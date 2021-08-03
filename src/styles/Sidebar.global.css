@@ -1,0 +1,22 @@
+.container__sidebar {
+  position: fixed;
+  z-index: 1;
+}
+
+.sidebar__main {
+  height: 100vh;
+}
+
+.sidebar__expander {
+  position: absolute;
+  top: 50px;
+  z-index: 1;
+}
+
+.sidebar__expander_true {
+  left: 180px;
+}
+
+.sidebar__expander_false {
+  left: 43px;
+}

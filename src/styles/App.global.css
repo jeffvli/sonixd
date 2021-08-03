@@ -1,0 +1,24 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+@import '~rsuite/lib/styles/themes/dark/index.less';
+@import 'custom-theme.less';
+
+html,
+body {
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+}
+
+.rs-panel-heading {
+  padding-bottom: 5px !important;
+}
+
+.color__green {
+  color: green;
+}

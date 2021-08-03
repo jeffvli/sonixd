@@ -1,0 +1,19 @@
+.container__root {
+  height: 100vh;
+}
+
+.container__root_expanded {
+  padding-left: 193px;
+}
+
+.container__root_shrunk {
+  padding-left: 56px;
+}
+
+.container__footer {
+  position: fixed;
+  height: 30px;
+  background-color: blue;
+  bottom: 0;
+  width: 100%;
+}

@@ -1,0 +1,28 @@
+{
+  "files.associations": {
+    ".babelrc": "jsonc",
+    ".eslintrc": "jsonc",
+    ".prettierrc": "jsonc",
+    ".eslintignore": "ignore"
+  },
+
+  "javascript.validate.enable": false,
+  "javascript.format.enable": false,
+  "typescript.format.enable": false,
+
+  "search.exclude": {
+    ".git": true,
+    ".eslintcache": true,
+    "src/dist": true,
+    "src/main.prod.js": true,
+    "src/main.prod.js.map": true,
+    "bower_components": true,
+    "dll": true,
+    "release": true,
+    "node_modules": true,
+    "npm-debug.log.*": true,
+    "test/**/__snapshots__": true,
+    "yarn.lock": true,
+    "*.{css,sass,scss}.d.ts": true
+  }
+}
