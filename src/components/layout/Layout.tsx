@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Container, Sidebar as Sb, Content, Footer } from 'rsuite';
+import { Container, Content, Footer } from 'rsuite';
 import classNames from 'classnames';
-
 import Sidebar from './Sidebar';
 import '../../styles/Layout.global.css';
 
@@ -40,12 +39,6 @@ const Layout = ({ footer, children }: any) => {
     history.push(route);
   };
 
-  const containerSidebarClasses = classNames({
-    container__sidebar: true,
-    container__sidebar_expanded: expandSidebar === true,
-    container__sidebar_shrunk: expandSidebar === false,
-  });
-
   const containerRootClasses = classNames({
     container__root: true,
     container__root_expanded: expandSidebar === true,
@@ -66,9 +59,11 @@ const Layout = ({ footer, children }: any) => {
             {children}
           </Content>
         </Container>
-        <Footer id="footer" className="container__footer">
-          Footer{footer}
-        </Footer>
+        {footer && (
+          <Footer id="footer" className="container__footer">
+            {footer}
+          </Footer>
+        )}
       </Container>
     </>
   );
