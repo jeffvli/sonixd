@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { getPlaylist, getStream } from '../../api/api';
+import { getPlaylist } from '../../api/api';
+import { useAppDispatch } from '../../redux/hooks';
+import { setPlayQueue, clearPlayQueue } from '../../redux/playQueueSlice';
 import GenericPage from '../layout/GenericPage';
-import ListView from '../views/ListView';
+import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import PlaylistViewHeader from './PlaylistViewHeader';
-import Player from '../player/Player';
 
-type PlaylistParams = {
+interface PlaylistParams {
   id: string;
-};
+}
 
 const tableColumns = [
   {
@@ -58,11 +58,13 @@ const PlaylistView = () => {
     ['playlist', id],
     () => getPlaylist(id)
   );
-  const [playing, setPlaying] = useState(null);
+
+  const dispatch = useAppDispatch();
 
   const handleRowClick = (e: any) => {
-    console.log(e);
-    setPlaying(e.streamUrl);
+    const newPlayQueue = playlist.entry.slice([e.index], playlist.entry.length);
+    dispatch(clearPlayQueue());
+    dispatch(setPlayQueue(newPlayQueue));
   };
 
   if (isLoading) {
@@ -72,8 +74,6 @@ const PlaylistView = () => {
   if (isError) {
     return <span>Error: {error.message}</span>;
   }
-
-  console.log(playlist);
 
   return (
     <GenericPage
@@ -87,15 +87,14 @@ const PlaylistView = () => {
         />
       }
     >
-      <Helmet>
-        <title>sonicd - {playlist.name}</title>
-      </Helmet>
-      <ListView
+      <ListViewType
         data={playlist.entry}
         tableColumns={tableColumns}
         handleRowClick={handleRowClick}
+        tableHeight={700}
+        virtualized
+        autoHeight
       />
-      {/* {setPlaying && <Player url={playing} />} */}
     </GenericPage>
   );
 };

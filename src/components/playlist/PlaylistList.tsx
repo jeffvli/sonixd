@@ -1,13 +1,10 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { Table, Icon } from 'rsuite';
-import { Helmet } from 'react-helmet-async';
 import { getPlaylists } from '../../api/api';
-import ListView from '../views/ListView';
+import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import GenericPage from '../layout/GenericPage';
-import PlaylistViewHeader from './PlaylistViewHeader';
 
 const tableColumns = [
   {
@@ -64,21 +61,20 @@ const PlaylistList = () => {
 
   return (
     <GenericPage>
-      <Helmet>
-        <title>sonicd - Playlists</title>
-      </Helmet>
-      <ListView
+      <ListViewType
         data={playlists}
         handleRowClick={handleRowClick}
         tableColumns={tableColumns}
+        virtualized={false}
+        autoHeight
       >
-        <Table.Column width={150} align="center" flexGrow={1}>
+        {/* <Table.Column width={150} align="center" flexGrow={1}>
           <Table.HeaderCell>Actions</Table.HeaderCell>
           <Table.Cell>
             <Icon icon="ellipsis-v" />
           </Table.Cell>
-        </Table.Column>
-      </ListView>
+        </Table.Column> */}
+      </ListViewType>
     </GenericPage>
   );
 };
