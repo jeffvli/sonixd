@@ -4,6 +4,7 @@
  */
 
 @import '~rsuite/lib/styles/themes/dark/index.less';
+@import '~react-h5-audio-player/lib/styles.less';
 @import 'custom-theme.less';
 
 html,
@@ -19,6 +20,18 @@ body {
   padding-bottom: 5px !important;
 }
 
-.color__green {
-  color: green;
+.rhap_container {
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
+}
+
+.login__root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login__panel {
+  margin-top: 200px;
 }

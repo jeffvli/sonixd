@@ -12,8 +12,12 @@
 
 .container__footer {
   position: fixed;
-  height: 30px;
-  background-color: blue;
+  height: 70px;
+  background-color: #0f131a;
+  border-top: 3px;
+  border-style: solid none none none;
+  border-color: #3c3f43;
   bottom: 0;
   width: 100%;
+  /* z-index: 1;  */
 }
