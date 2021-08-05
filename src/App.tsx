@@ -11,6 +11,7 @@ import Settings from './components/settings/Settings';
 import NowPlayingView from './components/player/NowPlayingView';
 import Player from './components/player/Player';
 import Login from './components/settings/Login';
+import StarredView from './components/starred/StarredView';
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,8 @@ const App = () => {
             <Route path="/playlists">
               <PlaylistList />
             </Route>
-            <Route path="/">Main route</Route>
+            <Route path="/starred" component={StarredView} />
+            <Route path="/" />
           </Switch>
         </Layout>
       </Router>

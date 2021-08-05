@@ -28,6 +28,9 @@ const Layout = ({ footer, children }: any) => {
       case 'playlists':
         route = '/playlists';
         break;
+      case 'starred':
+        route = '/starred';
+        break;
       case 'settings':
         route = '/settings';
         break;

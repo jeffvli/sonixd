@@ -1,14 +1,6 @@
 import React from 'React';
 import classNames from 'classnames';
-import {
-  Sidebar as Sb,
-  Sidenav,
-  Dropdown,
-  Nav,
-  Navbar,
-  Icon,
-  IconButton,
-} from 'rsuite';
+import { Sidebar as Sb, Sidenav, Dropdown, Nav, Icon } from 'rsuite';
 import '../../styles/Sidebar.global.css';
 
 const Sidebar = ({
@@ -33,13 +25,6 @@ const Sidebar = ({
     sidebar__expander_false: expand === false,
   });
 
-  const iconStyles = {
-    width: 56,
-    height: 56,
-    lineHeight: '56px',
-    textAlign: 'center',
-  };
-
   return (
     <Sb
       id="sidebar"
@@ -52,7 +37,7 @@ const Sidebar = ({
         expanded={expand}
         appearance="default"
       >
-        <Sidenav.Header></Sidenav.Header>
+        <Sidenav.Header />
         <Sidenav.Body>
           <Nav>
             <Nav.Item
@@ -78,6 +63,14 @@ const Sidebar = ({
               onSelect={handleSidebarSelect}
             >
               Playlists
+            </Nav.Item>
+            <Nav.Item
+              active={active === 'starred'}
+              eventKey="starred"
+              icon={<Icon icon="star" />}
+              onSelect={handleSidebarSelect}
+            >
+              Starred
             </Nav.Item>
             <Dropdown
               placement="rightStart"
@@ -106,13 +99,6 @@ const Sidebar = ({
                 onSelect={handleSidebarSelect}
               >
                 Genres
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={active === 'library-4'}
-                eventKey="library-4"
-                onSelect={handleSidebarSelect}
-              >
-                Starred
               </Dropdown.Item>
               <Dropdown.Item
                 active={active === 'library-5'}
