@@ -6,6 +6,7 @@
 
 .sidebar__main {
   height: 100vh;
+  border-right: 1px solid #3c3f43;
 }
 
 .sidebar__expander {
