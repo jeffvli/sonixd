@@ -1,4 +1,4 @@
-import { remote } from 'electron';
+const { remote } = require('electron');
 
 const win = remote.getCurrentWindow(); /* Note this is different to the
 html global `window` variable */
