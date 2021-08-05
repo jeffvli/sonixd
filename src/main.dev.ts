@@ -74,8 +74,11 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
     },
     autoHideMenuBar: true,
+    minWidth: 800,
+    minHeight: 600,
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
@@ -123,6 +126,11 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+app.commandLine.appendSwitch(
+  'disable-features',
+  'HardwareMediaKeyHandling,MediaSessionService'
+);
 
 app.whenReady().then(createWindow).catch(console.log);
 
