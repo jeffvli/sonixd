@@ -75,10 +75,12 @@ const createWindow = async () => {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      preload: path.join(__dirname, 'preload.ts'), // Add custom titlebar functionality
     },
     autoHideMenuBar: true,
     minWidth: 800,
     minHeight: 600,
+    frame: false,
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);

@@ -1,5 +1,6 @@
 .container__sidebar {
   position: fixed;
+  top: 33px; /* Account for custom titlebar */
   z-index: 1;
 }
 

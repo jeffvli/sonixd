@@ -4,6 +4,7 @@ import { Container, Content, Footer } from 'rsuite';
 import classNames from 'classnames';
 import Sidebar from './Sidebar';
 import '../../styles/Layout.global.css';
+import Titlebar from './Titlebar';
 
 const Layout = ({ footer, children }: any) => {
   const [expandSidebar, setExpandSidebar] = useState(true);
@@ -50,6 +51,7 @@ const Layout = ({ footer, children }: any) => {
 
   return (
     <>
+      <Titlebar />
       <Sidebar
         expand={expandSidebar}
         handleToggle={handleToggle}

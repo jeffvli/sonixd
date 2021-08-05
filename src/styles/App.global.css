@@ -12,8 +12,17 @@ body {
   height: 100%;
 }
 
+body {
+  border: 1px solid #48545c;
+  overflow-y: hidden;
+}
+
 #root {
   min-height: 100%;
+}
+
+h1 {
+  font-size: 30px !important;
 }
 
 .rs-panel-heading {
