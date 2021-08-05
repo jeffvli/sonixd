@@ -14,10 +14,8 @@ const ListViewType = ({
   autoHeight,
   rowHeight,
   virtualized,
+  currentIndex,
 }: any) => {
-  const height = document.getElementsByClassName('page__content')[0]
-    ?.clientHeight;
-  console.log(height);
   return (
     <Table
       data={data}
@@ -41,15 +39,36 @@ const ListViewType = ({
         >
           <Table.HeaderCell>{column.header}</Table.HeaderCell>
           {column.dataKey === 'index' ? (
-            <Table.Cell dataKey={column.dataKey} />
+            <Table.Cell>
+              {(rowData: any, rowIndex: any) => {
+                return (
+                  <span className={rowIndex === currentIndex ? 'playing' : ''}>
+                    {rowIndex + 1}
+                    {rowData['-empty']}
+                  </span>
+                );
+              }}
+            </Table.Cell>
           ) : column.dataKey === 'duration' ? (
             <Table.Cell>
-              {(rowData: any) => {
-                return <span>{formatSongDuration(rowData.duration)}</span>;
+              {(rowData: any, rowIndex: any) => {
+                return (
+                  <span className={rowIndex === currentIndex ? 'playing' : ''}>
+                    {formatSongDuration(rowData.duration)}
+                  </span>
+                );
               }}
             </Table.Cell>
           ) : (
-            <Table.Cell dataKey={column.dataKey} />
+            <Table.Cell>
+              {(rowData: any, rowIndex: any) => {
+                return (
+                  <span className={rowIndex === currentIndex ? 'playing' : ''}>
+                    {rowData[column.dataKey]}
+                  </span>
+                );
+              }}
+            </Table.Cell>
           )}
         </Table.Column>
       ))}
