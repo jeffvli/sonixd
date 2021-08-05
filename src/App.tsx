@@ -28,18 +28,10 @@ const App = () => {
       <Router>
         <Layout>
           <Switch>
-            <Route path="/nowplaying">
-              <NowPlayingView />
-            </Route>
-            <Route path="/settings">
-              <Settings />
-            </Route>
-            <Route path="/playlist/:id">
-              <PlaylistView />
-            </Route>
-            <Route path="/playlists">
-              <PlaylistList />
-            </Route>
+            <Route path="/nowplaying" component={NowPlayingView} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/playlist/:id" component={PlaylistView} />
+            <Route path="/playlists" component={PlaylistList} />
             <Route path="/starred" component={StarredView} />
             <Route path="/" />
           </Switch>
