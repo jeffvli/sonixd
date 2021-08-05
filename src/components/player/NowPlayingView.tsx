@@ -4,6 +4,7 @@ import { setCurrentIndex } from '../../redux/playQueueSlice';
 
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
+import Loader from '../loader/Loader';
 
 const tableColumns = [
   {
@@ -51,6 +52,10 @@ const NowPlayingView = () => {
     dispatch(setCurrentIndex(e));
   };
 
+  if (!playQueue) {
+    return <Loader />;
+  }
+
   return (
     <GenericPage header={<h1>Now Playing</h1>}>
       <ListViewType
@@ -58,7 +63,6 @@ const NowPlayingView = () => {
         currentIndex={playQueue.currentIndex}
         tableColumns={tableColumns}
         handleRowClick={handleRowClick}
-        autoHeight
         virtualized
       />
     </GenericPage>

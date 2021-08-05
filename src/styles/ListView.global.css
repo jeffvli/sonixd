@@ -5,3 +5,7 @@
 .playing {
   color: #169de0;
 }
+
+.table__container {
+  height: 100%;
+}

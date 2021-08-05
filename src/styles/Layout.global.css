@@ -21,3 +21,7 @@
   width: 100%;
   /* z-index: 1;  */
 }
+
+.container__page {
+  height: 100vh;
+}
