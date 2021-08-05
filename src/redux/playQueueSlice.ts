@@ -27,7 +27,7 @@ interface Entry {
   year: number;
 }
 
-interface PlayQueue {
+export interface PlayQueue {
   currentIndex: number;
   volume: number;
   isLoading: boolean;

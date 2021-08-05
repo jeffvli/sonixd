@@ -1,13 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import nowPlayingReducer from './nowPlayingSlice';
 import clickHandlerReducer from './clickHandlerSlice';
 import playerReducer from './playerSlice';
-import playQueueReducer from './playQueueSlice';
+import playQueueReducer, { PlayQueue } from './playQueueSlice';
 
-export const store = configureStore({
+export const store = configureStore<PlayQueue | any>({
   reducer: {
-    nowPlaying: nowPlayingReducer,
     clickHandler: clickHandlerReducer,
     player: playerReducer,
     playQueue: playQueueReducer,
