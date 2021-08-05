@@ -9,6 +9,8 @@ module.exports = {
     'no-console': 'off',
     'jsx-quotes': ['error', 'prefer-double'],
     'react/jsx-props-no-spreading': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'no-nested-ternary': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
