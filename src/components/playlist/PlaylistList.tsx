@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Tag } from 'rsuite';
-
 import { getPlaylists } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
@@ -41,19 +40,15 @@ const tableColumns = [
 ];
 
 const PlaylistList = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const history = useHistory();
   const { isLoading, isError, data: playlists, error }: any = useQuery(
     'playlists',
     getPlaylists
   );
-  const [searchQuery, setSearchQuery] = useState('');
-  const history = useHistory();
 
   const handleRowClick = (e: any) => {
     history.push(`playlist/${e.id}`);
-  };
-
-  const handleSearch = (e: any) => {
-    setSearchQuery(e);
   };
 
   if (isLoading) {
@@ -69,9 +64,12 @@ const PlaylistList = () => {
       header={
         <GenericPageHeader
           title="Playlists"
-          tags={<Tag>{playlists.length} playlists</Tag>}
-          handleSearch={handleSearch}
+          subtitle={<Tag>{playlists.length} playlists</Tag>}
+          searchQuery={searchQuery}
+          handleSearch={(e: any) => setSearchQuery(e)}
+          clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
+          showSearchBar
         />
       }
     >

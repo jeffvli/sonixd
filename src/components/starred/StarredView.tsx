@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { ButtonGroup, Button } from 'rsuite';
+import { useAppDispatch } from '../../redux/hooks';
 import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { getStarred } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
+import GenericPageHeader from '../layout/GenericPageHeader';
 import Loader from '../loader/Loader';
 import ListViewType from '../viewtypes/ListViewType';
 
-const tableColumns = [
+const trackTableColumns = [
   {
     header: '#',
     dataKey: 'index',
@@ -45,19 +47,56 @@ const tableColumns = [
   },
 ];
 
+const albumTableColumns = [
+  {
+    header: '#',
+    dataKey: 'index',
+    alignment: 'center',
+    width: 70,
+  },
+  {
+    header: 'Title',
+    dataKey: 'name',
+    alignment: 'left',
+    resizable: true,
+    width: 350,
+  },
+
+  {
+    header: 'Artist',
+    dataKey: 'artist',
+    alignment: 'center',
+    resizable: true,
+    width: 300,
+  },
+  {
+    header: 'Tracks',
+    dataKey: 'songCount',
+    alignment: 'center',
+    resizable: true,
+    width: 300,
+  },
+  {
+    header: 'Duration',
+    dataKey: 'duration',
+    alignment: 'center',
+    resizable: true,
+    width: 70,
+  },
+];
+
 const StarredView = () => {
+  const [currentPage, setCurrentPage] = useState('Tracks');
+  const [searchQuery, setSearchQuery] = useState('');
   const { isLoading, isError, data: starred, error }: any = useQuery(
     'starred',
     getStarred
   );
 
-  const tracks = useAppSelector((state) => state.playQueue);
-
   const dispatch = useAppDispatch();
 
   const handleRowClick = (e: any) => {
-    const newPlayQueue = starred.entry.slice([e.index], starred.entry.length);
-    console.log(newPlayQueue);
+    const newPlayQueue = starred.song.slice([e.index], starred.song.length);
     dispatch(clearPlayQueue());
     dispatch(setPlayQueue(newPlayQueue));
   };
@@ -70,16 +109,73 @@ const StarredView = () => {
     return <span>Error: {error.message}</span>;
   }
 
-  console.log(tracks);
-
   return (
-    <GenericPage header={<h1>Starred</h1>}>
-      <ListViewType
-        data={starred.entry}
-        tableColumns={tableColumns}
-        handleRowClick={handleRowClick}
-        virtualized
-      />
+    <GenericPage
+      header={
+        <GenericPageHeader
+          title={`Starred (${currentPage})`}
+          subtitle={
+            <ButtonGroup>
+              <Button
+                appearance="subtle"
+                onClick={() => setCurrentPage('Tracks')}
+              >
+                Tracks
+              </Button>
+              <Button
+                appearance="subtle"
+                onClick={() => setCurrentPage('Albums')}
+              >
+                Albums
+              </Button>
+              <Button
+                appearance="subtle"
+                onClick={() => setCurrentPage('Artists')}
+              >
+                Artists
+              </Button>
+            </ButtonGroup>
+          }
+          searchQuery={searchQuery}
+          handleSearch={(e: any) => setSearchQuery(e)}
+          clearSearchQuery={() => setSearchQuery('')}
+          showViewTypeButtons={currentPage !== 'Tracks'}
+          showSearchBar
+        />
+      }
+    >
+      {currentPage === 'Tracks' && (
+        <ListViewType
+          data={
+            searchQuery === ''
+              ? starred.song
+              : starred.song.filter((song: any) => {
+                  return song.title
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+                })
+          }
+          tableColumns={trackTableColumns}
+          handleRowClick={handleRowClick}
+          virtualized
+        />
+      )}
+      {currentPage === 'Albums' && (
+        <ListViewType
+          data={
+            searchQuery === ''
+              ? starred.album
+              : starred.album.filter((album: any) => {
+                  return album.name
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+                })
+          }
+          tableColumns={albumTableColumns}
+          handleRowClick={handleRowClick}
+          virtualized
+        />
+      )}
     </GenericPage>
   );
 };

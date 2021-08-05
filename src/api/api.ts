@@ -112,11 +112,18 @@ export const getPlayQueue = async () => {
 };
 
 export const getStarred = async () => {
-  const { data } = await api.get(`/getStarred`);
+  const { data } = await api.get(`/getStarred2`);
   return {
-    entry: data.starred.song.map((entry: any, index: any) => ({
+    ...data.starred2,
+    album: data.starred2.album.map((entry: any, index: any) => ({
+      ...entry,
+      coverArtUrl: getCoverArtUrl(entry),
+      index,
+    })),
+    song: data.starred2.song.map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
+      coverArtUrl: getCoverArtUrl(entry),
       index,
     })),
   };
