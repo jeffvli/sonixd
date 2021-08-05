@@ -1,17 +1,9 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { startPlayback } from '../../redux/playerSlice';
+import { setCurrentIndex } from '../../redux/playQueueSlice';
 
-import { getPlayQueue } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
-import Loader from '../loader/Loader';
-
-type PlaylistParams = {
-  id: string;
-};
 
 const tableColumns = [
   {
@@ -52,22 +44,18 @@ const tableColumns = [
 ];
 
 const NowPlayingView = () => {
-  const player = useAppSelector((state) => state.player);
   const playQueue = useAppSelector((state) => state.playQueue);
   const dispatch = useAppDispatch();
 
-  console.log(playQueue);
-
   const handleRowClick = (e: any) => {
-    console.log(e);
-    dispatch(startPlayback({ url: e.streamUrl }));
-    console.log(player);
+    dispatch(setCurrentIndex(e));
   };
 
   return (
-    <GenericPage title="Playlists">
+    <GenericPage header={<h1>Now Playing</h1>}>
       <ListViewType
         data={playQueue.entry}
+        currentIndex={playQueue.currentIndex}
         tableColumns={tableColumns}
         handleRowClick={handleRowClick}
         autoHeight

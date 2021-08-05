@@ -31,6 +31,7 @@ interface PlayQueue {
   currentIndex: number;
   volume: number;
   isLoading: boolean;
+  repeatAll: boolean;
   entry: Entry[];
 }
 
@@ -38,6 +39,7 @@ const initialState: PlayQueue = {
   currentIndex: 0,
   volume: 0.5,
   isLoading: false,
+  repeatAll: false,
   entry: [],
 };
 
@@ -46,9 +48,9 @@ const playQueueSlice = createSlice({
   initialState,
   reducers: {
     incrementCurrentIndex: (state) => {
-      if (state.currentIndex <= state.entry.length) {
+      if (state.currentIndex < state.entry.length - 1) {
         state.currentIndex += 1;
-      } else {
+      } else if (state.repeatAll) {
         state.currentIndex = 0;
       }
     },
@@ -57,9 +59,14 @@ const playQueueSlice = createSlice({
         state.currentIndex -= 1;
       }
     },
-    setCurrentIndex: (state, action: PayloadAction<PlayQueue>) => {
-      state.currentIndex = action.payload.currentIndex;
+    setCurrentIndex: (state, action: PayloadAction<Entry>) => {
+      const findIndex = state.entry.findIndex(
+        (track) => track.id === action.payload.id
+      );
+
+      state.currentIndex = findIndex;
     },
+
     setPlayQueue: (state, action: PayloadAction<Entry[]>) => {
       state.currentIndex = 0;
       action.payload.map((entry: any) => state.entry.push(entry));

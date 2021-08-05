@@ -25,7 +25,6 @@ const Player = () => {
 
   const handleOnClickNext = () => {
     dispatch(incrementCurrentIndex());
-    console.log(playerRef?.current?.audio?.current);
   };
 
   const handleOnClickPrevious = () => {
@@ -41,7 +40,8 @@ const Player = () => {
       {playQueue.entry[playQueue.currentIndex] && (
         <Helmet>
           <title>
-            {playQueue.entry[playQueue.currentIndex]?.title} — sonicD
+            {playQueue.entry[playQueue.currentIndex].title} {' by '}
+            {playQueue.entry[playQueue.currentIndex].artist} — sonicd
           </title>
         </Helmet>
       )}
@@ -53,8 +53,6 @@ const Player = () => {
         showSkipControls
         showFilledVolume
         showJumpControls={false}
-        onPlay={() => console.log('onPlay')}
-        onPlaying={(e) => console.log(e)}
         onClickNext={handleOnClickNext}
         onClickPrevious={handleOnClickPrevious}
         onEnded={handleOnEnded}

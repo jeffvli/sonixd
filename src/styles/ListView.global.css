@@ -1,3 +1,7 @@
 .rs-table-row {
   cursor: pointer;
 }
+
+.playing {
+  color: #169de0;
+}

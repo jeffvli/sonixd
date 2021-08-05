@@ -44,9 +44,6 @@ const PlaylistList = () => {
   );
   const history = useHistory();
 
-  // console.log(data);
-  console.log(playlists);
-
   const handleRowClick = (e: any) => {
     history.push(`playlist/${e.id}`);
   };
@@ -60,7 +57,7 @@ const PlaylistList = () => {
   }
 
   return (
-    <GenericPage>
+    <GenericPage header={<h1>Playlists</h1>}>
       <ListViewType
         data={playlists}
         handleRowClick={handleRowClick}
