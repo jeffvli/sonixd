@@ -1,3 +1,11 @@
 .container__page {
-  padding: 1rem 1rem 6rem 1rem;
+  padding: 0px 0px 95px 0px;
+}
+
+.page__header {
+  padding: 20px 20px 0px 20px;
+}
+
+.page__content {
+  padding: 10px;
 }

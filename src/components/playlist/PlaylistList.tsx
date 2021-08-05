@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
+import { Tag } from 'rsuite';
+
 import { getPlaylists } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import GenericPage from '../layout/GenericPage';
+import GenericPageHeader from '../layout/GenericPageHeader';
 
 const tableColumns = [
   {
@@ -42,10 +45,15 @@ const PlaylistList = () => {
     'playlists',
     getPlaylists
   );
+  const [searchQuery, setSearchQuery] = useState('');
   const history = useHistory();
 
   const handleRowClick = (e: any) => {
     history.push(`playlist/${e.id}`);
+  };
+
+  const handleSearch = (e: any) => {
+    setSearchQuery(e);
   };
 
   if (isLoading) {
@@ -57,21 +65,35 @@ const PlaylistList = () => {
   }
 
   return (
-    <GenericPage header={<h1>Playlists</h1>}>
+    <GenericPage
+      header={
+        <GenericPageHeader
+          title="Playlists"
+          tags={<Tag>{playlists.length} playlists</Tag>}
+          handleSearch={handleSearch}
+          showViewTypeButtons
+        />
+      }
+    >
       <ListViewType
-        data={playlists}
+        data={
+          searchQuery === ''
+            ? playlists
+            : playlists.filter((playlist: any) => {
+                return (
+                  playlist.name
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()) ||
+                  playlist.comment
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+                );
+              })
+        }
         handleRowClick={handleRowClick}
         tableColumns={tableColumns}
-        virtualized={false}
-        autoHeight
-      >
-        {/* <Table.Column width={150} align="center" flexGrow={1}>
-          <Table.HeaderCell>Actions</Table.HeaderCell>
-          <Table.Cell>
-            <Icon icon="ellipsis-v" />
-          </Table.Cell>
-        </Table.Column> */}
-      </ListViewType>
+        virtualized
+      />
     </GenericPage>
   );
 };
