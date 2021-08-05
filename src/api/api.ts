@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { formatSongDuration } from '../shared/utils';
 import getAuth from './auth';
 
 const auth = getAuth();
@@ -77,8 +76,7 @@ export const getPlaylist = async (id: string) => {
     entry: data.playlist.entry.map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
-      duration: formatSongDuration(entry.duration),
-      index: index + 1,
+      index,
     })),
     image:
       data.playlist.songCount > 0 ? getCoverArtUrl(data.playlist) : undefined,
@@ -93,6 +91,33 @@ export const getPing = async () => {
 
 export const getStream = async (id: string) => {
   const { data } = await api.get(`/stream?id=${id}`);
-  console.log(data);
   return data;
+};
+
+export const getDownload = async (id: string) => {
+  const { data } = await api.get(`/download?id=${id}`);
+  return data;
+};
+
+export const getPlayQueue = async () => {
+  const { data } = await api.get(`/getPlayQueue`);
+  return {
+    ...data.playQueue,
+    entry: data.playQueue.entry.map((entry: any, index: any) => ({
+      ...entry,
+      streamUrl: getStreamUrl(entry.id),
+      index,
+    })),
+  };
+};
+
+export const getStarred = async () => {
+  const { data } = await api.get(`/getStarred`);
+  return {
+    entry: data.starred.song.map((entry: any, index: any) => ({
+      ...entry,
+      streamUrl: getStreamUrl(entry.id),
+      index,
+    })),
+  };
 };
