@@ -35,35 +35,46 @@ const GenericPageHeader = ({
             alignSelf: 'center',
           }}
         >
-          {sidetitle}
+          {sidetitle && (
+            <span style={{ display: 'inline-block' }}>{sidetitle}</span>
+          )}
           {showSearchBar && (
-            <InputGroup inside>
-              <Input
-                size="md"
-                value={searchQuery}
-                placeholder="Search..."
-                onChange={handleSearch}
-              />
-              {searchQuery !== '' && (
-                <InputGroup.Button appearance="subtle">
-                  <Icon icon="close" onClick={clearSearchQuery} />
-                </InputGroup.Button>
-              )}
-            </InputGroup>
+            <span style={{ display: 'inline-block' }}>
+              <InputGroup inside>
+                <Input
+                  size="md"
+                  value={searchQuery}
+                  placeholder="Search..."
+                  onChange={handleSearch}
+                />
+                {searchQuery !== '' && (
+                  <InputGroup.Button appearance="subtle">
+                    <Icon icon="close" onClick={clearSearchQuery} />
+                  </InputGroup.Button>
+                )}
+              </InputGroup>
+            </span>
           )}
         </span>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span style={{ alignSelf: 'center' }}>{subtitle}</span>
         <span style={{ alignSelf: 'center' }}>
-          {subsidetitle}
+          {subsidetitle && (
+            <span style={{ display: 'inline-block' }}>{subsidetitle}</span>
+          )}
           {showViewTypeButtons && (
-            <ButtonToolbar>
-              <ButtonGroup>
-                <IconButton icon={<Icon icon="list" />} appearance="link" />
-                <IconButton icon={<Icon icon="th-large" />} appearance="link" />
-              </ButtonGroup>
-            </ButtonToolbar>
+            <span style={{ display: 'inline-block' }}>
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <IconButton icon={<Icon icon="list" />} appearance="link" />
+                  <IconButton
+                    icon={<Icon icon="th-large" />}
+                    appearance="link"
+                  />
+                </ButtonGroup>
+              </ButtonToolbar>
+            </span>
           )}
         </span>
       </div>
