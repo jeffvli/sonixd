@@ -67,10 +67,10 @@ const GenericPageHeader = ({
             <span style={{ display: 'inline-block' }}>
               <ButtonToolbar>
                 <ButtonGroup>
-                  <IconButton icon={<Icon icon="list" />} appearance="link" />
+                  <IconButton icon={<Icon icon="list" />} appearance="subtle" />
                   <IconButton
                     icon={<Icon icon="th-large" />}
-                    appearance="link"
+                    appearance="subtle"
                   />
                 </ButtonGroup>
               </ButtonToolbar>
