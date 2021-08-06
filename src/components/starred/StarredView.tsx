@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { ButtonGroup, Button } from 'rsuite';
+import { Nav } from 'rsuite';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { getStarred } from '../../api/api';
@@ -113,28 +113,13 @@ const StarredView = () => {
     <GenericPage
       header={
         <GenericPageHeader
-          title={`Starred (${currentPage})`}
+          title="Starred"
           subtitle={
-            <ButtonGroup>
-              <Button
-                appearance="subtle"
-                onClick={() => setCurrentPage('Tracks')}
-              >
-                Tracks
-              </Button>
-              <Button
-                appearance="subtle"
-                onClick={() => setCurrentPage('Albums')}
-              >
-                Albums
-              </Button>
-              <Button
-                appearance="subtle"
-                onClick={() => setCurrentPage('Artists')}
-              >
-                Artists
-              </Button>
-            </ButtonGroup>
+            <Nav activeKey={currentPage} onSelect={(e) => setCurrentPage(e)}>
+              <Nav.Item eventKey="Tracks">Tracks</Nav.Item>
+              <Nav.Item eventKey="Albums">Albums</Nav.Item>
+              <Nav.Item eventKey="Artists">Artists</Nav.Item>
+            </Nav>
           }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
