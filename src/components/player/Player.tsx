@@ -1,5 +1,4 @@
 import React, { createRef } from 'react';
-import { Helmet } from 'react-helmet-async';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
@@ -36,30 +35,19 @@ const Player = () => {
   };
 
   return (
-    <>
-      {playQueue.entry[playQueue.currentIndex] && (
-        <Helmet>
-          <title>
-            {playQueue.entry[playQueue.currentIndex].title} {' by '}
-            {playQueue.entry[playQueue.currentIndex].artist} — sonicd
-          </title>
-        </Helmet>
-      )}
-
-      <AudioPlayer
-        ref={playerRef}
-        src={playQueue.entry[playQueue.currentIndex]?.streamUrl}
-        autoPlay
-        showSkipControls
-        showFilledVolume
-        showJumpControls={false}
-        onClickNext={handleOnClickNext}
-        onClickPrevious={handleOnClickPrevious}
-        onEnded={handleOnEnded}
-        onLoadStart={handleOnLoadStart}
-        onLoadedData={handleOnLoadedData}
-      />
-    </>
+    <AudioPlayer
+      ref={playerRef}
+      src={playQueue.entry[playQueue.currentIndex]?.streamUrl}
+      autoPlay
+      showSkipControls
+      showFilledVolume
+      showJumpControls={false}
+      onClickNext={handleOnClickNext}
+      onClickPrevious={handleOnClickPrevious}
+      onEnded={handleOnEnded}
+      onLoadStart={handleOnLoadStart}
+      onLoadedData={handleOnLoadedData}
+    />
   );
 };
 

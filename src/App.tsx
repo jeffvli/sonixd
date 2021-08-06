@@ -2,7 +2,7 @@ import React from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Helmet } from 'react-helmet-async';
-
+import { useAppSelector } from './redux/hooks';
 import './styles/App.global.css';
 import Layout from './components/layout/Layout';
 import PlaylistList from './components/playlist/PlaylistList';
@@ -16,15 +16,27 @@ import StarredView from './components/starred/StarredView';
 const queryClient = new QueryClient();
 
 const App = () => {
+  const playQueue = useAppSelector((state: any) => state.playQueue);
   if (!localStorage.getItem('server')) {
     return <Login />;
   }
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Helmet>
-        <title>sonicd</title>
-      </Helmet>
+      {playQueue.entry.length <= 1 && (
+        <Helmet>
+          <title>sonicd</title>
+        </Helmet>
+      )}
+
+      {playQueue.entry[playQueue.currentIndex] && (
+        <Helmet>
+          <title>
+            {playQueue.entry[playQueue.currentIndex].title} {' by '}
+            {playQueue.entry[playQueue.currentIndex].artist} — sonicd
+          </title>
+        </Helmet>
+      )}
       <Router>
         <Layout>
           <Switch>
