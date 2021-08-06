@@ -86,7 +86,7 @@ const ListViewType = ({
                     {(rowData: any, rowIndex: any) => {
                       return (
                         <span
-                          className={rowIndex === currentIndex ? 'playing' : ''}
+                          className={rowIndex === currentIndex ? 'active' : ''}
                         >
                           {rowIndex + 1}
                           {rowData['-empty']}
@@ -99,7 +99,7 @@ const ListViewType = ({
                     {(rowData: any, rowIndex: any) => {
                       return (
                         <span
-                          className={rowIndex === currentIndex ? 'playing' : ''}
+                          className={rowIndex === currentIndex ? 'active' : ''}
                         >
                           {formatSongDuration(rowData.duration)}
                         </span>
@@ -111,7 +111,7 @@ const ListViewType = ({
                     {(rowData: any, rowIndex: any) => {
                       return (
                         <span
-                          className={rowIndex === currentIndex ? 'playing' : ''}
+                          className={rowIndex === currentIndex ? 'active' : ''}
                         >
                           {rowData[column.dataKey]}
                         </span>

@@ -44,3 +44,7 @@ h1 {
 .login__panel {
   margin-top: 200px;
 }
+
+.active {
+  color: #169de0 !important;
+}
