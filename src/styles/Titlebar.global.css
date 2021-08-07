@@ -13,7 +13,7 @@
 #main {
   height: calc(100% - 32px);
   margin-top: 32px;
-  padding: 20px;
+  /* padding: 20px; */
   overflow-y: auto;
 }
 
@@ -22,7 +22,7 @@
   position: fixed;
   height: 32px;
   width: calc(100% - 2px); /*Compensate for body 1px border*/
-  background: #1a1d24;
+  background: #20252c;
   padding: 4px;
   color: #fff;
 }

@@ -1,9 +1,16 @@
+@bg: #20252c;
+
+// Main
+@body-bg: @bg;
+
 // Table
-@table-body-background: #0f131a;
-@table-border-color: #0f131a;
+@table-body-background: @bg;
+@table-border-color: @bg;
+@table-body-content-padding-vertical: 0px;
+@table-content-padding-horizontal: 0px;
 
 // Sidenav
-@sidenav-default-bg: #0f131a;
+@sidenav-default-bg: #000000;
 @sidenav-collapse-transition-config: 0s;
 
 // Panel
@@ -11,7 +18,11 @@
 
 // For react-h5-audio-player
 @rhap_theme-color: #8d919a; // Color of all buttons and volume/progress indicators
-@rhap_background-color: #1a1d24; // Color of the player background
+@rhap_background-color: #000000; // Color of the player background
 @rhap_bar-color: #e4e4e4; // Color of volume and progress bar
 @rhap_time-color: #8d919a; // Font color of current time and duration
 @rhap_font-family: inherit; // Font family of current time and duration
+
+@font-size-base: 14px;
+
+@button-ripple: false;

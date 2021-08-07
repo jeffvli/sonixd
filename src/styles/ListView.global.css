@@ -1,5 +1,5 @@
 .rs-table-row {
-  cursor: pointer;
+  cursor: default;
 }
 
 .table__container {

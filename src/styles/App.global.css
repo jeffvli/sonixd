@@ -48,3 +48,7 @@ h1 {
 .active {
   color: #169de0 !important;
 }
+
+.rs-table-cell-content > div::selection {
+  background-color: transparent;
+}

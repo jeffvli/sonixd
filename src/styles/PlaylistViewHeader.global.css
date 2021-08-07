@@ -13,3 +13,8 @@
   align-items: center;
   justify-content: center;
 }
+
+img {
+  border-radius: 85px;
+  box-shadow: 0 0 20px #000;
+}

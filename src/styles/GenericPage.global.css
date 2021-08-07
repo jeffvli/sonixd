@@ -7,5 +7,6 @@
 }
 
 .page__content {
+  position: relative;
   padding: 10px;
 }
