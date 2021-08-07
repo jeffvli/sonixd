@@ -198,7 +198,7 @@ const ListViewType = ({
                             })
                           }
                           onDoubleClick={(e: any) =>
-                            handleRowDoubleClick(e, {
+                            handleRowDoubleClick({
                               ...rowData,
                               rowIndex,
                             })

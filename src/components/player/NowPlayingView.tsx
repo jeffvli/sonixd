@@ -91,7 +91,7 @@ const NowPlayingView = () => {
     }
   };
 
-  const handleRowDoubleClick = (_e: any, rowData: any) => {
+  const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
     dispatch(clearSelected());
