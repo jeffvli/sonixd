@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+/* eslint-disable no-lonely-if */
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
+import {
+  clearSelected,
+  setSelected,
+  toggleSelected,
+  toggleRangeSelected,
+  setRangeSelected,
+} from '../../redux/multiSelectSlice';
 import { getStarred } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -88,16 +96,83 @@ const albumTableColumns = [
 const StarredView = () => {
   const [currentPage, setCurrentPage] = useState('Tracks');
   const [searchQuery, setSearchQuery] = useState('');
-  const { isLoading, isError, data: starred, error }: any = useQuery(
+  const [filteredData, setFilteredData] = useState([]);
+  const { isLoading, isError, data, error }: any = useQuery(
     'starred',
     getStarred
   );
 
   const dispatch = useAppDispatch();
 
-  const handleRowClick = (e: any) => {
-    const newPlayQueue = starred.song.slice([e.index], starred.song.length);
+  useEffect(() => {
+    if (searchQuery !== '') {
+      switch (currentPage) {
+        case 'Tracks':
+          setFilteredData(
+            data.song.filter((song: any) => {
+              return song.title
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
+            })
+          );
+          break;
+        case 'Albums':
+          setFilteredData(
+            data.album.filter((album: any) => {
+              return album.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
+            })
+          );
+          break;
+        default:
+          break;
+      }
+    } else {
+      setFilteredData([]);
+    }
+  }, [currentPage, searchQuery, data?.album, data?.song]);
+
+  let timeout: any = null;
+  const handleRowClick = (e: any, rowData: any) => {
+    if (timeout === null) {
+      timeout = window.setTimeout(() => {
+        timeout = null;
+
+        if (e.ctrlKey) {
+          dispatch(toggleSelected(rowData));
+        } else if (e.shiftKey) {
+          if (currentPage === 'Tracks') {
+            dispatch(setRangeSelected(rowData));
+            if (searchQuery !== '') {
+              dispatch(toggleRangeSelected(filteredData));
+            } else {
+              dispatch(toggleRangeSelected(data.song));
+            }
+          } else if (currentPage === 'Albums') {
+            dispatch(setRangeSelected(rowData));
+            if (searchQuery !== '') {
+              dispatch(toggleRangeSelected(filteredData));
+            } else {
+              dispatch(toggleRangeSelected(data.album));
+            }
+          } else {
+            // !TODO
+            data.song.slice();
+          }
+        } else {
+          dispatch(setSelected(rowData));
+        }
+      }, 300);
+    }
+  };
+
+  const handleRowDoubleClick = (e: any) => {
+    window.clearTimeout(timeout);
+    timeout = null;
+    const newPlayQueue = data.song.slice([e.index], data.song.length);
     dispatch(clearPlayQueue());
+    dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
   };
 
@@ -131,31 +206,16 @@ const StarredView = () => {
     >
       {currentPage === 'Tracks' && (
         <ListViewType
-          data={
-            searchQuery === ''
-              ? starred.song
-              : starred.song.filter((song: any) => {
-                  return song.title
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase());
-                })
-          }
+          data={searchQuery !== '' ? filteredData : data.song}
           tableColumns={trackTableColumns}
           handleRowClick={handleRowClick}
+          handleRowDoubleClick={handleRowDoubleClick}
           virtualized
         />
       )}
       {currentPage === 'Albums' && (
         <ListViewType
-          data={
-            searchQuery === ''
-              ? starred.album
-              : starred.album.filter((album: any) => {
-                  return album.name
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase());
-                })
-          }
+          data={searchQuery !== '' ? filteredData : data.album}
           tableColumns={albumTableColumns}
           handleRowClick={handleRowClick}
           virtualized

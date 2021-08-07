@@ -1,10 +1,23 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, DOMHelper } from 'rsuite';
+import {
+  Table,
+  DOMHelper,
+  FlexboxGrid,
+  Button,
+  Icon,
+  Tag,
+  ButtonToolbar,
+  IconButton,
+} from 'rsuite';
 import { nanoid } from '@reduxjs/toolkit';
 import '../../styles/ListView.global.css';
 import { formatSongDuration } from '../../shared/utils';
 import Loader from '../loader/Loader';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { clearSelected } from '../../redux/multiSelectSlice';
 
 declare global {
   interface Window {
@@ -15,17 +28,19 @@ declare global {
 const ListViewType = ({
   data,
   handleRowClick,
-  handleContextMenu,
+  handleRowDoubleClick,
   tableColumns,
   rowHeight,
   virtualized,
-  currentIndex,
   children,
 }: any) => {
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
   const { getHeight } = DOMHelper;
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const multiSelect = useAppSelector((state: any) => state.multiSelect);
+  const playQueue = useAppSelector((state: any) => state.playQueue);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     function handleResize() {
@@ -54,7 +69,47 @@ const ListViewType = ({
 
   return (
     <>
-      {!show && <Loader text="Resizing..." />}
+      {!show && <Loader />}
+      {multiSelect.selected.length >= 1 && (
+        <div
+          style={{
+            backgroundColor: '#000000',
+            padding: '5px',
+            border: '1px solid #169de0',
+            borderRadius: '0px',
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1,
+            width: '600px',
+            boxShadow: '0 0 20px #000',
+          }}
+        >
+          <FlexboxGrid justify="space-between">
+            <FlexboxGrid.Item colspan={4} style={{ textAlign: 'left' }}>
+              <Tag style={{ color: '#CACBD0', background: 'transparent' }}>
+                {multiSelect.selected.length} selected
+              </Tag>
+            </FlexboxGrid.Item>
+            <FlexboxGrid.Item colspan={4} style={{ textAlign: 'center' }}>
+              <ButtonToolbar>
+                <IconButton size="md" icon={<Icon icon="file-text" />} />
+                <IconButton size="md" icon={<Icon icon="save" />} />
+              </ButtonToolbar>
+            </FlexboxGrid.Item>
+            <FlexboxGrid.Item colspan={4} style={{ textAlign: 'right' }}>
+              <Button
+                appearance="subtle"
+                size="xs"
+                onClick={() => dispatch(clearSelected())}
+              >
+                Deselect All
+              </Button>
+            </FlexboxGrid.Item>
+          </FlexboxGrid>
+        </div>
+      )}
       <div
         className="table__container"
         style={{ flexGrow: 1 }}
@@ -64,12 +119,14 @@ const ListViewType = ({
           <Table
             height={height}
             data={data}
-            onRowClick={handleRowClick}
             virtualized={virtualized}
             rowHeight={rowHeight}
-            onRowContextMenu={handleContextMenu}
+            onRowContextMenu={(e) => {
+              console.log(e);
+            }}
             affixHeader
             affixHorizontalScrollbar
+            shouldUpdateScroll={false}
           >
             {tableColumns.map((column: any) => (
               <Table.Column
@@ -79,30 +136,53 @@ const ListViewType = ({
                 resizable={column.resizable}
                 width={column.width}
                 fixed={column.fixed}
+                verticalAlign="middle"
               >
                 <Table.HeaderCell>{column.header}</Table.HeaderCell>
                 {column.dataKey === 'index' ? (
                   <Table.Cell>
                     {(rowData: any, rowIndex: any) => {
                       return (
-                        <span
-                          className={rowIndex === currentIndex ? 'active' : ''}
+                        <div
+                          className={
+                            rowData.id === playQueue.currentSongId
+                              ? 'active'
+                              : ''
+                          }
+                          style={
+                            multiSelect.selected.find(
+                              (e: any) => e.id === rowData.id
+                            )
+                              ? { background: '#4D5156', lineHeight: '46px' }
+                              : { lineHeight: '46px' }
+                          }
                         >
                           {rowIndex + 1}
                           {rowData['-empty']}
-                        </span>
+                        </div>
                       );
                     }}
                   </Table.Cell>
                 ) : column.dataKey === 'duration' ? (
                   <Table.Cell>
-                    {(rowData: any, rowIndex: any) => {
+                    {(rowData: any) => {
                       return (
-                        <span
-                          className={rowIndex === currentIndex ? 'active' : ''}
+                        <div
+                          className={
+                            rowData.id === playQueue.currentSongId
+                              ? 'active'
+                              : ''
+                          }
+                          style={
+                            multiSelect.selected.find(
+                              (e: any) => e.id === rowData.id
+                            )
+                              ? { background: '#4D5156', lineHeight: '46px' }
+                              : { lineHeight: '46px' }
+                          }
                         >
                           {formatSongDuration(rowData.duration)}
-                        </span>
+                        </div>
                       );
                     }}
                   </Table.Cell>
@@ -110,11 +190,34 @@ const ListViewType = ({
                   <Table.Cell>
                     {(rowData: any, rowIndex: any) => {
                       return (
-                        <span
-                          className={rowIndex === currentIndex ? 'active' : ''}
+                        <div
+                          onClick={(e: any) =>
+                            handleRowClick(e, {
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
+                          onDoubleClick={(e: any) =>
+                            handleRowDoubleClick(e, {
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
+                          className={
+                            rowData.id === playQueue.currentSongId
+                              ? 'active'
+                              : ''
+                          }
+                          style={
+                            multiSelect.selected.find(
+                              (e: any) => e.id === rowData.id
+                            )
+                              ? { background: '#4D5156', lineHeight: '46px' }
+                              : { lineHeight: '46px' }
+                          }
                         >
                           {rowData[column.dataKey]}
-                        </span>
+                        </div>
                       );
                     }}
                   </Table.Cell>
