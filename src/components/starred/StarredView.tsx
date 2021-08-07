@@ -19,13 +19,13 @@ import ListViewType from '../viewtypes/ListViewType';
 
 const trackTableColumns = [
   {
-    header: '#',
+    id: '#',
     dataKey: 'index',
     alignment: 'center',
     width: 70,
   },
   {
-    header: 'Title',
+    id: 'Title',
     dataKey: 'title',
     alignment: 'left',
     resizable: true,
@@ -33,21 +33,21 @@ const trackTableColumns = [
   },
 
   {
-    header: 'Artist',
+    id: 'Artist',
     dataKey: 'artist',
     alignment: 'center',
     resizable: true,
     width: 300,
   },
   {
-    header: 'Album',
+    id: 'Album',
     dataKey: 'album',
     alignment: 'center',
     resizable: true,
     width: 300,
   },
   {
-    header: 'Duration',
+    id: 'Duration',
     dataKey: 'duration',
     alignment: 'center',
     resizable: true,
@@ -57,13 +57,13 @@ const trackTableColumns = [
 
 const albumTableColumns = [
   {
-    header: '#',
+    id: '#',
     dataKey: 'index',
     alignment: 'center',
     width: 70,
   },
   {
-    header: 'Title',
+    id: 'Title',
     dataKey: 'name',
     alignment: 'left',
     resizable: true,
@@ -71,21 +71,21 @@ const albumTableColumns = [
   },
 
   {
-    header: 'Artist',
+    id: 'Artist',
     dataKey: 'artist',
     alignment: 'center',
     resizable: true,
     width: 300,
   },
   {
-    header: 'Tracks',
+    id: 'Tracks',
     dataKey: 'songCount',
     alignment: 'center',
     resizable: true,
     width: 300,
   },
   {
-    header: 'Duration',
+    id: 'Duration',
     dataKey: 'duration',
     alignment: 'center',
     resizable: true,

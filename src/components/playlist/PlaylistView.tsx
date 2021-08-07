@@ -22,14 +22,14 @@ interface PlaylistParams {
 
 const tableColumns = [
   {
-    header: '#',
+    id: '#',
     dataKey: 'index',
     alignment: 'center',
     resizable: true,
     width: 70,
   },
   {
-    header: 'Title',
+    id: 'Title',
     dataKey: 'title',
     alignment: 'left',
     resizable: true,
@@ -37,21 +37,21 @@ const tableColumns = [
   },
 
   {
-    header: 'Artist',
+    id: 'Artist',
     dataKey: 'artist',
     alignment: 'center',
     resizable: true,
     width: 300,
   },
   {
-    header: 'Album',
+    id: 'Album',
     dataKey: 'album',
     alignment: 'center',
     resizable: true,
     width: 300,
   },
   {
-    header: 'Duration',
+    id: 'Duration',
     dataKey: 'duration',
     alignment: 'center',
     resizable: true,

@@ -15,9 +15,10 @@ import {
 import { nanoid } from '@reduxjs/toolkit';
 import '../../styles/ListView.global.css';
 import { formatSongDuration } from '../../shared/utils';
-import Loader from '../loader/Loader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
+import DraggableHeaderCell from '../table/DraggableHeaderCell';
+import Loader from '../loader/Loader';
 
 declare global {
   interface Window {
@@ -25,22 +26,38 @@ declare global {
   }
 }
 
+const sort = (source: any, sourceId: any, targetId: any) => {
+  const nextData = source.filter((item: any) => item.id !== sourceId);
+  const dragItem = source.find((item: any) => item.id === sourceId);
+  const index = nextData.findIndex((item: any) => item.id === targetId);
+
+  nextData.splice(index + 1, 0, dragItem);
+  return nextData;
+};
+
 const ListViewType = ({
   data,
   handleRowClick,
   handleRowDoubleClick,
   tableColumns,
+  hasDraggableColumns,
   rowHeight,
   virtualized,
   children,
 }: any) => {
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
+  const [columns, setColumns] = useState(tableColumns);
+
   const { getHeight } = DOMHelper;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const multiSelect = useAppSelector((state: any) => state.multiSelect);
   const playQueue = useAppSelector((state: any) => state.playQueue);
   const dispatch = useAppDispatch();
+
+  const handleDragColumn = (sourceId: any, targetId: any) => {
+    setColumns(sort(columns, sourceId, targetId));
+  };
 
   useEffect(() => {
     function handleResize() {
@@ -128,7 +145,7 @@ const ListViewType = ({
             affixHorizontalScrollbar
             shouldUpdateScroll={false}
           >
-            {tableColumns.map((column: any) => (
+            {columns.map((column: any) => (
               <Table.Column
                 key={nanoid()}
                 align={column.alignment}
@@ -138,7 +155,14 @@ const ListViewType = ({
                 fixed={column.fixed}
                 verticalAlign="middle"
               >
-                <Table.HeaderCell>{column.header}</Table.HeaderCell>
+                {hasDraggableColumns ? (
+                  <DraggableHeaderCell onDrag={handleDragColumn} id={column.id}>
+                    {column.id}
+                  </DraggableHeaderCell>
+                ) : (
+                  <Table.HeaderCell>{column.id}</Table.HeaderCell>
+                )}
+
                 {column.dataKey === 'index' ? (
                   <Table.Cell>
                     {(rowData: any, rowIndex: any) => {

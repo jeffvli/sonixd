@@ -10,28 +10,28 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 
 const tableColumns = [
   {
-    header: 'Name',
+    id: 'Name',
     dataKey: 'name',
     alignment: 'left',
     flexGrow: 2,
     resizable: false,
   },
   {
-    header: 'Tracks',
+    id: 'Tracks',
     dataKey: 'songCount',
     alignment: 'center',
     flexGrow: 1,
     resizable: false,
   },
   {
-    header: 'Description',
+    id: 'Description',
     dataKey: 'comment',
     alignment: 'left',
     flexGrow: 2,
     resizable: false,
   },
   {
-    header: 'Created',
+    id: 'Created',
     dataKey: 'created',
     alignment: 'left',
     flexGrow: 1,
