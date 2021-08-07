@@ -14,17 +14,6 @@ const Sidebar = ({
     sidebar__main_expanded: expand === true,
   });
 
-  const containerSidebarClasses = classNames({
-    container__sidebar: true,
-    container__sidebar_expanded: expand === true,
-    container__sidebar_shrunk: expand === false,
-  });
-
-  const sidebarExpanderClasses = classNames({
-    sidebar__expander_true: expand === true,
-    sidebar__expander_false: expand === false,
-  });
-
   return (
     <Sb
       id="sidebar"
@@ -46,7 +35,7 @@ const Sidebar = ({
               icon={<Icon icon="dashboard" />}
               onSelect={handleSidebarSelect}
             >
-              Discover
+              Dashboard
             </Nav.Item>
             <Nav.Item
               active={active === 'nowplaying'}
@@ -57,6 +46,14 @@ const Sidebar = ({
               Now Playing
             </Nav.Item>
             <Nav.Item
+              active={active === 'starred'}
+              eventKey="starred"
+              icon={<Icon icon="star" />}
+              onSelect={handleSidebarSelect}
+            >
+              Starred
+            </Nav.Item>
+            <Nav.Item
               active={active === 'playlists'}
               eventKey="playlists"
               icon={<Icon icon="bookmark" />}
@@ -65,56 +62,13 @@ const Sidebar = ({
               Playlists
             </Nav.Item>
             <Nav.Item
-              active={active === 'starred'}
-              eventKey="starred"
-              icon={<Icon icon="star" />}
+              active={active === 'library'}
+              eventKey="library"
+              icon={<Icon icon="book2" />}
               onSelect={handleSidebarSelect}
             >
-              Starred
+              Library
             </Nav.Item>
-            <Dropdown
-              placement="rightStart"
-              eventKey="library"
-              title="Library"
-              noCaret
-              icon={<Icon icon="book2" />}
-            >
-              <Dropdown.Item
-                active={active === 'library-1'}
-                eventKey="library-1"
-                onSelect={handleSidebarSelect}
-              >
-                Album
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={active === 'library-2'}
-                eventKey="library-2"
-                onSelect={handleSidebarSelect}
-              >
-                Artists
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={active === 'library-3'}
-                eventKey="library-3"
-                onSelect={handleSidebarSelect}
-              >
-                Genres
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={active === 'library-5'}
-                eventKey="library-5"
-                onSelect={handleSidebarSelect}
-              >
-                Podcasts
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={active === 'library-6'}
-                eventKey="library-6"
-                onSelect={handleSidebarSelect}
-              >
-                Radio
-              </Dropdown.Item>
-            </Dropdown>
             <Nav.Item
               active={active === 'settings'}
               eventKey="settings"
