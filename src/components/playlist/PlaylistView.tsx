@@ -4,6 +4,13 @@ import { useParams } from 'react-router-dom';
 import { getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { setPlayQueue, clearPlayQueue } from '../../redux/playQueueSlice';
+import {
+  toggleSelected,
+  setRangeSelected,
+  toggleRangeSelected,
+  setSelected,
+  clearSelected,
+} from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
@@ -54,16 +61,39 @@ const tableColumns = [
 
 const PlaylistView = () => {
   const { id } = useParams<PlaylistParams>();
-  const { isLoading, isError, data: playlist, error }: any = useQuery(
+  const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', id],
     () => getPlaylist(id)
   );
 
   const dispatch = useAppDispatch();
 
-  const handleRowClick = (e: any) => {
-    const newPlayQueue = playlist.entry.slice([e.index], playlist.entry.length);
+  let timeout: any = null;
+  const handleRowClick = (e: any, rowData: any) => {
+    if (timeout === null) {
+      timeout = window.setTimeout(() => {
+        timeout = null;
+
+        if (e.ctrlKey) {
+          dispatch(toggleSelected(rowData));
+        } else if (e.shiftKey) {
+          dispatch(setRangeSelected(rowData));
+
+          dispatch(toggleRangeSelected(data.entry));
+        } else {
+          dispatch(setSelected(rowData));
+        }
+      }, 300);
+    }
+  };
+
+  const handleRowDoubleClick = (e: any) => {
+    window.clearTimeout(timeout);
+    timeout = null;
+    const newPlayQueue = data.entry.slice([e.index], data.entry.length);
+
     dispatch(clearPlayQueue());
+    dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
   };
 
@@ -80,17 +110,18 @@ const PlaylistView = () => {
       title="Playlists"
       header={
         <PlaylistViewHeader
-          name={playlist.name}
-          comment={playlist.comment}
-          songCount={playlist.songCount}
-          image={playlist.image}
+          name={data.name}
+          comment={data.comment}
+          songCount={data.songCount}
+          image={data.image}
         />
       }
     >
       <ListViewType
-        data={playlist.entry}
+        data={data.entry}
         tableColumns={tableColumns}
         handleRowClick={handleRowClick}
+        handleRowDoubleClick={handleRowDoubleClick}
         tableHeight={700}
         virtualized
         autoHeight
