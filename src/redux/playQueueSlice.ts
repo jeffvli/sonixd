@@ -55,12 +55,18 @@ const playQueueSlice = createSlice({
       } else if (state.repeatAll) {
         state.currentIndex = 0;
       }
+
+      state.currentSongId = state.entry[state.currentIndex].id;
     },
+
     decrementCurrentIndex: (state) => {
       if (state.currentIndex >= 0) {
         state.currentIndex -= 1;
       }
+
+      state.currentSongId = state.entry[state.currentIndex].id;
     },
+
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
       const findIndex = state.entry.findIndex(
         (track) => track.id === action.payload.id
@@ -69,18 +75,23 @@ const playQueueSlice = createSlice({
       state.currentIndex = findIndex;
       state.currentSongId = action.payload.id;
     },
+
     setPlayQueue: (state, action: PayloadAction<Entry[]>) => {
       state.currentIndex = 0;
       state.currentSongId = action.payload[0].id;
       action.payload.map((entry: any) => state.entry.push(entry));
     },
+
     appendPlayQueue: (state, action: PayloadAction<Entry[]>) => {
       action.payload.map((entry: any) => state.entry.push(entry));
     },
+
     clearPlayQueue: () => initialState,
+
     setIsLoading: (state) => {
       state.isLoading = true;
     },
+
     setIsLoaded: (state) => {
       state.isLoading = false;
     },
