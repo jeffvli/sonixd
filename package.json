@@ -190,6 +190,7 @@
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-test-renderer": "^16.9.3",
+    "@types/react-virtualized": "^9.21.13",
     "@types/styled-components": "^5.1.12",
     "@types/webpack-env": "^1.15.2",
     "@typescript-eslint/eslint-plugin": "^4.8.1",

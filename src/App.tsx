@@ -1,8 +1,5 @@
 import React from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Helmet } from 'react-helmet-async';
-import { useAppSelector } from './redux/hooks';
 import './styles/App.global.css';
 import Layout from './components/layout/Layout';
 import PlaylistList from './components/playlist/PlaylistList';
@@ -14,17 +11,15 @@ import Login from './components/settings/Login';
 import StarredView from './components/starred/StarredView';
 import Dashboard from './components/dashboard/Dashboard';
 
-const queryClient = new QueryClient();
-
 const App = () => {
-  const playQueue = useAppSelector((state: any) => state.playQueue);
+  // const playQueue = useAppSelector((state: any) => state.playQueue);
   if (!localStorage.getItem('server')) {
     return <Login />;
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {playQueue.entry.length <= 1 && (
+    <>
+      {/* {playQueue.entry.length <= 1 && (
         <Helmet>
           <title>sonicd</title>
         </Helmet>
@@ -37,7 +32,7 @@ const App = () => {
             {playQueue.entry[playQueue.currentIndex].artist} — sonicd
           </title>
         </Helmet>
-      )}
+      )} */}
       <Router>
         <Layout>
           <Switch>
@@ -52,7 +47,7 @@ const App = () => {
         </Layout>
       </Router>
       <Player />
-    </QueryClientProvider>
+    </>
   );
 };
 

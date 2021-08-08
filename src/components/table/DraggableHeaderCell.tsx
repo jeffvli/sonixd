@@ -38,7 +38,7 @@ const DraggableHeaderCell = ({ children, onDrag, id, ...rest }: any) => {
         ref={ref}
         style={{
           opacity: isDragging ? 0 : 1,
-          backgroundColor: isActive ? '#dddddd' : undefined,
+          backgroundColor: isActive ? '#3B4552' : undefined,
         }}
       >
         {children}

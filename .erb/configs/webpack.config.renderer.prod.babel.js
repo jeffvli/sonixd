@@ -55,8 +55,14 @@ export default merge(baseConfig, {
             },
           },
           'css-loader',
-          'less-loader',
-          'sass-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              lessOptions: {
+                javascriptEnabled: true,
+              },
+            },
+          },
         ],
       },
       // WOFF Font

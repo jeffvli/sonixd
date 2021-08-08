@@ -1,6 +1,6 @@
-import React from 'React';
+import React from 'react';
 import classNames from 'classnames';
-import { Sidebar as Sb, Sidenav, Dropdown, Nav, Icon } from 'rsuite';
+import { Sidebar as Sb, Sidenav, Nav, Icon } from 'rsuite';
 import '../../styles/Sidebar.global.css';
 
 const Sidebar = ({

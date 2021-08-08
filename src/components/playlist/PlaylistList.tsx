@@ -47,7 +47,7 @@ const PlaylistList = () => {
     getPlaylists
   );
 
-  const handleRowClick = (e: any, rowData: any) => {
+  const handleRowClick = (_e: any, rowData: any) => {
     history.push(`playlist/${rowData.id}`);
   };
 

@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Nav, Dropdown, Navbar, Icon } from 'rsuite';
 
 const NavToggle = ({ expand, onChange }: any) => {
-  const iconStyles = {
-    width: 56,
-    height: 56,
-    lineHeight: '56px',
-    textAlign: 'center',
-  };
-
   return (
     <Navbar appearance="subtle" className="nav-toggle">
       <Navbar.Body>
@@ -16,8 +9,8 @@ const NavToggle = ({ expand, onChange }: any) => {
           <Dropdown
             placement="topStart"
             trigger="click"
-            renderTitle={(children) => {
-              return <Icon style={iconStyles} icon="cog" />;
+            renderTitle={() => {
+              return <Icon icon="cog" />;
             }}
           >
             <Dropdown.Item>Help</Dropdown.Item>

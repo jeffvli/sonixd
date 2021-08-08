@@ -21,7 +21,7 @@ jobs:
 
       - name: yarn install
         run: |
-          yarn install --frozen-lockfile --network-timeout 300000
+          yarn install --frozen-lockfile --network-timeout 300000 --network-concurrency 1
 
       - name: yarn test
         env:
