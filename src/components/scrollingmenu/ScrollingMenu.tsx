@@ -10,6 +10,7 @@ const ScrollMenuContainer = styled.div`
 `;
 
 const StyledPanel = styled(Panel)`
+  text-align: center;
   width: 150px;
   height: 200px;
   margin: 10px;
@@ -19,7 +20,6 @@ const StyledPanel = styled(Panel)`
 `;
 
 const InfoPanel = styled(Panel)`
-  text-align: center;
   width: 150px;
 `;
 
@@ -27,14 +27,11 @@ const InfoSpan = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 150px;
   padding: 0 10px 0px 10px;
 `;
 
 const CardImg = styled.img`
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
+  max-height: 150px;
 `;
 
 const Overlay = styled.div`
@@ -45,7 +42,8 @@ const Overlay = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 24px !important;
+  margin-left: 20px;
+  font-size: 20px !important;
 `;
 
 const LeftArrow = () => {
