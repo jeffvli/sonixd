@@ -23,17 +23,19 @@ const multiSelectSlice = createSlice({
   initialState,
   reducers: {
     setSelected: (state, action: PayloadAction<any>) => {
+      state.lastSelected = {};
+      state.lastRangeSelected = {
+        lastSelected: {},
+        lastRangeSelected: {},
+      };
+
       if (state.selected.find((item) => item.id === action.payload.id)) {
-        state.lastSelected = {};
-        state.lastRangeSelected = {
-          lastSelected: {},
-          lastRangeSelected: {},
-        };
         state.selected = [];
+      } else {
+        state.selected = [];
+        state.lastSelected = action.payload;
+        state.selected.push(action.payload);
       }
-      state.selected = [];
-      state.lastSelected = action.payload;
-      state.selected.push(action.payload);
     },
 
     setRangeSelected: (state, action: PayloadAction<any>) => {

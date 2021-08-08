@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import arrayMove from 'array-move';
+import { areConsecutive, consecutiveRanges } from '../shared/utils';
 
 interface Entry {
   id: string;
@@ -95,6 +97,68 @@ const playQueueSlice = createSlice({
     setIsLoaded: (state) => {
       state.isLoading = false;
     },
+
+    moveUp: (state, action: PayloadAction<number[]>) => {
+      // Create a copy of the queue so we can mutate it in place with arrayMove.mutate
+      const tempQueue = state.entry.slice();
+
+      // Ascending index is needed to move the indexes in order
+      const selectedIndexesAsc = action.payload.sort((a, b) => a - b);
+      const cr = consecutiveRanges(selectedIndexesAsc);
+
+      // Handle case when index hits 0
+      if (
+        !(
+          selectedIndexesAsc.includes(0) &&
+          areConsecutive(selectedIndexesAsc, selectedIndexesAsc.length)
+        )
+      ) {
+        selectedIndexesAsc.map((index) => {
+          if (cr[0]?.includes(0)) {
+            if (!cr[0]?.includes(index) && index !== 0) {
+              return arrayMove.mutate(tempQueue, index, index - 1);
+            }
+          } else if (index !== 0) {
+            return arrayMove.mutate(tempQueue, index, index - 1);
+          }
+
+          return undefined;
+        });
+      }
+
+      state.entry = tempQueue;
+    },
+
+    moveDown: (state, action: PayloadAction<number[]>) => {
+      // Create a copy of the queue so we can mutate it in place with arrayMove.mutate
+      const tempQueue = state.entry.slice();
+
+      // Descending index is needed to move the indexes in order
+      const cr = consecutiveRanges(action.payload.sort((a, b) => a - b));
+      const selectedIndexesDesc = action.payload.sort((a, b) => b - a);
+
+      // Handle case when index hits the end
+      if (
+        !(
+          selectedIndexesDesc.includes(tempQueue.length - 1) &&
+          areConsecutive(selectedIndexesDesc, selectedIndexesDesc.length)
+        )
+      ) {
+        selectedIndexesDesc.map((index) => {
+          if (cr[0]?.includes(tempQueue.length - 1)) {
+            if (!cr[0]?.includes(index) && index !== tempQueue.length - 1) {
+              return arrayMove.mutate(tempQueue, index, index + 1);
+            }
+          } else if (index !== tempQueue.length - 1) {
+            return arrayMove.mutate(tempQueue, index, index + 1);
+          }
+
+          return undefined;
+        });
+      }
+
+      state.entry = tempQueue;
+    },
   },
 });
 
@@ -106,5 +170,7 @@ export const {
   clearPlayQueue,
   setIsLoading,
   setIsLoaded,
+  moveUp,
+  moveDown,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

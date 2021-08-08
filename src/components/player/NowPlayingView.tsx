@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setCurrentIndex } from '../../redux/playQueueSlice';
+import { setCurrentIndex, moveUp, moveDown } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -55,6 +55,7 @@ const NowPlayingView = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const playQueue = useAppSelector((state) => state.playQueue);
+  const multiSelect = useAppSelector((state) => state.multiSelect);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -102,6 +103,26 @@ const NowPlayingView = () => {
     return <Loader />;
   }
 
+  const handleUpClick = () => {
+    const selectedIndexes: any[] = [];
+    multiSelect.selected.map((selected: any) => {
+      return selectedIndexes.push(
+        playQueue.entry.findIndex((item: any) => item.id === selected.id)
+      );
+    });
+    dispatch(moveUp(selectedIndexes));
+  };
+
+  const handleDownClick = () => {
+    const selectedIndexes: any[] = [];
+    multiSelect.selected.map((selected: any) => {
+      return selectedIndexes.push(
+        playQueue.entry.findIndex((item: any) => item.id === selected.id)
+      );
+    });
+    dispatch(moveDown(selectedIndexes));
+  };
+
   return (
     <GenericPage
       header={
@@ -120,6 +141,8 @@ const NowPlayingView = () => {
         tableColumns={tableColumns}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
+        handleUpClick={handleUpClick}
+        handleDownClick={handleDownClick}
         virtualized
       />
     </GenericPage>
