@@ -1,12 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import clickHandlerReducer from './clickHandlerSlice';
 import playerReducer from './playerSlice';
 import playQueueReducer, { PlayQueue } from './playQueueSlice';
 import multiSelectReducer from './multiSelectSlice';
 
 export const store = configureStore<PlayQueue | any>({
   reducer: {
-    clickHandler: clickHandlerReducer,
     player: playerReducer,
     playQueue: playQueueReducer,
     multiSelect: multiSelectReducer,
