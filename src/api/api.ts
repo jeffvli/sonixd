@@ -30,9 +30,9 @@ api.interceptors.response.use(
   }
 );
 
-const getCoverArtUrl = (item: any) => {
+const getCoverArtUrl = (item: any, size = 200) => {
   if (!item.coverArt) {
-    return undefined;
+    return 'None';
   }
 
   return (
@@ -43,7 +43,7 @@ const getCoverArtUrl = (item: any) => {
     `&t=${auth.hash}` +
     `&v=1.15.0` +
     `&c=sonicd` +
-    `&size=200`
+    `&size=${size}`
   );
 };
 
@@ -123,7 +123,38 @@ export const getStarred = async () => {
     song: data.starred2.song.map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
-      coverArtUrl: getCoverArtUrl(entry),
+      image: getCoverArtUrl(entry),
+      index,
+    })),
+  };
+};
+
+export const getAlbumList = async (options: any, coverArtSize = 150) => {
+  const { data } = await api.get(`/getAlbumList2`, {
+    params: options,
+  });
+
+  return {
+    ...data.albumList2,
+    album: data.albumList2.album.map((entry: any, index: any) => ({
+      ...entry,
+      image: getCoverArtUrl(entry, coverArtSize),
+      index,
+    })),
+  };
+};
+
+export const getRandomSongs = async (options: any, coverArtSize = 150) => {
+  const { data } = await api.get(`/getRandomSongs`, {
+    params: options,
+  });
+
+  return {
+    ...data.randomSongs,
+    song: data.randomSongs.song.map((entry: any, index: any) => ({
+      ...entry,
+      streamUrl: getStreamUrl(entry.id),
+      image: getCoverArtUrl(entry, coverArtSize),
       index,
     })),
   };

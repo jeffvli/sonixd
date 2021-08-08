@@ -10141,6 +10141,11 @@ react-helmet-async@^1.0.9:
     react-fast-compare "^3.2.0"
     shallowequal "^1.1.0"
 
+react-horizontal-scrolling-menu@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-horizontal-scrolling-menu/-/react-horizontal-scrolling-menu-2.0.3.tgz#5b272de226a36bf1b0c0771c51f41877d3538833"
+  integrity sha512-sId5Rym54HuzS1xhNG8CkJ6X75uDyqq4i652Q5tNClcWFND19IwOyE5/JnamP7bo427nTy9zllt6ZhMjfdpmBA==
+
 react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"

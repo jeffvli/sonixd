@@ -277,6 +277,7 @@
     "react-dom": "^17.0.1",
     "react-h5-audio-player": "^3.7.1",
     "react-helmet-async": "^1.0.9",
+    "react-horizontal-scrolling-menu": "^2.0.3",
     "react-query": "^3.19.1",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",

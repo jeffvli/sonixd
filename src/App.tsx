@@ -12,6 +12,7 @@ import NowPlayingView from './components/player/NowPlayingView';
 import Player from './components/player/Player';
 import Login from './components/settings/Login';
 import StarredView from './components/starred/StarredView';
+import Dashboard from './components/dashboard/Dashboard';
 
 const queryClient = new QueryClient();
 
@@ -40,12 +41,13 @@ const App = () => {
       <Router>
         <Layout>
           <Switch>
+            <Route path="/album/:id" component={NowPlayingView} />
             <Route path="/nowplaying" component={NowPlayingView} />
             <Route path="/settings" component={Settings} />
             <Route path="/playlist/:id" component={PlaylistView} />
             <Route path="/playlists" component={PlaylistList} />
             <Route path="/starred" component={StarredView} />
-            <Route path="/" />
+            <Route path="/" component={Dashboard} />
           </Switch>
         </Layout>
       </Router>

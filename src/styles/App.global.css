@@ -25,10 +25,6 @@ h1 {
   font-size: 30px !important;
 }
 
-.rs-panel-heading {
-  padding-bottom: 5px !important;
-}
-
 .rhap_container {
   position: fixed;
   bottom: 0;
@@ -52,3 +48,22 @@ h1 {
 .rs-table-cell-content > div::selection {
   background-color: transparent;
 }
+
+.rs-panel-body,
+.rs-panel-heading {
+  padding: 0px;
+}
+
+.react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.react-horizontal-scrolling-menu--scroll-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* .rs-panel-heading {
+  padding-bottom: 5px !important;
+}
+ */
