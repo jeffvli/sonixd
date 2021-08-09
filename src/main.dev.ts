@@ -11,10 +11,33 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { configureStore } from '@reduxjs/toolkit';
+import {
+  forwardToRenderer,
+  triggerAlias,
+  replayActionMain,
+} from 'electron-redux';
+import playerReducer from './redux/playerSlice';
+import playQueueReducer, {
+  decrementCurrentIndex,
+  incrementCurrentIndex,
+} from './redux/playQueueSlice';
+import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
+
+export const store = configureStore<any>({
+  reducer: {
+    player: playerReducer,
+    playQueue: playQueueReducer,
+    multiSelect: multiSelectReducer,
+  },
+  middleware: [triggerAlias, forwardToRenderer],
+});
+
+replayActionMain(store);
 
 export default class AppUpdater {
   constructor() {
@@ -82,6 +105,14 @@ const createWindow = async () => {
     minWidth: 800,
     minHeight: 600,
     frame: false,
+  });
+
+  globalShortcut.register('MediaNextTrack', () => {
+    store.dispatch(incrementCurrentIndex());
+  });
+
+  globalShortcut.register('MediaPreviousTrack', () => {
+    store.dispatch(decrementCurrentIndex());
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);

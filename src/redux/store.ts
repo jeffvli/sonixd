@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import playerReducer from './playerSlice';
 import playQueueReducer, { PlayQueue } from './playQueueSlice';
 import multiSelectReducer from './multiSelectSlice';
@@ -9,7 +10,10 @@ export const store = configureStore<PlayQueue | any>({
     playQueue: playQueueReducer,
     multiSelect: multiSelectReducer,
   },
+  middleware: [forwardToMain],
 });
+
+replayActionRenderer(store);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
