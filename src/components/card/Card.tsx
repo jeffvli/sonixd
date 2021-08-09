@@ -1,5 +1,5 @@
 import React from 'react';
-import { Panel, Button } from 'rsuite';
+import { Panel, Button, IconButton, Icon } from 'rsuite';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import placeholderImg from '../../img/placeholder.jpg';
@@ -10,7 +10,7 @@ const StyledPanel = styled(Panel)`
   height: 200px;
   margin: 10px;
   &:hover {
-    border: 1px solid ${(props) => props.theme.main};
+    transform: scale(1.05);
   }
 `;
 
@@ -41,14 +41,35 @@ const CardImg = styled.img`
 `;
 
 const Overlay = styled.div`
+  position: relative;
   &:hover {
     background-color: #000;
-    opacity: 0.5;
+    opacity: 0.7;
     cursor: pointer;
+    display: block;
+  }
+
+  &:hover .rs-btn {
+    display: block;
   }
 `;
 
-const Card = ({ onClick, url, subUrl, ...rest }: any) => {
+const HoverControlButton = styled(IconButton)`
+  display: none;
+  opacity: 0.4;
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+
+  &:hover {
+    opacity: 1;
+    background: ${(props) => props.theme.main};
+  }
+`;
+
+const Card = ({ onClick, url, subUrl, hasHoverButtons, ...rest }: any) => {
   const history = useHistory();
 
   const handleClick = () => {
@@ -60,7 +81,7 @@ const Card = ({ onClick, url, subUrl, ...rest }: any) => {
   };
 
   return (
-    <StyledPanel className="card" tabIndex={0} bordered shaded>
+    <StyledPanel tabIndex={0} bordered shaded>
       <Overlay onClick={handleClick}>
         <CardImg
           src={rest.coverArt}
@@ -69,6 +90,9 @@ const Card = ({ onClick, url, subUrl, ...rest }: any) => {
             e.target.src = placeholderImg;
           }}
         />
+        {hasHoverButtons && (
+          <HoverControlButton size="lg" circle icon={<Icon icon="play" />} />
+        )}
       </Overlay>
       <InfoPanel>
         <InfoSpan>
