@@ -83,12 +83,16 @@ const Overlay = styled.div`
 
 const HoverControlButton = styled(IconButton)`
   display: none;
-  opacity: 0.4;
+  opacity: 0.9;
+  border: 1px solid #fff;
   position: absolute !important;
+  width: 0px;
+  height: 0px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
+  background: #20252c;
 
   &:hover {
     opacity: 1;
