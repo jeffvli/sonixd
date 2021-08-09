@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [recentAlbums, setRecentAlbums]: any[] = useState(null);
   const [newestAlbums, setNewestAlbums]: any[] = useState(null);
   const [randomAlbums, setRandomAlbums]: any[] = useState(null);
+  const [frequentAlbums, setFrequentAlbums]: any[] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError]: any = useState(null);
 
@@ -20,13 +21,18 @@ const Dashboard = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const newest = await getAlbumList({ type: 'newest', size: 50 });
-        const recent = await getAlbumList({ type: 'recent', size: 50 });
-        const random = await getAlbumList({ type: 'random', size: 50 });
+        const newest = await getAlbumList({ type: 'newest', size: 50 }, 250);
+        const recent = await getAlbumList({ type: 'recent', size: 50 }, 250);
+        const random = await getAlbumList({ type: 'random', size: 50 }, 250);
+        const frequent = await getAlbumList(
+          { type: 'frequent', size: 50 },
+          250
+        );
 
         setNewestAlbums(newest);
         setRecentAlbums(recent);
         setRandomAlbums(random);
+        setFrequentAlbums(frequent);
       } catch (err) {
         if (err instanceof Error) {
           setIsError(err.message);
@@ -66,9 +72,17 @@ const Dashboard = () => {
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />
+
           <ScrollingMenu
             title="Random"
             data={randomAlbums.album}
+            cardTitle={{ prefix: 'album', property: 'name' }}
+            cardSubtitle={{ prefix: 'album', property: 'artist' }}
+          />
+
+          <ScrollingMenu
+            title="Most Played"
+            data={frequentAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />

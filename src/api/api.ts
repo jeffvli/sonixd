@@ -32,7 +32,7 @@ api.interceptors.response.use(
 
 const getCoverArtUrl = (item: any, size = 200) => {
   if (!item.coverArt) {
-    return 'None';
+    return 'img/placeholder.jpg';
   }
 
   return (
