@@ -62,7 +62,7 @@ const playQueueSlice = createSlice({
     },
 
     decrementCurrentIndex: (state) => {
-      if (state.currentIndex >= 0) {
+      if (state.currentIndex > 0) {
         state.currentIndex -= 1;
       }
 
