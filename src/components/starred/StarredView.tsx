@@ -242,6 +242,7 @@ const StarredView = () => {
                 urlProperty: 'id',
               }}
               cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
+              playClick={{ type: 'album', idProperty: 'id' }}
             />
           )}
         </>

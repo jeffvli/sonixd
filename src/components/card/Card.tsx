@@ -3,6 +3,9 @@ import { Panel, Button, IconButton, Icon } from 'rsuite';
 import styled from 'styled-components';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useHistory } from 'react-router-dom';
+import { getAlbum, getPlaylist } from '../../api/api';
+import { useAppDispatch } from '../../redux/hooks';
+import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 
 const StyledPanel = styled(Panel)`
   text-align: center;
@@ -99,9 +102,11 @@ const Card = ({
   subUrl,
   hasHoverButtons,
   lazyLoad,
+  playClick,
   ...rest
 }: any) => {
   const history = useHistory();
+  const dispatch = useAppDispatch();
 
   const handleClick = () => {
     history.push(url);
@@ -111,17 +116,41 @@ const Card = ({
     history.push(subUrl);
   };
 
+  const handlePlayClick = async () => {
+    if (playClick.type === 'playlist') {
+      const res = await getPlaylist(playClick.id);
+      dispatch(clearPlayQueue());
+      dispatch(setPlayQueue(res.entry));
+    }
+
+    if (playClick.type === 'album') {
+      const res = await getAlbum(playClick.id);
+      dispatch(clearPlayQueue());
+      dispatch(setPlayQueue(res.song));
+    }
+  };
+
   return (
     <StyledPanel tabIndex={0} bordered shaded>
-      <Overlay onClick={handleClick}>
+      <Overlay>
         {lazyLoad ? (
-          <LazyCardImg src={rest.coverArt} alt="img" effect="opacity" />
+          <LazyCardImg
+            src={rest.coverArt}
+            alt="img"
+            effect="opacity"
+            onClick={handleClick}
+          />
         ) : (
-          <CardImg src={rest.coverArt} alt="img" />
+          <CardImg src={rest.coverArt} alt="img" onClick={handleClick} />
         )}
 
         {hasHoverButtons && (
-          <HoverControlButton size="lg" circle icon={<Icon icon="play" />} />
+          <HoverControlButton
+            size="lg"
+            circle
+            icon={<Icon icon="play" />}
+            onClick={handlePlayClick}
+          />
         )}
       </Overlay>
       <InfoPanel>

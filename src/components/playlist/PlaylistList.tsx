@@ -126,6 +126,7 @@ const PlaylistList = () => {
             urlProperty: 'id',
           }}
           cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
+          playClick={{ type: 'playlist', idProperty: 'id' }}
         />
       )}
     </GenericPage>

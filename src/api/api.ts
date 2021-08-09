@@ -144,6 +144,24 @@ export const getAlbumList = async (options: any, coverArtSize = 150) => {
   };
 };
 
+export const getAlbum = async (id: string, coverArtSize = 150) => {
+  const { data } = await api.get(`/getAlbum`, {
+    params: {
+      id,
+    },
+  });
+
+  return {
+    ...data.album,
+    song: data.album.song.map((entry: any, index: any) => ({
+      ...entry,
+      streamUrl: getStreamUrl(entry.id),
+      image: getCoverArtUrl(entry, coverArtSize),
+      index,
+    })),
+  };
+};
+
 export const getRandomSongs = async (options: any, coverArtSize = 150) => {
   const { data } = await api.get(`/getRandomSongs`, {
     params: options,
