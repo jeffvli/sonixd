@@ -1,27 +1,21 @@
 import React from 'react';
-import { IconButton, Icon, Tooltip, Whisper } from 'rsuite';
+import { IconButton, Icon } from 'rsuite';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
-
-const tooltip = (text: string) => <Tooltip>{text}</Tooltip>;
+import CustomTooltip from '../shared/CustomTooltip';
 
 const CustomIconButton = ({ tooltipText, icon, handleClick, ...rest }: any) => {
   return (
     <>
       {tooltipText ? (
-        <Whisper
-          placement="top"
-          trigger="hover"
-          delay={300}
-          speaker={tooltip(tooltipText)}
-        >
+        <CustomTooltip text={tooltipText}>
           <IconButton
             size="xs"
             {...rest}
             icon={<Icon icon={icon} {...rest} />}
             onClick={handleClick}
           />
-        </Whisper>
+        </CustomTooltip>
       ) : (
         <IconButton size="xs" icon={<Icon icon={icon} {...rest} />} />
       )}
