@@ -38,7 +38,7 @@ const Login = () => {
 
     try {
       const testConnection = await axios.get(
-        `${serverName}/rest/getUsers?v=1.15.0&c=sonicd&f=json&u=${userName}&s=${salt}&t=${hash}`
+        `${serverName}/rest/getUsers?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
       );
 
       // Since a valid request will return a 200 response, we need to check that there

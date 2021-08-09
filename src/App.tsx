@@ -21,7 +21,7 @@ const App = () => {
     <>
       {/* {playQueue.entry.length <= 1 && (
         <Helmet>
-          <title>sonicd</title>
+          <title>sonixd</title>
         </Helmet>
       )}
 
@@ -29,7 +29,7 @@ const App = () => {
         <Helmet>
           <title>
             {playQueue.entry[playQueue.currentIndex].title} {' by '}
-            {playQueue.entry[playQueue.currentIndex].artist} — sonicd
+            {playQueue.entry[playQueue.currentIndex].artist} — sonixd
           </title>
         </Helmet>
       )} */}

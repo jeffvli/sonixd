@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
   config.params.s = auth.salt;
   config.params.t = auth.hash;
   config.params.v = '1.15.0';
-  config.params.c = 'sonicd';
+  config.params.c = 'sonixd';
   config.params.f = 'json';
   return config;
 });
@@ -42,7 +42,7 @@ const getCoverArtUrl = (item: any, size = 200) => {
     `&s=${auth.salt}` +
     `&t=${auth.hash}` +
     `&v=1.15.0` +
-    `&c=sonicd` +
+    `&c=sonixd` +
     `&size=${size}`
   );
 };
@@ -55,7 +55,7 @@ const getStreamUrl = (id: string) => {
     `&s=${auth.salt}` +
     `&t=${auth.hash}` +
     `&v=1.15.0` +
-    `&c=sonicd`
+    `&c=sonixd`
   );
 };
 

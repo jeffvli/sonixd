@@ -37,7 +37,7 @@ const Settings = () => {
 
     try {
       const testConnection = await axios.get(
-        `${serverName}/rest/getUsers?v=1.15.0&c=sonicd&f=json&u=${userName}&s=${salt}&t=${hash}`
+        `${serverName}/rest/getUsers?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
       );
 
       // Since a valid request will return a 200 response, we need to check that there
@@ -67,7 +67,7 @@ const Settings = () => {
   };
 
   return (
-    <GenericPage id="settings" header={<h3>Sonicd Config</h3>}>
+    <GenericPage id="settings" header={<h3>Config</h3>}>
       <Container>
         <Panel
           className="settings__server"
