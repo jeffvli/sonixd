@@ -16,6 +16,7 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import Loader from '../loader/Loader';
 import ListViewType from '../viewtypes/ListViewType';
+import GridViewType from '../viewtypes/GridViewType';
 
 const trackTableColumns = [
   {
@@ -97,6 +98,7 @@ const StarredView = () => {
   const [currentPage, setCurrentPage] = useState('Tracks');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [viewType, setViewType] = useState(localStorage.getItem('viewType'));
   const { isLoading, isError, data, error }: any = useQuery(
     'starred',
     getStarred
@@ -201,6 +203,14 @@ const StarredView = () => {
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons={currentPage !== 'Tracks'}
           showSearchBar
+          handleListClick={() => {
+            setViewType('list');
+            localStorage.setItem('viewType', 'list');
+          }}
+          handleGridClick={() => {
+            setViewType('grid');
+            localStorage.setItem('viewType', 'grid');
+          }}
         />
       }
     >
@@ -214,12 +224,27 @@ const StarredView = () => {
         />
       )}
       {currentPage === 'Albums' && (
-        <ListViewType
-          data={searchQuery !== '' ? filteredData : data.album}
-          tableColumns={albumTableColumns}
-          handleRowClick={handleRowClick}
-          virtualized
-        />
+        <>
+          {viewType === 'list' && (
+            <ListViewType
+              data={searchQuery !== '' ? filteredData : data.album}
+              tableColumns={albumTableColumns}
+              handleRowClick={handleRowClick}
+              virtualized
+            />
+          )}
+          {viewType === 'grid' && (
+            <GridViewType
+              data={searchQuery === '' ? data.album : filteredData}
+              cardTitle={{
+                prefix: 'playlist',
+                property: 'name',
+                urlProperty: 'id',
+              }}
+              cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
+            />
+          )}
+        </>
       )}
     </GenericPage>
   );

@@ -117,7 +117,7 @@ export const getStarred = async () => {
     ...data.starred2,
     album: data.starred2.album.map((entry: any, index: any) => ({
       ...entry,
-      coverArtUrl: getCoverArtUrl(entry),
+      image: getCoverArtUrl(entry),
       index,
     })),
     song: data.starred2.song.map((entry: any, index: any) => ({

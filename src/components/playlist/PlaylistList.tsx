@@ -7,6 +7,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
+import GridViewType from '../viewtypes/GridViewType';
 
 const tableColumns = [
   {
@@ -41,6 +42,7 @@ const tableColumns = [
 
 const PlaylistList = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewType, setViewType] = useState(localStorage.getItem('viewType'));
   const history = useHistory();
   const { isLoading, isError, data: playlists, error }: any = useQuery(
     'playlists',
@@ -70,28 +72,62 @@ const PlaylistList = () => {
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
           showSearchBar
+          handleListClick={() => {
+            setViewType('list');
+            localStorage.setItem('viewType', 'list');
+          }}
+          handleGridClick={() => {
+            setViewType('grid');
+            localStorage.setItem('viewType', 'grid');
+          }}
         />
       }
     >
-      <ListViewType
-        data={
-          searchQuery === ''
-            ? playlists
-            : playlists.filter((playlist: any) => {
-                return (
-                  playlist.name
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                  playlist.comment
-                    ?.toLowerCase()
-                    .includes(searchQuery.toLowerCase())
-                );
-              })
-        }
-        handleRowClick={handleRowClick}
-        tableColumns={tableColumns}
-        virtualized
-      />
+      {viewType === 'list' && (
+        <ListViewType
+          data={
+            searchQuery === ''
+              ? playlists
+              : playlists.filter((playlist: any) => {
+                  return (
+                    playlist.name
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    playlist.comment
+                      ?.toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  );
+                })
+          }
+          handleRowClick={handleRowClick}
+          tableColumns={tableColumns}
+          virtualized
+        />
+      )}
+      {viewType === 'grid' && (
+        <GridViewType
+          data={
+            searchQuery === ''
+              ? playlists
+              : playlists.filter((playlist: any) => {
+                  return (
+                    playlist.name
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    playlist.comment
+                      ?.toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  );
+                })
+          }
+          cardTitle={{
+            prefix: 'playlist',
+            property: 'name',
+            urlProperty: 'id',
+          }}
+          cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
+        />
+      )}
     </GenericPage>
   );
 };

@@ -7,6 +7,7 @@ import {
   Input,
   InputGroup,
 } from 'rsuite';
+import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 
 const GenericPageHeader = ({
   title,
@@ -18,6 +19,8 @@ const GenericPageHeader = ({
   handleSearch,
   showViewTypeButtons,
   showSearchBar,
+  handleListClick,
+  handleGridClick,
 }: any) => {
   return (
     <>
@@ -65,15 +68,10 @@ const GenericPageHeader = ({
           )}
           {showViewTypeButtons && (
             <span style={{ display: 'inline-block' }}>
-              <ButtonToolbar>
-                <ButtonGroup>
-                  <IconButton icon={<Icon icon="list" />} appearance="subtle" />
-                  <IconButton
-                    icon={<Icon icon="th-large" />}
-                    appearance="subtle"
-                  />
-                </ButtonGroup>
-              </ButtonToolbar>
+              <ViewTypeButtons
+                handleListClick={handleListClick}
+                handleGridClick={handleGridClick}
+              />
             </span>
           )}
         </span>
