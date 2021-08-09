@@ -13,16 +13,16 @@ import { theme } from './styles/styled';
 const queryClient = new QueryClient();
 
 render(
-  <ThemeProvider theme={theme}>
-    <HelmetProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
       <DndProvider backend={HTML5Backend}>
         <QueryClientProvider client={queryClient}>
-          <Provider store={store}>
+          <HelmetProvider>
             <App />
-          </Provider>
+          </HelmetProvider>
         </QueryClientProvider>
       </DndProvider>
-    </HelmetProvider>
-  </ThemeProvider>,
+    </ThemeProvider>
+  </Provider>,
   document.getElementById('root')
 );

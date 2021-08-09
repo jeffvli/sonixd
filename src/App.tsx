@@ -13,6 +13,7 @@ import Dashboard from './components/dashboard/Dashboard';
 
 const App = () => {
   // const playQueue = useAppSelector((state: any) => state.playQueue);
+
   if (!localStorage.getItem('server')) {
     return <Login />;
   }

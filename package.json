@@ -38,7 +38,9 @@
       "index.html",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json"
+      "package.json",
+      "preload.ts",
+      "img/"
     ],
     "afterSign": ".erb/scripts/Notarize.js",
     "mac": {
