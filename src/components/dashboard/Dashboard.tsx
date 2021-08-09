@@ -56,18 +56,21 @@ const Dashboard = () => {
           <ScrollingMenu
             title="Recently Added"
             data={newestAlbums.album}
-            routePrefix="album"
+            cardTitle={{ prefix: 'album', property: 'id' }}
+            cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />
 
           <ScrollingMenu
             title="Recently Played"
             data={recentAlbums.album}
-            routePrefix="album"
+            cardTitle={{ prefix: 'album', property: 'id' }}
+            cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />
           <ScrollingMenu
             title="Random"
             data={randomAlbums.album}
-            routePrefix="album"
+            cardTitle={{ prefix: 'album', property: 'id' }}
+            cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />
         </>
       )}
