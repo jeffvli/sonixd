@@ -1,12 +1,17 @@
 import React from 'react';
 import { Loader as RsLoader } from 'rsuite';
-import '../../styles/Loader.global.css';
+import styled from 'styled-components';
+
+const LoaderContainer = styled.div`
+  text-align: center;
+  margin-top: 75px;
+`;
 
 const Loader = ({ text }: any) => {
   return (
-    <div className="loader__main">
-      <RsLoader size="md" vertical content={text} />
-    </div>
+    <LoaderContainer>
+      <RsLoader size="md" vertical content={text} speed="slow" />
+    </LoaderContainer>
   );
 };
 
