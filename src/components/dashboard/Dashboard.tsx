@@ -21,11 +21,11 @@ const Dashboard = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const newest = await getAlbumList({ type: 'newest', size: 50 }, 250);
-        const recent = await getAlbumList({ type: 'recent', size: 50 }, 250);
-        const random = await getAlbumList({ type: 'random', size: 50 }, 250);
+        const newest = await getAlbumList({ type: 'newest', size: 20 }, 250);
+        const recent = await getAlbumList({ type: 'recent', size: 20 }, 250);
+        const random = await getAlbumList({ type: 'random', size: 20 }, 250);
         const frequent = await getAlbumList(
-          { type: 'frequent', size: 50 },
+          { type: 'frequent', size: 20 },
           250
         );
 
