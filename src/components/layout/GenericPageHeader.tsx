@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  IconButton,
-  ButtonGroup,
-  ButtonToolbar,
-  Icon,
-  Input,
-  InputGroup,
-} from 'rsuite';
+import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 
 const GenericPageHeader = ({
