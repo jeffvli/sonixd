@@ -28,7 +28,7 @@ import playQueueReducer, {
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
 
-export const store = configureStore<any>({
+export const store = configureStore({
   reducer: {
     player: playerReducer,
     playQueue: playQueueReducer,
@@ -47,7 +47,7 @@ export default class AppUpdater {
   }
 }
 
-let mainWindow: BrowserWindow | null = null;
+let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -86,7 +86,7 @@ const createWindow = async () => {
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../assets');
 
-  const getAssetPath = (...paths: string[]): string => {
+  const getAssetPath = (...paths) => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
