@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Tag } from 'rsuite';
+import settings from 'electron-settings';
 import { getPlaylists } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
@@ -42,7 +43,9 @@ const tableColumns = [
 
 const PlaylistList = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewType, setViewType] = useState(localStorage.getItem('viewType'));
+  const [viewType, setViewType] = useState(
+    settings.getSync('viewType') || 'list'
+  );
   const history = useHistory();
   const { isLoading, isError, data: playlists, error }: any = useQuery(
     'playlists',
@@ -72,14 +75,8 @@ const PlaylistList = () => {
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
           showSearchBar
-          handleListClick={() => {
-            setViewType('list');
-            localStorage.setItem('viewType', 'list');
-          }}
-          handleGridClick={() => {
-            setViewType('grid');
-            localStorage.setItem('viewType', 'grid');
-          }}
+          handleListClick={() => setViewType('list')}
+          handleGridClick={() => setViewType('grid')}
         />
       }
     >

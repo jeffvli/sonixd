@@ -1,13 +1,12 @@
 {
-  "name": "sonixd-react",
-  "productName": "sonixd-react",
-  "version": "2.3.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "sonixd",
+  "productName": "sonixd",
+  "version": "0.0.1",
+  "description": "An electron-based subsonic-api compatible desktop media player",
   "main": "./main.prod.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "jeffvli",
+    "url": "https://github.com/jeffvli/sonixd"
   },
   "scripts": {
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",

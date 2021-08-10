@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
+import settings from 'electron-settings';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import {
@@ -98,7 +99,9 @@ const StarredView = () => {
   const [currentPage, setCurrentPage] = useState('Tracks');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-  const [viewType, setViewType] = useState(localStorage.getItem('viewType'));
+  const [viewType, setViewType] = useState(
+    settings.getSync('viewType') || 'list'
+  );
   const { isLoading, isError, data, error }: any = useQuery(
     'starred',
     getStarred
@@ -203,14 +206,8 @@ const StarredView = () => {
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons={currentPage !== 'Tracks'}
           showSearchBar
-          handleListClick={() => {
-            setViewType('list');
-            localStorage.setItem('viewType', 'list');
-          }}
-          handleGridClick={() => {
-            setViewType('grid');
-            localStorage.setItem('viewType', 'grid');
-          }}
+          handleListClick={() => setViewType('list')}
+          handleGridClick={() => setViewType('grid')}
         />
       }
     >
