@@ -10,6 +10,7 @@ import Player from './components/player/Player';
 import Login from './components/settings/Login';
 import StarredView from './components/starred/StarredView';
 import Dashboard from './components/dashboard/Dashboard';
+import LibraryView from './components/library/LibraryView';
 
 const App = () => {
   // const playQueue = useAppSelector((state: any) => state.playQueue);
@@ -37,7 +38,8 @@ const App = () => {
       <Router>
         <Layout>
           <Switch>
-            <Route path="/album/:id" component={NowPlayingView} />
+            <Route path="/library/album/:id" component={NowPlayingView} />
+            <Route path="/library/" component={LibraryView} />
             <Route path="/nowplaying" component={NowPlayingView} />
             <Route path="/settings" component={Settings} />
             <Route path="/playlist/:id" component={PlaylistView} />

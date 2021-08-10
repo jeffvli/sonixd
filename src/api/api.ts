@@ -144,6 +144,20 @@ export const getAlbumList = async (options: any, coverArtSize = 150) => {
   };
 };
 
+export const getAlbumListDirect = async (options: any, coverArtSize = 150) => {
+  const { data } = await api.get(`/getAlbumList2`, {
+    params: options,
+  });
+
+  const albums = data.albumList2.album.map((entry: any, index: any) => ({
+    ...entry,
+    image: getCoverArtUrl(entry, coverArtSize),
+    index,
+  }));
+
+  return albums;
+};
+
 export const getAlbum = async (id: string, coverArtSize = 150) => {
   const { data } = await api.get(`/getAlbum`, {
     params: {

@@ -32,6 +32,9 @@ const Layout = ({ footer, children }: any) => {
       case 'starred':
         route = '/starred';
         break;
+      case 'library':
+        route = '/library';
+        break;
       case 'settings':
         route = '/settings';
         break;
