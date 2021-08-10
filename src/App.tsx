@@ -36,7 +36,7 @@ const App = () => {
         </Helmet>
       )} */}
       <Router>
-        <Layout>
+        <Layout footer={<Player />}>
           <Switch>
             <Route path="/library/artist/:id" component={NowPlayingView} />
             <Route path="/library/album/:id" component={NowPlayingView} />
@@ -50,7 +50,6 @@ const App = () => {
           </Switch>
         </Layout>
       </Router>
-      <Player />
     </>
   );
 };

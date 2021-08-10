@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Container, Content, Footer } from 'rsuite';
-import classNames from 'classnames';
+import { Content } from 'rsuite';
 import Sidebar from './Sidebar';
-import '../../styles/Layout.global.css';
 import Titlebar from './Titlebar';
+import { RootContainer, RootFooter, MainContainer } from './styled';
 
 const Layout = ({ footer, children }: any) => {
   const [expandSidebar, setExpandSidebar] = useState(true);
@@ -46,12 +45,6 @@ const Layout = ({ footer, children }: any) => {
     history.push(route);
   };
 
-  const containerRootClasses = classNames({
-    container__root: true,
-    container__root_expanded: expandSidebar === true,
-    container__root_shrunk: expandSidebar === false,
-  });
-
   return (
     <>
       <Titlebar />
@@ -61,18 +54,12 @@ const Layout = ({ footer, children }: any) => {
         active={activeSidebarNav}
         handleSidebarSelect={handleSidebarSelect}
       />
-      <Container id="container__root" className={containerRootClasses}>
-        <Container id="main" className="container__main">
-          <Content id="content" className="container__content">
-            {children}
-          </Content>
-        </Container>
-        {footer && (
-          <Footer id="footer" className="container__footer">
-            {footer}
-          </Footer>
-        )}
-      </Container>
+      <RootContainer id="container-root">
+        <MainContainer id="container-main" expanded={expandSidebar}>
+          <Content id="container-content">{children}</Content>
+        </MainContainer>
+        <RootFooter id="container-footer">{footer}</RootFooter>
+      </RootContainer>
     </>
   );
 };
