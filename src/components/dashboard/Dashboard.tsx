@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAlbumList } from '../../api/api';
+import { getAlbums } from '../../api/api';
 import Loader from '../loader/Loader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -21,13 +21,10 @@ const Dashboard = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const newest = await getAlbumList({ type: 'newest', size: 20 }, 250);
-        const recent = await getAlbumList({ type: 'recent', size: 20 }, 250);
-        const random = await getAlbumList({ type: 'random', size: 20 }, 250);
-        const frequent = await getAlbumList(
-          { type: 'frequent', size: 20 },
-          250
-        );
+        const newest = await getAlbums({ type: 'newest', size: 20 }, 250);
+        const recent = await getAlbums({ type: 'recent', size: 20 }, 250);
+        const random = await getAlbums({ type: 'random', size: 20 }, 250);
+        const frequent = await getAlbums({ type: 'frequent', size: 20 }, 250);
 
         setNewestAlbums(newest);
         setRecentAlbums(recent);
@@ -60,15 +57,15 @@ const Dashboard = () => {
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu
-            title="Recently Added"
-            data={newestAlbums.album}
+            title="Recently Played"
+            data={recentAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />
 
           <ScrollingMenu
-            title="Recently Played"
-            data={recentAlbums.album}
+            title="Recently Added"
+            data={newestAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
           />
