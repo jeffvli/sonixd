@@ -13,10 +13,11 @@ const AlbumList = ({ data, viewType }: any) => {
         }}
         cardSubtitle={{ prefix: 'album', property: 'artist' }}
         playClick={{ type: 'album', idProperty: 'id' }}
+        subUrl={`/library/artist/${data.artistId}`}
       />
     );
   }
-  return undefined;
+  return <></>;
 };
 
 export default AlbumList;

@@ -9,16 +9,16 @@ import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 
 const StyledPanel = styled(Panel)`
   text-align: center;
-  width: 155px;
+  width: 152px;
   height: 205px;
   margin: 10px;
   &:hover {
-    transform: scale(1.05);
+    border: 1px solid ${(props) => props.theme.main};
   }
 `;
 
 const InfoPanel = styled(Panel)`
-  width: 155px;
+  width: 150px;
 `;
 
 const InfoSpan = styled.div``;
@@ -28,7 +28,7 @@ const CardButton = styled(Button)`
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 10px 0px 10px;
-  width: 155px;
+  width: 150px;
 `;
 
 const CardTitleButton = styled(CardButton)`
@@ -45,24 +45,28 @@ const CardSubtitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 10px 0px 10px;
-  width: 155px;
+  width: 150px;
   color: ${(props) => props.theme.subtitleText};
 `;
 
 const CardImg = styled.img`
-  max-height: 155px;
+  height: 150px;
+  width: 150px;
 `;
 
 const LazyCardImg = styled(LazyLoadImage)`
-  max-height: 155px;
+  height: 150px;
+  height: 150px;
 `;
 
 const Overlay = styled.div`
+  background-color: #1a1d24;
   position: relative;
-  height: 155px;
+  height: 150px;
+  width: 150px;
   &:hover {
     background-color: #000;
-    opacity: 0.7;
+    opacity: 0.5;
     cursor: pointer;
     display: block;
   }
@@ -128,6 +132,12 @@ const Card = ({
     }
 
     if (playClick.type === 'album') {
+      const res = await getAlbum(playClick.id);
+      dispatch(clearPlayQueue());
+      dispatch(setPlayQueue(res.song));
+    }
+
+    if (playClick.type === 'artist') {
       const res = await getAlbum(playClick.id);
       dispatch(clearPlayQueue());
       dispatch(setPlayQueue(res.song));

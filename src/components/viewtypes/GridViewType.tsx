@@ -15,7 +15,7 @@ const GridViewType = ({
         <FlexboxGrid.Item componentClass={Col} key={item.id}>
           <Card
             title={item[cardTitle.property]}
-            subtitle={`${item[cardSubtitle.property]} tracks`}
+            subtitle={`${item[cardSubtitle.property]}${cardSubtitle.unit}`}
             coverArt={item.image}
             url={
               cardTitle.urlProperty

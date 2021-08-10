@@ -122,7 +122,11 @@ const PlaylistList = () => {
             property: 'name',
             urlProperty: 'id',
           }}
-          cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
+          cardSubtitle={{
+            prefix: 'playlist',
+            property: 'songCount',
+            unit: ' tracks',
+          }}
           playClick={{ type: 'playlist', idProperty: 'id' }}
         />
       )}

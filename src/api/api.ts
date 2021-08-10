@@ -73,7 +73,7 @@ export const getPlaylist = async (id: string) => {
   const { data } = await api.get(`/getPlaylist?id=${id}`);
   return {
     ...data.playlist,
-    entry: data.playlist.entry.map((entry: any, index: any) => ({
+    entry: (data.playlist.entry || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       index,
@@ -103,7 +103,7 @@ export const getPlayQueue = async () => {
   const { data } = await api.get(`/getPlayQueue`);
   return {
     ...data.playQueue,
-    entry: data.playQueue.entry.map((entry: any, index: any) => ({
+    entry: (data.playQueue.entry || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       index,
@@ -115,12 +115,12 @@ export const getStarred = async () => {
   const { data } = await api.get(`/getStarred2`);
   return {
     ...data.starred2,
-    album: data.starred2.album.map((entry: any, index: any) => ({
+    album: (data.starred2.album || []).map((entry: any, index: any) => ({
       ...entry,
       image: getCoverArtUrl(entry),
       index,
     })),
-    song: data.starred2.song.map((entry: any, index: any) => ({
+    song: (data.starred2.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
@@ -129,14 +129,14 @@ export const getStarred = async () => {
   };
 };
 
-export const getAlbumList = async (options: any, coverArtSize = 150) => {
+export const getAlbums = async (options: any, coverArtSize = 150) => {
   const { data } = await api.get(`/getAlbumList2`, {
     params: options,
   });
 
   return {
     ...data.albumList2,
-    album: data.albumList2.album.map((entry: any, index: any) => ({
+    album: (data.albumList2.album || []).map((entry: any, index: any) => ({
       ...entry,
       image: getCoverArtUrl(entry, coverArtSize),
       index,
@@ -144,16 +144,18 @@ export const getAlbumList = async (options: any, coverArtSize = 150) => {
   };
 };
 
-export const getAlbumListDirect = async (options: any, coverArtSize = 150) => {
+export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
   const { data } = await api.get(`/getAlbumList2`, {
     params: options,
   });
 
-  const albums = data.albumList2.album.map((entry: any, index: any) => ({
-    ...entry,
-    image: getCoverArtUrl(entry, coverArtSize),
-    index,
-  }));
+  const albums = (data.albumList2.album || []).map(
+    (entry: any, index: any) => ({
+      ...entry,
+      image: getCoverArtUrl(entry, coverArtSize),
+      index,
+    })
+  );
 
   return albums;
 };
@@ -167,7 +169,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
 
   return {
     ...data.album,
-    song: data.album.song.map((entry: any, index: any) => ({
+    song: (data.album.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
@@ -183,11 +185,26 @@ export const getRandomSongs = async (options: any, coverArtSize = 150) => {
 
   return {
     ...data.randomSongs,
-    song: data.randomSongs.song.map((entry: any, index: any) => ({
+    song: (data.randomSongs.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
       index,
     })),
   };
+};
+
+export const getArtists = async () => {
+  const { data } = await api.get(`/getArtists`);
+
+  const artistList: any[] = [];
+  const artists = (data.artists?.index || []).flatMap(
+    (index: any) => index.artist
+  );
+
+  artists.map((artist: any) =>
+    artistList.push({ ...artist, image: getCoverArtUrl(artist, 150) })
+  );
+
+  return artistList;
 };

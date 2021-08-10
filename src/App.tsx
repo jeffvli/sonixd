@@ -38,8 +38,9 @@ const App = () => {
       <Router>
         <Layout>
           <Switch>
+            <Route path="/library/artist/:id" component={NowPlayingView} />
             <Route path="/library/album/:id" component={NowPlayingView} />
-            <Route path="/library/" component={LibraryView} />
+            <Route path="/library" component={LibraryView} />
             <Route path="/nowplaying" component={NowPlayingView} />
             <Route path="/settings" component={Settings} />
             <Route path="/playlist/:id" component={PlaylistView} />
