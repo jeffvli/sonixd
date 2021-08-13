@@ -6,6 +6,7 @@
 @import '~rsuite/lib/styles/themes/dark/index.less';
 @import '~react-h5-audio-player/lib/styles.less';
 @import 'custom-theme.less';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
 html,
 body {
