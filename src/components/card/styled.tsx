@@ -32,34 +32,35 @@ export const InfoPanel = styled(Panel)<Card>`
   width: ${(props) => props.cardSize};
 `;
 
-export const InfoSpan = styled.div``;
+export const InfoSpan = styled.div`
+  color: ${(props) => props.theme.subtitleText};
+`;
 
 export const CardButton = styled(Button)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 10px 0px 10px;
 `;
 
 export const CardTitleButton = styled(CardButton)`
-  padding-top: 8px;
+  padding-top: 5px;
+  padding-bottom: 2px;
   color: ${(props) => props.theme.titleText};
   width: ${(props) => props.cardSize};
 `;
 
 export const CardSubtitleButton = styled(CardButton)`
-  color: ${(props) => props.theme.subtitleText};
+  padding-bottom: 5px;
   width: ${(props) => props.cardSize};
 `;
 
 export const CardSubtitle = styled.div<Card>`
+  padding-bottom: 5px;
   font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 10px 0px 10px;
-  width: ${(props) => props.cardSize}
-  color: ${(props) => props.theme.subtitleText};
+  width: ${(props) => props.cardSize};
 `;
 
 export const CardImg = styled.img<Card>`
