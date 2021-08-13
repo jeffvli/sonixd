@@ -51,6 +51,7 @@ export const CardTitleButton = styled(CardButton)`
 
 export const CardSubtitleButton = styled(CardButton)`
   padding-bottom: 5px;
+  color: ${(props) => props.theme.subtitleText};
   width: ${(props) => props.cardSize};
 `;
 

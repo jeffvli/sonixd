@@ -25,7 +25,7 @@ const ALBUM_SORT_TYPES = [
 
 const LibraryView = () => {
   const [currentPage, setCurrentPage] = useState('albums');
-  const [sortBy, setCurrentSort] = useState(null);
+  const [sortBy, setSortBy] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -109,7 +109,7 @@ const LibraryView = () => {
                 onChange={(value) => {
                   setData([]);
                   setOffset(0);
-                  setCurrentSort(value);
+                  setSortBy(value);
                 }}
               />
             ) : undefined
