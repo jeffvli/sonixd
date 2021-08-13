@@ -45,11 +45,19 @@ const Dashboard = () => {
   }, []);
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <GenericPage header={<GenericPageHeader title="Dashboard" />}>
+        <Loader />
+      </GenericPage>
+    );
   }
 
   if (isError) {
-    return <span>Error: {isError}</span>;
+    return (
+      <GenericPage header={<GenericPageHeader title="Dashboard" />}>
+        <span>Error: {isError}</span>
+      </GenericPage>
+    );
   }
 
   return (
@@ -61,6 +69,7 @@ const Dashboard = () => {
             data={recentAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSize="175px"
           />
 
           <ScrollingMenu
@@ -68,6 +77,7 @@ const Dashboard = () => {
             data={newestAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSize="175px"
           />
 
           <ScrollingMenu
@@ -75,6 +85,7 @@ const Dashboard = () => {
             data={randomAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSize="175px"
           />
 
           <ScrollingMenu
@@ -82,6 +93,7 @@ const Dashboard = () => {
             data={frequentAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
             cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSize="175px"
           />
         </>
       )}

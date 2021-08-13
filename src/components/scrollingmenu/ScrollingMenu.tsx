@@ -41,7 +41,13 @@ const RightArrow = () => {
   );
 };
 
-const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title }: any) => {
+const ScrollingMenu = ({
+  cardTitle,
+  cardSubtitle,
+  data,
+  title,
+  cardSize,
+}: any) => {
   return (
     <ScrollMenuContainer>
       <Title>{title}</Title>
@@ -57,6 +63,7 @@ const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title }: any) => {
             subUrl={`${cardSubtitle.prefix}/${item[cardSubtitle.property]}`}
             playClick={{ type: 'album', id: item.id }}
             hasHoverButtons
+            size={cardSize}
           />
         ))}
       </ScrollMenu>
