@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Container, Footer } from 'rsuite';
+import { Container, Content, Footer, Header, Sidebar } from 'rsuite';
 
 // Layout.tsx
 export const RootContainer = styled(Container)`
@@ -86,4 +86,26 @@ export const WindowControlButton = styled.div<{
   &:active {
     background: rgba(255, 255, 255, 0.2);
   }
+`;
+
+// GenericPage.tsx
+export const PageContainer = styled(Container)`
+  height: 100%;
+`;
+
+export const PageHeader = styled(Header)`
+  padding: 20px 20px 0px 20px;
+`;
+
+export const PageContent = styled(Content)`
+  position: relative;
+  padding: 10px;
+`;
+
+// Sidebar.tsx
+export const FixedSidebar = styled(Sidebar)`
+  position: fixed;
+  top: 33px;
+  z-index: 1;
+  height: 100%;
 `;
