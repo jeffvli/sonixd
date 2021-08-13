@@ -128,6 +128,7 @@ const PlaylistList = () => {
             unit: ' tracks',
           }}
           playClick={{ type: 'playlist', idProperty: 'id' }}
+          size="150px"
         />
       )}
     </GenericPage>

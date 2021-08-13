@@ -7,6 +7,7 @@ const GridViewType = ({
   cardTitle,
   cardSubtitle,
   playClick,
+  size,
   ...rest
 }: any) => {
   return (
@@ -17,6 +18,7 @@ const GridViewType = ({
             title={item[cardTitle.property]}
             subtitle={`${item[cardSubtitle.property]}${cardSubtitle.unit}`}
             coverArt={item.image}
+            size={size}
             url={
               cardTitle.urlProperty
                 ? `${cardTitle.prefix}/${item[cardTitle.urlProperty]}`
