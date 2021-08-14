@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Howl } from 'howler';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
+import { PlayerContext } from '../player/Player';
 import { getAlbum, getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
@@ -27,6 +29,8 @@ const Card = ({
   size,
   ...rest
 }: any) => {
+  const { setTracks } = useContext(PlayerContext);
+
   const history = useHistory();
   const dispatch = useAppDispatch();
 
@@ -43,6 +47,21 @@ const Card = ({
       const res = await getPlaylist(playClick.id);
       dispatch(clearPlayQueue());
       dispatch(setPlayQueue(res.entry));
+
+      const trackList: any[] = [];
+      res.entry.map((entry: any) => {
+        const howl = new Howl({
+          src: [entry.streamUrl],
+          html5: true,
+          autoplay: false,
+        });
+        return trackList.push(howl);
+      });
+      setTracks(trackList);
+
+      // trackList[playQueue.currentIndex].on('play', () => setFade(0));
+      // trackList[playQueue.currentIndex].play();
+      // dispatch(player('play'));
     }
 
     if (playClick.type === 'album') {

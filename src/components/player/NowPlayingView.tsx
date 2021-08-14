@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { PlayerContext } from './Player';
+
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setCurrentIndex, moveUp, moveDown } from '../../redux/playQueueSlice';
 import {
@@ -52,6 +54,14 @@ const tableColumns = [
 ];
 
 const NowPlayingView = () => {
+  const {
+    tracks,
+    setTracks,
+    currentlyPlaying,
+    setCurrentlyPlaying,
+    currentTrack,
+    setCurrentTrack,
+  } = useContext(PlayerContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -95,8 +105,12 @@ const NowPlayingView = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    dispatch(clearSelected());
+    tracks[currentTrack]?.stop();
+    setCurrentTrack(rowData.index);
+    setCurrentlyPlaying(false);
+
     dispatch(setCurrentIndex(rowData));
+    dispatch(clearSelected());
   };
 
   if (!playQueue) {
