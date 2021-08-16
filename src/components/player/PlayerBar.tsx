@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { Button } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -47,7 +47,7 @@ const PlayerBar = () => {
         );
         player2Ref.current.audioEl.current.play();
         if (!incremented) {
-          dispatch(incrementCurrentIndex());
+          dispatch(incrementCurrentIndex('none'));
           setIncremented(true);
         }
         setCurrentPlayer(2);
@@ -78,7 +78,7 @@ const PlayerBar = () => {
         );
         player1Ref.current.audioEl.current.play();
         if (!incremented) {
-          dispatch(incrementCurrentIndex());
+          dispatch(incrementCurrentIndex('none'));
           setIncremented(true);
         }
         setCurrentPlayer(1);
@@ -113,7 +113,7 @@ const PlayerBar = () => {
         onEnded={handleOnEnded1}
         controls
         volume={player1Volume}
-        autoPlay={playQueue.currentIndex === 0}
+        autoPlay={playQueue.player1Index === playQueue.currentIndex}
       />
       <ReactAudioPlayer
         ref={player2Ref}
@@ -124,16 +124,18 @@ const PlayerBar = () => {
         onEnded={handleOnEnded2}
         controls
         volume={player2Volume}
+        autoPlay={playQueue.player2Index === playQueue.currentIndex}
       />
       <Button onClick={() => console.log(playQueue.entry)}>Length</Button>
       <div>
         {`Current index: ${playQueue.currentIndex}  |  `}
-        {`Player1 index: ${playQueue.player1Index}  | ${
+        {`Player1 index: ${playQueue.player1Index} - ${
           playQueue.entry[playQueue.player1Index]?.title
-        } `}
-        {`Player2 index: ${playQueue.player2Index}  |  ${
+        } | `}
+        {`Player2 index: ${playQueue.player2Index} - ${
           playQueue.entry[playQueue.player2Index]?.title
-        }`}
+        } | `}
+        {`CurrentPlayer: ${playQueue.currentPlayer}`}
       </div>
     </>
   );

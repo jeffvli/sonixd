@@ -24,6 +24,7 @@ import playerReducer from './redux/playerSlice';
 import playQueueReducer, {
   decrementCurrentIndex,
   incrementCurrentIndex,
+  setStatus,
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
@@ -107,12 +108,21 @@ const createWindow = async () => {
     frame: false,
   });
 
+  globalShortcut.register('MediaPlayPause', () => {
+    const storeValues = store.getState();
+    if (storeValues.playQueue.status === 'PAUSED') {
+      store.dispatch(setStatus('PLAYING'));
+    } else {
+      store.dispatch(setStatus('PAUSED'));
+    }
+  });
+
   globalShortcut.register('MediaNextTrack', () => {
-    store.dispatch(incrementCurrentIndex());
+    store.dispatch(incrementCurrentIndex('usingHotkey'));
   });
 
   globalShortcut.register('MediaPreviousTrack', () => {
-    store.dispatch(decrementCurrentIndex());
+    store.dispatch(decrementCurrentIndex('usingHotkey'));
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);

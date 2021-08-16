@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setCurrentIndex, moveUp, moveDown } from '../../redux/playQueueSlice';
+import {
+  moveUp,
+  moveDown,
+  setPlayerIndex,
+  setPlayerVolume,
+} from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -95,8 +100,13 @@ const NowPlayingView = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
+
+    // Reset volumes when changing to a new track
+    dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
+    dispatch(setPlayerVolume({ player: 2, volume: 0 }));
+
     dispatch(clearSelected());
-    dispatch(setCurrentIndex(rowData));
+    dispatch(setPlayerIndex(rowData));
   };
 
   if (!playQueue) {
