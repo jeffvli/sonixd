@@ -84,26 +84,28 @@ const playQueueSlice = createSlice({
     },
 
     incrementCurrentIndex: (state, action: PayloadAction<string>) => {
-      if (state.currentIndex < state.entry.length - 1) {
-        state.currentIndex += 1;
-        if (action.payload === 'usingHotkey') {
-          state.currentPlayer = 1;
-          state.player1.volume = state.volume;
-          state.player1.index = state.currentIndex;
-          state.player2.index = state.currentIndex + 1;
+      if (state.entry.length >= 1) {
+        if (state.currentIndex < state.entry.length - 1) {
+          state.currentIndex += 1;
+          if (action.payload === 'usingHotkey') {
+            state.currentPlayer = 1;
+            state.player1.volume = state.volume;
+            state.player1.index = state.currentIndex;
+            state.player2.index = state.currentIndex + 1;
+          }
         }
-      }
 
-      if (state.repeatAll) {
-        state.currentIndex = 0;
-        if (action.payload === 'usingHotkey') {
-          state.currentPlayer = 1;
-          state.player1.index = 0;
-          state.player2.index = 1;
+        if (state.repeatAll) {
+          state.currentIndex = 0;
+          if (action.payload === 'usingHotkey') {
+            state.currentPlayer = 1;
+            state.player1.index = 0;
+            state.player2.index = 1;
+          }
         }
-      }
 
-      state.currentSongId = state.entry[state.currentIndex].id;
+        state.currentSongId = state.entry[state.currentIndex].id;
+      }
     },
 
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
@@ -121,9 +123,11 @@ const playQueueSlice = createSlice({
         (track) => track.id === action.payload.id
       );
 
-      state.currentPlayer = 1;
       state.player1.index = findIndex;
+      state.player1.volume = state.volume;
       state.player2.index = findIndex + 1;
+      state.player2.volume = 0;
+      state.currentPlayer = 1;
       state.currentIndex = findIndex;
       state.currentSongId = action.payload.id;
     },
@@ -140,16 +144,18 @@ const playQueueSlice = createSlice({
     },
 
     decrementCurrentIndex: (state, action: PayloadAction<string>) => {
-      if (state.currentIndex > 0) {
-        state.currentIndex -= 1;
-        if (action.payload === 'usingHotkey') {
-          state.currentPlayer = 1;
-          state.player1.index = state.currentIndex;
-          state.player2.index = state.currentIndex + 1;
+      if (state.entry.length >= 1) {
+        if (state.currentIndex > 0) {
+          state.currentIndex -= 1;
+          if (action.payload === 'usingHotkey') {
+            state.currentPlayer = 1;
+            state.player1.index = state.currentIndex;
+            state.player2.index = state.currentIndex + 1;
+          }
         }
-      }
 
-      state.currentSongId = state.entry[state.currentIndex].id;
+        state.currentSongId = state.entry[state.currentIndex].id;
+      }
     },
 
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
@@ -162,7 +168,9 @@ const playQueueSlice = createSlice({
     },
 
     setPlayQueue: (state, action: PayloadAction<Entry[]>) => {
-      state.status = 'PLAYING';
+      if (state.status !== 'PLAYING') {
+        state.status = 'PLAYING';
+      }
       state.currentIndex = 0;
       state.currentSongId = action.payload[0].id;
       action.payload.map((entry: any) => state.entry.push(entry));

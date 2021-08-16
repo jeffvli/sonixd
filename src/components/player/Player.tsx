@@ -20,21 +20,23 @@ const Player = ({ children }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
 
   useEffect(() => {
-    if (playQueue.status === 'PAUSED') {
-      player1Ref.current.audioEl.current.pause();
-      player2Ref.current.audioEl.current.pause();
-    } else if (playQueue.currentPlayer === 1) {
-      try {
-        player1Ref.current.audioEl.current.play();
-      } catch (err) {
-        console.log(err);
+    if (playQueue.status === 'PLAYING') {
+      if (playQueue.currentPlayer === 1) {
+        try {
+          player1Ref.current.audioEl.current.play();
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          player2Ref.current.audioEl.current.play();
+        } catch (err) {
+          console.log(err);
+        }
       }
     } else {
-      try {
-        player2Ref.current.audioEl.current.play();
-      } catch (err) {
-        console.log(err);
-      }
+      player1Ref.current.audioEl.current.pause();
+      player2Ref.current.audioEl.current.pause();
     }
   }, [playQueue.currentPlayer, playQueue.status]);
 
