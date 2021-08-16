@@ -1,20 +1,15 @@
-import React, { createRef } from 'react';
-import AudioPlayer from 'react-h5-audio-player';
-import 'react-h5-audio-player/lib/styles.css';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import {
-  incrementCurrentIndex,
-  decrementCurrentIndex,
-  setIsLoading,
-  setIsLoaded,
-} from '../../redux/playQueueSlice';
+import React, { useState, createContext } from 'react';
 
-const Player = () => {
-  const playerRef = createRef<AudioPlayer>();
-  const playQueue = useAppSelector((state: any) => state.playQueue);
-  const dispatch = useAppDispatch();
+export const PlayerContext = createContext<any>({});
 
-  const handleOnLoadStart = () => {
+const Player = ({ children }: any) => {
+  const [globalVolume, setGlobalVolume] = useState(0.5);
+  const [player1Volume, setPlayer1Volume] = useState(0.5);
+  const [player2Volume, setPlayer2Volume] = useState(0);
+  const [currentPlayer, setCurrentPlayer] = useState(1);
+  const [incremented, setIncremented] = useState(false);
+
+  /*   const handleOnLoadStart = () => {
     dispatch(setIsLoading());
   };
 
@@ -28,26 +23,25 @@ const Player = () => {
 
   const handleOnClickPrevious = () => {
     dispatch(decrementCurrentIndex());
-  };
-
-  const handleOnEnded = () => {
-    dispatch(incrementCurrentIndex());
-  };
+  }; */
 
   return (
-    <AudioPlayer
-      ref={playerRef}
-      src={playQueue.entry[playQueue.currentIndex]?.streamUrl}
-      autoPlay
-      showSkipControls
-      showFilledVolume
-      showJumpControls={false}
-      onClickNext={handleOnClickNext}
-      onClickPrevious={handleOnClickPrevious}
-      onEnded={handleOnEnded}
-      onLoadStart={handleOnLoadStart}
-      onLoadedData={handleOnLoadedData}
-    />
+    <PlayerContext.Provider
+      value={{
+        globalVolume,
+        setGlobalVolume,
+        player1Volume,
+        setPlayer1Volume,
+        player2Volume,
+        setPlayer2Volume,
+        currentPlayer,
+        setCurrentPlayer,
+        incremented,
+        setIncremented,
+      }}
+    >
+      {children}
+    </PlayerContext.Provider>
   );
 };
 

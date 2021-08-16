@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { Button } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';

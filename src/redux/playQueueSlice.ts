@@ -32,6 +32,9 @@ interface Entry {
 export interface PlayQueue {
   currentIndex: number;
   currentSongId: string;
+  player1Index: number;
+  player2Index: number;
+  currentPlayer: number;
   volume: number;
   isLoading: boolean;
   repeatAll: boolean;
@@ -41,6 +44,8 @@ export interface PlayQueue {
 const initialState: PlayQueue = {
   currentIndex: 0,
   currentSongId: '',
+  player1Index: 0,
+  player2Index: 1,
   volume: 0.5,
   isLoading: false,
   repeatAll: false,
@@ -59,6 +64,14 @@ const playQueueSlice = createSlice({
       }
 
       state.currentSongId = state.entry[state.currentIndex].id;
+    },
+
+    incrementPlayerIndex: (state, action: PayloadAction<number>) => {
+      if (action.payload === 1) {
+        state.player1Index += 2;
+      } else {
+        state.player2Index += 2;
+      }
     },
 
     decrementCurrentIndex: (state) => {
@@ -165,6 +178,7 @@ const playQueueSlice = createSlice({
 export const {
   incrementCurrentIndex,
   decrementCurrentIndex,
+  incrementPlayerIndex,
   setCurrentIndex,
   setPlayQueue,
   clearPlayQueue,

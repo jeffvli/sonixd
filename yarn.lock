@@ -1188,16 +1188,6 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@iconify/icons-mdi@^1.0.46":
-  version "1.1.17"
-  resolved "https://registry.yarnpkg.com/@iconify/icons-mdi/-/icons-mdi-1.1.17.tgz#48caf7756b0468670aa9c7336f5d76751389e76b"
-  integrity sha512-9Ot1n1bpyTtOj0jzY44My8KOKaHNyZSFry2U1YFt8sCykKVLttoKcxYnXLGN9HIFzY7eKjOLvhA1Vbjt3ZFhpQ==
-
-"@iconify/react@^1.1.3":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@iconify/react/-/react-1.1.4.tgz#c778eddbaf196e55705d0bedff00d039dc1de8d3"
-  integrity sha512-oxq8IMOq8q3nKGiDHbQPC8FcFuBsKve68JWBo140d5LRnj0bv5TB/FE/y01ZSvEZ7PlI2HIrnb2qivPN8kTDgw==
-
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -10155,6 +10145,13 @@ rc@^1.2.7, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-audio-player@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/react-audio-player/-/react-audio-player-0.17.0.tgz#4be7b1952512801f36ba0865a9c98f7b108f991e"
+  integrity sha512-aCZgusPxA9HK7rLZcTdhTbBH9l6do9vn3NorgoDZRxRxJlOy9uZWzPaKjd7QdcuP2vXpxGA/61JMnnOEY7NXeA==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-dnd-html5-backend@^14.0.0:
   version "14.0.0"
   resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-14.0.0.tgz#28d660a2ad1e07447c34a65cd25f7de8f1657194"
@@ -10186,15 +10183,6 @@ react-fast-compare@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
   integrity sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==
-
-react-h5-audio-player@^3.7.1:
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/react-h5-audio-player/-/react-h5-audio-player-3.7.1.tgz#7401f1385a5bd369652dde18cca5823fd6cc6f30"
-  integrity sha512-MWeMZ/orBXxt48P4SVBUfzRy+lw5acz61nc8mhDzqfE4VP7kPzpAnedGsC7mhu+BKy5/1+nO/0q4FFCuNe6U2Q==
-  dependencies:
-    "@babel/runtime" "^7.10.2"
-    "@iconify/icons-mdi" "^1.0.46"
-    "@iconify/react" "^1.1.3"
 
 react-helmet-async@^1.0.9:
   version "1.0.9"

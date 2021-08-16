@@ -14,46 +14,28 @@ import LibraryView from './components/library/LibraryView';
 import PlayerBar from './components/player/PlayerBar';
 
 const App = () => {
-  // const playQueue = useAppSelector((state: any) => state.playQueue);
-
   if (!localStorage.getItem('server')) {
     return <Login />;
   }
 
   return (
-    <>
-      {/* {playQueue.entry.length <= 1 && (
-        <Helmet>
-          <title>sonixd</title>
-        </Helmet>
-      )}
-
-      {playQueue.entry[playQueue.currentIndex] && (
-        <Helmet>
-          <title>
-            {playQueue.entry[playQueue.currentIndex].title} {' by '}
-            {playQueue.entry[playQueue.currentIndex].artist} — sonixd
-          </title>
-        </Helmet>
-      )} */}
+    <Player>
       <Router>
-        <Player>
-          <Layout footer={<PlayerBar />}>
-            <Switch>
-              <Route path="/library/artist/:id" component={NowPlayingView} />
-              <Route path="/library/album/:id" component={NowPlayingView} />
-              <Route path="/library" component={LibraryView} />
-              <Route path="/nowplaying" component={NowPlayingView} />
-              <Route path="/settings" component={Settings} />
-              <Route path="/playlist/:id" component={PlaylistView} />
-              <Route path="/playlists" component={PlaylistList} />
-              <Route path="/starred" component={StarredView} />
-              <Route path="/" component={Dashboard} />
-            </Switch>
-          </Layout>
-        </Player>
+        <Layout footer={<PlayerBar />}>
+          <Switch>
+            <Route path="/library/artist/:id" component={NowPlayingView} />
+            <Route path="/library/album/:id" component={NowPlayingView} />
+            <Route path="/library" component={LibraryView} />
+            <Route path="/nowplaying" component={NowPlayingView} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/playlist/:id" component={PlaylistView} />
+            <Route path="/playlists" component={PlaylistList} />
+            <Route path="/starred" component={StarredView} />
+            <Route path="/" component={Dashboard} />
+          </Switch>
+        </Layout>
       </Router>
-    </>
+    </Player>
   );
 };
 
