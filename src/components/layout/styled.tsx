@@ -29,7 +29,7 @@ export const MainContainer = styled(StyledContainer)`
 `;
 
 export const RootFooter = styled(Footer)`
-  height: 80px;
+  height: 88px;
 `;
 
 // Titlebar.tsx
@@ -107,5 +107,5 @@ export const FixedSidebar = styled(Sidebar)`
   position: fixed;
   top: 33px;
   z-index: 1;
-  height: 100%;
+  height: calc(100% - 130px);
 `;

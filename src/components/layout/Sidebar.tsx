@@ -9,14 +9,7 @@ const Sidebar = ({
   handleSidebarSelect,
 }: any) => {
   return (
-    <FixedSidebar
-      id="sidebar"
-      style={{
-        height: 'calc(100% - 122px)',
-      }}
-      width={expand ? 193 : 56}
-      collapsible
-    >
+    <FixedSidebar id="sidebar" width={expand ? 193 : 56} collapsible>
       <Sidenav
         style={{
           height: '100%',
