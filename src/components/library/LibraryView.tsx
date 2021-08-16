@@ -33,7 +33,7 @@ const LibraryView = () => {
   const [viewType, setViewType] = useState(settings.getSync('viewType'));
 
   const { isLoading: isLoadingArtists, data: artists }: any = useQuery(
-    'playlists',
+    'artists',
     getArtists,
     {
       enabled: currentPage === 'artists',
