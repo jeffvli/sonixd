@@ -1,7 +1,6 @@
 import React from 'react';
-import classNames from 'classnames';
-import { Sidebar as Sb, Sidenav, Nav, Icon } from 'rsuite';
-import '../../styles/Sidebar.global.css';
+import { Sidenav, Nav, Icon } from 'rsuite';
+import { FixedSidebar } from './styled';
 
 const Sidebar = ({
   expand,
@@ -9,22 +8,15 @@ const Sidebar = ({
   active,
   handleSidebarSelect,
 }: any) => {
-  const sidebarClasses = classNames({
-    sidebar__main: true,
-    sidebar__main_expanded: expand === true,
-  });
-
   return (
-    <Sb
-      id="sidebar"
-      className="container__sidebar"
-      width={expand ? 193 : 56}
-      collapsible
-    >
+    <FixedSidebar id="sidebar" width={expand ? 193 : 56} collapsible>
       <Sidenav
-        className={sidebarClasses}
         expanded={expand}
         appearance="default"
+        style={{
+          height: 'calc(100% - 122px)',
+          borderRight: '1px solid #48545c',
+        }}
       >
         <Sidenav.Header />
         <Sidenav.Body>
@@ -92,7 +84,7 @@ const Sidebar = ({
           </Nav>
         </Sidenav.Body>
       </Sidenav>
-    </Sb>
+    </FixedSidebar>
   );
 };
 

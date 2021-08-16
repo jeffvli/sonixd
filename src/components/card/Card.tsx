@@ -1,108 +1,21 @@
 import React from 'react';
-import { Panel, Button, IconButton, Icon } from 'rsuite';
-import styled from 'styled-components';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { getAlbum, getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
-
-const StyledPanel = styled(Panel)`
-  text-align: center;
-  width: 152px;
-  height: 205px;
-  margin: 10px;
-  &:hover {
-    border: 1px solid ${(props) => props.theme.main};
-  }
-`;
-
-const InfoPanel = styled(Panel)`
-  width: 150px;
-`;
-
-const InfoSpan = styled.div``;
-
-const CardButton = styled(Button)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 10px 0px 10px;
-  width: 150px;
-`;
-
-const CardTitleButton = styled(CardButton)`
-  color: ${(props) => props.theme.titleText};
-`;
-
-const CardSubtitleButton = styled(CardButton)`
-  color: ${(props) => props.theme.subtitleText};
-`;
-
-const CardSubtitle = styled.div`
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 10px 0px 10px;
-  width: 150px;
-  color: ${(props) => props.theme.subtitleText};
-`;
-
-const CardImg = styled.img`
-  height: 150px;
-  width: 150px;
-`;
-
-const LazyCardImg = styled(LazyLoadImage)`
-  height: 150px;
-  height: 150px;
-`;
-
-const Overlay = styled.div`
-  background-color: #1a1d24;
-  position: relative;
-  height: 150px;
-  width: 150px;
-  &:hover {
-    background-color: #000;
-    opacity: 0.5;
-    cursor: pointer;
-    display: block;
-  }
-
-  &:hover .rs-btn {
-    display: block;
-  }
-
-  .lazy-load-image-background.opacity {
-    opacity: 0;
-  }
-
-  .lazy-load-image-background.opacity.lazy-load-image-loaded {
-    opacity: 1;
-    transition: opacity 0.3s;
-  }
-`;
-
-const HoverControlButton = styled(IconButton)`
-  display: none;
-  opacity: 0.9;
-  border: 1px solid #fff;
-  position: absolute !important;
-  width: 0px;
-  height: 0px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  background: #20252c;
-
-  &:hover {
-    opacity: 1;
-    background: ${(props) => props.theme.main};
-  }
-`;
+import {
+  StyledPanel,
+  InfoPanel,
+  InfoSpan,
+  CardTitleButton,
+  CardSubtitleButton,
+  CardSubtitle,
+  CardImg,
+  LazyCardImg,
+  Overlay,
+  HoverControlButton,
+} from './styled';
 
 const Card = ({
   onClick,
@@ -111,6 +24,7 @@ const Card = ({
   hasHoverButtons,
   lazyLoad,
   playClick,
+  size,
   ...rest
 }: any) => {
   const history = useHistory();
@@ -145,17 +59,23 @@ const Card = ({
   };
 
   return (
-    <StyledPanel tabIndex={0} bordered shaded>
-      <Overlay>
+    <StyledPanel tabIndex={0} bordered shaded cardSize={size}>
+      <Overlay cardSize={size}>
         {lazyLoad ? (
           <LazyCardImg
             src={rest.coverArt}
             alt="img"
             effect="opacity"
             onClick={handleClick}
+            cardSize={size}
           />
         ) : (
-          <CardImg src={rest.coverArt} alt="img" onClick={handleClick} />
+          <CardImg
+            src={rest.coverArt}
+            alt="img"
+            onClick={handleClick}
+            cardSize={size}
+          />
         )}
 
         {hasHoverButtons && (
@@ -167,9 +87,14 @@ const Card = ({
           />
         )}
       </Overlay>
-      <InfoPanel>
+      <InfoPanel cardSize={size}>
         <InfoSpan>
-          <CardTitleButton appearance="link" size="xs" onClick={handleClick}>
+          <CardTitleButton
+            appearance="link"
+            size="sm"
+            onClick={handleClick}
+            cardSize={size}
+          >
             {rest.title}
           </CardTitleButton>
         </InfoSpan>
@@ -179,11 +104,12 @@ const Card = ({
               appearance="link"
               size="xs"
               onClick={handleSubClick}
+              cardSize={size}
             >
               {rest.subtitle}
             </CardSubtitleButton>
           ) : (
-            <CardSubtitle>{rest.subtitle}</CardSubtitle>
+            <CardSubtitle cardSize={size}>{rest.subtitle}</CardSubtitle>
           )}
         </InfoSpan>
       </InfoPanel>

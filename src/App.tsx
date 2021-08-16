@@ -11,6 +11,7 @@ import Login from './components/settings/Login';
 import StarredView from './components/starred/StarredView';
 import Dashboard from './components/dashboard/Dashboard';
 import LibraryView from './components/library/LibraryView';
+import PlayerBar from './components/player/PlayerBar';
 
 const App = () => {
   // const playQueue = useAppSelector((state: any) => state.playQueue);
@@ -36,19 +37,21 @@ const App = () => {
         </Helmet>
       )} */}
       <Router>
-        <Layout footer={<Player />}>
-          <Switch>
-            <Route path="/library/artist/:id" component={NowPlayingView} />
-            <Route path="/library/album/:id" component={NowPlayingView} />
-            <Route path="/library" component={LibraryView} />
-            <Route path="/nowplaying" component={NowPlayingView} />
-            <Route path="/settings" component={Settings} />
-            <Route path="/playlist/:id" component={PlaylistView} />
-            <Route path="/playlists" component={PlaylistList} />
-            <Route path="/starred" component={StarredView} />
-            <Route path="/" component={Dashboard} />
-          </Switch>
-        </Layout>
+        <Player>
+          <Layout footer={<PlayerBar />}>
+            <Switch>
+              <Route path="/library/artist/:id" component={NowPlayingView} />
+              <Route path="/library/album/:id" component={NowPlayingView} />
+              <Route path="/library" component={LibraryView} />
+              <Route path="/nowplaying" component={NowPlayingView} />
+              <Route path="/settings" component={Settings} />
+              <Route path="/playlist/:id" component={PlaylistView} />
+              <Route path="/playlists" component={PlaylistList} />
+              <Route path="/starred" component={StarredView} />
+              <Route path="/" component={Dashboard} />
+            </Switch>
+          </Layout>
+        </Player>
       </Router>
     </>
   );

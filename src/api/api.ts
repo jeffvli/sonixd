@@ -59,10 +59,21 @@ const getStreamUrl = (id: string) => {
   );
 };
 
-export const getPlaylists = async () => {
+export const getPlaylists = async (sortBy: string) => {
   const { data } = await api.get('/getPlaylists');
 
-  return (data.playlists?.playlist || []).map((playlist: any) => ({
+  const newData =
+    sortBy === 'dateCreated'
+      ? data.playlists?.playlist.sort((a: any, b: any) => {
+          return a.created > b.created ? -1 : a.created < b.created ? 1 : 0;
+        })
+      : sortBy === 'dateModified'
+      ? data.playlists?.playlist.sort((a: any, b: any) => {
+          return a.changed > b.changed ? -1 : a.changed < b.changed ? 1 : 0;
+        })
+      : data.playlists?.playlist;
+
+  return (newData || []).map((playlist: any) => ({
     ...playlist,
     name: playlist.name,
     image: playlist.songCount > 0 ? getCoverArtUrl(playlist) : undefined,
