@@ -1,5 +1,4 @@
 import React, {
-  createContext,
   useRef,
   useEffect,
   useImperativeHandle,
@@ -16,8 +15,6 @@ import {
   setIsFading,
   setAutoIncremented,
 } from '../../redux/playQueueSlice';
-
-export const PlayerContext = createContext<any>({});
 
 const Player = ({ children }: any, ref: any) => {
   const player1Ref = useRef<any>();
@@ -150,7 +147,7 @@ const Player = ({ children }: any, ref: any) => {
   };
 
   return (
-    <PlayerContext.Provider value={{}}>
+    <>
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.entry[playQueue.player1.index]?.streamUrl}
@@ -172,7 +169,7 @@ const Player = ({ children }: any, ref: any) => {
         autoPlay={playQueue.player2.index === playQueue.currentIndex}
       />
       {children}
-    </PlayerContext.Provider>
+    </>
   );
 };
 
