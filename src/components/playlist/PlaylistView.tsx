@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import { setPlayQueue, clearPlayQueue } from '../../redux/playQueueSlice';
+import { setPlayQueue } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -92,7 +92,6 @@ const PlaylistView = () => {
     timeout = null;
     const newPlayQueue = data.entry.slice([e.index], data.entry.length);
 
-    dispatch(clearPlayQueue());
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
   };

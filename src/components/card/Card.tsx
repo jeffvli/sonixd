@@ -3,7 +3,7 @@ import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { getAlbum, getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
+import { setPlayQueue } from '../../redux/playQueueSlice';
 import {
   StyledPanel,
   InfoPanel,
@@ -41,19 +41,16 @@ const Card = ({
   const handlePlayClick = async () => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
-      dispatch(clearPlayQueue());
       dispatch(setPlayQueue(res.entry));
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
-      dispatch(clearPlayQueue());
       dispatch(setPlayQueue(res.song));
     }
 
     if (playClick.type === 'artist') {
       const res = await getAlbum(playClick.id);
-      dispatch(clearPlayQueue());
       dispatch(setPlayQueue(res.song));
     }
   };

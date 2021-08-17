@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';
 import { useAppDispatch } from '../../redux/hooks';
-import { clearPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
+import { setPlayQueue } from '../../redux/playQueueSlice';
 import {
   clearSelected,
   setSelected,
@@ -176,7 +176,6 @@ const StarredView = () => {
     window.clearTimeout(timeout);
     timeout = null;
     const newPlayQueue = data.song.slice([e.index], data.song.length);
-    dispatch(clearPlayQueue());
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
   };
