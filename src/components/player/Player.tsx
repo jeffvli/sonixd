@@ -55,8 +55,17 @@ const Player = ({ children }: any, ref: any) => {
   const handleListen = () => {
     const fadeDuration = 10;
     const currentSeek = player1Ref.current?.audioEl.current?.currentTime || 0;
+    const seekable =
+      player1Ref.current.audioEl.current.seekable.length >= 1
+        ? player1Ref.current.audioEl.current.seekable.end(
+            player1Ref.current.audioEl.current.seekable.length - 1
+          )
+        : 0;
     const duration = player1Ref.current?.audioEl.current?.duration;
     const fadeAtTime = duration - fadeDuration;
+
+    console.log(`seekable`, seekable);
+    console.log(`currentSeek`, currentSeek);
 
     if (currentSeek >= fadeAtTime) {
       // Once fading starts, start playing player 2 and set current to 2
@@ -82,13 +91,19 @@ const Player = ({ children }: any, ref: any) => {
     }
 
     if (playQueue.currentPlayer === 1) {
-      dispatch(setCurrentSeek(currentSeek));
+      dispatch(setCurrentSeek({ seek: currentSeek, seekable }));
     }
   };
 
   const handleListen2 = () => {
     const fadeDuration = 10;
     const currentSeek = player2Ref.current?.audioEl.current?.currentTime || 0;
+    const seekable =
+      player2Ref.current.audioEl.current.seekable.length >= 1
+        ? player2Ref.current.audioEl.current.seekable.end(
+            player2Ref.current.audioEl.current.seekable.length - 1
+          )
+        : 0;
     const duration = player2Ref.current?.audioEl.current?.duration;
     const fadeAtTime = duration - fadeDuration;
 
@@ -116,7 +131,7 @@ const Player = ({ children }: any, ref: any) => {
     }
 
     if (playQueue.currentPlayer === 2) {
-      dispatch(setCurrentSeek(currentSeek));
+      dispatch(setCurrentSeek({ seek: currentSeek, seekable }));
     }
   };
 

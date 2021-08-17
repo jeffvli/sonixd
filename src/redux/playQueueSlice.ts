@@ -35,6 +35,7 @@ export interface PlayQueue {
   currentSongId: string;
   currentPlayer: number;
   currentSeek: number;
+  currentSeekable: number;
   isFading: boolean;
   autoIncremented: boolean;
   player1: {
@@ -57,6 +58,7 @@ const initialState: PlayQueue = {
   currentSongId: '',
   currentPlayer: 1,
   currentSeek: 0,
+  currentSeekable: 0,
   isFading: false,
   autoIncremented: false,
   player1: {
@@ -93,8 +95,12 @@ const playQueueSlice = createSlice({
       state.volume = action.payload;
     },
 
-    setCurrentSeek: (state, action: PayloadAction<number>) => {
-      state.currentSeek = action.payload;
+    setCurrentSeek: (
+      state,
+      action: PayloadAction<{ seek: number; seekable: number }>
+    ) => {
+      state.currentSeek = action.payload.seek;
+      state.currentSeekable = action.payload.seekable;
     },
 
     setCurrentPlayer: (state, action: PayloadAction<number>) => {
@@ -108,6 +114,7 @@ const playQueueSlice = createSlice({
     incrementCurrentIndex: (state, action: PayloadAction<string>) => {
       if (state.entry.length >= 1) {
         state.currentSeek = 0;
+        state.currentSeekable = 0;
         if (state.currentIndex < state.entry.length - 1) {
           state.currentIndex += 1;
           if (action.payload === 'usingHotkey') {
@@ -149,6 +156,7 @@ const playQueueSlice = createSlice({
       );
 
       state.currentSeek = 0;
+      state.currentSeekable = 0;
       state.isFading = false;
       state.player1.index = findIndex;
       state.player1.volume = state.volume;
@@ -173,17 +181,29 @@ const playQueueSlice = createSlice({
     decrementCurrentIndex: (state, action: PayloadAction<string>) => {
       if (state.entry.length >= 1) {
         state.currentSeek = 0;
+        state.currentSeekable = 0;
         if (state.currentIndex > 0) {
           state.currentIndex -= 1;
           if (action.payload === 'usingHotkey') {
             state.currentPlayer = 1;
+            state.isFading = false;
+            state.player1.volume = state.volume;
             state.player1.index = state.currentIndex;
-            state.player2.index = state.currentIndex + 1;
+
+            // Set the index back to 0 here, while performing the index set on fixPlayer2Index
+            // when dispatching this reducer. We need to do this because when decrementing while
+            // the current player is player2, the current index of player2 will not change,
+            // which means that player2 will continue playing even after decrementing the song
+            state.player2.index = 0;
           }
         }
 
         state.currentSongId = state.entry[state.currentIndex].id;
       }
+    },
+
+    fixPlayer2Index: (state) => {
+      state.player2.index = state.currentIndex + 1;
     },
 
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
@@ -204,6 +224,7 @@ const playQueueSlice = createSlice({
       state.currentSongId = '';
       state.currentPlayer = 1;
       state.currentSeek = 0;
+      state.currentSeekable = 0;
       state.player1.index = 0;
       state.player2.index = 1;
 
@@ -226,6 +247,7 @@ const playQueueSlice = createSlice({
       state.currentSongId = '';
       state.currentPlayer = 1;
       state.currentSeek = 0;
+      state.currentSeekable = 0;
       state.player1.index = 0;
       state.player2.index = 1;
     },
@@ -311,6 +333,7 @@ export const {
   decrementCurrentIndex,
   incrementPlayerIndex,
   setPlayerIndex,
+  fixPlayer2Index,
   setCurrentIndex,
   setPlayQueue,
   clearPlayQueue,

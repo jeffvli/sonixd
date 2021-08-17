@@ -25,6 +25,7 @@ import playQueueReducer, {
   decrementCurrentIndex,
   incrementCurrentIndex,
   setStatus,
+  fixPlayer2Index,
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
@@ -123,6 +124,7 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaPreviousTrack', () => {
     store.dispatch(decrementCurrentIndex('usingHotkey'));
+    store.dispatch(fixPlayer2Index());
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
