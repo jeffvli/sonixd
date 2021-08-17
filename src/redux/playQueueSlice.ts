@@ -35,6 +35,8 @@ export interface PlayQueue {
   currentSongId: string;
   currentPlayer: number;
   currentSeek: number;
+  isFading: boolean;
+  autoIncremented: boolean;
   player1: {
     index: number;
     volume: number;
@@ -55,6 +57,8 @@ const initialState: PlayQueue = {
   currentSongId: '',
   currentPlayer: 1,
   currentSeek: 0,
+  isFading: false,
+  autoIncremented: false,
   player1: {
     index: 0,
     volume: 0.5,
@@ -69,6 +73,8 @@ const initialState: PlayQueue = {
   entry: [],
 };
 
+// TODO: Needs refactoring due to rapid experimental changes to add gapless playback
+
 const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
@@ -77,6 +83,10 @@ const playQueueSlice = createSlice({
       if (state.entry.length >= 1) {
         state.status = action.payload;
       }
+    },
+
+    setAutoIncremented: (state, action: PayloadAction<boolean>) => {
+      state.autoIncremented = action.payload;
     },
 
     setVolume: (state, action: PayloadAction<number>) => {
@@ -102,6 +112,7 @@ const playQueueSlice = createSlice({
           state.currentIndex += 1;
           if (action.payload === 'usingHotkey') {
             state.currentPlayer = 1;
+            state.isFading = false;
             state.player1.volume = state.volume;
             state.player1.index = state.currentIndex;
             state.player2.index = state.currentIndex + 1;
@@ -111,6 +122,7 @@ const playQueueSlice = createSlice({
         if (state.repeatAll) {
           state.currentIndex = 0;
           if (action.payload === 'usingHotkey') {
+            state.isFading = false;
             state.currentPlayer = 1;
             state.player1.index = 0;
             state.player2.index = 1;
@@ -137,6 +149,7 @@ const playQueueSlice = createSlice({
       );
 
       state.currentSeek = 0;
+      state.isFading = false;
       state.player1.index = findIndex;
       state.player1.volume = state.volume;
       state.player2.index = findIndex + 1;
@@ -186,6 +199,7 @@ const playQueueSlice = createSlice({
       // Reset player defaults
       state.entry = [];
       state.status = 'PAUSED';
+      state.isFading = false;
       state.currentIndex = 0;
       state.currentSongId = '';
       state.currentPlayer = 1;
@@ -207,6 +221,7 @@ const playQueueSlice = createSlice({
     clearPlayQueue: (state) => {
       state.entry = [];
       state.status = 'PAUSED';
+      state.isFading = false;
       state.currentIndex = 0;
       state.currentSongId = '';
       state.currentPlayer = 1;
@@ -221,6 +236,10 @@ const playQueueSlice = createSlice({
 
     setIsLoaded: (state) => {
       state.isLoading = false;
+    },
+
+    setIsFading: (state, action: PayloadAction<boolean>) => {
+      state.isFading = action.payload;
     },
 
     moveUp: (state, action: PayloadAction<number[]>) => {
@@ -304,5 +323,7 @@ export const {
   setPlayerVolume,
   setVolume,
   setCurrentSeek,
+  setIsFading,
+  setAutoIncremented,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

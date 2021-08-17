@@ -1,5 +1,4 @@
 import React, {
-  useState,
   createContext,
   useRef,
   useEffect,
@@ -14,12 +13,13 @@ import {
   setCurrentPlayer,
   setPlayerVolume,
   setCurrentSeek,
+  setIsFading,
+  setAutoIncremented,
 } from '../../redux/playQueueSlice';
 
 export const PlayerContext = createContext<any>({});
 
 const Player = ({ children }: any, ref: any) => {
-  const [incremented, setIncremented] = useState(false);
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
   const dispatch = useAppDispatch();
@@ -62,35 +62,31 @@ const Player = ({ children }: any, ref: any) => {
     const fadeAtTime = duration - fadeDuration;
 
     if (currentSeek >= fadeAtTime) {
+      // Once fading starts, start playing player 2 and set current to 2
+      const timeLeft = duration - currentSeek;
+
       if (player2Ref.current.audioEl.current) {
-        // Once fading starts, start playing player 2 and set current to 2
         const player1Volume =
-          playQueue.player1.volume - playQueue.volume / (fadeDuration * 2) <= 0
+          playQueue.player1.volume - playQueue.volume / timeLeft <= 0
             ? 0
-            : playQueue.player1.volume - playQueue.volume / (fadeDuration * 2);
+            : playQueue.player1.volume - playQueue.volume / timeLeft;
 
         const player2Volume =
-          playQueue.player2.volume + playQueue.volume / (fadeDuration * 1.5) >=
+          playQueue.player2.volume + playQueue.volume / timeLeft >=
           playQueue.volume
             ? playQueue.volume
-            : playQueue.player2.volume +
-              playQueue.volume / (fadeDuration * 1.5);
+            : playQueue.player2.volume + playQueue.volume / timeLeft;
 
         dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
         dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
-
         player2Ref.current.audioEl.current.play();
-        if (!incremented) {
-          dispatch(incrementCurrentIndex('none'));
-          setIncremented(true);
-        }
-        dispatch(setCurrentPlayer(2));
+        dispatch(setIsFading(true));
       }
-      console.log('fading player1...');
-    } else {
+    }
+
+    if (playQueue.currentPlayer === 1) {
       dispatch(setCurrentSeek(currentSeek));
     }
-    console.log(`player1: ${currentSeek} / ${fadeAtTime}`);
   };
 
   const handleListen2 = () => {
@@ -100,59 +96,61 @@ const Player = ({ children }: any, ref: any) => {
     const fadeAtTime = duration - fadeDuration;
 
     if (currentSeek >= fadeAtTime) {
+      const timeLeft = duration - currentSeek;
+
+      // Once fading starts, start playing player 1 and set current to 1
       if (player1Ref.current.audioEl.current) {
-        // Once fading starts, start playing player 1 and set current to 1
         const player1Volume =
-          playQueue.player1.volume + playQueue.volume / (fadeDuration * 1.5) >=
+          playQueue.player1.volume + playQueue.volume / timeLeft >=
           playQueue.volume
             ? playQueue.volume
-            : playQueue.player1.volume +
-              playQueue.volume / (fadeDuration * 1.5);
+            : playQueue.player1.volume + playQueue.volume / timeLeft;
 
         const player2Volume =
-          playQueue.player2.volume - playQueue.volume / (fadeDuration * 2) <= 0
+          playQueue.player2.volume - playQueue.volume / timeLeft <= 0
             ? 0
-            : playQueue.player2.volume - playQueue.volume / (fadeDuration * 2);
+            : playQueue.player2.volume - playQueue.volume / timeLeft;
 
         dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
         dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
-
         player1Ref.current.audioEl.current.play();
-        if (!incremented) {
-          dispatch(incrementCurrentIndex('none'));
-          setIncremented(true);
-        }
-        dispatch(setCurrentPlayer(1));
+        dispatch(setIsFading(true));
       }
-      console.log('fading player2...');
-    } else {
-      dispatch(setCurrentSeek(currentSeek));
     }
 
-    console.log(`player2: ${currentSeek} / ${fadeAtTime}`);
+    if (playQueue.currentPlayer === 2) {
+      dispatch(setCurrentSeek(currentSeek));
+    }
   };
 
   const handleOnEnded1 = () => {
+    if (!playQueue.autoIncremented) {
+      dispatch(incrementCurrentIndex('none'));
+      dispatch(setAutoIncremented(true));
+    }
+    dispatch(setCurrentPlayer(2));
     dispatch(incrementPlayerIndex(1));
     dispatch(setPlayerVolume({ player: 1, volume: 0 }));
     dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
-    setIncremented(false);
+    dispatch(setIsFading(false));
+    dispatch(setAutoIncremented(false));
   };
 
   const handleOnEnded2 = () => {
+    if (!playQueue.autoIncremented) {
+      dispatch(incrementCurrentIndex('none'));
+      dispatch(setAutoIncremented(true));
+    }
+    dispatch(setCurrentPlayer(1));
     dispatch(incrementPlayerIndex(2));
     dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
     dispatch(setPlayerVolume({ player: 2, volume: 0 }));
-    setIncremented(false);
+    dispatch(setIsFading(false));
+    dispatch(setAutoIncremented(false));
   };
 
   return (
-    <PlayerContext.Provider
-      value={{
-        incremented,
-        setIncremented,
-      }}
-    >
+    <PlayerContext.Provider value={{}}>
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.entry[playQueue.player1.index]?.streamUrl}
