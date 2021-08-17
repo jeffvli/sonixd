@@ -34,6 +34,7 @@ export interface PlayQueue {
   currentIndex: number;
   currentSongId: string;
   currentPlayer: number;
+  currentSeek: number;
   player1: {
     index: number;
     volume: number;
@@ -53,6 +54,7 @@ const initialState: PlayQueue = {
   currentIndex: 0,
   currentSongId: '',
   currentPlayer: 1,
+  currentSeek: 0,
   player1: {
     index: 0,
     volume: 0.5,
@@ -72,7 +74,17 @@ const playQueueSlice = createSlice({
   initialState,
   reducers: {
     setStatus: (state, action: PayloadAction<string>) => {
-      state.status = action.payload;
+      if (state.entry.length >= 1) {
+        state.status = action.payload;
+      }
+    },
+
+    setVolume: (state, action: PayloadAction<number>) => {
+      state.volume = action.payload;
+    },
+
+    setCurrentSeek: (state, action: PayloadAction<number>) => {
+      state.currentSeek = action.payload;
     },
 
     setCurrentPlayer: (state, action: PayloadAction<number>) => {
@@ -85,6 +97,7 @@ const playQueueSlice = createSlice({
 
     incrementCurrentIndex: (state, action: PayloadAction<string>) => {
       if (state.entry.length >= 1) {
+        state.currentSeek = 0;
         if (state.currentIndex < state.entry.length - 1) {
           state.currentIndex += 1;
           if (action.payload === 'usingHotkey') {
@@ -123,6 +136,7 @@ const playQueueSlice = createSlice({
         (track) => track.id === action.payload.id
       );
 
+      state.currentSeek = 0;
       state.player1.index = findIndex;
       state.player1.volume = state.volume;
       state.player2.index = findIndex + 1;
@@ -145,6 +159,7 @@ const playQueueSlice = createSlice({
 
     decrementCurrentIndex: (state, action: PayloadAction<string>) => {
       if (state.entry.length >= 1) {
+        state.currentSeek = 0;
         if (state.currentIndex > 0) {
           state.currentIndex -= 1;
           if (action.payload === 'usingHotkey') {
@@ -168,10 +183,19 @@ const playQueueSlice = createSlice({
     },
 
     setPlayQueue: (state, action: PayloadAction<Entry[]>) => {
+      // Reset player defaults
+      state.entry = [];
+      state.status = 'PAUSED';
+      state.currentIndex = 0;
+      state.currentSongId = '';
+      state.currentPlayer = 1;
+      state.currentSeek = 0;
+      state.player1.index = 0;
+      state.player2.index = 1;
+
       if (state.status !== 'PLAYING') {
         state.status = 'PLAYING';
       }
-      state.currentIndex = 0;
       state.currentSongId = action.payload[0].id;
       action.payload.map((entry: any) => state.entry.push(entry));
     },
@@ -180,7 +204,16 @@ const playQueueSlice = createSlice({
       action.payload.map((entry: any) => state.entry.push(entry));
     },
 
-    clearPlayQueue: () => initialState,
+    clearPlayQueue: (state) => {
+      state.entry = [];
+      state.status = 'PAUSED';
+      state.currentIndex = 0;
+      state.currentSongId = '';
+      state.currentPlayer = 1;
+      state.currentSeek = 0;
+      state.player1.index = 0;
+      state.player2.index = 1;
+    },
 
     setIsLoading: (state) => {
       state.isLoading = true;
@@ -269,5 +302,7 @@ export const {
   setCurrentPlayer,
   setStatus,
   setPlayerVolume,
+  setVolume,
+  setCurrentSeek,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

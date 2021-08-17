@@ -252,6 +252,7 @@
     "electron-redux": "^1.5.4",
     "electron-settings": "^4.0.2",
     "electron-updater": "^4.3.4",
+    "format-duration": "^1.4.0",
     "history": "^5.0.0",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",

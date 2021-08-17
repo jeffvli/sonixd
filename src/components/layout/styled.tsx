@@ -5,7 +5,6 @@ import { Container, Content, Footer, Header, Sidebar } from 'rsuite';
 // Layout.tsx
 export const RootContainer = styled(Container)`
   height: 100vh;
-  padding-bottom: 10px;
 `;
 
 interface ContainerProps {
@@ -29,7 +28,7 @@ export const MainContainer = styled(StyledContainer)`
 `;
 
 export const RootFooter = styled(Footer)`
-  height: 88px;
+  height: 98px;
 `;
 
 // Titlebar.tsx

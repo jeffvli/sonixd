@@ -1,4 +1,11 @@
-import React, { useState, createContext, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  createContext,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -6,18 +13,26 @@ import {
   incrementPlayerIndex,
   setCurrentPlayer,
   setPlayerVolume,
+  setCurrentSeek,
 } from '../../redux/playQueueSlice';
 
 export const PlayerContext = createContext<any>({});
 
-const Player = ({ children }: any) => {
+const Player = ({ children }: any, ref: any) => {
   const [incremented, setIncremented] = useState(false);
-
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
-
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
+
+  useImperativeHandle(ref, () => ({
+    get player1() {
+      return player1Ref.current;
+    },
+    get player2() {
+      return player2Ref.current;
+    },
+  }));
 
   useEffect(() => {
     if (playQueue.status === 'PLAYING') {
@@ -42,11 +57,11 @@ const Player = ({ children }: any) => {
 
   const handleListen = () => {
     const fadeDuration = 10;
-    const currentTime = player1Ref.current?.audioEl.current?.currentTime || 0;
+    const currentSeek = player1Ref.current?.audioEl.current?.currentTime || 0;
     const duration = player1Ref.current?.audioEl.current?.duration;
     const fadeAtTime = duration - fadeDuration;
 
-    if (currentTime >= fadeAtTime) {
+    if (currentSeek >= fadeAtTime) {
       if (player2Ref.current.audioEl.current) {
         // Once fading starts, start playing player 2 and set current to 2
         const player1Volume =
@@ -72,17 +87,19 @@ const Player = ({ children }: any) => {
         dispatch(setCurrentPlayer(2));
       }
       console.log('fading player1...');
+    } else {
+      dispatch(setCurrentSeek(currentSeek));
     }
-    console.log(`player1: ${currentTime} / ${fadeAtTime}`);
+    console.log(`player1: ${currentSeek} / ${fadeAtTime}`);
   };
 
   const handleListen2 = () => {
     const fadeDuration = 10;
-    const currentTime = player2Ref.current?.audioEl.current?.currentTime || 0;
+    const currentSeek = player2Ref.current?.audioEl.current?.currentTime || 0;
     const duration = player2Ref.current?.audioEl.current?.duration;
     const fadeAtTime = duration - fadeDuration;
 
-    if (currentTime >= fadeAtTime) {
+    if (currentSeek >= fadeAtTime) {
       if (player1Ref.current.audioEl.current) {
         // Once fading starts, start playing player 1 and set current to 1
         const player1Volume =
@@ -108,8 +125,11 @@ const Player = ({ children }: any) => {
         dispatch(setCurrentPlayer(1));
       }
       console.log('fading player2...');
+    } else {
+      dispatch(setCurrentSeek(currentSeek));
     }
-    console.log(`player2: ${currentTime} / ${fadeAtTime}`);
+
+    console.log(`player2: ${currentSeek} / ${fadeAtTime}`);
   };
 
   const handleOnEnded1 = () => {
@@ -126,22 +146,6 @@ const Player = ({ children }: any) => {
     setIncremented(false);
   };
 
-  /*   const handleOnLoadStart = () => {
-    dispatch(setIsLoading());
-  };
-
-  const handleOnLoadedData = () => {
-    dispatch(setIsLoaded());
-  };
-
-  const handleOnClickNext = () => {
-    dispatch(incrementCurrentIndex());
-  };
-
-  const handleOnClickPrevious = () => {
-    dispatch(decrementCurrentIndex());
-  }; */
-
   return (
     <PlayerContext.Provider
       value={{
@@ -150,7 +154,6 @@ const Player = ({ children }: any) => {
       }}
     >
       <ReactAudioPlayer
-        style={{ position: 'absolute' }}
         ref={player1Ref}
         src={playQueue.entry[playQueue.player1.index]?.streamUrl}
         listenInterval={500}
@@ -158,11 +161,9 @@ const Player = ({ children }: any) => {
         onListen={handleListen}
         onEnded={handleOnEnded1}
         volume={playQueue.player1.volume}
-        controls
         autoPlay={playQueue.player1.index === playQueue.currentIndex}
       />
       <ReactAudioPlayer
-        style={{ position: 'absolute' }}
         ref={player2Ref}
         src={playQueue.entry[playQueue.player2.index]?.streamUrl}
         listenInterval={500}
@@ -170,7 +171,6 @@ const Player = ({ children }: any) => {
         onListen={handleListen2}
         onEnded={handleOnEnded2}
         volume={playQueue.player2.volume}
-        controls
         autoPlay={playQueue.player2.index === playQueue.currentIndex}
       />
       {children}
@@ -178,4 +178,4 @@ const Player = ({ children }: any) => {
   );
 };
 
-export default Player;
+export default forwardRef(Player);

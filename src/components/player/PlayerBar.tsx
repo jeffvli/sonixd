@@ -1,132 +1,229 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import ReactAudioPlayer from 'react-audio-player';
-import { Button } from 'rsuite';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import React, { useEffect, useState, useRef } from 'react';
+import { FlexboxGrid, Icon, Slider, Button } from 'rsuite';
+import format from 'format-duration';
+import styled from 'styled-components';
 import {
   incrementCurrentIndex,
-  incrementPlayerIndex,
+  decrementCurrentIndex,
+  setVolume,
+  setPlayerVolume,
+  setStatus,
 } from '../../redux/playQueueSlice';
-import { PlayerContext } from './Player';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import Player from './Player';
+import 'react-rangeslider/lib/index.css';
+
+const PlayerContainer = styled.div`
+  background: #000000;
+  height: 100%;
+  border-top: 1px solid #48545c;
+`;
+
+const PlayerColumn = styled.div<{
+  left?: boolean;
+  center?: boolean;
+  right?: boolean;
+  height: string;
+}>`
+  height: ${(props) => props.height};
+  display: flex;
+  align-items: center;
+  justify-content: ${(props) =>
+    props.left
+      ? 'flex-start'
+      : props.center
+      ? 'center'
+      : props.right
+      ? 'flex-end'
+      : 'center'};
+`;
+
+const PlayerControlIcon = styled(Icon)`
+  color: #b3b3b3;
+  padding: 0 15px 0 15px;
+  &:hover {
+    color: #fff;
+  }
+`;
 
 const PlayerBar = () => {
-  const player1Ref = useRef<any>();
-  const player2Ref = useRef<any>();
-  const {
-    player1Volume,
-    player2Volume,
-    setPlayer1Volume,
-    setPlayer2Volume,
-    incremented,
-    setIncremented,
-    globalVolume,
-    currentPlayer,
-    setCurrentPlayer,
-  } = useContext(PlayerContext);
-
-  const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
+  const dispatch = useAppDispatch();
+  const [seek, setSeek] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [manualSeek, setManualSeek] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const playersRef = useRef<any>();
 
-  const handleListen = () => {
-    const fadeDuration = 10;
-    const currentTime = player1Ref.current?.audioEl.current?.currentTime || 0;
-    const duration = player1Ref.current?.audioEl.current?.duration;
-    const fadeAtTime = duration - fadeDuration;
+  useEffect(() => {
+    setSeek(playQueue.currentSeek);
+  }, [playQueue.currentSeek]);
 
-    if (currentTime >= fadeAtTime) {
-      if (player2Ref.current.audioEl.current) {
-        // Once fading starts, start playing player 2 and set current to 2
-        setPlayer1Volume(
-          player1Volume - globalVolume / (fadeDuration * 2) <= 0
-            ? 0
-            : player1Volume - globalVolume / (fadeDuration * 2)
-        );
-        setPlayer2Volume(
-          player2Volume + globalVolume / (fadeDuration * 1.5) >= globalVolume
-            ? globalVolume
-            : player2Volume + globalVolume / (fadeDuration * 1.5)
-        );
-        player2Ref.current.audioEl.current.play();
-        if (!incremented) {
-          dispatch(incrementCurrentIndex('none'));
-          setIncremented(true);
-        }
-        setCurrentPlayer(2);
+  useEffect(() => {
+    if (isDragging) {
+      if (playQueue.currentPlayer === 1) {
+        playersRef.current.player1.audioEl.current.currentTime = manualSeek;
+      } else {
+        playersRef.current.player2.audioEl.current.currentTime = manualSeek;
       }
-      console.log('fading player1...');
+
+      // Wait for the seek to catch up, otherwise the bar will bounce back and forth
+      setTimeout(() => {
+        setIsDragging(false);
+      }, 1500);
     }
-    console.log(`player1: ${currentTime} / ${fadeAtTime}`);
+  }, [isDragging, manualSeek, playQueue.currentPlayer]);
+
+  /* const handleOnLoadStart = () => {
+    dispatch(setIsLoading());
   };
 
-  const handleListen2 = () => {
-    const fadeDuration = 10;
-    const currentTime = player2Ref.current?.audioEl.current?.currentTime || 0;
-    const duration = player2Ref.current?.audioEl.current?.duration;
-    const fadeAtTime = duration - fadeDuration;
+  const handleOnLoadedData = () => {
+    dispatch(setIsLoaded());
+  }; */
 
-    if (currentTime >= fadeAtTime) {
-      if (player1Ref.current.audioEl.current) {
-        // Once fading starts, start playing player 1 and set current to 1
-        setPlayer1Volume(
-          player1Volume + globalVolume / (fadeDuration * 1.5) >= globalVolume
-            ? globalVolume
-            : player1Volume + globalVolume / (fadeDuration * 1.5)
-        );
-        setPlayer2Volume(
-          player2Volume - globalVolume / (fadeDuration * 2) <= 0
-            ? 0
-            : player2Volume - globalVolume / (fadeDuration * 2)
-        );
-        player1Ref.current.audioEl.current.play();
-        if (!incremented) {
-          dispatch(incrementCurrentIndex('none'));
-          setIncremented(true);
-        }
-        setCurrentPlayer(1);
-      }
-      console.log('fading player2...');
-    }
-    console.log(`player2: ${currentTime} / ${fadeAtTime}`);
+  const handleClickNext = () => {
+    dispatch(incrementCurrentIndex('usingHotkey'));
   };
 
-  const handleOnEnded1 = () => {
-    dispatch(incrementPlayerIndex(1));
-    setPlayer1Volume(0);
-    setPlayer2Volume(globalVolume);
-    setIncremented(false);
+  const handleClickPrevious = () => {
+    dispatch(decrementCurrentIndex('usingHotkey'));
   };
 
-  const handleOnEnded2 = () => {
-    dispatch(incrementPlayerIndex(2));
-    setPlayer1Volume(globalVolume);
-    setPlayer2Volume(0);
-    setIncremented(false);
+  const handleClickPlayPause = () => {
+    dispatch(setStatus(playQueue.status === 'PLAYING' ? 'PAUSED' : 'PLAYING'));
+  };
+
+  const handleVolumeSlider = (e: number) => {
+    const vol = Number((e / 100).toFixed(2));
+    dispatch(setVolume(vol));
+    dispatch(setPlayerVolume({ player: playQueue.currentPlayer, volume: vol }));
+  };
+
+  const handleSeekSlider = (e: number) => {
+    setIsDragging(true);
+    setManualSeek(e);
+    console.log(e);
+  };
+
+  const handleOnWaiting = () => {
+    /* console.log(
+      (playersRef.current?.player1.audioEl.current.onwaiting = () => {
+        console.log('Waiting');
+      })
+    ); */
   };
 
   return (
-    <>
-      <ReactAudioPlayer
-        ref={player1Ref}
-        src={playQueue.entry[playQueue.player1Index]?.streamUrl}
-        listenInterval={500}
-        preload="auto"
-        onListen={handleListen}
-        onEnded={handleOnEnded1}
-        controls
-        volume={player1Volume}
-        autoPlay={playQueue.player1Index === playQueue.currentIndex}
-      />
-      <ReactAudioPlayer
-        ref={player2Ref}
-        src={playQueue.entry[playQueue.player2Index]?.streamUrl}
-        listenInterval={500}
-        preload="auto"
-        onListen={handleListen2}
-        onEnded={handleOnEnded2}
-        controls
-        volume={player2Volume}
-        autoPlay={playQueue.player2Index === playQueue.currentIndex}
-      />
-      <Button onClick={() => console.log(playQueue.entry)}>Length</Button>
+    <PlayerContainer>
+      <Player ref={playersRef} isDragging={isDragging} />
+      <Button onClick={handleOnWaiting} />
+
+      <FlexboxGrid align="middle" style={{ height: '100%' }}>
+        <FlexboxGrid.Item
+          colspan={6}
+          style={{ textAlign: 'left', paddingLeft: '25px' }}
+        >
+          <PlayerColumn left height="50px">
+            <div>Is seeking: {isDragging ? 'true' : 'false'}</div>
+          </PlayerColumn>
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item
+          colspan={12}
+          style={{ textAlign: 'center', verticalAlign: 'middle' }}
+        >
+          <PlayerColumn center height="45px">
+            <PlayerControlIcon icon="random" size="lg" />
+            <PlayerControlIcon
+              icon="step-backward"
+              size="lg"
+              onClick={handleClickPrevious}
+            />
+            <PlayerControlIcon
+              icon={
+                playQueue.status === 'PLAYING' ? 'pause-circle' : 'play-circle'
+              }
+              size="3x"
+              onClick={handleClickPlayPause}
+            />
+            <PlayerControlIcon
+              icon="step-forward"
+              size="lg"
+              onClick={handleClickNext}
+            />
+            <PlayerControlIcon
+              icon="repeat"
+              size="lg"
+              onClick={() => console.log('h')}
+            />
+          </PlayerColumn>
+          <PlayerColumn center height="35px">
+            <FlexboxGrid
+              justify="center"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                height: '35px',
+              }}
+            >
+              <FlexboxGrid.Item
+                colspan={4}
+                style={{ textAlign: 'right', paddingRight: '10px' }}
+              >
+                {format((isDragging ? manualSeek : seek) * 1000)}
+              </FlexboxGrid.Item>
+              <FlexboxGrid.Item colspan={16}>
+                <Slider
+                  progress
+                  defaultValue={0}
+                  value={isDragging ? manualSeek : seek}
+                  tooltip={false}
+                  max={
+                    playQueue.entry[playQueue.currentIndex]?.duration -
+                      10 * 1.3 || 0
+                  }
+                  onChange={handleSeekSlider}
+                  style={{ width: '100%' }}
+                />
+              </FlexboxGrid.Item>
+              <FlexboxGrid.Item
+                colspan={4}
+                style={{ textAlign: 'left', paddingLeft: '10px' }}
+              >
+                {format(
+                  playQueue.entry[playQueue.currentIndex]?.duration * 1000 || 0
+                )}
+              </FlexboxGrid.Item>
+            </FlexboxGrid>
+          </PlayerColumn>
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item
+          colspan={6}
+          style={{ textAlign: 'right', paddingRight: '25px' }}
+        >
+          <PlayerColumn right height="45px">
+            <Icon
+              icon={
+                playQueue.volume > 0.7
+                  ? 'volume-up'
+                  : playQueue.volume < 0.3
+                  ? 'volume-off'
+                  : 'volume-down'
+              }
+              size="lg"
+              style={{ marginRight: '15px' }}
+            />
+            <Slider
+              progress
+              value={Math.floor(playQueue.volume * 100)}
+              style={{ width: '80px' }}
+              onChange={handleVolumeSlider}
+            />
+          </PlayerColumn>
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
+      {/* <Button onClick={() => console.log(playQueue.entry)}>Length</Button>
       <div>
         {`Current index: ${playQueue.currentIndex}  |  `}
         {`Player1 index: ${playQueue.player1Index} - ${
@@ -136,8 +233,8 @@ const PlayerBar = () => {
           playQueue.entry[playQueue.player2Index]?.title
         } | `}
         {`CurrentPlayer: ${playQueue.currentPlayer}`}
-      </div>
-    </>
+      </div> */}
+    </PlayerContainer>
   );
 };
 
