@@ -64,15 +64,15 @@ const Player = ({ children }: any, ref: any) => {
 
       if (player2Ref.current.audioEl.current) {
         const player1Volume =
-          playQueue.player1.volume - playQueue.volume / timeLeft <= 0
+          playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.25 <= 0
             ? 0
-            : playQueue.player1.volume - playQueue.volume / timeLeft;
+            : playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.25;
 
         const player2Volume =
-          playQueue.player2.volume + playQueue.volume / timeLeft >=
+          playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.25 >=
           playQueue.volume
             ? playQueue.volume
-            : playQueue.player2.volume + playQueue.volume / timeLeft;
+            : playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.25;
 
         dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
         dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
@@ -98,15 +98,15 @@ const Player = ({ children }: any, ref: any) => {
       // Once fading starts, start playing player 1 and set current to 1
       if (player1Ref.current.audioEl.current) {
         const player1Volume =
-          playQueue.player1.volume + playQueue.volume / timeLeft >=
+          playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.25 >=
           playQueue.volume
             ? playQueue.volume
-            : playQueue.player1.volume + playQueue.volume / timeLeft;
+            : playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.25;
 
         const player2Volume =
-          playQueue.player2.volume - playQueue.volume / timeLeft <= 0
+          playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.25 <= 0
             ? 0
-            : playQueue.player2.volume - playQueue.volume / timeLeft;
+            : playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.25;
 
         dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
         dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
@@ -151,7 +151,7 @@ const Player = ({ children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.entry[playQueue.player1.index]?.streamUrl}
-        listenInterval={500}
+        listenInterval={250}
         preload="auto"
         onListen={handleListen}
         onEnded={handleOnEnded1}
@@ -161,7 +161,7 @@ const Player = ({ children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player2Ref}
         src={playQueue.entry[playQueue.player2.index]?.streamUrl}
-        listenInterval={500}
+        listenInterval={250}
         preload="auto"
         onListen={handleListen2}
         onEnded={handleOnEnded2}
