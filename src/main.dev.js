@@ -111,20 +111,28 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaPlayPause', () => {
     const storeValues = store.getState();
-    if (storeValues.playQueue.status === 'PAUSED') {
-      store.dispatch(setStatus('PLAYING'));
-    } else {
-      store.dispatch(setStatus('PAUSED'));
+    if (storeValues.playQueue.entry.length >= 1) {
+      if (storeValues.playQueue.status === 'PAUSED') {
+        store.dispatch(setStatus('PLAYING'));
+      } else {
+        store.dispatch(setStatus('PAUSED'));
+      }
     }
   });
 
   globalShortcut.register('MediaNextTrack', () => {
-    store.dispatch(incrementCurrentIndex('usingHotkey'));
+    const storeValues = store.getState();
+    if (storeValues.playQueue.entry.length >= 1) {
+      store.dispatch(incrementCurrentIndex('usingHotkey'));
+    }
   });
 
   globalShortcut.register('MediaPreviousTrack', () => {
-    store.dispatch(decrementCurrentIndex('usingHotkey'));
-    store.dispatch(fixPlayer2Index());
+    const storeValues = store.getState();
+    if (storeValues.playQueue.entry.length >= 1) {
+      store.dispatch(decrementCurrentIndex('usingHotkey'));
+      store.dispatch(fixPlayer2Index());
+    }
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
@@ -168,6 +176,7 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  globalShortcut.unregisterAll();
   if (process.platform !== 'darwin') {
     app.quit();
   }
