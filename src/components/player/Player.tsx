@@ -4,6 +4,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from 'react';
+import { Notification } from 'rsuite';
 import ReactAudioPlayer from 'react-audio-player';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -63,9 +64,6 @@ const Player = ({ children }: any, ref: any) => {
         : 0;
     const duration = player1Ref.current?.audioEl.current?.duration;
     const fadeAtTime = duration - fadeDuration;
-
-    console.log(`seekable`, seekable);
-    console.log(`currentSeek`, currentSeek);
 
     if (currentSeek >= fadeAtTime) {
       // Once fading starts, start playing player 2 and set current to 2
@@ -161,6 +159,13 @@ const Player = ({ children }: any, ref: any) => {
     dispatch(setAutoIncremented(false));
   };
 
+  const notification = (description: string) => {
+    Notification.error({
+      title: 'Playback Error',
+      description,
+    });
+  };
+
   return (
     <>
       <ReactAudioPlayer
@@ -172,6 +177,7 @@ const Player = ({ children }: any, ref: any) => {
         onEnded={handleOnEnded1}
         volume={playQueue.player1.volume}
         autoPlay={playQueue.player1.index === playQueue.currentIndex}
+        onError={(e: any) => notification(e.message)}
       />
       <ReactAudioPlayer
         ref={player2Ref}
@@ -182,6 +188,7 @@ const Player = ({ children }: any, ref: any) => {
         onEnded={handleOnEnded2}
         volume={playQueue.player2.volume}
         autoPlay={playQueue.player2.index === playQueue.currentIndex}
+        onError={(e: any) => notification(e.message)}
       />
       {children}
     </>
