@@ -48,7 +48,8 @@ export interface PlayQueue {
   };
   volume: number;
   isLoading: boolean;
-  repeatAll: boolean;
+  repeat: string;
+  shuffle: boolean;
   entry: Entry[];
 }
 
@@ -71,16 +72,38 @@ const initialState: PlayQueue = {
   },
   volume: 0.5,
   isLoading: false,
-  repeatAll: false,
+  repeat: 'none',
+  shuffle: false,
   entry: [],
 };
 
 // TODO: Needs refactoring due to rapid experimental changes to add gapless playback
 
+const resetPlayerDefaults = (state: PlayQueue) => {
+  state.currentSeek = 0;
+  state.currentSeekable = 0;
+  state.isFading = false;
+  state.currentIndex = 0;
+  state.currentSongId = '';
+  state.currentPlayer = 1;
+  state.currentSeek = 0;
+  state.currentSeekable = 0;
+  state.player1.index = 0;
+  state.player1.volume = state.volume;
+  state.player2.index = 0;
+  state.player2.volume = 0;
+};
+
 const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
   reducers: {
+    resetPlayer: (state) => {
+      resetPlayerDefaults(state);
+      state.currentSongId = state.entry[0].id;
+      state.status = 'PAUSED';
+    },
+
     setStatus: (state, action: PayloadAction<string>) => {
       if (state.entry.length >= 1) {
         state.status = action.payload;
@@ -89,6 +112,22 @@ const playQueueSlice = createSlice({
 
     setAutoIncremented: (state, action: PayloadAction<boolean>) => {
       state.autoIncremented = action.payload;
+    },
+
+    toggleRepeat: (state) => {
+      if (state.repeat === 'none') {
+        state.repeat = 'all';
+      } else if (state.repeat === 'all') {
+        state.repeat = 'none';
+      }
+
+      if (state.player1.index > state.entry.length - 1) state.player1.index = 0;
+
+      if (state.player2.index > state.entry.length - 1) state.player2.index = 0;
+    },
+
+    toggleShuffle: (state) => {
+      state.shuffle = !state.shuffle;
     },
 
     setVolume: (state, action: PayloadAction<number>) => {
@@ -122,17 +161,11 @@ const playQueueSlice = createSlice({
             state.isFading = false;
             state.player1.volume = state.volume;
             state.player1.index = state.currentIndex;
-            state.player2.index = state.currentIndex + 1;
-          }
-        }
-
-        if (state.repeatAll) {
-          state.currentIndex = 0;
-          if (action.payload === 'usingHotkey') {
-            state.isFading = false;
-            state.currentPlayer = 1;
-            state.player1.index = 0;
-            state.player2.index = 1;
+            if (state.currentIndex + 1 >= state.entry.length) {
+              state.player2.index = 0;
+            } else {
+              state.player2.index = state.currentIndex + 1;
+            }
           }
         }
 
@@ -141,12 +174,35 @@ const playQueueSlice = createSlice({
     },
 
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
-      if (action.payload === 1) {
-        state.player1.index += 2;
-        state.currentPlayer = 2;
-      } else {
-        state.player2.index += 2;
-        state.currentPlayer = 1;
+      // If the entry list is greater than two, we don't need to increment,
+      // just keep swapping playback between the tracks [0 <=> 0] or [0 <=> 1]
+      // without changing the index of either player
+      if (state.entry.length > 2) {
+        if (action.payload === 1) {
+          if (
+            state.player1.index + 2 >= state.entry.length - 1 &&
+            state.repeat === 'all'
+          ) {
+            state.player1.index = state.player2.index + 1;
+          } else if (state.player1.index + 2 >= state.entry.length - 1) {
+            resetPlayerDefaults(state);
+          } else {
+            state.player1.index += 2;
+          }
+          state.currentPlayer = 2;
+        } else {
+          if (
+            state.player2.index + 2 >= state.entry.length - 1 &&
+            state.repeat === 'all'
+          ) {
+            state.player2.index = state.player1.index + 1;
+          } else if (state.player2.index + 2 >= state.entry.length - 1) {
+            resetPlayerDefaults(state);
+          } else {
+            state.player2.index += 2;
+          }
+          state.currentPlayer = 1;
+        }
       }
     },
 
@@ -160,7 +216,14 @@ const playQueueSlice = createSlice({
       state.isFading = false;
       state.player1.index = findIndex;
       state.player1.volume = state.volume;
-      state.player2.index = findIndex + 1;
+
+      // Don't set player2 index greater than entry list
+      if (findIndex >= state.entry.length - 1) {
+        state.player2.index = 0;
+      } else {
+        state.player2.index = findIndex + 1;
+      }
+
       state.player2.volume = 0;
       state.currentPlayer = 1;
       state.currentIndex = findIndex;
@@ -195,6 +258,7 @@ const playQueueSlice = createSlice({
             // the current player is player2, the current index of player2 will not change,
             // which means that player2 will continue playing even after decrementing the song
             state.player2.index = 0;
+            state.player2.volume = 0;
           }
         }
 
@@ -203,7 +267,9 @@ const playQueueSlice = createSlice({
     },
 
     fixPlayer2Index: (state) => {
-      state.player2.index = state.currentIndex + 1;
+      if (state.entry.length >= 2) {
+        state.player2.index = state.currentIndex + 1;
+      }
     },
 
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
@@ -218,15 +284,7 @@ const playQueueSlice = createSlice({
     setPlayQueue: (state, action: PayloadAction<Entry[]>) => {
       // Reset player defaults
       state.entry = [];
-      state.status = 'PAUSED';
-      state.isFading = false;
-      state.currentIndex = 0;
-      state.currentSongId = '';
-      state.currentPlayer = 1;
-      state.currentSeek = 0;
-      state.currentSeekable = 0;
-      state.player1.index = 0;
-      state.player2.index = 1;
+      resetPlayerDefaults(state);
 
       if (state.status !== 'PLAYING') {
         state.status = 'PLAYING';
@@ -241,15 +299,7 @@ const playQueueSlice = createSlice({
 
     clearPlayQueue: (state) => {
       state.entry = [];
-      state.status = 'PAUSED';
-      state.isFading = false;
-      state.currentIndex = 0;
-      state.currentSongId = '';
-      state.currentPlayer = 1;
-      state.currentSeek = 0;
-      state.currentSeekable = 0;
-      state.player1.index = 0;
-      state.player2.index = 1;
+      resetPlayerDefaults(state);
     },
 
     setIsLoading: (state) => {
@@ -348,5 +398,8 @@ export const {
   setCurrentSeek,
   setIsFading,
   setAutoIncremented,
+  toggleRepeat,
+  toggleShuffle,
+  resetPlayer,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

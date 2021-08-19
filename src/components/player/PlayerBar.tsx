@@ -1,49 +1,28 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { FlexboxGrid, Icon, Slider } from 'rsuite';
+import { FlexboxGrid, Icon, Grid, Row, Col } from 'rsuite';
+import { useHistory } from 'react-router-dom';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
-import styled from 'styled-components';
+import {
+  PlayerContainer,
+  PlayerColumn,
+  PlayerControlIcon,
+  LinkButton,
+  CustomSlider,
+} from './styled';
 import {
   incrementCurrentIndex,
   decrementCurrentIndex,
   setVolume,
   setPlayerVolume,
   setStatus,
+  fixPlayer2Index,
+  toggleRepeat,
+  toggleShuffle,
 } from '../../redux/playQueueSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
-
-const PlayerContainer = styled.div`
-  background: #000000;
-  height: 100%;
-  border-top: 1px solid #48545c;
-`;
-
-const PlayerColumn = styled.div<{
-  left?: boolean;
-  center?: boolean;
-  right?: boolean;
-  height: string;
-}>`
-  height: ${(props) => props.height};
-  display: flex;
-  align-items: center;
-  justify-content: ${(props) =>
-    props.left
-      ? 'flex-start'
-      : props.center
-      ? 'center'
-      : props.right
-      ? 'flex-end'
-      : 'center'};
-`;
-
-const PlayerControlIcon = styled(Icon)`
-  color: #b3b3b3;
-  padding: 0 15px 0 15px;
-  &:hover {
-    color: #fff;
-  }
-`;
+import CustomTooltip from '../shared/CustomTooltip';
 
 const PlayerBar = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -51,8 +30,8 @@ const PlayerBar = () => {
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [manualSeek, setManualSeek] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const playersRef = useRef<any>();
+  const history = useHistory();
 
   useEffect(() => {
     setSeek(playQueue.currentSeek);
@@ -73,20 +52,13 @@ const PlayerBar = () => {
     }
   }, [isDragging, manualSeek, playQueue.currentPlayer]);
 
-  /* const handleOnLoadStart = () => {
-    dispatch(setIsLoading());
-  };
-
-  const handleOnLoadedData = () => {
-    dispatch(setIsLoaded());
-  }; */
-
   const handleClickNext = () => {
     dispatch(incrementCurrentIndex('usingHotkey'));
   };
 
   const handleClickPrevious = () => {
     dispatch(decrementCurrentIndex('usingHotkey'));
+    dispatch(fixPlayer2Index());
   };
 
   const handleClickPlayPause = () => {
@@ -121,120 +93,241 @@ const PlayerBar = () => {
     setManualSeek(e);
   };
 
-  const handleOnWaiting = () => {
-    /* console.log(
-      (playersRef.current?.player1.audioEl.current.onwaiting = () => {
-        console.log('Waiting');
-      })
-    ); */
+  const handleRepeat = () => {
+    dispatch(toggleRepeat());
+  };
+
+  const handleShuffle = () => {
+    dispatch(toggleShuffle());
   };
 
   return (
-    <PlayerContainer>
-      <Player />
-      <FlexboxGrid align="middle" style={{ height: '100%' }}>
-        <FlexboxGrid.Item
-          colspan={6}
-          style={{ textAlign: 'left', paddingLeft: '25px' }}
-        >
-          <PlayerColumn left height="50px">
-            <div>Is seeking: {isDragging ? 'true' : 'false'}</div>
-          </PlayerColumn>
-        </FlexboxGrid.Item>
-        <FlexboxGrid.Item
-          colspan={12}
-          style={{ textAlign: 'center', verticalAlign: 'middle' }}
-        >
-          <PlayerColumn center height="45px">
-            <PlayerControlIcon icon="random" size="lg" />
-            <PlayerControlIcon
-              icon="step-backward"
-              size="lg"
-              onClick={handleClickPrevious}
-            />
-            <PlayerControlIcon
-              icon={
-                playQueue.status === 'PLAYING' ? 'pause-circle' : 'play-circle'
-              }
-              size="3x"
-              onClick={handleClickPlayPause}
-            />
-            <PlayerControlIcon
-              icon="step-forward"
-              size="lg"
-              onClick={handleClickNext}
-            />
-            <PlayerControlIcon
-              icon="repeat"
-              size="lg"
-              onClick={() => console.log('Set Repeat')}
-            />
-          </PlayerColumn>
-          <PlayerColumn center height="35px">
-            <FlexboxGrid
-              justify="center"
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                height: '35px',
-              }}
-            >
-              <FlexboxGrid.Item
-                colspan={4}
-                style={{ textAlign: 'right', paddingRight: '10px' }}
+    <Player ref={playersRef}>
+      <PlayerContainer>
+        <FlexboxGrid align="middle" style={{ height: '100%' }}>
+          <FlexboxGrid.Item
+            colspan={6}
+            style={{ textAlign: 'left', paddingLeft: '10px' }}
+          >
+            <PlayerColumn left height="80px">
+              <Grid>
+                <Row
+                  style={{
+                    height: '70px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Col
+                    xs={2}
+                    onClick={() => history.push(`/nowplaying`)}
+                    style={{ height: '100%', width: '80px' }}
+                  >
+                    {playQueue.entry.length >= 1 && (
+                      <LazyLoadImage
+                        src={playQueue.entry[playQueue.currentIndex].image}
+                        alt="trackImg"
+                        effect="opacity"
+                        width="65"
+                        height="65"
+                        style={{ borderRadius: '10px', cursor: 'pointer' }}
+                      />
+                    )}
+                  </Col>
+                  <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>
+                    <Row
+                      style={{
+                        height: '35px',
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                      }}
+                    >
+                      {playQueue.entry.length >= 1 && (
+                        <LinkButton>
+                          {playQueue.entry[playQueue.currentIndex]?.title ||
+                            'Unknown title'}
+                        </LinkButton>
+                      )}
+                    </Row>
+
+                    <Row style={{ height: '35px', width: '100%' }}>
+                      {playQueue.entry.length >= 1 && (
+                        <LinkButton subtitle="true">
+                          {playQueue.entry[playQueue.currentIndex]?.artist ||
+                            'Unknown artist'}
+                        </LinkButton>
+                      )}
+                    </Row>
+                  </Col>
+                </Row>
+              </Grid>
+            </PlayerColumn>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item
+            colspan={12}
+            style={{ textAlign: 'center', verticalAlign: 'middle' }}
+          >
+            <PlayerColumn center height="45px">
+              <PlayerControlIcon icon="backward" size="lg" fixedWidth />
+              <PlayerControlIcon
+                icon="step-backward"
+                size="lg"
+                fixedWidth
+                onClick={handleClickPrevious}
+              />
+              <PlayerControlIcon
+                icon={
+                  playQueue.status === 'PLAYING'
+                    ? 'pause-circle'
+                    : 'play-circle'
+                }
+                spin={
+                  playQueue.currentSeekable <= playQueue.currentSeek &&
+                  playQueue.status === 'PLAYING'
+                }
+                size="3x"
+                onClick={handleClickPlayPause}
+              />
+              <PlayerControlIcon
+                icon="step-forward"
+                size="lg"
+                fixedWidth
+                onClick={handleClickNext}
+              />
+              <PlayerControlIcon icon="forward" size="lg" fixedWidth />
+            </PlayerColumn>
+            <PlayerColumn center height="35px">
+              <FlexboxGrid
+                justify="center"
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  height: '35px',
+                }}
               >
-                {format((isDragging ? manualSeek : seek) * 1000)}
-              </FlexboxGrid.Item>
-              <FlexboxGrid.Item colspan={16}>
-                <Slider
-                  progress
-                  // disabled={playQueue.isFading}
-                  defaultValue={0}
-                  value={isDragging ? manualSeek : seek}
-                  tooltip={false}
-                  max={playQueue.entry[playQueue.currentIndex]?.duration || 0}
-                  onChange={handleSeekSlider}
-                  style={{ width: '100%' }}
-                />
-              </FlexboxGrid.Item>
-              <FlexboxGrid.Item
-                colspan={4}
-                style={{ textAlign: 'left', paddingLeft: '10px' }}
-              >
-                {format(
-                  playQueue.entry[playQueue.currentIndex]?.duration * 1000 || 0
-                )}
-              </FlexboxGrid.Item>
-            </FlexboxGrid>
-          </PlayerColumn>
-        </FlexboxGrid.Item>
-        <FlexboxGrid.Item
-          colspan={6}
-          style={{ textAlign: 'right', paddingRight: '25px' }}
-        >
-          <PlayerColumn right height="45px">
-            <Icon
-              icon={
-                playQueue.volume > 0.7
-                  ? 'volume-up'
-                  : playQueue.volume < 0.3
-                  ? 'volume-off'
-                  : 'volume-down'
-              }
-              size="lg"
-              style={{ marginRight: '15px' }}
-            />
-            <Slider
-              progress
-              value={Math.floor(playQueue.volume * 100)}
-              style={{ width: '80px' }}
-              onChange={handleVolumeSlider}
-            />
-          </PlayerColumn>
-        </FlexboxGrid.Item>
-      </FlexboxGrid>
-    </PlayerContainer>
+                <FlexboxGrid.Item
+                  colspan={4}
+                  style={{ textAlign: 'right', paddingRight: '10px' }}
+                >
+                  {format((isDragging ? manualSeek : seek) * 1000)}
+                </FlexboxGrid.Item>
+                <FlexboxGrid.Item colspan={16}>
+                  <CustomSlider
+                    progress
+                    defaultValue={0}
+                    value={isDragging ? manualSeek : seek}
+                    tooltip={false}
+                    max={playQueue.entry[playQueue.currentIndex]?.duration || 0}
+                    onChange={handleSeekSlider}
+                    style={{ width: '100%' }}
+                  />
+                </FlexboxGrid.Item>
+                <FlexboxGrid.Item
+                  colspan={4}
+                  style={{ textAlign: 'left', paddingLeft: '10px' }}
+                >
+                  {format(
+                    playQueue.entry[playQueue.currentIndex]?.duration * 1000 ||
+                      0
+                  )}
+                </FlexboxGrid.Item>
+              </FlexboxGrid>
+            </PlayerColumn>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item
+            colspan={6}
+            style={{ textAlign: 'right', paddingRight: '10px' }}
+          >
+            <PlayerColumn right height="80px">
+              <Grid>
+                <Row
+                  style={{
+                    height: '35px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  {playQueue.entry.length >= 1 && (
+                    <>
+                      <CustomTooltip text="Star" delay={1000}>
+                        <PlayerControlIcon
+                          icon={
+                            playQueue.entry[playQueue.currentIndex].starred
+                              ? 'star'
+                              : 'star-o'
+                          }
+                          size="lg"
+                          style={{
+                            color: playQueue.entry[playQueue.currentIndex]
+                              .starred
+                              ? '#1179ac'
+                              : undefined,
+                          }}
+                        />
+                      </CustomTooltip>
+                      <CustomTooltip text="Shuffle" delay={1000}>
+                        <PlayerControlIcon
+                          icon="random"
+                          size="lg"
+                          onClick={handleShuffle}
+                          style={{
+                            color: playQueue.shuffle ? '#1179ac' : undefined,
+                          }}
+                        />
+                      </CustomTooltip>
+                      <CustomTooltip text="Repeat" delay={1000}>
+                        <PlayerControlIcon
+                          icon="repeat"
+                          size="lg"
+                          onClick={handleRepeat}
+                          inverse={playQueue.repeat === 'all'}
+                          style={{
+                            color:
+                              playQueue.repeat === 'all'
+                                ? '#1179ac'
+                                : undefined,
+                          }}
+                        />
+                      </CustomTooltip>
+                    </>
+                  )}
+                </Row>
+                <Row
+                  style={{
+                    height: '35px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  <Icon
+                    icon={
+                      playQueue.volume > 0.7
+                        ? 'volume-up'
+                        : playQueue.volume === 0
+                        ? 'volume-off'
+                        : 'volume-down'
+                    }
+                    size="lg"
+                    style={{ marginRight: '15px', padding: '0' }}
+                  />
+                  <CustomSlider
+                    progress
+                    value={Math.floor(playQueue.volume * 100)}
+                    tooltip={false}
+                    style={{ width: '100px', marginRight: '10px' }}
+                    onChange={handleVolumeSlider}
+                  />
+                </Row>
+              </Grid>
+            </PlayerColumn>
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </PlayerContainer>
+    </Player>
   );
 };
 

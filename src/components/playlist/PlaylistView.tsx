@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import { setPlayQueue } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -94,6 +94,7 @@ const PlaylistView = () => {
 
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
+    dispatch(fixPlayer2Index());
   };
 
   if (isLoading) {

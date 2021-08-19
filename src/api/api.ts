@@ -87,6 +87,7 @@ export const getPlaylist = async (id: string) => {
     entry: (data.playlist.entry || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
+      image: getCoverArtUrl(entry),
       index,
     })),
     image:
@@ -135,6 +136,7 @@ export const getStarred = async () => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
+      starred: entry.starred || '',
       index,
     })),
   };
@@ -150,6 +152,7 @@ export const getAlbums = async (options: any, coverArtSize = 150) => {
     album: (data.albumList2.album || []).map((entry: any, index: any) => ({
       ...entry,
       image: getCoverArtUrl(entry, coverArtSize),
+      starred: entry.starred || '',
       index,
     })),
   };
@@ -164,6 +167,7 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
     (entry: any, index: any) => ({
       ...entry,
       image: getCoverArtUrl(entry, coverArtSize),
+      starred: entry.starred || '',
       index,
     })
   );
@@ -184,6 +188,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
+      starred: entry.starred || '',
       index,
     })),
   };
@@ -200,6 +205,7 @@ export const getRandomSongs = async (options: any, coverArtSize = 150) => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
+      starred: entry.starred || '',
       index,
     })),
   };
