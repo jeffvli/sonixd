@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 import VisibilitySensor from 'react-visibility-sensor';
 import settings from 'electron-settings';
 import _ from 'lodash';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import { getAlbumsDirect, getArtists } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -26,12 +27,9 @@ const ALBUM_SORT_TYPES = [
 const LibraryView = () => {
   const [currentPage, setCurrentPage] = useState('albums');
   const [sortBy, setSortBy] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState<any[]>([]);
-  const [filteredData, setFilteredData] = useState<any[]>([]);
   const [offset, setOffset] = useState(0);
   const [viewType, setViewType] = useState(settings.getSync('viewType'));
-
   const { isLoading: isLoadingArtists, data: artists }: any = useQuery(
     'artists',
     getArtists,
@@ -39,26 +37,16 @@ const LibraryView = () => {
       enabled: currentPage === 'artists',
     }
   );
-
-  useEffect(() => {
-    if (searchQuery !== '') {
-      if (currentPage === 'albums') {
-        setFilteredData(
-          data.filter((entry: any) => {
-            return entry.name.toLowerCase().includes(searchQuery.toLowerCase());
-          })
-        );
-      } else if (currentPage === 'artists') {
-        setFilteredData(
-          artists.filter((entry: any) => {
-            return entry.name.toLowerCase().includes(searchQuery.toLowerCase());
-          })
-        );
-      }
-    } else {
-      setFilteredData([]);
-    }
-  }, [artists, currentPage, data, searchQuery]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredData = useSearchQuery(
+    searchQuery,
+    currentPage === 'artists'
+      ? artists
+      : currentPage === 'albums'
+      ? data
+      : data,
+    ['name', 'artist']
+  );
 
   const onChange = (isVisible: boolean) => {
     if (isVisible) {

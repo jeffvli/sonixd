@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Tag, SelectPicker } from 'rsuite';
 import settings from 'electron-settings';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import { getPlaylists } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
@@ -47,32 +48,20 @@ const tableColumns = [
 ];
 
 const PlaylistList = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const history = useHistory();
   const [sortBy, setSortBy] = useState('');
-  const [filteredData, setFilteredData] = useState<any[]>([]);
   const [viewType, setViewType] = useState(
     settings.getSync('viewType') || 'list'
   );
-  const history = useHistory();
   const { isLoading, isError, data: playlists, error }: any = useQuery(
     ['playlists', sortBy],
     () => getPlaylists(sortBy)
   );
-
-  useEffect(() => {
-    if (searchQuery !== '') {
-      setFilteredData(
-        playlists.filter((playlist: any) => {
-          return (
-            playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            playlist.comment?.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-        })
-      );
-    } else {
-      setFilteredData([]);
-    }
-  }, [playlists, searchQuery]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredData = useSearchQuery(searchQuery, playlists, [
+    'name',
+    'comment',
+  ]);
 
   const handleRowClick = (_e: any, rowData: any) => {
     history.push(`playlist/${rowData.id}`);

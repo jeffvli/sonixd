@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getPlaylist } from '../../api/api';
@@ -11,10 +11,11 @@ import {
   setSelected,
   clearSelected,
 } from '../../redux/multiSelectSlice';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
-import PlaylistViewHeader from './PlaylistViewHeader';
+import GenericPageHeader from '../layout/GenericPageHeader';
 
 interface PlaylistParams {
   id: string;
@@ -60,13 +61,18 @@ const tableColumns = [
 ];
 
 const PlaylistView = () => {
+  const dispatch = useAppDispatch();
   const { id } = useParams<PlaylistParams>();
   const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', id],
     () => getPlaylist(id)
   );
-
-  const dispatch = useAppDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredData = useSearchQuery(searchQuery, data?.entry, [
+    'title',
+    'artist',
+    'album',
+  ]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -107,18 +113,20 @@ const PlaylistView = () => {
 
   return (
     <GenericPage
-      title="Playlists"
       header={
-        <PlaylistViewHeader
-          name={data.name}
-          comment={data.comment}
-          songCount={data.songCount}
+        <GenericPageHeader
           image={data.image}
+          title={data.name}
+          subtitle={data.comment}
+          searchQuery={searchQuery}
+          handleSearch={(e: any) => setSearchQuery(e)}
+          clearSearchQuery={() => setSearchQuery('')}
+          showSearchBar
         />
       }
     >
       <ListViewType
-        data={data.entry}
+        data={searchQuery !== '' ? filteredData : data.entry}
         tableColumns={tableColumns}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import {
   moveUp,
   moveDown,
@@ -32,7 +33,6 @@ const tableColumns = [
     resizable: true,
     width: 350,
   },
-
   {
     id: 'Artist',
     dataKey: 'artist',
@@ -57,23 +57,15 @@ const tableColumns = [
 ];
 
 const NowPlayingView = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
+  const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (searchQuery !== '') {
-      setFilteredData(
-        playQueue.entry.filter((entry: any) => {
-          return entry.title.toLowerCase().includes(searchQuery.toLowerCase());
-        })
-      );
-    } else {
-      setFilteredData([]);
-    }
-  }, [playQueue?.entry, searchQuery]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredData = useSearchQuery(searchQuery, playQueue.entry, [
+    'title',
+    'artist',
+    'album',
+  ]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {

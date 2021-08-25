@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch } from '../../redux/hooks';
 import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import {
@@ -96,9 +97,8 @@ const albumTableColumns = [
 ];
 
 const StarredView = () => {
+  const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState('Tracks');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
   const [viewType, setViewType] = useState(
     settings.getSync('viewType') || 'list'
   );
@@ -106,37 +106,16 @@ const StarredView = () => {
     'starred',
     getStarred
   );
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (searchQuery !== '') {
-      switch (currentPage) {
-        case 'Tracks':
-          setFilteredData(
-            data.song.filter((song: any) => {
-              return song.title
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase());
-            })
-          );
-          break;
-        case 'Albums':
-          setFilteredData(
-            data.album.filter((album: any) => {
-              return album.name
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase());
-            })
-          );
-          break;
-        default:
-          break;
-      }
-    } else {
-      setFilteredData([]);
-    }
-  }, [currentPage, searchQuery, data?.album, data?.song]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredData = useSearchQuery(
+    searchQuery,
+    currentPage === 'Tracks'
+      ? data?.song
+      : currentPage === 'Albums'
+      ? data?.album
+      : data?.song,
+    ['title', 'artist', 'album']
+  );
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {

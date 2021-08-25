@@ -1,4 +1,5 @@
 import React from 'react';
+import { nanoid } from 'nanoid';
 import { FlexboxGrid, Col } from 'rsuite';
 import Card from '../card/Card';
 
@@ -13,7 +14,7 @@ const GridViewType = ({
   return (
     <FlexboxGrid justify="center">
       {data.map((item: any) => (
-        <FlexboxGrid.Item componentClass={Col} key={item.id}>
+        <FlexboxGrid.Item componentClass={Col} key={nanoid()}>
           <Card
             title={item[cardTitle.property]}
             subtitle={`${item[cardSubtitle.property]}${cardSubtitle.unit}`}
