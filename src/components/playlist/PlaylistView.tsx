@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
+import { ButtonToolbar } from 'rsuite';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
+import {
+  DeleteButton,
+  EditButton,
+  PlayAppendButton,
+  PlayButton,
+  PlayShuffleAppendButton,
+  PlayShuffleButton,
+} from '../shared/ToolbarButtons';
 import { getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
@@ -115,9 +124,30 @@ const PlaylistView = () => {
     <GenericPage
       header={
         <GenericPageHeader
-          image={data.image}
           title={data.name}
-          subtitle={data.comment}
+          subtitle={
+            <div>
+              <div
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {data.comment}
+              </div>
+              <div style={{ marginTop: '10px' }}>
+                <ButtonToolbar>
+                  <PlayButton appearance="primary" size="lg" circle />
+                  <PlayShuffleButton />
+                  <PlayAppendButton />
+                  <PlayShuffleAppendButton />
+                  <EditButton />
+                  <DeleteButton />
+                </ButtonToolbar>
+              </div>
+            </div>
+          }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
