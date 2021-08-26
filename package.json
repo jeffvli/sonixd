@@ -175,6 +175,7 @@
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-test-renderer": "^16.9.3",
+    "@types/react-virtualized": "^9.21.13",
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
     "@types/styled-components": "^5.1.12",

@@ -1,5 +1,4 @@
-/* eslint-disable no-lonely-if */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';

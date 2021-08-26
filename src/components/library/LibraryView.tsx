@@ -1,5 +1,4 @@
-/* eslint-disable react/button-has-type */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Loader as RsuiteLoader, Nav, SelectPicker } from 'rsuite';
 import { useQuery } from 'react-query';
 import VisibilitySensor from 'react-visibility-sensor';
