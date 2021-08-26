@@ -3,8 +3,9 @@ import React, { useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
+import 'react-virtualized/styles.css';
 
-const GAP_SIZE = -10;
+const GAP_SIZE = 5;
 const CARD_HEIGHT = 225;
 const CARD_WIDTH = 175;
 
