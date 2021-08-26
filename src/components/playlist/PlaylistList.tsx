@@ -138,6 +138,7 @@ const PlaylistList = () => {
           }}
           playClick={{ type: 'playlist', idProperty: 'id' }}
           size="150px"
+          cacheType="playlist"
         />
       )}
     </GenericPage>

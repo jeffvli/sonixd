@@ -219,6 +219,7 @@ const StarredView = () => {
               cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
               playClick={{ type: 'album', idProperty: 'id' }}
               size="150px"
+              cacheType="album"
             />
           )}
         </>

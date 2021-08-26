@@ -15,6 +15,7 @@ const AlbumList = ({ data, viewType }: any) => {
         playClick={{ type: 'album', idProperty: 'id' }}
         subUrl={`/library/artist/${data.artistId}`}
         size="150px"
+        cacheType="album"
       />
     );
   }

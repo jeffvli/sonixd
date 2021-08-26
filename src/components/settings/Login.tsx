@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import md5 from 'md5';
 import randomstring from 'randomstring';
+import settings from 'electron-settings';
 
 import {
   Button,
@@ -56,6 +57,13 @@ const Login = () => {
     localStorage.setItem('username', userName);
     localStorage.setItem('salt', salt);
     localStorage.setItem('hash', hash);
+
+    settings.setSync('server', serverName);
+    settings.setSync('serverBase64', btoa(serverName));
+    settings.setSync('username', userName);
+    settings.setSync('salt', salt);
+    settings.setSync('hash', hash);
+
     window.location.reload();
   };
 

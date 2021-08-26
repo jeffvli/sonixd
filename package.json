@@ -256,6 +256,7 @@
     "electron-updater": "^4.3.4",
     "format-duration": "^1.4.0",
     "history": "^5.0.0",
+    "image-downloader": "^4.0.3",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "md5-es": "^1.8.2",

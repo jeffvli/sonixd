@@ -22,7 +22,6 @@ export const StyledPanel = styled(Panel)<Card>`
   text-align: center;
   width: ${(props) => props.cardSize + 2};
   height: ${(props) => props.cardSize + 55};
-  margin: 10px;
   &:hover {
     border: 1px solid ${(props) => props.theme.main};
   }
@@ -96,7 +95,7 @@ export const Overlay = styled.div<Card>`
 
   .lazy-load-image-background.opacity.lazy-load-image-loaded {
     opacity: 1;
-    transition: opacity 0.3s;
+    transition: opacity 0.1s;
   }
 `;
 

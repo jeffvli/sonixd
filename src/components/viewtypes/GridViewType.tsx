@@ -4,11 +4,11 @@ import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
 
-const GAP_SIZE = 0;
+const GAP_SIZE = -10;
 const CARD_HEIGHT = 225;
 const CARD_WIDTH = 175;
 
-const CardPROP = ({ data, index, style }: any) => {
+const GridCard = ({ data, index, style }: any) => {
   const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
   const startIndex = index * columnCount;
   const stopIndex = Math.min(itemCount - 1, startIndex + columnCount - 1);
@@ -54,6 +54,7 @@ const CardPROP = ({ data, index, style }: any) => {
             ...data.playClick,
             id: data.data[i][data.playClick.idProperty],
           }}
+          details={{ cacheType: data.cacheType, ...data.data[i] }}
         />
       </div>
     );
@@ -82,6 +83,7 @@ function ListWrapper({
   height,
   itemCount,
   width,
+  cacheType,
 }: any) {
   // How many cards can we show per row, given the current width?
   const columnCount = Math.floor((width - GAP_SIZE) / (CARD_WIDTH + GAP_SIZE));
@@ -96,11 +98,21 @@ function ListWrapper({
       size,
       columnCount,
       itemCount,
+      cacheType,
       cardWidth: CARD_WIDTH,
       cardHeight: CARD_HEIGHT,
       gapSize: GAP_SIZE,
     }),
-    [cardSubtitle, cardTitle, columnCount, data, itemCount, playClick, size]
+    [
+      cacheType,
+      cardSubtitle,
+      cardTitle,
+      columnCount,
+      data,
+      itemCount,
+      playClick,
+      size,
+    ]
   );
 
   return (
@@ -112,7 +124,7 @@ function ListWrapper({
       width={width}
       itemData={itemData}
     >
-      {CardPROP}
+      {GridCard}
     </List>
   );
 }
@@ -123,6 +135,7 @@ const GridViewType = ({
   cardSubtitle,
   playClick,
   size,
+  cacheType,
 }: any) => {
   return (
     <AutoSizer>
@@ -136,6 +149,7 @@ const GridViewType = ({
           cardSubtitle={cardSubtitle}
           playClick={playClick}
           size={size}
+          cacheType={cacheType}
         />
       )}
     </AutoSizer>
