@@ -1,7 +1,121 @@
-import React from 'react';
-import { nanoid } from 'nanoid';
-import { FlexboxGrid, Col } from 'rsuite';
+// Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
+import React, { useMemo } from 'react';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
+
+const GAP_SIZE = 0;
+const CARD_HEIGHT = 225;
+const CARD_WIDTH = 175;
+
+const CardPROP = ({ data, index, style }: any) => {
+  const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
+  const startIndex = index * columnCount;
+  const stopIndex = Math.min(itemCount - 1, startIndex + columnCount - 1);
+  const cards = [];
+
+  for (let i = startIndex; i <= stopIndex; i += 1) {
+    cards.push(
+      <div
+        key={`card-${i}`}
+        style={{
+          flex: `0 0 ${cardWidth}px`,
+          height: cardHeight,
+          margin: `0 ${gapSize / 2}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Card
+          title={data.data[i][data.cardTitle.property]}
+          subtitle={`${data.data[i][data.cardSubtitle.property]}${
+            data.cardSubtitle.unit
+          }`}
+          coverArt={data.data[i].image}
+          size={data.size}
+          url={
+            data.cardTitle.urlProperty
+              ? `${data.cardTitle.prefix}/${
+                  data.data[i][data.cardTitle.urlProperty]
+                }`
+              : undefined
+          }
+          subUrl={
+            data.cardSubtitle.urlProperty
+              ? `${data.cardSubtitle.prefix}/${
+                  data.data[i][data.cardSubtitle.urlProperty]
+                }`
+              : undefined
+          }
+          lazyLoad
+          hasHoverButtons
+          playClick={{
+            ...data.playClick,
+            id: data.data[i][data.playClick.idProperty],
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        ...style,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {cards}
+    </div>
+  );
+};
+
+function ListWrapper({
+  data,
+  cardTitle,
+  cardSubtitle,
+  playClick,
+  size,
+  height,
+  itemCount,
+  width,
+}: any) {
+  // How many cards can we show per row, given the current width?
+  const columnCount = Math.floor((width - GAP_SIZE) / (CARD_WIDTH + GAP_SIZE));
+  const rowCount = Math.ceil(itemCount / columnCount);
+
+  const itemData = useMemo(
+    () => ({
+      data,
+      cardTitle,
+      cardSubtitle,
+      playClick,
+      size,
+      columnCount,
+      itemCount,
+      cardWidth: CARD_WIDTH,
+      cardHeight: CARD_HEIGHT,
+      gapSize: GAP_SIZE,
+    }),
+    [cardSubtitle, cardTitle, columnCount, data, itemCount, playClick, size]
+  );
+
+  return (
+    <List
+      className="List"
+      height={height}
+      itemCount={rowCount}
+      itemSize={CARD_HEIGHT + GAP_SIZE}
+      width={width}
+      itemData={itemData}
+    >
+      {CardPROP}
+    </List>
+  );
+}
 
 const GridViewType = ({
   data,
@@ -9,35 +123,22 @@ const GridViewType = ({
   cardSubtitle,
   playClick,
   size,
-  ...rest
 }: any) => {
   return (
-    <FlexboxGrid justify="center">
-      {data.map((item: any) => (
-        <FlexboxGrid.Item componentClass={Col} key={nanoid()}>
-          <Card
-            title={item[cardTitle.property]}
-            subtitle={`${item[cardSubtitle.property]}${cardSubtitle.unit}`}
-            coverArt={item.image}
-            size={size}
-            url={
-              cardTitle.urlProperty
-                ? `${cardTitle.prefix}/${item[cardTitle.urlProperty]}`
-                : undefined
-            }
-            subUrl={
-              cardSubtitle.urlProperty
-                ? `${cardSubtitle.prefix}/${item[cardSubtitle.urlProperty]}`
-                : undefined
-            }
-            lazyLoad
-            hasHoverButtons
-            playClick={{ ...playClick, id: item[playClick.idProperty] }}
-            {...rest}
-          />
-        </FlexboxGrid.Item>
-      ))}
-    </FlexboxGrid>
+    <AutoSizer>
+      {({ height, width }: any) => (
+        <ListWrapper
+          height={height}
+          itemCount={data.length}
+          width={width}
+          data={data}
+          cardTitle={cardTitle}
+          cardSubtitle={cardSubtitle}
+          playClick={playClick}
+          size={size}
+        />
+      )}
+    </AutoSizer>
   );
 };
 
