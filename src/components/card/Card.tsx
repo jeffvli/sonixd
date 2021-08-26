@@ -76,8 +76,8 @@ const Card = ({
   };
 
   return (
-    <StyledPanel tabIndex={0} bordered shaded cardSize={size}>
-      <Overlay cardSize={size}>
+    <StyledPanel tabIndex={0} bordered shaded cardsize={size} {...rest}>
+      <Overlay cardsize={size}>
         {lazyLoad ? (
           <LazyCardImg
             src={
@@ -94,7 +94,7 @@ const Card = ({
             alt="img"
             effect="opacity"
             onClick={handleClick}
-            cardSize={size}
+            cardsize={size}
             afterLoad={() => {
               cacheImage(
                 `${rest.details.cacheType}_${rest.details.id}.jpg`,
@@ -108,7 +108,7 @@ const Card = ({
             src={rest.coverArt}
             alt="img"
             onClick={handleClick}
-            cardSize={size}
+            cardsize={size}
           />
         )}
 
@@ -121,13 +121,13 @@ const Card = ({
           />
         )}
       </Overlay>
-      <InfoPanel cardSize={size}>
+      <InfoPanel cardsize={size}>
         <InfoSpan>
           <CardTitleButton
             appearance="link"
             size="sm"
             onClick={handleClick}
-            cardSize={size}
+            cardsize={size}
           >
             {rest.title}
           </CardTitleButton>
@@ -138,12 +138,12 @@ const Card = ({
               appearance="link"
               size="xs"
               onClick={handleSubClick}
-              cardSize={size}
+              cardsize={size}
             >
               {rest.subtitle}
             </CardSubtitleButton>
           ) : (
-            <CardSubtitle cardSize={size}>{rest.subtitle}</CardSubtitle>
+            <CardSubtitle cardsize={size}>{rest.subtitle}</CardSubtitle>
           )}
         </InfoSpan>
       </InfoPanel>

@@ -55,10 +55,16 @@ const cacheImage = (fileName: string, url: string, cacheType: string) => {
   // Check if an existing cached image exists
   if (!fs.existsSync(cachedImgPath) && !fs.existsSync(tempImgPath)) {
     if (!options.url.includes('placeholder')) {
-      download
-        .image(options)
-        .then(() => fs.renameSync(tempImgPath, cachedImgPath))
-        .catch((err: any) => console.log(err));
+      try {
+        download
+          .image(options)
+          .then(() => fs.renameSync(tempImgPath, cachedImgPath))
+          .catch((err: any) => console.log(err));
+      } finally {
+        if (fs.existsSync(tempImgPath)) {
+          fs.rmSync(tempImgPath);
+        }
+      }
     }
   }
 };

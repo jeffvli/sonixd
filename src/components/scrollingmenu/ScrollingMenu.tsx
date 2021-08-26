@@ -64,6 +64,9 @@ const ScrollingMenu = ({
             playClick={{ type: 'album', id: item.id }}
             hasHoverButtons
             size={cardSize}
+            details={{ cacheType: 'album', ...item }}
+            lazyLoad
+            style={{ margin: '0px 5px 0px 5px' }}
           />
         ))}
       </ScrollMenu>
