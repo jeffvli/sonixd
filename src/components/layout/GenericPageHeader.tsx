@@ -21,7 +21,14 @@ const GenericPageHeader = ({
     <>
       {image && (
         <div style={{ display: 'inline-block' }}>
-          {image && <LazyLoadImage src={image} effect="opacity" height="150" />}
+          {image && (
+            <LazyLoadImage
+              src={image}
+              effect="opacity"
+              height={145}
+              width={145}
+            />
+          )}
         </div>
       )}
 
@@ -29,7 +36,7 @@ const GenericPageHeader = ({
         style={{
           display: 'inline-block',
           width: image ? 'calc(100% - 160px)' : '100%',
-          marginLeft: image ? '10px' : '0px',
+          marginLeft: image ? '15px' : '0px',
           height: '100%',
         }}
       >

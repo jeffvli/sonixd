@@ -124,6 +124,7 @@ const PlaylistView = () => {
     <GenericPage
       header={
         <GenericPageHeader
+          image={data.image}
           title={data.name}
           subtitle={
             <div>
