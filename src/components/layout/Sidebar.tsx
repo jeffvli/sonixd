@@ -2,12 +2,7 @@ import React from 'react';
 import { Sidenav, Nav, Icon } from 'rsuite';
 import { FixedSidebar } from './styled';
 
-const Sidebar = ({
-  expand,
-  handleToggle,
-  active,
-  handleSidebarSelect,
-}: any) => {
+const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
   return (
     <FixedSidebar id="sidebar" width={expand ? 193 : 56} collapsible>
       <Sidenav
@@ -22,7 +17,6 @@ const Sidebar = ({
         <Sidenav.Body>
           <Nav>
             <Nav.Item
-              active={active === 'discover'}
               eventKey="discover"
               icon={<Icon icon="dashboard" />}
               onSelect={handleSidebarSelect}
@@ -30,7 +24,6 @@ const Sidebar = ({
               Dashboard
             </Nav.Item>
             <Nav.Item
-              active={active === 'nowplaying'}
               eventKey="nowplaying"
               icon={<Icon icon="music" />}
               onSelect={handleSidebarSelect}
@@ -38,7 +31,6 @@ const Sidebar = ({
               Now Playing
             </Nav.Item>
             <Nav.Item
-              active={active === 'starred'}
               eventKey="starred"
               icon={<Icon icon="star" />}
               onSelect={handleSidebarSelect}
@@ -46,7 +38,6 @@ const Sidebar = ({
               Starred
             </Nav.Item>
             <Nav.Item
-              active={active === 'playlists'}
               eventKey="playlists"
               icon={<Icon icon="bookmark" />}
               onSelect={handleSidebarSelect}
@@ -54,7 +45,6 @@ const Sidebar = ({
               Playlists
             </Nav.Item>
             <Nav.Item
-              active={active === 'library'}
               eventKey="library"
               icon={<Icon icon="book2" />}
               onSelect={handleSidebarSelect}
@@ -62,7 +52,6 @@ const Sidebar = ({
               Library
             </Nav.Item>
             <Nav.Item
-              active={active === 'settings'}
               eventKey="settings"
               icon={<Icon icon="gear-circle" />}
               onSelect={handleSidebarSelect}
@@ -70,16 +59,10 @@ const Sidebar = ({
               Config
             </Nav.Item>
             <Nav.Item
-              icon={
-                <Icon
-                  icon={
-                    expand ? 'exclamation-triangle' : 'exclamation-triangle'
-                  }
-                />
-              }
+              icon={<Icon icon={expand ? 'arrow-left' : 'arrow-right'} />}
               onSelect={handleToggle}
             >
-              Toggle Expand
+              {expand ? 'Collapse' : 'Expand'}
             </Nav.Item>
           </Nav>
         </Sidenav.Body>

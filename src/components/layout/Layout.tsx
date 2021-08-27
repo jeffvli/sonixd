@@ -7,7 +7,6 @@ import { RootContainer, RootFooter, MainContainer } from './styled';
 
 const Layout = ({ footer, children }: any) => {
   const [expandSidebar, setExpandSidebar] = useState(true);
-  const [activeSidebarNav, setActiveSidebarNav] = useState('discover');
   const history = useHistory();
 
   const handleToggle = () => {
@@ -17,7 +16,6 @@ const Layout = ({ footer, children }: any) => {
   const handleSidebarSelect = (e: string) => {
     let route;
     const navItem = String(e);
-    setActiveSidebarNav(navItem);
     switch (navItem) {
       case 'discover':
         route = '/';
@@ -51,7 +49,6 @@ const Layout = ({ footer, children }: any) => {
       <Sidebar
         expand={expandSidebar}
         handleToggle={handleToggle}
-        active={activeSidebarNav}
         handleSidebarSelect={handleSidebarSelect}
       />
       <RootContainer id="container-root">
