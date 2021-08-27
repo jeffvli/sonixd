@@ -38,7 +38,7 @@ export const TitleHeader = styled.header`
   height: 32px;
   width: ${(props) =>
     props.className?.includes('maximized') ? '100%' : 'calc(100% - 2px)'};
-  background: #20252c;
+  background: #000000;
   padding: 4px;
   color: #fff;
 `;

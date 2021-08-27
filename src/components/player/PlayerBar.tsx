@@ -226,7 +226,7 @@ const PlayerBar = () => {
                         effect="opacity"
                         width="65"
                         height="65"
-                        style={{ borderRadius: '10px', cursor: 'pointer' }}
+                        style={{ cursor: 'pointer' }}
                         onClick={() => history.push(`/nowplaying`)}
                         onKeyDown={(e: any) => {
                           if (e.keyCode === 32) {

@@ -119,3 +119,12 @@ h1 {
 .maximized #max-button {
   display: none;
 }
+
+.lazy-load-image-background.opacity {
+  opacity: 0;
+}
+
+.lazy-load-image-background.opacity.lazy-load-image-loaded {
+  opacity: 1;
+  transition: opacity 0.1s;
+}

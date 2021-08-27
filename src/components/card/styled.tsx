@@ -88,15 +88,6 @@ export const Overlay = styled.div<Card>`
   &:hover .rs-btn {
     display: block;
   }
-
-  .lazy-load-image-background.opacity {
-    opacity: 0;
-  }
-
-  .lazy-load-image-background.opacity.lazy-load-image-loaded {
-    opacity: 1;
-    transition: opacity 0.1s;
-  }
 `;
 
 export const HoverControlButton = styled(IconButton)`
@@ -110,7 +101,7 @@ export const HoverControlButton = styled(IconButton)`
   left: 50%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  background: #20252c;
+  background: ${(props) => props.theme.background};
 
   &:hover {
     opacity: 1;

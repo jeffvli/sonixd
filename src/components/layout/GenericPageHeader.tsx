@@ -1,5 +1,4 @@
 import React from 'react';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 
@@ -21,23 +20,15 @@ const GenericPageHeader = ({
     <>
       {image && (
         <div style={{ display: 'inline-block' }}>
-          {image && (
-            <LazyLoadImage
-              src={image}
-              effect="opacity"
-              height={145}
-              width={145}
-            />
-          )}
+          <img src={image} alt="header-img" height="145px" width="145px" />
         </div>
       )}
 
       <div
         style={{
-          display: 'inline-block',
+          display: image ? 'inline-block' : 'undefined',
           width: image ? 'calc(100% - 160px)' : '100%',
           marginLeft: image ? '15px' : '0px',
-          height: '100%',
         }}
       >
         <div
