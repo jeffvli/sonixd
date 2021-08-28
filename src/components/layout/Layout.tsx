@@ -5,8 +5,8 @@ import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
 
-const Layout = ({ footer, children }: any) => {
-  const [expandSidebar, setExpandSidebar] = useState(true);
+const Layout = ({ footer, children, disableSidebar }: any) => {
+  const [expandSidebar, setExpandSidebar] = useState(false);
   const history = useHistory();
 
   const handleToggle = () => {
@@ -32,8 +32,8 @@ const Layout = ({ footer, children }: any) => {
       case 'library':
         route = '/library';
         break;
-      case 'settings':
-        route = '/settings';
+      case 'config':
+        route = '/config';
         break;
       default:
         route = '/';
@@ -50,6 +50,7 @@ const Layout = ({ footer, children }: any) => {
         expand={expandSidebar}
         handleToggle={handleToggle}
         handleSidebarSelect={handleSidebarSelect}
+        disableSidebar={disableSidebar}
       />
       <RootContainer id="container-root">
         <MainContainer id="container-main" expanded={expandSidebar}>

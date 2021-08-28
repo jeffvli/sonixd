@@ -31,16 +31,6 @@ h1 {
   z-index: 1;
 }
 
-.login__root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login__panel {
-  margin-top: 200px;
-}
-
 .active {
   color: #169de0 !important;
 }

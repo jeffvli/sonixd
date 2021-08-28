@@ -2,7 +2,12 @@ import React from 'react';
 import { Sidenav, Nav, Icon } from 'rsuite';
 import { FixedSidebar } from './styled';
 
-const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
+const Sidebar = ({
+  expand,
+  handleToggle,
+  handleSidebarSelect,
+  disableSidebar,
+}: any) => {
   return (
     <FixedSidebar id="sidebar" width={expand ? 193 : 56} collapsible>
       <Sidenav
@@ -20,6 +25,7 @@ const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
               eventKey="discover"
               icon={<Icon icon="dashboard" />}
               onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
             >
               Dashboard
             </Nav.Item>
@@ -27,6 +33,7 @@ const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
               eventKey="nowplaying"
               icon={<Icon icon="music" />}
               onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
             >
               Now Playing
             </Nav.Item>
@@ -34,6 +41,7 @@ const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
               eventKey="starred"
               icon={<Icon icon="star" />}
               onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
             >
               Starred
             </Nav.Item>
@@ -41,6 +49,7 @@ const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
               eventKey="playlists"
               icon={<Icon icon="bookmark" />}
               onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
             >
               Playlists
             </Nav.Item>
@@ -48,19 +57,22 @@ const Sidebar = ({ expand, handleToggle, handleSidebarSelect }: any) => {
               eventKey="library"
               icon={<Icon icon="book2" />}
               onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
             >
               Library
             </Nav.Item>
             <Nav.Item
-              eventKey="settings"
+              eventKey="config"
               icon={<Icon icon="gear-circle" />}
               onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
             >
               Config
             </Nav.Item>
             <Nav.Item
               icon={<Icon icon={expand ? 'arrow-left' : 'arrow-right'} />}
               onSelect={handleToggle}
+              disabled={disableSidebar}
             >
               {expand ? 'Collapse' : 'Expand'}
             </Nav.Item>
