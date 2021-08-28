@@ -246,19 +246,41 @@ const PlayerBar = () => {
                       }}
                     >
                       {playQueue.entry.length >= 1 && (
-                        <LinkButton tabIndex={0}>
-                          {playQueue.entry[playQueue.currentIndex]?.title ||
-                            'Unknown title'}
-                        </LinkButton>
+                        <CustomTooltip
+                          text={
+                            playQueue.entry[playQueue.currentIndex]?.title ||
+                            'Unknown title'
+                          }
+                          delay={800}
+                        >
+                          <LinkButton tabIndex={0}>
+                            {playQueue.entry[playQueue.currentIndex]?.title ||
+                              'Unknown title'}
+                          </LinkButton>
+                        </CustomTooltip>
                       )}
                     </Row>
 
-                    <Row style={{ height: '35px', width: '100%' }}>
+                    <Row
+                      style={{
+                        height: '35px',
+                        minWidth: '130px',
+                        width: '50%',
+                      }}
+                    >
                       {playQueue.entry.length >= 1 && (
-                        <LinkButton tabIndex={0} subtitle="true">
-                          {playQueue.entry[playQueue.currentIndex]?.artist ||
-                            'Unknown artist'}
-                        </LinkButton>
+                        <CustomTooltip
+                          text={
+                            playQueue.entry[playQueue.currentIndex]?.artist ||
+                            'Unknown artist'
+                          }
+                          delay={800}
+                        >
+                          <LinkButton tabIndex={0} subtitle="true">
+                            {playQueue.entry[playQueue.currentIndex]?.artist ||
+                              'Unknown artist'}
+                          </LinkButton>
+                        </CustomTooltip>
                       )}
                     </Row>
                   </Col>
