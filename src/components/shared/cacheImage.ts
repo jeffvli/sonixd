@@ -4,7 +4,7 @@ import path from 'path';
 
 const download = require('image-downloader');
 
-const cacheImage = (fileName: string, url: string, cacheType: string) => {
+const cacheImage = (fileName: string, url: string) => {
   const settingsPath = path.dirname(settings.file());
 
   // We save the img to a temp path first so that React does not try to use the
@@ -13,7 +13,7 @@ const cacheImage = (fileName: string, url: string, cacheType: string) => {
     settingsPath,
     'sonixdCache',
     `${settings.getSync('serverBase64')}`,
-    cacheType,
+    'image',
     `TEMP_${fileName}`
   );
 
@@ -21,7 +21,7 @@ const cacheImage = (fileName: string, url: string, cacheType: string) => {
     settingsPath,
     'sonixdCache',
     `${settings.getSync('serverBase64')}`,
-    cacheType,
+    'image',
     `${fileName}`
   );
 
@@ -37,7 +37,7 @@ const cacheImage = (fileName: string, url: string, cacheType: string) => {
         settingsPath,
         'sonixdCache',
         `${settings.getSync('serverBase64')}`,
-        cacheType
+        'image'
       )
     )
   ) {
@@ -46,7 +46,7 @@ const cacheImage = (fileName: string, url: string, cacheType: string) => {
         settingsPath,
         'sonixdCache',
         `${settings.getSync('serverBase64')}`,
-        cacheType
+        'image'
       ),
       { recursive: true }
     );

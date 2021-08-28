@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import settings from 'electron-settings';
 import path from 'path';
 import fs from 'fs';
@@ -34,6 +34,7 @@ const Card = ({
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const [cacheImages] = useState(Boolean(settings.getSync('cacheImages')));
 
   const handleClick = () => {
     history.push(url);
@@ -69,7 +70,7 @@ const Card = ({
         path.dirname(settings.file()),
         'sonixdCache',
         `${settings.getSync('serverBase64')}`,
-        rest.details.cacheType,
+        'image',
         `${rest.details.cacheType}_${rest.details.id}.jpg`
       )
     );
@@ -92,7 +93,7 @@ const Card = ({
                     path.dirname(settings.file()),
                     'sonixdCache',
                     `${settings.getSync('serverBase64')}`,
-                    rest.details.cacheType,
+                    'image',
                     `${rest.details.cacheType}_${rest.details.id}.jpg`
                   )
                 : rest.coverArt
@@ -102,11 +103,12 @@ const Card = ({
             onClick={handleClick}
             cardsize={size}
             afterLoad={() => {
-              cacheImage(
-                `${rest.details.cacheType}_${rest.details.id}.jpg`,
-                rest.coverArt.replace(/size=\d+/, 'size=350'),
-                rest.details.cacheType
-              );
+              if (cacheImages) {
+                cacheImage(
+                  `${rest.details.cacheType}_${rest.details.id}.jpg`,
+                  rest.coverArt.replace(/size=\d+/, 'size=350')
+                );
+              }
             }}
           />
         ) : (

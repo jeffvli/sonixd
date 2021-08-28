@@ -4,6 +4,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from 'react';
+import settings from 'electron-settings';
 import { Notification } from 'rsuite';
 import ReactAudioPlayer from 'react-audio-player';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -57,7 +58,7 @@ const Player = ({ children }: any, ref: any) => {
   }, [playQueue.currentPlayer, playQueue.status]);
 
   const handleListen1 = () => {
-    const fadeDuration = 10;
+    const fadeDuration = Number(settings.getSync('fadeDuration')) || 0;
     const currentSeek = player1Ref.current?.audioEl.current?.currentTime || 0;
     const seekable =
       player1Ref.current.audioEl.current.seekable.length >= 1
@@ -104,7 +105,7 @@ const Player = ({ children }: any, ref: any) => {
   };
 
   const handleListen2 = () => {
-    const fadeDuration = 10;
+    const fadeDuration = Number(settings.getSync('fadeDuration')) || 0;
     const currentSeek = player2Ref.current?.audioEl.current?.currentTime || 0;
     const seekable =
       player2Ref.current.audioEl.current.seekable.length >= 1

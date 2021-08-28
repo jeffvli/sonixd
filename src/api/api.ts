@@ -225,3 +225,17 @@ export const getArtists = async () => {
 
   return artistList;
 };
+
+export const startScan = async () => {
+  const { data } = await api.get(`/startScan`);
+  const scanStatus = data?.scanStatus;
+
+  return scanStatus;
+};
+
+export const getScanStatus = async () => {
+  const { data } = await api.get(`/getScanStatus`);
+  const scanStatus = data?.scanStatus;
+
+  return scanStatus;
+};
