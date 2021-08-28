@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import getFolderSize from 'get-folder-size';
 import path from 'path';
 import settings from 'electron-settings';
 import { Button, ControlLabel, InputNumber, Checkbox, Tag } from 'rsuite';
@@ -8,6 +7,8 @@ import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
+
+const fsUtils = require('nodejs-fs-utils');
 
 const Config = () => {
   const [isScanning, setIsScanning] = useState(false);
@@ -23,23 +24,17 @@ const Config = () => {
       `${settings.getSync('serverBase64')}`
     );
 
-    const imageCacheFolder = path.join(rootCacheFolder, 'image');
+    const imgCacheFolder = path.join(rootCacheFolder, 'image');
     const songCacheFolder = path.join(rootCacheFolder, 'song');
 
-    getFolderSize
-      .loose(imageCacheFolder)
-      .then((size: number) =>
-        setImgCacheSize(Number((size / 1000 / 1000).toFixed(0)))
-      )
-      .catch((err: any) => console.log(err));
+    setImgCacheSize(
+      Number((fsUtils.fsizeSync(imgCacheFolder) / 1000 / 1000).toFixed(0))
+    );
 
-    getFolderSize
-      .loose(songCacheFolder)
-      .then((size: number) =>
-        setSongCacheSize(Number((size / 1000 / 1000).toFixed(0)))
-      )
-      .catch((err: any) => console.log(err));
-  });
+    setSongCacheSize(
+      Number((fsUtils.fsizeSync(songCacheFolder) / 1000 / 1000).toFixed(0))
+    );
+  }, []);
 
   useEffect(() => {
     // Check scan status on render

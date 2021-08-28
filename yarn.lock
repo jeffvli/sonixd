@@ -1635,13 +1635,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/get-folder-size@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/get-folder-size/-/get-folder-size-3.0.1.tgz#bedb72ecdaa03a5b5950d2fa5bd8647d565f66de"
-  integrity sha512-TyUyOJjzBYgfVRLusyb7tB7YXv5OgBz98a7gnSQzdaX+bqW1fqvFHRiDKKaFLAtbkYOD21nbZcAFuBxUuknDOQ==
-  dependencies:
-    "@types/node" "*"
-
 "@types/glob@^7.1.1":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.3.tgz#e6ba80f36b7daad2c685acd9266382e68985c183"
@@ -6046,11 +6039,6 @@ functions-have-names@^1.2.0:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.1.tgz#a981ac397fa0c9964551402cdc5533d7a4d52f91"
   integrity sha512-j48B/ZI7VKs3sgeI2cZp7WXWmZXu7Iq5pl5/vptV5N2mq+DGFuS/ulaDjtaoLpYzuD6u8UgrUKHfgo7fDTSiBA==
 
-gar@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/gar/-/gar-1.0.4.tgz#f777bc7db425c0572fdeb52676172ca1ae9888b8"
-  integrity sha512-w4n9cPWyP7aHxKxYHFQMegj7WIAsL/YX/C4Bs5Rr8s1H9M1rNtRWRsw+ovYMkXDQ5S4ZbYHsHAPmevPjPgw44w==
-
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
@@ -6081,13 +6069,6 @@ get-caller-file@^2.0.1, get-caller-file@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-2.0.5.tgz#4f94412a82db32f36e3b0b9741f8a97feb031f7e"
   integrity sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
-
-get-folder-size@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/get-folder-size/-/get-folder-size-3.1.0.tgz#96d39f7e1a0b2e30d13958e05373ebfa32bdfaa4"
-  integrity sha512-/I7q+x1HCd22IXP4+kp2Wkz8+au7VfNwNyMfM4Z0gwaTMs+dJ1ShXUWDGSWXi+rDU59MI/j7NBP7+kd7zejnPw==
-  dependencies:
-    gar "^1.0.4"
 
 get-intrinsic@^1.0.0:
   version "1.0.1"
@@ -8643,6 +8624,11 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+module-require@*:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/module-require/-/module-require-1.4.5.tgz#633df0833443c9ad8596f4c42e5237348355af88"
+  integrity sha1-Yz3wgzRDya2FlvTELlI3NINVr4g=
+
 moment@^2.29.1:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
@@ -8901,6 +8887,13 @@ node-sass@^5.0.0:
     sass-graph "2.2.5"
     stdout-stream "^1.4.0"
     "true-case-path" "^1.0.2"
+
+nodejs-fs-utils@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/nodejs-fs-utils/-/nodejs-fs-utils-1.2.5.tgz#0f5dd1c44097842de8bcc5f838ec87296d2f79e5"
+  integrity sha512-QuIFfHWaQJhjmUnGSCq+knKrYL2Q8HJUNAzRk8qoHK+g0oKzq57MdB4tODIknclKII0oAO0kO1lDt8yLyLhsAQ==
+  dependencies:
+    module-require "*"
 
 nopt@^4.0.1:
   version "4.0.3"
