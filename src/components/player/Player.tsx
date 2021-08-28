@@ -24,13 +24,6 @@ import {
 } from '../../redux/playQueueSlice';
 import cacheSong from '../shared/cacheSong';
 
-const rootCacheFolder = path.join(
-  path.dirname(settings.file()),
-  'sonixdCache',
-  `${settings.getSync('serverBase64')}`
-);
-const songCacheFolder = path.join(rootCacheFolder, 'song');
-
 const Player = ({ children }: any, ref: any) => {
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
@@ -242,6 +235,13 @@ const Player = ({ children }: any, ref: any) => {
   };
 
   const checkCachedSong = (id: string) => {
+    const rootCacheFolder = path.join(
+      path.dirname(settings.file()),
+      'sonixdCache',
+      `${settings.getSync('serverBase64')}`
+    );
+    const songCacheFolder = path.join(rootCacheFolder, 'song');
+
     const songCache = fs.readdirSync(songCacheFolder);
     const matchedSong = songCache.filter((song) => song.split('.')[0] === id);
 
