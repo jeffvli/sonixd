@@ -24,6 +24,13 @@ import {
 } from '../../redux/playQueueSlice';
 import cacheSong from '../shared/cacheSong';
 
+const rootCacheFolder = path.join(
+  path.dirname(settings.file()),
+  'sonixdCache',
+  `${settings.getSync('serverBase64')}`
+);
+const songCacheFolder = path.join(rootCacheFolder, 'song');
+
 const Player = ({ children }: any, ref: any) => {
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
@@ -154,6 +161,15 @@ const Player = ({ children }: any, ref: any) => {
   };
 
   const handleOnEnded1 = () => {
+    if (cacheSongs) {
+      cacheSong(
+        `${playQueue.entry[playQueue.player1.index].id}.mp3`,
+        playQueue.entry[playQueue.player1.index].streamUrl.replace(
+          /stream/,
+          'download'
+        )
+      );
+    }
     if (
       playQueue.repeat === 'none' &&
       playQueue.player1.index > playQueue.player2.index
@@ -182,6 +198,15 @@ const Player = ({ children }: any, ref: any) => {
   };
 
   const handleOnEnded2 = () => {
+    if (cacheSongs) {
+      cacheSong(
+        `${playQueue.entry[playQueue.player2.index].id}.mp3`,
+        playQueue.entry[playQueue.player2.index].streamUrl.replace(
+          /stream/,
+          'download'
+        )
+      );
+    }
     if (
       playQueue.repeat === 'none' &&
       playQueue.player2.index > playQueue.player1.index
@@ -217,15 +242,7 @@ const Player = ({ children }: any, ref: any) => {
   };
 
   const checkCachedSong = (id: string) => {
-    const rootCacheFolder = path.join(
-      path.dirname(settings.file()),
-      'sonixdCache',
-      `${settings.getSync('serverBase64')}`
-    );
-
-    const songCacheFolder = path.join(rootCacheFolder, 'song');
     const songCache = fs.readdirSync(songCacheFolder);
-
     const matchedSong = songCache.filter((song) => song.split('.')[0] === id);
 
     if (matchedSong.length !== 0) {
@@ -254,17 +271,6 @@ const Player = ({ children }: any, ref: any) => {
           playQueue.currentPlayer === 1
         }
         onError={(e: any) => notification(e.message)}
-        onPlay={() => {
-          if (cacheSongs) {
-            cacheSong(
-              `${playQueue.entry[playQueue.player1.index].id}.mp3`,
-              playQueue.entry[playQueue.player1.index].streamUrl.replace(
-                /stream/,
-                'download'
-              )
-            );
-          }
-        }}
       />
       <ReactAudioPlayer
         ref={player2Ref}
@@ -283,17 +289,6 @@ const Player = ({ children }: any, ref: any) => {
           playQueue.currentPlayer === 2
         }
         onError={(e: any) => notification(e.message)}
-        onPlay={() => {
-          if (cacheSongs) {
-            cacheSong(
-              `${playQueue.entry[playQueue.player2.index].id}.mp3`,
-              playQueue.entry[playQueue.player2.index].streamUrl.replace(
-                /stream/,
-                'download'
-              )
-            );
-          }
-        }}
       />
       {children}
     </>
