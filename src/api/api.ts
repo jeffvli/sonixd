@@ -30,7 +30,7 @@ api.interceptors.response.use(
   }
 );
 
-const getCoverArtUrl = (item: any, size = 200) => {
+const getCoverArtUrl = (item: any, size = 150) => {
   if (!item.coverArt) {
     return 'img/placeholder.jpg';
   }
