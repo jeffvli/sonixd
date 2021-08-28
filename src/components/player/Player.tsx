@@ -216,7 +216,7 @@ const Player = ({ children }: any, ref: any) => {
     });
   };
 
-  const checkCachedSong = (id: number) => {
+  const checkCachedSong = (id: string) => {
     const rootCacheFolder = path.join(
       path.dirname(settings.file()),
       'sonixdCache',
@@ -226,9 +226,7 @@ const Player = ({ children }: any, ref: any) => {
     const songCacheFolder = path.join(rootCacheFolder, 'song');
     const songCache = fs.readdirSync(songCacheFolder);
 
-    const matchedSong = songCache.filter(
-      (song) => Number(song.split('.')[0]) === id
-    );
+    const matchedSong = songCache.filter((song) => song.split('.')[0] === id);
 
     if (matchedSong.length !== 0) {
       return path.join(songCacheFolder, matchedSong[0]);
