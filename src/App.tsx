@@ -15,7 +15,19 @@ import PlayerBar from './components/player/PlayerBar';
 const App = () => {
   if (!localStorage.getItem('server')) {
     return (
-      <Layout disableSidebar>
+      <Layout
+        disableSidebar
+        footer={
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              background: 'black',
+              borderTop: '1px solid #48545c',
+            }}
+          />
+        }
+      >
         <Login />
       </Layout>
     );
