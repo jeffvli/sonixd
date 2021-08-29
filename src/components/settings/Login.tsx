@@ -15,9 +15,7 @@ import {
 import axios from 'axios';
 
 const Login = () => {
-  const [serverName, setServerName] = useState(
-    localStorage.getItem('server') || ''
-  );
+  const [serverName, setServerName] = useState('');
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -50,16 +48,74 @@ const Login = () => {
       return;
     }
 
-    localStorage.setItem('server', cleanServerName);
+    /* localStorage.setItem('server', cleanServerName);
     localStorage.setItem('username', userName);
     localStorage.setItem('salt', salt);
-    localStorage.setItem('hash', hash);
+    localStorage.setItem('hash', hash); */
 
     settings.setSync('server', cleanServerName);
     settings.setSync('serverBase64', btoa(cleanServerName));
     settings.setSync('username', userName);
     settings.setSync('salt', salt);
     settings.setSync('hash', hash);
+
+    // Set setting defaults on first login
+    if (!settings.hasSync('cacheImages')) {
+      settings.setSync('cacheImages', false);
+    }
+
+    if (!settings.hasSync('cacheSongs')) {
+      settings.setSync('cacheSongs', false);
+    }
+
+    if (!settings.hasSync('fadeDuration')) {
+      settings.setSync('fadeDuration', '5.0');
+    }
+
+    if (!settings.hasSync('songListFontSize')) {
+      settings.setSync('songListFontSize', '14');
+    }
+
+    if (!settings.hasSync('songListRowHeight')) {
+      settings.setSync('songListRowHeight', '60.0');
+    }
+
+    if (!settings.hasSync('songListColumns')) {
+      settings.setSync('songListColumns', [
+        {
+          id: '#',
+          dataKey: 'index',
+          alignment: 'center',
+          resizable: true,
+          width: 40,
+          label: '#',
+        },
+        {
+          id: 'Title',
+          dataKey: 'combinedtitle',
+          alignment: 'left',
+          resizable: true,
+          width: 350,
+          label: 'Title (Combined)',
+        },
+        {
+          id: 'Album',
+          dataKey: 'album',
+          alignment: 'left',
+          resizable: true,
+          width: 350,
+          label: 'Album',
+        },
+        {
+          id: 'Duration',
+          dataKey: 'duration',
+          alignment: 'center',
+          resizable: true,
+          width: 70,
+          label: 'Duration',
+        },
+      ]);
+    }
     window.location.reload();
   };
 

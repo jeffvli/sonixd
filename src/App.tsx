@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
+import settings from 'electron-settings';
 import './styles/App.global.css';
 import Layout from './components/layout/Layout';
 import PlaylistList from './components/playlist/PlaylistList';
@@ -13,7 +14,7 @@ import LibraryView from './components/library/LibraryView';
 import PlayerBar from './components/player/PlayerBar';
 
 const App = () => {
-  if (!localStorage.getItem('server')) {
+  if (!settings.getSync('server')) {
     return (
       <Layout
         disableSidebar
