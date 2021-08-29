@@ -36,6 +36,7 @@ h1 {
 }
 
 .rs-table-cell-content > div::selection,
+.rs-table-cell-content > div > div::selection,
 .rs-table-cell-content > div > div > div > div > div > span::selection,
 .rs-table-cell-content > div > div > div > div > span > img::selection {
   background-color: transparent;
