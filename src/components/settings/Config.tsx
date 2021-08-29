@@ -235,15 +235,21 @@ const Config = () => {
       }
     >
       <ConfigPanel header="Playback" bordered>
-        <div>
+        <p>
+          Fading works by polling the audio player on an interval (100ms) to
+          determine when to start fading to the next track. Due to this, you may
+          notice the fade to be inconsistent occasionally.
+        </p>
+
+        <p>
           If the crossfade duration is set to less than or equal to{' '}
-          <code>1.0</code>, volume fading will not occur for either track, but
+          <code>1.5</code>, volume fading will not occur for either track, but
           rather start the fading-in track at full volume. This is to
           tentatively support
-          <strong> gapless playback</strong> without fade. Experiment between a
-          crossfade duration of <code>0</code> and <code>1.0</code> to find your
-          comfort zone.
-        </div>
+          <strong> gapless playback</strong> without fade. Experiment with this
+          knowledge to find your comfort zone.
+        </p>
+
         <div style={{ width: '300px', paddingTop: '20px' }}>
           <ControlLabel>Crossfade duration (seconds)</ControlLabel>
           <InputNumber
