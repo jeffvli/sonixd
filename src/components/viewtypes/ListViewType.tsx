@@ -2,14 +2,21 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, DOMHelper } from 'rsuite';
+import { Table, DOMHelper, Grid, Col, Row } from 'rsuite';
+import path from 'path';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { nanoid } from '@reduxjs/toolkit';
 import '../../styles/ListView.global.css';
-import { formatSongDuration } from '../../shared/utils';
+import {
+  formatSongDuration,
+  getImageCachePath,
+  isCached,
+} from '../../shared/utils';
 import { useAppSelector } from '../../redux/hooks';
 import DraggableHeaderCell from '../table/DraggableHeaderCell';
 import Loader from '../loader/Loader';
 import SelectionBar from '../selectionbar/SelectionBar';
+import cacheImage from '../shared/cacheImage';
 
 declare global {
   interface Window {
@@ -34,6 +41,8 @@ const ListViewType = ({
   hasDraggableColumns,
   rowHeight,
   virtualized,
+  fontSize,
+  cacheImages,
   children,
   ...rest
 }: any) => {
@@ -244,6 +253,7 @@ const ListViewType = ({
             affixHeader
             affixHorizontalScrollbar
             shouldUpdateScroll={false}
+            style={{ fontSize: `${fontSize}px` }}
           >
             {columns.map((column: any) => (
               <Table.Column
@@ -254,6 +264,7 @@ const ListViewType = ({
                 width={column.width}
                 fixed={column.fixed}
                 verticalAlign="middle"
+                onResize={(e) => console.log(`resize ${column.id}`, e)}
               >
                 {hasDraggableColumns ? (
                   <DraggableHeaderCell onDrag={handleDragColumn} id={column.id}>
@@ -268,6 +279,18 @@ const ListViewType = ({
                     {(rowData: any, rowIndex: any) => {
                       return (
                         <div
+                          onClick={(e: any) =>
+                            handleRowClick(e, {
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
+                          onDoubleClick={() =>
+                            handleRowDoubleClick({
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
                           className={
                             rowData.id === playQueue.currentSongId
                               ? 'active'
@@ -277,8 +300,11 @@ const ListViewType = ({
                             multiSelect.selected.find(
                               (e: any) => e.id === rowData.id
                             )
-                              ? { background: '#4D5156', lineHeight: '46px' }
-                              : { lineHeight: '46px' }
+                              ? {
+                                  background: '#4D5156',
+                                  lineHeight: `${rowHeight}px`,
+                                }
+                              : { lineHeight: `${rowHeight}px` }
                           }
                         >
                           {rowIndex + 1}
@@ -289,9 +315,21 @@ const ListViewType = ({
                   </Table.Cell>
                 ) : column.dataKey === 'duration' ? (
                   <Table.Cell>
-                    {(rowData: any) => {
+                    {(rowData: any, rowIndex: any) => {
                       return (
                         <div
+                          onClick={(e: any) =>
+                            handleRowClick(e, {
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
+                          onDoubleClick={() =>
+                            handleRowDoubleClick({
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
                           className={
                             rowData.id === playQueue.currentSongId
                               ? 'active'
@@ -301,11 +339,140 @@ const ListViewType = ({
                             multiSelect.selected.find(
                               (e: any) => e.id === rowData.id
                             )
-                              ? { background: '#4D5156', lineHeight: '46px' }
-                              : { lineHeight: '46px' }
+                              ? {
+                                  background: '#4D5156',
+                                  lineHeight: `${rowHeight}px`,
+                                }
+                              : { lineHeight: `${rowHeight}px` }
                           }
                         >
                           {formatSongDuration(rowData.duration)}
+                        </div>
+                      );
+                    }}
+                  </Table.Cell>
+                ) : column.dataKey === 'combinedtitle' ? (
+                  <Table.Cell>
+                    {(rowData: any, rowIndex: any) => {
+                      return (
+                        <div
+                          onClick={(e: any) =>
+                            handleRowClick(e, {
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
+                          onDoubleClick={() =>
+                            handleRowDoubleClick({
+                              ...rowData,
+                              rowIndex,
+                            })
+                          }
+                          className={
+                            rowData.id === playQueue.currentSongId
+                              ? 'active'
+                              : ''
+                          }
+                          style={
+                            multiSelect.selected.find(
+                              (e: any) => e.id === rowData.id
+                            )
+                              ? {
+                                  background: '#4D5156',
+                                }
+                              : {}
+                          }
+                        >
+                          <Grid fluid>
+                            <Row
+                              style={{
+                                height: `${rowHeight}px`,
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <Col
+                                style={{
+                                  marginRight: '5px',
+                                  width: `${rowHeight + 5}px`,
+                                }}
+                              >
+                                {playQueue.entry.length >= 1 && (
+                                  <LazyLoadImage
+                                    tabIndex={0}
+                                    src={
+                                      isCached(
+                                        path.join(
+                                          getImageCachePath(),
+                                          `${cacheImages.cacheType}_${rowData.albumId}.jpg`
+                                        )
+                                      )
+                                        ? path.join(
+                                            getImageCachePath(),
+                                            `${cacheImages.cacheType}_${rowData.albumId}.jpg`
+                                          )
+                                        : rowData.image
+                                    }
+                                    alt="track-img"
+                                    effect="opacity"
+                                    width={rowHeight - 10}
+                                    height={rowHeight - 10}
+                                    afterLoad={() => {
+                                      if (cacheImages.enabled) {
+                                        cacheImage(
+                                          `${cacheImages.cacheType}_${rowData.albumId}.jpg`,
+                                          rowData.image.replace(
+                                            /size=\d+/,
+                                            'size=350'
+                                          )
+                                        );
+                                      }
+                                    }}
+                                  />
+                                )}
+                              </Col>
+                              <Col
+                                style={{
+                                  width: '100%',
+                                  overflow: 'hidden',
+                                  paddingLeft: '10px',
+                                  paddingRight: '20px',
+                                }}
+                              >
+                                <Row
+                                  style={{
+                                    height: `${rowHeight / 2}px`,
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    position: 'relative',
+                                  }}
+                                >
+                                  <span
+                                    style={{ position: 'absolute', bottom: 0 }}
+                                  >
+                                    {rowData.title}
+                                  </span>
+                                </Row>
+                                <Row
+                                  style={{
+                                    height: `${rowHeight / 2}px`,
+                                    fontSize: 'smaller',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    position: 'relative',
+                                  }}
+                                >
+                                  <span
+                                    style={{ position: 'absolute', top: 0 }}
+                                  >
+                                    {rowData.artist}
+                                  </span>
+                                </Row>
+                              </Col>
+                            </Row>
+                          </Grid>
                         </div>
                       );
                     }}
@@ -336,11 +503,15 @@ const ListViewType = ({
                             multiSelect.selected.find(
                               (e: any) => e.id === rowData.id
                             )
-                              ? { background: '#4D5156', lineHeight: '46px' }
-                              : { lineHeight: '46px' }
+                              ? {
+                                  background: '#4D5156',
+                                  lineHeight: `${rowHeight}px`,
+                                }
+                              : { lineHeight: `${rowHeight}px` }
                           }
                         >
-                          {rowData[column.dataKey]}
+                          {rowData[column.dataKey]}{' '}
+                          {column.dataKey === 'bitRate' ? ' kbps' : ''}
                         </div>
                       );
                     }}

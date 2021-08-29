@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
 import path from 'path';
-import fs from 'fs';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import cacheImage from '../shared/cacheImage';
 import { getAlbum, getPlaylist } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
+import { isCached, getImageCachePath } from '../../shared/utils';
 
 import {
   StyledPanel,
@@ -64,18 +64,6 @@ const Card = ({
     }
   };
 
-  const isCached = () => {
-    return fs.existsSync(
-      path.join(
-        path.dirname(settings.file()),
-        'sonixdCache',
-        `${settings.getSync('serverBase64')}`,
-        'image',
-        `${rest.details.cacheType}_${rest.details.id}.jpg`
-      )
-    );
-  };
-
   return (
     <StyledPanel
       tabIndex={0}
@@ -88,12 +76,14 @@ const Card = ({
         {lazyLoad ? (
           <LazyCardImg
             src={
-              isCached()
+              isCached(
+                path.join(
+                  getImageCachePath(),
+                  `${rest.details.cacheType}_${rest.details.id}.jpg`
+                )
+              )
                 ? path.join(
-                    path.dirname(settings.file()),
-                    'sonixdCache',
-                    `${settings.getSync('serverBase64')}`,
-                    'image',
+                    getImageCachePath(),
                     `${rest.details.cacheType}_${rest.details.id}.jpg`
                   )
                 : rest.coverArt

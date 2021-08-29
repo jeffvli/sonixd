@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import settings from 'electron-settings';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -18,43 +19,6 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
-
-const tableColumns = [
-  {
-    id: '#',
-    dataKey: 'index',
-    alignment: 'center',
-    width: 70,
-  },
-  {
-    id: 'Title',
-    dataKey: 'title',
-    alignment: 'left',
-    resizable: true,
-    width: 350,
-  },
-  {
-    id: 'Artist',
-    dataKey: 'artist',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Album',
-    dataKey: 'album',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Duration',
-    dataKey: 'duration',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-];
 
 const NowPlayingView = () => {
   const dispatch = useAppDispatch();
@@ -140,12 +104,18 @@ const NowPlayingView = () => {
       <ListViewType
         data={searchQuery !== '' ? filteredData : playQueue.entry}
         currentIndex={playQueue.currentIndex}
-        tableColumns={tableColumns}
+        tableColumns={settings.getSync('songListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         handleUpClick={handleUpClick}
         handleDownClick={handleDownClick}
         virtualized
+        rowHeight={Number(settings.getSync('songListRowHeight'))}
+        fontSize={Number(settings.getSync('songListFontSize'))}
+        cacheImages={{
+          enabled: settings.getSync('cacheImages'),
+          cacheType: 'album',
+        }}
       />
     </GenericPage>
   );
