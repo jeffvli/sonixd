@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, DOMHelper, Grid, Col, Row } from 'rsuite';
 import path from 'path';
+import settings from 'electron-settings';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { nanoid } from '@reduxjs/toolkit';
 import '../../styles/ListView.global.css';
@@ -264,7 +265,22 @@ const ListViewType = ({
                 width={column.width}
                 fixed={column.fixed}
                 verticalAlign="middle"
-                onResize={(e) => console.log(`resize ${column.id}`, e)}
+                onResize={(width: any) => {
+                  const resizedColumn: any = settings.getSync(
+                    'songListColumns'
+                  );
+
+                  const resizedColumnIndex = resizedColumn.findIndex(
+                    (c: any) => c.dataKey === column.dataKey
+                  );
+
+                  settings.setSync(
+                    `songListColumns[${resizedColumnIndex}].width`,
+                    width
+                  );
+
+                  console.log(`resize ${column.id}`, width, resizedColumnIndex);
+                }}
               >
                 {hasDraggableColumns ? (
                   <DraggableHeaderCell onDrag={handleDragColumn} id={column.id}>
@@ -346,7 +362,16 @@ const ListViewType = ({
                               : { lineHeight: `${rowHeight}px` }
                           }
                         >
-                          {formatSongDuration(rowData.duration)}
+                          <div
+                            style={{
+                              width: '100%',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            {formatSongDuration(rowData.duration)}
+                          </div>
                         </div>
                       );
                     }}
@@ -393,8 +418,8 @@ const ListViewType = ({
                             >
                               <Col
                                 style={{
-                                  marginRight: '5px',
-                                  width: `${rowHeight + 5}px`,
+                                  paddingRight: '5px',
+                                  width: `${rowHeight}px`,
                                 }}
                               >
                                 {playQueue.entry.length >= 1 && (
@@ -442,14 +467,19 @@ const ListViewType = ({
                                 <Row
                                   style={{
                                     height: `${rowHeight / 2}px`,
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     position: 'relative',
                                   }}
                                 >
                                   <span
-                                    style={{ position: 'absolute', bottom: 0 }}
+                                    style={{
+                                      position: 'absolute',
+                                      bottom: 0,
+                                      width: '100%',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                    }}
                                   >
                                     {rowData.title}
                                   </span>
@@ -458,14 +488,19 @@ const ListViewType = ({
                                   style={{
                                     height: `${rowHeight / 2}px`,
                                     fontSize: 'smaller',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     position: 'relative',
                                   }}
                                 >
                                   <span
-                                    style={{ position: 'absolute', top: 0 }}
+                                    style={{
+                                      position: 'absolute',
+                                      top: 0,
+                                      width: '100%',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                    }}
                                   >
                                     {rowData.artist}
                                   </span>
@@ -507,11 +542,22 @@ const ListViewType = ({
                                   background: '#4D5156',
                                   lineHeight: `${rowHeight}px`,
                                 }
-                              : { lineHeight: `${rowHeight}px` }
+                              : {
+                                  lineHeight: `${rowHeight}px`,
+                                }
                           }
                         >
-                          {rowData[column.dataKey]}{' '}
-                          {column.dataKey === 'bitRate' ? ' kbps' : ''}
+                          <div
+                            style={{
+                              width: '100%',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            {rowData[column.dataKey]}{' '}
+                            {column.dataKey === 'bitRate' ? ' kbps' : ''}
+                          </div>
                         </div>
                       );
                     }}
