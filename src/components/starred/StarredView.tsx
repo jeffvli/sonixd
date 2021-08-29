@@ -19,44 +19,6 @@ import Loader from '../loader/Loader';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 
-const trackTableColumns = [
-  {
-    id: '#',
-    dataKey: 'index',
-    alignment: 'center',
-    width: 70,
-  },
-  {
-    id: 'Title',
-    dataKey: 'title',
-    alignment: 'left',
-    resizable: true,
-    width: 350,
-  },
-
-  {
-    id: 'Artist',
-    dataKey: 'artist',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Album',
-    dataKey: 'album',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Duration',
-    dataKey: 'duration',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-];
-
 const albumTableColumns = [
   {
     id: '#',
