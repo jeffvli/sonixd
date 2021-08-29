@@ -58,7 +58,7 @@ const columnList = [
       dataKey: 'bitRate',
       alignment: 'left',
       resizable: true,
-      width: 50,
+      width: 65,
       label: 'Bitrate',
     },
   },
