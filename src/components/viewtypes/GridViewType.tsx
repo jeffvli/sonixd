@@ -26,6 +26,9 @@ const GridCard = ({ data, index, style }: any) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          // This allows immediate pointer events after scrolling to override the default delay
+          // https://github.com/bvaughn/react-window/issues/128#issuecomment-460166682
+          pointerEvents: 'auto',
         }}
       >
         <Card
