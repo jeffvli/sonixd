@@ -92,6 +92,7 @@ const Card = ({
             effect="opacity"
             onClick={handleClick}
             cardsize={size}
+            visibleByDefault={cacheImages}
             afterLoad={() => {
               if (cacheImages) {
                 cacheImage(

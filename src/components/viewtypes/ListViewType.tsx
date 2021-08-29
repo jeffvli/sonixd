@@ -424,7 +424,6 @@ const ListViewType = ({
                               >
                                 {playQueue.entry.length >= 1 && (
                                   <LazyLoadImage
-                                    tabIndex={0}
                                     src={
                                       isCached(
                                         path.join(
@@ -442,6 +441,7 @@ const ListViewType = ({
                                     effect="opacity"
                                     width={rowHeight - 10}
                                     height={rowHeight - 10}
+                                    visibleByDefault={cacheImages.enabled}
                                     afterLoad={() => {
                                       if (cacheImages.enabled) {
                                         cacheImage(
