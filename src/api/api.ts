@@ -1,17 +1,16 @@
 import axios from 'axios';
 
-import settings from 'electron-settings';
-
 const getAuth = () => {
   const serverConfig = {
-    username: settings.getSync('username') || '',
-    salt: settings.getSync('salt') || '',
-    hash: settings.getSync('hash') || '',
-    server: settings.getSync('server') || '',
+    username: localStorage.getItem('username') || '',
+    salt: localStorage.getItem('salt') || '',
+    hash: localStorage.getItem('hash') || '',
+    server: localStorage.getItem('server') || '',
   };
 
   return serverConfig;
 };
+
 const auth = getAuth();
 const API_BASE_URL = `${auth.server}/rest`;
 

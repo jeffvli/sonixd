@@ -48,10 +48,10 @@ const Login = () => {
       return;
     }
 
-    /* localStorage.setItem('server', cleanServerName);
+    localStorage.setItem('server', cleanServerName);
     localStorage.setItem('username', userName);
     localStorage.setItem('salt', salt);
-    localStorage.setItem('hash', hash); */
+    localStorage.setItem('hash', hash);
 
     settings.setSync('server', cleanServerName);
     settings.setSync('serverBase64', btoa(cleanServerName));
