@@ -1,10 +1,46 @@
-export function shuffle(a: any[]) {
-  for (let i = a.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+import fs from 'fs';
+import path from 'path';
+import settings from 'electron-settings';
+
+export const isCached = (filePath: string) => {
+  return fs.existsSync(filePath);
+};
+
+export const getRootCachePath = () => {
+  return path.join(
+    path.dirname(settings.file()),
+    'sonixdCache',
+    `${settings.getSync('serverBase64')}`
+  );
+};
+
+export const getImageCachePath = () => {
+  return path.join(getRootCachePath(), 'image');
+};
+
+export const getSongCachePath = () => {
+  return path.join(getRootCachePath(), 'song');
+};
+
+export const shuffle = (array: any[]) => {
+  let currentIndex = array.length;
+  let randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
-  return a;
-}
+
+  return array;
+};
 
 export const formatSongDuration = (duration: number) => {
   const minutes = Math.floor(duration / 60);
