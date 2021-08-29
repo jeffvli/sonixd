@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import fs from 'fs';
 import md5 from 'md5';
 import randomstring from 'randomstring';
 import settings from 'electron-settings';
@@ -13,6 +14,7 @@ import {
   Message,
 } from 'rsuite';
 import axios from 'axios';
+import { getImageCachePath, getSongCachePath } from '../../shared/utils';
 
 const Login = () => {
   const [serverName, setServerName] = useState('');
@@ -58,6 +60,10 @@ const Login = () => {
     settings.setSync('username', userName);
     settings.setSync('salt', salt);
     settings.setSync('hash', hash);
+
+    // Create the cache folders
+    fs.mkdirSync(getSongCachePath(), { recursive: true });
+    fs.mkdirSync(getImageCachePath(), { recursive: true });
 
     // Set setting defaults on first login
     if (!settings.hasSync('cacheImages')) {
