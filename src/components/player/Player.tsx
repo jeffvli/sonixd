@@ -83,22 +83,22 @@ const Player = ({ children }: any, ref: any) => {
         // If it's not the last track in the queue OR we want to repeat
         // Once fading starts, start playing player 2 and set current to 2
 
-        if (fadeDuration > 1) {
+        if (fadeDuration > 1.5) {
           const timeLeft = duration - currentSeek;
           if (player2Ref.current.audioEl.current) {
             const player1Volume =
-              playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.05 <=
+              playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.11 <=
               0
                 ? 0
                 : playQueue.player1.volume -
-                  (playQueue.volume / timeLeft) * 0.05;
+                  (playQueue.volume / timeLeft) * 0.11;
 
             const player2Volume =
-              playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.05 >=
+              playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.11 >=
               playQueue.volume
                 ? playQueue.volume
                 : playQueue.player2.volume +
-                  (playQueue.volume / timeLeft) * 0.05;
+                  (playQueue.volume / timeLeft) * 0.11;
 
             dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
             dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
@@ -137,22 +137,22 @@ const Player = ({ children }: any, ref: any) => {
       playQueue.repeat === 'all'
     ) {
       if (currentSeek >= fadeAtTime) {
-        if (fadeDuration > 1) {
+        if (fadeDuration > 1.5) {
           const timeLeft = duration - currentSeek;
           if (player1Ref.current.audioEl.current) {
             const player1Volume =
-              playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.05 >=
+              playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.11 >=
               playQueue.volume
                 ? playQueue.volume
                 : playQueue.player1.volume +
-                  (playQueue.volume / timeLeft) * 0.05;
+                  (playQueue.volume / timeLeft) * 0.11;
 
             const player2Volume =
-              playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.05 <=
+              playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.11 <=
               0
                 ? 0
                 : playQueue.player2.volume -
-                  (playQueue.volume / timeLeft) * 0.05;
+                  (playQueue.volume / timeLeft) * 0.11;
 
             dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
             dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
