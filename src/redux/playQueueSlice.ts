@@ -180,24 +180,38 @@ const playQueueSlice = createSlice({
       if (state.entry.length > 2) {
         if (action.payload === 1) {
           if (
-            state.player1.index + 2 >= state.entry.length - 1 &&
-            state.repeat === 'all'
+            state.player1.index + 1 === state.entry.length &&
+            state.repeat === 'none'
           ) {
-            state.player1.index = state.player2.index + 1;
-          } else if (state.player1.index + 2 >= state.entry.length - 1) {
+            // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
+          } else if (state.player1.index + 2 >= state.entry.length) {
+            // If incrementing would be greater than the total number of entries,
+            // reset it back to 0. Also check if player1 is already set to 0.
+            if (state.player2.index === 0) {
+              state.player1.index = state.player2.index + 1;
+            } else {
+              state.player1.index = 0;
+            }
           } else {
             state.player1.index += 2;
           }
           state.currentPlayer = 2;
         } else {
           if (
-            state.player2.index + 2 >= state.entry.length - 1 &&
-            state.repeat === 'all'
+            state.player2.index + 1 === state.entry.length &&
+            state.repeat === 'none'
           ) {
-            state.player2.index = state.player1.index + 1;
-          } else if (state.player2.index + 2 >= state.entry.length - 1) {
+            // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
+          } else if (state.player2.index + 2 >= state.entry.length) {
+            // If incrementing would be greater than the total number of entries,
+            // reset it back to 0. Also check if player1 is already set to 0.
+            if (state.player1.index === 0) {
+              state.player2.index = 1;
+            } else {
+              state.player2.index = 0;
+            }
           } else {
             state.player2.index += 2;
           }
@@ -217,12 +231,9 @@ const playQueueSlice = createSlice({
       state.player1.index = findIndex;
       state.player1.volume = state.volume;
 
-      // Don't set player2 index greater than entry list
-      if (findIndex >= state.entry.length - 1) {
-        state.player2.index = 0;
-      } else {
-        state.player2.index = findIndex + 1;
-      }
+      // We use fixPlayer2Index in conjunction with this reducer
+      // See note in decrementCurrentIndex reducer
+      state.player2.index = 0;
 
       state.player2.volume = 0;
       state.currentPlayer = 1;
@@ -269,6 +280,8 @@ const playQueueSlice = createSlice({
     fixPlayer2Index: (state) => {
       if (state.entry.length >= 2) {
         state.player2.index = state.currentIndex + 1;
+      } else {
+        state.player1.index = 0;
       }
     },
 

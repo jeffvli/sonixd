@@ -76,28 +76,40 @@ const Player = ({ children }: any, ref: any) => {
     // Don't fade if player2Index <= player1Index unless repeat==='all'
 
     if (
-      (playQueue.repeat === 'none' &&
-        playQueue.player2.index > playQueue.player1.index) ||
+      playQueue.player1.index + 1 < playQueue.entry.length ||
       playQueue.repeat === 'all'
     ) {
       if (currentSeek >= fadeAtTime) {
+        // If it's not the last track in the queue OR we want to repeat
         // Once fading starts, start playing player 2 and set current to 2
-        const timeLeft = duration - currentSeek;
 
-        if (player2Ref.current.audioEl.current) {
-          const player1Volume =
-            playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.1 <= 0
-              ? 0
-              : playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.1;
+        if (fadeDuration > 1) {
+          const timeLeft = duration - currentSeek;
+          if (player2Ref.current.audioEl.current) {
+            const player1Volume =
+              playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.05 <=
+              0
+                ? 0
+                : playQueue.player1.volume -
+                  (playQueue.volume / timeLeft) * 0.05;
 
-          const player2Volume =
-            playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.1 >=
-            playQueue.volume
-              ? playQueue.volume
-              : playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.1;
+            const player2Volume =
+              playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.05 >=
+              playQueue.volume
+                ? playQueue.volume
+                : playQueue.player2.volume +
+                  (playQueue.volume / timeLeft) * 0.05;
 
-          dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
-          dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
+            dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
+            dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
+            player2Ref.current.audioEl.current.play();
+            dispatch(setIsFading(true));
+          }
+        } else {
+          // If fade time is less than 1 second, don't fade and just start at
+          // full volume. Due to the low fade duration, it causes the volume to
+          // blast from low to full incredibly quickly due to the intervalled polling
+          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
           player2Ref.current.audioEl.current.play();
           dispatch(setIsFading(true));
         }
@@ -121,28 +133,34 @@ const Player = ({ children }: any, ref: any) => {
     const fadeAtTime = duration - fadeDuration;
 
     if (
-      (playQueue.repeat === 'none' &&
-        playQueue.player1.index > playQueue.player2.index) ||
+      playQueue.player2.index + 1 < playQueue.entry.length ||
       playQueue.repeat === 'all'
     ) {
       if (currentSeek >= fadeAtTime) {
-        const timeLeft = duration - currentSeek;
+        if (fadeDuration > 1) {
+          const timeLeft = duration - currentSeek;
+          if (player1Ref.current.audioEl.current) {
+            const player1Volume =
+              playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.05 >=
+              playQueue.volume
+                ? playQueue.volume
+                : playQueue.player1.volume +
+                  (playQueue.volume / timeLeft) * 0.05;
 
-        // Once fading starts, start playing player 1 and set current to 1
-        if (player1Ref.current.audioEl.current) {
-          const player1Volume =
-            playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.1 >=
-            playQueue.volume
-              ? playQueue.volume
-              : playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.1;
+            const player2Volume =
+              playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.05 <=
+              0
+                ? 0
+                : playQueue.player2.volume -
+                  (playQueue.volume / timeLeft) * 0.05;
 
-          const player2Volume =
-            playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.1 <= 0
-              ? 0
-              : playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.1;
-
-          dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
-          dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
+            dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
+            dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
+            player1Ref.current.audioEl.current.play();
+            dispatch(setIsFading(true));
+          }
+        } else {
+          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
           player1Ref.current.audioEl.current.play();
           dispatch(setIsFading(true));
         }
@@ -261,7 +279,7 @@ const Player = ({ children }: any, ref: any) => {
             ? checkCachedSong(playQueue.entry[playQueue.player1.index]?.id)
             : playQueue.entry[playQueue.player1.index]?.streamUrl
         }
-        listenInterval={150}
+        listenInterval={100}
         preload="auto"
         onListen={handleListen1}
         onEnded={handleOnEnded1}
@@ -279,7 +297,7 @@ const Player = ({ children }: any, ref: any) => {
             ? checkCachedSong(playQueue.entry[playQueue.player2.index]?.id)
             : playQueue.entry[playQueue.player2.index]?.streamUrl
         }
-        listenInterval={150}
+        listenInterval={100}
         preload="auto"
         onListen={handleListen2}
         onEnded={handleOnEnded2}

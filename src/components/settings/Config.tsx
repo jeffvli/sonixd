@@ -235,11 +235,20 @@ const Config = () => {
       }
     >
       <ConfigPanel header="Playback" bordered>
+        <div>
+          If the crossfade duration is set to less than or equal to{' '}
+          <code>1.0</code>, volume fading will not occur for either track, but
+          rather start the fading-in track at full volume. This is to
+          tentatively support
+          <strong> gapless playback</strong> without fade. Experiment between a
+          crossfade duration of <code>0</code> and <code>1.0</code> to find your
+          comfort zone.
+        </div>
         <div style={{ width: '300px', paddingTop: '20px' }}>
           <ControlLabel>Crossfade duration (seconds)</ControlLabel>
           <InputNumber
             defaultValue={String(settings.getSync('fadeDuration')) || '0'}
-            step={0.5}
+            step={0.1}
             min={0}
             max={100}
             onChange={(e) => {
@@ -251,8 +260,8 @@ const Config = () => {
       </ConfigPanel>
       <ConfigPanel header="Look & Feel" bordered>
         <div>
-          Select the columns you want displayed on all pages with a song list.
-          The columns will be displayed in the order selected below.
+          Select the columns you want displayed pages with a song list. The
+          columns will be displayed in the order selected below.
         </div>
         <div style={{ width: '100%', marginTop: '20px' }}>
           <TagPicker
@@ -299,7 +308,7 @@ const Config = () => {
             <ControlLabel>Font Size</ControlLabel>
             <InputNumber
               defaultValue={String(settings.getSync('songListFontSize')) || '0'}
-              step={1}
+              step={0.5}
               min={1}
               max={100}
               onChange={(e) => {

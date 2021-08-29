@@ -7,6 +7,7 @@ import {
   moveDown,
   setPlayerIndex,
   setPlayerVolume,
+  fixPlayer2Index,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -63,6 +64,7 @@ const NowPlayingView = () => {
 
     dispatch(clearSelected());
     dispatch(setPlayerIndex(rowData));
+    dispatch(fixPlayer2Index());
   };
 
   if (!playQueue) {
