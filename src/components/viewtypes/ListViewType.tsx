@@ -422,39 +422,37 @@ const ListViewType = ({
                                   width: `${rowHeight}px`,
                                 }}
                               >
-                                {playQueue.entry.length >= 1 && (
-                                  <LazyLoadImage
-                                    src={
-                                      isCached(
-                                        path.join(
+                                <LazyLoadImage
+                                  src={
+                                    isCached(
+                                      path.join(
+                                        getImageCachePath(),
+                                        `${cacheImages.cacheType}_${rowData.albumId}.jpg`
+                                      )
+                                    )
+                                      ? path.join(
                                           getImageCachePath(),
                                           `${cacheImages.cacheType}_${rowData.albumId}.jpg`
                                         )
-                                      )
-                                        ? path.join(
-                                            getImageCachePath(),
-                                            `${cacheImages.cacheType}_${rowData.albumId}.jpg`
-                                          )
-                                        : rowData.image
+                                      : rowData.image
+                                  }
+                                  alt="track-img"
+                                  effect="opacity"
+                                  width={rowHeight - 10}
+                                  height={rowHeight - 10}
+                                  visibleByDefault={cacheImages.enabled}
+                                  afterLoad={() => {
+                                    if (cacheImages.enabled) {
+                                      cacheImage(
+                                        `${cacheImages.cacheType}_${rowData.albumId}.jpg`,
+                                        rowData.image.replace(
+                                          /size=\d+/,
+                                          'size=350'
+                                        )
+                                      );
                                     }
-                                    alt="track-img"
-                                    effect="opacity"
-                                    width={rowHeight - 10}
-                                    height={rowHeight - 10}
-                                    visibleByDefault={cacheImages.enabled}
-                                    afterLoad={() => {
-                                      if (cacheImages.enabled) {
-                                        cacheImage(
-                                          `${cacheImages.cacheType}_${rowData.albumId}.jpg`,
-                                          rowData.image.replace(
-                                            /size=\d+/,
-                                            'size=350'
-                                          )
-                                        );
-                                      }
-                                    }}
-                                  />
-                                )}
+                                  }}
+                                />
                               </Col>
                               <Col
                                 style={{

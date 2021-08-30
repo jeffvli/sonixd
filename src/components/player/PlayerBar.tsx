@@ -25,6 +25,12 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
 
+const keyCodes = {
+  SPACEBAR: 32,
+  UP: 38,
+  DOWN: 40,
+};
+
 const PlayerBar = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const dispatch = useAppDispatch();
@@ -79,7 +85,7 @@ const PlayerBar = () => {
   };
 
   const handleVolumeKey = (e: any) => {
-    if (e.keyCode === 38) {
+    if (e.keyCode === keyCodes.UP) {
       const vol = Number(
         (playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2)
       );
@@ -90,7 +96,7 @@ const PlayerBar = () => {
           volume: vol,
         })
       );
-    } else if (e.keyCode === 40) {
+    } else if (e.keyCode === keyCodes.DOWN) {
       const vol = Number(
         (playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2)
       );
@@ -229,7 +235,7 @@ const PlayerBar = () => {
                         style={{ cursor: 'pointer' }}
                         onClick={() => history.push(`/nowplaying`)}
                         onKeyDown={(e: any) => {
-                          if (e.keyCode === 32) {
+                          if (e.keyCode === keyCodes.SPACEBAR) {
                             history.push(`/nowplaying`);
                           }
                         }}
@@ -301,7 +307,7 @@ const PlayerBar = () => {
                 fixedWidth
                 onClick={handleClickBackward}
                 onKeyDown={(e: any) => {
-                  if (e.keyCode === 32) {
+                  if (e.keyCode === keyCodes.SPACEBAR) {
                     handleClickBackward();
                   }
                 }}
@@ -314,7 +320,7 @@ const PlayerBar = () => {
                 fixedWidth
                 onClick={handleClickPrevious}
                 onKeyDown={(e: any) => {
-                  if (e.keyCode === 32) {
+                  if (e.keyCode === keyCodes.SPACEBAR) {
                     handleClickPrevious();
                   }
                 }}
@@ -334,7 +340,7 @@ const PlayerBar = () => {
                 size="3x"
                 onClick={handleClickPlayPause}
                 onKeyDown={(e: any) => {
-                  if (e.keyCode === 32) {
+                  if (e.keyCode === keyCodes.SPACEBAR) {
                     handleClickPlayPause();
                   }
                 }}
@@ -347,7 +353,7 @@ const PlayerBar = () => {
                 fixedWidth
                 onClick={handleClickNext}
                 onKeyDown={(e: any) => {
-                  if (e.keyCode === 32) {
+                  if (e.keyCode === keyCodes.SPACEBAR) {
                     handleClickNext();
                   }
                 }}
@@ -360,7 +366,7 @@ const PlayerBar = () => {
                 fixedWidth
                 onClick={handleClickForward}
                 onKeyDown={(e: any) => {
-                  if (e.keyCode === 32) {
+                  if (e.keyCode === keyCodes.SPACEBAR) {
                     handleClickForward();
                   }
                 }}
@@ -378,7 +384,11 @@ const PlayerBar = () => {
               >
                 <FlexboxGrid.Item
                   colspan={4}
-                  style={{ textAlign: 'right', paddingRight: '10px' }}
+                  style={{
+                    textAlign: 'right',
+                    paddingRight: '10px',
+                    userSelect: 'none',
+                  }}
                 >
                   {format((isDragging ? manualSeek : seek) * 1000)}
                 </FlexboxGrid.Item>
@@ -396,7 +406,11 @@ const PlayerBar = () => {
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item
                   colspan={4}
-                  style={{ textAlign: 'left', paddingLeft: '10px' }}
+                  style={{
+                    textAlign: 'left',
+                    paddingLeft: '10px',
+                    userSelect: 'none',
+                  }}
                 >
                   {format(
                     playQueue.entry[playQueue.currentIndex]?.duration * 1000 ||
@@ -432,6 +446,7 @@ const PlayerBar = () => {
                               : 'star-o'
                           }
                           size="lg"
+                          fixedWidth
                           style={{
                             color: playQueue.entry[playQueue.currentIndex]
                               .starred
@@ -447,9 +462,10 @@ const PlayerBar = () => {
                           tabIndex={0}
                           icon="random"
                           size="lg"
+                          fixedWidth
                           onClick={handleShuffle}
                           onKeyDown={(e: any) => {
-                            if (e.keyCode === 32) {
+                            if (e.keyCode === keyCodes.SPACEBAR) {
                               handleShuffle();
                             }
                           }}
@@ -465,9 +481,10 @@ const PlayerBar = () => {
                           tabIndex={0}
                           icon="repeat"
                           size="lg"
+                          fixedWidth
                           onClick={handleRepeat}
                           onKeyDown={(e: any) => {
-                            if (e.keyCode === 32) {
+                            if (e.keyCode === keyCodes.SPACEBAR) {
                               handleRepeat();
                             }
                           }}

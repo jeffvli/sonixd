@@ -2,7 +2,7 @@ import { Icon, Slider } from 'rsuite';
 import styled from 'styled-components';
 
 export const PlayerContainer = styled.div`
-  background: #000000;
+  background: ${(props) => props.theme.playerBar};
   height: 100%;
   border-top: 1px solid #48545c;
 `;
@@ -28,7 +28,8 @@ export const PlayerColumn = styled.div<{
 
 export const PlayerControlIcon = styled(Icon)`
   color: #b3b3b3;
-  padding: 0 15px 0 15px;
+  padding-left: 5px;
+  padding-right: 5px;
   &:hover {
     color: #ffffff;
   }
