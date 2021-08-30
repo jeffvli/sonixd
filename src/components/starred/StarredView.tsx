@@ -133,7 +133,7 @@ const StarredView = () => {
     <GenericPage
       header={
         <GenericPageHeader
-          title="Starred"
+          title="Favorites"
           subtitle={
             <Nav activeKey={currentPage} onSelect={(e) => setCurrentPage(e)}>
               <Nav.Item eventKey="Tracks">Tracks</Nav.Item>

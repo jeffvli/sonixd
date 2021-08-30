@@ -39,15 +39,15 @@ const Sidebar = ({
             </Nav.Item>
             <Nav.Item
               eventKey="starred"
-              icon={<Icon icon="star" />}
+              icon={<Icon icon="heart" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
-              Starred
+              Favorites
             </Nav.Item>
             <Nav.Item
               eventKey="playlists"
-              icon={<Icon icon="bookmark" />}
+              icon={<Icon icon="list-ul" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
@@ -55,7 +55,7 @@ const Sidebar = ({
             </Nav.Item>
             <Nav.Item
               eventKey="library"
-              icon={<Icon icon="book2" />}
+              icon={<Icon icon="folder-open" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >

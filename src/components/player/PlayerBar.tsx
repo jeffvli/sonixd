@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
 import { FlexboxGrid, Icon, Grid, Row, Col } from 'rsuite';
 import { useHistory } from 'react-router-dom';
@@ -19,11 +20,13 @@ import {
   setStatus,
   fixPlayer2Index,
   toggleRepeat,
-  toggleShuffle,
+  toggleDisplayQueue,
+  setStar,
 } from '../../redux/playQueueSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
+import { star, unstar } from '../../api/api';
 
 const keyCodes = {
   SPACEBAR: 32,
@@ -32,6 +35,7 @@ const keyCodes = {
 };
 
 const PlayerBar = () => {
+  const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
@@ -202,10 +206,27 @@ const PlayerBar = () => {
     dispatch(toggleRepeat());
   };
 
-  const handleShuffle = () => {
-    dispatch(toggleShuffle());
+  const handleDisplayQueue = () => {
+    dispatch(toggleDisplayQueue());
   };
 
+  const handleFavorite = async () => {
+    if (!playQueue.entry[playQueue.currentIndex].starred) {
+      star(playQueue.entry[playQueue.currentIndex].id, 'song');
+      dispatch(setStar('star'));
+      await queryClient.refetchQueries(['starred'], {
+        active: true,
+        exact: true,
+      });
+    } else {
+      unstar(playQueue.entry[playQueue.currentIndex].id, 'song');
+      dispatch(setStar('unstar'));
+      await queryClient.refetchQueries(['starred'], {
+        active: true,
+        exact: true,
+      });
+    }
+  };
   return (
     <Player ref={playersRef}>
       <PlayerContainer>
@@ -436,14 +457,14 @@ const PlayerBar = () => {
                 >
                   {playQueue.entry.length >= 1 && (
                     <>
-                      {/* Star Button */}
-                      <CustomTooltip text="Star" delay={1000}>
+                      {/* Favorite Button */}
+                      <CustomTooltip text="Favorite">
                         <PlayerControlIcon
                           tabIndex={0}
                           icon={
                             playQueue.entry[playQueue.currentIndex].starred
-                              ? 'star'
-                              : 'star-o'
+                              ? 'heart'
+                              : 'heart-o'
                           }
                           size="lg"
                           fixedWidth
@@ -453,30 +474,12 @@ const PlayerBar = () => {
                               ? '#1179ac'
                               : undefined,
                           }}
-                        />
-                      </CustomTooltip>
-
-                      {/* Shuffle Button */}
-                      <CustomTooltip text="Shuffle" delay={1000}>
-                        <PlayerControlIcon
-                          tabIndex={0}
-                          icon="random"
-                          size="lg"
-                          fixedWidth
-                          onClick={handleShuffle}
-                          onKeyDown={(e: any) => {
-                            if (e.keyCode === keyCodes.SPACEBAR) {
-                              handleShuffle();
-                            }
-                          }}
-                          style={{
-                            color: playQueue.shuffle ? '#1179ac' : undefined,
-                          }}
+                          onClick={handleFavorite}
                         />
                       </CustomTooltip>
 
                       {/* Repeat Button */}
-                      <CustomTooltip text="Repeat" delay={1000}>
+                      <CustomTooltip text="Repeat">
                         <PlayerControlIcon
                           tabIndex={0}
                           icon="repeat"
@@ -493,6 +496,26 @@ const PlayerBar = () => {
                               playQueue.repeat === 'all'
                                 ? '#1179ac'
                                 : undefined,
+                          }}
+                        />
+                      </CustomTooltip>
+                      {/* Display Queue Button */}
+                      <CustomTooltip text="Queue">
+                        <PlayerControlIcon
+                          tabIndex={0}
+                          icon="tasks"
+                          size="lg"
+                          fixedWidth
+                          onClick={handleDisplayQueue}
+                          onKeyDown={(e: any) => {
+                            if (e.keyCode === keyCodes.SPACEBAR) {
+                              handleDisplayQueue();
+                            }
+                          }}
+                          style={{
+                            color: playQueue.displayQueue
+                              ? '#1179ac'
+                              : undefined,
                           }}
                         />
                       </CustomTooltip>

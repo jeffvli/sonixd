@@ -50,6 +50,7 @@ export interface PlayQueue {
   isLoading: boolean;
   repeat: string;
   shuffle: boolean;
+  displayQueue: boolean;
   entry: Entry[];
 }
 
@@ -74,6 +75,7 @@ const initialState: PlayQueue = {
   isLoading: false,
   repeat: 'none',
   shuffle: false,
+  displayQueue: false,
   entry: [],
 };
 
@@ -114,6 +116,14 @@ const playQueueSlice = createSlice({
       state.autoIncremented = action.payload;
     },
 
+    setStar: (state, action: PayloadAction<string>) => {
+      if (action.payload === 'unstar') {
+        state.entry[state.currentIndex].starred = undefined;
+      } else {
+        state.entry[state.currentIndex].starred = String(Date.now());
+      }
+    },
+
     toggleRepeat: (state) => {
       if (state.repeat === 'none') {
         state.repeat = 'all';
@@ -128,6 +138,10 @@ const playQueueSlice = createSlice({
 
     toggleShuffle: (state) => {
       state.shuffle = !state.shuffle;
+    },
+
+    toggleDisplayQueue: (state) => {
+      state.displayQueue = !state.displayQueue;
     },
 
     setVolume: (state, action: PayloadAction<number>) => {
@@ -413,6 +427,8 @@ export const {
   setAutoIncremented,
   toggleRepeat,
   toggleShuffle,
+  toggleDisplayQueue,
   resetPlayer,
+  setStar,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

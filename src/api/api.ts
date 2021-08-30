@@ -249,3 +249,27 @@ export const getScanStatus = async () => {
 
   return scanStatus;
 };
+
+export const star = async (id: string, type: string) => {
+  const { data } = await api.get(`/star`, {
+    params: {
+      id: type === 'song' ? id : undefined,
+      albumId: type === 'album' ? id : undefined,
+      artistId: type === 'artist' ? id : undefined,
+    },
+  });
+
+  return data;
+};
+
+export const unstar = async (id: string, type: string) => {
+  const { data } = await api.get(`/unstar`, {
+    params: {
+      id: type === 'song' ? id : undefined,
+      albumId: type === 'album' ? id : undefined,
+      artistId: type === 'artist' ? id : undefined,
+    },
+  });
+
+  return data;
+};
