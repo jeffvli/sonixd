@@ -66,6 +66,10 @@ const Login = () => {
     fs.mkdirSync(getImageCachePath(), { recursive: true });
 
     // Set setting defaults on first login
+    if (!settings.hasSync('scrollWithCurrentSong')) {
+      settings.setSync('scrollWithCurrentSong', true);
+    }
+
     if (!settings.hasSync('cacheImages')) {
       settings.setSync('cacheImages', false);
     }

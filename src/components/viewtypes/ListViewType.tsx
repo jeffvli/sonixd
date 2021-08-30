@@ -1,23 +1,30 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
-import React, { useState, useEffect, useRef } from 'react';
-import { Table, DOMHelper, Grid, Col, Row } from 'rsuite';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
+import { useHistory } from 'react-router-dom';
+import { Table, DOMHelper, Grid, Col, Row, Button } from 'rsuite';
 import path from 'path';
 import settings from 'electron-settings';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { nanoid } from '@reduxjs/toolkit';
-import '../../styles/ListView.global.css';
 import {
   formatSongDuration,
   getImageCachePath,
   isCached,
 } from '../../shared/utils';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import DraggableHeaderCell from '../table/DraggableHeaderCell';
 import Loader from '../loader/Loader';
 import SelectionBar from '../selectionbar/SelectionBar';
 import cacheImage from '../shared/cacheImage';
+import { RsuiteLinkButton } from './styled';
 
 declare global {
   interface Window {
@@ -34,32 +41,40 @@ const sort = (source: any, sourceId: any, targetId: any) => {
   return nextData;
 };
 
-const ListViewType = ({
-  data,
-  handleRowClick,
-  handleRowDoubleClick,
-  tableColumns,
-  hasDraggableColumns,
-  rowHeight,
-  virtualized,
-  fontSize,
-  cacheImages,
-  children,
-  ...rest
-}: any) => {
+const ListViewType = (
+  {
+    data,
+    handleRowClick,
+    handleRowDoubleClick,
+    tableColumns,
+    hasDraggableColumns,
+    rowHeight,
+    virtualized,
+    fontSize,
+    cacheImages,
+    children,
+    ...rest
+  }: any,
+  ref: any
+) => {
   // const [isDragging, setIsDragging] = useState(false);
   // const [dragDirection, setDragDirection] = useState('down');
   // const [dragSpeed, setDragSpeed] = useState('medium');
-
+  const history = useHistory();
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
   const [columns, setColumns] = useState(tableColumns);
-
   const { getHeight } = DOMHelper;
-  const tableRef = useRef<any>();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const multiSelect = useAppSelector((state: any) => state.multiSelect);
   const playQueue = useAppSelector((state: any) => state.playQueue);
+
+  const tableRef = useRef<any>();
+  useImperativeHandle(ref, () => ({
+    get table() {
+      return tableRef;
+    },
+  }));
 
   const handleDragColumn = (sourceId: any, targetId: any) => {
     setColumns(sort(columns, sourceId, targetId));
@@ -145,11 +160,7 @@ const ListViewType = ({
         <div>DragSpeed: {dragSpeed}</div>
       </div> */}
 
-      <div
-        className="table__container"
-        style={{ flexGrow: 1 }}
-        ref={wrapperRef}
-      >
+      <div style={{ flexGrow: 1, height: '100%' }} ref={wrapperRef}>
         {/* <div
           id="scroll-top"
           style={{
@@ -279,8 +290,6 @@ const ListViewType = ({
                     `songListColumns[${resizedColumnIndex}].width`,
                     width
                   );
-
-                  console.log(`resize ${column.id}`, width, resizedColumnIndex);
                 }}
               >
                 {hasDraggableColumns ? (
@@ -489,19 +498,30 @@ const ListViewType = ({
                                     fontSize: 'smaller',
                                     overflow: 'hidden',
                                     position: 'relative',
+                                    width: '100%',
                                   }}
                                 >
                                   <span
                                     style={{
                                       position: 'absolute',
                                       top: 0,
-                                      width: '100%',
                                       textOverflow: 'ellipsis',
                                       whiteSpace: 'nowrap',
                                       overflow: 'hidden',
+                                      width: '100%',
                                     }}
                                   >
-                                    {rowData.artist}
+                                    <RsuiteLinkButton
+                                      subtitle="true"
+                                      appearance="link"
+                                      onClick={() => {
+                                        history.push(
+                                          `/library/artist/${rowData.artistId}`
+                                        );
+                                      }}
+                                    >
+                                      {rowData.artist}
+                                    </RsuiteLinkButton>
                                   </span>
                                 </Row>
                               </Col>
@@ -548,13 +568,17 @@ const ListViewType = ({
                         >
                           <div
                             style={{
-                              width: '100%',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                             }}
                           >
-                            {rowData[column.dataKey]}{' '}
+                            {column.dataKey === 'album' && (
+                              <RsuiteLinkButton appearance="link">
+                                {rowData[column.dataKey]}
+                              </RsuiteLinkButton>
+                            )}
+                            {/* {rowData[column.dataKey]}{' '} */}
                             {column.dataKey === 'bitRate' ? ' kbps' : ''}
                           </div>
                         </div>
@@ -572,4 +596,4 @@ const ListViewType = ({
   );
 };
 
-export default ListViewType;
+export default forwardRef(ListViewType);

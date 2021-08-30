@@ -326,6 +326,7 @@ const playQueueSlice = createSlice({
 
     clearPlayQueue: (state) => {
       state.entry = [];
+      state.status = 'PAUSED';
       resetPlayerDefaults(state);
     },
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -158,12 +159,17 @@ const PlaylistView = () => {
     >
       <ListViewType
         data={searchQuery !== '' ? filteredData : data.entry}
-        tableColumns={tableColumns}
+        tableColumns={settings.getSync('songListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         tableHeight={700}
         virtualized
-        autoHeight
+        rowHeight={Number(settings.getSync('songListRowHeight'))}
+        fontSize={Number(settings.getSync('songListFontSize'))}
+        cacheImages={{
+          enabled: settings.getSync('cacheImages'),
+          cacheType: 'album',
+        }}
       />
     </GenericPage>
   );

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
+import { Button, Checkbox } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -8,6 +9,7 @@ import {
   setPlayerIndex,
   setPlayerVolume,
   fixPlayer2Index,
+  clearPlayQueue,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -22,15 +24,27 @@ import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 
 const NowPlayingView = () => {
+  const tableRef = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [searchQuery, setSearchQuery] = useState('');
+  const [scrollWithCurrent, setScrollWithCurrent] = useState(
+    Boolean(settings.getSync('scrollWithCurrentSong'))
+  );
   const filteredData = useSearchQuery(searchQuery, playQueue.entry, [
     'title',
     'artist',
     'album',
   ]);
+
+  useEffect(() => {
+    if (scrollWithCurrent) {
+      tableRef.current.table.current?.scrollTop(
+        Number(settings.getSync('songListRowHeight')) * playQueue.currentIndex
+      );
+    }
+  }, [playQueue.currentIndex, scrollWithCurrent, tableRef]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -96,6 +110,29 @@ const NowPlayingView = () => {
       header={
         <GenericPageHeader
           title="Now Playing"
+          subtitle={
+            <Button
+              onClick={() => {
+                dispatch(clearPlayQueue());
+              }}
+            >
+              Clear queue
+            </Button>
+          }
+          subsidetitle={
+            <Checkbox
+              defaultChecked={scrollWithCurrent}
+              onChange={() => {
+                settings.setSync(
+                  'scrollWithCurrentSong',
+                  !settings.getSync('scrollWithCurrentSong')
+                );
+                setScrollWithCurrent(!scrollWithCurrent);
+              }}
+            >
+              Scroll with current
+            </Checkbox>
+          }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
@@ -104,6 +141,7 @@ const NowPlayingView = () => {
       }
     >
       <ListViewType
+        ref={tableRef}
         data={searchQuery !== '' ? filteredData : playQueue.entry}
         currentIndex={playQueue.currentIndex}
         tableColumns={settings.getSync('songListColumns')}

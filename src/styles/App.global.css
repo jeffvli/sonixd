@@ -43,6 +43,10 @@ h1 {
   background-color: transparent;
 }
 
+.rs-table-row {
+  cursor: default;
+}
+
 .rs-panel-body,
 .rs-panel-heading {
   padding: 0px;

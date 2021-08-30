@@ -107,7 +107,7 @@ const StarredView = () => {
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons={currentPage !== 'Tracks'}
-          viewTypeSetting="song"
+          viewTypeSetting="album"
           showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}

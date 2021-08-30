@@ -313,21 +313,29 @@ const PlayerBar = () => {
                           }
                           placement="topStart"
                         >
-                          <LinkButton
-                            tabIndex={0}
-                            subtitle="true"
-                            onClick={() => {
-                              history.push(
-                                `/library/artist/${
-                                  playQueue.entry[playQueue.currentIndex]
-                                    ?.artistId
-                                }`
-                              );
+                          <span
+                            style={{
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
                             }}
                           >
-                            {playQueue.entry[playQueue.currentIndex]?.artist ||
-                              'Unknown artist'}
-                          </LinkButton>
+                            <LinkButton
+                              tabIndex={0}
+                              subtitle="true"
+                              onClick={() => {
+                                history.push(
+                                  `/library/artist/${
+                                    playQueue.entry[playQueue.currentIndex]
+                                      ?.artistId
+                                  }`
+                                );
+                              }}
+                            >
+                              {playQueue.entry[playQueue.currentIndex]
+                                ?.artist || 'Unknown artist'}
+                            </LinkButton>
+                          </span>
                         </CustomTooltip>
                       )}
                     </Row>
