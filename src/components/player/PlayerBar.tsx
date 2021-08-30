@@ -278,9 +278,19 @@ const PlayerBar = () => {
                             playQueue.entry[playQueue.currentIndex]?.title ||
                             'Unknown title'
                           }
-                          delay={800}
+                          placement="topStart"
                         >
-                          <LinkButton tabIndex={0}>
+                          <LinkButton
+                            tabIndex={0}
+                            onClick={() =>
+                              history.push(
+                                `/library/album/${
+                                  playQueue.entry[playQueue.currentIndex]
+                                    ?.albumId
+                                }`
+                              )
+                            }
+                          >
                             {playQueue.entry[playQueue.currentIndex]?.title ||
                               'Unknown title'}
                           </LinkButton>
@@ -301,9 +311,20 @@ const PlayerBar = () => {
                             playQueue.entry[playQueue.currentIndex]?.artist ||
                             'Unknown artist'
                           }
-                          delay={800}
+                          placement="topStart"
                         >
-                          <LinkButton tabIndex={0} subtitle="true">
+                          <LinkButton
+                            tabIndex={0}
+                            subtitle="true"
+                            onClick={() => {
+                              history.push(
+                                `/library/artist/${
+                                  playQueue.entry[playQueue.currentIndex]
+                                    ?.artistId
+                                }`
+                              );
+                            }}
+                          >
                             {playQueue.entry[playQueue.currentIndex]?.artist ||
                               'Unknown artist'}
                           </LinkButton>
@@ -321,77 +342,88 @@ const PlayerBar = () => {
           >
             <PlayerColumn center height="45px">
               {/* Seek Backward Button */}
-              <PlayerControlIcon
-                tabIndex={0}
-                icon="backward"
-                size="lg"
-                fixedWidth
-                onClick={handleClickBackward}
-                onKeyDown={(e: any) => {
-                  if (e.keyCode === keyCodes.SPACEBAR) {
-                    handleClickBackward();
-                  }
-                }}
-              />
+              <CustomTooltip text="Seek backward">
+                <PlayerControlIcon
+                  tabIndex={0}
+                  icon="backward"
+                  size="lg"
+                  fixedWidth
+                  onClick={handleClickBackward}
+                  onKeyDown={(e: any) => {
+                    if (e.keyCode === keyCodes.SPACEBAR) {
+                      handleClickBackward();
+                    }
+                  }}
+                />
+              </CustomTooltip>
               {/* Previous Song Button */}
-              <PlayerControlIcon
-                tabIndex={0}
-                icon="step-backward"
-                size="lg"
-                fixedWidth
-                onClick={handleClickPrevious}
-                onKeyDown={(e: any) => {
-                  if (e.keyCode === keyCodes.SPACEBAR) {
-                    handleClickPrevious();
-                  }
-                }}
-              />
+              <CustomTooltip text="Previous track">
+                <PlayerControlIcon
+                  tabIndex={0}
+                  icon="step-backward"
+                  size="lg"
+                  fixedWidth
+                  onClick={handleClickPrevious}
+                  onKeyDown={(e: any) => {
+                    if (e.keyCode === keyCodes.SPACEBAR) {
+                      handleClickPrevious();
+                    }
+                  }}
+                />
+              </CustomTooltip>
               {/* Play/Pause Button */}
-              <PlayerControlIcon
-                tabIndex={0}
-                icon={
-                  playQueue.status === 'PLAYING'
-                    ? 'pause-circle'
-                    : 'play-circle'
-                }
-                spin={
-                  playQueue.currentSeekable <= playQueue.currentSeek &&
-                  playQueue.status === 'PLAYING'
-                }
-                size="3x"
-                onClick={handleClickPlayPause}
-                onKeyDown={(e: any) => {
-                  if (e.keyCode === keyCodes.SPACEBAR) {
-                    handleClickPlayPause();
+              <CustomTooltip text="Play/Pause">
+                <PlayerControlIcon
+                  tabIndex={0}
+                  icon={
+                    playQueue.status === 'PLAYING'
+                      ? 'pause-circle'
+                      : 'play-circle'
                   }
-                }}
-              />
+                  spin={
+                    playQueue.currentSeekable <= playQueue.currentSeek &&
+                    playQueue.status === 'PLAYING'
+                  }
+                  size="3x"
+                  onClick={handleClickPlayPause}
+                  onKeyDown={(e: any) => {
+                    if (e.keyCode === keyCodes.SPACEBAR) {
+                      handleClickPlayPause();
+                    }
+                  }}
+                />
+              </CustomTooltip>
+
               {/* Next Song Button */}
-              <PlayerControlIcon
-                tabIndex={0}
-                icon="step-forward"
-                size="lg"
-                fixedWidth
-                onClick={handleClickNext}
-                onKeyDown={(e: any) => {
-                  if (e.keyCode === keyCodes.SPACEBAR) {
-                    handleClickNext();
-                  }
-                }}
-              />
+              <CustomTooltip text="Next track">
+                <PlayerControlIcon
+                  tabIndex={0}
+                  icon="step-forward"
+                  size="lg"
+                  fixedWidth
+                  onClick={handleClickNext}
+                  onKeyDown={(e: any) => {
+                    if (e.keyCode === keyCodes.SPACEBAR) {
+                      handleClickNext();
+                    }
+                  }}
+                />
+              </CustomTooltip>
               {/* Seek Forward Button */}
-              <PlayerControlIcon
-                tabIndex={0}
-                icon="forward"
-                size="lg"
-                fixedWidth
-                onClick={handleClickForward}
-                onKeyDown={(e: any) => {
-                  if (e.keyCode === keyCodes.SPACEBAR) {
-                    handleClickForward();
-                  }
-                }}
-              />
+              <CustomTooltip text="Seek forward">
+                <PlayerControlIcon
+                  tabIndex={0}
+                  icon="forward"
+                  size="lg"
+                  fixedWidth
+                  onClick={handleClickForward}
+                  onKeyDown={(e: any) => {
+                    if (e.keyCode === keyCodes.SPACEBAR) {
+                      handleClickForward();
+                    }
+                  }}
+                />
+              </CustomTooltip>
             </PlayerColumn>
             <PlayerColumn center height="35px">
               <FlexboxGrid

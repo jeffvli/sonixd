@@ -251,6 +251,7 @@ const ListViewType = ({
             onRowContextMenu={(e) => {
               console.log(e);
             }}
+            hover={false}
             affixHeader
             affixHorizontalScrollbar
             shouldUpdateScroll={false}
@@ -479,7 +480,7 @@ const ListViewType = ({
                                       overflow: 'hidden',
                                     }}
                                   >
-                                    {rowData.title}
+                                    {rowData.title || rowData.name}
                                   </span>
                                 </Row>
                                 <Row

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ButtonToolbar } from 'rsuite';
+import settings from 'electron-settings';
+import { ButtonToolbar, Tag } from 'rsuite';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   DeleteButton,
   EditButton,
@@ -10,7 +11,7 @@ import {
   PlayShuffleAppendButton,
   PlayShuffleButton,
 } from '../shared/ToolbarButtons';
-import { getPlaylist } from '../../api/api';
+import { getAlbum } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import {
@@ -25,62 +26,25 @@ import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import GenericPageHeader from '../layout/GenericPageHeader';
+import { TagLink } from './styled';
 
-interface PlaylistParams {
+interface AlbumParams {
   id: string;
 }
 
-const tableColumns = [
-  {
-    id: '#',
-    dataKey: 'index',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-  {
-    id: 'Title',
-    dataKey: 'title',
-    alignment: 'left',
-    resizable: true,
-    width: 350,
-  },
-
-  {
-    id: 'Artist',
-    dataKey: 'artist',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Album',
-    dataKey: 'album',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Duration',
-    dataKey: 'duration',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-];
-
-const PlaylistView = () => {
+const AlbumView = () => {
   const dispatch = useAppDispatch();
-  const { id } = useParams<PlaylistParams>();
-  const { isLoading, isError, data, error }: any = useQuery(
-    ['playlist', id],
-    () => getPlaylist(id)
+  const history = useHistory();
+  const { id } = useParams<AlbumParams>();
+  const { isLoading, isError, data, error }: any = useQuery(['album', id], () =>
+    getAlbum(id)
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.entry, [
+  const filteredData = useSearchQuery(searchQuery, data?.song, [
     'title',
     'artist',
     'album',
+    'genre',
   ]);
 
   let timeout: any = null;
@@ -94,7 +58,7 @@ const PlaylistView = () => {
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
 
-          dispatch(toggleRangeSelected(data.entry));
+          dispatch(toggleRangeSelected(data.song));
         } else {
           dispatch(setSelected(rowData));
         }
@@ -105,7 +69,7 @@ const PlaylistView = () => {
   const handleRowDoubleClick = (e: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    const newPlayQueue = data.entry.slice([e.index], data.entry.length);
+    const newPlayQueue = data.song.slice([e.index], data.song.length);
 
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
@@ -135,7 +99,27 @@ const PlaylistView = () => {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {data.comment ? data.comment : ' '}
+                {data.artist && (
+                  <Tag>
+                    <TagLink
+                      onClick={() =>
+                        history.push(`/library/artist/${data.artistId}`)
+                      }
+                    >
+                      Artist: {data.artist}
+                    </TagLink>
+                  </Tag>
+                )}
+                {data.year && (
+                  <Tag>
+                    <TagLink>Year: {data.year}</TagLink>
+                  </Tag>
+                )}
+                {data.genre && (
+                  <Tag>
+                    <TagLink>Genre: {data.genre}</TagLink>
+                  </Tag>
+                )}
               </div>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
@@ -157,16 +141,21 @@ const PlaylistView = () => {
       }
     >
       <ListViewType
-        data={searchQuery !== '' ? filteredData : data.entry}
-        tableColumns={tableColumns}
+        data={searchQuery !== '' ? filteredData : data.song}
+        tableColumns={settings.getSync('songListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         tableHeight={700}
         virtualized
-        autoHeight
+        rowHeight={Number(settings.getSync('songListRowHeight'))}
+        fontSize={Number(settings.getSync('songListFontSize'))}
+        cacheImages={{
+          enabled: settings.getSync('cacheImages'),
+          cacheType: 'album',
+        }}
       />
     </GenericPage>
   );
 };
 
-export default PlaylistView;
+export default AlbumView;

@@ -51,7 +51,7 @@ const PlaylistList = () => {
   const history = useHistory();
   const [sortBy, setSortBy] = useState('');
   const [viewType, setViewType] = useState(
-    settings.getSync('viewType') || 'list'
+    settings.getSync('playlistViewType') || 'list'
   );
   const { isLoading, isError, data: playlists, error }: any = useQuery(
     ['playlists', sortBy],
@@ -85,6 +85,7 @@ const PlaylistList = () => {
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
+          viewTypeSetting="playlist"
           showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}

@@ -4,6 +4,7 @@ import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 
 const GenericPageHeader = ({
   image,
+  imageHeight,
   title,
   subtitle,
   sidetitle,
@@ -15,12 +16,18 @@ const GenericPageHeader = ({
   showSearchBar,
   handleListClick,
   handleGridClick,
+  viewTypeSetting,
 }: any) => {
   return (
     <>
       {image && (
         <div style={{ display: 'inline-block' }}>
-          <img src={image} alt="header-img" height="145px" width="145px" />
+          <img
+            src={image}
+            alt="header-img"
+            height={imageHeight || '145px'}
+            width={imageHeight || '145px'}
+          />
         </div>
       )}
 
@@ -66,14 +73,18 @@ const GenericPageHeader = ({
               <span style={{ display: 'inline-block' }}>
                 <InputGroup inside>
                   <Input
+                    id="local-search-input"
                     size="md"
                     value={searchQuery}
                     placeholder="Search..."
                     onChange={handleSearch}
                   />
                   {searchQuery !== '' && (
-                    <InputGroup.Button appearance="subtle">
-                      <Icon icon="close" onClick={clearSearchQuery} />
+                    <InputGroup.Button
+                      appearance="subtle"
+                      onClick={clearSearchQuery}
+                    >
+                      <Icon icon="close" />
                     </InputGroup.Button>
                   )}
                 </InputGroup>
@@ -88,7 +99,17 @@ const GenericPageHeader = ({
             height: '50%',
           }}
         >
-          <span style={{ alignSelf: 'center' }}>{subtitle}</span>
+          <span
+            style={{
+              alignSelf: 'center',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              width: '55%',
+            }}
+          >
+            {subtitle}
+          </span>
           <span style={{ alignSelf: 'center' }}>
             {subsidetitle && (
               <span style={{ display: 'inline-block' }}>{subsidetitle}</span>
@@ -98,6 +119,7 @@ const GenericPageHeader = ({
                 <ViewTypeButtons
                   handleListClick={handleListClick}
                   handleGridClick={handleGridClick}
+                  viewTypeSetting={viewTypeSetting}
                 />
               </span>
             )}

@@ -139,6 +139,7 @@ export const getStarred = async () => {
     ...data.starred2,
     album: (data.starred2.album || []).map((entry: any, index: any) => ({
       ...entry,
+      albumId: entry.id,
       image: getCoverArtUrl(entry),
       index,
     })),
@@ -161,6 +162,7 @@ export const getAlbums = async (options: any, coverArtSize = 150) => {
     ...data.albumList2,
     album: (data.albumList2.album || []).map((entry: any, index: any) => ({
       ...entry,
+      albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || '',
       index,
@@ -176,6 +178,7 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
   const albums = (data.albumList2.album || []).map(
     (entry: any, index: any) => ({
       ...entry,
+      albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || '',
       index,
@@ -194,6 +197,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
 
   return {
     ...data.album,
+    image: getCoverArtUrl(data.album, coverArtSize),
     song: (data.album.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
@@ -236,6 +240,39 @@ export const getArtists = async () => {
   return artistList;
 };
 
+export const getArtist = async (id: string, coverArtSize = 150) => {
+  const { data } = await api.get(`/getArtist`, {
+    params: {
+      id,
+    },
+  });
+
+  return {
+    ...data.artist,
+    image: getCoverArtUrl(data.artist, coverArtSize),
+    album: (data.artist.album || []).map((entry: any, index: any) => ({
+      ...entry,
+      albumId: entry.id,
+      image: getCoverArtUrl(entry, coverArtSize),
+      starred: entry.starred || '',
+      index,
+    })),
+  };
+};
+
+export const getArtistInfo = async (id: string, count = 10) => {
+  const { data } = await api.get(`/getArtistInfo2`, {
+    params: {
+      id,
+      count,
+    },
+  });
+
+  return {
+    ...data.artistInfo2,
+  };
+};
+
 export const startScan = async () => {
   const { data } = await api.get(`/startScan`);
   const scanStatus = data?.scanStatus;
@@ -272,4 +309,22 @@ export const unstar = async (id: string, type: string) => {
   });
 
   return data;
+};
+
+export const getSimilarSongs = async (
+  id: string,
+  count: number,
+  coverArtSize = 150
+) => {
+  const { data } = await api.get(`/getSimilarSongs2`, {
+    params: { id, count },
+  });
+
+  return {
+    song: (data.similarSongs2.song || []).map((entry: any, index: any) => ({
+      ...entry,
+      image: getCoverArtUrl(entry, coverArtSize),
+      index,
+    })),
+  };
 };

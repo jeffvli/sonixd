@@ -19,49 +19,11 @@ import Loader from '../loader/Loader';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 
-const albumTableColumns = [
-  {
-    id: '#',
-    dataKey: 'index',
-    alignment: 'center',
-    width: 70,
-  },
-  {
-    id: 'Title',
-    dataKey: 'name',
-    alignment: 'left',
-    resizable: true,
-    width: 350,
-  },
-
-  {
-    id: 'Artist',
-    dataKey: 'artist',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Tracks',
-    dataKey: 'songCount',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Duration',
-    dataKey: 'duration',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-];
-
 const StarredView = () => {
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState('Tracks');
   const [viewType, setViewType] = useState(
-    settings.getSync('viewType') || 'list'
+    settings.getSync('albumViewType') || 'list'
   );
   const { isLoading, isError, data, error }: any = useQuery(
     'starred',
@@ -75,7 +37,7 @@ const StarredView = () => {
       : currentPage === 'Albums'
       ? data?.album
       : data?.song,
-    ['title', 'artist', 'album']
+    ['title', 'artist', 'album', 'name', 'genre']
   );
 
   let timeout: any = null;
@@ -145,6 +107,7 @@ const StarredView = () => {
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons={currentPage !== 'Tracks'}
+          viewTypeSetting="song"
           showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}
@@ -171,8 +134,14 @@ const StarredView = () => {
           {viewType === 'list' && (
             <ListViewType
               data={searchQuery !== '' ? filteredData : data.album}
-              tableColumns={albumTableColumns}
+              tableColumns={settings.getSync('albumListColumns')}
+              rowHeight={Number(settings.getSync('albumListRowHeight'))}
+              fontSize={settings.getSync('albumListFontSize')}
               handleRowClick={handleRowClick}
+              cacheImages={{
+                enabled: settings.getSync('cacheImages'),
+                cacheType: 'album',
+              }}
               virtualized
             />
           )}
@@ -180,11 +149,16 @@ const StarredView = () => {
             <GridViewType
               data={searchQuery === '' ? data.album : filteredData}
               cardTitle={{
-                prefix: 'playlist',
+                prefix: '/library/album',
                 property: 'name',
-                urlProperty: 'id',
+                urlProperty: 'albumId',
               }}
-              cardSubtitle={{ prefix: 'playlist', property: 'songCount' }}
+              cardSubtitle={{
+                prefix: 'artist',
+                property: 'artist',
+                urlProperty: 'artistId',
+                unit: '',
+              }}
               playClick={{ type: 'album', idProperty: 'id' }}
               size="150px"
               cacheType="album"

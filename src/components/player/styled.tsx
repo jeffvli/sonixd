@@ -28,8 +28,8 @@ export const PlayerColumn = styled.div<{
 
 export const PlayerControlIcon = styled(Icon)`
   color: #b3b3b3;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
   &:hover {
     color: #ffffff;
   }
@@ -54,6 +54,13 @@ export const LinkButton = styled.a<{ subtitle?: string }>`
         ? props.theme.subtitleText
         : props.theme.titleText};
     cursor: pointer;
+  }
+
+  &:active {
+    color: ${(props) =>
+      props.subtitle === 'true'
+        ? props.theme.subtitleText
+        : props.theme.titleText};
   }
 `;
 

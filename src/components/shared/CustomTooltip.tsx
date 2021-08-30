@@ -3,10 +3,10 @@ import { Tooltip, Whisper } from 'rsuite';
 
 export const tooltip = (text: string) => <Tooltip>{text}</Tooltip>;
 
-const CustomTooltip = ({ children, text, delay }: any) => {
+const CustomTooltip = ({ children, text, delay, ...rest }: any) => {
   return (
     <Whisper
-      placement="top"
+      placement={rest.placement || 'top'}
       trigger="hover"
       delay={delay || 300}
       speaker={tooltip(text)}

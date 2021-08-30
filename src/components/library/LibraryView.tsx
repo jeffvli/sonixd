@@ -28,7 +28,7 @@ const LibraryView = () => {
   const [sortBy, setSortBy] = useState(null);
   const [data, setData] = useState<any[]>([]);
   const [offset, setOffset] = useState(0);
-  const [viewType, setViewType] = useState(settings.getSync('viewType'));
+  const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const { isLoading: isLoadingArtists, data: artists }: any = useQuery(
     'artists',
     getArtists,
@@ -105,6 +105,7 @@ const LibraryView = () => {
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons={currentPage === 'albums'}
+          viewTypeSetting="album"
           showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}

@@ -68,7 +68,11 @@ const Dashboard = () => {
             title="Recently Played"
             data={recentAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
-            cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSubtitle={{
+              prefix: 'artist',
+              property: 'artist',
+              urlProperty: 'artistId',
+            }}
             cardSize="175px"
           />
 
@@ -76,7 +80,11 @@ const Dashboard = () => {
             title="Recently Added"
             data={newestAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
-            cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSubtitle={{
+              prefix: 'artist',
+              property: 'artist',
+              urlProperty: 'artistId',
+            }}
             cardSize="175px"
           />
 
@@ -84,7 +92,11 @@ const Dashboard = () => {
             title="Random"
             data={randomAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
-            cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSubtitle={{
+              prefix: 'artist',
+              property: 'artist',
+              urlProperty: 'artistId',
+            }}
             cardSize="175px"
           />
 
@@ -92,7 +104,11 @@ const Dashboard = () => {
             title="Most Played"
             data={frequentAlbums.album}
             cardTitle={{ prefix: 'album', property: 'name' }}
-            cardSubtitle={{ prefix: 'album', property: 'artist' }}
+            cardSubtitle={{
+              prefix: 'artist',
+              property: 'artist',
+              urlProperty: 'artistId',
+            }}
             cardSize="175px"
           />
         </>

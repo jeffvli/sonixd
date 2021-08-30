@@ -2,7 +2,11 @@ import React from 'react';
 import { ButtonToolbar, ButtonGroup, IconButton, Icon } from 'rsuite';
 import settings from 'electron-settings';
 
-const ViewTypeButtons = ({ handleListClick, handleGridClick }: any) => {
+const ViewTypeButtons = ({
+  handleListClick,
+  handleGridClick,
+  viewTypeSetting,
+}: any) => {
   return (
     <ButtonToolbar>
       <ButtonGroup>
@@ -11,8 +15,8 @@ const ViewTypeButtons = ({ handleListClick, handleGridClick }: any) => {
           appearance="subtle"
           onClick={async () => {
             handleListClick();
-            localStorage.setItem('viewType', 'list');
-            settings.setSync('viewType', 'list');
+            localStorage.setItem(`${viewTypeSetting}ViewType`, 'list');
+            settings.setSync(`${viewTypeSetting}ViewType`, 'list');
           }}
         />
         <IconButton
@@ -20,8 +24,8 @@ const ViewTypeButtons = ({ handleListClick, handleGridClick }: any) => {
           appearance="subtle"
           onClick={async () => {
             handleGridClick();
-            localStorage.setItem('viewType', 'grid');
-            settings.setSync('viewType', 'grid');
+            localStorage.setItem(`${viewTypeSetting}ViewType`, 'grid');
+            settings.setSync(`${viewTypeSetting}ViewType`, 'grid');
           }}
         />
       </ButtonGroup>

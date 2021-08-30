@@ -59,8 +59,8 @@ const ScrollingMenu = ({
             subtitle={item[cardSubtitle.property]}
             key={item.id}
             coverArt={item.image}
-            url={`${cardTitle.prefix}/${item[cardTitle.property]}`}
-            subUrl={`${cardSubtitle.prefix}/${item[cardSubtitle.property]}`}
+            url={`library/${cardTitle.prefix}/${item.id}`}
+            subUrl={`library/${cardSubtitle.prefix}/${item.artistId}`}
             playClick={{ type: 'album', id: item.id }}
             hasHoverButtons
             size={cardSize}

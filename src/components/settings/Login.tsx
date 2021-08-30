@@ -78,6 +78,14 @@ const Login = () => {
       settings.setSync('fadeDuration', '5.0');
     }
 
+    if (!settings.hasSync('playlistViewType')) {
+      settings.setSync('playlistViewType', 'list');
+    }
+
+    if (!settings.hasSync('albumViewType')) {
+      settings.setSync('albumViewType', 'list');
+    }
+
     if (!settings.hasSync('songListFontSize')) {
       settings.setSync('songListFontSize', '14');
     }
@@ -111,6 +119,54 @@ const Login = () => {
           resizable: true,
           width: 350,
           label: 'Album',
+        },
+        {
+          id: 'Duration',
+          dataKey: 'duration',
+          alignment: 'center',
+          resizable: true,
+          width: 70,
+          label: 'Duration',
+        },
+      ]);
+    }
+
+    if (!settings.hasSync('albumListFontSize')) {
+      settings.setSync('albumListFontSize', '14');
+    }
+
+    if (!settings.hasSync('albumListRowHeight')) {
+      settings.setSync('albumListRowHeight', '60.0');
+    }
+
+    if (!settings.hasSync('albumListColumns')) {
+      settings.setSync('albumListColumns', [
+        {
+          id: '#',
+          dataKey: 'index',
+          alignment: 'center',
+          resizable: true,
+          width: 40,
+          label: '#',
+        },
+        {
+          id: 'Title',
+          dataKey: 'combinedtitle',
+          alignment: 'left',
+          resizable: true,
+          width: 350,
+          label: 'Title (Combined)',
+        },
+        {
+          label: 'Track Count',
+          value: {
+            id: 'Tracks',
+            dataKey: 'songCount',
+            alignment: 'center',
+            resizable: true,
+            width: 70,
+            label: 'Track Count',
+          },
         },
         {
           id: 'Duration',
