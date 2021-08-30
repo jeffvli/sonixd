@@ -86,7 +86,8 @@ export const getPlaylists = async (sortBy: string) => {
   return (newData || []).map((playlist: any) => ({
     ...playlist,
     name: playlist.name,
-    image: playlist.songCount > 0 ? getCoverArtUrl(playlist) : undefined,
+    image:
+      playlist.songCount > 0 ? getCoverArtUrl(playlist) : 'img/placeholder.jpg',
   }));
 };
 
@@ -101,7 +102,9 @@ export const getPlaylist = async (id: string) => {
       index,
     })),
     image:
-      data.playlist.songCount > 0 ? getCoverArtUrl(data.playlist) : undefined,
+      data.playlist.songCount > 0
+        ? getCoverArtUrl(data.playlist)
+        : 'img/placeholder.jpg',
   };
 };
 
