@@ -10,6 +10,7 @@ import {
   setPlayerVolume,
   fixPlayer2Index,
   clearPlayQueue,
+  shufflePlayQueue,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -114,15 +115,26 @@ const NowPlayingView = () => {
         <GenericPageHeader
           title="Now Playing"
           subtitle={
-            <Button
-              onClick={() => {
-                dispatch(clearPlayQueue());
-                dispatch(resetPlayer());
-                dispatch(setStatus('PAUSED'));
-              }}
-            >
-              Clear queue
-            </Button>
+            <>
+              <Button
+                size="sm"
+                onClick={() => {
+                  dispatch(clearPlayQueue());
+                  dispatch(resetPlayer());
+                  dispatch(setStatus('PAUSED'));
+                }}
+              >
+                Clear queue
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  dispatch(shufflePlayQueue());
+                }}
+              >
+                Shuffle
+              </Button>
+            </>
           }
           subsidetitle={
             <Checkbox

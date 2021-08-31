@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash';
 import arrayMove from 'array-move';
 import { areConsecutive, consecutiveRanges } from '../shared/utils';
 
@@ -84,6 +85,14 @@ const resetPlayerDefaults = (state: PlayQueue) => {
   state.player2.volume = 0;
 };
 
+const insertItem = (array: any, index: any, item: any) => {
+  return [...array.slice(0, index), item, ...array.slice(index)];
+};
+
+const removeItem = (array: any, index: any) => {
+  return [...array.slice(0, index), ...array.slice(index + 1)];
+};
+
 const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
@@ -91,6 +100,24 @@ const playQueueSlice = createSlice({
     resetPlayQueue: (state) => {
       resetPlayerDefaults(state);
       state.currentSongId = state.entry[0].id;
+    },
+
+    shufflePlayQueue: (state) => {
+      // Remove the current song before shuffling the array
+      // We do this so that the currently playing song doesn't
+      // suddenly switch because the index has changed
+      const shuffledEntriesWithoutCurrent = _.shuffle(
+        removeItem(state.entry, state.currentIndex)
+      );
+
+      // Readd the current song back into its original index
+      const shuffledEntries = insertItem(
+        shuffledEntriesWithoutCurrent,
+        state.currentIndex,
+        state.entry[state.currentIndex]
+      );
+
+      state.entry = shuffledEntries;
     },
 
     setAutoIncremented: (state, action: PayloadAction<boolean>) => {
@@ -112,12 +139,28 @@ const playQueueSlice = createSlice({
       if (state.repeat === 'none') {
         state.repeat = 'all';
       } else if (state.repeat === 'all') {
+        state.repeat = 'one';
+        if (state.currentPlayer === 1) {
+          state.player2.index = state.player1.index;
+        } else {
+          state.player1.index = state.player2.index;
+        }
+      } else if (state.repeat === 'one') {
         state.repeat = 'none';
+        if (state.currentPlayer === 1) {
+          state.player2.index = state.player1.index + 1;
+        } else {
+          state.player1.index = state.player2.index + 1;
+        }
       }
 
-      if (state.player1.index > state.entry.length - 1) state.player1.index = 0;
+      if (state.player1.index > state.entry.length - 1) {
+        state.player1.index = 0;
+      }
 
-      if (state.player2.index > state.entry.length - 1) state.player2.index = 0;
+      if (state.player2.index > state.entry.length - 1) {
+        state.player2.index = 0;
+      }
     },
 
     toggleShuffle: (state) => {
@@ -141,9 +184,22 @@ const playQueueSlice = createSlice({
     },
 
     incrementCurrentIndex: (state, action: PayloadAction<string>) => {
-      if (state.entry.length >= 1) {
+      if (state.entry.length >= 1 && state.repeat !== 'one') {
         if (state.currentIndex < state.entry.length - 1) {
           state.currentIndex += 1;
+          if (action.payload === 'usingHotkey') {
+            state.currentPlayer = 1;
+            state.isFading = false;
+            state.player1.volume = state.volume;
+            state.player1.index = state.currentIndex;
+            if (state.currentIndex + 1 >= state.entry.length) {
+              state.player2.index = 0;
+            } else {
+              state.player2.index = state.currentIndex + 1;
+            }
+          }
+        } else if (state.repeat === 'all') {
+          state.currentIndex = 0;
           if (action.payload === 'usingHotkey') {
             state.currentPlayer = 1;
             state.isFading = false;
@@ -165,7 +221,7 @@ const playQueueSlice = createSlice({
       // If the entry list is greater than two, we don't need to increment,
       // just keep swapping playback between the tracks [0 <=> 0] or [0 <=> 1]
       // without changing the index of either player
-      if (state.entry.length > 2) {
+      if (state.entry.length > 2 && state.repeat !== 'one') {
         if (action.payload === 1) {
           if (
             state.player1.index + 1 === state.entry.length &&
@@ -262,8 +318,10 @@ const playQueueSlice = createSlice({
     },
 
     fixPlayer2Index: (state) => {
-      if (state.entry.length >= 2) {
+      if (state.entry.length >= 2 && state.repeat !== 'one') {
         state.player2.index = state.currentIndex + 1;
+      } else if (state.repeat === 'one') {
+        state.player2.index = state.currentIndex;
       } else {
         state.player1.index = 0;
       }
@@ -395,5 +453,6 @@ export const {
   toggleDisplayQueue,
   resetPlayQueue,
   setStar,
+  shufflePlayQueue,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

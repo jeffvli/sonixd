@@ -27,11 +27,12 @@ export const PlayerColumn = styled.div<{
 `;
 
 export const PlayerControlIcon = styled(Icon)`
-  color: #b3b3b3;
+  color: ${(props) => (props.active === 'true' ? props.theme.main : '#b3b3b3')};
   padding-left: 10px;
   padding-right: 10px;
   &:hover {
-    color: #ffffff;
+    color: ${(props) =>
+      props.active === 'true' ? props.theme.main : '#ffffff'};
   }
   cursor: pointer;
 `;

@@ -21,6 +21,7 @@ import {
   toggleRepeat,
   toggleDisplayQueue,
   setStar,
+  shufflePlayQueue,
 } from '../../redux/playQueueSlice';
 import { setStatus, resetPlayer } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -209,6 +210,10 @@ const PlayerBar = () => {
 
   const handleRepeat = () => {
     dispatch(toggleRepeat());
+  };
+
+  const handleShuffle = () => {
+    dispatch(shufflePlayQueue());
   };
 
   const handleDisplayQueue = () => {
@@ -522,21 +527,28 @@ const PlayerBar = () => {
                           }
                           size="lg"
                           fixedWidth
-                          style={{
-                            color: playQueue.entry[playQueue.currentIndex]
-                              .starred
-                              ? '#1179ac'
-                              : undefined,
-                          }}
+                          active={
+                            playQueue.entry[playQueue.currentIndex].starred
+                              ? 'true'
+                              : 'false'
+                          }
                           onClick={handleFavorite}
                         />
                       </CustomTooltip>
 
                       {/* Repeat Button */}
-                      <CustomTooltip text="Repeat">
+                      <CustomTooltip
+                        text={
+                          playQueue.repeat === 'all'
+                            ? 'Repeat all'
+                            : playQueue.repeat === 'one'
+                            ? 'Repeat one'
+                            : 'Repeat'
+                        }
+                      >
                         <PlayerControlIcon
                           tabIndex={0}
-                          icon="repeat"
+                          icon="refresh"
                           size="lg"
                           fixedWidth
                           onClick={handleRepeat}
@@ -545,11 +557,31 @@ const PlayerBar = () => {
                               handleRepeat();
                             }
                           }}
-                          style={{
-                            color:
-                              playQueue.repeat === 'all'
-                                ? '#1179ac'
-                                : undefined,
+                          active={
+                            playQueue.repeat === 'all' ||
+                            playQueue.repeat === 'one'
+                              ? 'true'
+                              : 'false'
+                          }
+                          flip={
+                            playQueue.repeat === 'one'
+                              ? 'horizontal'
+                              : undefined
+                          }
+                        />
+                      </CustomTooltip>
+                      {/* Shuffle Button */}
+                      <CustomTooltip text="Shuffle">
+                        <PlayerControlIcon
+                          tabIndex={0}
+                          icon="random"
+                          size="lg"
+                          fixedWidth
+                          onClick={handleShuffle}
+                          onKeyDown={(e: any) => {
+                            if (e.keyCode === keyCodes.SPACEBAR) {
+                              handleShuffle();
+                            }
                           }}
                         />
                       </CustomTooltip>
@@ -566,11 +598,7 @@ const PlayerBar = () => {
                               handleDisplayQueue();
                             }
                           }}
-                          style={{
-                            color: playQueue.displayQueue
-                              ? '#1179ac'
-                              : undefined,
-                          }}
+                          active={playQueue.displayQueue ? 'true' : 'false'}
                         />
                       </CustomTooltip>
                     </>
