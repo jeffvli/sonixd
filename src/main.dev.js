@@ -124,6 +124,7 @@ const createWindow = async () => {
     if (storeValues.playQueue.entry.length >= 1) {
       store.dispatch(resetPlayer());
       store.dispatch(incrementCurrentIndex('usingHotkey'));
+      store.dispatch(setStatus('PLAYING'));
     }
   });
 
@@ -133,6 +134,7 @@ const createWindow = async () => {
       store.dispatch(resetPlayer());
       store.dispatch(decrementCurrentIndex('usingHotkey'));
       store.dispatch(fixPlayer2Index());
+      store.dispatch(setStatus('PLAYING'));
     }
   });
 

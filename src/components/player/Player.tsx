@@ -19,11 +19,10 @@ import {
   setPlayerVolume,
   setIsFading,
   setAutoIncremented,
-  resetPlayQueue,
   fixPlayer2Index,
   setCurrentIndex,
 } from '../../redux/playQueueSlice';
-import { resetPlayer, setCurrentSeek } from '../../redux/playerSlice';
+import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 
 const Player = ({ children }: any, ref: any) => {

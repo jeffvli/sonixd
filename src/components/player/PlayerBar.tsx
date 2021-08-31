@@ -73,12 +73,14 @@ const PlayerBar = () => {
   const handleClickNext = () => {
     dispatch(resetPlayer());
     dispatch(incrementCurrentIndex('usingHotkey'));
+    dispatch(setStatus('PLAYING'));
   };
 
   const handleClickPrevious = () => {
     dispatch(resetPlayer());
     dispatch(decrementCurrentIndex('usingHotkey'));
     dispatch(fixPlayer2Index());
+    dispatch(setStatus('PLAYING'));
   };
 
   const handleClickPlayPause = () => {
