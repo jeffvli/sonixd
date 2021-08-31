@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
 import React, {
   useState,
@@ -8,38 +6,17 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Table, DOMHelper, Grid, Col, Row, Button } from 'rsuite';
-import path from 'path';
-import settings from 'electron-settings';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { nanoid } from '@reduxjs/toolkit';
-import {
-  formatSongDuration,
-  getImageCachePath,
-  isCached,
-} from '../../shared/utils';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import DraggableHeaderCell from '../table/DraggableHeaderCell';
+import { DOMHelper } from 'rsuite';
+import { useAppSelector } from '../../redux/hooks';
 import Loader from '../loader/Loader';
 import SelectionBar from '../selectionbar/SelectionBar';
-import cacheImage from '../shared/cacheImage';
-import { RsuiteLinkButton } from './styled';
+import ListViewTable from './ListViewTable';
 
 declare global {
   interface Window {
     resizeInterval: any;
   }
 }
-
-const sort = (source: any, sourceId: any, targetId: any) => {
-  const nextData = source.filter((item: any) => item.id !== sourceId);
-  const dragItem = source.find((item: any) => item.id === sourceId);
-  const index = nextData.findIndex((item: any) => item.id === targetId);
-
-  nextData.splice(index + 1, 0, dragItem);
-  return nextData;
-};
 
 const ListViewType = (
   {
@@ -60,10 +37,9 @@ const ListViewType = (
   // const [isDragging, setIsDragging] = useState(false);
   // const [dragDirection, setDragDirection] = useState('down');
   // const [dragSpeed, setDragSpeed] = useState('medium');
-  const history = useHistory();
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
-  const [columns, setColumns] = useState(tableColumns);
+  const [columns] = useState(tableColumns);
   const { getHeight } = DOMHelper;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const multiSelect = useAppSelector((state: any) => state.multiSelect);
@@ -75,10 +51,6 @@ const ListViewType = (
       return tableRef;
     },
   }));
-
-  const handleDragColumn = (sourceId: any, targetId: any) => {
-    setColumns(sort(columns, sourceId, targetId));
-  };
 
   useEffect(() => {
     function handleResize() {
@@ -253,343 +225,20 @@ const ListViewType = (
         </div> */}
 
         {show && (
-          <Table
-            ref={tableRef}
+          <ListViewTable
+            tableRef={tableRef}
             height={height}
             data={data}
-            virtualized={virtualized}
+            virtualized
             rowHeight={rowHeight}
-            onRowContextMenu={(e) => {
-              console.log(e);
-            }}
-            hover={false}
-            affixHeader
-            affixHorizontalScrollbar
-            shouldUpdateScroll={false}
-            style={{ fontSize: `${fontSize}px` }}
-          >
-            {columns.map((column: any) => (
-              <Table.Column
-                key={nanoid()}
-                align={column.alignment}
-                flexGrow={column.flexGrow}
-                resizable={column.resizable}
-                width={column.width}
-                fixed={column.fixed}
-                verticalAlign="middle"
-                onResize={(width: any) => {
-                  const resizedColumn: any = settings.getSync(
-                    'songListColumns'
-                  );
-
-                  const resizedColumnIndex = resizedColumn.findIndex(
-                    (c: any) => c.dataKey === column.dataKey
-                  );
-
-                  settings.setSync(
-                    `songListColumns[${resizedColumnIndex}].width`,
-                    width
-                  );
-                }}
-              >
-                {hasDraggableColumns ? (
-                  <DraggableHeaderCell onDrag={handleDragColumn} id={column.id}>
-                    {column.id}
-                  </DraggableHeaderCell>
-                ) : (
-                  <Table.HeaderCell>{column.id}</Table.HeaderCell>
-                )}
-
-                {column.dataKey === 'index' ? (
-                  <Table.Cell>
-                    {(rowData: any, rowIndex: any) => {
-                      return (
-                        <div
-                          onClick={(e: any) =>
-                            handleRowClick(e, {
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          onDoubleClick={() =>
-                            handleRowDoubleClick({
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          className={
-                            rowData.id === playQueue.currentSongId
-                              ? 'active'
-                              : ''
-                          }
-                          style={
-                            multiSelect.selected.find(
-                              (e: any) => e.id === rowData.id
-                            )
-                              ? {
-                                  background: '#4D5156',
-                                  lineHeight: `${rowHeight}px`,
-                                }
-                              : { lineHeight: `${rowHeight}px` }
-                          }
-                        >
-                          {rowIndex + 1}
-                          {rowData['-empty']}
-                        </div>
-                      );
-                    }}
-                  </Table.Cell>
-                ) : column.dataKey === 'duration' ? (
-                  <Table.Cell>
-                    {(rowData: any, rowIndex: any) => {
-                      return (
-                        <div
-                          onClick={(e: any) =>
-                            handleRowClick(e, {
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          onDoubleClick={() =>
-                            handleRowDoubleClick({
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          className={
-                            rowData.id === playQueue.currentSongId
-                              ? 'active'
-                              : ''
-                          }
-                          style={
-                            multiSelect.selected.find(
-                              (e: any) => e.id === rowData.id
-                            )
-                              ? {
-                                  background: '#4D5156',
-                                  lineHeight: `${rowHeight}px`,
-                                }
-                              : { lineHeight: `${rowHeight}px` }
-                          }
-                        >
-                          <div
-                            style={{
-                              width: '100%',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            {formatSongDuration(rowData.duration)}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </Table.Cell>
-                ) : column.dataKey === 'combinedtitle' ? (
-                  <Table.Cell>
-                    {(rowData: any, rowIndex: any) => {
-                      return (
-                        <div
-                          onClick={(e: any) =>
-                            handleRowClick(e, {
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          onDoubleClick={() =>
-                            handleRowDoubleClick({
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          className={
-                            rowData.id === playQueue.currentSongId
-                              ? 'active'
-                              : ''
-                          }
-                          style={
-                            multiSelect.selected.find(
-                              (e: any) => e.id === rowData.id
-                            )
-                              ? {
-                                  background: '#4D5156',
-                                }
-                              : {}
-                          }
-                        >
-                          <Grid fluid>
-                            <Row
-                              style={{
-                                height: `${rowHeight}px`,
-                                display: 'flex',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <Col
-                                style={{
-                                  paddingRight: '5px',
-                                  width: `${rowHeight}px`,
-                                }}
-                              >
-                                <LazyLoadImage
-                                  src={
-                                    isCached(
-                                      path.join(
-                                        getImageCachePath(),
-                                        `${cacheImages.cacheType}_${rowData.albumId}.jpg`
-                                      )
-                                    )
-                                      ? path.join(
-                                          getImageCachePath(),
-                                          `${cacheImages.cacheType}_${rowData.albumId}.jpg`
-                                        )
-                                      : rowData.image
-                                  }
-                                  alt="track-img"
-                                  effect="opacity"
-                                  width={rowHeight - 10}
-                                  height={rowHeight - 10}
-                                  visibleByDefault={cacheImages.enabled}
-                                  afterLoad={() => {
-                                    if (cacheImages.enabled) {
-                                      cacheImage(
-                                        `${cacheImages.cacheType}_${rowData.albumId}.jpg`,
-                                        rowData.image.replace(
-                                          /size=\d+/,
-                                          'size=350'
-                                        )
-                                      );
-                                    }
-                                  }}
-                                />
-                              </Col>
-                              <Col
-                                style={{
-                                  width: '100%',
-                                  overflow: 'hidden',
-                                  paddingLeft: '10px',
-                                  paddingRight: '20px',
-                                }}
-                              >
-                                <Row
-                                  style={{
-                                    height: `${rowHeight / 2}px`,
-                                    overflow: 'hidden',
-                                    position: 'relative',
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      position: 'absolute',
-                                      bottom: 0,
-                                      width: '100%',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                    }}
-                                  >
-                                    {rowData.title || rowData.name}
-                                  </span>
-                                </Row>
-                                <Row
-                                  style={{
-                                    height: `${rowHeight / 2}px`,
-                                    fontSize: 'smaller',
-                                    overflow: 'hidden',
-                                    position: 'relative',
-                                    width: '100%',
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      position: 'absolute',
-                                      top: 0,
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                      width: '100%',
-                                    }}
-                                  >
-                                    <RsuiteLinkButton
-                                      subtitle="true"
-                                      appearance="link"
-                                      onClick={() => {
-                                        history.push(
-                                          `/library/artist/${rowData.artistId}`
-                                        );
-                                      }}
-                                    >
-                                      {rowData.artist}
-                                    </RsuiteLinkButton>
-                                  </span>
-                                </Row>
-                              </Col>
-                            </Row>
-                          </Grid>
-                        </div>
-                      );
-                    }}
-                  </Table.Cell>
-                ) : (
-                  <Table.Cell>
-                    {(rowData: any, rowIndex: any) => {
-                      return (
-                        <div
-                          onClick={(e: any) =>
-                            handleRowClick(e, {
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          onDoubleClick={() =>
-                            handleRowDoubleClick({
-                              ...rowData,
-                              rowIndex,
-                            })
-                          }
-                          className={
-                            rowData.id === playQueue.currentSongId
-                              ? 'active'
-                              : ''
-                          }
-                          style={
-                            multiSelect.selected.find(
-                              (e: any) => e.id === rowData.id
-                            )
-                              ? {
-                                  background: '#4D5156',
-                                  lineHeight: `${rowHeight}px`,
-                                }
-                              : {
-                                  lineHeight: `${rowHeight}px`,
-                                }
-                          }
-                        >
-                          <div
-                            style={{
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            {column.dataKey === 'album' && (
-                              <RsuiteLinkButton appearance="link">
-                                {rowData[column.dataKey]}
-                              </RsuiteLinkButton>
-                            )}
-                            {/* {rowData[column.dataKey]}{' '} */}
-                            {column.dataKey === 'bitRate' ? ' kbps' : ''}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </Table.Cell>
-                )}
-              </Table.Column>
-            ))}
-            {children}
-          </Table>
+            fontSize={fontSize}
+            columns={columns}
+            handleRowClick={handleRowClick}
+            handleRowDoubleClick={handleRowDoubleClick}
+            playQueue={playQueue}
+            multiSelect={multiSelect}
+            cacheImages={cacheImages}
+          />
         )}
       </div>
     </>
