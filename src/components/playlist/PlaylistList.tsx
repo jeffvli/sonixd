@@ -16,37 +16,6 @@ const PLAYLIST_SORT_TYPES = [
   { label: 'Date Created', value: 'dateCreated' },
 ];
 
-const tableColumns = [
-  {
-    id: '#',
-    dataKey: 'index',
-    alignment: 'center',
-    width: 70,
-    resizable: false,
-  },
-  {
-    id: 'Name',
-    dataKey: 'name',
-    alignment: 'left',
-    flexGrow: 1,
-    resizable: false,
-  },
-  {
-    id: 'Tracks',
-    dataKey: 'songCount',
-    alignment: 'center',
-    flexGrow: 1,
-    resizable: false,
-  },
-  {
-    id: 'Description',
-    dataKey: 'comment',
-    alignment: 'left',
-    flexGrow: 2,
-    resizable: false,
-  },
-];
-
 const PlaylistList = () => {
   const history = useHistory();
   const [sortBy, setSortBy] = useState('');
