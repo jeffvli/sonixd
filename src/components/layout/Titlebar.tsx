@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TitleHeader,
   DragRegion,
@@ -7,11 +7,29 @@ import {
 } from './styled';
 
 const Titlebar = () => {
+  const [title, setTitle] = useState(document.title);
+
+  useEffect(() => {
+    // We are using an interval to set the title instead of redux because jest
+    // throws an error on render that this component is not wrapped in a redux provider.
+    // Not sure if this is a bug or not, but this is the only workaround unless
+    // someone knows of a better solution.
+    setInterval(() => setTitle(document.title), 1000);
+  });
+
   return (
     <TitleHeader id="titlebar">
       <DragRegion id="drag-region">
-        <div id="window-title">
-          <span>{document.title}</span>
+        <div
+          id="window-title"
+          style={{
+            width: 'calc(80%)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <span>{title}</span>
         </div>
         <WindowControl id="window-controls">
           <WindowControlButton minButton className="button" id="min-button">

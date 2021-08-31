@@ -3,12 +3,14 @@ import React, {
   useEffect,
   useImperativeHandle,
   forwardRef,
+  useState,
 } from 'react';
 import path from 'path';
 import fs from 'fs';
 import settings from 'electron-settings';
 import { Notification } from 'rsuite';
 import ReactAudioPlayer from 'react-audio-player';
+import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   incrementCurrentIndex,
@@ -30,6 +32,7 @@ const Player = ({ children }: any, ref: any) => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const cacheSongs = settings.getSync('cacheSongs');
+  const [title, setTitle] = useState('');
 
   useImperativeHandle(ref, () => ({
     get player1() {
@@ -270,8 +273,26 @@ const Player = ({ children }: any, ref: any) => {
     return null;
   };
 
+  useEffect(() => {
+    const playStatus =
+      playQueue.status !== 'PLAYING' && playQueue.entry.length > 0
+        ? '(Paused)'
+        : '';
+    const songTitle = playQueue.entry[playQueue.currentIndex]?.title
+      ? `(${playQueue.currentIndex + 1} / ${playQueue.entry.length}) ~ ${
+          playQueue.entry[playQueue.currentIndex]?.title
+        } ~ ${playQueue.entry[playQueue.currentIndex]?.artist} `
+      : 'sonixd';
+
+    setTitle(`${playStatus} ${songTitle}`);
+  }, [playQueue.currentIndex, playQueue.entry, playQueue.status]);
+
   return (
     <>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+
       <ReactAudioPlayer
         ref={player1Ref}
         src={

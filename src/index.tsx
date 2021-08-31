@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from 'styled-components';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
+import { HelmetProvider } from 'react-helmet-async';
 import { store } from './redux/store';
 import App from './App';
 import { theme } from './styles/styledTheme';

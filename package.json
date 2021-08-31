@@ -267,7 +267,7 @@
     "react": "^17.0.2",
     "react-audio-player": "^0.17.0",
     "react-dom": "^17.0.2",
-    "react-helmet-async": "^1.0.9",
+    "react-helmet-async": "^1.1.2",
     "react-horizontal-scrolling-menu": "^2.0.3",
     "react-hotkeys": "^2.0.0",
     "react-lazy-load-image-component": "^1.5.1",

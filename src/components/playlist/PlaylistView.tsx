@@ -31,45 +31,6 @@ interface PlaylistParams {
   id: string;
 }
 
-const tableColumns = [
-  {
-    id: '#',
-    dataKey: 'index',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-  {
-    id: 'Title',
-    dataKey: 'title',
-    alignment: 'left',
-    resizable: true,
-    width: 350,
-  },
-
-  {
-    id: 'Artist',
-    dataKey: 'artist',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Album',
-    dataKey: 'album',
-    alignment: 'center',
-    resizable: true,
-    width: 300,
-  },
-  {
-    id: 'Duration',
-    dataKey: 'duration',
-    alignment: 'center',
-    resizable: true,
-    width: 70,
-  },
-];
-
 const PlaylistView = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams<PlaylistParams>();
