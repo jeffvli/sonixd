@@ -113,7 +113,7 @@ const Config = () => {
     >
       <ConfigPanel header="Playback" bordered>
         <p>
-          Fading works by polling the audio player on an interval (100ms) to
+          Fading works by polling the audio player on an interval (150ms) to
           determine when to start fading to the next track. Due to this, you may
           notice the fade to be inconsistent occasionally.
         </p>

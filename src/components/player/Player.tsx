@@ -90,18 +90,18 @@ const Player = ({ children }: any, ref: any) => {
           const timeLeft = duration - currentSeek;
           if (player2Ref.current.audioEl.current) {
             const player1Volume =
-              playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.11 <=
+              playQueue.player1.volume - (playQueue.volume / timeLeft) * 0.1 <=
               0
                 ? 0
                 : playQueue.player1.volume -
-                  (playQueue.volume / timeLeft) * 0.11;
+                  (playQueue.volume / timeLeft) * 0.1;
 
             const player2Volume =
-              playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.11 >=
+              playQueue.player2.volume + (playQueue.volume / timeLeft) * 0.1 >=
               playQueue.volume
                 ? playQueue.volume
                 : playQueue.player2.volume +
-                  (playQueue.volume / timeLeft) * 0.11;
+                  (playQueue.volume / timeLeft) * 0.1;
 
             dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
             dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
@@ -144,18 +144,18 @@ const Player = ({ children }: any, ref: any) => {
           const timeLeft = duration - currentSeek;
           if (player1Ref.current.audioEl.current) {
             const player1Volume =
-              playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.11 >=
+              playQueue.player1.volume + (playQueue.volume / timeLeft) * 0.1 >=
               playQueue.volume
                 ? playQueue.volume
                 : playQueue.player1.volume +
-                  (playQueue.volume / timeLeft) * 0.11;
+                  (playQueue.volume / timeLeft) * 0.1;
 
             const player2Volume =
-              playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.11 <=
+              playQueue.player2.volume - (playQueue.volume / timeLeft) * 0.1 <=
               0
                 ? 0
                 : playQueue.player2.volume -
-                  (playQueue.volume / timeLeft) * 0.11;
+                  (playQueue.volume / timeLeft) * 0.1;
 
             dispatch(setPlayerVolume({ player: 1, volume: player1Volume }));
             dispatch(setPlayerVolume({ player: 2, volume: player2Volume }));
@@ -300,7 +300,7 @@ const Player = ({ children }: any, ref: any) => {
             ? checkCachedSong(playQueue.entry[playQueue.player1.index]?.id)
             : playQueue.entry[playQueue.player1.index]?.streamUrl
         }
-        listenInterval={100}
+        listenInterval={150}
         preload="auto"
         onListen={handleListen1}
         onEnded={handleOnEnded1}
@@ -318,7 +318,7 @@ const Player = ({ children }: any, ref: any) => {
             ? checkCachedSong(playQueue.entry[playQueue.player2.index]?.id)
             : playQueue.entry[playQueue.player2.index]?.streamUrl
         }
-        listenInterval={100}
+        listenInterval={150}
         preload="auto"
         onListen={handleListen2}
         onEnded={handleOnEnded2}
