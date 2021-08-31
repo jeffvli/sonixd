@@ -17,13 +17,13 @@ import {
   incrementPlayerIndex,
   setCurrentPlayer,
   setPlayerVolume,
-  setCurrentSeek,
   setIsFading,
   setAutoIncremented,
-  resetPlayer,
+  resetPlayQueue,
   fixPlayer2Index,
   setCurrentIndex,
 } from '../../redux/playQueueSlice';
+import { resetPlayer, setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 
 const Player = ({ children }: any, ref: any) => {
@@ -31,6 +31,7 @@ const Player = ({ children }: any, ref: any) => {
   const player2Ref = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
+  const player = useAppSelector((state) => state.player);
   const cacheSongs = settings.getSync('cacheSongs');
   const [title, setTitle] = useState('');
 
@@ -44,7 +45,7 @@ const Player = ({ children }: any, ref: any) => {
   }));
 
   useEffect(() => {
-    if (playQueue.status === 'PLAYING') {
+    if (player.status === 'PLAYING') {
       if (playQueue.currentPlayer === 1) {
         try {
           player1Ref.current.audioEl.current.play();
@@ -62,7 +63,7 @@ const Player = ({ children }: any, ref: any) => {
       player1Ref.current.audioEl.current.pause();
       player2Ref.current.audioEl.current.pause();
     }
-  }, [playQueue.currentPlayer, playQueue.status]);
+  }, [playQueue.currentPlayer, player.status]);
 
   const handleListen1 = () => {
     const fadeDuration = Number(settings.getSync('fadeDuration')) || 0;
@@ -188,6 +189,7 @@ const Player = ({ children }: any, ref: any) => {
       playQueue.repeat === 'none' &&
       playQueue.player1.index > playQueue.player2.index
     ) {
+      dispatch(resetPlayQueue());
       dispatch(resetPlayer());
       dispatch(fixPlayer2Index());
       setTimeout(() => {
@@ -196,6 +198,7 @@ const Player = ({ children }: any, ref: any) => {
       }, 200);
     } else {
       if (!playQueue.autoIncremented) {
+        dispatch(resetPlayer());
         dispatch(incrementCurrentIndex('none'));
         dispatch(setCurrentIndex(playQueue.entry[playQueue.player2.index]));
         dispatch(setAutoIncremented(true));
@@ -225,6 +228,7 @@ const Player = ({ children }: any, ref: any) => {
       playQueue.repeat === 'none' &&
       playQueue.player2.index > playQueue.player1.index
     ) {
+      dispatch(resetPlayQueue());
       dispatch(resetPlayer());
       dispatch(fixPlayer2Index());
       setTimeout(() => {
@@ -233,6 +237,7 @@ const Player = ({ children }: any, ref: any) => {
       }, 200);
     } else {
       if (!playQueue.autoIncremented) {
+        dispatch(resetPlayer());
         dispatch(incrementCurrentIndex('none'));
         dispatch(setCurrentIndex(playQueue.entry[playQueue.player1.index]));
         dispatch(setAutoIncremented(true));
@@ -275,7 +280,7 @@ const Player = ({ children }: any, ref: any) => {
 
   useEffect(() => {
     const playStatus =
-      playQueue.status !== 'PLAYING' && playQueue.entry.length > 0
+      player.status !== 'PLAYING' && playQueue.entry.length > 0
         ? '(Paused)'
         : '';
     const songTitle = playQueue.entry[playQueue.currentIndex]?.title
@@ -285,7 +290,7 @@ const Player = ({ children }: any, ref: any) => {
       : 'sonixd';
 
     setTitle(`${playStatus} ${songTitle}`);
-  }, [playQueue.currentIndex, playQueue.entry, playQueue.status]);
+  }, [playQueue.currentIndex, playQueue.entry, player.status]);
 
   return (
     <>

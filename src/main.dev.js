@@ -20,11 +20,10 @@ import {
   triggerAlias,
   replayActionMain,
 } from 'electron-redux';
-import playerReducer from './redux/playerSlice';
+import playerReducer, { resetPlayer, setStatus } from './redux/playerSlice';
 import playQueueReducer, {
   decrementCurrentIndex,
   incrementCurrentIndex,
-  setStatus,
   fixPlayer2Index,
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
@@ -112,7 +111,7 @@ const createWindow = async () => {
   globalShortcut.register('MediaPlayPause', () => {
     const storeValues = store.getState();
     if (storeValues.playQueue.entry.length >= 1) {
-      if (storeValues.playQueue.status === 'PAUSED') {
+      if (storeValues.player.status === 'PAUSED') {
         store.dispatch(setStatus('PLAYING'));
       } else {
         store.dispatch(setStatus('PAUSED'));
@@ -123,6 +122,7 @@ const createWindow = async () => {
   globalShortcut.register('MediaNextTrack', () => {
     const storeValues = store.getState();
     if (storeValues.playQueue.entry.length >= 1) {
+      store.dispatch(resetPlayer());
       store.dispatch(incrementCurrentIndex('usingHotkey'));
     }
   });
@@ -130,6 +130,7 @@ const createWindow = async () => {
   globalShortcut.register('MediaPreviousTrack', () => {
     const storeValues = store.getState();
     if (storeValues.playQueue.entry.length >= 1) {
+      store.dispatch(resetPlayer());
       store.dispatch(decrementCurrentIndex('usingHotkey'));
       store.dispatch(fixPlayer2Index());
     }

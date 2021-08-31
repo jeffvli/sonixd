@@ -17,12 +17,12 @@ import {
   decrementCurrentIndex,
   setVolume,
   setPlayerVolume,
-  setStatus,
   fixPlayer2Index,
   toggleRepeat,
   toggleDisplayQueue,
   setStar,
 } from '../../redux/playQueueSlice';
+import { setStatus, resetPlayer } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -37,6 +37,7 @@ const keyCodes = {
 const PlayerBar = () => {
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
+  const player = useAppSelector((state) => state.player);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -51,8 +52,8 @@ const PlayerBar = () => {
   const history = useHistory();
 
   useEffect(() => {
-    setSeek(playQueue.currentSeek);
-  }, [playQueue.currentSeek]);
+    setSeek(player.currentSeek);
+  }, [player.currentSeek]);
 
   useEffect(() => {
     if (isDragging) {
@@ -70,16 +71,18 @@ const PlayerBar = () => {
   }, [isDragging, manualSeek, playQueue.currentPlayer]);
 
   const handleClickNext = () => {
+    dispatch(resetPlayer());
     dispatch(incrementCurrentIndex('usingHotkey'));
   };
 
   const handleClickPrevious = () => {
+    dispatch(resetPlayer());
     dispatch(decrementCurrentIndex('usingHotkey'));
     dispatch(fixPlayer2Index());
   };
 
   const handleClickPlayPause = () => {
-    dispatch(setStatus(playQueue.status === 'PLAYING' ? 'PAUSED' : 'PLAYING'));
+    dispatch(setStatus(player.status === 'PLAYING' ? 'PAUSED' : 'PLAYING'));
   };
 
   const handleVolumeSlider = (e: number) => {
@@ -395,13 +398,11 @@ const PlayerBar = () => {
                 <PlayerControlIcon
                   tabIndex={0}
                   icon={
-                    playQueue.status === 'PLAYING'
-                      ? 'pause-circle'
-                      : 'play-circle'
+                    player.status === 'PLAYING' ? 'pause-circle' : 'play-circle'
                   }
                   spin={
-                    playQueue.currentSeekable <= playQueue.currentSeek &&
-                    playQueue.status === 'PLAYING'
+                    player.currentSeekable <= player.currentSeek &&
+                    player.status === 'PLAYING'
                   }
                   size="3x"
                   onClick={handleClickPlayPause}

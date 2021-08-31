@@ -112,7 +112,10 @@ const ListViewTable = ({
                       })
                     }
                     className={
-                      rowData.id === playQueue?.currentSongId ? 'active' : ''
+                      rowData.id === playQueue?.currentSongId &&
+                      playQueue.currentIndex === rowIndex
+                        ? 'active'
+                        : ''
                     }
                     style={
                       multiSelect?.selected.find(
@@ -149,7 +152,10 @@ const ListViewTable = ({
                       })
                     }
                     className={
-                      rowData.id === playQueue?.currentSongId ? 'active' : ''
+                      rowData.id === playQueue?.currentSongId &&
+                      playQueue.currentIndex === rowIndex
+                        ? 'active'
+                        : ''
                     }
                     style={
                       multiSelect?.selected.find(
@@ -258,11 +264,6 @@ const ListViewTable = ({
                               <RsuiteLinkButton
                                 subtitle="true"
                                 appearance="link"
-                                className={
-                                  rowData.id === playQueue?.currentSongId
-                                    ? 'active'
-                                    : ''
-                                }
                                 onClick={() => {
                                   history.push(
                                     `/library/artist/${rowData.artistId}`
@@ -355,7 +356,12 @@ const ListViewTable = ({
                       })
                     }
                     className={
-                      rowData.id === playQueue?.currentSongId ? 'active' : ''
+                      rowData.id === playQueue?.currentSongId &&
+                      (column.dataKey === 'title' ||
+                        column.dataKey === 'name') &&
+                      playQueue.currentIndex === rowIndex
+                        ? 'active'
+                        : ''
                     }
                     style={
                       multiSelect?.selected.find(
@@ -382,11 +388,6 @@ const ListViewTable = ({
                       column.dataKey === 'artist' ? (
                         <RsuiteLinkButton
                           appearance="link"
-                          className={
-                            rowData.id === playQueue?.currentSongId
-                              ? 'active'
-                              : ''
-                          }
                           onClick={() => {
                             if (column.dataKey === 'album') {
                               history.push(`/library/album/${rowData.albumId}`);
@@ -414,7 +415,7 @@ const ListViewTable = ({
                           size="lg"
                           fixedWidth
                           style={{
-                            color: rowData?.starred ? '#1179ac' : undefined,
+                            color: rowData?.starred ? '#1179ac' : '#E8EAEF',
                             cursor: 'pointer',
                           }}
                           onClick={() => handleFavorite(rowData)}

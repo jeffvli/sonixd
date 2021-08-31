@@ -28,6 +28,7 @@ import Loader from '../loader/Loader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
 import { TagLink } from './styled';
+import { setStatus } from '../../redux/playerSlice';
 
 interface ArtistParams {
   id: string;
@@ -85,6 +86,7 @@ const ArtistView = () => {
 
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
+    dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
   };
 

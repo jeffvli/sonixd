@@ -18,6 +18,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import Loader from '../loader/Loader';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
+import { setStatus } from '../../redux/playerSlice';
 
 const StarredView = () => {
   const dispatch = useAppDispatch();
@@ -80,6 +81,7 @@ const StarredView = () => {
     const newPlayQueue = data.song.slice([e.index], data.song.length);
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
+    dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
   };
 

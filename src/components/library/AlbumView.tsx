@@ -27,6 +27,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { TagLink } from './styled';
+import { setStatus } from '../../redux/playerSlice';
 
 interface AlbumParams {
   id: string;
@@ -73,6 +74,7 @@ const AlbumView = () => {
 
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
+    dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
   };
 

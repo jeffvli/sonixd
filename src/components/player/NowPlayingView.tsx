@@ -22,6 +22,7 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
+import { resetPlayer, setStatus } from '../../redux/playerSlice';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -77,8 +78,10 @@ const NowPlayingView = () => {
     dispatch(setPlayerVolume({ player: 2, volume: 0 }));
 
     dispatch(clearSelected());
+    dispatch(resetPlayer());
     dispatch(setPlayerIndex(rowData));
     dispatch(fixPlayer2Index());
+    dispatch(setStatus('PLAYING'));
   };
 
   if (!playQueue) {
@@ -114,6 +117,8 @@ const NowPlayingView = () => {
             <Button
               onClick={() => {
                 dispatch(clearPlayQueue());
+                dispatch(resetPlayer());
+                dispatch(setStatus('PAUSED'));
               }}
             >
               Clear queue
