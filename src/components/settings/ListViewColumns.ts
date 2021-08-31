@@ -79,7 +79,7 @@ export const songColumnList = [
   {
     label: 'Favorite',
     value: {
-      id: 'Favorite',
+      id: 'Fav',
       dataKey: 'starred',
       alignment: 'center',
       resizable: true,
@@ -219,7 +219,7 @@ export const albumColumnList = [
   {
     label: 'Favorite',
     value: {
-      id: 'Favorite',
+      id: 'Fav',
       dataKey: 'starred',
       alignment: 'center',
       resizable: true,

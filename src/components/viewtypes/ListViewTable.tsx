@@ -385,7 +385,8 @@ const ListViewTable = ({
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
-                        paddingRight: '20px',
+                        paddingRight:
+                          column.dataKey !== 'starred' ? '20px' : undefined,
                       }}
                     >
                       {column.dataKey === 'album' ||
