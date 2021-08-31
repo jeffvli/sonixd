@@ -105,7 +105,7 @@ const Login = () => {
           dataKey: 'index',
           alignment: 'center',
           resizable: true,
-          width: 40,
+          width: 50,
           label: '#',
         },
         {
@@ -129,7 +129,7 @@ const Login = () => {
           dataKey: 'duration',
           alignment: 'center',
           resizable: true,
-          width: 70,
+          width: 100,
           label: 'Duration',
         },
       ]);
@@ -150,7 +150,7 @@ const Login = () => {
           dataKey: 'index',
           alignment: 'center',
           resizable: true,
-          width: 40,
+          width: 50,
           label: '#',
         },
         {
@@ -177,7 +177,7 @@ const Login = () => {
           dataKey: 'duration',
           alignment: 'center',
           resizable: true,
-          width: 70,
+          width: 100,
           label: 'Duration',
         },
       ]);

@@ -1,277 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import path from 'path';
 import settings from 'electron-settings';
-import {
-  Button,
-  ControlLabel,
-  InputNumber,
-  Checkbox,
-  Tag,
-  TagPicker,
-} from 'rsuite';
+import { Button, ControlLabel, InputNumber, Checkbox, Tag, Nav } from 'rsuite';
 import { ConfigPanel } from './styled';
 import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
+import ListViewConfig from './ListViewConfig';
+import {
+  songColumnList,
+  songColumnPicker,
+  albumColumnList,
+  albumColumnPicker,
+} from './ListViewColumns';
 
 const fsUtils = require('nodejs-fs-utils');
-
-const songColumnList = [
-  {
-    label: '#',
-    value: {
-      id: '#',
-      dataKey: 'index',
-      alignment: 'center',
-      resizable: true,
-      width: 40,
-      label: '#',
-    },
-  },
-  {
-    label: 'Album',
-    value: {
-      id: 'Album',
-      dataKey: 'album',
-      alignment: 'left',
-      resizable: true,
-      width: 350,
-      label: 'Album',
-    },
-  },
-  {
-    label: 'Artist',
-    value: {
-      id: 'Artist',
-      dataKey: 'artist',
-      alignment: 'left',
-      resizable: true,
-      width: 300,
-      label: 'Artist',
-    },
-  },
-  {
-    label: 'Bitrate',
-    value: {
-      id: 'Bitrate',
-      dataKey: 'bitRate',
-      alignment: 'left',
-      resizable: true,
-      width: 65,
-      label: 'Bitrate',
-    },
-  },
-  {
-    label: 'Created',
-    value: {
-      id: 'Created',
-      dataKey: 'created',
-      alignment: 'left',
-      resizable: true,
-      width: 100,
-      label: 'Created',
-    },
-  },
-  {
-    label: 'Duration',
-    value: {
-      id: 'Duration',
-      dataKey: 'duration',
-      alignment: 'center',
-      resizable: true,
-      width: 65,
-      label: 'Duration',
-    },
-  },
-  {
-    label: 'Play Count',
-    value: {
-      id: 'Plays',
-      dataKey: 'playCount',
-      alignment: 'center',
-      resizable: true,
-      width: 50,
-      label: 'Play Count',
-    },
-  },
-  {
-    label: 'Title',
-    value: {
-      id: 'Title',
-      dataKey: 'title',
-      alignment: 'left',
-      resizable: true,
-      width: 350,
-      label: 'Title',
-    },
-  },
-  {
-    label: 'Title (Combined)',
-    value: {
-      id: 'Title',
-      dataKey: 'combinedtitle',
-      alignment: 'left',
-      resizable: true,
-      width: 350,
-      label: 'Title (Combined)',
-    },
-  },
-];
-
-const songColumnPicker = [
-  {
-    label: '#',
-  },
-  {
-    label: 'Album',
-  },
-  {
-    label: 'Artist',
-  },
-  {
-    label: 'Bitrate',
-  },
-  {
-    label: 'Created',
-  },
-  {
-    label: 'Duration',
-  },
-  {
-    label: 'Play Count',
-  },
-  {
-    label: 'Title',
-  },
-  {
-    label: 'Title (Combined)',
-  },
-];
-
-const albumColumnList = [
-  {
-    label: '#',
-    value: {
-      id: '#',
-      dataKey: 'index',
-      alignment: 'center',
-      resizable: true,
-      width: 40,
-      label: '#',
-    },
-  },
-  {
-    label: 'Artist',
-    value: {
-      id: 'Artist',
-      dataKey: 'artist',
-      alignment: 'left',
-      resizable: true,
-      width: 300,
-      label: 'Artist',
-    },
-  },
-  {
-    label: 'Created',
-    value: {
-      id: 'Created',
-      dataKey: 'created',
-      alignment: 'left',
-      resizable: true,
-      width: 100,
-      label: 'Created',
-    },
-  },
-  {
-    label: 'Duration',
-    value: {
-      id: 'Duration',
-      dataKey: 'duration',
-      alignment: 'center',
-      resizable: true,
-      width: 65,
-      label: 'Duration',
-    },
-  },
-  {
-    label: 'Genre',
-    value: {
-      id: 'Genre',
-      dataKey: 'genre',
-      alignment: 'center',
-      resizable: true,
-      width: 70,
-      label: 'Genre',
-    },
-  },
-  {
-    label: 'Track Count',
-    value: {
-      id: 'Tracks',
-      dataKey: 'songCount',
-      alignment: 'center',
-      resizable: true,
-      width: 70,
-      label: 'Track Count',
-    },
-  },
-  {
-    label: 'Title',
-    value: {
-      id: 'Title',
-      dataKey: 'name',
-      alignment: 'left',
-      resizable: true,
-      width: 350,
-      label: 'Title',
-    },
-  },
-  {
-    label: 'Title (Combined)',
-    value: {
-      id: 'Title',
-      dataKey: 'combinedtitle',
-      alignment: 'left',
-      resizable: true,
-      width: 350,
-      label: 'Title (Combined)',
-    },
-  },
-];
-
-const albumColumnPicker = [
-  {
-    label: '#',
-  },
-  {
-    label: 'Artist',
-  },
-  {
-    label: 'Created',
-  },
-  {
-    label: 'Duration',
-  },
-  {
-    label: 'Genre',
-  },
-  {
-    label: 'Title',
-  },
-  {
-    label: 'Title (Combined)',
-  },
-  {
-    label: 'Track Count',
-  },
-];
 
 const Config = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [imgCacheSize, setImgCacheSize] = useState(0);
   const [songCacheSize, setSongCacheSize] = useState(0);
+  const [currentLAFTab, setCurrentLAFTab] = useState('songList');
 
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -390,122 +141,42 @@ const Config = () => {
           Select the columns you want displayed pages with a song list. The
           columns will be displayed in the order selected below.
         </div>
-        <div style={{ width: '100%', marginTop: '20px' }}>
-          <strong>Song List</strong>
-          <br />
-          <TagPicker
-            data={songColumnPicker}
-            defaultValue={currentSongColumns}
-            style={{ width: '500px' }}
-            onChange={(e) => {
-              const columns: any[] = [];
-
-              if (e) {
-                e.map((selected: string) => {
-                  const selectedColumn = songColumnList.find(
-                    (column) => column.label === selected
-                  );
-                  if (selectedColumn) {
-                    return columns.push(selectedColumn.value);
-                  }
-
-                  return null;
-                });
-              }
-
-              settings.setSync('songListColumns', columns);
+        <Nav
+          style={{ paddingTop: '10px' }}
+          activeKey={currentLAFTab}
+          onSelect={(e) => setCurrentLAFTab(e)}
+        >
+          <Nav.Item eventKey="songList">Song List</Nav.Item>
+          <Nav.Item eventKey="albumList">Album List</Nav.Item>
+          <Nav.Item eventKey="playlistList">Playlist List</Nav.Item>
+        </Nav>
+        {currentLAFTab === 'songList' && (
+          <ListViewConfig
+            title="Song List"
+            defaultColumns={currentSongColumns}
+            columnPicker={songColumnPicker}
+            columnList={songColumnList}
+            settingsConfig={{
+              columnList: 'songListColumns',
+              rowHeight: 'songListRowHeight',
+              fontSize: 'songListFontSize',
             }}
-            labelKey="label"
-            valueKey="label"
           />
-          <div style={{ marginTop: '20px' }}>
-            <ControlLabel>Row height</ControlLabel>
-            <InputNumber
-              defaultValue={
-                String(settings.getSync('songListRowHeight')) || '0'
-              }
-              step={1}
-              min={30}
-              max={100}
-              onChange={(e) => {
-                settings.setSync('songListRowHeight', e);
-              }}
-              style={{ width: '150px' }}
-            />
-          </div>
-          <div style={{ marginTop: '20px' }}>
-            <ControlLabel>Font Size</ControlLabel>
-            <InputNumber
-              defaultValue={String(settings.getSync('songListFontSize')) || '0'}
-              step={0.5}
-              min={1}
-              max={100}
-              onChange={(e) => {
-                settings.setSync('songListFontSize', e);
-              }}
-              style={{ width: '150px' }}
-            />
-          </div>
-        </div>
-        <div style={{ width: '100%', marginTop: '20px' }}>
-          <strong>Album List</strong>
-          <br />
-          <TagPicker
-            data={albumColumnPicker}
-            defaultValue={currentAlbumColumns}
-            style={{ width: '500px' }}
-            onChange={(e) => {
-              const columns: any[] = [];
+        )}
 
-              if (e) {
-                e.map((selected: string) => {
-                  const selectedColumn = albumColumnList.find(
-                    (column) => column.label === selected
-                  );
-                  if (selectedColumn) {
-                    return columns.push(selectedColumn.value);
-                  }
-
-                  return null;
-                });
-              }
-
-              settings.setSync('albumListColumns', columns);
+        {currentLAFTab === 'albumList' && (
+          <ListViewConfig
+            title="Album List"
+            defaultColumns={currentAlbumColumns}
+            columnPicker={albumColumnPicker}
+            columnList={albumColumnList}
+            settingsConfig={{
+              columnList: 'albumListColumns',
+              rowHeight: 'albumListRowHeight',
+              fontSize: 'albumListFontSize',
             }}
-            labelKey="label"
-            valueKey="label"
           />
-          <div style={{ marginTop: '20px' }}>
-            <ControlLabel>Row height</ControlLabel>
-            <InputNumber
-              defaultValue={
-                String(settings.getSync('albumListRowHeight')) || '0'
-              }
-              step={1}
-              min={30}
-              max={100}
-              onChange={(e) => {
-                settings.setSync('albumListRowHeight', e);
-              }}
-              style={{ width: '150px' }}
-            />
-          </div>
-          <div style={{ marginTop: '20px' }}>
-            <ControlLabel>Font Size</ControlLabel>
-            <InputNumber
-              defaultValue={
-                String(settings.getSync('albumListFontSize')) || '0'
-              }
-              step={0.5}
-              min={1}
-              max={100}
-              onChange={(e) => {
-                settings.setSync('albumListFontSize', e);
-              }}
-              style={{ width: '150px' }}
-            />
-          </div>
-        </div>
+        )}
       </ConfigPanel>
       <ConfigPanel header="Cache" bordered>
         <div style={{ overflow: 'auto' }}>
