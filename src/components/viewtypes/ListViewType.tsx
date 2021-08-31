@@ -30,6 +30,7 @@ const ListViewType = (
     fontSize,
     cacheImages,
     children,
+    listType,
     ...rest
   }: any,
   ref: any
@@ -238,6 +239,7 @@ const ListViewType = (
             playQueue={playQueue}
             multiSelect={multiSelect}
             cacheImages={cacheImages}
+            listType={listType}
           />
         )}
       </div>

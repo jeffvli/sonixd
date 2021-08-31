@@ -213,20 +213,31 @@ const PlayerBar = () => {
   const handleFavorite = async () => {
     if (!playQueue.entry[playQueue.currentIndex].starred) {
       star(playQueue.entry[playQueue.currentIndex].id, 'song');
-      dispatch(setStar('star'));
+      dispatch(
+        setStar({
+          id: playQueue.entry[playQueue.currentIndex].id,
+          type: 'star',
+        })
+      );
       await queryClient.refetchQueries(['starred'], {
         active: true,
         exact: true,
       });
     } else {
       unstar(playQueue.entry[playQueue.currentIndex].id, 'song');
-      dispatch(setStar('unstar'));
+      dispatch(
+        setStar({
+          id: playQueue.entry[playQueue.currentIndex].id,
+          type: 'unstar',
+        })
+      );
       await queryClient.refetchQueries(['starred'], {
         active: true,
         exact: true,
       });
     }
   };
+
   return (
     <Player ref={playersRef}>
       <PlayerContainer>

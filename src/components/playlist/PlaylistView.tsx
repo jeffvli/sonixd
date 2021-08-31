@@ -130,7 +130,9 @@ const PlaylistView = () => {
         cacheImages={{
           enabled: settings.getSync('cacheImages'),
           cacheType: 'album',
+          cacheIdProperty: 'albumId',
         }}
+        listType="song"
       />
     </GenericPage>
   );

@@ -125,7 +125,9 @@ const StarredView = () => {
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',
+            cacheIdProperty: 'albumId',
           }}
+          listType="song"
           virtualized
         />
       )}
@@ -141,7 +143,9 @@ const StarredView = () => {
               cacheImages={{
                 enabled: settings.getSync('cacheImages'),
                 cacheType: 'album',
+                cacheIdProperty: 'albumId',
               }}
+              listType="album"
               virtualized
             />
           )}

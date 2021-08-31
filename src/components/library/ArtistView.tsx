@@ -184,6 +184,7 @@ const ArtistView = () => {
               enabled: settings.getSync('cacheImages'),
               cacheType: 'album',
             }}
+            listType="album"
           />
         )}
 

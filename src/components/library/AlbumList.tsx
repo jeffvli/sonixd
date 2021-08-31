@@ -32,7 +32,9 @@ const AlbumList = ({ data, viewType }: any) => {
         cacheImages={{
           enabled: settings.getSync('cacheImages'),
           cacheType: 'album',
+          cacheIdProperty: 'albumId',
         }}
+        listType="album"
         virtualized
       />
     );

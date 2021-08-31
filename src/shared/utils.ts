@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
+import moment from 'moment';
 
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
@@ -43,10 +44,25 @@ export const shuffle = (array: any[]) => {
 };
 
 export const formatSongDuration = (duration: number) => {
-  const minutes = Math.floor(duration / 60);
+  const hours = Math.floor(duration / 60 / 60);
+  const minutes = Math.floor((duration / 60) % 60);
   const seconds = String(duration % 60).padStart(2, '0');
 
+  // if (minutes > 60) {
+  //   const hours = Math.floor(minutes / 60);
+  //   const newMinutes = Math.floor(minutes % 60);
+  //   const newSeconds = String(duration % 60).padStart(2, '0');
+  //   return `${hours}:${newMinutes}:${newSeconds}`;
+  // }
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`;
+  }
+
   return `${minutes}:${seconds}`;
+};
+
+export const formatDate = (date: string) => {
+  return moment(date).format('L');
 };
 
 // https://www.geeksforgeeks.org/check-if-array-elements-are-consecutive/

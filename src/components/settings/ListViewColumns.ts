@@ -44,6 +44,17 @@ export const songColumnList = [
     },
   },
   {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      resizable: true,
+      width: 100,
+      label: 'CoverArt',
+    },
+  },
+  {
     label: 'Created',
     value: {
       id: 'Created',
@@ -63,6 +74,28 @@ export const songColumnList = [
       resizable: true,
       width: 80,
       label: 'Duration',
+    },
+  },
+  {
+    label: 'Favorite',
+    value: {
+      id: 'Favorite',
+      dataKey: 'starred',
+      alignment: 'center',
+      resizable: true,
+      width: 60,
+      label: 'Favorite',
+    },
+  },
+  {
+    label: 'Path',
+    value: {
+      id: 'Path',
+      dataKey: 'path',
+      alignment: 'center',
+      resizable: true,
+      width: 200,
+      label: 'Path',
     },
   },
   {
@@ -98,36 +131,33 @@ export const songColumnList = [
       label: 'Title (Combined)',
     },
   },
+  {
+    label: 'Year',
+    value: {
+      id: 'Year',
+      dataKey: 'year',
+      alignment: 'left',
+      resizable: true,
+      width: 60,
+      label: 'Year',
+    },
+  },
 ];
 
 export const songColumnPicker = [
-  {
-    label: '#',
-  },
-  {
-    label: 'Album',
-  },
-  {
-    label: 'Artist',
-  },
-  {
-    label: 'Bitrate',
-  },
-  {
-    label: 'Created',
-  },
-  {
-    label: 'Duration',
-  },
-  {
-    label: 'Play Count',
-  },
-  {
-    label: 'Title',
-  },
-  {
-    label: 'Title (Combined)',
-  },
+  { label: '#' },
+  { label: 'Album' },
+  { label: 'Artist' },
+  { label: 'Bitrate' },
+  { label: 'CoverArt' },
+  { label: 'Created' },
+  { label: 'Duration' },
+  { label: 'Favorite' },
+  { label: 'Path' },
+  { label: 'Play Count' },
+  { label: 'Title' },
+  { label: 'Title (Combined)' },
+  { label: 'Year' },
 ];
 
 export const albumColumnList = [
@@ -154,6 +184,17 @@ export const albumColumnList = [
     },
   },
   {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      resizable: true,
+      width: 100,
+      label: 'CoverArt',
+    },
+  },
+  {
     label: 'Created',
     value: {
       id: 'Created',
@@ -176,11 +217,22 @@ export const albumColumnList = [
     },
   },
   {
+    label: 'Favorite',
+    value: {
+      id: 'Favorite',
+      dataKey: 'starred',
+      alignment: 'center',
+      resizable: true,
+      width: 60,
+      label: 'Favorite',
+    },
+  },
+  {
     label: 'Genre',
     value: {
       id: 'Genre',
       dataKey: 'genre',
-      alignment: 'center',
+      alignment: 'left',
       resizable: true,
       width: 70,
       label: 'Genre',
@@ -219,31 +271,190 @@ export const albumColumnList = [
       label: 'Title (Combined)',
     },
   },
+  {
+    label: 'Year',
+    value: {
+      id: 'Year',
+      dataKey: 'year',
+      alignment: 'left',
+      resizable: true,
+      width: 60,
+      label: 'Year',
+    },
+  },
 ];
 
 export const albumColumnPicker = [
+  { label: '#' },
+  { label: 'Artist' },
+  { label: 'CoverArt' },
+  { label: 'Created' },
+  { label: 'Duration' },
+  { label: 'Favorite' },
+  { label: 'Genre' },
+  { label: 'Play Count' },
+  { label: 'Title' },
+  { label: 'Title (Combined)' },
+  { label: 'Track Count' },
+  { label: 'Year' },
+];
+
+export const playlistColumnList = [
   {
     label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      resizable: true,
+      width: 50,
+      label: '#',
+    },
   },
   {
-    label: 'Artist',
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      resizable: true,
+      width: 100,
+      label: 'CoverArt',
+    },
   },
   {
     label: 'Created',
+    value: {
+      id: 'Created',
+      dataKey: 'created',
+      alignment: 'left',
+      resizable: true,
+      width: 100,
+      label: 'Created',
+    },
+  },
+  {
+    label: 'Description',
+    value: {
+      id: 'Description',
+      dataKey: 'comment',
+      alignment: 'left',
+      resizable: true,
+      width: 200,
+      label: 'Description',
+    },
   },
   {
     label: 'Duration',
+    value: {
+      id: 'Duration',
+      dataKey: 'duration',
+      alignment: 'center',
+      resizable: true,
+      width: 80,
+      label: 'Duration',
+    },
   },
   {
     label: 'Genre',
+    value: {
+      id: 'Genre',
+      dataKey: 'genre',
+      alignment: 'left',
+      resizable: true,
+      width: 70,
+      label: 'Genre',
+    },
   },
   {
-    label: 'Title',
+    label: 'Modified',
+    value: {
+      id: 'Modified',
+      dataKey: 'changed',
+      alignment: 'left',
+      resizable: true,
+      width: 70,
+      label: 'Modified',
+    },
   },
   {
-    label: 'Title (Combined)',
+    label: 'Owner',
+    value: {
+      id: 'Owner',
+      dataKey: 'owner',
+      alignment: 'left',
+      resizable: true,
+      width: 100,
+      label: 'Owner',
+    },
+  },
+  {
+    label: 'Play Count',
+    value: {
+      id: 'Plays',
+      dataKey: 'playCount',
+      alignment: 'center',
+      resizable: true,
+      width: 60,
+      label: 'Play Count',
+    },
   },
   {
     label: 'Track Count',
+    value: {
+      id: 'Tracks',
+      dataKey: 'songCount',
+      alignment: 'center',
+      resizable: true,
+      width: 70,
+      label: 'Track Count',
+    },
   },
+  {
+    label: 'Title',
+    value: {
+      id: 'Title',
+      dataKey: 'name',
+      alignment: 'left',
+      resizable: true,
+      width: 300,
+      label: 'Title',
+    },
+  },
+  {
+    label: 'Title (Combined)',
+    value: {
+      id: 'Title',
+      dataKey: 'combinedtitle',
+      alignment: 'left',
+      resizable: true,
+      width: 300,
+      label: 'Title (Combined)',
+    },
+  },
+  {
+    label: 'Visibility',
+    value: {
+      id: 'Visibility',
+      dataKey: 'public',
+      alignment: 'left',
+      resizable: true,
+      width: 100,
+      label: 'Visibility',
+    },
+  },
+];
+
+export const playlistColumnPicker = [
+  { label: '#' },
+  { label: 'CoverArt' },
+  { label: 'Created' },
+  { label: 'Description' },
+  { label: 'Duration' },
+  { label: 'Modified' },
+  { label: 'Owner' },
+  { label: 'Title' },
+  { label: 'Title (Combined)' },
+  { label: 'Track Count' },
+  { label: 'Visiblity' },
 ];

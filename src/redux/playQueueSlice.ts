@@ -116,11 +116,14 @@ const playQueueSlice = createSlice({
       state.autoIncremented = action.payload;
     },
 
-    setStar: (state, action: PayloadAction<string>) => {
-      if (action.payload === 'unstar') {
-        state.entry[state.currentIndex].starred = undefined;
+    setStar: (state, action: PayloadAction<{ id: string; type: string }>) => {
+      const findIndex = state.entry.findIndex(
+        (track) => track.id === action.payload.id
+      );
+      if (action.payload.type === 'unstar') {
+        state.entry[findIndex].starred = undefined;
       } else {
-        state.entry[state.currentIndex].starred = String(Date.now());
+        state.entry[findIndex].starred = String(Date.now());
       }
     },
 

@@ -120,7 +120,15 @@ const PlaylistList = () => {
                 })
           }
           handleRowClick={handleRowClick}
-          tableColumns={tableColumns}
+          tableColumns={settings.getSync('playlistListColumns')}
+          rowHeight={Number(settings.getSync('playlistListRowHeight'))}
+          fontSize={settings.getSync('playlistListFontSize')}
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'playlist',
+            cacheIdProperty: 'id',
+          }}
+          listType="playlist"
           virtualized
         />
       )}

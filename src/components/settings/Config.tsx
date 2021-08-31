@@ -13,6 +13,8 @@ import {
   songColumnPicker,
   albumColumnList,
   albumColumnPicker,
+  playlistColumnList,
+  playlistColumnPicker,
 } from './ListViewColumns';
 
 const fsUtils = require('nodejs-fs-utils');
@@ -26,9 +28,12 @@ const Config = () => {
 
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
+  const playlistCols: any = settings.getSync('playlistListColumns');
   const currentSongColumns = songCols?.map((column: any) => column.label) || [];
   const currentAlbumColumns =
     albumCols?.map((column: any) => column.label) || [];
+  const currentPlaylistColumns =
+    playlistCols?.map((column: any) => column.label) || [];
 
   useEffect(() => {
     // Retrieve cache sizes on render
@@ -126,7 +131,7 @@ const Config = () => {
           <ControlLabel>Crossfade duration (seconds)</ControlLabel>
           <InputNumber
             defaultValue={String(settings.getSync('fadeDuration')) || '0'}
-            step={0.1}
+            step={0.05}
             min={0}
             max={100}
             onChange={(e) => {
@@ -174,6 +179,20 @@ const Config = () => {
               columnList: 'albumListColumns',
               rowHeight: 'albumListRowHeight',
               fontSize: 'albumListFontSize',
+            }}
+          />
+        )}
+
+        {currentLAFTab === 'playlistList' && (
+          <ListViewConfig
+            title="Playlist List"
+            defaultColumns={currentPlaylistColumns}
+            columnPicker={playlistColumnPicker}
+            columnList={playlistColumnList}
+            settingsConfig={{
+              columnList: 'playlistListColumns',
+              rowHeight: 'playlistListRowHeight',
+              fontSize: 'playlistListFontSize',
             }}
           />
         )}

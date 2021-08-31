@@ -3,8 +3,9 @@
 import React from 'react';
 import path from 'path';
 import settings from 'electron-settings';
+import { useQueryClient } from 'react-query';
 import { nanoid } from 'nanoid';
-import { Table, Grid, Row, Col } from 'rsuite';
+import { Table, Grid, Row, Col, Icon } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { RsuiteLinkButton } from './styled';
@@ -12,8 +13,12 @@ import {
   formatSongDuration,
   isCached,
   getImageCachePath,
+  formatDate,
 } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
+import { star, unstar } from '../../api/api';
+import { useAppDispatch } from '../../redux/hooks';
+import { setStar } from '../../redux/playQueueSlice';
 
 const ListViewTable = ({
   tableRef,
@@ -29,8 +34,30 @@ const ListViewTable = ({
   multiSelect,
   cacheImages,
   autoHeight,
+  listType,
 }: any) => {
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
+
+  const handleFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      star(rowData.id, listType);
+      dispatch(setStar({ id: rowData.id, type: 'star' }));
+      await queryClient.refetchQueries(['starred'], {
+        active: true,
+        exact: true,
+      });
+    } else {
+      unstar(rowData.id, listType);
+      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+      await queryClient.refetchQueries(['starred'], {
+        active: true,
+        exact: true,
+      });
+    }
+  };
+
   return (
     <Table
       ref={tableRef}
@@ -55,14 +82,12 @@ const ListViewTable = ({
           fixed={column.fixed}
           verticalAlign="middle"
           onResize={(width: any) => {
-            const resizedColumn: any = settings.getSync('songListColumns');
-
-            const resizedColumnIndex = resizedColumn.findIndex(
+            const resizedColumnIndex = columns.findIndex(
               (c: any) => c.dataKey === column.dataKey
             );
 
             settings.setSync(
-              `songListColumns[${resizedColumnIndex}].width`,
+              `${listType}ListColumns[${resizedColumnIndex}].width`,
               width
             );
           }}
@@ -155,12 +180,16 @@ const ListViewTable = ({
                               isCached(
                                 path.join(
                                   getImageCachePath(),
-                                  `${cacheImages.cacheType}_${rowData.albumId}.jpg`
+                                  `${cacheImages.cacheType}_${
+                                    rowData[cacheImages.cacheIdProperty]
+                                  }.jpg`
                                 )
                               )
                                 ? path.join(
                                     getImageCachePath(),
-                                    `${cacheImages.cacheType}_${rowData.albumId}.jpg`
+                                    `${cacheImages.cacheType}_${
+                                      rowData[cacheImages.cacheIdProperty]
+                                    }.jpg`
                                   )
                                 : rowData.image
                             }
@@ -254,6 +283,60 @@ const ListViewTable = ({
                 );
               }}
             </Table.Cell>
+          ) : column.dataKey === 'coverart' ? (
+            <Table.Cell>
+              {(rowData: any) => {
+                return (
+                  <div
+                    style={
+                      multiSelect?.selected.find(
+                        (e: any) => e.id === rowData.id
+                      )
+                        ? {
+                            background: '#4D5156',
+                            lineHeight: `${rowHeight}px`,
+                          }
+                        : {
+                            lineHeight: `${rowHeight}px`,
+                          }
+                    }
+                  >
+                    <LazyLoadImage
+                      src={
+                        isCached(
+                          path.join(
+                            getImageCachePath(),
+                            `${cacheImages.cacheType}_${
+                              rowData[cacheImages.cacheIdProperty]
+                            }.jpg`
+                          )
+                        )
+                          ? path.join(
+                              getImageCachePath(),
+                              `${cacheImages.cacheType}_${
+                                rowData[cacheImages.cacheIdProperty]
+                              }.jpg`
+                            )
+                          : rowData.image
+                      }
+                      alt="track-img"
+                      effect="opacity"
+                      width={rowHeight - 10}
+                      height={rowHeight - 10}
+                      visibleByDefault={cacheImages.enabled}
+                      afterLoad={() => {
+                        if (cacheImages.enabled) {
+                          cacheImage(
+                            `${cacheImages.cacheType}_${rowData.albumId}.jpg`,
+                            rowData.image.replace(/size=\d+/, 'size=350')
+                          );
+                        }
+                      }}
+                    />
+                  </div>
+                );
+              }}
+            </Table.Cell>
           ) : (
             <Table.Cell>
               {(rowData: any, rowIndex: any) => {
@@ -292,6 +375,7 @@ const ListViewTable = ({
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
+                        paddingRight: '20px',
                       }}
                     >
                       {column.dataKey === 'album' ||
@@ -319,7 +403,22 @@ const ListViewTable = ({
                           {rowData[column.dataKey]}
                         </RsuiteLinkButton>
                       ) : column.dataKey === 'duration' ? (
-                        formatSongDuration(rowData.duration)
+                        formatSongDuration(rowData[column.dataKey])
+                      ) : column.dataKey === 'changed' ||
+                        column.dataKey === 'created' ? (
+                        formatDate(rowData[column.dataKey])
+                      ) : column.dataKey === 'starred' ? (
+                        <Icon
+                          tabIndex={0}
+                          icon={rowData?.starred ? 'heart' : 'heart-o'}
+                          size="lg"
+                          fixedWidth
+                          style={{
+                            color: rowData?.starred ? '#1179ac' : undefined,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => handleFavorite(rowData)}
+                        />
                       ) : (
                         rowData[column.dataKey]
                       )}
