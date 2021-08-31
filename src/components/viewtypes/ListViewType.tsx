@@ -240,6 +240,7 @@ const ListViewType = (
             multiSelect={multiSelect}
             cacheImages={cacheImages}
             listType={listType}
+            nowPlaying={rest.nowPlaying}
           />
         )}
       </div>

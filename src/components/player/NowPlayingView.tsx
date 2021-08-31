@@ -163,6 +163,7 @@ const NowPlayingView = () => {
           cacheIdProperty: 'albumId',
         }}
         listType="song"
+        nowPlaying
       />
     </GenericPage>
   );

@@ -26,6 +26,7 @@ import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import GenericPageHeader from '../layout/GenericPageHeader';
+import { setStatus } from '../../redux/playerSlice';
 
 interface PlaylistParams {
   id: string;
@@ -71,6 +72,7 @@ const PlaylistView = () => {
 
     dispatch(clearSelected());
     dispatch(setPlayQueue(newPlayQueue));
+    dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
   };
 

@@ -35,6 +35,7 @@ const ListViewTable = ({
   cacheImages,
   autoHeight,
   listType,
+  nowPlaying,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -113,7 +114,8 @@ const ListViewTable = ({
                     }
                     className={
                       rowData.id === playQueue?.currentSongId &&
-                      playQueue.currentIndex === rowIndex
+                      playQueue.currentIndex === rowIndex &&
+                      nowPlaying
                         ? 'active'
                         : ''
                     }
@@ -153,7 +155,8 @@ const ListViewTable = ({
                     }
                     className={
                       rowData.id === playQueue?.currentSongId &&
-                      playQueue.currentIndex === rowIndex
+                      playQueue.currentIndex === rowIndex &&
+                      nowPlaying
                         ? 'active'
                         : ''
                     }
@@ -359,7 +362,8 @@ const ListViewTable = ({
                       rowData.id === playQueue?.currentSongId &&
                       (column.dataKey === 'title' ||
                         column.dataKey === 'name') &&
-                      playQueue.currentIndex === rowIndex
+                      playQueue.currentIndex === rowIndex &&
+                      nowPlaying
                         ? 'active'
                         : ''
                     }
