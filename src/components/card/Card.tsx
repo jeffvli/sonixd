@@ -69,13 +69,7 @@ const Card = ({
   };
 
   return (
-    <StyledPanel
-      tabIndex={0}
-      bordered
-      shaded
-      cardsize={size}
-      style={rest.style}
-    >
+    <StyledPanel bordered shaded cardsize={size} style={rest.style}>
       <Overlay cardsize={size}>
         {lazyLoad ? (
           <LazyCardImg
