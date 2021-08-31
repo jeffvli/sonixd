@@ -66,7 +66,7 @@ const ListViewTable = ({
       data={data}
       virtualized={virtualized}
       rowHeight={rowHeight}
-      hover={false}
+      hover
       affixHeader
       autoHeight={autoHeight}
       affixHorizontalScrollbar
