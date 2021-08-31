@@ -189,8 +189,6 @@ const Player = ({ children }: any, ref: any) => {
       playQueue.repeat === 'none' &&
       playQueue.player1.index > playQueue.player2.index
     ) {
-      dispatch(resetPlayQueue());
-      dispatch(resetPlayer());
       dispatch(fixPlayer2Index());
       setTimeout(() => {
         player1Ref.current.audioEl.current.pause();
@@ -198,7 +196,6 @@ const Player = ({ children }: any, ref: any) => {
       }, 200);
     } else {
       if (!playQueue.autoIncremented) {
-        dispatch(resetPlayer());
         dispatch(incrementCurrentIndex('none'));
         dispatch(setCurrentIndex(playQueue.entry[playQueue.player2.index]));
         dispatch(setAutoIncremented(true));
@@ -228,8 +225,6 @@ const Player = ({ children }: any, ref: any) => {
       playQueue.repeat === 'none' &&
       playQueue.player2.index > playQueue.player1.index
     ) {
-      dispatch(resetPlayQueue());
-      dispatch(resetPlayer());
       dispatch(fixPlayer2Index());
       setTimeout(() => {
         player1Ref.current.audioEl.current.pause();
@@ -237,7 +232,6 @@ const Player = ({ children }: any, ref: any) => {
       }, 200);
     } else {
       if (!playQueue.autoIncremented) {
-        dispatch(resetPlayer());
         dispatch(incrementCurrentIndex('none'));
         dispatch(setCurrentIndex(playQueue.entry[playQueue.player1.index]));
         dispatch(setAutoIncremented(true));

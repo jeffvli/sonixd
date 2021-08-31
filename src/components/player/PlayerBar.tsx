@@ -66,7 +66,7 @@ const PlayerBar = () => {
       // Wait for the seek to catch up, otherwise the bar will bounce back and forth
       setTimeout(() => {
         setIsDragging(false);
-      }, 1500);
+      }, 300);
     }
   }, [isDragging, manualSeek, playQueue.currentPlayer]);
 
