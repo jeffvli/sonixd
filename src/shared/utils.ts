@@ -3,6 +3,25 @@ import path from 'path';
 import settings from 'electron-settings';
 import moment from 'moment';
 
+let settingsPath = path.join(
+  String(process.env.APPDATA),
+  process.env.NODE_ENV !== 'production' ? 'Electron' : 'sonixd',
+  'settings.js'
+);
+
+// For CI
+settingsPath = fs.existsSync(settingsPath)
+  ? settingsPath
+  : 'src/shared/settings.json';
+
+export const getSettings = () => {
+  const parsedSettings = JSON.parse(String(fs.readFileSync(settingsPath)));
+  return {
+    repeat: parsedSettings.defaultRepeat,
+    shuffle: parsedSettings.defaultShuffle,
+  };
+};
+
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
 };

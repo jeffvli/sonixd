@@ -1,8 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import settings from 'electron-settings';
 import _ from 'lodash';
 import arrayMove from 'array-move';
-import { areConsecutive, consecutiveRanges } from '../shared/utils';
+import {
+  areConsecutive,
+  consecutiveRanges,
+  getSettings,
+} from '../shared/utils';
 
 interface Entry {
   id: string;
@@ -70,8 +73,8 @@ const initialState: PlayQueue = {
   autoIncremented: false,
   volume: 0.5,
   isLoading: false,
-  repeat: String(settings.getSync('defaultRepeat') || 'all'),
-  shuffle: Boolean(settings.getSync('defaultShuffle') || false),
+  repeat: getSettings().repeat,
+  shuffle: getSettings().shuffle,
   displayQueue: false,
   entry: [],
   shuffledEntry: [],

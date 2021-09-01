@@ -1,0 +1,161 @@
+{
+  "cachePath": "C:\\Users\\jli\\AppData\\Roaming\\Electron",
+  "repeat": "all",
+  "shuffle": false,
+  "scrollWithCurrentSong": true,
+  "cacheImages": true,
+  "cacheSongs": false,
+  "fadeDuration": "9.0",
+  "playlistViewType": "list",
+  "albumViewType": "list",
+  "songListFontSize": "14",
+  "songListRowHeight": "60.0",
+  "songListColumns": [
+    {
+      "id": "#",
+      "dataKey": "index",
+      "alignment": "center",
+      "resizable": true,
+      "width": 50,
+      "label": "#"
+    },
+    {
+      "id": "Title",
+      "dataKey": "combinedtitle",
+      "alignment": "left",
+      "resizable": true,
+      "width": 450,
+      "label": "Title (Combined)"
+    },
+    {
+      "id": "Album",
+      "dataKey": "album",
+      "alignment": "left",
+      "resizable": true,
+      "width": 450,
+      "label": "Album"
+    },
+    {
+      "id": "Duration",
+      "dataKey": "duration",
+      "alignment": "center",
+      "resizable": true,
+      "width": 100,
+      "label": "Duration"
+    },
+    {
+      "id": "Fav",
+      "dataKey": "starred",
+      "alignment": "center",
+      "resizable": true,
+      "width": 60,
+      "label": "Favorite"
+    }
+  ],
+  "albumListFontSize": "14",
+  "albumListRowHeight": "60.0",
+  "albumListColumns": [
+    {
+      "id": "#",
+      "dataKey": "index",
+      "alignment": "center",
+      "resizable": true,
+      "width": 50,
+      "label": "#"
+    },
+    {
+      "id": "Title",
+      "dataKey": "combinedtitle",
+      "alignment": "left",
+      "resizable": true,
+      "width": 450,
+      "label": "Title (Combined)"
+    },
+    {
+      "id": "Tracks",
+      "dataKey": "songCount",
+      "alignment": "center",
+      "resizable": true,
+      "width": 100,
+      "label": "Track Count"
+    },
+    {
+      "id": "Duration",
+      "dataKey": "duration",
+      "alignment": "center",
+      "resizable": true,
+      "width": 100,
+      "label": "Duration"
+    },
+    {
+      "id": "Fav",
+      "dataKey": "starred",
+      "alignment": "center",
+      "resizable": true,
+      "width": 60,
+      "label": "Favorite"
+    }
+  ],
+  "playlistListFontSize": "14",
+  "playlistListRowHeight": "55.0",
+  "playlistListColumns": [
+    {
+      "id": "#",
+      "dataKey": "index",
+      "alignment": "center",
+      "resizable": true,
+      "width": 50,
+      "label": "#"
+    },
+    {
+      "id": "Art",
+      "dataKey": "coverart",
+      "alignment": "center",
+      "resizable": true,
+      "width": 100,
+      "label": "CoverArt"
+    },
+    {
+      "id": "Title",
+      "dataKey": "name",
+      "alignment": "left",
+      "resizable": true,
+      "width": 300,
+      "label": "Title"
+    },
+    {
+      "id": "Description",
+      "dataKey": "comment",
+      "alignment": "left",
+      "resizable": true,
+      "width": 200,
+      "label": "Description"
+    },
+    {
+      "id": "Tracks",
+      "dataKey": "songCount",
+      "alignment": "center",
+      "resizable": true,
+      "width": 100,
+      "label": "Track Count"
+    },
+    {
+      "id": "Owner",
+      "dataKey": "owner",
+      "alignment": "left",
+      "resizable": true,
+      "width": 150,
+      "label": "Owner"
+    },
+    {
+      "id": "Modified",
+      "dataKey": "changed",
+      "alignment": "left",
+      "resizable": true,
+      "width": 100,
+      "label": "Modified"
+    }
+  ],
+  "defaultRepeat": "all",
+  "defaultShuffle": true
+}
