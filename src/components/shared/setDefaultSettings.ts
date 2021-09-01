@@ -11,6 +11,14 @@ const setDefaultSettings = (force: boolean) => {
   fs.mkdirSync(getSongCachePath(), { recursive: true });
   fs.mkdirSync(getImageCachePath(), { recursive: true });
 
+  if (force || !settings.hasSync('defaultRepeat')) {
+    settings.setSync('defaultRepeat', 'all');
+  }
+
+  if (force || !settings.hasSync('defaultShuffle')) {
+    settings.setSync('defaultShuffle', false);
+  }
+
   if (force || !settings.hasSync('scrollWithCurrentSong')) {
     settings.setSync('scrollWithCurrentSong', true);
   }
@@ -58,7 +66,7 @@ const setDefaultSettings = (force: boolean) => {
         dataKey: 'combinedtitle',
         alignment: 'left',
         resizable: true,
-        width: 350,
+        width: 450,
         label: 'Title (Combined)',
       },
       {
@@ -66,7 +74,7 @@ const setDefaultSettings = (force: boolean) => {
         dataKey: 'album',
         alignment: 'left',
         resizable: true,
-        width: 350,
+        width: 450,
         label: 'Album',
       },
       {
@@ -111,7 +119,7 @@ const setDefaultSettings = (force: boolean) => {
         dataKey: 'combinedtitle',
         alignment: 'left',
         resizable: true,
-        width: 350,
+        width: 450,
         label: 'Title (Combined)',
       },
       {

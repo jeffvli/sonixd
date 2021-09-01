@@ -22,6 +22,7 @@ import {
   toggleDisplayQueue,
   setStar,
   shufflePlayQueue,
+  toggleShuffle,
 } from '../../redux/playQueueSlice';
 import { setStatus, resetPlayer } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -43,6 +44,7 @@ const PlayerBar = () => {
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [manualSeek, setManualSeek] = useState(0);
+  const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [seekForwardInterval] = useState<number>(
     Number(settings.getSync('seekForwardInterval')) || 5
   );
@@ -51,6 +53,14 @@ const PlayerBar = () => {
   );
   const playersRef = useRef<any>();
   const history = useHistory();
+
+  useEffect(() => {
+    if (playQueue.shuffle) {
+      setCurrentEntryList('shuffledEntry');
+    } else {
+      setCurrentEntryList('entry');
+    }
+  }, [playQueue.shuffle]);
 
   useEffect(() => {
     setSeek(player.currentSeek);
@@ -214,6 +224,7 @@ const PlayerBar = () => {
 
   const handleShuffle = () => {
     dispatch(shufflePlayQueue());
+    dispatch(toggleShuffle());
   };
 
   const handleDisplayQueue = () => {
@@ -221,11 +232,11 @@ const PlayerBar = () => {
   };
 
   const handleFavorite = async () => {
-    if (!playQueue.entry[playQueue.currentIndex].starred) {
-      star(playQueue.entry[playQueue.currentIndex].id, 'song');
+    if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
+      star(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
       dispatch(
         setStar({
-          id: playQueue.entry[playQueue.currentIndex].id,
+          id: playQueue[currentEntryList][playQueue.currentIndex].id,
           type: 'star',
         })
       );
@@ -234,10 +245,10 @@ const PlayerBar = () => {
         exact: true,
       });
     } else {
-      unstar(playQueue.entry[playQueue.currentIndex].id, 'song');
+      unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
       dispatch(
         setStar({
-          id: playQueue.entry[playQueue.currentIndex].id,
+          id: playQueue[currentEntryList][playQueue.currentIndex].id,
           type: 'unstar',
         })
       );
@@ -266,10 +277,13 @@ const PlayerBar = () => {
                   }}
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px' }}>
-                    {playQueue.entry.length >= 1 && (
+                    {playQueue[currentEntryList].length >= 1 && (
                       <LazyLoadImage
                         tabIndex={0}
-                        src={playQueue.entry[playQueue.currentIndex].image}
+                        src={
+                          playQueue[currentEntryList][playQueue.currentIndex]
+                            .image
+                        }
                         alt="trackImg"
                         effect="opacity"
                         width="65"
@@ -293,11 +307,11 @@ const PlayerBar = () => {
                         alignItems: 'flex-end',
                       }}
                     >
-                      {playQueue.entry.length >= 1 && (
+                      {playQueue[currentEntryList].length >= 1 && (
                         <CustomTooltip
                           text={
-                            playQueue.entry[playQueue.currentIndex]?.title ||
-                            'Unknown title'
+                            playQueue[currentEntryList][playQueue.currentIndex]
+                              ?.title || 'Unknown title'
                           }
                           placement="topStart"
                         >
@@ -306,14 +320,15 @@ const PlayerBar = () => {
                             onClick={() =>
                               history.push(
                                 `/library/album/${
-                                  playQueue.entry[playQueue.currentIndex]
-                                    ?.albumId
+                                  playQueue[currentEntryList][
+                                    playQueue.currentIndex
+                                  ]?.albumId
                                 }`
                               )
                             }
                           >
-                            {playQueue.entry[playQueue.currentIndex]?.title ||
-                              'Unknown title'}
+                            {playQueue[currentEntryList][playQueue.currentIndex]
+                              ?.title || 'Unknown title'}
                           </LinkButton>
                         </CustomTooltip>
                       )}
@@ -326,11 +341,11 @@ const PlayerBar = () => {
                         width: '50%',
                       }}
                     >
-                      {playQueue.entry.length >= 1 && (
+                      {playQueue[currentEntryList].length >= 1 && (
                         <CustomTooltip
                           text={
-                            playQueue.entry[playQueue.currentIndex]?.artist ||
-                            'Unknown artist'
+                            playQueue[currentEntryList][playQueue.currentIndex]
+                              ?.artist || 'Unknown artist'
                           }
                           placement="topStart"
                         >
@@ -347,14 +362,16 @@ const PlayerBar = () => {
                               onClick={() => {
                                 history.push(
                                   `/library/artist/${
-                                    playQueue.entry[playQueue.currentIndex]
-                                      ?.artistId
+                                    playQueue[currentEntryList][
+                                      playQueue.currentIndex
+                                    ]?.artistId
                                   }`
                                 );
                               }}
                             >
-                              {playQueue.entry[playQueue.currentIndex]
-                                ?.artist || 'Unknown artist'}
+                              {playQueue[currentEntryList][
+                                playQueue.currentIndex
+                              ]?.artist || 'Unknown artist'}
                             </LinkButton>
                           </span>
                         </CustomTooltip>
@@ -479,7 +496,10 @@ const PlayerBar = () => {
                     defaultValue={0}
                     value={isDragging ? manualSeek : seek}
                     tooltip={false}
-                    max={playQueue.entry[playQueue.currentIndex]?.duration || 0}
+                    max={
+                      playQueue[currentEntryList][playQueue.currentIndex]
+                        ?.duration || 0
+                    }
                     onChange={handleSeekSlider}
                     style={{ width: '100%' }}
                   />
@@ -493,8 +513,8 @@ const PlayerBar = () => {
                   }}
                 >
                   {format(
-                    playQueue.entry[playQueue.currentIndex]?.duration * 1000 ||
-                      0
+                    playQueue[currentEntryList][playQueue.currentIndex]
+                      ?.duration * 1000 || 0
                   )}
                 </FlexboxGrid.Item>
               </FlexboxGrid>
@@ -514,21 +534,23 @@ const PlayerBar = () => {
                     justifyContent: 'flex-end',
                   }}
                 >
-                  {playQueue.entry.length >= 1 && (
+                  {playQueue[currentEntryList].length >= 1 && (
                     <>
                       {/* Favorite Button */}
                       <CustomTooltip text="Favorite">
                         <PlayerControlIcon
                           tabIndex={0}
                           icon={
-                            playQueue.entry[playQueue.currentIndex].starred
+                            playQueue[currentEntryList][playQueue.currentIndex]
+                              .starred
                               ? 'heart'
                               : 'heart-o'
                           }
                           size="lg"
                           fixedWidth
                           active={
-                            playQueue.entry[playQueue.currentIndex].starred
+                            playQueue[currentEntryList][playQueue.currentIndex]
+                              .starred
                               ? 'true'
                               : 'false'
                           }
@@ -583,6 +605,7 @@ const PlayerBar = () => {
                               handleShuffle();
                             }
                           }}
+                          active={playQueue.shuffle ? 'true' : 'false'}
                         />
                       </CustomTooltip>
                       {/* Display Queue Button */}

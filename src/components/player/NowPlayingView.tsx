@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
-import { Button, Checkbox } from 'rsuite';
+import { Checkbox } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -10,7 +10,9 @@ import {
   setPlayerVolume,
   fixPlayer2Index,
   clearPlayQueue,
+  shuffleInPlace,
   shufflePlayQueue,
+  toggleShuffle,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -130,7 +132,12 @@ const NowPlayingView = () => {
               <HeaderButton
                 size="sm"
                 onClick={() => {
-                  dispatch(shufflePlayQueue());
+                  if (!playQueue.shuffle) {
+                    dispatch(shufflePlayQueue());
+                    dispatch(toggleShuffle());
+                  } else {
+                    dispatch(shuffleInPlace());
+                  }
                 }}
               >
                 Shuffle
@@ -160,7 +167,13 @@ const NowPlayingView = () => {
     >
       <ListViewType
         ref={tableRef}
-        data={searchQuery !== '' ? filteredData : playQueue.entry}
+        data={
+          searchQuery !== ''
+            ? filteredData
+            : playQueue.shuffle
+            ? playQueue.shuffledEntry
+            : playQueue.entry
+        }
         currentIndex={playQueue.currentIndex}
         tableColumns={settings.getSync('songListColumns')}
         handleRowClick={handleRowClick}

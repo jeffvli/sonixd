@@ -34,6 +34,15 @@ const Player = ({ children }: any, ref: any) => {
   const cacheSongs = settings.getSync('cacheSongs');
   const [title, setTitle] = useState('');
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
+  const [currentEntryList, setCurrentEntryList] = useState('entry');
+
+  useEffect(() => {
+    if (playQueue.shuffle) {
+      setCurrentEntryList('shuffledEntry');
+    } else {
+      setCurrentEntryList('entry');
+    }
+  }, [playQueue.shuffle]);
 
   useImperativeHandle(ref, () => ({
     get player1() {
@@ -80,7 +89,7 @@ const Player = ({ children }: any, ref: any) => {
     // Don't fade if player2Index <= player1Index unless repeat==='all'
 
     if (
-      playQueue.player1.index + 1 < playQueue.entry.length ||
+      playQueue.player1.index + 1 < playQueue[currentEntryList].length ||
       playQueue.repeat === 'all'
     ) {
       if (currentSeek >= fadeAtTime) {
@@ -139,7 +148,7 @@ const Player = ({ children }: any, ref: any) => {
     const fadeAtTime = duration - fadeDuration;
 
     if (
-      playQueue.player2.index + 1 < playQueue.entry.length ||
+      playQueue.player2.index + 1 < playQueue[currentEntryList].length ||
       playQueue.repeat === 'all'
     ) {
       if (currentSeek >= fadeAtTime) {
@@ -182,8 +191,8 @@ const Player = ({ children }: any, ref: any) => {
   const handleOnEnded1 = () => {
     if (cacheSongs) {
       cacheSong(
-        `${playQueue.entry[playQueue.player1.index].id}.mp3`,
-        playQueue.entry[playQueue.player1.index].streamUrl.replace(
+        `${playQueue[currentEntryList][playQueue.player1.index].id}.mp3`,
+        playQueue[currentEntryList][playQueue.player1.index].streamUrl.replace(
           /stream/,
           'download'
         )
@@ -201,10 +210,15 @@ const Player = ({ children }: any, ref: any) => {
     } else {
       if (!playQueue.autoIncremented) {
         dispatch(incrementCurrentIndex('none'));
-        dispatch(setCurrentIndex(playQueue.entry[playQueue.player2.index]));
+        dispatch(
+          setCurrentIndex(playQueue[currentEntryList][playQueue.player2.index])
+        );
         dispatch(setAutoIncremented(true));
       }
-      if (playQueue.entry.length > 1 || playQueue.repeat === 'all') {
+      if (
+        playQueue[currentEntryList].length > 1 ||
+        playQueue.repeat === 'all'
+      ) {
         dispatch(setCurrentPlayer(2));
         dispatch(incrementPlayerIndex(1));
         dispatch(setPlayerVolume({ player: 1, volume: 0 }));
@@ -218,8 +232,8 @@ const Player = ({ children }: any, ref: any) => {
   const handleOnEnded2 = () => {
     if (cacheSongs) {
       cacheSong(
-        `${playQueue.entry[playQueue.player2.index].id}.mp3`,
-        playQueue.entry[playQueue.player2.index].streamUrl.replace(
+        `${playQueue[currentEntryList][playQueue.player2.index].id}.mp3`,
+        playQueue[currentEntryList][playQueue.player2.index].streamUrl.replace(
           /stream/,
           'download'
         )
@@ -237,10 +251,15 @@ const Player = ({ children }: any, ref: any) => {
     } else {
       if (!playQueue.autoIncremented) {
         dispatch(incrementCurrentIndex('none'));
-        dispatch(setCurrentIndex(playQueue.entry[playQueue.player1.index]));
+        dispatch(
+          setCurrentIndex(playQueue[currentEntryList][playQueue.player1.index])
+        );
         dispatch(setAutoIncremented(true));
       }
-      if (playQueue.entry.length > 1 || playQueue.repeat === 'all') {
+      if (
+        playQueue[currentEntryList].length > 1 ||
+        playQueue.repeat === 'all'
+      ) {
         dispatch(setCurrentPlayer(1));
         dispatch(incrementPlayerIndex(2));
         dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
@@ -260,17 +279,19 @@ const Player = ({ children }: any, ref: any) => {
 
   useEffect(() => {
     const playStatus =
-      player.status !== 'PLAYING' && playQueue.entry.length > 0
+      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0
         ? '(Paused)'
         : '';
-    const songTitle = playQueue.entry[playQueue.currentIndex]?.title
-      ? `(${playQueue.currentIndex + 1} / ${playQueue.entry.length}) ~ ${
-          playQueue.entry[playQueue.currentIndex]?.title
-        } ~ ${playQueue.entry[playQueue.currentIndex]?.artist} `
+    const songTitle = playQueue[currentEntryList][playQueue.currentIndex]?.title
+      ? `(${playQueue.currentIndex + 1} / ${
+          playQueue[currentEntryList].length
+        }) ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.title} ~ ${
+          playQueue[currentEntryList][playQueue.currentIndex]?.artist
+        } `
       : 'sonixd';
 
     setTitle(`${playStatus} ${songTitle}`);
-  }, [playQueue.currentIndex, playQueue.entry, player.status]);
+  }, [currentEntryList, playQueue, playQueue.currentIndex, player.status]);
 
   return (
     <>
@@ -282,10 +303,14 @@ const Player = ({ children }: any, ref: any) => {
         ref={player1Ref}
         src={
           isCached(
-            `${cachePath}/${playQueue.entry[playQueue.player1.index]?.id}.mp3`
+            `${cachePath}/${
+              playQueue[currentEntryList][playQueue.player1.index]?.id
+            }.mp3`
           )
-            ? `${cachePath}/${playQueue.entry[playQueue.player1.index]?.id}.mp3`
-            : playQueue.entry[playQueue.player1.index]?.streamUrl
+            ? `${cachePath}/${
+                playQueue[currentEntryList][playQueue.player1.index]?.id
+              }.mp3`
+            : playQueue[currentEntryList][playQueue.player1.index]?.streamUrl
         }
         listenInterval={150}
         preload="auto"
@@ -302,10 +327,14 @@ const Player = ({ children }: any, ref: any) => {
         ref={player2Ref}
         src={
           isCached(
-            `${cachePath}/${playQueue.entry[playQueue.player2.index]?.id}.mp3`
+            `${cachePath}/${
+              playQueue[currentEntryList][playQueue.player2.index]?.id
+            }.mp3`
           )
-            ? `${cachePath}/${playQueue.entry[playQueue.player2.index]?.id}.mp3`
-            : playQueue.entry[playQueue.player2.index]?.streamUrl
+            ? `${cachePath}/${
+                playQueue[currentEntryList][playQueue.player2.index]?.id
+              }.mp3`
+            : playQueue[currentEntryList][playQueue.player2.index]?.streamUrl
         }
         listenInterval={150}
         preload="auto"
