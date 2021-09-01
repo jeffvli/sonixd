@@ -145,6 +145,7 @@ const Config = () => {
                       >
                         Yes
                       </Button>
+                      <strong>WARNING: This will reload the application</strong>
                     </div>
                   </Popover>
                 }
@@ -300,7 +301,11 @@ const Config = () => {
           <div style={{ overflow: 'auto' }}>
             Location:{' '}
             <code>
-              {path.join(String(settings.getSync('cachePath')), 'sonixdCache')}
+              {path.join(
+                String(settings.getSync('cachePath')),
+                'sonixdCache',
+                String(localStorage.getItem('serverBase64'))
+              )}
             </code>
           </div>
         )}

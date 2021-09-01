@@ -5,14 +5,7 @@ import { getSongCachePath, getImageCachePath } from '../../shared/utils';
 // Set setting defaults on first login
 const setDefaultSettings = (force: boolean) => {
   if (force || !settings.hasSync('cachePath')) {
-    settings.setSync(
-      'cachePath',
-      path.join(
-        path.dirname(settings.file()),
-        'sonixdCache',
-        `${localStorage.getItem('serverBase64')}`
-      )
-    );
+    settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
 
   fs.mkdirSync(getSongCachePath(), { recursive: true });
