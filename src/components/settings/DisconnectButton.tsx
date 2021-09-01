@@ -17,7 +17,7 @@ const DisconnectButton = () => {
     window.location.reload();
   };
   return (
-    <Button onClick={handleDisconnect} color="red">
+    <Button onClick={handleDisconnect} size="sm" color="red">
       Disconnect
     </Button>
   );
