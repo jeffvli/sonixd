@@ -81,9 +81,7 @@ const StarredView = () => {
   const handleRowDoubleClick = (e: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    const newPlayQueue = data.song.slice([e.index], data.song.length);
     dispatch(clearSelected());
-    // dispatch(setPlayQueue({ entries: newPlayQueue, type: 'list' }));
     dispatch(
       setPlayQueueByRowClick({
         entries: data.song,

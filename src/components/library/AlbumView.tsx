@@ -15,7 +15,6 @@ import { getAlbum } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   fixPlayer2Index,
-  setPlayQueue,
   setPlayQueueByRowClick,
 } from '../../redux/playQueueSlice';
 import {
