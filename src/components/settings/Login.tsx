@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import fs from 'fs';
 import md5 from 'md5';
 import randomstring from 'randomstring';
 import settings from 'electron-settings';
@@ -14,7 +13,7 @@ import {
   Message,
 } from 'rsuite';
 import axios from 'axios';
-import { getImageCachePath, getSongCachePath } from '../../shared/utils';
+import setDefaultSettings from '../shared/setDefaultSettings';
 
 const Login = () => {
   const [serverName, setServerName] = useState('');
@@ -51,6 +50,7 @@ const Login = () => {
     }
 
     localStorage.setItem('server', cleanServerName);
+    localStorage.setItem('serverBase64', btoa(cleanServerName));
     localStorage.setItem('username', userName);
     localStorage.setItem('salt', salt);
     localStorage.setItem('hash', hash);
@@ -61,127 +61,9 @@ const Login = () => {
     settings.setSync('salt', salt);
     settings.setSync('hash', hash);
 
-    // Create the cache folders
-    fs.mkdirSync(getSongCachePath(), { recursive: true });
-    fs.mkdirSync(getImageCachePath(), { recursive: true });
+    // Set defaults on login
+    setDefaultSettings(false);
 
-    // Set setting defaults on first login
-    if (!settings.hasSync('scrollWithCurrentSong')) {
-      settings.setSync('scrollWithCurrentSong', true);
-    }
-
-    if (!settings.hasSync('cacheImages')) {
-      settings.setSync('cacheImages', false);
-    }
-
-    if (!settings.hasSync('cacheSongs')) {
-      settings.setSync('cacheSongs', false);
-    }
-
-    if (!settings.hasSync('fadeDuration')) {
-      settings.setSync('fadeDuration', '5.0');
-    }
-
-    if (!settings.hasSync('playlistViewType')) {
-      settings.setSync('playlistViewType', 'list');
-    }
-
-    if (!settings.hasSync('albumViewType')) {
-      settings.setSync('albumViewType', 'list');
-    }
-
-    if (!settings.hasSync('songListFontSize')) {
-      settings.setSync('songListFontSize', '14');
-    }
-
-    if (!settings.hasSync('songListRowHeight')) {
-      settings.setSync('songListRowHeight', '60.0');
-    }
-
-    if (!settings.hasSync('songListColumns')) {
-      settings.setSync('songListColumns', [
-        {
-          id: '#',
-          dataKey: 'index',
-          alignment: 'center',
-          resizable: true,
-          width: 50,
-          label: '#',
-        },
-        {
-          id: 'Title',
-          dataKey: 'combinedtitle',
-          alignment: 'left',
-          resizable: true,
-          width: 350,
-          label: 'Title (Combined)',
-        },
-        {
-          id: 'Album',
-          dataKey: 'album',
-          alignment: 'left',
-          resizable: true,
-          width: 350,
-          label: 'Album',
-        },
-        {
-          id: 'Duration',
-          dataKey: 'duration',
-          alignment: 'center',
-          resizable: true,
-          width: 100,
-          label: 'Duration',
-        },
-      ]);
-    }
-
-    if (!settings.hasSync('albumListFontSize')) {
-      settings.setSync('albumListFontSize', '14');
-    }
-
-    if (!settings.hasSync('albumListRowHeight')) {
-      settings.setSync('albumListRowHeight', '60.0');
-    }
-
-    if (!settings.hasSync('albumListColumns')) {
-      settings.setSync('albumListColumns', [
-        {
-          id: '#',
-          dataKey: 'index',
-          alignment: 'center',
-          resizable: true,
-          width: 50,
-          label: '#',
-        },
-        {
-          id: 'Title',
-          dataKey: 'combinedtitle',
-          alignment: 'left',
-          resizable: true,
-          width: 350,
-          label: 'Title (Combined)',
-        },
-        {
-          label: 'Track Count',
-          value: {
-            id: 'Tracks',
-            dataKey: 'songCount',
-            alignment: 'center',
-            resizable: true,
-            width: 70,
-            label: 'Track Count',
-          },
-        },
-        {
-          id: 'Duration',
-          dataKey: 'duration',
-          alignment: 'center',
-          resizable: true,
-          width: 100,
-          label: 'Duration',
-        },
-      ]);
-    }
     window.location.reload();
   };
 

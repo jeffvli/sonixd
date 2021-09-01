@@ -1,29 +1,17 @@
-import settings from 'electron-settings';
 import fs from 'fs';
 import path from 'path';
+import { getImageCachePath } from '../../shared/utils';
 
 const download = require('image-downloader');
 
 const cacheImage = (fileName: string, url: string) => {
-  const settingsPath = path.dirname(settings.file());
+  const cachePath = getImageCachePath();
 
   // We save the img to a temp path first so that React does not try to use the
   // in-progress downloaded image which would cause the image to be cut off
-  const tempImgPath = path.join(
-    settingsPath,
-    'sonixdCache',
-    `${settings.getSync('serverBase64')}`,
-    'image',
-    `TEMP_${fileName}`
-  );
+  const tempImgPath = path.join(cachePath, `TEMP_${fileName}`);
 
-  const cachedImgPath = path.join(
-    settingsPath,
-    'sonixdCache',
-    `${settings.getSync('serverBase64')}`,
-    'image',
-    `${fileName}`
-  );
+  const cachedImgPath = path.join(cachePath, `${fileName}`);
 
   const options = {
     url,
@@ -31,25 +19,8 @@ const cacheImage = (fileName: string, url: string) => {
   };
 
   // Create the cache folder if it doesn't exist
-  if (
-    !fs.existsSync(
-      path.join(
-        settingsPath,
-        'sonixdCache',
-        `${settings.getSync('serverBase64')}`,
-        'image'
-      )
-    )
-  ) {
-    fs.mkdirSync(
-      path.join(
-        settingsPath,
-        'sonixdCache',
-        `${settings.getSync('serverBase64')}`,
-        'image'
-      ),
-      { recursive: true }
-    );
+  if (!fs.existsSync(path.join(cachePath, 'image'))) {
+    fs.mkdirSync(path.join(cachePath, 'image'), { recursive: true });
   }
 
   // Check if an existing cached image exists

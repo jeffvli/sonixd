@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
-import { Button, ControlLabel, InputNumber, Checkbox, Tag, Nav } from 'rsuite';
+import {
+  Button,
+  ControlLabel,
+  InputNumber,
+  Checkbox,
+  Tag,
+  Nav,
+  Icon,
+  Input,
+  InputGroup,
+  Message,
+  Whisper,
+  Popover,
+} from 'rsuite';
 import { ConfigPanel } from './styled';
 import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
@@ -16,6 +30,9 @@ import {
   playlistColumnList,
   playlistColumnPicker,
 } from './ListViewColumns';
+import { getImageCachePath, getSongCachePath } from '../../shared/utils';
+import setDefaultSettings from '../shared/setDefaultSettings';
+import { HeaderButton } from '../shared/styled';
 
 const fsUtils = require('nodejs-fs-utils');
 
@@ -25,6 +42,9 @@ const Config = () => {
   const [imgCacheSize, setImgCacheSize] = useState(0);
   const [songCacheSize, setSongCacheSize] = useState(0);
   const [currentLAFTab, setCurrentLAFTab] = useState('songList');
+  const [isEditingCachePath, setIsEditingCachePath] = useState(false);
+  const [newCachePath, setNewCachePath] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -37,22 +57,22 @@ const Config = () => {
 
   useEffect(() => {
     // Retrieve cache sizes on render
-    const rootCacheFolder = path.join(
-      path.dirname(settings.file()),
-      'sonixdCache',
-      `${settings.getSync('serverBase64')}`
-    );
+    try {
+      setImgCacheSize(
+        Number(
+          (fsUtils.fsizeSync(getImageCachePath()) / 1000 / 1000).toFixed(0)
+        )
+      );
 
-    const imgCacheFolder = path.join(rootCacheFolder, 'image');
-    const songCacheFolder = path.join(rootCacheFolder, 'song');
-
-    setImgCacheSize(
-      Number((fsUtils.fsizeSync(imgCacheFolder) / 1000 / 1000).toFixed(0))
-    );
-
-    setSongCacheSize(
-      Number((fsUtils.fsizeSync(songCacheFolder) / 1000 / 1000).toFixed(0))
-    );
+      setSongCacheSize(
+        Number((fsUtils.fsizeSync(getSongCachePath()) / 1000 / 1000).toFixed(0))
+      );
+    } catch (err) {
+      setImgCacheSize(0);
+      setSongCacheSize(0);
+      fs.mkdirSync(getSongCachePath(), { recursive: true });
+      fs.mkdirSync(getImageCachePath(), { recursive: true });
+    }
   }, []);
 
   useEffect(() => {
@@ -96,7 +116,8 @@ const Config = () => {
           title="Config"
           subtitle={
             <>
-              <Button
+              <HeaderButton
+                size="sm"
                 onClick={async () => {
                   startScan();
                   setIsScanning(true);
@@ -104,7 +125,32 @@ const Config = () => {
                 disabled={isScanning}
               >
                 {isScanning ? `Scanning: ${scanProgress}` : 'Scan Library'}
-              </Button>
+              </HeaderButton>
+              <Whisper
+                trigger="click"
+                speaker={
+                  <Popover title="Confirm">
+                    <div>
+                      Are you sure you want to reset your settings to default?
+                    </div>
+                    <div>
+                      <Button
+                        id="reset-submit-button"
+                        size="sm"
+                        onClick={() => {
+                          setDefaultSettings(true);
+                          window.location.reload();
+                        }}
+                        appearance="link"
+                      >
+                        Yes
+                      </Button>
+                    </div>
+                  </Popover>
+                }
+              >
+                <HeaderButton size="sm">Reset defaults</HeaderButton>
+              </Whisper>
             </>
           }
           sidetitle={<DisconnectButton />}
@@ -198,13 +244,66 @@ const Config = () => {
         )}
       </ConfigPanel>
       <ConfigPanel header="Cache" bordered>
-        <div style={{ overflow: 'auto' }}>
-          {path.join(
-            path.dirname(settings.file()),
-            'sonixdCache',
-            `${settings.getSync('serverBase64')}`
-          )}
-        </div>
+        {errorMessage !== '' && (
+          <>
+            <Message showIcon type="error" description={errorMessage} />
+            <br />
+          </>
+        )}
+        <p>
+          Songs are cached only when playback for the track fully completes and
+          ends. Skipping to the next or previous track after only partially
+          completing the track will not begin the caching process.
+        </p>
+        <br />
+        {isEditingCachePath && (
+          <>
+            <InputGroup>
+              <Input
+                value={newCachePath}
+                onChange={(e: string) => setNewCachePath(e)}
+              />
+              <InputGroup.Button
+                onClick={() => {
+                  const check = fs.existsSync(newCachePath);
+                  if (check) {
+                    settings.setSync('cachePath', newCachePath);
+                    fs.mkdirSync(getSongCachePath(), { recursive: true });
+                    fs.mkdirSync(getImageCachePath(), { recursive: true });
+                    setErrorMessage('');
+                    return setIsEditingCachePath(false);
+                  }
+
+                  return setErrorMessage(
+                    `Path: ${newCachePath} not found. Enter a valid path.`
+                  );
+                }}
+              >
+                <Icon icon="check" />
+              </InputGroup.Button>
+              <InputGroup.Button
+                onClick={() => {
+                  setIsEditingCachePath(false);
+                  setErrorMessage('');
+                }}
+              >
+                <Icon icon="close" />
+              </InputGroup.Button>
+            </InputGroup>
+            <p style={{ fontSize: 'smaller' }}>
+              *You will need to manually move any existing cached files to their
+              new location.
+            </p>
+          </>
+        )}
+        {!isEditingCachePath && (
+          <div style={{ overflow: 'auto' }}>
+            Location:{' '}
+            <code>
+              {path.join(String(settings.getSync('cachePath')), 'sonixdCache')}
+            </code>
+          </div>
+        )}
         <div style={{ width: '300px', marginTop: '20px' }}>
           <Checkbox
             defaultChecked={Boolean(settings.getSync('cacheSongs'))}
@@ -212,7 +311,11 @@ const Config = () => {
               settings.setSync('cacheSongs', !settings.getSync('cacheSongs'));
             }}
           >
-            Songs <Tag>{songCacheSize} MB</Tag>
+            Songs{' '}
+            <Tag>
+              {songCacheSize} MB{' '}
+              {imgCacheSize === 9999999 && '- Folder not found'}
+            </Tag>
           </Checkbox>
           <Checkbox
             defaultChecked={Boolean(settings.getSync('cacheImages'))}
@@ -220,8 +323,16 @@ const Config = () => {
               settings.setSync('cacheImages', !settings.getSync('cacheImages'));
             }}
           >
-            Images <Tag>{imgCacheSize} MB</Tag>
+            Images{' '}
+            <Tag>
+              {imgCacheSize} MB{' '}
+              {imgCacheSize === 9999999 && '- Folder not found'}
+            </Tag>
           </Checkbox>
+          <br />
+          <Button onClick={() => setIsEditingCachePath(true)}>
+            Edit cache location
+          </Button>
         </div>
       </ConfigPanel>
     </GenericPage>

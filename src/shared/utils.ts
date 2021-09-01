@@ -9,7 +9,7 @@ export const isCached = (filePath: string) => {
 
 export const getRootCachePath = () => {
   return path.join(
-    path.dirname(settings.file()),
+    String(settings.getSync('cachePath')),
     'sonixdCache',
     `${settings.getSync('serverBase64')}`
   );

@@ -14,6 +14,7 @@ import LibraryView from './components/library/LibraryView';
 import PlayerBar from './components/player/PlayerBar';
 import AlbumView from './components/library/AlbumView';
 import ArtistView from './components/library/ArtistView';
+import setDefaultSettings from './components/shared/setDefaultSettings';
 
 const keyMap = {
   FOCUS_SEARCH: 'ctrl+f',
@@ -47,6 +48,9 @@ const App = () => {
   const handlers = {
     FOCUS_SEARCH: focusSearchInput,
   };
+
+  // Always check for default settings
+  setDefaultSettings(false);
 
   return (
     <GlobalHotKeys keyMap={keyMap} handlers={handlers}>
