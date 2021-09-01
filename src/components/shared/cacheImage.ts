@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import { getImageCachePath } from '../../shared/utils';
 
 const download = require('image-downloader');
@@ -9,22 +8,18 @@ const cacheImage = (fileName: string, url: string) => {
 
   // We save the img to a temp path first so that React does not try to use the
   // in-progress downloaded image which would cause the image to be cut off
-  const tempImgPath = path.join(cachePath, `TEMP_${fileName}`);
-
-  const cachedImgPath = path.join(cachePath, `${fileName}`);
-
-  const options = {
-    url,
-    dest: tempImgPath,
-  };
-
-  // Create the cache folder if it doesn't exist
-  if (!fs.existsSync(path.join(cachePath, 'image'))) {
-    fs.mkdirSync(path.join(cachePath, 'image'), { recursive: true });
-  }
+  // Also we use string concatenation here instead of path joins because too many
+  // joins start to kill performance
+  const tempImgPath = `${cachePath}/TEMP_${fileName}`;
+  const cachedImgPath = `${cachePath}/${fileName}`;
 
   // Check if an existing cached image exists
   if (!fs.existsSync(cachedImgPath) && !fs.existsSync(tempImgPath)) {
+    const options = {
+      url,
+      dest: tempImgPath,
+    };
+
     if (!options.url.includes('placeholder')) {
       try {
         download

@@ -24,6 +24,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
+import { HeaderButton } from '../shared/styled';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -116,7 +117,7 @@ const NowPlayingView = () => {
           title="Now Playing"
           subtitle={
             <>
-              <Button
+              <HeaderButton
                 size="sm"
                 onClick={() => {
                   dispatch(clearPlayQueue());
@@ -125,15 +126,15 @@ const NowPlayingView = () => {
                 }}
               >
                 Clear queue
-              </Button>
-              <Button
+              </HeaderButton>
+              <HeaderButton
                 size="sm"
                 onClick={() => {
                   dispatch(shufflePlayQueue());
                 }}
               >
                 Shuffle
-              </Button>
+              </HeaderButton>
             </>
           }
           subsidetitle={

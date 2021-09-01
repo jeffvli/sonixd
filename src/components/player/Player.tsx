@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import path from 'path';
-import fs from 'fs';
 import settings from 'electron-settings';
 import { Notification } from 'rsuite';
 import ReactAudioPlayer from 'react-audio-player';
@@ -24,7 +23,7 @@ import {
 } from '../../redux/playQueueSlice';
 import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
-import { getSongCachePath } from '../../shared/utils';
+import { getSongCachePath, isCached } from '../../shared/utils';
 
 const Player = ({ children }: any, ref: any) => {
   const player1Ref = useRef<any>();
@@ -34,6 +33,7 @@ const Player = ({ children }: any, ref: any) => {
   const player = useAppSelector((state) => state.player);
   const cacheSongs = settings.getSync('cacheSongs');
   const [title, setTitle] = useState('');
+  const [cachePath] = useState(path.join(getSongCachePath(), '/'));
 
   useImperativeHandle(ref, () => ({
     get player1() {
@@ -258,19 +258,6 @@ const Player = ({ children }: any, ref: any) => {
     });
   };
 
-  const checkCachedSong = (id: string) => {
-    const songCacheFolder = getSongCachePath();
-
-    const songCache = fs.readdirSync(songCacheFolder || '');
-    const matchedSong = songCache.filter((song) => song.split('.')[0] === id);
-
-    if (matchedSong.length !== 0) {
-      return path.join(songCacheFolder, matchedSong[0]);
-    }
-
-    return null;
-  };
-
   useEffect(() => {
     const playStatus =
       player.status !== 'PLAYING' && playQueue.entry.length > 0
@@ -294,8 +281,10 @@ const Player = ({ children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player1Ref}
         src={
-          checkCachedSong(playQueue.entry[playQueue.player1.index]?.id)
-            ? checkCachedSong(playQueue.entry[playQueue.player1.index]?.id)
+          isCached(
+            `${cachePath}/${playQueue.entry[playQueue.player1.index]?.id}.mp3`
+          )
+            ? `${cachePath}/${playQueue.entry[playQueue.player1.index]?.id}.mp3`
             : playQueue.entry[playQueue.player1.index]?.streamUrl
         }
         listenInterval={150}
@@ -312,8 +301,10 @@ const Player = ({ children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player2Ref}
         src={
-          checkCachedSong(playQueue.entry[playQueue.player2.index]?.id)
-            ? checkCachedSong(playQueue.entry[playQueue.player2.index]?.id)
+          isCached(
+            `${cachePath}/${playQueue.entry[playQueue.player2.index]?.id}.mp3`
+          )
+            ? `${cachePath}/${playQueue.entry[playQueue.player2.index]?.id}.mp3`
             : playQueue.entry[playQueue.player2.index]?.streamUrl
         }
         listenInterval={150}

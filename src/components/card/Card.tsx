@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import path from 'path';
 import settings from 'electron-settings';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
@@ -35,7 +36,7 @@ const Card = ({
   const history = useHistory();
   const dispatch = useAppDispatch();
   const [cacheImages] = useState(Boolean(settings.getSync('cacheImages')));
-  const [cachePath] = useState(`${getImageCachePath()}\\`);
+  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
 
   const handleClick = () => {
     history.push(url);
