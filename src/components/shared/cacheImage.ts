@@ -25,7 +25,9 @@ const cacheImage = (fileName: string, url: string) => {
         download
           .image(options)
           .then(() => fs.renameSync(tempImgPath, cachedImgPath))
-          .catch((err: any) => console.log(err));
+          // Ignore any errors here because it would most likely be a race
+          // condition error
+          .catch(() => undefined);
       } finally {
         if (fs.existsSync(tempImgPath)) {
           fs.rmSync(tempImgPath);
