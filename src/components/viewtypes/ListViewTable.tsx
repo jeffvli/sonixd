@@ -35,6 +35,7 @@ const ListViewTable = ({
   cacheImages,
   autoHeight,
   listType,
+  // onScroll,
   nowPlaying,
 }: any) => {
   const history = useHistory();
@@ -73,6 +74,7 @@ const ListViewTable = ({
       affixHorizontalScrollbar
       shouldUpdateScroll={false}
       style={{ fontSize: `${fontSize}px` }}
+      // onScroll={onScroll}
     >
       {columns.map((column: any) => (
         <Table.Column

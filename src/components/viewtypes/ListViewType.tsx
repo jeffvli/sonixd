@@ -42,6 +42,7 @@ const ListViewType = (
   const [dragSpeed, setDragSpeed] = useState('');
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
+  // const [scrollY, setScrollY] = useState(0);
   const [columns] = useState(tableColumns);
   const { getHeight } = DOMHelper;
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -61,6 +62,7 @@ const ListViewType = (
       window.clearTimeout(window.resizeInterval);
       window.resizeInterval = window.setTimeout(() => {
         setShow(true);
+        // tableRef?.current?.scrollTop(Math.abs(scrollY));
       }, 500);
 
       setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
@@ -110,6 +112,8 @@ const ListViewType = (
             ? currentScroll - scrollDistance
             : currentScroll
         );
+
+        // setScrollY(currentScroll);
       }, 50);
 
       return () => clearInterval(interval);
@@ -273,6 +277,7 @@ const ListViewType = (
             cacheImages={cacheImages}
             listType={listType}
             nowPlaying={rest.nowPlaying}
+            // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
           />
         )}
       </div>
