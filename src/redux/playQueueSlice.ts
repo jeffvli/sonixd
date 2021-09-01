@@ -186,6 +186,7 @@ const playQueueSlice = createSlice({
     incrementCurrentIndex: (state, action: PayloadAction<string>) => {
       if (state.entry.length >= 1 && state.repeat !== 'one') {
         if (state.currentIndex < state.entry.length - 1) {
+          // Check that current index isn't on the last track of the queue
           state.currentIndex += 1;
           if (action.payload === 'usingHotkey') {
             state.currentPlayer = 1;
@@ -199,6 +200,7 @@ const playQueueSlice = createSlice({
             }
           }
         } else if (state.repeat === 'all') {
+          // But if it is the last track, and repeat is all, then we can go back to 0
           state.currentIndex = 0;
           if (action.payload === 'usingHotkey') {
             state.currentPlayer = 1;
@@ -212,7 +214,17 @@ const playQueueSlice = createSlice({
             }
           }
         }
-
+        state.currentSongId = state.entry[state.currentIndex].id;
+      } else if (state.entry.length >= 1 && state.repeat === 'one') {
+        // If repeating one, then we can just increment to the next track
+        state.currentIndex += 1;
+        if (action.payload === 'usingHotkey') {
+          state.currentPlayer = 1;
+          state.isFading = false;
+          state.player1.volume = state.volume;
+          state.player1.index = state.currentIndex;
+          state.player2.index = state.currentIndex;
+        }
         state.currentSongId = state.entry[state.currentIndex].id;
       }
     },
