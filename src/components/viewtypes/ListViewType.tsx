@@ -86,10 +86,10 @@ const ListViewType = (
     let scrollDistance = 0;
     switch (dragSpeed) {
       case 'slow':
-        scrollDistance = 15;
+        scrollDistance = 5;
         break;
       case 'medium':
-        scrollDistance = 30;
+        scrollDistance = 15;
         break;
       case 'fast':
         scrollDistance = 60;
@@ -104,17 +104,30 @@ const ListViewType = (
 
     if (isDragging) {
       const interval = setInterval(() => {
-        const currentScroll = Math.abs(tableRef?.current.scrollY);
-        tableRef.current.scrollTop(
-          dragDirection === 'down'
-            ? currentScroll + scrollDistance
-            : dragDirection === 'up' && currentScroll - scrollDistance > 0
-            ? currentScroll - scrollDistance
-            : currentScroll
-        );
+        const currentScrollY = Math.abs(tableRef?.current.scrollY);
+        const currentScrollX = Math.abs(tableRef?.current.scrollX);
+        if (dragDirection.match(/down|up/)) {
+          tableRef.current.scrollTop(
+            dragDirection === 'down'
+              ? currentScrollY + scrollDistance
+              : dragDirection === 'up' && currentScrollY - scrollDistance > 0
+              ? currentScrollY - scrollDistance
+              : 0
+          );
+        }
+
+        if (dragDirection.match(/left|right/)) {
+          tableRef.current.scrollLeft(
+            dragDirection === 'right'
+              ? currentScrollX + 60
+              : dragDirection === 'left' && currentScrollX - scrollDistance > 0
+              ? currentScrollX - 60
+              : 0
+          );
+        }
 
         // setScrollY(currentScroll);
-      }, 50);
+      }, 20);
 
       return () => clearInterval(interval);
     }
@@ -156,9 +169,9 @@ const ListViewType = (
           style={{
             position: 'absolute',
             height: '40%',
-            width: '100%',
+            width: '90%',
             top: 0,
-            left: 0,
+            left: '5%',
             right: 0,
             zIndex: isDragging ? 1 : undefined,
           }}
@@ -199,13 +212,47 @@ const ListViewType = (
           />
         </div>
         <div
+          id="scroll-left"
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '5%',
+            top: 0,
+            left: 0,
+            zIndex: isDragging ? 1 : undefined,
+          }}
+          onMouseEnter={() => {
+            setDragDirection('left');
+          }}
+          onMouseLeave={() => {
+            setDragDirection('none');
+          }}
+        />
+        <div
+          id="scroll-right"
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '5%',
+            top: 0,
+            right: 0,
+            zIndex: isDragging ? 1 : undefined,
+          }}
+          onMouseEnter={() => {
+            setDragDirection('right');
+          }}
+          onMouseLeave={() => {
+            setDragDirection('none');
+          }}
+        />
+        <div
           id="scroll-neutral"
           style={{
             position: 'absolute',
             height: '20%',
-            width: '100%',
+            width: '90%',
             top: '40%',
-            left: 0,
+            left: '5%',
             right: 0,
             zIndex: isDragging ? 1 : undefined,
           }}
@@ -218,9 +265,9 @@ const ListViewType = (
           style={{
             position: 'absolute',
             height: '40%',
-            width: '100%',
+            width: '90%',
             bottom: 0,
-            left: 0,
+            left: '5%',
             right: 0,
             zIndex: isDragging ? 1 : undefined,
           }}
