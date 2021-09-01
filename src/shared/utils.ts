@@ -6,7 +6,7 @@ import moment from 'moment';
 let settingsPath = path.join(
   String(process.env.APPDATA),
   process.env.NODE_ENV !== 'production' ? 'Electron' : 'sonixd',
-  'settings.js'
+  'settings.json'
 );
 
 // For CI

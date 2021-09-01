@@ -89,6 +89,8 @@ const resetPlayerDefaults = (state: PlayQueue) => {
   state.player1.volume = state.volume;
   state.player2.index = 0;
   state.player2.volume = 0;
+  state.entry = [];
+  state.shuffledEntry = [];
 };
 
 const insertItem = (array: any, index: any, item: any) => {
@@ -102,13 +104,31 @@ const removeItem = (array: any, index: any) => {
 const entrySelect = (state: PlayQueue) =>
   state.shuffle ? 'shuffledEntry' : 'entry';
 
+const getNextPlayerIndex = (
+  length: number,
+  repeat: string,
+  currentIndex: number
+) => {
+  if (length >= 2 && repeat !== 'one') {
+    if (currentIndex + 1 === length) {
+      return 0;
+    }
+    return currentIndex + 1;
+  }
+  if (repeat === 'one') {
+    return currentIndex;
+  }
+  return 0;
+};
+
+const getCurrentEntryIndex = (entries: any[], currentSongId: string) => {
+  return entries.findIndex((entry: any) => entry.id === currentSongId);
+};
+
 const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
   reducers: {
-    // ! Reducers need major refactoring and cleanup due to rapid
-    // ! development/experimentation to get things working
-
     resetPlayQueue: (state) => {
       const currentEntry = entrySelect(state);
 
@@ -117,14 +137,16 @@ const playQueueSlice = createSlice({
     },
 
     shuffleInPlace: (state) => {
-      if (state.shuffledEntry.length > 0) {
+      /* Used on the NowPlayingView to shuffle the current shuffledEntry queue.
+      Uses the same logic as the toggleShuffle reducer to keep the currentIndex
+      in-place so that the song doesn't change when shuffling */
+      if (state.shuffledEntry.length > 1) {
         state.shuffle = true;
 
         const shuffledEntriesWithoutCurrent = _.shuffle(
           removeItem(state.shuffledEntry, state.currentIndex)
         );
 
-        // Readd the current song back into its original index
         const shuffledEntries = insertItem(
           shuffledEntriesWithoutCurrent,
           state.currentIndex,
@@ -135,13 +157,12 @@ const playQueueSlice = createSlice({
       }
     },
 
-    shufflePlayQueue: (state) => {
-      const currentEntry = entrySelect(state);
+    toggleShuffle: (state) => {
+      state.shuffle = !state.shuffle;
 
-      if (state.shuffledEntry.length < 1) {
-        // Remove the current song before shuffling the array
-        // We do this so that the currently playing song doesn't
-        // suddenly switch because the index has changed
+      if (state.shuffle && state.entry.length > 1) {
+        /* When shuffling, we want to keep the currently playing track in the
+        same index so that the song doesn't change when enabling the shuffle. */
         const shuffledEntriesWithoutCurrent = _.shuffle(
           removeItem(state.entry, state.currentIndex)
         );
@@ -153,50 +174,38 @@ const playQueueSlice = createSlice({
           state.entry[state.currentIndex]
         );
 
+        // currentIndex and currentSongId stays the same since we're keeping it in place
         state.shuffledEntry = shuffledEntries;
-        state.currentSongId = shuffledEntries[0].id;
-      } else {
-        const findIndex = state.entry.findIndex(
-          (track) => track.id === state.currentSongId
+      } else if (state.entry.length > 1) {
+        /* If toggled to false, the NowPlayingView will reset back to using the regular entry[].
+        We want to swap the currentIndex over to the currently playing track since its row index
+        will change */
+
+        const currentEntryIndex = getCurrentEntryIndex(
+          state.entry,
+          state.currentSongId
         );
 
-        if (state[currentEntry].length >= 1 && state.repeat !== 'one') {
-          if (state.currentIndex < state[currentEntry].length - 1) {
-            state.currentIndex = findIndex;
-            state.player1.index = findIndex;
-            state.currentPlayer = 1;
-            state.isFading = false;
-            state.player1.volume = state.volume;
-            state.player1.index = state.currentIndex;
-            if (state.currentIndex + 1 >= state[currentEntry].length) {
-              state.player2.index = 0;
-            } else {
-              state.player2.index = state.currentIndex + 1;
-            }
-          } else if (state.repeat === 'all') {
-            state.currentIndex = findIndex;
-            state.currentPlayer = 1;
-            state.isFading = false;
-            state.player1.volume = state.volume;
-            state.player1.index = state.currentIndex;
-            if (state.currentIndex + 1 >= state[currentEntry].length) {
-              state.player2.index = 0;
-            } else {
-              state.player2.index = state.currentIndex + 1;
-            }
-          } else if (
-            state[currentEntry].length >= 1 &&
-            state.repeat === 'one'
-          ) {
-            state.currentIndex = findIndex;
-            state.currentPlayer = 1;
-            state.isFading = false;
-            state.player1.volume = state.volume;
-            state.player1.index = state.currentIndex;
-            state.player2.index = state.currentIndex;
-          }
-        }
-        state.currentSongId = state.entry[findIndex].id;
+        /* Account for the currentPlayer and set the player indexes accordingly. Unfortunately
+        since we're updating the indexes here, the transition won't be seamless and the currently
+        playing song will reset */
+        state.currentIndex = currentEntryIndex;
+        state.player1.index =
+          state.currentPlayer === 1
+            ? currentEntryIndex
+            : getNextPlayerIndex(
+                state.entry.length,
+                state.repeat,
+                state.currentIndex
+              );
+        state.player2.index =
+          state.currentPlayer === 2
+            ? currentEntryIndex
+            : getNextPlayerIndex(
+                state.entry.length,
+                state.repeat,
+                state.currentIndex
+              );
       }
     },
 
@@ -245,10 +254,6 @@ const playQueueSlice = createSlice({
       if (state.player2.index > state[currentEntry].length - 1) {
         state.player2.index = 0;
       }
-    },
-
-    toggleShuffle: (state) => {
-      state.shuffle = !state.shuffle;
     },
 
     toggleDisplayQueue: (state) => {
@@ -317,9 +322,9 @@ const playQueueSlice = createSlice({
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
       const currentEntry = entrySelect(state);
 
-      // If the entry list is greater than two, we don't need to increment,
-      // just keep swapping playback between the tracks [0 <=> 0] or [0 <=> 1]
-      // without changing the index of either player
+      /* If the entry list is greater than two, we don't need to increment,
+      just keep swapping playback between the tracks [0 <=> 0] or [0 <=> 1]
+      without changing the index of either player */
       if (state[currentEntry].length > 2 && state.repeat !== 'one') {
         if (action.payload === 1) {
           if (
@@ -329,8 +334,8 @@ const playQueueSlice = createSlice({
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
           } else if (state.player1.index + 2 >= state[currentEntry].length) {
-            // If incrementing would be greater than the total number of entries,
-            // reset it back to 0. Also check if player1 is already set to 0.
+            /* If incrementing would be greater than the total number of entries,
+            reset it back to 0. Also check if player1 is already set to 0. */
             if (state.player2.index === 0) {
               state.player1.index = state.player2.index + 1;
             } else {
@@ -348,8 +353,8 @@ const playQueueSlice = createSlice({
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
           } else if (state.player2.index + 2 >= state[currentEntry].length) {
-            // If incrementing would be greater than the total number of entries,
-            // reset it back to 0. Also check if player1 is already set to 0.
+            /* If incrementing would be greater than the total number of entries,
+            reset it back to 0. Also check if player1 is already set to 0. */
             if (state.player1.index === 0) {
               state.player2.index = 1;
             } else {
@@ -374,11 +379,10 @@ const playQueueSlice = createSlice({
       state.player1.index = findIndex;
       state.player1.volume = state.volume;
 
-      // We use fixPlayer2Index in conjunction with this reducer
-      // See note in decrementCurrentIndex reducer
+      // Use in conjunction with fixPlayer2Index reducer - see note
       state.player2.index = 0;
-
       state.player2.volume = 0;
+
       state.currentPlayer = 1;
       state.currentIndex = findIndex;
       state.currentSongId = action.payload.id;
@@ -407,10 +411,7 @@ const playQueueSlice = createSlice({
             state.player1.volume = state.volume;
             state.player1.index = state.currentIndex;
 
-            // Set the index back to 0 here, while performing the index set on fixPlayer2Index
-            // when dispatching this reducer. We need to do this because when decrementing while
-            // the current player is player2, the current index of player2 will not change,
-            // which means that player2 will continue playing even after decrementing the song
+            // Use in conjunction with fixPlayer2Index reducer - see note
             state.player2.index = 0;
             state.player2.volume = 0;
           }
@@ -421,19 +422,23 @@ const playQueueSlice = createSlice({
     },
 
     fixPlayer2Index: (state) => {
-      const currentEntry = entrySelect(state);
+      /* Before decrementing:
+      Player1: 4 | Player2: 3 */
 
-      if (state[currentEntry].length >= 2 && state.repeat !== 'one') {
-        if (state.currentIndex + 1 === state[currentEntry].length) {
-          state.player2.index = 0;
-        } else {
-          state.player2.index = state.currentIndex + 1;
-        }
-      } else if (state.repeat === 'one') {
-        state.player2.index = state.currentIndex;
-      } else {
-        state.player1.index = 0;
-      }
+      /* After decrementing:
+      Player1: 2 | Player2: 3 */
+
+      /* When incrementing/decrementing, we will always revert back to Player1 instead of
+      using the current player. In this case you will notice that the Player2 index stays the same.
+      This will cause the react audio player component to not unload the song which makes it so that
+      Player2 will continue playing even after decrementing. This reducer resets the Player2 index and
+      then sets it to its proper index. */
+
+      state.player2.index = getNextPlayerIndex(
+        state.entry.length,
+        state.repeat,
+        state.currentIndex
+      );
     },
 
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
@@ -447,19 +452,62 @@ const playQueueSlice = createSlice({
       state.currentSongId = action.payload.id;
     },
 
-    setPlayQueue: (state, action: PayloadAction<Entry[]>) => {
-      // Reset player defaults
-      state.entry = [];
-      state.shuffledEntry = [];
+    setPlayQueue: (
+      state,
+      action: PayloadAction<{
+        entries: Entry[];
+      }>
+    ) => {
+      // Used with gridview where you just want to set the entry queue directly
       resetPlayerDefaults(state);
 
-      action.payload.map((entry: any) => state.entry.push(entry));
+      action.payload.entries.map((entry: any) => state.entry.push(entry));
       if (state.shuffle) {
-        const shuffledEntries = _.shuffle(action.payload);
+        // If shuffle is enabled, add all entries randomly
+        const shuffledEntries = _.shuffle(action.payload.entries);
         shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
         state.currentSongId = shuffledEntries[0].id;
       } else {
-        state.currentSongId = action.payload[0].id;
+        // If shuffle is disabled, add all entries in order
+        state.currentSongId = action.payload.entries[0].id;
+      }
+    },
+
+    setPlayQueueByRowClick: (
+      state,
+      action: PayloadAction<{
+        entries: Entry[];
+        currentIndex: number;
+        currentSongId: string;
+      }>
+    ) => {
+      /* Used with listview where you want to set the entry queue by double clicking on a row
+      Setting the entry queue by row will add all entries, but set the current index to
+      the row that was double clicked */
+      resetPlayerDefaults(state);
+      action.payload.entries.map((entry: any) => state.entry.push(entry));
+
+      if (state.shuffle) {
+        // If shuffle is enabled, add the selected row to 0 and then shuffle the rest
+        const shuffledEntriesWithoutCurrent = _.shuffle(
+          removeItem(action.payload.entries, action.payload.currentIndex)
+        );
+
+        const shuffledEntries = insertItem(
+          shuffledEntriesWithoutCurrent,
+          0,
+          action.payload.entries[action.payload.currentIndex]
+        );
+
+        state.shuffledEntry = shuffledEntries;
+        state.currentIndex = 0;
+        state.player1.index = 0;
+        state.currentSongId = action.payload.currentSongId;
+      } else {
+        // Add all songs in order and set the current index to the selected row
+        state.currentIndex = action.payload.currentIndex;
+        state.player1.index = action.payload.currentIndex;
+        state.currentSongId = action.payload.currentSongId;
       }
     },
 
@@ -565,6 +613,7 @@ export const {
   fixPlayer2Index,
   setCurrentIndex,
   setPlayQueue,
+  setPlayQueueByRowClick,
   clearPlayQueue,
   setIsLoading,
   setIsLoaded,
@@ -580,7 +629,6 @@ export const {
   toggleDisplayQueue,
   resetPlayQueue,
   setStar,
-  shufflePlayQueue,
   shuffleInPlace,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

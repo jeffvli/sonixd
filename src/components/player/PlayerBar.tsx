@@ -21,7 +21,6 @@ import {
   toggleRepeat,
   toggleDisplayQueue,
   setStar,
-  shufflePlayQueue,
   toggleShuffle,
 } from '../../redux/playQueueSlice';
 import { setStatus, resetPlayer } from '../../redux/playerSlice';
@@ -29,6 +28,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
 import { star, unstar } from '../../api/api';
+import placeholderImg from '../../img/placeholder.jpg';
 
 const keyCodes = {
   SPACEBAR: 32,
@@ -223,7 +223,6 @@ const PlayerBar = () => {
   };
 
   const handleShuffle = () => {
-    dispatch(shufflePlayQueue());
     dispatch(toggleShuffle());
   };
 
@@ -277,26 +276,24 @@ const PlayerBar = () => {
                   }}
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px' }}>
-                    {playQueue[currentEntryList].length >= 1 && (
-                      <LazyLoadImage
-                        tabIndex={0}
-                        src={
-                          playQueue[currentEntryList][playQueue.currentIndex]
-                            .image
+                    <LazyLoadImage
+                      tabIndex={0}
+                      src={
+                        playQueue[currentEntryList][playQueue.currentIndex]
+                          ?.image || placeholderImg
+                      }
+                      alt="trackImg"
+                      effect="opacity"
+                      width="65"
+                      height="65"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => history.push(`/nowplaying`)}
+                      onKeyDown={(e: any) => {
+                        if (e.keyCode === keyCodes.SPACEBAR) {
+                          history.push(`/nowplaying`);
                         }
-                        alt="trackImg"
-                        effect="opacity"
-                        width="65"
-                        height="65"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => history.push(`/nowplaying`)}
-                        onKeyDown={(e: any) => {
-                          if (e.keyCode === keyCodes.SPACEBAR) {
-                            history.push(`/nowplaying`);
-                          }
-                        }}
-                      />
-                    )}
+                      }}
+                    />
                   </Col>
                   <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>
                     <Row
@@ -307,31 +304,29 @@ const PlayerBar = () => {
                         alignItems: 'flex-end',
                       }}
                     >
-                      {playQueue[currentEntryList].length >= 1 && (
-                        <CustomTooltip
-                          text={
-                            playQueue[currentEntryList][playQueue.currentIndex]
-                              ?.title || 'Unknown title'
+                      <CustomTooltip
+                        text={
+                          playQueue[currentEntryList][playQueue.currentIndex]
+                            ?.title || 'Unknown title'
+                        }
+                        placement="topStart"
+                      >
+                        <LinkButton
+                          tabIndex={0}
+                          onClick={() =>
+                            history.push(
+                              `/library/album/${
+                                playQueue[currentEntryList][
+                                  playQueue.currentIndex
+                                ]?.albumId
+                              }`
+                            )
                           }
-                          placement="topStart"
                         >
-                          <LinkButton
-                            tabIndex={0}
-                            onClick={() =>
-                              history.push(
-                                `/library/album/${
-                                  playQueue[currentEntryList][
-                                    playQueue.currentIndex
-                                  ]?.albumId
-                                }`
-                              )
-                            }
-                          >
-                            {playQueue[currentEntryList][playQueue.currentIndex]
-                              ?.title || 'Unknown title'}
-                          </LinkButton>
-                        </CustomTooltip>
-                      )}
+                          {playQueue[currentEntryList][playQueue.currentIndex]
+                            ?.title || 'Unknown title'}
+                        </LinkButton>
+                      </CustomTooltip>
                     </Row>
 
                     <Row
@@ -341,41 +336,38 @@ const PlayerBar = () => {
                         width: '50%',
                       }}
                     >
-                      {playQueue[currentEntryList].length >= 1 && (
-                        <CustomTooltip
-                          text={
-                            playQueue[currentEntryList][playQueue.currentIndex]
-                              ?.artist || 'Unknown artist'
-                          }
-                          placement="topStart"
+                      <CustomTooltip
+                        text={
+                          playQueue[currentEntryList][playQueue.currentIndex]
+                            ?.artist || 'Unknown artist'
+                        }
+                        placement="topStart"
+                      >
+                        <span
+                          style={{
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                          }}
                         >
-                          <span
-                            style={{
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
+                          <LinkButton
+                            tabIndex={0}
+                            subtitle="true"
+                            onClick={() => {
+                              history.push(
+                                `/library/artist/${
+                                  playQueue[currentEntryList][
+                                    playQueue.currentIndex
+                                  ]?.artistId
+                                }`
+                              );
                             }}
                           >
-                            <LinkButton
-                              tabIndex={0}
-                              subtitle="true"
-                              onClick={() => {
-                                history.push(
-                                  `/library/artist/${
-                                    playQueue[currentEntryList][
-                                      playQueue.currentIndex
-                                    ]?.artistId
-                                  }`
-                                );
-                              }}
-                            >
-                              {playQueue[currentEntryList][
-                                playQueue.currentIndex
-                              ]?.artist || 'Unknown artist'}
-                            </LinkButton>
-                          </span>
-                        </CustomTooltip>
-                      )}
+                            {playQueue[currentEntryList][playQueue.currentIndex]
+                              ?.artist || 'Unknown artist'}
+                          </LinkButton>
+                        </span>
+                      </CustomTooltip>
                     </Row>
                   </Col>
                 </Row>
@@ -534,98 +526,94 @@ const PlayerBar = () => {
                     justifyContent: 'flex-end',
                   }}
                 >
-                  {playQueue[currentEntryList].length >= 1 && (
-                    <>
-                      {/* Favorite Button */}
-                      <CustomTooltip text="Favorite">
-                        <PlayerControlIcon
-                          tabIndex={0}
-                          icon={
-                            playQueue[currentEntryList][playQueue.currentIndex]
-                              .starred
-                              ? 'heart'
-                              : 'heart-o'
-                          }
-                          size="lg"
-                          fixedWidth
-                          active={
-                            playQueue[currentEntryList][playQueue.currentIndex]
-                              .starred
-                              ? 'true'
-                              : 'false'
-                          }
-                          onClick={handleFavorite}
-                        />
-                      </CustomTooltip>
-
-                      {/* Repeat Button */}
-                      <CustomTooltip
-                        text={
-                          playQueue.repeat === 'all'
-                            ? 'Repeat all'
-                            : playQueue.repeat === 'one'
-                            ? 'Repeat one'
-                            : 'Repeat'
+                  <>
+                    {/* Favorite Button */}
+                    <CustomTooltip text="Favorite">
+                      <PlayerControlIcon
+                        tabIndex={0}
+                        icon={
+                          playQueue[currentEntryList][playQueue.currentIndex]
+                            ?.starred
+                            ? 'heart'
+                            : 'heart-o'
                         }
-                      >
-                        <PlayerControlIcon
-                          tabIndex={0}
-                          icon="refresh"
-                          size="lg"
-                          fixedWidth
-                          onClick={handleRepeat}
-                          onKeyDown={(e: any) => {
-                            if (e.keyCode === keyCodes.SPACEBAR) {
-                              handleRepeat();
-                            }
-                          }}
-                          active={
-                            playQueue.repeat === 'all' ||
-                            playQueue.repeat === 'one'
-                              ? 'true'
-                              : 'false'
+                        size="lg"
+                        fixedWidth
+                        active={
+                          playQueue[currentEntryList][playQueue.currentIndex]
+                            ?.starred
+                            ? 'true'
+                            : 'false'
+                        }
+                        onClick={handleFavorite}
+                      />
+                    </CustomTooltip>
+
+                    {/* Repeat Button */}
+                    <CustomTooltip
+                      text={
+                        playQueue.repeat === 'all'
+                          ? 'Repeat all'
+                          : playQueue.repeat === 'one'
+                          ? 'Repeat one'
+                          : 'Repeat'
+                      }
+                    >
+                      <PlayerControlIcon
+                        tabIndex={0}
+                        icon="refresh"
+                        size="lg"
+                        fixedWidth
+                        onClick={handleRepeat}
+                        onKeyDown={(e: any) => {
+                          if (e.keyCode === keyCodes.SPACEBAR) {
+                            handleRepeat();
                           }
-                          flip={
-                            playQueue.repeat === 'one'
-                              ? 'horizontal'
-                              : undefined
+                        }}
+                        active={
+                          playQueue.repeat === 'all' ||
+                          playQueue.repeat === 'one'
+                            ? 'true'
+                            : 'false'
+                        }
+                        flip={
+                          playQueue.repeat === 'one' ? 'horizontal' : undefined
+                        }
+                      />
+                    </CustomTooltip>
+                    {/* Shuffle Button */}
+                    <CustomTooltip text="Shuffle">
+                      <PlayerControlIcon
+                        tabIndex={0}
+                        icon="random"
+                        size="lg"
+                        fixedWidth
+                        onClick={handleShuffle}
+                        onKeyDown={(e: any) => {
+                          if (e.keyCode === keyCodes.SPACEBAR) {
+                            handleShuffle();
                           }
-                        />
-                      </CustomTooltip>
-                      {/* Shuffle Button */}
-                      <CustomTooltip text="Shuffle">
-                        <PlayerControlIcon
-                          tabIndex={0}
-                          icon="random"
-                          size="lg"
-                          fixedWidth
-                          onClick={handleShuffle}
-                          onKeyDown={(e: any) => {
-                            if (e.keyCode === keyCodes.SPACEBAR) {
-                              handleShuffle();
-                            }
-                          }}
-                          active={playQueue.shuffle ? 'true' : 'false'}
-                        />
-                      </CustomTooltip>
-                      {/* Display Queue Button */}
-                      <CustomTooltip text="Queue">
-                        <PlayerControlIcon
-                          tabIndex={0}
-                          icon="tasks"
-                          size="lg"
-                          fixedWidth
-                          onClick={handleDisplayQueue}
-                          onKeyDown={(e: any) => {
-                            if (e.keyCode === keyCodes.SPACEBAR) {
-                              handleDisplayQueue();
-                            }
-                          }}
-                          active={playQueue.displayQueue ? 'true' : 'false'}
-                        />
-                      </CustomTooltip>
-                    </>
-                  )}
+                        }}
+                        active={playQueue.shuffle ? 'true' : 'false'}
+                      />
+                    </CustomTooltip>
+                    {/* Display Queue Button */}
+                    <CustomTooltip text="Queue">
+                      <PlayerControlIcon
+                        tabIndex={0}
+                        icon="tasks"
+                        size="lg"
+                        fixedWidth
+                        onClick={handleDisplayQueue}
+                        onKeyDown={(e: any) => {
+                          if (e.keyCode === keyCodes.SPACEBAR) {
+                            handleDisplayQueue();
+                          }
+                        }}
+                        active={playQueue.displayQueue ? 'true' : 'false'}
+                      />
+                    </CustomTooltip>
+                  </>
                 </Row>
                 <Row
                   style={{

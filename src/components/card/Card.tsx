@@ -49,21 +49,21 @@ const Card = ({
   const handlePlayClick = async () => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
-      dispatch(setPlayQueue(res.entry));
+      dispatch(setPlayQueue({ entries: res.entry }));
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
-      dispatch(setPlayQueue(res.song));
+      dispatch(setPlayQueue({ entries: res.song }));
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
     }
 
     if (playClick.type === 'artist') {
       const res = await getAlbum(playClick.id);
-      dispatch(setPlayQueue(res.song));
+      dispatch(setPlayQueue({ entries: res.song }));
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
     }

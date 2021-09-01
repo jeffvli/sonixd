@@ -4,7 +4,10 @@ import { Nav } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
+import {
+  fixPlayer2Index,
+  setPlayQueueByRowClick,
+} from '../../redux/playQueueSlice';
 import {
   clearSelected,
   setSelected,
@@ -80,7 +83,14 @@ const StarredView = () => {
     timeout = null;
     const newPlayQueue = data.song.slice([e.index], data.song.length);
     dispatch(clearSelected());
-    dispatch(setPlayQueue(newPlayQueue));
+    // dispatch(setPlayQueue({ entries: newPlayQueue, type: 'list' }));
+    dispatch(
+      setPlayQueueByRowClick({
+        entries: data.song,
+        currentIndex: e.index,
+        currentSongId: e.id,
+      })
+    );
     dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
   };

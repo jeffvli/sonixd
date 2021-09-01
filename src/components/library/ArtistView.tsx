@@ -12,7 +12,11 @@ import {
 } from '../shared/ToolbarButtons';
 import { getArtist, getArtistInfo } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
+import {
+  fixPlayer2Index,
+  setPlayQueue,
+  setPlayQueueByRowClick,
+} from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -82,10 +86,15 @@ const ArtistView = () => {
   const handleRowDoubleClick = (e: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    const newPlayQueue = data.album.slice([e.index], data.album.length);
 
     dispatch(clearSelected());
-    dispatch(setPlayQueue(newPlayQueue));
+    dispatch(
+      setPlayQueueByRowClick({
+        entries: data.album,
+        currentIndex: e.index,
+        currentSongId: e.id,
+      })
+    );
     dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
   };
