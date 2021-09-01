@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
 import React, {
   useState,
@@ -35,9 +37,9 @@ const ListViewType = (
   }: any,
   ref: any
 ) => {
-  // const [isDragging, setIsDragging] = useState(false);
-  // const [dragDirection, setDragDirection] = useState('down');
-  // const [dragSpeed, setDragSpeed] = useState('medium');
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragDirection, setDragDirection] = useState('');
+  const [dragSpeed, setDragSpeed] = useState('');
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
   const [columns] = useState(tableColumns);
@@ -78,7 +80,7 @@ const ListViewType = (
     });
   }, [getHeight]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     let scrollDistance = 0;
     switch (dragSpeed) {
       case 'slow':
@@ -89,6 +91,9 @@ const ListViewType = (
         break;
       case 'fast':
         scrollDistance = 60;
+        break;
+      case 'fastest':
+        scrollDistance = 240;
         break;
       default:
         scrollDistance = 15;
@@ -103,14 +108,14 @@ const ListViewType = (
             ? currentScroll + scrollDistance
             : dragDirection === 'up' && currentScroll - scrollDistance > 0
             ? currentScroll - scrollDistance
-            : 0
+            : currentScroll
         );
       }, 50);
 
       return () => clearInterval(interval);
     }
     return () => clearInterval();
-  }, [dragDirection, dragSpeed, isDragging]); */
+  }, [dragDirection, dragSpeed, isDragging]);
 
   return (
     <>
@@ -123,23 +128,30 @@ const ListViewType = (
         />
       )}
 
-      {/* <Button onClick={() => tableRef.current.scrollTop(16000)}>Scroll</Button> */}
-      {/* <Button onClick={() => console.log(tableRef.current)}>Info</Button> */}
-      {/* <div
-        style={{ position: 'absolute', left: '50%', top: '200px', zIndex: 1 }}
+      <div
+        style={{
+          flexGrow: 1,
+          height: '100%',
+          cursor: isDragging ? 'all-scroll' : 'default',
+        }}
+        ref={wrapperRef}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          if (e.button === 1) {
+            console.log('middle click');
+            setIsDragging(true);
+          }
+          if (e.button === 0 && isDragging) {
+            console.log('left click');
+            setIsDragging(false);
+          }
+        }}
       >
-        <div>Direction: {dragDirection}</div>
-        <div>IsDragging: {isDragging ? 'true' : 'false'}</div>
-        <div>DragSpeed: {dragSpeed}</div>
-      </div> */}
-
-      <div style={{ flexGrow: 1, height: '100%' }} ref={wrapperRef}>
-        {/* <div
+        <div
           id="scroll-top"
           style={{
             position: 'absolute',
-            background: 'blue',
-            height: '15%',
+            height: '40%',
             width: '100%',
             top: 0,
             left: 0,
@@ -147,44 +159,61 @@ const ListViewType = (
             zIndex: isDragging ? 1 : undefined,
           }}
           onMouseEnter={() => {
-            console.log('panning down');
-            setIsDragging(true);
             setDragDirection('up');
           }}
           onMouseLeave={() => {
-            console.log('stopped panning down');
-            setIsDragging(false);
             setDragDirection('none');
           }}
         >
           <div
+            id="scroll-top-fastest"
+            style={{ height: 'calc(100% / 4)' }}
+            onMouseEnter={() => {
+              setDragSpeed('fastest');
+            }}
+          />
+          <div
             id="scroll-top-fast"
-            style={{ height: 'calc(100% / 3)', background: 'green' }}
+            style={{ height: 'calc(100% / 4)' }}
             onMouseEnter={() => {
               setDragSpeed('fast');
             }}
           />
           <div
             id="scroll-top-medium"
-            style={{ height: 'calc(100% / 3)', background: 'blue' }}
+            style={{ height: 'calc(100% / 4)' }}
             onMouseEnter={() => {
               setDragSpeed('medium');
             }}
           />
           <div
             id="scroll-top-slow"
-            style={{ height: 'calc(100% / 3)', background: 'red' }}
+            style={{ height: 'calc(100% / 4)' }}
             onMouseEnter={() => {
               setDragSpeed('slow');
             }}
           />
         </div>
         <div
+          id="scroll-neutral"
+          style={{
+            position: 'absolute',
+            height: '20%',
+            width: '100%',
+            top: '40%',
+            left: 0,
+            right: 0,
+            zIndex: isDragging ? 1 : undefined,
+          }}
+          onMouseEnter={() => {
+            setDragDirection('none');
+          }}
+        />
+        <div
           id="scroll-bottom"
           style={{
             position: 'absolute',
-            background: 'red',
-            height: '15%',
+            height: '40%',
             width: '100%',
             bottom: 0,
             left: 0,
@@ -192,38 +221,41 @@ const ListViewType = (
             zIndex: isDragging ? 1 : undefined,
           }}
           onMouseEnter={() => {
-            console.log('panning down');
-            setIsDragging(true);
             setDragDirection('down');
           }}
           onMouseLeave={() => {
-            console.log('stopped panning down');
-            setIsDragging(false);
             setDragDirection('none');
           }}
         >
           <div
             id="scroll-bottom-slow"
-            style={{ height: 'calc(100% / 3)', background: 'red' }}
+            style={{ height: 'calc(100% / 4)' }}
             onMouseEnter={() => {
               setDragSpeed('slow');
             }}
           />
           <div
             id="scroll-bottom-medium"
-            style={{ height: 'calc(100% / 3)', background: 'blue' }}
+            style={{ height: 'calc(100% / 4)' }}
             onMouseEnter={() => {
               setDragSpeed('medium');
             }}
           />
           <div
             id="scroll-bottom-fast"
-            style={{ height: 'calc(100% / 3)', background: 'green' }}
+            style={{ height: 'calc(100% / 4)' }}
             onMouseEnter={() => {
               setDragSpeed('fast');
             }}
           />
-        </div> */}
+          <div
+            id="scroll-bottom-fastest"
+            style={{ height: 'calc(100% / 4)' }}
+            onMouseEnter={() => {
+              setDragSpeed('fastest');
+            }}
+          />
+        </div>
 
         {show && (
           <ListViewTable
