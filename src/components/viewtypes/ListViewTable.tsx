@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from 'react';
+import React, { useState } from 'react';
 import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
@@ -40,6 +40,7 @@ const ListViewTable = ({
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
+  const [cachePath] = useState(`${getImageCachePath()}\\`);
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
@@ -187,19 +188,13 @@ const ListViewTable = ({
                           <LazyLoadImage
                             src={
                               isCached(
-                                path.join(
-                                  getImageCachePath(),
-                                  `${cacheImages.cacheType}_${
+                                `${cachePath}${cacheImages.cacheType}_${
+                                  rowData[cacheImages.cacheIdProperty]
+                                }.jpg`
+                              )
+                                ? `${cachePath}${cacheImages.cacheType}_${
                                     rowData[cacheImages.cacheIdProperty]
                                   }.jpg`
-                                )
-                              )
-                                ? path.join(
-                                    getImageCachePath(),
-                                    `${cacheImages.cacheType}_${
-                                      rowData[cacheImages.cacheIdProperty]
-                                    }.jpg`
-                                  )
                                 : rowData.image
                             }
                             alt="track-img"
@@ -207,14 +202,6 @@ const ListViewTable = ({
                             width={rowHeight - 10}
                             height={rowHeight - 10}
                             visibleByDefault={cacheImages.enabled}
-                            afterLoad={() => {
-                              if (cacheImages.enabled) {
-                                cacheImage(
-                                  `${cacheImages.cacheType}_${rowData.albumId}.jpg`,
-                                  rowData.image.replace(/size=\d+/, 'size=350')
-                                );
-                              }
-                            }}
                           />
                         </Col>
                         <Col

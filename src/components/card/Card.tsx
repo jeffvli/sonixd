@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
-import path from 'path';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import cacheImage from '../shared/cacheImage';
@@ -36,6 +35,7 @@ const Card = ({
   const history = useHistory();
   const dispatch = useAppDispatch();
   const [cacheImages] = useState(Boolean(settings.getSync('cacheImages')));
+  const [cachePath] = useState(`${getImageCachePath()}\\`);
 
   const handleClick = () => {
     history.push(url);
@@ -75,15 +75,9 @@ const Card = ({
           <LazyCardImg
             src={
               isCached(
-                path.join(
-                  getImageCachePath(),
-                  `${rest.details.cacheType}_${rest.details.id}.jpg`
-                )
+                `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
               )
-                ? path.join(
-                    getImageCachePath(),
-                    `${rest.details.cacheType}_${rest.details.id}.jpg`
-                  )
+                ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
                 : rest.coverArt
             }
             alt="img"
