@@ -16,7 +16,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('cacheImages')) {
-    settings.setSync('cacheImages', false);
+    settings.setSync('cacheImages', true);
   }
 
   if (force || !settings.hasSync('cacheSongs')) {
@@ -146,7 +146,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('playlistListRowHeight')) {
-    settings.setSync('playlistListRowHeight', '40.0');
+    settings.setSync('playlistListRowHeight', '55.0');
   }
 
   if (force || !settings.hasSync('playlistListColumns')) {

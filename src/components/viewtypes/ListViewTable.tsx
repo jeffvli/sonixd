@@ -381,7 +381,7 @@ const ListViewTable = ({
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         paddingRight: !column.dataKey?.match(
-                          /starred|songCount/
+                          /starred|songCount|duration/
                         )
                           ? '10px'
                           : undefined,

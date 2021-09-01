@@ -422,17 +422,6 @@ export const playlistColumnList = [
     },
   },
   {
-    label: 'Title (Combined)',
-    value: {
-      id: 'Title',
-      dataKey: 'combinedtitle',
-      alignment: 'left',
-      resizable: true,
-      width: 300,
-      label: 'Title (Combined)',
-    },
-  },
-  {
     label: 'Visibility',
     value: {
       id: 'Visibility',
@@ -454,7 +443,6 @@ export const playlistColumnPicker = [
   { label: 'Modified' },
   { label: 'Owner' },
   { label: 'Title' },
-  { label: 'Title (Combined)' },
   { label: 'Track Count' },
   { label: 'Visiblity' },
 ];
