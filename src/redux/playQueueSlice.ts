@@ -93,6 +93,13 @@ const resetPlayerDefaults = (state: PlayQueue) => {
   state.shuffledEntry = [];
 };
 
+const resetToPlayer1 = (state: PlayQueue) => {
+  state.currentPlayer = 1;
+  state.isFading = false;
+  state.player1.volume = state.volume;
+  state.player1.index = state.currentIndex;
+};
+
 const insertItem = (array: any, index: any, item: any) => {
   return [...array.slice(0, index), item, ...array.slice(index)];
 };
@@ -278,45 +285,33 @@ const playQueueSlice = createSlice({
         if (state.currentIndex < state[currentEntry].length - 1) {
           // Check that current index isn't on the last track of the queue
           state.currentIndex += 1;
-          if (action.payload === 'usingHotkey') {
-            state.currentPlayer = 1;
-            state.isFading = false;
-            state.player1.volume = state.volume;
-            state.player1.index = state.currentIndex;
-            if (state.currentIndex + 1 >= state[currentEntry].length) {
-              state.player2.index = 0;
-            } else {
-              state.player2.index = state.currentIndex + 1;
-            }
-          }
         } else if (state.repeat === 'all') {
           // But if it is the last track, and repeat is all, then we can go back to 0
           state.currentIndex = 0;
-          if (action.payload === 'usingHotkey') {
-            state.currentPlayer = 1;
-            state.isFading = false;
-            state.player1.volume = state.volume;
-            state.player1.index = state.currentIndex;
-            if (state.currentIndex + 1 >= state[currentEntry].length) {
-              state.player2.index = 0;
-            } else {
-              state.player2.index = state.currentIndex + 1;
-            }
+        }
+        if (action.payload === 'usingHotkey') {
+          /* If incrementing manually (usingHotkey), we'll reset to player 1. Otherwise,
+          if incrementing automatically (on fade/end) it will swap between player1/player2 */
+          resetToPlayer1(state);
+          if (state.currentIndex + 1 >= state[currentEntry].length) {
+            state.player2.index = 0;
+          } else {
+            state.player2.index = state.currentIndex + 1;
           }
         }
-        state.currentSongId = state[currentEntry][state.currentIndex].id;
       } else if (state[currentEntry].length >= 1 && state.repeat === 'one') {
         // If repeating one, then we can just increment to the next track
-        state.currentIndex += 1;
-        if (action.payload === 'usingHotkey') {
-          state.currentPlayer = 1;
-          state.isFading = false;
-          state.player1.volume = state.volume;
-          state.player1.index = state.currentIndex;
-          state.player2.index = state.currentIndex;
+        if (state.currentIndex + 1 < state[currentEntry].length) {
+          // Only increment if not on the last entry in the queue
+          state.currentIndex += 1;
+          if (action.payload === 'usingHotkey') {
+            resetToPlayer1(state);
+            state.player2.index = state.currentIndex;
+          }
         }
-        state.currentSongId = state[currentEntry][state.currentIndex].id;
       }
+
+      state.currentSongId = state[currentEntry][state.currentIndex].id;
     },
 
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
@@ -400,21 +395,22 @@ const playQueueSlice = createSlice({
     },
 
     decrementCurrentIndex: (state, action: PayloadAction<string>) => {
-      const currentEntry = entrySelect(state);
+      if (action.payload === 'usingHotkey') {
+        const currentEntry = entrySelect(state);
 
-      if (state[currentEntry].length >= 1) {
-        if (state.currentIndex > 0) {
-          state.currentIndex -= 1;
-          if (action.payload === 'usingHotkey') {
-            state.currentPlayer = 1;
-            state.isFading = false;
-            state.player1.volume = state.volume;
-            state.player1.index = state.currentIndex;
-
-            // Use in conjunction with fixPlayer2Index reducer - see note
-            state.player2.index = 0;
-            state.player2.volume = 0;
+        if (state[currentEntry].length >= 1) {
+          if (state.currentIndex > 0) {
+            state.currentIndex -= 1;
+          } else if (state.repeat === 'all') {
+            // If repeating all and currentIndex is 0, then decrement to end of entry queue
+            state.currentIndex = state[currentEntry].length - 1;
           }
+
+          resetToPlayer1(state);
+
+          // Use in conjunction with fixPlayer2Index reducer - see note
+          state.player2.index = 0;
+          state.player2.volume = 0;
         }
 
         state.currentSongId = state[currentEntry][state.currentIndex].id;
@@ -423,12 +419,12 @@ const playQueueSlice = createSlice({
 
     fixPlayer2Index: (state) => {
       /* Before decrementing:
-      Player1: 4 | Player2: 3 */
+      Player1: 4 | Player2: 3
 
-      /* After decrementing:
-      Player1: 2 | Player2: 3 */
+      After decrementing:
+      Player1: 2 | Player2: 3
 
-      /* When incrementing/decrementing, we will always revert back to Player1 instead of
+      When incrementing/decrementing, we will always revert back to Player1 instead of
       using the current player. In this case you will notice that the Player2 index stays the same.
       This will cause the react audio player component to not unload the song which makes it so that
       Player2 will continue playing even after decrementing. This reducer resets the Player2 index and
