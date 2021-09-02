@@ -46,19 +46,27 @@ const ListViewTable = ({
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       star(rowData.id, listType);
-      dispatch(setStar({ id: rowData.id, type: 'star' }));
-      await queryClient.refetchQueries(['starred'], {
-        active: true,
-        exact: true,
-      });
+      if (nowPlaying) {
+        dispatch(setStar({ id: rowData.id, type: 'star' }));
+      }
     } else {
       unstar(rowData.id, listType);
-      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
-      await queryClient.refetchQueries(['starred'], {
-        active: true,
-        exact: true,
-      });
+      if (nowPlaying) {
+        dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+      }
     }
+    await queryClient.refetchQueries(['starred'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['album'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['albumList'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['playlist'], {
+      active: true,
+    });
   };
 
   return (
