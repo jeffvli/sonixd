@@ -29,6 +29,7 @@ import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
 import { star, unstar } from '../../api/api';
 import placeholderImg from '../../img/placeholder.jpg';
+import DebugWindow from '../debug/DebugWindow';
 
 const keyCodes = {
   SPACEBAR: 32,
@@ -118,7 +119,11 @@ const PlayerBar = () => {
   };
 
   const handleClickPlayPause = () => {
-    dispatch(setStatus(player.status === 'PLAYING' ? 'PAUSED' : 'PLAYING'));
+    if (player.status === 'PAUSED') {
+      dispatch(setStatus('PLAYING'));
+    } else {
+      dispatch(setStatus('PAUSED'));
+    }
   };
 
   const handleVolumeSlider = (e: number) => {
@@ -292,6 +297,7 @@ const PlayerBar = () => {
 
   return (
     <Player ref={playersRef}>
+      {settings.getSync('showDebugWindow') && <DebugWindow />}
       <PlayerContainer>
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
           <FlexboxGrid.Item
@@ -515,6 +521,7 @@ const PlayerBar = () => {
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item colspan={16}>
                   {/* Seek Slider */}
+
                   <CustomSlider
                     progress
                     defaultValue={0}

@@ -169,11 +169,9 @@ const Config = () => {
 
         <p>
           If the crossfade duration is set to less than or equal to{' '}
-          <code>1.5</code>, volume fading will not occur for either track, but
+          <code>0.5</code>, volume fading will not occur for either track, but
           rather start the fading-in track at full volume. This is to
-          tentatively support
-          <strong> gapless playback</strong> without fade. Experiment with this
-          knowledge to find your comfort zone.
+          tentatively support <strong> gapless playback</strong> without fade.
         </p>
 
         <div style={{ width: '300px', paddingTop: '20px' }}>
@@ -353,6 +351,21 @@ const Config = () => {
             Edit cache location
           </Button>
         </div>
+      </ConfigPanel>
+      <ConfigPanel header="Advanced" bordered>
+        <Checkbox
+          defaultChecked={Boolean(settings.getSync('showDebugWindow'))}
+          onChange={() => {
+            settings.setSync(
+              'showDebugWindow',
+              !settings.getSync('showDebugWindow')
+            );
+          }}
+        >
+          Show debug window (requires reload)
+        </Checkbox>
+        <br />
+        <Button onClick={() => window.location.reload()}>Reload window</Button>
       </ConfigPanel>
     </GenericPage>
   );
