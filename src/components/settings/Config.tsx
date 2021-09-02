@@ -162,7 +162,7 @@ const Config = () => {
     >
       <ConfigPanel header="Playback" bordered>
         <p>
-          Fading works by polling the audio player on an interval (150ms) to
+          Fading works by polling the audio player on an interval (50ms) to
           determine when to start fading to the next track. Due to this, you may
           notice the fade timing may not be 100% perfect.
         </p>
@@ -188,6 +188,18 @@ const Config = () => {
             }}
             style={{ width: '150px' }}
           />
+          <br />
+
+          <ControlLabel>Crossfade type</ControlLabel>
+          <RadioGroup
+            name="radioList"
+            appearance="default"
+            defaultValue={String(settings.getSync('fadeType'))}
+            onChange={(e) => settings.setSync('fadeType', e)}
+          >
+            <Radio value="equalPower">Equal Power</Radio>
+            <Radio value="linear">Linear</Radio>
+          </RadioGroup>
         </div>
       </ConfigPanel>
       <ConfigPanel header="Look & Feel" bordered>

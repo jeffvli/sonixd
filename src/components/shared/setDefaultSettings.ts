@@ -39,6 +39,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('fadeDuration', '9.0');
   }
 
+  if (force || !settings.hasSync('fadeType')) {
+    settings.setSync('fadeType', 'equalPower');
+  }
+
   if (force || !settings.hasSync('playlistViewType')) {
     settings.setSync('playlistViewType', 'list');
   }

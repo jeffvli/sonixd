@@ -98,6 +98,7 @@ const resetToPlayer1 = (state: PlayQueue) => {
   state.isFading = false;
   state.player1.volume = state.volume;
   state.player1.index = state.currentIndex;
+  state.player2.volume = 0;
 };
 
 const insertItem = (array: any, index: any, item: any) => {
