@@ -11,6 +11,7 @@ import {
   fixPlayer2Index,
   clearPlayQueue,
   shuffleInPlace,
+  toggleShuffle,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -130,7 +131,11 @@ const NowPlayingView = () => {
               <HeaderButton
                 size="sm"
                 onClick={() => {
-                  dispatch(shuffleInPlace());
+                  if (playQueue.shuffle) {
+                    dispatch(shuffleInPlace());
+                  } else {
+                    dispatch(toggleShuffle());
+                  }
                 }}
               >
                 Shuffle
