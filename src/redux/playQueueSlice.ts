@@ -213,6 +213,9 @@ const playQueueSlice = createSlice({
                 state.repeat,
                 state.currentIndex
               );
+
+        // Free up memory by clearing out the shuffled entries
+        state.shuffledEntry = [];
       }
     },
 
