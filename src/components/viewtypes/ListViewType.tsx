@@ -120,7 +120,7 @@ const ListViewType = (
           tableRef.current.scrollLeft(
             dragDirection === 'right'
               ? currentScrollX + 60
-              : dragDirection === 'left' && currentScrollX - scrollDistance > 0
+              : dragDirection === 'left' && currentScrollX - 60 > 0
               ? currentScrollX - 60
               : 0
           );
