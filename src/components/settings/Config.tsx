@@ -188,49 +188,6 @@ const Config = () => {
             }}
             style={{ width: '150px' }}
           />
-          <br />
-          <RadioGroup
-            name="radioList"
-            inline
-            appearance="picker"
-            defaultValue={String(settings.getSync('defaultRepeat'))}
-            onChange={(e) => settings.setSync('defaultRepeat', e)}
-          >
-            <span
-              style={{
-                padding: '8px 2px 8px 10px',
-                display: 'inline-block',
-                verticalAlign: 'middle',
-              }}
-            >
-              Repeat (default):{' '}
-            </span>
-            <Radio value="all">All</Radio>
-            <Radio value="one">One</Radio>
-            <Radio value="none">None</Radio>
-          </RadioGroup>
-          <RadioGroup
-            name="radioList"
-            inline
-            appearance="picker"
-            defaultValue={String(settings.getSync('defaultShuffle'))}
-            style={{ marginTop: '20px' }}
-            onChange={(e) => settings.setSync('defaultShuffle', e === 'true')}
-          >
-            <span
-              style={{
-                padding: '8px 2px 8px 10px',
-                display: 'inline-block',
-                verticalAlign: 'middle',
-              }}
-            >
-              Shuffle (default):{' '}
-            </span>
-            <Radio value="true">Enabled</Radio>
-            <Radio value="false">Disabled</Radio>
-          </RadioGroup>
-
-          <br />
         </div>
       </ConfigPanel>
       <ConfigPanel header="Look & Feel" bordered>

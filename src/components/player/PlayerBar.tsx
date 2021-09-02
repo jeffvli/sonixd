@@ -242,11 +242,20 @@ const PlayerBar = () => {
   };
 
   const handleRepeat = () => {
+    const currentRepeat = settings.getSync('repeat');
+    const newRepeat =
+      currentRepeat === 'none'
+        ? 'all'
+        : currentRepeat === 'all'
+        ? 'one'
+        : 'none';
     dispatch(toggleRepeat());
+    settings.setSync('repeat', newRepeat);
   };
 
   const handleShuffle = () => {
     dispatch(toggleShuffle());
+    settings.setSync('shuffle', !settings.getSync('shuffle'));
   };
 
   const handleDisplayQueue = () => {

@@ -17,8 +17,8 @@ settingsPath = fs.existsSync(settingsPath)
 export const getSettings = () => {
   const parsedSettings = JSON.parse(String(fs.readFileSync(settingsPath)));
   return {
-    repeat: parsedSettings.defaultRepeat,
-    shuffle: parsedSettings.defaultShuffle,
+    repeat: parsedSettings.repeat,
+    shuffle: parsedSettings.shuffle,
     volume: parsedSettings.volume,
   };
 };

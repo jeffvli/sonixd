@@ -15,12 +15,12 @@ const setDefaultSettings = (force: boolean) => {
   fs.mkdirSync(getSongCachePath(), { recursive: true });
   fs.mkdirSync(getImageCachePath(), { recursive: true });
 
-  if (force || !settings.hasSync('defaultRepeat')) {
-    settings.setSync('defaultRepeat', 'all');
+  if (force || !settings.hasSync('repeat')) {
+    settings.setSync('repeat', 'all');
   }
 
-  if (force || !settings.hasSync('defaultShuffle')) {
-    settings.setSync('defaultShuffle', false);
+  if (force || !settings.hasSync('shuffle')) {
+    settings.setSync('shuffle', false);
   }
 
   if (force || !settings.hasSync('scrollWithCurrentSong')) {
