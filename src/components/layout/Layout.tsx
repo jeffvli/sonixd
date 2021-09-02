@@ -24,13 +24,22 @@ const Layout = ({ footer, children, disableSidebar }: any) => {
         route = '/nowplaying';
         break;
       case 'playlists':
-        route = '/playlists';
+        route = '/playlist';
         break;
       case 'starred':
         route = '/starred';
         break;
-      case 'library':
-        route = '/library';
+      case 'albums':
+        route = '/library/album';
+        break;
+      case 'artists':
+        route = '/library/artist';
+        break;
+      case 'genres':
+        route = '/library/genre';
+        break;
+      case 'folders':
+        route = '/folder';
         break;
       case 'config':
         route = '/config';

@@ -15,6 +15,8 @@ import PlayerBar from './components/player/PlayerBar';
 import AlbumView from './components/library/AlbumView';
 import ArtistView from './components/library/ArtistView';
 import setDefaultSettings from './components/shared/setDefaultSettings';
+import AlbumList from './components/library/AlbumList';
+import ArtistList from './components/library/ArtistList';
 
 const keyMap = {
   FOCUS_SEARCH: 'ctrl+f',
@@ -57,12 +59,15 @@ const App = () => {
       <Router>
         <Layout footer={<PlayerBar />}>
           <Switch>
+            <Route exact path="/library/album" component={AlbumList} />
+            <Route exact path="/library/artist" component={ArtistList} />
+            <Route exact path="/library/genre" component={LibraryView} />
             <Route exact path="/library/artist/:id" component={ArtistView} />
             <Route exact path="/library/album/:id" component={AlbumView} />
-            <Route exact path="/library" component={LibraryView} />
+            <Route exact path="/folder" component={LibraryView} />
             <Route exact path="/nowplaying" component={NowPlayingView} />
             <Route exact path="/playlist/:id" component={PlaylistView} />
-            <Route exact path="/playlists" component={PlaylistList} />
+            <Route exact path="/playlist" component={PlaylistList} />
             <Route exact path="/starred" component={StarredView} />
             <Route exact path="/config" component={Config} />
             <Route path="/" component={Dashboard} />
