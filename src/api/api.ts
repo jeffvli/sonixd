@@ -1,4 +1,5 @@
 import axios from 'axios';
+import _ from 'lodash';
 
 const getAuth = () => {
   const serverConfig = {
@@ -187,6 +188,43 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
       index,
     })
   );
+
+  return albums;
+};
+
+// ! Rewrite as async function
+export const getAllAlbums = (
+  offset: number,
+  sortType: string,
+  data: any[] = [],
+  coverArtSize = 150
+) => {
+  const albums: any = api
+    .get(`/getAlbumList2`, {
+      params: {
+        type: sortType,
+        size: 500,
+        offset,
+      },
+    })
+    .then((res) => {
+      if (!res.data.albumList2.album) {
+        // Flatten the array and return once there are no more albums left
+        const flattened = _.flatten(data);
+        return flattened.map((entry: any, index: any) => ({
+          ...entry,
+          albumId: entry.id,
+          image: getCoverArtUrl(entry, coverArtSize),
+          starred: entry.starred || '',
+          index,
+        }));
+      }
+
+      // On every iteration, push the existing combined album array and increase the offset
+      data.push(res.data.albumList2.album);
+      return getAllAlbums(offset + 500, sortType, data);
+    })
+    .catch((err) => console.log(err));
 
   return albums;
 };
