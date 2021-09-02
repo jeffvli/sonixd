@@ -19,6 +19,7 @@ export const getSettings = () => {
   return {
     repeat: parsedSettings.defaultRepeat,
     shuffle: parsedSettings.defaultShuffle,
+    volume: parsedSettings.volume,
   };
 };
 

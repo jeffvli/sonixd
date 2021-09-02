@@ -71,7 +71,7 @@ const initialState: PlayQueue = {
   currentPlayer: 1,
   isFading: false,
   autoIncremented: false,
-  volume: 0.5,
+  volume: getSettings().volume,
   isLoading: false,
   repeat: getSettings().repeat,
   shuffle: getSettings().shuffle,

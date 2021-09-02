@@ -8,6 +8,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
 
+  if (force || !settings.hasSync('volume')) {
+    settings.setSync('volume', 0.5);
+  }
+
   fs.mkdirSync(getSongCachePath(), { recursive: true });
   fs.mkdirSync(getImageCachePath(), { recursive: true });
 

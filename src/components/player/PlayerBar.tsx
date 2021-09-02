@@ -43,8 +43,12 @@ const PlayerBar = () => {
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingVolume, setIsDraggingVolume] = useState(false);
   const [manualSeek, setManualSeek] = useState(0);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
+  const [localVolume, setLocalVolume] = useState(
+    Number(settings.getSync('volume'))
+  );
   const [seekForwardInterval] = useState<number>(
     Number(settings.getSync('seekForwardInterval')) || 5
   );
@@ -61,6 +65,25 @@ const PlayerBar = () => {
       setCurrentEntryList('entry');
     }
   }, [playQueue.shuffle]);
+
+  useEffect(() => {
+    // Handle volume slider dragging
+    const debounce = setTimeout(() => {
+      if (isDraggingVolume) {
+        dispatch(setVolume(localVolume));
+        dispatch(
+          setPlayerVolume({
+            player: playQueue.currentPlayer,
+            volume: localVolume,
+          })
+        );
+        settings.setSync('volume', localVolume);
+      }
+      setIsDragging(false);
+    }, 10);
+
+    return () => clearTimeout(debounce);
+  }, [dispatch, isDraggingVolume, localVolume, playQueue.currentPlayer]);
 
   useEffect(() => {
     setSeek(player.currentSeek);
@@ -99,9 +122,9 @@ const PlayerBar = () => {
   };
 
   const handleVolumeSlider = (e: number) => {
+    setIsDraggingVolume(true);
     const vol = Number((e / 100).toFixed(2));
-    dispatch(setVolume(vol));
-    dispatch(setPlayerVolume({ player: playQueue.currentPlayer, volume: vol }));
+    setLocalVolume(vol);
   };
 
   const handleVolumeKey = (e: any) => {
@@ -638,7 +661,7 @@ const PlayerBar = () => {
                   <CustomSlider
                     tabIndex={0}
                     progress
-                    value={Math.floor(playQueue.volume * 100)}
+                    value={Math.floor(localVolume * 100)}
                     tooltip={false}
                     style={{ width: '100px', marginRight: '10px' }}
                     onChange={handleVolumeSlider}
