@@ -44,9 +44,11 @@ const NowPlayingView = () => {
 
   useEffect(() => {
     if (scrollWithCurrent) {
-      tableRef.current.table.current?.scrollTop(
-        Number(settings.getSync('songListRowHeight')) * playQueue.currentIndex
-      );
+      setTimeout(() => {
+        tableRef.current.table.current?.scrollTop(
+          Number(settings.getSync('songListRowHeight')) * playQueue.currentIndex
+        );
+      }, 100);
     }
   }, [playQueue.currentIndex, scrollWithCurrent, tableRef]);
 
