@@ -84,9 +84,9 @@ const listenHandler = (
             // https://math.stackexchange.com/a/4622
             percentageOfFadeLeft = timeLeft / fadeDuration;
             currentPlayerVolumeCalculation =
-              (percentageOfFadeLeft * playQueue.volume) ** 2;
+              percentageOfFadeLeft ** 2 * playQueue.volume;
             nextPlayerVolumeCalculation =
-              ((percentageOfFadeLeft - 1) * playQueue.volume) ** 2;
+              (percentageOfFadeLeft - 1) ** 2 * playQueue.volume;
             break;
           default:
             currentPlayerVolumeCalculation =
