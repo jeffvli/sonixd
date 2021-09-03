@@ -58,97 +58,84 @@ const listenHandler = (
     // Detect to start fading when seek is greater than the fade time
     if (currentSeek >= fadeAtTime) {
       if (volumeFade) {
+        nextPlayerRef.current.audioEl.current.play();
+        dispatch(setIsFading(true));
+
         const timeLeft = duration - currentSeek;
         let currentPlayerVolumeCalculation;
-        if (nextPlayerRef.current.audioEl.current) {
-          switch (fadeType) {
-            case 'equalPower':
-              currentPlayerVolumeCalculation =
-                Math.sqrt(0.5 * ((timeLeft / fadeDuration) * 2)) *
-                playQueue.volume;
-              break;
-            case 'linear':
-              currentPlayerVolumeCalculation =
-                (timeLeft / fadeDuration) * playQueue.volume;
-              break;
-            default:
-              currentPlayerVolumeCalculation =
-                (timeLeft / fadeDuration) * playQueue.volume;
-              break;
-          }
+        let nextPlayerVolumeCalculation;
+        let percentageOfFadeLeft;
+        switch (fadeType) {
+          case 'equalPower':
+            // https://dsp.stackexchange.com/a/14755
+            percentageOfFadeLeft = (timeLeft / fadeDuration) * 2;
+            currentPlayerVolumeCalculation =
+              Math.sqrt(0.5 * percentageOfFadeLeft) * playQueue.volume;
+            nextPlayerVolumeCalculation =
+              Math.sqrt(0.5 * (2 - percentageOfFadeLeft)) * playQueue.volume;
+            break;
+          case 'linear':
+            currentPlayerVolumeCalculation =
+              (timeLeft / fadeDuration) * playQueue.volume;
+            nextPlayerVolumeCalculation =
+              ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume;
+            break;
+          default:
+            currentPlayerVolumeCalculation =
+              (timeLeft / fadeDuration) * playQueue.volume;
+            nextPlayerVolumeCalculation =
+              ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume;
+            break;
+        }
 
-          const currentPlayerVolume =
-            currentPlayerVolumeCalculation <= 0
-              ? 0
-              : currentPlayerVolumeCalculation;
+        const currentPlayerVolume =
+          currentPlayerVolumeCalculation >= 0
+            ? currentPlayerVolumeCalculation
+            : 0;
 
-          let nextPlayerVolumeCalculation;
-          switch (fadeType) {
-            case 'equalPower':
-              nextPlayerVolumeCalculation =
-                Math.sqrt(0.5 * (2 - (timeLeft / fadeDuration) * 2)) *
-                playQueue.volume;
-              break;
-            case 'linear':
-              nextPlayerVolumeCalculation =
-                ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume;
-              break;
-            default:
-              nextPlayerVolumeCalculation =
-                ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume;
-          }
+        const nextPlayerVolume =
+          nextPlayerVolumeCalculation <= playQueue.volume
+            ? nextPlayerVolumeCalculation
+            : playQueue.volume;
 
-          const nextPlayerVolume =
-            nextPlayerVolumeCalculation >= playQueue.volume
-              ? playQueue.volume
-              : nextPlayerVolumeCalculation;
-
-          if (player === 1) {
+        if (player === 1) {
+          dispatch(setPlayerVolume({ player: 1, volume: currentPlayerVolume }));
+          dispatch(setPlayerVolume({ player: 2, volume: nextPlayerVolume }));
+          if (debug) {
             dispatch(
-              setPlayerVolume({ player: 1, volume: currentPlayerVolume })
+              setFadeData({
+                player: 1,
+                time: timeLeft,
+                volume: currentPlayerVolume,
+              })
             );
-            dispatch(setPlayerVolume({ player: 2, volume: nextPlayerVolume }));
-            if (debug) {
-              dispatch(
-                setFadeData({
-                  player: 1,
-                  time: timeLeft,
-                  volume: currentPlayerVolume,
-                })
-              );
-              dispatch(
-                setFadeData({
-                  player: 2,
-                  time: timeLeft,
-                  volume: nextPlayerVolume,
-                })
-              );
-            }
-          } else {
             dispatch(
-              setPlayerVolume({ player: 2, volume: currentPlayerVolume })
+              setFadeData({
+                player: 2,
+                time: timeLeft,
+                volume: nextPlayerVolume,
+              })
             );
-            dispatch(setPlayerVolume({ player: 1, volume: nextPlayerVolume }));
-            if (debug) {
-              dispatch(
-                setFadeData({
-                  player: 2,
-                  time: timeLeft,
-                  volume: currentPlayerVolume,
-                })
-              );
-              dispatch(
-                setFadeData({
-                  player: 1,
-                  time: timeLeft,
-                  volume: nextPlayerVolume,
-                })
-              );
-            }
           }
-
-          nextPlayerRef.current.audioEl.current.play();
-          dispatch(setIsFading(true));
+        } else {
+          dispatch(setPlayerVolume({ player: 2, volume: currentPlayerVolume }));
+          dispatch(setPlayerVolume({ player: 1, volume: nextPlayerVolume }));
+          if (debug) {
+            dispatch(
+              setFadeData({
+                player: 2,
+                time: timeLeft,
+                volume: currentPlayerVolume,
+              })
+            );
+            dispatch(
+              setFadeData({
+                player: 1,
+                time: timeLeft,
+                volume: nextPlayerVolume,
+              })
+            );
+          }
         }
       } else {
         // If fade time is less than 0.5 seconds, don't fade and just start at
