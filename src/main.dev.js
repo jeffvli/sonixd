@@ -110,7 +110,7 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaPlayPause', () => {
     const storeValues = store.getState();
-    const currentEntryList = store.playQueue.shuffle
+    const currentEntryList = storeValues.playQueue.shuffle
       ? 'shuffledEntry'
       : 'entry';
 
@@ -125,7 +125,7 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaNextTrack', () => {
     const storeValues = store.getState();
-    const currentEntryList = store.playQueue.shuffle
+    const currentEntryList = storeValues.playQueue.shuffle
       ? 'shuffledEntry'
       : 'entry';
     if (storeValues.playQueue[currentEntryList].length > 0) {
@@ -137,7 +137,7 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaPreviousTrack', () => {
     const storeValues = store.getState();
-    const currentEntryList = store.playQueue.shuffle
+    const currentEntryList = storeValues.playQueue.shuffle
       ? 'shuffledEntry'
       : 'entry';
     if (storeValues.playQueue[currentEntryList].length > 0) {
