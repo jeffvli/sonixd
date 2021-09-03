@@ -155,16 +155,18 @@ const Config = () => {
               >
                 <HeaderButton size="sm">Reset defaults</HeaderButton>
               </Whisper>
-              <HeaderButton
-                color={requiresReload ? 'red' : undefined}
-                size="sm"
-                onClick={() => window.location.reload()}
-              >
-                Reload window {requiresReload ? '(pending changes)' : undefined}
-              </HeaderButton>
             </>
           }
           sidetitle={<DisconnectButton />}
+          subsidetitle={
+            <Button
+              color={requiresReload ? 'red' : undefined}
+              size="sm"
+              onClick={() => window.location.reload()}
+            >
+              Reload window {requiresReload ? '(pending)' : ''}
+            </Button>
+          }
         />
       }
     >
