@@ -67,6 +67,7 @@ export interface PlayQueue {
   repeat: string;
   shuffle: boolean;
   displayQueue: boolean;
+  showDebugWindow: boolean;
   entry: Entry[];
   shuffledEntry: Entry[];
 }
@@ -102,6 +103,7 @@ const initialState: PlayQueue = {
   repeat: parsedSettings.repeat,
   shuffle: parsedSettings.shuffle,
   displayQueue: false,
+  showDebugWindow: parsedSettings.showDebugWindow,
   entry: [],
   shuffledEntry: [],
 };
@@ -186,6 +188,9 @@ const playQueueSlice = createSlice({
           break;
         case 'volumeFade':
           state.volumeFade = action.payload.value;
+          break;
+        case 'showDebugWindow':
+          state.showDebugWindow = action.payload.value;
           break;
         default:
           break;

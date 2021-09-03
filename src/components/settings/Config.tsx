@@ -410,14 +410,19 @@ const Config = () => {
         <Checkbox
           defaultChecked={Boolean(settings.getSync('showDebugWindow'))}
           onChange={() => {
-            setRequiresReload(true);
             settings.setSync(
               'showDebugWindow',
               !settings.getSync('showDebugWindow')
             );
+            dispatch(
+              setPlaybackSetting({
+                setting: 'showDebugWindow',
+                value: settings.getSync('showDebugWindow'),
+              })
+            );
           }}
         >
-          Show debug window (requires reload)
+          Show debug window
         </Checkbox>
         <br />
       </ConfigPanel>

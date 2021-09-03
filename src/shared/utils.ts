@@ -24,6 +24,7 @@ export const getSettings = () => {
     fadeType: parsedSettings.fadeType,
     pollingInterval: parsedSettings.pollingInterval,
     volumeFade: parsedSettings.volumeFade,
+    showDebugWindow: parsedSettings.showDebugWindow,
   };
 };
 
