@@ -31,10 +31,11 @@ const listenHandler = (
   playQueue: any,
   currentEntryList: any,
   dispatch: any,
-  player: number
+  player: number,
+  fadeDuration: number,
+  fadeType: string,
+  volumeFade: boolean
 ) => {
-  const fadeDuration = Number(settings.getSync('fadeDuration')) || 0;
-  const fadeType = String(settings.getSync('fadeType'));
   const currentSeek =
     currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const seekable =
@@ -52,11 +53,9 @@ const listenHandler = (
       playQueue[currentEntryList].length ||
     playQueue.repeat === 'all'
   ) {
+    // Detect to start fading when seek is greater than the fade time
     if (currentSeek >= fadeAtTime) {
-      // If it's not the last track in the queue OR we want to repeat
-      // Once fading starts, start playing player 2 and set current to 2
-
-      if (fadeDuration > 1.5) {
+      if (volumeFade) {
         const timeLeft = duration - currentSeek;
         if (nextPlayerRef.current.audioEl.current) {
           const currentPlayerVolumeCalculation =
@@ -101,9 +100,9 @@ const listenHandler = (
           dispatch(setIsFading(true));
         }
       } else {
-        // If fade time is less than 1 second, don't fade and just start at
-        // full volume. Due to the low fade duration, it causes the volume to
-        // blast from low to full incredibly quickly due to the intervalled polling
+        // If fade time is less than 0.5 seconds, don't fade and just start at
+        // full volume. Due to the low fade duration and interval polling, the volume
+        // blasts from low to full incredibly quickly
         if (player === 1) {
           dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
         } else {
@@ -119,7 +118,17 @@ const listenHandler = (
   }
 };
 
-const Player = ({ children }: any, ref: any) => {
+const Player = (
+  {
+    currentEntryList,
+    fadeDuration,
+    fadeType,
+    pollingInterval,
+    volumeFade,
+    children,
+  }: any,
+  ref: any
+) => {
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
   const dispatch = useAppDispatch();
@@ -128,15 +137,6 @@ const Player = ({ children }: any, ref: any) => {
   const cacheSongs = settings.getSync('cacheSongs');
   const [title, setTitle] = useState('');
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
-  const [currentEntryList, setCurrentEntryList] = useState('entry');
-
-  useEffect(() => {
-    if (playQueue.shuffle) {
-      setCurrentEntryList('shuffledEntry');
-    } else {
-      setCurrentEntryList('entry');
-    }
-  }, [playQueue.shuffle]);
 
   useImperativeHandle(ref, () => ({
     get player1() {
@@ -163,13 +163,26 @@ const Player = ({ children }: any, ref: any) => {
         }
       }
     } else {
-      // Add short timeout otherwise sometimes fading-in player doesn't pause
+      // Hacky way to pause the player because it sometimes doesn't pause if the
+      // polling interval is set to a low value
+      setTimeout(() => {
+        player1Ref.current.audioEl.current.pause();
+        player2Ref.current.audioEl.current.pause();
+      }, 10);
+      setTimeout(() => {
+        player1Ref.current.audioEl.current.pause();
+        player2Ref.current.audioEl.current.pause();
+      }, 25);
       setTimeout(() => {
         player1Ref.current.audioEl.current.pause();
         player2Ref.current.audioEl.current.pause();
       }, 100);
+      setTimeout(() => {
+        player1Ref.current.audioEl.current.pause();
+        player2Ref.current.audioEl.current.pause();
+      }, 200);
     }
-  }, [playQueue.currentPlayer, player.status]);
+  }, [playQueue.currentPlayer, player.status, pollingInterval]);
 
   const handleListenPlayer1 = () => {
     listenHandler(
@@ -178,7 +191,10 @@ const Player = ({ children }: any, ref: any) => {
       playQueue,
       currentEntryList,
       dispatch,
-      1
+      1,
+      fadeDuration,
+      fadeType,
+      volumeFade
     );
   };
 
@@ -189,7 +205,10 @@ const Player = ({ children }: any, ref: any) => {
       playQueue,
       currentEntryList,
       dispatch,
-      2
+      2,
+      fadeDuration,
+      fadeType,
+      volumeFade
     );
   };
 
@@ -317,7 +336,7 @@ const Player = ({ children }: any, ref: any) => {
               }.mp3`
             : playQueue[currentEntryList][playQueue.player1.index]?.streamUrl
         }
-        listenInterval={50}
+        listenInterval={pollingInterval}
         preload="auto"
         onListen={handleListenPlayer1}
         onEnded={handleOnEndedPlayer1}
@@ -341,7 +360,7 @@ const Player = ({ children }: any, ref: any) => {
               }.mp3`
             : playQueue[currentEntryList][playQueue.player2.index]?.streamUrl
         }
-        listenInterval={50}
+        listenInterval={pollingInterval}
         preload="auto"
         onListen={handleListenPlayer2}
         onEnded={handleOnEndedPlayer2}

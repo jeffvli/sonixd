@@ -56,6 +56,12 @@ const PlayerBar = () => {
   const [seekBackwardInterval] = useState<number>(
     Number(settings.getSync('seekBackwardInterval')) || 5
   );
+  const [fadeDuration] = useState(Number(settings.getSync('fadeDuration')));
+  const [fadeType] = useState(String(settings.getSync('fadeType')));
+  const [pollingInterval] = useState(
+    Number(settings.getSync('pollingInterval'))
+  );
+  const [volumeFade] = useState(Boolean(settings.getSync('volumeFade')));
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -106,23 +112,29 @@ const PlayerBar = () => {
   }, [isDragging, manualSeek, playQueue.currentPlayer]);
 
   const handleClickNext = () => {
-    dispatch(resetPlayer());
-    dispatch(incrementCurrentIndex('usingHotkey'));
-    dispatch(setStatus('PLAYING'));
+    if (playQueue[currentEntryList].length > 0) {
+      dispatch(resetPlayer());
+      dispatch(incrementCurrentIndex('usingHotkey'));
+      dispatch(setStatus('PLAYING'));
+    }
   };
 
   const handleClickPrevious = () => {
-    dispatch(resetPlayer());
-    dispatch(decrementCurrentIndex('usingHotkey'));
-    dispatch(fixPlayer2Index());
-    dispatch(setStatus('PLAYING'));
+    if (playQueue[currentEntryList].length > 0) {
+      dispatch(resetPlayer());
+      dispatch(decrementCurrentIndex('usingHotkey'));
+      dispatch(fixPlayer2Index());
+      dispatch(setStatus('PLAYING'));
+    }
   };
 
   const handleClickPlayPause = () => {
-    if (player.status === 'PAUSED') {
-      dispatch(setStatus('PLAYING'));
-    } else {
-      dispatch(setStatus('PAUSED'));
+    if (playQueue[currentEntryList].length > 0) {
+      if (player.status === 'PAUSED') {
+        dispatch(setStatus('PLAYING'));
+      } else {
+        dispatch(setStatus('PAUSED'));
+      }
     }
   };
 
@@ -159,68 +171,74 @@ const PlayerBar = () => {
   };
 
   const handleClickForward = () => {
-    setIsDragging(true);
+    if (playQueue[currentEntryList].length > 0) {
+      setIsDragging(true);
 
-    if (playQueue.isFading) {
-      if (playQueue.currentPlayer === 1) {
-        playersRef.current.player2.audioEl.current.pause();
-        playersRef.current.player2.audioEl.current.currentTime = 0;
-        dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-        dispatch(setPlayerVolume({ player: 2, volume: 0 }));
-      } else {
-        playersRef.current.player1.audioEl.current.pause();
-        playersRef.current.player1.audioEl.current.currentTime = 0;
-        dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-        dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+      if (playQueue.isFading) {
+        if (playQueue.currentPlayer === 1) {
+          playersRef.current.player2.audioEl.current.pause();
+          playersRef.current.player2.audioEl.current.currentTime = 0;
+          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
+          dispatch(setPlayerVolume({ player: 2, volume: 0 }));
+        } else {
+          playersRef.current.player1.audioEl.current.pause();
+          playersRef.current.player1.audioEl.current.currentTime = 0;
+          dispatch(setPlayerVolume({ player: 1, volume: 0 }));
+          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+        }
       }
-    }
 
-    if (playQueue.currentPlayer === 1) {
-      const calculatedTime =
-        playersRef.current.player1.audioEl.current.currentTime +
-        seekForwardInterval;
-      const songDuration = playersRef.current.player1.audioEl.current.duration;
-      setManualSeek(
-        calculatedTime > songDuration ? songDuration - 1 : calculatedTime
-      );
-    } else {
-      const calculatedTime =
-        playersRef.current.player2.audioEl.current.currentTime +
-        seekForwardInterval;
-      const songDuration = playersRef.current.player2.audioEl.current.duration;
-      setManualSeek(
-        calculatedTime > songDuration ? songDuration - 1 : calculatedTime
-      );
+      if (playQueue.currentPlayer === 1) {
+        const calculatedTime =
+          playersRef.current.player1.audioEl.current.currentTime +
+          seekForwardInterval;
+        const songDuration =
+          playersRef.current.player1.audioEl.current.duration;
+        setManualSeek(
+          calculatedTime > songDuration ? songDuration - 1 : calculatedTime
+        );
+      } else {
+        const calculatedTime =
+          playersRef.current.player2.audioEl.current.currentTime +
+          seekForwardInterval;
+        const songDuration =
+          playersRef.current.player2.audioEl.current.duration;
+        setManualSeek(
+          calculatedTime > songDuration ? songDuration - 1 : calculatedTime
+        );
+      }
     }
   };
 
   const handleClickBackward = () => {
-    setIsDragging(true);
+    if (playQueue[currentEntryList].length > 0) {
+      setIsDragging(true);
 
-    if (playQueue.isFading) {
-      if (playQueue.currentPlayer === 1) {
-        playersRef.current.player2.audioEl.current.pause();
-        playersRef.current.player2.audioEl.current.currentTime = 0;
-        dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-        dispatch(setPlayerVolume({ player: 2, volume: 0 }));
-      } else {
-        playersRef.current.player1.audioEl.current.pause();
-        playersRef.current.player1.audioEl.current.currentTime = 0;
-        dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-        dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+      if (playQueue.isFading) {
+        if (playQueue.currentPlayer === 1) {
+          playersRef.current.player2.audioEl.current.pause();
+          playersRef.current.player2.audioEl.current.currentTime = 0;
+          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
+          dispatch(setPlayerVolume({ player: 2, volume: 0 }));
+        } else {
+          playersRef.current.player1.audioEl.current.pause();
+          playersRef.current.player1.audioEl.current.currentTime = 0;
+          dispatch(setPlayerVolume({ player: 1, volume: 0 }));
+          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+        }
       }
-    }
 
-    if (playQueue.currentPlayer === 1) {
-      const calculatedTime =
-        playersRef.current.player1.audioEl.current.currentTime -
-        seekBackwardInterval;
-      setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
-    } else {
-      const calculatedTime =
-        playersRef.current.player2.audioEl.current.currentTime -
-        seekBackwardInterval;
-      setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
+      if (playQueue.currentPlayer === 1) {
+        const calculatedTime =
+          playersRef.current.player1.audioEl.current.currentTime -
+          seekBackwardInterval;
+        setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
+      } else {
+        const calculatedTime =
+          playersRef.current.player2.audioEl.current.currentTime -
+          seekBackwardInterval;
+        setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
+      }
     }
   };
 
@@ -296,8 +314,23 @@ const PlayerBar = () => {
   };
 
   return (
-    <Player ref={playersRef}>
-      {settings.getSync('showDebugWindow') && <DebugWindow />}
+    <Player
+      ref={playersRef}
+      currentEntryList={currentEntryList}
+      fadeDuration={fadeDuration}
+      fadeType={fadeType}
+      pollingInterval={pollingInterval}
+      volumeFade={volumeFade}
+    >
+      {settings.getSync('showDebugWindow') && (
+        <DebugWindow
+          currentEntryList={currentEntryList}
+          fadeDuration={fadeDuration}
+          fadeType={fadeType}
+          pollingInterval={pollingInterval}
+          volumeFade={volumeFade}
+        />
+      )}
       <PlayerContainer>
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
           <FlexboxGrid.Item

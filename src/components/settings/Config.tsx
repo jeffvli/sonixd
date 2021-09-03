@@ -47,6 +47,7 @@ const Config = () => {
   const [isEditingCachePath, setIsEditingCachePath] = useState(false);
   const [newCachePath, setNewCachePath] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [requiresReload, setRequiresReload] = useState(false);
 
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -154,6 +155,13 @@ const Config = () => {
               >
                 <HeaderButton size="sm">Reset defaults</HeaderButton>
               </Whisper>
+              <HeaderButton
+                color={requiresReload ? 'red' : undefined}
+                size="sm"
+                onClick={() => window.location.reload()}
+              >
+                Reload window {requiresReload ? '(pending changes)' : undefined}
+              </HeaderButton>
             </>
           }
           sidetitle={<DisconnectButton />}
@@ -161,42 +169,81 @@ const Config = () => {
       }
     >
       <ConfigPanel header="Playback" bordered>
+        <p style={{ fontSize: 'smaller' }}>
+          *Changing any playback setting will require a reload
+        </p>
         <p>
-          Fading works by polling the audio player on an interval (50ms) to
-          determine when to start fading to the next track. Due to this, you may
-          notice the fade timing may not be 100% perfect.
+          Fading works by polling the audio player on an interval to determine
+          when to start fading to the next track. Due to this, you may notice
+          the fade timing may not be 100% perfect. Lowering the player polling
+          interval may increase the accuracy of the fade, but may also decrease
+          application performance. You may find that lowering the polling
+          interval between <code>1</code> and <code>50</code> can cause
+          application instabilities, so use at your own risk.
         </p>
 
         <p>
-          If the crossfade duration is set to less than or equal to{' '}
-          <code>0.5</code>, volume fading will not occur for either track, but
-          rather start the fading-in track at full volume. This is to
-          tentatively support <strong> gapless playback</strong> without fade.
+          If volume fade is disabled, then the fading-in track will start at the
+          specified crossfade duration at full volume. This is to tentatively
+          support <strong>gapless playback without fade</strong>, but due to
+          tiny inconsistencies with the audio polling interval, you may find the
+          fade better. Experiment with these settings to find your sweet spot.
         </p>
 
         <div style={{ width: '300px', paddingTop: '20px' }}>
-          <ControlLabel>Crossfade duration (seconds)</ControlLabel>
+          <ControlLabel>Crossfade duration (s)</ControlLabel>
           <InputNumber
             defaultValue={String(settings.getSync('fadeDuration')) || '0'}
             step={0.05}
             min={0}
             max={100}
             onChange={(e) => {
+              setRequiresReload(true);
               settings.setSync('fadeDuration', e);
             }}
             style={{ width: '150px' }}
           />
-          <br />
 
+          <br />
+          <ControlLabel>Polling interval (ms)</ControlLabel>
+          <InputNumber
+            defaultValue={String(settings.getSync('pollingInterval'))}
+            step={1}
+            min={1}
+            max={1000}
+            onChange={(e) => {
+              setRequiresReload(true);
+              settings.setSync('pollingInterval', e);
+            }}
+            style={{ width: '150px' }}
+          />
+          <br />
           <ControlLabel>Crossfade type</ControlLabel>
           <RadioGroup
             name="radioList"
             appearance="default"
             defaultValue={String(settings.getSync('fadeType'))}
-            onChange={(e) => settings.setSync('fadeType', e)}
+            onChange={(e) => {
+              setRequiresReload(true);
+              settings.setSync('fadeType', e);
+            }}
           >
             <Radio value="equalPower">Equal Power</Radio>
             <Radio value="linear">Linear</Radio>
+          </RadioGroup>
+          <br />
+          <ControlLabel>Volume fade</ControlLabel>
+          <RadioGroup
+            name="radioList"
+            appearance="default"
+            defaultValue={Boolean(settings.getSync('volumeFade'))}
+            onChange={(e) => {
+              setRequiresReload(true);
+              settings.setSync('volumeFade', e);
+            }}
+          >
+            <Radio value>Enabled</Radio>
+            <Radio value={false}>Disabled</Radio>
           </RadioGroup>
         </div>
       </ConfigPanel>
@@ -356,6 +403,7 @@ const Config = () => {
         <Checkbox
           defaultChecked={Boolean(settings.getSync('showDebugWindow'))}
           onChange={() => {
+            setRequiresReload(true);
             settings.setSync(
               'showDebugWindow',
               !settings.getSync('showDebugWindow')
@@ -365,7 +413,6 @@ const Config = () => {
           Show debug window (requires reload)
         </Checkbox>
         <br />
-        <Button onClick={() => window.location.reload()}>Reload window</Button>
       </ConfigPanel>
     </GenericPage>
   );

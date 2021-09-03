@@ -3,7 +3,7 @@ import { Checkbox, Divider, FlexboxGrid, Panel, Slider } from 'rsuite';
 import { useAppSelector } from '../../redux/hooks';
 import CustomTooltip from '../shared/CustomTooltip';
 
-const DebugWindow = () => {
+const DebugWindow = ({ ...rest }) => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -15,9 +15,9 @@ const DebugWindow = () => {
         position: 'absolute',
         zIndex: 2,
         bottom: '120px',
-        right: '25px',
+        right: '20px',
         padding: '10px',
-        maxWidth: '250px',
+        width: '270px',
         background: '#000',
         pointerEvents: checked ? 'all' : 'none',
         opacity: opacity / 100,
@@ -76,43 +76,50 @@ const DebugWindow = () => {
         <li>currentSeek: {player.currentSeek.toFixed(2)}</li>
         <li>currentSeekable: {player.currentSeekable.toFixed(2)}</li>
         <li>volume (global): {playQueue.volume.toFixed(2)}</li>
-        <li>repeat: {playQueue.repeat}</li>
+        <li>volumeFade: {rest.volumeFade ? 'true' : 'false'}</li>
         <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
+        <li>repeat: {playQueue.repeat}</li>
         <li>isFading: {playQueue.isFading ? 'true' : 'false'}</li>
+        <li>currentEntryList: {rest.currentEntryList}</li>
+        <li>fadeDuration: {rest.fadeDuration}</li>
+        <li>fadeType: {rest.fadeType}</li>
+        <li>pollingInterval: {rest.pollingInterval}</li>
       </ul>
 
       <table style={{ tableLayout: 'fixed' }}>
-        <tr style={{ textAlign: 'left' }}>
-          <th>Player</th>
-          <th
-            style={{
-              color: playQueue.currentPlayer === 1 ? 'lightgreen' : undefined,
-            }}
-          >
-            1
-          </th>
-          <th
-            style={{
-              color: playQueue.currentPlayer === 2 ? 'lightgreen' : undefined,
-            }}
-          >
-            2
-          </th>
-        </tr>
-        <tr>
-          <td>index</td>
-          <td>{playQueue.player1.index}</td>
-          <td>{playQueue.player2.index}</td>
-        </tr>
-        <tr>
-          <td style={{ width: '80px' }}>volume</td>
-          <td style={{ width: '65px' }}>
-            {Number(playQueue.player1.volume).toFixed(2)}
-          </td>
-          <td style={{ width: '65px' }}>
-            {Number(playQueue.player2.volume).toFixed(2)}
-          </td>
-        </tr>
+        <tbody>
+          <tr style={{ textAlign: 'left' }}>
+            <th>Player</th>
+            <th
+              style={{
+                color: playQueue.currentPlayer === 1 ? 'lightgreen' : undefined,
+              }}
+            >
+              1
+            </th>
+            <th
+              style={{
+                color: playQueue.currentPlayer === 2 ? 'lightgreen' : undefined,
+              }}
+            >
+              2
+            </th>
+          </tr>
+          <tr>
+            <td>index</td>
+            <td>{playQueue.player1.index}</td>
+            <td>{playQueue.player2.index}</td>
+          </tr>
+          <tr>
+            <td style={{ width: '80px' }}>volume</td>
+            <td style={{ width: '65px' }}>
+              {Number(playQueue.player1.volume).toFixed(2)}
+            </td>
+            <td style={{ width: '65px' }}>
+              {Number(playQueue.player2.volume).toFixed(2)}
+            </td>
+          </tr>
+        </tbody>
       </table>
 
       <Divider />

@@ -16,6 +16,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('volume', 0.5);
   }
 
+  if (force || !settings.hasSync('volumeFade')) {
+    settings.setSync('volumeFade', true);
+  }
+
   fs.mkdirSync(getSongCachePath(), { recursive: true });
   fs.mkdirSync(getImageCachePath(), { recursive: true });
 
@@ -37,6 +41,10 @@ const setDefaultSettings = (force: boolean) => {
 
   if (force || !settings.hasSync('cacheSongs')) {
     settings.setSync('cacheSongs', false);
+  }
+
+  if (force || !settings.hasSync('pollingInterval')) {
+    settings.setSync('pollingInterval', 100);
   }
 
   if (force || !settings.hasSync('fadeDuration')) {
