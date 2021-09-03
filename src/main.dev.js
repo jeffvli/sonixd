@@ -110,7 +110,11 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaPlayPause', () => {
     const storeValues = store.getState();
-    if (storeValues.playQueue.entry.length >= 1) {
+    const currentEntryList = store.playQueue.shuffle
+      ? 'shuffledEntry'
+      : 'entry';
+
+    if (storeValues.playQueue[currentEntryList].length > 0) {
       if (storeValues.player.status === 'PAUSED') {
         store.dispatch(setStatus('PLAYING'));
       } else {
@@ -121,7 +125,10 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaNextTrack', () => {
     const storeValues = store.getState();
-    if (storeValues.playQueue.entry.length >= 1) {
+    const currentEntryList = store.playQueue.shuffle
+      ? 'shuffledEntry'
+      : 'entry';
+    if (storeValues.playQueue[currentEntryList].length > 0) {
       store.dispatch(resetPlayer());
       store.dispatch(incrementCurrentIndex('usingHotkey'));
       store.dispatch(setStatus('PLAYING'));
@@ -130,7 +137,10 @@ const createWindow = async () => {
 
   globalShortcut.register('MediaPreviousTrack', () => {
     const storeValues = store.getState();
-    if (storeValues.playQueue.entry.length >= 1) {
+    const currentEntryList = store.playQueue.shuffle
+      ? 'shuffledEntry'
+      : 'entry';
+    if (storeValues.playQueue[currentEntryList].length > 0) {
       store.dispatch(resetPlayer());
       store.dispatch(decrementCurrentIndex('usingHotkey'));
       store.dispatch(fixPlayer2Index());
