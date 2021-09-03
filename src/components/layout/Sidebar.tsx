@@ -22,20 +22,20 @@ const Sidebar = ({
         <Sidenav.Body>
           <Nav>
             <Nav.Item
-              eventKey="nowplaying"
-              icon={<Icon icon="music" />}
-              onSelect={handleSidebarSelect}
-              disabled={disableSidebar}
-            >
-              Now Playing
-            </Nav.Item>
-            <Nav.Item
               eventKey="discover"
               icon={<Icon icon="dashboard" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Dashboard
+            </Nav.Item>
+            <Nav.Item
+              eventKey="nowplaying"
+              icon={<Icon icon="music" />}
+              onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
+            >
+              Now Playing
             </Nav.Item>
             <Nav.Item
               eventKey="starred"
