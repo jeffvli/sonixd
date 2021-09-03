@@ -20,6 +20,10 @@ export const getSettings = () => {
     repeat: parsedSettings.repeat,
     shuffle: parsedSettings.shuffle,
     volume: parsedSettings.volume,
+    fadeDuration: parsedSettings.fadeDuration,
+    fadeType: parsedSettings.fadeType,
+    pollingInterval: parsedSettings.pollingInterval,
+    volumeFade: parsedSettings.volumeFade,
   };
 };
 

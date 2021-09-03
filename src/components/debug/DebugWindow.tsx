@@ -132,14 +132,14 @@ const DebugWindow = ({ ...rest }) => {
           <li>currentSeek: {player.currentSeek.toFixed(2)}</li>
           <li>currentSeekable: {player.currentSeekable.toFixed(2)}</li>
           <li>volume (global): {playQueue.volume.toFixed(2)}</li>
-          <li>volumeFade: {rest.volumeFade ? 'true' : 'false'}</li>
+          <li>volumeFade: {playQueue.volumeFade ? 'true' : 'false'}</li>
           <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
           <li>repeat: {playQueue.repeat}</li>
           <li>isFading: {playQueue.isFading ? 'true' : 'false'}</li>
           <li>currentEntryList: {rest.currentEntryList}</li>
-          <li>fadeDuration: {rest.fadeDuration}</li>
-          <li>fadeType: {rest.fadeType}</li>
-          <li>pollingInterval: {rest.pollingInterval}</li>
+          <li>fadeDuration: {playQueue.fadeDuration}</li>
+          <li>fadeType: {playQueue.fadeType}</li>
+          <li>pollingInterval: {playQueue.pollingInterval}</li>
         </ul>
 
         <table style={{ tableLayout: 'fixed', textAlign: 'center' }}>

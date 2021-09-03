@@ -7,6 +7,8 @@ import {
   getSettings,
 } from '../shared/utils';
 
+const parsedSettings = getSettings();
+
 interface Entry {
   id: string;
   album: string;
@@ -51,6 +53,10 @@ export interface PlayQueue {
       timeData: string[];
     };
   };
+  fadeDuration: number;
+  fadeType: string;
+  pollingInterval: number;
+  volumeFade: boolean;
   currentIndex: number;
   currentSongId: string;
   currentPlayer: number;
@@ -82,15 +88,19 @@ const initialState: PlayQueue = {
       timeData: [],
     },
   },
+  fadeDuration: parsedSettings.fadeDuration,
+  fadeType: parsedSettings.fadeType,
+  pollingInterval: parsedSettings.pollingInterval,
+  volumeFade: parsedSettings.volumeFade,
   currentIndex: 0,
   currentSongId: '',
   currentPlayer: 1,
   isFading: false,
   autoIncremented: false,
-  volume: getSettings().volume,
+  volume: parsedSettings.volume,
   isLoading: false,
-  repeat: getSettings().repeat,
-  shuffle: getSettings().shuffle,
+  repeat: parsedSettings.repeat,
+  shuffle: parsedSettings.shuffle,
   displayQueue: false,
   entry: [],
   shuffledEntry: [],
@@ -158,6 +168,28 @@ const playQueueSlice = createSlice({
 
       resetPlayerDefaults(state);
       state.currentSongId = state[currentEntry][0].id;
+    },
+
+    setPlaybackSetting: (
+      state,
+      action: PayloadAction<{ setting: string; value: any }>
+    ) => {
+      switch (action.payload.setting) {
+        case 'fadeDuration':
+          state.fadeDuration = action.payload.value;
+          break;
+        case 'pollingInterval':
+          state.pollingInterval = action.payload.value;
+          break;
+        case 'fadeType':
+          state.fadeType = action.payload.value;
+          break;
+        case 'volumeFade':
+          state.fadeType = action.payload.value;
+          break;
+        default:
+          break;
+      }
     },
 
     setFadeData: (
@@ -679,5 +711,6 @@ export const {
   setStar,
   shuffleInPlace,
   setFadeData,
+  setPlaybackSetting,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

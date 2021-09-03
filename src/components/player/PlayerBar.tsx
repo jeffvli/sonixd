@@ -56,12 +56,6 @@ const PlayerBar = () => {
   const [seekBackwardInterval] = useState<number>(
     Number(settings.getSync('seekBackwardInterval')) || 5
   );
-  const [fadeDuration] = useState(Number(settings.getSync('fadeDuration')));
-  const [fadeType] = useState(String(settings.getSync('fadeType')));
-  const [pollingInterval] = useState(
-    Number(settings.getSync('pollingInterval'))
-  );
-  const [volumeFade] = useState(Boolean(settings.getSync('volumeFade')));
   const [debug] = useState(Boolean(settings.getSync('showDebugWindow')));
   const playersRef = useRef<any>();
   const history = useHistory();
@@ -315,24 +309,8 @@ const PlayerBar = () => {
   };
 
   return (
-    <Player
-      ref={playersRef}
-      currentEntryList={currentEntryList}
-      fadeDuration={fadeDuration}
-      fadeType={fadeType}
-      pollingInterval={pollingInterval}
-      volumeFade={volumeFade}
-      debug={debug}
-    >
-      {debug && (
-        <DebugWindow
-          currentEntryList={currentEntryList}
-          fadeDuration={fadeDuration}
-          fadeType={fadeType}
-          pollingInterval={pollingInterval}
-          volumeFade={volumeFade}
-        />
-      )}
+    <Player ref={playersRef} currentEntryList={currentEntryList} debug={debug}>
+      {debug && <DebugWindow currentEntryList={currentEntryList} />}
       <PlayerContainer>
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
           <FlexboxGrid.Item

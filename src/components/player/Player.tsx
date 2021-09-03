@@ -164,18 +164,7 @@ const listenHandler = (
   }
 };
 
-const Player = (
-  {
-    currentEntryList,
-    fadeDuration,
-    fadeType,
-    pollingInterval,
-    volumeFade,
-    debug,
-    children,
-  }: any,
-  ref: any
-) => {
+const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
   const dispatch = useAppDispatch();
@@ -184,6 +173,12 @@ const Player = (
   const cacheSongs = settings.getSync('cacheSongs');
   const [title, setTitle] = useState('');
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
+  const [fadeDuration, setFadeDuration] = useState(playQueue.fadeDuration);
+  const [fadeType, setFadeType] = useState(playQueue.fadeType);
+  const [volumeFade, setVolumeFade] = useState(playQueue.volumeFade);
+  const [pollingInterval, setPollingInterval] = useState(
+    playQueue.pollingInterval
+  );
 
   useImperativeHandle(ref, () => ({
     get player1() {
@@ -229,7 +224,20 @@ const Player = (
         player2Ref.current.audioEl.current.pause();
       }, 200);
     }
-  }, [playQueue.currentPlayer, player.status, pollingInterval]);
+  }, [playQueue.currentPlayer, player.status]);
+
+  useEffect(() => {
+    // Update playback settings when changed in redux store
+    setFadeDuration(playQueue.fadeDuration);
+    setFadeType(playQueue.fadeType);
+    setVolumeFade(playQueue.volumeFade);
+    setPollingInterval(playQueue.pollingInterval);
+  }, [
+    playQueue.fadeDuration,
+    playQueue.fadeType,
+    playQueue.pollingInterval,
+    playQueue.volumeFade,
+  ]);
 
   const handleListenPlayer1 = () => {
     listenHandler(

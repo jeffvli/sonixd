@@ -35,10 +35,13 @@ import {
 import { getImageCachePath, getSongCachePath } from '../../shared/utils';
 import setDefaultSettings from '../shared/setDefaultSettings';
 import { HeaderButton } from '../shared/styled';
+import { useAppDispatch } from '../../redux/hooks';
+import { setPlaybackSetting } from '../../redux/playQueueSlice';
 
 const fsUtils = require('nodejs-fs-utils');
 
 const Config = () => {
+  const dispatch = useAppDispatch();
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [imgCacheSize, setImgCacheSize] = useState(0);
@@ -171,9 +174,6 @@ const Config = () => {
       }
     >
       <ConfigPanel header="Playback" bordered>
-        <p style={{ fontSize: 'smaller' }}>
-          *Changing any playback setting will require a reload
-        </p>
         <p>
           Fading works by polling the audio player on an interval to determine
           when to start fading to the next track. Due to this, you may notice
@@ -200,8 +200,10 @@ const Config = () => {
             min={0}
             max={100}
             onChange={(e) => {
-              setRequiresReload(true);
               settings.setSync('fadeDuration', e);
+              dispatch(
+                setPlaybackSetting({ setting: 'fadeDuration', value: e })
+              );
             }}
             style={{ width: '150px' }}
           />
@@ -214,8 +216,10 @@ const Config = () => {
             min={1}
             max={1000}
             onChange={(e) => {
-              setRequiresReload(true);
               settings.setSync('pollingInterval', e);
+              dispatch(
+                setPlaybackSetting({ setting: 'pollingInterval', value: e })
+              );
             }}
             style={{ width: '150px' }}
           />
@@ -226,8 +230,8 @@ const Config = () => {
             appearance="default"
             defaultValue={String(settings.getSync('fadeType'))}
             onChange={(e) => {
-              setRequiresReload(true);
               settings.setSync('fadeType', e);
+              dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
             }}
           >
             <Radio value="equalPower">Equal Power</Radio>
@@ -241,8 +245,8 @@ const Config = () => {
             appearance="default"
             defaultValue={Boolean(settings.getSync('volumeFade'))}
             onChange={(e) => {
-              setRequiresReload(true);
               settings.setSync('volumeFade', e);
+              dispatch(setPlaybackSetting({ setting: 'volumeFade', value: e }));
             }}
           >
             <Radio value>Enabled</Radio>
