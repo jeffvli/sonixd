@@ -185,7 +185,7 @@ const playQueueSlice = createSlice({
           state.fadeType = action.payload.value;
           break;
         case 'volumeFade':
-          state.fadeType = action.payload.value;
+          state.volumeFade = action.payload.value;
           break;
         default:
           break;
