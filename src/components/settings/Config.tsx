@@ -35,13 +35,17 @@ import {
 import { getImageCachePath, getSongCachePath } from '../../shared/utils';
 import setDefaultSettings from '../shared/setDefaultSettings';
 import { HeaderButton } from '../shared/styled';
-import { useAppDispatch } from '../../redux/hooks';
-import { setPlaybackSetting } from '../../redux/playQueueSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  setPlaybackSetting,
+  setPlayerVolume,
+} from '../../redux/playQueueSlice';
 
 const fsUtils = require('nodejs-fs-utils');
 
 const Config = () => {
   const dispatch = useAppDispatch();
+  const playQueue = useAppSelector((state) => state.playQueue);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [imgCacheSize, setImgCacheSize] = useState(0);
@@ -50,7 +54,7 @@ const Config = () => {
   const [isEditingCachePath, setIsEditingCachePath] = useState(false);
   const [newCachePath, setNewCachePath] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [requiresReload, setRequiresReload] = useState(false);
+  const [requiresReload] = useState(false);
 
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -178,18 +182,25 @@ const Config = () => {
           Fading works by polling the audio player on an interval to determine
           when to start fading to the next track. Due to this, you may notice
           the fade timing may not be 100% perfect. Lowering the player polling
-          interval may increase the accuracy of the fade, but may also decrease
-          application performance. You may find that lowering the polling
-          interval between <code>1</code> and <code>50</code> can cause
-          application instabilities, so use at your own risk.
+          interval can increase the accuracy of the fade, but may also decrease
+          application performance as calculations are running for the fade.
         </p>
 
         <p>
           If volume fade is disabled, then the fading-in track will start at the
-          specified crossfade duration at full volume. This is to tentatively
-          support <strong>gapless playback without fade</strong>, but due to
-          tiny inconsistencies with the audio polling interval, you may find the
-          fade better. Experiment with these settings to find your sweet spot.
+          specified crossfade duration at full volume.
+        </p>
+
+        <p>
+          Setting the crossfade duration to <code>0</code> will enable{' '}
+          <strong>gapless playback</strong>. All other playback settings except
+          the polling interval will be ignored. It is recommended that you use a
+          polling interval of <code>1 - 20</code> for increased transition
+          accuracy.
+        </p>
+        <p style={{ fontSize: 'smaller' }}>
+          *Enable the debug window if you want to view the differences between
+          each fade type
         </p>
 
         <div style={{ width: '300px', paddingTop: '20px' }}>
@@ -200,10 +211,22 @@ const Config = () => {
             min={0}
             max={100}
             onChange={(e) => {
-              settings.setSync('fadeDuration', e);
+              settings.setSync('fadeDuration', Number(e));
               dispatch(
-                setPlaybackSetting({ setting: 'fadeDuration', value: e })
+                setPlaybackSetting({
+                  setting: 'fadeDuration',
+                  value: Number(e),
+                })
               );
+
+              if (Number(e) === 0) {
+                dispatch(
+                  setPlayerVolume({ player: 1, volume: playQueue.volume })
+                );
+                dispatch(
+                  setPlayerVolume({ player: 2, volume: playQueue.volume })
+                );
+              }
             }}
             style={{ width: '150px' }}
           />
@@ -216,9 +239,12 @@ const Config = () => {
             min={1}
             max={1000}
             onChange={(e) => {
-              settings.setSync('pollingInterval', e);
+              settings.setSync('pollingInterval', Number(e));
               dispatch(
-                setPlaybackSetting({ setting: 'pollingInterval', value: e })
+                setPlaybackSetting({
+                  setting: 'pollingInterval',
+                  value: Number(e),
+                })
               );
             }}
             style={{ width: '150px' }}
@@ -237,6 +263,16 @@ const Config = () => {
             <Radio value="equalPower">Equal Power</Radio>
             <Radio value="linear">Linear</Radio>
             <Radio value="dipped">Dipped</Radio>
+            <Radio value="constantPower">Constant Power</Radio>
+            <Radio value="constantPowerSlowFade">
+              Constant Power (slow fade)
+            </Radio>
+            <Radio value="constantPowerSlowCut">
+              Constant Power (slow cut)
+            </Radio>
+            <Radio value="constantPowerFastCut">
+              Constant Power (fast cut)
+            </Radio>
           </RadioGroup>
           <br />
           <ControlLabel>Volume fade</ControlLabel>

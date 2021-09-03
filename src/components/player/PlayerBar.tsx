@@ -56,7 +56,6 @@ const PlayerBar = () => {
   const [seekBackwardInterval] = useState<number>(
     Number(settings.getSync('seekBackwardInterval')) || 5
   );
-  const [debug] = useState(Boolean(settings.getSync('showDebugWindow')));
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -79,13 +78,27 @@ const PlayerBar = () => {
             volume: localVolume,
           })
         );
+        if (playQueue.fadeDuration === 0) {
+          dispatch(
+            setPlayerVolume({
+              player: playQueue.currentPlayer === 1 ? 2 : 1,
+              volume: localVolume,
+            })
+          );
+        }
         settings.setSync('volume', localVolume);
       }
       setIsDragging(false);
     }, 10);
 
     return () => clearTimeout(debounce);
-  }, [dispatch, isDraggingVolume, localVolume, playQueue.currentPlayer]);
+  }, [
+    dispatch,
+    isDraggingVolume,
+    localVolume,
+    playQueue.currentPlayer,
+    playQueue.fadeDuration,
+  ]);
 
   useEffect(() => {
     setSeek(player.currentSeek);
@@ -309,8 +322,10 @@ const PlayerBar = () => {
   };
 
   return (
-    <Player ref={playersRef} currentEntryList={currentEntryList} debug={debug}>
-      {debug && <DebugWindow currentEntryList={currentEntryList} />}
+    <Player ref={playersRef} currentEntryList={currentEntryList}>
+      {playQueue.showDebugWindow && (
+        <DebugWindow currentEntryList={currentEntryList} />
+      )}
       <PlayerContainer>
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
           <FlexboxGrid.Item
@@ -480,7 +495,6 @@ const PlayerBar = () => {
                   }}
                 />
               </CustomTooltip>
-
               {/* Next Song Button */}
               <CustomTooltip text="Next track">
                 <PlayerControlIcon

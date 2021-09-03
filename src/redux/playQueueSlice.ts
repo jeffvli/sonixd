@@ -161,6 +161,12 @@ const getCurrentEntryIndex = (entries: any[], currentSongId: string) => {
   return entries.findIndex((entry: any) => entry.id === currentSongId);
 };
 
+const handleGaplessPlayback = (state: PlayQueue) => {
+  if (state.fadeDuration === 0) {
+    state.player2.volume = state.volume;
+  }
+};
+
 const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
@@ -169,6 +175,7 @@ const playQueueSlice = createSlice({
       const currentEntry = entrySelect(state);
 
       resetPlayerDefaults(state);
+      handleGaplessPlayback(state);
       state.currentSongId = state[currentEntry][0].id;
     },
 
@@ -370,6 +377,7 @@ const playQueueSlice = createSlice({
 
     incrementCurrentIndex: (state, action: PayloadAction<string>) => {
       const currentEntry = entrySelect(state);
+
       if (state[currentEntry].length >= 1 && state.repeat !== 'one') {
         if (state.currentIndex < state[currentEntry].length - 1) {
           // Check that current index isn't on the last track of the queue
@@ -400,6 +408,7 @@ const playQueueSlice = createSlice({
         }
       }
 
+      handleGaplessPlayback(state);
       state.currentSongId = state[currentEntry][state.currentIndex].id;
     },
 
@@ -417,6 +426,7 @@ const playQueueSlice = createSlice({
           ) {
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
+            handleGaplessPlayback(state);
           } else if (state.player1.index + 2 >= state[currentEntry].length) {
             /* If incrementing would be greater than the total number of entries,
             reset it back to 0. Also check if player1 is already set to 0. */
@@ -436,6 +446,7 @@ const playQueueSlice = createSlice({
           ) {
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
+            handleGaplessPlayback(state);
           } else if (state.player2.index + 2 >= state[currentEntry].length) {
             /* If incrementing would be greater than the total number of entries,
             reset it back to 0. Also check if player1 is already set to 0. */
@@ -502,6 +513,7 @@ const playQueueSlice = createSlice({
           state.player2.volume = 0;
         }
 
+        handleGaplessPlayback(state);
         state.currentSongId = state[currentEntry][state.currentIndex].id;
       }
     },
@@ -524,6 +536,7 @@ const playQueueSlice = createSlice({
         state.repeat,
         state.currentIndex
       );
+      handleGaplessPlayback(state);
     },
 
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
@@ -545,6 +558,7 @@ const playQueueSlice = createSlice({
     ) => {
       // Used with gridview where you just want to set the entry queue directly
       resetPlayerDefaults(state);
+      handleGaplessPlayback(state);
 
       action.payload.entries.map((entry: any) => state.entry.push(entry));
       if (state.shuffle) {
@@ -570,6 +584,7 @@ const playQueueSlice = createSlice({
       Setting the entry queue by row will add all entries, but set the current index to
       the row that was double clicked */
       resetPlayerDefaults(state);
+      handleGaplessPlayback(state);
       action.payload.entries.map((entry: any) => state.entry.push(entry));
 
       if (state.shuffle) {

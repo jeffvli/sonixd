@@ -26,6 +26,45 @@ import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 import { getSongCachePath, isCached } from '../../shared/utils';
 
+const gaplessListenHandler = (
+  currentPlayerRef: any,
+  nextPlayerRef: any,
+  playQueue: any,
+  currentPlayer: number,
+  dispatch: any,
+  pollingInterval: number
+) => {
+  const seek =
+    Math.round(currentPlayerRef.current.audioEl.current.currentTime * 100) /
+    100;
+  const duration =
+    Math.round(currentPlayerRef.current.audioEl.current.duration * 100) / 100;
+
+  const seekable =
+    currentPlayerRef.current.audioEl.current.seekable.length >= 1
+      ? currentPlayerRef.current.audioEl.current.seekable.end(
+          currentPlayerRef.current.audioEl.current.seekable.length - 1
+        )
+      : 0;
+
+  if (playQueue.currentPlayer === currentPlayer) {
+    dispatch(
+      setCurrentSeek({
+        seek,
+        seekable,
+      })
+    );
+  }
+
+  // Add a bit of leeway for the second track to start since the
+  // seek value doesn't always reach the duration
+  const durationPadding =
+    pollingInterval <= 10 ? 0.13 : pollingInterval <= 20 ? 0.14 : 0.15;
+  if (seek + durationPadding >= duration) {
+    nextPlayerRef.current.audioEl.current.play();
+  }
+};
+
 const listenHandler = (
   currentPlayerRef: any,
   nextPlayerRef: any,
@@ -65,6 +104,7 @@ const listenHandler = (
         let currentPlayerVolumeCalculation;
         let nextPlayerVolumeCalculation;
         let percentageOfFadeLeft;
+        let n;
         switch (fadeType) {
           case 'equalPower':
             // https://dsp.stackexchange.com/a/14755
@@ -88,6 +128,30 @@ const listenHandler = (
             nextPlayerVolumeCalculation =
               (percentageOfFadeLeft - 1) ** 2 * playQueue.volume;
             break;
+          case fadeType.match(/constantPower.*/)?.input:
+            // https://math.stackexchange.com/a/26159
+            n =
+              fadeType === 'constantPower'
+                ? 0
+                : fadeType === 'constantPowerSlowFade'
+                ? 1
+                : fadeType === 'constantPowerSlowCut'
+                ? 3
+                : 10;
+
+            percentageOfFadeLeft = timeLeft / fadeDuration;
+            currentPlayerVolumeCalculation =
+              Math.cos(
+                (Math.PI / 4) *
+                  ((2 * percentageOfFadeLeft - 1) ** (2 * n + 1) - 1)
+              ) * playQueue.volume;
+            nextPlayerVolumeCalculation =
+              Math.cos(
+                (Math.PI / 4) *
+                  ((2 * percentageOfFadeLeft - 1) ** (2 * n + 1) + 1)
+              ) * playQueue.volume;
+            break;
+
           default:
             currentPlayerVolumeCalculation =
               (timeLeft / fadeDuration) * playQueue.volume;
@@ -164,13 +228,14 @@ const listenHandler = (
   }
 };
 
-const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
+const Player = ({ currentEntryList, children }: any, ref: any) => {
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const cacheSongs = settings.getSync('cacheSongs');
+  const [debug, setDebug] = useState(playQueue.showDebugWindow);
   const [title, setTitle] = useState('');
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
   const [fadeDuration, setFadeDuration] = useState(playQueue.fadeDuration);
@@ -228,6 +293,7 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
 
   useEffect(() => {
     // Update playback settings when changed in redux store
+    setDebug(playQueue.showDebugWindow);
     setFadeDuration(playQueue.fadeDuration);
     setFadeType(playQueue.fadeType);
     setVolumeFade(playQueue.volumeFade);
@@ -236,6 +302,7 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
     playQueue.fadeDuration,
     playQueue.fadeType,
     playQueue.pollingInterval,
+    playQueue.showDebugWindow,
     playQueue.volumeFade,
   ]);
 
@@ -302,9 +369,12 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
       ) {
         dispatch(setCurrentPlayer(2));
         dispatch(incrementPlayerIndex(1));
-        dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-        dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
-        dispatch(setIsFading(false));
+        if (fadeDuration !== 0) {
+          dispatch(setPlayerVolume({ player: 1, volume: 0 }));
+          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+          dispatch(setIsFading(false));
+        }
+
         dispatch(setAutoIncremented(false));
       }
     }
@@ -343,9 +413,11 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
       ) {
         dispatch(setCurrentPlayer(1));
         dispatch(incrementPlayerIndex(2));
-        dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-        dispatch(setPlayerVolume({ player: 2, volume: 0 }));
-        dispatch(setIsFading(false));
+        if (fadeDuration !== 0) {
+          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
+          dispatch(setPlayerVolume({ player: 2, volume: 0 }));
+          dispatch(setIsFading(false));
+        }
         dispatch(setAutoIncremented(false));
       }
     }
@@ -374,6 +446,28 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
     setTitle(`${playStatus} ${songTitle}`);
   }, [currentEntryList, playQueue, playQueue.currentIndex, player.status]);
 
+  const handleGaplessPlayer1 = () => {
+    gaplessListenHandler(
+      player1Ref,
+      player2Ref,
+      playQueue,
+      1,
+      dispatch,
+      pollingInterval
+    );
+  };
+
+  const handleGaplessPlayer2 = () => {
+    gaplessListenHandler(
+      player2Ref,
+      player1Ref,
+      playQueue,
+      2,
+      dispatch,
+      pollingInterval
+    );
+  };
+
   return (
     <>
       <Helmet>
@@ -395,7 +489,9 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
         }
         listenInterval={pollingInterval}
         preload="auto"
-        onListen={handleListenPlayer1}
+        onListen={
+          fadeDuration === 0 ? handleGaplessPlayer1 : handleListenPlayer1
+        }
         onEnded={handleOnEndedPlayer1}
         volume={playQueue.player1.volume}
         autoPlay={
@@ -419,7 +515,9 @@ const Player = ({ currentEntryList, debug, children }: any, ref: any) => {
         }
         listenInterval={pollingInterval}
         preload="auto"
-        onListen={handleListenPlayer2}
+        onListen={
+          fadeDuration === 0 ? handleGaplessPlayer2 : handleListenPlayer2
+        }
         onEnded={handleOnEndedPlayer2}
         volume={playQueue.player2.volume}
         autoPlay={
