@@ -232,6 +232,7 @@ const Config = () => {
           >
             <Radio value="equalPower">Equal Power</Radio>
             <Radio value="linear">Linear</Radio>
+            <Radio value="dipped">Dipped</Radio>
           </RadioGroup>
           <br />
           <ControlLabel>Volume fade</ControlLabel>
