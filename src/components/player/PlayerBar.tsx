@@ -62,6 +62,7 @@ const PlayerBar = () => {
     Number(settings.getSync('pollingInterval'))
   );
   const [volumeFade] = useState(Boolean(settings.getSync('volumeFade')));
+  const [debug] = useState(Boolean(settings.getSync('showDebugWindow')));
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -321,8 +322,9 @@ const PlayerBar = () => {
       fadeType={fadeType}
       pollingInterval={pollingInterval}
       volumeFade={volumeFade}
+      debug={debug}
     >
-      {settings.getSync('showDebugWindow') && (
+      {debug && (
         <DebugWindow
           currentEntryList={currentEntryList}
           fadeDuration={fadeDuration}

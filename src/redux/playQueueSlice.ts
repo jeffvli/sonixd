@@ -38,10 +38,18 @@ export interface PlayQueue {
   player1: {
     index: number;
     volume: number;
+    fadeData: {
+      volumeData: number[];
+      timeData: string[];
+    };
   };
   player2: {
     index: number;
     volume: number;
+    fadeData: {
+      volumeData: number[];
+      timeData: string[];
+    };
   };
   currentIndex: number;
   currentSongId: string;
@@ -61,10 +69,18 @@ const initialState: PlayQueue = {
   player1: {
     index: 0,
     volume: 0.5,
+    fadeData: {
+      volumeData: [],
+      timeData: [],
+    },
   },
   player2: {
     index: 1,
     volume: 0,
+    fadeData: {
+      volumeData: [],
+      timeData: [],
+    },
   },
   currentIndex: 0,
   currentSongId: '',
@@ -142,6 +158,38 @@ const playQueueSlice = createSlice({
 
       resetPlayerDefaults(state);
       state.currentSongId = state[currentEntry][0].id;
+    },
+
+    setFadeData: (
+      state,
+      action: PayloadAction<{
+        player?: number;
+        volume?: number;
+        time?: number;
+        clear?: boolean;
+      }>
+    ) => {
+      if (!action.payload.clear) {
+        switch (action.payload.player) {
+          case 1:
+            state.player1.fadeData.volumeData.push(action.payload.volume || 0);
+            state.player1.fadeData.timeData.push(
+              action.payload.time?.toFixed(2) || '0'
+            );
+            break;
+          case 2:
+            state.player2.fadeData.volumeData.push(action.payload.volume || 0);
+            state.player2.fadeData.timeData.push(
+              action.payload.time?.toFixed(2) || '0'
+            );
+            break;
+          default:
+            break;
+        }
+      } else {
+        state.player1.fadeData = { volumeData: [], timeData: [] };
+        state.player2.fadeData = { volumeData: [], timeData: [] };
+      }
     },
 
     shuffleInPlace: (state) => {
@@ -630,5 +678,6 @@ export const {
   resetPlayQueue,
   setStar,
   shuffleInPlace,
+  setFadeData,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

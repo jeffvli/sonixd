@@ -20,6 +20,7 @@ import {
   setAutoIncremented,
   fixPlayer2Index,
   setCurrentIndex,
+  setFadeData,
 } from '../../redux/playQueueSlice';
 import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
@@ -34,7 +35,8 @@ const listenHandler = (
   player: number,
   fadeDuration: number,
   fadeType: string,
-  volumeFade: boolean
+  volumeFade: boolean,
+  debug: boolean
 ) => {
   const currentSeek =
     currentPlayerRef.current?.audioEl.current?.currentTime || 0;
@@ -57,27 +59,44 @@ const listenHandler = (
     if (currentSeek >= fadeAtTime) {
       if (volumeFade) {
         const timeLeft = duration - currentSeek;
+        let currentPlayerVolumeCalculation;
         if (nextPlayerRef.current.audioEl.current) {
-          const currentPlayerVolumeCalculation =
-            fadeType === 'equalPower'
-              ? Math.sqrt(0.5 * ((timeLeft / fadeDuration) * 2)) *
-                playQueue.volume
-              : fadeType === 'linear'
-              ? (timeLeft / fadeDuration) * playQueue.volume
-              : 0;
+          switch (fadeType) {
+            case 'equalPower':
+              currentPlayerVolumeCalculation =
+                Math.sqrt(0.5 * ((timeLeft / fadeDuration) * 2)) *
+                playQueue.volume;
+              break;
+            case 'linear':
+              currentPlayerVolumeCalculation =
+                (timeLeft / fadeDuration) * playQueue.volume;
+              break;
+            default:
+              currentPlayerVolumeCalculation =
+                (timeLeft / fadeDuration) * playQueue.volume;
+              break;
+          }
 
           const currentPlayerVolume =
             currentPlayerVolumeCalculation <= 0
               ? 0
               : currentPlayerVolumeCalculation;
 
-          const nextPlayerVolumeCalculation =
-            fadeType === 'equalPower'
-              ? Math.sqrt(0.5 * (2 - (timeLeft / fadeDuration) * 2)) *
-                playQueue.volume
-              : fadeType === 'linear'
-              ? ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume
-              : 0;
+          let nextPlayerVolumeCalculation;
+          switch (fadeType) {
+            case 'equalPower':
+              nextPlayerVolumeCalculation =
+                Math.sqrt(0.5 * (2 - (timeLeft / fadeDuration) * 2)) *
+                playQueue.volume;
+              break;
+            case 'linear':
+              nextPlayerVolumeCalculation =
+                ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume;
+              break;
+            default:
+              nextPlayerVolumeCalculation =
+                ((fadeDuration - timeLeft) / fadeDuration) * playQueue.volume;
+          }
 
           const nextPlayerVolume =
             nextPlayerVolumeCalculation >= playQueue.volume
@@ -89,11 +108,43 @@ const listenHandler = (
               setPlayerVolume({ player: 1, volume: currentPlayerVolume })
             );
             dispatch(setPlayerVolume({ player: 2, volume: nextPlayerVolume }));
+            if (debug) {
+              dispatch(
+                setFadeData({
+                  player: 1,
+                  time: timeLeft,
+                  volume: currentPlayerVolume,
+                })
+              );
+              dispatch(
+                setFadeData({
+                  player: 2,
+                  time: timeLeft,
+                  volume: nextPlayerVolume,
+                })
+              );
+            }
           } else {
             dispatch(
               setPlayerVolume({ player: 2, volume: currentPlayerVolume })
             );
             dispatch(setPlayerVolume({ player: 1, volume: nextPlayerVolume }));
+            if (debug) {
+              dispatch(
+                setFadeData({
+                  player: 2,
+                  time: timeLeft,
+                  volume: currentPlayerVolume,
+                })
+              );
+              dispatch(
+                setFadeData({
+                  player: 1,
+                  time: timeLeft,
+                  volume: nextPlayerVolume,
+                })
+              );
+            }
           }
 
           nextPlayerRef.current.audioEl.current.play();
@@ -125,6 +176,7 @@ const Player = (
     fadeType,
     pollingInterval,
     volumeFade,
+    debug,
     children,
   }: any,
   ref: any
@@ -194,7 +246,8 @@ const Player = (
       1,
       fadeDuration,
       fadeType,
-      volumeFade
+      volumeFade,
+      debug
     );
   };
 
@@ -208,7 +261,8 @@ const Player = (
       2,
       fadeDuration,
       fadeType,
-      volumeFade
+      volumeFade,
+      debug
     );
   };
 

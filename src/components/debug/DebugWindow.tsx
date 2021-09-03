@@ -1,33 +1,100 @@
 import React, { useState } from 'react';
-import { Checkbox, Divider, FlexboxGrid, Panel, Slider } from 'rsuite';
-import { useAppSelector } from '../../redux/hooks';
+import { Line } from 'react-chartjs-2';
+import { Button, Checkbox, Divider, FlexboxGrid, Panel, Slider } from 'rsuite';
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import CustomTooltip from '../shared/CustomTooltip';
+import { setFadeData } from '../../redux/playQueueSlice';
 
 const DebugWindow = ({ ...rest }) => {
+  const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [checked, setChecked] = useState(true);
-  const [opacity, setOpacity] = useState(100);
+  const [opacity, setOpacity] = useState(60);
+
+  const fadeChartData = {
+    labels: playQueue.player1.fadeData.timeData,
+    datasets: [
+      {
+        label: 'Player 1',
+        data: playQueue.player1.fadeData.volumeData,
+        fill: false,
+        backgroundColor: 'rgb(0, 150, 0)',
+        borderColor: 'rgba(0, 150, 0, 0.2)',
+      },
+      {
+        label: 'Player 2',
+        data: playQueue.player2.fadeData.volumeData,
+        fill: false,
+        backgroundColor: 'rgb(150, 0, 0)',
+        borderColor: 'rgba(150, 0, 0, 0.2)',
+      },
+    ],
+  };
+
+  const fadeChartOptions = {
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: `${playQueue.player1.fadeData.volumeData.length} fades`,
+        position: 'bottom',
+      },
+      legend: {
+        display: false,
+      },
+    },
+    animation: false,
+  };
+
   return (
     <Panel
       style={{
         position: 'absolute',
         zIndex: 2,
-        bottom: '120px',
+        bottom: '8%',
         right: '20px',
         padding: '10px',
-        width: '270px',
+        width: '400px',
+        height: '70%',
         background: '#000',
         pointerEvents: checked ? 'all' : 'none',
         opacity: opacity / 100,
+        overflowX: 'hidden',
+        overflowY: 'auto',
       }}
       bordered
     >
-      <FlexboxGrid justify="space-between" style={{ alignItems: 'center' }}>
-        <FlexboxGrid.Item>
-          <h6>Player</h6>
-        </FlexboxGrid.Item>
+      <FlexboxGrid
+        style={{
+          alignItems: 'center',
+          position: 'fixed',
+        }}
+      >
+        <h5 style={{ paddingRight: '10px' }}>Debug</h5>
+        <CustomTooltip text="Clickable">
+          <FlexboxGrid.Item>
+            <Checkbox
+              style={{
+                pointerEvents: 'all',
+                paddingRight: '10px',
+                padding: '0px !important',
+                margin: '0px !important',
+              }}
+              defaultChecked={checked}
+              onChange={() => setChecked(!checked)}
+            />
+          </FlexboxGrid.Item>
+        </CustomTooltip>
         <CustomTooltip text="Opacity">
           <FlexboxGrid.Item>
             <Slider
@@ -40,128 +107,139 @@ const DebugWindow = ({ ...rest }) => {
             />
           </FlexboxGrid.Item>
         </CustomTooltip>
-
-        <CustomTooltip text="Clickable">
-          <FlexboxGrid.Item>
-            <Checkbox
-              style={{
-                pointerEvents: 'all',
-                padding: '0px !important',
-                margin: '0px !important',
-              }}
-              defaultChecked={checked}
-              onChange={() => setChecked(!checked)}
-            />
-          </FlexboxGrid.Item>
-        </CustomTooltip>
       </FlexboxGrid>
 
-      <ul
-        style={{
-          listStyle: 'none',
-          paddingLeft: '0px',
-          wordWrap: 'break-word',
-        }}
-      >
-        <li>
-          status:{' '}
-          <span
-            style={{
-              color: player.status === 'PLAYING' ? 'lightgreen' : 'orange',
-            }}
-          >
-            {player.status}
-          </span>
-        </li>
-        <li>currentSeek: {player.currentSeek.toFixed(2)}</li>
-        <li>currentSeekable: {player.currentSeekable.toFixed(2)}</li>
-        <li>volume (global): {playQueue.volume.toFixed(2)}</li>
-        <li>volumeFade: {rest.volumeFade ? 'true' : 'false'}</li>
-        <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
-        <li>repeat: {playQueue.repeat}</li>
-        <li>isFading: {playQueue.isFading ? 'true' : 'false'}</li>
-        <li>currentEntryList: {rest.currentEntryList}</li>
-        <li>fadeDuration: {rest.fadeDuration}</li>
-        <li>fadeType: {rest.fadeType}</li>
-        <li>pollingInterval: {rest.pollingInterval}</li>
-      </ul>
+      <div style={{ paddingTop: '40px' }}>
+        <h6>Player</h6>
 
-      <table style={{ tableLayout: 'fixed' }}>
-        <tbody>
-          <tr style={{ textAlign: 'left' }}>
-            <th>Player</th>
-            <th
+        <ul
+          style={{
+            listStyle: 'none',
+            paddingLeft: '0px',
+            wordWrap: 'break-word',
+          }}
+        >
+          <li>
+            status:{' '}
+            <span
               style={{
-                color: playQueue.currentPlayer === 1 ? 'lightgreen' : undefined,
+                color: player.status === 'PLAYING' ? 'lightgreen' : 'orange',
               }}
             >
-              1
-            </th>
-            <th
-              style={{
-                color: playQueue.currentPlayer === 2 ? 'lightgreen' : undefined,
-              }}
+              {player.status}
+            </span>
+          </li>
+          <li>currentSeek: {player.currentSeek.toFixed(2)}</li>
+          <li>currentSeekable: {player.currentSeekable.toFixed(2)}</li>
+          <li>volume (global): {playQueue.volume.toFixed(2)}</li>
+          <li>volumeFade: {rest.volumeFade ? 'true' : 'false'}</li>
+          <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
+          <li>repeat: {playQueue.repeat}</li>
+          <li>isFading: {playQueue.isFading ? 'true' : 'false'}</li>
+          <li>currentEntryList: {rest.currentEntryList}</li>
+          <li>fadeDuration: {rest.fadeDuration}</li>
+          <li>fadeType: {rest.fadeType}</li>
+          <li>pollingInterval: {rest.pollingInterval}</li>
+        </ul>
+
+        <table style={{ tableLayout: 'fixed', textAlign: 'center' }}>
+          <tbody>
+            <tr>
+              <th style={{ textAlign: 'left' }}>
+                Player [{playQueue.currentPlayer}]
+              </th>
+              <th
+                style={{
+                  color: 'rgb(0, 150, 0)',
+                }}
+              >
+                1
+              </th>
+              <th
+                style={{
+                  color: 'rgb(150, 0, 0)',
+                }}
+              >
+                2
+              </th>
+            </tr>
+            <tr>
+              <td style={{ textAlign: 'left' }}>index</td>
+              <td>{playQueue.player1.index}</td>
+              <td>{playQueue.player2.index}</td>
+            </tr>
+            <tr>
+              <td style={{ width: '80px', textAlign: 'left' }}>volume</td>
+              <td style={{ width: '65px' }}>
+                {Number(playQueue.player1.volume).toFixed(2)}
+              </td>
+              <td style={{ width: '65px' }}>
+                {Number(playQueue.player2.volume).toFixed(2)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br />
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item>
+            <h6>Volume fade</h6>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item>
+            <Button
+              size="xs"
+              onClick={() => dispatch(setFadeData({ clear: true }))}
             >
-              2
-            </th>
-          </tr>
-          <tr>
-            <td>index</td>
-            <td>{playQueue.player1.index}</td>
-            <td>{playQueue.player2.index}</td>
-          </tr>
-          <tr>
-            <td style={{ width: '80px' }}>volume</td>
-            <td style={{ width: '65px' }}>
-              {Number(playQueue.player1.volume).toFixed(2)}
-            </td>
-            <td style={{ width: '65px' }}>
-              {Number(playQueue.player2.volume).toFixed(2)}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              Reset
+            </Button>
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
 
-      <Divider />
-      <h6>PlayQueue</h6>
+        <Line data={fadeChartData} options={fadeChartOptions} />
 
-      <ul
-        style={{
-          listStyle: 'none',
-          paddingLeft: '0px',
-          wordWrap: 'break-word',
-        }}
-      >
-        <li>currentIndex: {playQueue.currentIndex}</li>
-        <li>currentSongId: {playQueue.currentSongId}</li>
-        <li>entry: {playQueue.entry.length} tracks</li>
-        <li>shuffledEntry: {playQueue.shuffledEntry.length} tracks</li>
-      </ul>
+        <Divider />
 
-      <Divider />
-      <h6>Multiselect</h6>
-      <ul
-        style={{
-          listStyle: 'none',
-          paddingLeft: '0px',
-          wordWrap: 'break-word',
-        }}
-      >
-        <li>
-          lastSelected: [{multiSelect.lastSelected.rowIndex}]{' '}
-          {multiSelect.lastSelected.title}
-        </li>
-        <li>
-          range (start): [{multiSelect.lastRangeSelected.lastSelected.rowIndex}]{' '}
-          {multiSelect.lastRangeSelected.lastSelected.title}
-        </li>
-        <li>
-          range (end): [
-          {multiSelect.lastRangeSelected.lastRangeSelected.rowIndex}]{' '}
-          {multiSelect.lastRangeSelected.lastRangeSelected.title}
-        </li>
-        <li>selected: {multiSelect.selected.length} rows</li>
-      </ul>
+        <h6>PlayQueue</h6>
+
+        <ul
+          style={{
+            listStyle: 'none',
+            paddingLeft: '0px',
+            wordWrap: 'break-word',
+          }}
+        >
+          <li>currentIndex: {playQueue.currentIndex}</li>
+          <li>currentSongId: {playQueue.currentSongId}</li>
+          <li>entry: {playQueue.entry.length} tracks</li>
+          <li>shuffledEntry: {playQueue.shuffledEntry.length} tracks</li>
+        </ul>
+
+        <Divider />
+        <h6>Multiselect</h6>
+        <ul
+          style={{
+            listStyle: 'none',
+            paddingLeft: '0px',
+            wordWrap: 'break-word',
+          }}
+        >
+          <li>
+            lastSelected: [{multiSelect.lastSelected.rowIndex}]{' '}
+            {multiSelect.lastSelected.title}
+          </li>
+          <li>
+            range (start): [
+            {multiSelect.lastRangeSelected.lastSelected.rowIndex}]{' '}
+            {multiSelect.lastRangeSelected.lastSelected.title}
+          </li>
+          <li>
+            range (end): [
+            {multiSelect.lastRangeSelected.lastRangeSelected.rowIndex}]{' '}
+            {multiSelect.lastRangeSelected.lastRangeSelected.title}
+          </li>
+          <li>selected: {multiSelect.selected.length} rows</li>
+        </ul>
+      </div>
     </Panel>
   );
 };
