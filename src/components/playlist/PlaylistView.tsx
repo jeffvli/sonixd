@@ -8,14 +8,15 @@ import {
   EditButton,
   PlayAppendButton,
   PlayButton,
-  PlayShuffleAppendButton,
-  PlayShuffleButton,
+  SaveButton,
 } from '../shared/ToolbarButtons';
 import { getPlaylist } from '../../api/api';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
   setPlayQueueByRowClick,
+  setPlayQueue,
+  appendPlayQueue,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -37,6 +38,7 @@ interface PlaylistParams {
 
 const PlaylistView = () => {
   const dispatch = useAppDispatch();
+  const playQueue = useAppSelector((state) => state.playQueue);
   const { id } = useParams<PlaylistParams>();
   const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', id],
@@ -84,6 +86,18 @@ const PlaylistView = () => {
     dispatch(fixPlayer2Index());
   };
 
+  const handlePlay = () => {
+    dispatch(setPlayQueue({ entries: data.entry }));
+    dispatch(setStatus('PLAYING'));
+  };
+
+  const handlePlayAppend = () => {
+    dispatch(appendPlayQueue({ entries: data.entry }));
+    if (playQueue.entry.length < 1) {
+      dispatch(setStatus('PLAYING'));
+    }
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -111,12 +125,19 @@ const PlaylistView = () => {
               </div>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton appearance="primary" size="lg" circle />
-                  <PlayShuffleButton />
-                  <PlayAppendButton />
-                  <PlayShuffleAppendButton />
-                  <EditButton />
-                  <DeleteButton />
+                  <PlayButton
+                    appearance="primary"
+                    size="lg"
+                    onClick={handlePlay}
+                  />
+                  <PlayAppendButton
+                    appearance="primary"
+                    size="lg"
+                    onClick={handlePlayAppend}
+                  />
+                  <SaveButton size="lg" />
+                  <EditButton size="lg" />
+                  <DeleteButton size="lg" />
                 </ButtonToolbar>
               </div>
             </div>

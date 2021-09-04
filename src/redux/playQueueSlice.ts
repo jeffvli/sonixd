@@ -317,15 +317,37 @@ const playQueueSlice = createSlice({
     },
 
     setStar: (state, action: PayloadAction<{ id: string; type: string }>) => {
-      const currentEntry = entrySelect(state);
+      /* Since the playqueue can have multiples of the same song, we need to find
+       all the indices of the starred/unstarred song. */
 
-      const findIndex = state[currentEntry].findIndex(
-        (track) => track.id === action.payload.id
-      );
+      const findIndices = state.entry
+        .map((entry, index) => (entry.id === action.payload.id ? index : ''))
+        .filter(String);
+
+      const findShuffledIndices = state.shuffledEntry
+        .map((entry, index) => (entry.id === action.payload.id ? index : ''))
+        .filter(String);
+
       if (action.payload.type === 'unstar') {
-        state[currentEntry][findIndex].starred = undefined;
+        findIndices?.map((rowIndex: any) => {
+          state.entry[rowIndex].starred = undefined;
+          return rowIndex;
+        });
+
+        findShuffledIndices?.map((rowIndex: any) => {
+          state.shuffledEntry[rowIndex].starred = undefined;
+          return rowIndex;
+        });
       } else {
-        state[currentEntry][findIndex].starred = String(Date.now());
+        findIndices?.map((rowIndex: any) => {
+          state.entry[rowIndex].starred = String(Date.now());
+          return rowIndex;
+        });
+
+        findShuffledIndices?.map((rowIndex: any) => {
+          state.shuffledEntry[rowIndex].starred = String(Date.now());
+          return rowIndex;
+        });
       }
     },
 
@@ -611,10 +633,10 @@ const playQueueSlice = createSlice({
       }
     },
 
-    appendPlayQueue: (state, action: PayloadAction<Entry[]>) => {
-      action.payload.map((entry: any) => state.entry.push(entry));
+    appendPlayQueue: (state, action: PayloadAction<{ entries: Entry[] }>) => {
+      action.payload.entries.map((entry: any) => state.entry.push(entry));
       if (state.shuffle) {
-        const shuffledEntries = _.shuffle(action.payload);
+        const shuffledEntries = _.shuffle(action.payload.entries);
         shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
       }
     },
@@ -714,6 +736,7 @@ export const {
   setCurrentIndex,
   setPlayQueue,
   setPlayQueueByRowClick,
+  appendPlayQueue,
   clearPlayQueue,
   setIsLoading,
   setIsLoaded,

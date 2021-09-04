@@ -45,15 +45,11 @@ const ListViewTable = ({
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      star(rowData.id, listType);
-      if (nowPlaying) {
-        dispatch(setStar({ id: rowData.id, type: 'star' }));
-      }
+      await star(rowData.id, listType);
+      dispatch(setStar({ id: rowData.id, type: 'star' }));
     } else {
-      unstar(rowData.id, listType);
-      if (nowPlaying) {
-        dispatch(setStar({ id: rowData.id, type: 'unstar' }));
-      }
+      await unstar(rowData.id, listType);
+      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
     }
     await queryClient.refetchQueries(['starred'], {
       active: true,

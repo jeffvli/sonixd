@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag } from 'rsuite';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
-  DeleteButton,
-  EditButton,
+  FavoriteButton,
   PlayAppendButton,
   PlayButton,
-  PlayShuffleAppendButton,
-  PlayShuffleButton,
 } from '../shared/ToolbarButtons';
-import { getAlbum } from '../../api/api';
-import { useAppDispatch } from '../../redux/hooks';
+import { getAlbum, star, unstar } from '../../api/api';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  appendPlayQueue,
   fixPlayer2Index,
+  setPlayQueue,
   setPlayQueueByRowClick,
 } from '../../redux/playQueueSlice';
 import {
@@ -38,7 +37,9 @@ interface AlbumParams {
 
 const AlbumView = () => {
   const dispatch = useAppDispatch();
+  const playQueue = useAppSelector((state) => state.playQueue);
   const history = useHistory();
+  const queryClient = useQueryClient();
   const { id } = useParams<AlbumParams>();
   const { isLoading, isError, data, error }: any = useQuery(['album', id], () =>
     getAlbum(id)
@@ -84,6 +85,30 @@ const AlbumView = () => {
     );
     dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
+  };
+
+  const handlePlay = () => {
+    dispatch(setPlayQueue({ entries: data.song }));
+    dispatch(setStatus('PLAYING'));
+  };
+
+  const handlePlayAppend = () => {
+    dispatch(appendPlayQueue({ entries: data.song }));
+    if (playQueue.entry.length < 1) {
+      dispatch(setStatus('PLAYING'));
+    }
+  };
+
+  const handleFavorite = async () => {
+    if (!data.starred) {
+      await star(data.id, 'album');
+    } else {
+      await unstar(data.id, 'album');
+    }
+    await queryClient.refetchQueries(['album', id], {
+      active: true,
+      exact: true,
+    });
   };
 
   if (isLoading) {
@@ -133,12 +158,21 @@ const AlbumView = () => {
               </div>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton appearance="primary" size="lg" circle />
-                  <PlayShuffleButton />
-                  <PlayAppendButton />
-                  <PlayShuffleAppendButton />
-                  <EditButton />
-                  <DeleteButton />
+                  <PlayButton
+                    appearance="primary"
+                    size="lg"
+                    onClick={handlePlay}
+                  />
+                  <PlayAppendButton
+                    appearance="primary"
+                    size="lg"
+                    onClick={handlePlayAppend}
+                  />
+                  <FavoriteButton
+                    size="lg"
+                    isFavorite={data.starred}
+                    onClick={handleFavorite}
+                  />
                 </ButtonToolbar>
               </div>
             </div>

@@ -295,30 +295,38 @@ const PlayerBar = () => {
 
   const handleFavorite = async () => {
     if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
-      star(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
+      await star(
+        playQueue[currentEntryList][playQueue.currentIndex].id,
+        'song'
+      );
       dispatch(
         setStar({
           id: playQueue[currentEntryList][playQueue.currentIndex].id,
           type: 'star',
         })
       );
-      await queryClient.refetchQueries(['starred'], {
-        active: true,
-        exact: true,
-      });
     } else {
-      unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
+      await unstar(
+        playQueue[currentEntryList][playQueue.currentIndex].id,
+        'song'
+      );
       dispatch(
         setStar({
           id: playQueue[currentEntryList][playQueue.currentIndex].id,
           type: 'unstar',
         })
       );
-      await queryClient.refetchQueries(['starred'], {
-        active: true,
-        exact: true,
-      });
     }
+
+    await queryClient.refetchQueries(['album'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['starred'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['playlist'], {
+      active: true,
+    });
   };
 
   return (
