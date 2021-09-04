@@ -21,7 +21,12 @@ const GenericPageHeader = ({
   return (
     <>
       {image && (
-        <div style={{ display: 'inline-block' }}>
+        <div
+          style={{
+            display: 'inline-block',
+            filter: 'drop-shadow(0px 0px 6px #000)',
+          }}
+        >
           <img
             src={image}
             alt="header-img"

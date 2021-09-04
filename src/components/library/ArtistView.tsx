@@ -144,7 +144,8 @@ const ArtistView = () => {
                   <EditButton style={{ marginRight: '10px' }} />
                   <Whisper
                     placement="bottomStart"
-                    trigger="click"
+                    trigger="hover"
+                    enterable
                     speaker={
                       <Popover style={{ width: '400px' }}>
                         <TagGroup>

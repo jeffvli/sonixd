@@ -460,7 +460,6 @@ const Config = () => {
         >
           Show debug window
         </Checkbox>
-        <br />
       </ConfigPanel>
     </GenericPage>
   );

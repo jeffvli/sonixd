@@ -8,7 +8,7 @@ import { nanoid } from 'nanoid';
 import { Table, Grid, Row, Col, Icon, Rate } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { RsuiteLinkButton } from './styled';
+import { RsuiteLinkButton, TableCellWrapper } from './styled';
 import {
   formatSongDuration,
   isCached,
@@ -114,7 +114,16 @@ const ListViewTable = ({
             <Table.Cell>
               {(rowData: any, rowIndex: any) => {
                 return (
-                  <div
+                  <TableCellWrapper
+                    playing={
+                      rowData.id === playQueue?.currentSongId &&
+                      playQueue.currentIndex === rowIndex &&
+                      nowPlaying
+                    }
+                    selected={multiSelect?.selected.find(
+                      (e: any) => e.id === rowData.id
+                    )}
+                    height={rowHeight}
                     onClick={(e: any) =>
                       handleRowClick(e, {
                         ...rowData,
@@ -127,27 +136,10 @@ const ListViewTable = ({
                         rowIndex,
                       })
                     }
-                    className={
-                      rowData.id === playQueue?.currentSongId &&
-                      playQueue.currentIndex === rowIndex &&
-                      nowPlaying
-                        ? 'active'
-                        : ''
-                    }
-                    style={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? {
-                            background: '#4D5156',
-                            lineHeight: `${rowHeight}px`,
-                          }
-                        : { lineHeight: `${rowHeight}px` }
-                    }
                   >
                     {rowIndex + 1}
                     {rowData['-empty']}
-                  </div>
+                  </TableCellWrapper>
                 );
               }}
             </Table.Cell>
@@ -155,7 +147,10 @@ const ListViewTable = ({
             <Table.Cell>
               {(rowData: any, rowIndex: any) => {
                 return (
-                  <div
+                  <TableCellWrapper
+                    selected={multiSelect?.selected.find(
+                      (e: any) => e.id === rowData.id
+                    )}
                     onClick={(e: any) =>
                       handleRowClick(e, {
                         ...rowData,
@@ -167,22 +162,6 @@ const ListViewTable = ({
                         ...rowData,
                         rowIndex,
                       })
-                    }
-                    className={
-                      rowData.id === playQueue?.currentSongId &&
-                      playQueue.currentIndex === rowIndex &&
-                      nowPlaying
-                        ? 'active'
-                        : ''
-                    }
-                    style={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? {
-                            background: '#4D5156',
-                          }
-                        : {}
                     }
                   >
                     <Grid fluid>
@@ -234,6 +213,12 @@ const ListViewTable = ({
                             overflow: 'hidden',
                             paddingLeft: '10px',
                             paddingRight: '20px',
+                            color:
+                              rowData.id === playQueue?.currentSongId &&
+                              playQueue.currentIndex === rowIndex &&
+                              nowPlaying
+                                ? '#2196F3'
+                                : undefined,
                           }}
                         >
                           <Row
@@ -288,6 +273,11 @@ const ListViewTable = ({
                                 style={{
                                   fontSize: `${fontSize}px`,
                                 }}
+                                playing={
+                                  rowData.id === playQueue?.currentSongId &&
+                                  playQueue.currentIndex === rowIndex &&
+                                  nowPlaying
+                                }
                               >
                                 {rowData.artist}
                               </RsuiteLinkButton>
@@ -296,7 +286,7 @@ const ListViewTable = ({
                         </Col>
                       </Row>
                     </Grid>
-                  </div>
+                  </TableCellWrapper>
                 );
               }}
             </Table.Cell>
@@ -304,19 +294,11 @@ const ListViewTable = ({
             <Table.Cell>
               {(rowData: any) => {
                 return (
-                  <div
-                    style={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? {
-                            background: '#4D5156',
-                            lineHeight: `${rowHeight}px`,
-                          }
-                        : {
-                            lineHeight: `${rowHeight}px`,
-                          }
-                    }
+                  <TableCellWrapper
+                    selected={multiSelect?.selected.find(
+                      (e: any) => e.id === rowData.id
+                    )}
+                    height={rowHeight}
                   >
                     <LazyLoadImage
                       src={
@@ -346,7 +328,7 @@ const ListViewTable = ({
                         }
                       }}
                     />
-                  </div>
+                  </TableCellWrapper>
                 );
               }}
             </Table.Cell>
@@ -354,7 +336,16 @@ const ListViewTable = ({
             <Table.Cell>
               {(rowData: any, rowIndex: any) => {
                 return (
-                  <div
+                  <TableCellWrapper
+                    playing={
+                      rowData.id === playQueue?.currentSongId &&
+                      playQueue.currentIndex === rowIndex &&
+                      nowPlaying
+                    }
+                    selected={multiSelect?.selected.find(
+                      (e: any) => e.id === rowData.id
+                    )}
+                    height={rowHeight}
                     onClick={(e: any) => {
                       if (
                         !column.dataKey?.match(
@@ -431,6 +422,11 @@ const ListViewTable = ({
                               }
                             }
                           }}
+                          playing={
+                            rowData.id === playQueue?.currentSongId &&
+                            playQueue.currentIndex === rowIndex &&
+                            nowPlaying
+                          }
                           style={{
                             fontSize: `${fontSize}px`,
                           }}
@@ -449,7 +445,7 @@ const ListViewTable = ({
                           size="lg"
                           fixedWidth
                           style={{
-                            color: rowData?.starred ? '#1179ac' : '#E8EAEF',
+                            color: rowData?.starred ? '#2196F3' : '#E8EAEF',
                             cursor: 'pointer',
                           }}
                           onClick={() => handleFavorite(rowData)}
@@ -458,6 +454,7 @@ const ListViewTable = ({
                         <Rate
                           size="xs"
                           readOnly={false}
+                          color="blue"
                           defaultValue={
                             rowData?.userRating ? rowData.userRating : 0
                           }
@@ -471,7 +468,7 @@ const ListViewTable = ({
                         ? ' kbps'
                         : ''}
                     </div>
-                  </div>
+                  </TableCellWrapper>
                 );
               }}
             </Table.Cell>

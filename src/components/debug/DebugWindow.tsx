@@ -225,17 +225,19 @@ const DebugWindow = ({ ...rest }) => {
         >
           <li>
             lastSelected: [{multiSelect.lastSelected.rowIndex}]{' '}
-            {multiSelect.lastSelected.title}
+            {multiSelect.lastSelected.title} {multiSelect.lastSelected.id}
           </li>
           <li>
             range (start): [
             {multiSelect.lastRangeSelected.lastSelected.rowIndex}]{' '}
-            {multiSelect.lastRangeSelected.lastSelected.title}
+            {multiSelect.lastRangeSelected.lastSelected.title}{' '}
+            {multiSelect.lastRangeSelected.lastSelected.id}
           </li>
           <li>
             range (end): [
             {multiSelect.lastRangeSelected.lastRangeSelected.rowIndex}]{' '}
-            {multiSelect.lastRangeSelected.lastRangeSelected.title}
+            {multiSelect.lastRangeSelected.lastRangeSelected.title}{' '}
+            {multiSelect.lastRangeSelected.lastRangeSelected.id}
           </li>
           <li>selected: {multiSelect.selected.length} rows</li>
         </ul>

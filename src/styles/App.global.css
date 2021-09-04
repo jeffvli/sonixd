@@ -31,10 +31,6 @@ h1 {
   z-index: 1;
 }
 
-.active {
-  color: #169de0 !important;
-}
-
 .rs-table-cell-content > div::selection,
 .rs-table-cell-content > div > div::selection,
 .rs-table-cell-content > div > span > img::selection,
