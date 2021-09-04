@@ -5,7 +5,7 @@ import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
 import { nanoid } from 'nanoid';
-import { Table, Grid, Row, Col, Icon } from 'rsuite';
+import { Table, Grid, Row, Col, Icon, Rate } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { RsuiteLinkButton } from './styled';
@@ -16,7 +16,7 @@ import {
   formatDate,
 } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
-import { star, unstar } from '../../api/api';
+import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
 
@@ -67,6 +67,10 @@ const ListViewTable = ({
     await queryClient.refetchQueries(['playlist'], {
       active: true,
     });
+  };
+
+  const handleRating = (rowData: any, e: number) => {
+    setRating(rowData.id, e);
   };
 
   return (
@@ -275,9 +279,11 @@ const ListViewTable = ({
                                 subtitle="true"
                                 appearance="link"
                                 onClick={() => {
-                                  history.push(
-                                    `/library/artist/${rowData.artistId}`
-                                  );
+                                  if (rowData.artistId) {
+                                    history.push(
+                                      `/library/artist/${rowData.artistId}`
+                                    );
+                                  }
                                 }}
                                 style={{
                                   fontSize: `${fontSize}px`,
@@ -349,18 +355,30 @@ const ListViewTable = ({
               {(rowData: any, rowIndex: any) => {
                 return (
                   <div
-                    onClick={(e: any) =>
-                      handleRowClick(e, {
-                        ...rowData,
-                        rowIndex,
-                      })
-                    }
-                    onDoubleClick={() =>
-                      handleRowDoubleClick({
-                        ...rowData,
-                        rowIndex,
-                      })
-                    }
+                    onClick={(e: any) => {
+                      if (
+                        !column.dataKey?.match(
+                          /starred|songCount|duration|userRating/
+                        )
+                      ) {
+                        handleRowClick(e, {
+                          ...rowData,
+                          rowIndex,
+                        });
+                      }
+                    }}
+                    onDoubleClick={() => {
+                      if (
+                        !column.dataKey?.match(
+                          /starred|songCount|duration|userRating/
+                        )
+                      ) {
+                        handleRowDoubleClick({
+                          ...rowData,
+                          rowIndex,
+                        });
+                      }
+                    }}
                     className={
                       rowData.id === playQueue?.currentSongId &&
                       (column.dataKey === 'title' ||
@@ -389,23 +407,28 @@ const ListViewTable = ({
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         paddingRight: !column.dataKey?.match(
-                          /starred|songCount|duration/
+                          /starred|songCount|duration|userRating/
                         )
                           ? '10px'
                           : undefined,
                       }}
                     >
-                      {column.dataKey === 'album' ||
-                      column.dataKey === 'artist' ? (
+                      {column.dataKey.match(/album|artist/) ? (
                         <RsuiteLinkButton
                           appearance="link"
                           onClick={() => {
                             if (column.dataKey === 'album') {
-                              history.push(`/library/album/${rowData.albumId}`);
+                              if (rowData.albumId) {
+                                history.push(
+                                  `/library/album/${rowData.albumId}`
+                                );
+                              }
                             } else if (column.dataKey === 'artist') {
-                              history.push(
-                                `/library/artist/${rowData.artistId}`
-                              );
+                              if (rowData.artistId) {
+                                history.push(
+                                  `/library/artist/${rowData.artistId}`
+                                );
+                              }
                             }
                           }}
                           style={{
@@ -430,6 +453,15 @@ const ListViewTable = ({
                             cursor: 'pointer',
                           }}
                           onClick={() => handleFavorite(rowData)}
+                        />
+                      ) : column.dataKey === 'userRating' ? (
+                        <Rate
+                          size="xs"
+                          readOnly={false}
+                          defaultValue={
+                            rowData?.userRating ? rowData.userRating : 0
+                          }
+                          onChange={(e: any) => handleRating(rowData, e)}
                         />
                       ) : (
                         rowData[column.dataKey]

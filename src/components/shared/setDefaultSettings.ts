@@ -106,12 +106,28 @@ const setDefaultSettings = (force: boolean) => {
         label: 'Duration',
       },
       {
+        id: 'Bitrate',
+        dataKey: 'bitRate',
+        alignment: 'left',
+        resizable: true,
+        width: 100,
+        label: 'Bitrate',
+      },
+      {
         id: 'Fav',
         dataKey: 'starred',
         alignment: 'center',
         resizable: true,
-        width: 60,
+        width: 100,
         label: 'Favorite',
+      },
+      {
+        id: 'Rate',
+        dataKey: 'userRating',
+        alignment: 'center',
+        resizable: true,
+        width: 150,
+        label: 'Rating',
       },
     ]);
   }

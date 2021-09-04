@@ -352,6 +352,17 @@ export const unstar = async (id: string, type: string) => {
   return data;
 };
 
+export const setRating = async (id: string, rating: number) => {
+  const { data } = await api.get(`/setRating`, {
+    params: {
+      id,
+      rating,
+    },
+  });
+
+  return data;
+};
+
 export const getSimilarSongs = async (
   id: string,
   count: number,
