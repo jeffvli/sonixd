@@ -50,12 +50,6 @@ const PlayerBar = () => {
   const [localVolume, setLocalVolume] = useState(
     Number(settings.getSync('volume'))
   );
-  const [seekForwardInterval] = useState<number>(
-    Number(settings.getSync('seekForwardInterval')) || 5
-  );
-  const [seekBackwardInterval] = useState<number>(
-    Number(settings.getSync('seekBackwardInterval')) || 5
-  );
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -180,6 +174,9 @@ const PlayerBar = () => {
 
   const handleClickForward = () => {
     if (playQueue[currentEntryList].length > 0) {
+      const seekForwardInterval = Number(
+        settings.getSync('seekForwardInterval')
+      );
       setIsDragging(true);
 
       if (playQueue.isFading) {
@@ -219,6 +216,9 @@ const PlayerBar = () => {
   };
 
   const handleClickBackward = () => {
+    const seekBackwardInterval = Number(
+      settings.getSync('seekBackwardInterval')
+    );
     if (playQueue[currentEntryList].length > 0) {
       setIsDragging(true);
 

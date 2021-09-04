@@ -346,6 +346,36 @@ const Config = () => {
           />
         )}
       </ConfigPanel>
+      <ConfigPanel header="Player" bordered>
+        <p>
+          Configure the number of seconds to skip forwards/backwards by when
+          clicking the seek forward/backward buttons.
+        </p>
+        <br />
+        <ControlLabel>Seek forward (s)</ControlLabel>
+        <InputNumber
+          defaultValue={String(settings.getSync('seekForwardInterval')) || '0'}
+          step={0.5}
+          min={0}
+          max={100}
+          onChange={(e) => {
+            settings.setSync('seekForwardInterval', Number(e));
+          }}
+          style={{ width: '150px' }}
+        />
+        <br />
+        <ControlLabel>Seek backward (s)</ControlLabel>
+        <InputNumber
+          defaultValue={String(settings.getSync('seekBackwardInterval')) || '0'}
+          step={0.5}
+          min={0}
+          max={100}
+          onChange={(e) => {
+            settings.setSync('seekBackwardInterval', Number(e));
+          }}
+          style={{ width: '150px' }}
+        />
+      </ConfigPanel>
       <ConfigPanel header="Cache" bordered>
         {errorMessage !== '' && (
           <>

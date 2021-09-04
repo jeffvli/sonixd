@@ -16,6 +16,14 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('volume', 0.5);
   }
 
+  if (force || !settings.hasSync('seekForwardInterval')) {
+    settings.setSync('seekForwardInterval', 5);
+  }
+
+  if (force || !settings.hasSync('seekBackwardInterval')) {
+    settings.setSync('seekBackwardInterval', 5);
+  }
+
   if (force || !settings.hasSync('volumeFade')) {
     settings.setSync('volumeFade', true);
   }
@@ -48,7 +56,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('fadeDuration')) {
-    settings.setSync('fadeDuration', '9.0');
+    settings.setSync('fadeDuration', 9);
   }
 
   if (force || !settings.hasSync('fadeType')) {
