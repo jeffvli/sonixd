@@ -210,9 +210,6 @@ const listenHandler = (
           }
         }
       } else {
-        // If fade time is less than 0.5 seconds, don't fade and just start at
-        // full volume. Due to the low fade duration and interval polling, the volume
-        // blasts from low to full incredibly quickly
         if (player === 1) {
           dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
         } else {
