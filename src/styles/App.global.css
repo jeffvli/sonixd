@@ -100,17 +100,19 @@ h1 {
 
 #window-title-wrapper {
   width: calc(80%);
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   height: 100%;
   padding: 2px;
 }
 
 #window-title {
+  width: 100%;
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #restore-button {
