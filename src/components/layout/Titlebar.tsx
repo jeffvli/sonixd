@@ -20,16 +20,8 @@ const Titlebar = () => {
   return (
     <TitleHeader id="titlebar">
       <DragRegion id="drag-region">
-        <div
-          id="window-title"
-          style={{
-            width: 'calc(80%)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <span>{title}</span>
+        <div id="window-title-wrapper">
+          <span id="window-title">{title}</span>
         </div>
         <WindowControl id="window-controls">
           <WindowControlButton minButton className="button" id="min-button">
