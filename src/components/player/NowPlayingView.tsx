@@ -45,7 +45,7 @@ const NowPlayingView = () => {
   useEffect(() => {
     if (scrollWithCurrent) {
       setTimeout(() => {
-        tableRef.current.table.current?.scrollTop(
+        tableRef?.current.table.current?.scrollTop(
           Number(settings.getSync('songListRowHeight')) * playQueue.currentIndex
         );
       }, 100);
@@ -124,8 +124,10 @@ const NowPlayingView = () => {
                 size="sm"
                 onClick={() => {
                   dispatch(clearPlayQueue());
-                  dispatch(resetPlayer());
                   dispatch(setStatus('PAUSED'));
+                  // Needs a timeout otherwise the seek may still update after the pause due to
+                  // the delay timeout
+                  setTimeout(() => dispatch(resetPlayer()), 200);
                 }}
               >
                 Clear queue
