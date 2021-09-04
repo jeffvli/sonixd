@@ -24,7 +24,7 @@ const GenericPageHeader = ({
         <div
           style={{
             display: 'inline-block',
-            filter: 'drop-shadow(0px 0px 6px #000)',
+            filter: 'drop-shadow(0px 0px 6px #fff)',
           }}
         >
           <img

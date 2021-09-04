@@ -119,10 +119,16 @@ const ListViewTable = ({
                       rowData.id === playQueue?.currentSongId &&
                       playQueue.currentIndex === rowIndex &&
                       nowPlaying
+                        ? 'true'
+                        : 'false'
                     }
-                    selected={multiSelect?.selected.find(
-                      (e: any) => e.id === rowData.id
-                    )}
+                    rowselected={
+                      multiSelect?.selected.find(
+                        (e: any) => e.id === rowData.id
+                      )
+                        ? 'true'
+                        : 'false'
+                    }
                     height={rowHeight}
                     onClick={(e: any) =>
                       handleRowClick(e, {
@@ -148,9 +154,13 @@ const ListViewTable = ({
               {(rowData: any, rowIndex: any) => {
                 return (
                   <TableCellWrapper
-                    selected={multiSelect?.selected.find(
-                      (e: any) => e.id === rowData.id
-                    )}
+                    rowselected={
+                      multiSelect?.selected.find(
+                        (e: any) => e.id === rowData.id
+                      )
+                        ? 'true'
+                        : 'false'
+                    }
                     onClick={(e: any) =>
                       handleRowClick(e, {
                         ...rowData,
@@ -277,6 +287,8 @@ const ListViewTable = ({
                                   rowData.id === playQueue?.currentSongId &&
                                   playQueue.currentIndex === rowIndex &&
                                   nowPlaying
+                                    ? 'true'
+                                    : 'false'
                                 }
                               >
                                 {rowData.artist}
@@ -295,9 +307,13 @@ const ListViewTable = ({
               {(rowData: any) => {
                 return (
                   <TableCellWrapper
-                    selected={multiSelect?.selected.find(
-                      (e: any) => e.id === rowData.id
-                    )}
+                    rowselected={
+                      multiSelect?.selected.find(
+                        (e: any) => e.id === rowData.id
+                      )
+                        ? 'true'
+                        : 'false'
+                    }
                     height={rowHeight}
                   >
                     <LazyLoadImage
@@ -341,10 +357,16 @@ const ListViewTable = ({
                       rowData.id === playQueue?.currentSongId &&
                       playQueue.currentIndex === rowIndex &&
                       nowPlaying
+                        ? 'true'
+                        : 'false'
                     }
-                    selected={multiSelect?.selected.find(
-                      (e: any) => e.id === rowData.id
-                    )}
+                    rowselected={
+                      multiSelect?.selected.find(
+                        (e: any) => e.id === rowData.id
+                      )
+                        ? 'true'
+                        : 'false'
+                    }
                     height={rowHeight}
                     onClick={(e: any) => {
                       if (
@@ -426,6 +448,8 @@ const ListViewTable = ({
                             rowData.id === playQueue?.currentSongId &&
                             playQueue.currentIndex === rowIndex &&
                             nowPlaying
+                              ? 'true'
+                              : 'false'
                           }
                           style={{
                             fontSize: `${fontSize}px`,

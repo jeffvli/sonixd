@@ -11,7 +11,7 @@ export const RsuiteLinkButton = styled(Button)<{
   text-overflow: ellipsis;
   overflow: hidden;
   color: ${(props) =>
-    props.playing
+    props.playing === 'true'
       ? props.theme.main
       : props.subtitle === 'true'
       ? props.theme.subtitleText
@@ -25,12 +25,13 @@ export const RsuiteLinkButton = styled(Button)<{
 `;
 
 export const TableCellWrapper = styled.div<{
-  selected: boolean;
-  playing?: boolean;
+  rowselected: string;
+  playing?: string;
   height?: number;
 }>`
   background: ${(props) =>
-    props.selected ? props.theme.rowSelected : undefined};
-  color: ${(props) => (props.playing ? props.theme.main : undefined)};
+    props.rowselected === 'true' ? props.theme.rowSelected : undefined};
+  color: ${(props) =>
+    props.playing === 'true' ? props.theme.main : undefined};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
 `;
