@@ -86,10 +86,10 @@ const ListViewType = (
     let scrollDistance = 0;
     switch (dragSpeed) {
       case 'slow':
-        scrollDistance = 5;
+        scrollDistance = 15;
         break;
       case 'medium':
-        scrollDistance = 15;
+        scrollDistance = 30;
         break;
       case 'fast':
         scrollDistance = 60;
