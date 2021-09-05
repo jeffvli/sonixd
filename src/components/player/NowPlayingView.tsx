@@ -157,7 +157,7 @@ const NowPlayingView = () => {
                 setScrollWithCurrent(!scrollWithCurrent);
               }}
             >
-              Scroll with current
+              Auto scroll
             </StyledCheckbox>
           }
           searchQuery={searchQuery}
