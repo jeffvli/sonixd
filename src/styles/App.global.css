@@ -13,7 +13,6 @@ body {
 }
 
 body {
-  border: 1px solid #48545c;
   overflow-y: hidden;
 }
 
@@ -64,17 +63,16 @@ h1 {
  */
 
 *::-webkit-scrollbar {
-  width: 12px;
+  width: 10px;
 }
 
 *::-webkit-scrollbar-track {
-  background: #262a31;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #6f747d;
+  background-color: rgba(192, 196, 205, 0.5) !important;
   border-radius: 20px;
-  border: 3px solid #262a31;
 }
 
 @media (-webkit-device-pixel-ratio: 1.5),

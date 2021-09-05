@@ -25,6 +25,7 @@ export const getSettings = () => {
     pollingInterval: parsedSettings.pollingInterval,
     volumeFade: parsedSettings.volumeFade,
     showDebugWindow: parsedSettings.showDebugWindow,
+    theme: parsedSettings.theme,
   };
 };
 

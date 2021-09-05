@@ -28,7 +28,7 @@ import {
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 
@@ -99,7 +99,7 @@ const PlaylistView = () => {
   };
 
   if (isLoading) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
   if (isError) {

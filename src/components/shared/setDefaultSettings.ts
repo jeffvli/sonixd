@@ -4,6 +4,10 @@ import fs from 'fs';
 import { getSongCachePath, getImageCachePath } from '../../shared/utils';
 // Set setting defaults on first login
 const setDefaultSettings = (force: boolean) => {
+  if (force || !settings.hasSync('theme')) {
+    settings.setSync('theme', 'defaultDark');
+  }
+
   if (force || !settings.hasSync('showDebugWindow')) {
     settings.setSync('showDebugWindow', false);
   }

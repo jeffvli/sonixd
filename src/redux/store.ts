@@ -3,12 +3,14 @@ import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import playerReducer from './playerSlice';
 import playQueueReducer, { PlayQueue } from './playQueueSlice';
 import multiSelectReducer from './multiSelectSlice';
+import miscReducer from './miscSlice';
 
 export const store = configureStore<PlayQueue | any>({
   reducer: {
     player: playerReducer,
     playQueue: playQueueReducer,
     multiSelect: multiSelectReducer,
+    misc: miscReducer,
   },
   middleware: [forwardToMain],
 });

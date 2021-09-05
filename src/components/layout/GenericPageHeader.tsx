@@ -1,6 +1,8 @@
 import React from 'react';
 import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
+import { StyledInputGroup } from '../shared/styled';
+import { CoverArtWrapper } from './styled';
 
 const GenericPageHeader = ({
   image,
@@ -21,19 +23,14 @@ const GenericPageHeader = ({
   return (
     <>
       {image && (
-        <div
-          style={{
-            display: 'inline-block',
-            filter: 'drop-shadow(0px 0px 6px #fff)',
-          }}
-        >
+        <CoverArtWrapper>
           <img
             src={image}
             alt="header-img"
             height={imageHeight || '145px'}
             width={imageHeight || '145px'}
           />
-        </div>
+        </CoverArtWrapper>
       )}
 
       <div
@@ -76,7 +73,7 @@ const GenericPageHeader = ({
             )}
             {showSearchBar && (
               <span style={{ display: 'inline-block' }}>
-                <InputGroup inside>
+                <StyledInputGroup inside>
                   <Input
                     id="local-search-input"
                     size="md"
@@ -92,7 +89,7 @@ const GenericPageHeader = ({
                       <Icon icon="close" />
                     </InputGroup.Button>
                   )}
-                </InputGroup>
+                </StyledInputGroup>
               </span>
             )}
           </span>

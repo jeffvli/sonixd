@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAlbums } from '../../api/api';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
@@ -46,22 +46,22 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <GenericPage header={<GenericPageHeader title="Dashboard" />}>
-        <Loader />
+      <GenericPage hideDivider header={<GenericPageHeader title="Dashboard" />}>
+        <PageLoader />
       </GenericPage>
     );
   }
 
   if (isError) {
     return (
-      <GenericPage header={<GenericPageHeader title="Dashboard" />}>
+      <GenericPage hideDivider header={<GenericPageHeader title="Dashboard" />}>
         <span>Error: {isError}</span>
       </GenericPage>
     );
   }
 
   return (
-    <GenericPage header={<GenericPageHeader title="Dashboard" />}>
+    <GenericPage header={<GenericPageHeader title="Dashboard" />} hideDivider>
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu

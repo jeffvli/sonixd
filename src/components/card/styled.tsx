@@ -8,14 +8,14 @@ interface Card {
 
 /* const getcardsize = (props: any) => {
   return props.cardsize === 'xs'
-    ? props.theme.cardXs
+    ? props.theme.primary.cardXs
     : props.cardsize === 'sm'
-    ? props.theme.cardSm
+    ? props.theme.primary.cardSm
     : props.cardsize === 'md'
-    ? props.theme.cardMd
+    ? props.theme.primary.cardMd
     : props.cardsize === 'lg'
-    ? props.theme.cardLg
-    : props.theme.cardSm;
+    ? props.theme.primary.cardLg
+    : props.theme.primary.cardSm;
 }; */
 
 export const StyledPanel = styled(Panel)<Card>`
@@ -23,7 +23,7 @@ export const StyledPanel = styled(Panel)<Card>`
   width: ${(props) => props.cardsize + 2};
   height: ${(props) => props.cardsize + 55};
   &:hover {
-    border: 1px solid ${(props) => props.theme.main};
+    border: 1px solid ${(props) => props.theme.primary.main};
   }
 `;
 
@@ -32,7 +32,7 @@ export const InfoPanel = styled(Panel)<Card>`
 `;
 
 export const InfoSpan = styled.div`
-  color: ${(props) => props.theme.subtitleText};
+  color: ${(props) => props.theme.secondary.text};
 `;
 
 export const CardButton = styled(Button)`
@@ -44,13 +44,13 @@ export const CardButton = styled(Button)`
 export const CardTitleButton = styled(CardButton)`
   padding-top: 5px;
   padding-bottom: 2px;
-  color: ${(props) => props.theme.titleText};
+  color: ${(props) => props.theme.primary.text};
   width: ${(props) => props.cardsize};
 `;
 
 export const CardSubtitleButton = styled(CardButton)`
   padding-bottom: 5px;
-  color: ${(props) => props.theme.subtitleText};
+  color: ${(props) => props.theme.secondary.text};
   width: ${(props) => props.cardsize};
 `;
 
@@ -80,7 +80,7 @@ export const Overlay = styled.div<Card>`
   width: ${(props) => props.cardsize};
   &:hover {
     background-color: #000;
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: pointer;
     display: block;
   }
@@ -101,10 +101,10 @@ export const HoverControlButton = styled(IconButton)`
   left: 50%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  background: ${(props) => props.theme.background};
+  background: #000;
 
   &:hover {
     opacity: 1;
-    background: ${(props) => props.theme.main};
+    background: ${(props) => props.theme.primary.main};
   }
 `;

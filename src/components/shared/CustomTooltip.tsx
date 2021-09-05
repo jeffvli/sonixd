@@ -6,10 +6,11 @@ export const tooltip = (text: string) => <Tooltip>{text}</Tooltip>;
 const CustomTooltip = ({ children, text, delay, ...rest }: any) => {
   return (
     <Whisper
-      placement={rest.placement || 'top'}
       trigger="hover"
       delay={delay || 300}
       speaker={tooltip(text)}
+      placement={rest.placement || 'top'}
+      {...rest}
     >
       {children}
     </Whisper>

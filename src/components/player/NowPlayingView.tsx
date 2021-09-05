@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
-import { ButtonToolbar, Checkbox } from 'rsuite';
+import { ButtonToolbar } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -23,9 +23,10 @@ import {
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import { ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
+import { StyledCheckbox } from '../shared/styled';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -90,7 +91,7 @@ const NowPlayingView = () => {
   };
 
   if (!playQueue) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
   const handleUpClick = () => {
@@ -115,6 +116,7 @@ const NowPlayingView = () => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           title="Now Playing"
@@ -145,7 +147,7 @@ const NowPlayingView = () => {
             </>
           }
           subsidetitle={
-            <Checkbox
+            <StyledCheckbox
               defaultChecked={scrollWithCurrent}
               onChange={() => {
                 settings.setSync(
@@ -156,7 +158,7 @@ const NowPlayingView = () => {
               }}
             >
               Scroll with current
-            </Checkbox>
+            </StyledCheckbox>
           }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}

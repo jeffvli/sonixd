@@ -4,7 +4,9 @@ import { Container, Content, Footer, Header, Sidebar } from 'rsuite';
 
 // Layout.tsx
 export const RootContainer = styled(Container)`
+  background: ${(props) => props.theme.primary.background};
   height: 100vh;
+  color: ${(props) => props.theme.primary.text};
 `;
 
 interface ContainerProps {
@@ -32,15 +34,16 @@ export const RootFooter = styled(Footer)`
 `;
 
 // Titlebar.tsx
+// Subtract 2px from width if you add window border
 export const TitleHeader = styled.header`
   display: block;
   position: fixed;
   height: 32px;
   width: ${(props) =>
-    props.className?.includes('maximized') ? '100%' : 'calc(100% - 2px)'};
-  background: #000000;
+    props.className?.includes('maximized') ? '100%' : 'calc(100%)'};
+  background: ${(props) => props.theme.primary.titleBar};
   padding: 4px;
-  color: #fff;
+  color: ${(props) => props.theme.primary.titleText};
 `;
 
 export const DragRegion = styled.div`
@@ -93,7 +96,7 @@ export const PageContainer = styled(Container)`
 `;
 
 export const PageHeader = styled(Header)`
-  padding: 20px 20px 0px 20px;
+  padding: 10px 20px 0px 20px;
 `;
 
 export const PageContent = styled(Content)`
@@ -102,9 +105,17 @@ export const PageContent = styled(Content)`
 `;
 
 // Sidebar.tsx
+// Add 1 to top if you add window border
 export const FixedSidebar = styled(Sidebar)`
+  background: ${(props) => props.theme.primary.sideBar} !important;
   position: fixed;
-  top: 33px;
+  top: 32px;
   z-index: 1;
   height: calc(100% - 130px);
+`;
+
+export const CoverArtWrapper = styled.div`
+  display: inline-block;
+  filter: ${(props) =>
+    `drop-shadow(0px 5px 8px ${props.theme.primary.coverArtShadow})`};
 `;

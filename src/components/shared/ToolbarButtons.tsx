@@ -1,11 +1,12 @@
 import React from 'react';
-import { IconButton, Icon } from 'rsuite';
+import { Icon } from 'rsuite';
 import CustomTooltip from './CustomTooltip';
+import { StyledIconButton } from './styled';
 
 export const PlayButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Play" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="play" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="play" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -13,7 +14,7 @@ export const PlayButton = ({ ...rest }) => {
 export const PlayShuffleButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Shuffle and play" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="random" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="random" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -21,7 +22,7 @@ export const PlayShuffleButton = ({ ...rest }) => {
 export const PlayAppendButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Add to queue" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="plus" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="plus" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -33,7 +34,10 @@ export const PlayShuffleAppendButton = ({ ...rest }) => {
       placement="bottom"
       onClick={rest.onClick}
     >
-      <IconButton tabIndex={0} icon={<Icon icon="plus-square" {...rest} />} />
+      <StyledIconButton
+        tabIndex={0}
+        icon={<Icon icon="plus-square" {...rest} />}
+      />
     </CustomTooltip>
   );
 };
@@ -41,7 +45,7 @@ export const PlayShuffleAppendButton = ({ ...rest }) => {
 export const SaveButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Save" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="save" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="save" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -49,7 +53,7 @@ export const SaveButton = ({ ...rest }) => {
 export const EditButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Edit" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="edit2" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="edit2" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -57,7 +61,7 @@ export const EditButton = ({ ...rest }) => {
 export const DeleteButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Delete" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="trash" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="trash" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -65,7 +69,7 @@ export const DeleteButton = ({ ...rest }) => {
 export const FavoriteButton = ({ isFavorite, ...rest }: any) => {
   return (
     <CustomTooltip text="Toggle favorite" placement="bottom">
-      <IconButton
+      <StyledIconButton
         tabIndex={0}
         icon={<Icon icon={isFavorite ? 'heart' : 'heart-o'} />}
         {...rest}
@@ -77,7 +81,11 @@ export const FavoriteButton = ({ isFavorite, ...rest }: any) => {
 export const DownloadButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Toggle favorite" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="download" />} {...rest} />
+      <StyledIconButton
+        tabIndex={0}
+        icon={<Icon icon="download" />}
+        {...rest}
+      />
     </CustomTooltip>
   );
 };
@@ -85,7 +93,7 @@ export const DownloadButton = ({ ...rest }) => {
 export const ShuffleButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Shuffle" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="random" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="random" />} {...rest} />
     </CustomTooltip>
   );
 };
@@ -93,7 +101,7 @@ export const ShuffleButton = ({ ...rest }) => {
 export const ClearQueueButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Clear queue" placement="bottom">
-      <IconButton tabIndex={0} icon={<Icon icon="close" />} {...rest} />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="close" />} {...rest} />
     </CustomTooltip>
   );
 };

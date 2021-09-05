@@ -8,7 +8,7 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
 import { getAllAlbums } from '../../api/api';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -99,7 +99,7 @@ const AlbumList = () => {
         />
       }
     >
-      {isLoading && <Loader />}
+      {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType

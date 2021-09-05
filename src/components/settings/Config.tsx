@@ -5,18 +5,14 @@ import settings from 'electron-settings';
 import {
   Button,
   ControlLabel,
-  InputNumber,
-  Checkbox,
   Tag,
   Nav,
   Icon,
-  Input,
   InputGroup,
   Message,
   Whisper,
   Popover,
   RadioGroup,
-  Radio,
 } from 'rsuite';
 import { ConfigPanel } from './styled';
 import { startScan, getScanStatus } from '../../api/api';
@@ -34,12 +30,20 @@ import {
 } from './ListViewColumns';
 import { getImageCachePath, getSongCachePath } from '../../shared/utils';
 import setDefaultSettings from '../shared/setDefaultSettings';
-import { HeaderButton } from '../shared/styled';
+import {
+  HeaderButton,
+  StyledCheckbox,
+  StyledInput,
+  StyledInputNumber,
+  StyledNavItem,
+  StyledRadio,
+} from '../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   setPlaybackSetting,
   setPlayerVolume,
 } from '../../redux/playQueueSlice';
+import { setTheme } from '../../redux/miscSlice';
 
 const fsUtils = require('nodejs-fs-utils');
 
@@ -55,6 +59,15 @@ const Config = () => {
   const [newCachePath, setNewCachePath] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [requiresReload] = useState(false);
+  const [cacheSongs, setCacheSongs] = useState(
+    Boolean(settings.getSync('cacheSongs'))
+  );
+  const [cacheImages, setCacheImages] = useState(
+    Boolean(settings.getSync('cacheImages'))
+  );
+  const [showDebugWindow, setShowDebugWindow] = useState(
+    Boolean(settings.getSync('showDebugWindow'))
+  );
 
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -195,8 +208,8 @@ const Config = () => {
           Setting the crossfade duration to <code>0</code> will enable{' '}
           <strong>gapless playback</strong>. All other playback settings except
           the polling interval will be ignored. It is recommended that you use a
-          polling interval of <code>1 - 20</code> for increased transition
-          accuracy.
+          polling interval between <code>1</code> and <code>20</code> for
+          increased transition accuracy.
         </p>
         <p style={{ fontSize: 'smaller' }}>
           *Enable the debug window if you want to view the differences between
@@ -205,12 +218,13 @@ const Config = () => {
 
         <div style={{ width: '300px', paddingTop: '20px' }}>
           <ControlLabel>Crossfade duration (s)</ControlLabel>
-          <InputNumber
+          <StyledInputNumber
             defaultValue={String(settings.getSync('fadeDuration')) || '0'}
             step={0.05}
             min={0}
             max={100}
-            onChange={(e) => {
+            width={150}
+            onChange={(e: any) => {
               settings.setSync('fadeDuration', Number(e));
               dispatch(
                 setPlaybackSetting({
@@ -228,17 +242,17 @@ const Config = () => {
                 );
               }
             }}
-            style={{ width: '150px' }}
           />
 
           <br />
           <ControlLabel>Polling interval (ms)</ControlLabel>
-          <InputNumber
+          <StyledInputNumber
             defaultValue={String(settings.getSync('pollingInterval'))}
             step={1}
             min={1}
             max={1000}
-            onChange={(e) => {
+            width={150}
+            onChange={(e: any) => {
               settings.setSync('pollingInterval', Number(e));
               dispatch(
                 setPlaybackSetting({
@@ -247,12 +261,11 @@ const Config = () => {
                 })
               );
             }}
-            style={{ width: '150px' }}
           />
           <br />
           <ControlLabel>Crossfade type</ControlLabel>
           <RadioGroup
-            name="radioList"
+            name="fadeTypeRadioList"
             appearance="default"
             defaultValue={String(settings.getSync('fadeType'))}
             onChange={(e) => {
@@ -260,24 +273,24 @@ const Config = () => {
               dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
             }}
           >
-            <Radio value="equalPower">Equal Power</Radio>
-            <Radio value="linear">Linear</Radio>
-            <Radio value="dipped">Dipped</Radio>
-            <Radio value="constantPower">Constant Power</Radio>
-            <Radio value="constantPowerSlowFade">
+            <StyledRadio value="equalPower">Equal Power</StyledRadio>
+            <StyledRadio value="linear">Linear</StyledRadio>
+            <StyledRadio value="dipped">Dipped</StyledRadio>
+            <StyledRadio value="constantPower">Constant Power</StyledRadio>
+            <StyledRadio value="constantPowerSlowFade">
               Constant Power (slow fade)
-            </Radio>
-            <Radio value="constantPowerSlowCut">
+            </StyledRadio>
+            <StyledRadio value="constantPowerSlowCut">
               Constant Power (slow cut)
-            </Radio>
-            <Radio value="constantPowerFastCut">
+            </StyledRadio>
+            <StyledRadio value="constantPowerFastCut">
               Constant Power (fast cut)
-            </Radio>
+            </StyledRadio>
           </RadioGroup>
           <br />
           <ControlLabel>Volume fade</ControlLabel>
           <RadioGroup
-            name="radioList"
+            name="volumeFadeRadioList"
             appearance="default"
             defaultValue={Boolean(settings.getSync('volumeFade'))}
             onChange={(e) => {
@@ -285,24 +298,35 @@ const Config = () => {
               dispatch(setPlaybackSetting({ setting: 'volumeFade', value: e }));
             }}
           >
-            <Radio value>Enabled</Radio>
-            <Radio value={false}>Disabled</Radio>
+            <StyledRadio value>Enabled</StyledRadio>
+            <StyledRadio value={false}>Disabled</StyledRadio>
           </RadioGroup>
         </div>
       </ConfigPanel>
       <ConfigPanel header="Look & Feel" bordered>
-        <div>
-          Select the columns you want displayed pages with a song list. The
-          columns will be displayed in the order selected below.
-        </div>
+        <p>Select the main application theme.</p>
+        <RadioGroup
+          name="themeRadioList"
+          appearance="default"
+          defaultValue={String(settings.getSync('theme'))}
+          onChange={(e) => {
+            settings.setSync('theme', e);
+            dispatch(setTheme(e));
+          }}
+        >
+          <StyledRadio value="defaultDark">Default Dark</StyledRadio>
+          <StyledRadio value="defaultLight">Default Light</StyledRadio>
+        </RadioGroup>
+        <br />
+        <p>Select the columns you want displayed on pages with a list-view.</p>
         <Nav
           style={{ paddingTop: '10px' }}
           activeKey={currentLAFTab}
           onSelect={(e) => setCurrentLAFTab(e)}
         >
-          <Nav.Item eventKey="songList">Song List</Nav.Item>
-          <Nav.Item eventKey="albumList">Album List</Nav.Item>
-          <Nav.Item eventKey="playlistList">Playlist List</Nav.Item>
+          <StyledNavItem eventKey="songList">Song List</StyledNavItem>
+          <StyledNavItem eventKey="albumList">Album List</StyledNavItem>
+          <StyledNavItem eventKey="playlistList">Playlist List</StyledNavItem>
         </Nav>
         {currentLAFTab === 'songList' && (
           <ListViewConfig
@@ -353,27 +377,27 @@ const Config = () => {
         </p>
         <br />
         <ControlLabel>Seek forward (s)</ControlLabel>
-        <InputNumber
+        <StyledInputNumber
           defaultValue={String(settings.getSync('seekForwardInterval')) || '0'}
           step={0.5}
           min={0}
           max={100}
-          onChange={(e) => {
+          width={150}
+          onChange={(e: any) => {
             settings.setSync('seekForwardInterval', Number(e));
           }}
-          style={{ width: '150px' }}
         />
         <br />
         <ControlLabel>Seek backward (s)</ControlLabel>
-        <InputNumber
+        <StyledInputNumber
           defaultValue={String(settings.getSync('seekBackwardInterval')) || '0'}
           step={0.5}
           min={0}
           max={100}
-          onChange={(e) => {
+          width={150}
+          onChange={(e: any) => {
             settings.setSync('seekBackwardInterval', Number(e));
           }}
-          style={{ width: '150px' }}
         />
       </ConfigPanel>
       <ConfigPanel header="Cache" bordered>
@@ -392,7 +416,7 @@ const Config = () => {
         {isEditingCachePath && (
           <>
             <InputGroup>
-              <Input
+              <StyledInput
                 value={newCachePath}
                 onChange={(e: string) => setNewCachePath(e)}
               />
@@ -442,10 +466,11 @@ const Config = () => {
           </div>
         )}
         <div style={{ width: '300px', marginTop: '20px' }}>
-          <Checkbox
-            defaultChecked={Boolean(settings.getSync('cacheSongs'))}
+          <StyledCheckbox
+            defaultChecked={cacheSongs}
             onChange={() => {
               settings.setSync('cacheSongs', !settings.getSync('cacheSongs'));
+              setCacheSongs(!cacheSongs);
             }}
           >
             Songs{' '}
@@ -453,11 +478,12 @@ const Config = () => {
               {songCacheSize} MB{' '}
               {imgCacheSize === 9999999 && '- Folder not found'}
             </Tag>
-          </Checkbox>
-          <Checkbox
-            defaultChecked={Boolean(settings.getSync('cacheImages'))}
+          </StyledCheckbox>
+          <StyledCheckbox
+            defaultChecked={cacheImages}
             onChange={() => {
               settings.setSync('cacheImages', !settings.getSync('cacheImages'));
+              setCacheImages(!cacheImages);
             }}
           >
             Images{' '}
@@ -465,7 +491,7 @@ const Config = () => {
               {imgCacheSize} MB{' '}
               {imgCacheSize === 9999999 && '- Folder not found'}
             </Tag>
-          </Checkbox>
+          </StyledCheckbox>
           <br />
           <Button onClick={() => setIsEditingCachePath(true)}>
             Edit cache location
@@ -473,8 +499,8 @@ const Config = () => {
         </div>
       </ConfigPanel>
       <ConfigPanel header="Advanced" bordered>
-        <Checkbox
-          defaultChecked={Boolean(settings.getSync('showDebugWindow'))}
+        <StyledCheckbox
+          defaultChecked={showDebugWindow}
           onChange={() => {
             settings.setSync(
               'showDebugWindow',
@@ -486,10 +512,11 @@ const Config = () => {
                 value: settings.getSync('showDebugWindow'),
               })
             );
+            setShowDebugWindow(!showDebugWindow);
           }}
         >
           Show debug window
-        </Checkbox>
+        </StyledCheckbox>
       </ConfigPanel>
     </GenericPage>
   );

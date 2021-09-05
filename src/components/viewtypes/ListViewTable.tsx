@@ -5,10 +5,14 @@ import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
 import { nanoid } from 'nanoid';
-import { Table, Grid, Row, Col, Icon, Rate } from 'rsuite';
+import { Table, Grid, Row, Col } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { RsuiteLinkButton, TableCellWrapper } from './styled';
+import {
+  CombinedTitleTextWrapper,
+  RsuiteLinkButton,
+  TableCellWrapper,
+} from './styled';
 import {
   formatSongDuration,
   isCached,
@@ -19,6 +23,7 @@ import cacheImage from '../shared/cacheImage';
 import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
+import { StyledIconToggle, StyledRate } from '../shared/styled';
 
 const ListViewTable = ({
   tableRef,
@@ -112,9 +117,10 @@ const ListViewTable = ({
                 return (
                   <TableCellWrapper
                     playing={
-                      rowData.id === playQueue?.currentSongId &&
-                      playQueue.currentIndex === rowIndex &&
-                      nowPlaying
+                      (rowData.id === playQueue?.currentSongId &&
+                        playQueue.currentIndex === rowIndex &&
+                        nowPlaying) ||
+                      (!nowPlaying && rowData.id === playQueue?.currentSongId)
                         ? 'true'
                         : 'false'
                     }
@@ -219,12 +225,6 @@ const ListViewTable = ({
                             overflow: 'hidden',
                             paddingLeft: '10px',
                             paddingRight: '20px',
-                            color:
-                              rowData.id === playQueue?.currentSongId &&
-                              playQueue.currentIndex === rowIndex &&
-                              nowPlaying
-                                ? '#2196F3'
-                                : undefined,
                           }}
                         >
                           <Row
@@ -234,7 +234,16 @@ const ListViewTable = ({
                               position: 'relative',
                             }}
                           >
-                            <span
+                            <CombinedTitleTextWrapper
+                              playing={
+                                (rowData.id === playQueue?.currentSongId &&
+                                  playQueue.currentIndex === rowIndex &&
+                                  nowPlaying) ||
+                                (!nowPlaying &&
+                                  rowData.id === playQueue?.currentSongId)
+                                  ? 'true'
+                                  : 'false'
+                              }
                               style={{
                                 position: 'absolute',
                                 bottom: 0,
@@ -245,7 +254,7 @@ const ListViewTable = ({
                               }}
                             >
                               {rowData.title || rowData.name}
-                            </span>
+                            </CombinedTitleTextWrapper>
                           </Row>
                           <Row
                             style={{
@@ -280,9 +289,11 @@ const ListViewTable = ({
                                   fontSize: `${fontSize}px`,
                                 }}
                                 playing={
-                                  rowData.id === playQueue?.currentSongId &&
-                                  playQueue.currentIndex === rowIndex &&
-                                  nowPlaying
+                                  (rowData.id === playQueue?.currentSongId &&
+                                    playQueue.currentIndex === rowIndex &&
+                                    nowPlaying) ||
+                                  (!nowPlaying &&
+                                    rowData.id === playQueue?.currentSongId)
                                     ? 'true'
                                     : 'false'
                                 }
@@ -350,9 +361,10 @@ const ListViewTable = ({
                 return (
                   <TableCellWrapper
                     playing={
-                      rowData.id === playQueue?.currentSongId &&
-                      playQueue.currentIndex === rowIndex &&
-                      nowPlaying
+                      (rowData.id === playQueue?.currentSongId &&
+                        playQueue.currentIndex === rowIndex &&
+                        nowPlaying) ||
+                      (!nowPlaying && rowData.id === playQueue?.currentSongId)
                         ? 'true'
                         : 'false'
                     }
@@ -389,25 +401,17 @@ const ListViewTable = ({
                       }
                     }}
                     className={
-                      rowData.id === playQueue?.currentSongId &&
-                      (column.dataKey === 'title' ||
-                        column.dataKey === 'name') &&
-                      playQueue.currentIndex === rowIndex &&
-                      nowPlaying
+                      (rowData.id === playQueue?.currentSongId &&
+                        (column.dataKey === 'title' ||
+                          column.dataKey === 'name') &&
+                        playQueue.currentIndex === rowIndex &&
+                        nowPlaying) ||
+                      (!nowPlaying &&
+                        rowData.id === playQueue?.currentSongId &&
+                        (column.dataKey === 'title' ||
+                          column.dataKey === 'name'))
                         ? 'active'
                         : ''
-                    }
-                    style={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? {
-                            background: '#4D5156',
-                            lineHeight: `${rowHeight}px`,
-                          }
-                        : {
-                            lineHeight: `${rowHeight}px`,
-                          }
                     }
                   >
                     <div
@@ -459,22 +463,18 @@ const ListViewTable = ({
                         column.dataKey === 'created' ? (
                         formatDate(rowData[column.dataKey])
                       ) : column.dataKey === 'starred' ? (
-                        <Icon
+                        <StyledIconToggle
                           tabIndex={0}
                           icon={rowData?.starred ? 'heart' : 'heart-o'}
                           size="lg"
                           fixedWidth
-                          style={{
-                            color: rowData?.starred ? '#2196F3' : '#E8EAEF',
-                            cursor: 'pointer',
-                          }}
+                          active={rowData?.starred ? 'true' : 'false'}
                           onClick={() => handleFavorite(rowData)}
                         />
                       ) : column.dataKey === 'userRating' ? (
-                        <Rate
+                        <StyledRate
                           size="xs"
                           readOnly={false}
-                          color="blue"
                           defaultValue={
                             rowData?.userRating ? rowData.userRating : 0
                           }

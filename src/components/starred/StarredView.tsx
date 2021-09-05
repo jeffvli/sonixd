@@ -18,10 +18,11 @@ import {
 import { getStarred } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 import { setStatus } from '../../redux/playerSlice';
+import { StyledNavItem } from '../shared/styled';
 
 const StarredView = () => {
   const dispatch = useAppDispatch();
@@ -94,7 +95,7 @@ const StarredView = () => {
   };
 
   if (isLoading) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
   if (isError) {
@@ -103,14 +104,15 @@ const StarredView = () => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           title="Favorites"
           subtitle={
             <Nav activeKey={currentPage} onSelect={(e) => setCurrentPage(e)}>
-              <Nav.Item eventKey="Tracks">Tracks</Nav.Item>
-              <Nav.Item eventKey="Albums">Albums</Nav.Item>
-              <Nav.Item eventKey="Artists">Artists</Nav.Item>
+              <StyledNavItem eventKey="Tracks">Tracks</StyledNavItem>
+              <StyledNavItem eventKey="Albums">Albums</StyledNavItem>
+              <StyledNavItem eventKey="Artists">Artists</StyledNavItem>
             </Nav>
           }
           searchQuery={searchQuery}

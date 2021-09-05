@@ -12,14 +12,14 @@ export const RsuiteLinkButton = styled(Button)<{
   overflow: hidden;
   color: ${(props) =>
     props.playing === 'true'
-      ? props.theme.main
+      ? props.theme.primary.main
       : props.subtitle === 'true'
-      ? props.theme.subtitleText
-      : props.theme.titleText};
+      ? props.theme.secondary.text
+      : props.theme.primary.text};
 
   &:hover {
     text-decoration: underline;
-    color: ${(props) => props.theme.titleText};
+    color: ${(props) => props.theme.primary.text};
     cursor: pointer;
   }
 `;
@@ -30,8 +30,14 @@ export const TableCellWrapper = styled.div<{
   height?: number;
 }>`
   background: ${(props) =>
-    props.rowselected === 'true' ? props.theme.rowSelected : undefined};
+    props.rowselected === 'true' ? props.theme.primary.rowSelected : undefined};
   color: ${(props) =>
-    props.playing === 'true' ? props.theme.main : undefined};
+    props.playing === 'true' ? props.theme.primary.main : undefined};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
+  cursor: pointer;
+`;
+
+export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`
+  color: ${(props) =>
+    props.playing === 'true' ? props.theme.primary.main : undefined};
 `;

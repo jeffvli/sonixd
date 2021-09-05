@@ -2,18 +2,12 @@ import React, { useState } from 'react';
 import md5 from 'md5';
 import randomstring from 'randomstring';
 import settings from 'electron-settings';
-import {
-  Button,
-  Panel,
-  Form,
-  FormGroup,
-  ControlLabel,
-  FormControl,
-  ButtonToolbar,
-  Message,
-} from 'rsuite';
+import { Button, Form, ControlLabel, Message } from 'rsuite';
 import axios from 'axios';
 import setDefaultSettings from '../shared/setDefaultSettings';
+import { StyledInput } from '../shared/styled';
+import { LoginPanel } from './styled';
+import GenericPage from '../layout/GenericPage';
 
 const Login = () => {
   const [serverName, setServerName] = useState('');
@@ -68,64 +62,52 @@ const Login = () => {
   };
 
   return (
-    <Panel
-      header="Log in to your server"
-      bordered
-      style={{
-        padding: '30px',
-        marginLeft: '28px',
-        position: 'absolute',
-        left: '50%',
-        top: '30%',
-        transform: 'translate(-50%, -50%)',
-        minWidth: '400px',
-      }}
-    >
-      {message !== '' && <Message type="error" description={message} />}
-      <Form id="login-form" fluid style={{ paddingTop: '20px' }}>
-        <FormGroup>
-          <ControlLabel>*sonic Server</ControlLabel>
-          <FormControl
+    <GenericPage hideDivider>
+      <LoginPanel style={{ textAlign: 'center' }}>
+        <h1>Sign in to sonixd</h1>
+      </LoginPanel>
+      <LoginPanel bordered>
+        {message !== '' && <Message type="error" description={message} />}
+        <Form id="login-form" fluid style={{ paddingTop: '20px' }}>
+          <ControlLabel>Server hostname</ControlLabel>
+          <StyledInput
             id="login-servername"
             name="servername"
             value={serverName}
-            onChange={(e) => setServerName(e)}
+            onChange={(e: string) => setServerName(e)}
           />
-        </FormGroup>
-        <FormGroup>
+          <br />
           <ControlLabel>Username</ControlLabel>
-          <FormControl
+          <StyledInput
             id="login-username"
             name="name"
             value={userName}
-            onChange={(e) => setUserName(e)}
+            onChange={(e: string) => setUserName(e)}
           />
-        </FormGroup>
+          <br />
 
-        <FormGroup>
           <ControlLabel>Password</ControlLabel>
-          <FormControl
+          <StyledInput
             id="login-password"
             name="password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e)}
+            onChange={(e: string) => setPassword(e)}
           />
-        </FormGroup>
-        <FormGroup>
-          <ButtonToolbar>
-            <Button
-              id="login-button"
-              appearance="primary"
-              type="submit"
-              onClick={handleConnect}
-            >
-              Connect
-            </Button>
-          </ButtonToolbar>
-        </FormGroup>
-      </Form>
-    </Panel>
+          <br />
+          <Button
+            id="login-button"
+            appearance="primary"
+            type="submit"
+            color="green"
+            block
+            onClick={handleConnect}
+          >
+            Connect
+          </Button>
+        </Form>
+      </LoginPanel>
+    </GenericPage>
   );
 };
 

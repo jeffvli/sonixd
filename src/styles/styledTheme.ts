@@ -1,8 +1,55 @@
-export const theme = {
-  background: '#151515',
-  playerBar: '#101010',
-  main: '#2196F3',
-  titleText: '#e9ebf0',
-  subtitleText: '#888e94',
-  rowSelected: '#4D5156',
+export const defaultDark = {
+  all: {},
+  primary: {
+    main: '#2196F3',
+    background: '#181a1f',
+    titleBar: '#101010',
+    titleText: '#FFFFFF',
+    playerBar: '#101010',
+    sideBar: '#101010',
+    text: '#e9ebf0',
+    rowSelected: '#4D5156',
+    playerBarText: '#e9ebf0',
+    playerBarButtons: '#b3b3b3',
+    playerBarButtonsHover: '#ffffff',
+    inputBackground: '#1A1D24',
+    spinner: '#FFFFFF',
+    spinnerBackground: 'rgba(233, 235, 240, 0.3)',
+    sliderBackground: '#888E94',
+    coverArtShadow: '#000000',
+  },
+  secondary: {
+    main: '#292D33',
+    text: '#888e94',
+    playerBarText: '#888e94',
+  },
+};
+
+export const defaultLight = {
+  all: {
+    ...defaultDark.all,
+  },
+  primary: {
+    main: '#285DA0',
+    background: '#EBEEF5',
+    titleBar: '#272C36',
+    titleText: '#FFFFFF',
+    playerBar: '#272C36',
+    sideBar: '#272C36',
+    text: '#000000',
+    rowSelected: '#BABCC2',
+    playerBarText: '#EBEEF5',
+    playerBarButtons: '#EBEEF5',
+    playerBarButtonsHover: '#FFFFFF',
+    inputBackground: '#F4F7FF',
+    spinner: '#000000',
+    spinnerBackground: 'rgba(0, 0, 0, 0.3)',
+    sliderBackground: '#888e94',
+    coverArtShadow: '#000000',
+  },
+  secondary: {
+    main: '#292D33',
+    text: '#888e94',
+    playerBarText: '#888e94',
+  },
 };

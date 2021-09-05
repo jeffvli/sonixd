@@ -3,13 +3,7 @@ import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
-import {
-  PlayAppendButton,
-  PlayButton,
-  PlayShuffleAppendButton,
-  PlayShuffleButton,
-  EditButton,
-} from '../shared/ToolbarButtons';
+import { PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
 import { getArtist, getArtistInfo } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import {
@@ -27,7 +21,7 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
 import { TagLink } from './styled';
@@ -97,7 +91,7 @@ const ArtistView = () => {
   };
 
   if (isLoading || isLoadingAI) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
   if (isError || isErrorAI) {

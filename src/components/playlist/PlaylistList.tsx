@@ -6,7 +6,7 @@ import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { getPlaylists } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
@@ -37,7 +37,7 @@ const PlaylistList = () => {
   };
 
   if (isLoading) {
-    return <Loader />;
+    return <PageLoader />;
   }
 
   if (isError) {
@@ -46,6 +46,7 @@ const PlaylistList = () => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           title="Playlists"

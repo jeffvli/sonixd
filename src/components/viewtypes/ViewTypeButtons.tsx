@@ -1,6 +1,7 @@
 import React from 'react';
-import { ButtonToolbar, ButtonGroup, IconButton, Icon } from 'rsuite';
+import { ButtonToolbar, ButtonGroup, Icon } from 'rsuite';
 import settings from 'electron-settings';
+import { StyledIconButton } from '../shared/styled';
 
 const ViewTypeButtons = ({
   handleListClick,
@@ -10,7 +11,7 @@ const ViewTypeButtons = ({
   return (
     <ButtonToolbar>
       <ButtonGroup>
-        <IconButton
+        <StyledIconButton
           icon={<Icon icon="list" />}
           appearance="subtle"
           onClick={async () => {
@@ -19,7 +20,7 @@ const ViewTypeButtons = ({
             settings.setSync(`${viewTypeSetting}ViewType`, 'list');
           }}
         />
-        <IconButton
+        <StyledIconButton
           icon={<Icon icon="th-large" />}
           appearance="subtle"
           onClick={async () => {

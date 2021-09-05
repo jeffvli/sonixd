@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader as RsuiteLoader, Nav, SelectPicker } from 'rsuite';
+import { Nav, SelectPicker } from 'rsuite';
 import { useQuery } from 'react-query';
 import VisibilitySensor from 'react-visibility-sensor';
 import settings from 'electron-settings';
@@ -8,9 +8,8 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import { getAlbumsDirect, getArtists } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import AlbumList from './AlbumList';
 import ArtistList from './ArtistList';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName' },
@@ -112,17 +111,7 @@ const LibraryView = () => {
         />
       }
     >
-      {isLoadingArtists && <Loader />}
-      {data && (
-        <>
-          {currentPage === 'albums' && (
-            <AlbumList
-              viewType={viewType}
-              data={searchQuery === '' ? data : filteredData}
-            />
-          )}
-        </>
-      )}
+      {isLoadingArtists && <PageLoader />}
 
       {artists && (
         <>
@@ -144,7 +133,7 @@ const LibraryView = () => {
               marginBottom: '25px',
             }}
           >
-            <RsuiteLoader size="md" />
+            <PageLoader size="md" />
           </div>
         </VisibilitySensor>
       )}

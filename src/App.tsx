@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
+import { ThemeProvider } from 'styled-components';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import './styles/App.global.css';
 import Layout from './components/layout/Layout';
@@ -17,33 +18,45 @@ import ArtistView from './components/library/ArtistView';
 import setDefaultSettings from './components/shared/setDefaultSettings';
 import AlbumList from './components/library/AlbumList';
 import ArtistList from './components/library/ArtistList';
+import { MockFooter } from './components/settings/styled';
+import { defaultDark, defaultLight } from './styles/styledTheme';
+import { useAppSelector } from './redux/hooks';
 
 const keyMap = {
   FOCUS_SEARCH: 'ctrl+f',
 };
 
 const App = () => {
+  const [theme, setTheme] = useState<any>(defaultDark);
+  const misc = useAppSelector((state) => state.misc);
+  useEffect(() => {
+    switch (misc.theme) {
+      case 'defaultDark':
+        setTheme(defaultDark);
+        break;
+      case 'defaultLight':
+        setTheme(defaultLight);
+        break;
+      default:
+        setTheme(defaultDark);
+        break;
+    }
+  }, [misc.theme]);
+
   const focusSearchInput = useCallback(() => {
     document.getElementById('local-search-input')?.focus();
   }, []);
 
-  if (!localStorage.getItem('server')) {
+  if (
+    !localStorage.getItem('server') ||
+    !localStorage.getItem('serverBase64')
+  ) {
     return (
-      <Layout
-        disableSidebar
-        footer={
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              background: 'black',
-              borderTop: '1px solid #48545c',
-            }}
-          />
-        }
-      >
-        <Login />
-      </Layout>
+      <ThemeProvider theme={theme}>
+        <Layout disableSidebar footer={<MockFooter />}>
+          <Login />
+        </Layout>
+      </ThemeProvider>
     );
   }
 
@@ -55,26 +68,28 @@ const App = () => {
   setDefaultSettings(false);
 
   return (
-    <GlobalHotKeys keyMap={keyMap} handlers={handlers}>
-      <Router>
-        <Layout footer={<PlayerBar />}>
-          <Switch>
-            <Route exact path="/library/album" component={AlbumList} />
-            <Route exact path="/library/artist" component={ArtistList} />
-            <Route exact path="/library/genre" component={LibraryView} />
-            <Route exact path="/library/artist/:id" component={ArtistView} />
-            <Route exact path="/library/album/:id" component={AlbumView} />
-            <Route exact path="/folder" component={LibraryView} />
-            <Route exact path="/nowplaying" component={NowPlayingView} />
-            <Route exact path="/playlist/:id" component={PlaylistView} />
-            <Route exact path="/playlist" component={PlaylistList} />
-            <Route exact path="/starred" component={StarredView} />
-            <Route exact path="/config" component={Config} />
-            <Route path="/" component={Dashboard} />
-          </Switch>
-        </Layout>
-      </Router>
-    </GlobalHotKeys>
+    <ThemeProvider theme={theme}>
+      <GlobalHotKeys keyMap={keyMap} handlers={handlers}>
+        <Router>
+          <Layout footer={<PlayerBar />}>
+            <Switch>
+              <Route exact path="/library/album" component={AlbumList} />
+              <Route exact path="/library/artist" component={ArtistList} />
+              <Route exact path="/library/genre" component={LibraryView} />
+              <Route exact path="/library/artist/:id" component={ArtistView} />
+              <Route exact path="/library/album/:id" component={AlbumView} />
+              <Route exact path="/folder" component={LibraryView} />
+              <Route exact path="/nowplaying" component={NowPlayingView} />
+              <Route exact path="/playlist/:id" component={PlaylistView} />
+              <Route exact path="/playlist" component={PlaylistList} />
+              <Route exact path="/starred" component={StarredView} />
+              <Route exact path="/config" component={Config} />
+              <Route path="/" component={Dashboard} />
+            </Switch>
+          </Layout>
+        </Router>
+      </GlobalHotKeys>
+    </ThemeProvider>
   );
 };
 

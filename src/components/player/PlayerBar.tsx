@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
-import { FlexboxGrid, Icon, Grid, Row, Col } from 'rsuite';
+import { FlexboxGrid, Grid, Row, Col } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
@@ -11,6 +11,8 @@ import {
   PlayerControlIcon,
   LinkButton,
   CustomSlider,
+  DurationSpan,
+  VolumeIcon,
 } from './styled';
 import {
   incrementCurrentIndex,
@@ -30,6 +32,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import { star, unstar } from '../../api/api';
 import placeholderImg from '../../img/placeholder.jpg';
 import DebugWindow from '../debug/DebugWindow';
+import { CoverArtWrapper } from '../layout/styled';
 
 const keyCodes = {
   SPACEBAR: 32,
@@ -350,24 +353,26 @@ const PlayerBar = () => {
                   }}
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px' }}>
-                    <LazyLoadImage
-                      tabIndex={0}
-                      src={
-                        playQueue[currentEntryList][playQueue.currentIndex]
-                          ?.image || placeholderImg
-                      }
-                      alt="trackImg"
-                      effect="opacity"
-                      width="65"
-                      height="65"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => history.push(`/nowplaying`)}
-                      onKeyDown={(e: any) => {
-                        if (e.keyCode === keyCodes.SPACEBAR) {
-                          history.push(`/nowplaying`);
+                    <CoverArtWrapper>
+                      <LazyLoadImage
+                        tabIndex={0}
+                        src={
+                          playQueue[currentEntryList][playQueue.currentIndex]
+                            ?.image || placeholderImg
                         }
-                      }}
-                    />
+                        alt="trackImg"
+                        effect="opacity"
+                        width="65"
+                        height="65"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => history.push(`/nowplaying`)}
+                        onKeyDown={(e: any) => {
+                          if (e.keyCode === keyCodes.SPACEBAR) {
+                            history.push(`/nowplaying`);
+                          }
+                        }}
+                      />
+                    </CoverArtWrapper>
                   </Col>
                   <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>
                     <Row
@@ -379,11 +384,12 @@ const PlayerBar = () => {
                       }}
                     >
                       <CustomTooltip
+                        enterable
+                        placement="topStart"
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]
                             ?.title || 'Unknown title'
                         }
-                        placement="topStart"
                       >
                         <LinkButton
                           tabIndex={0}
@@ -411,11 +417,12 @@ const PlayerBar = () => {
                       }}
                     >
                       <CustomTooltip
+                        enterable
+                        placement="topStart"
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]
                             ?.artist || 'Unknown artist'
                         }
-                        placement="topStart"
                       >
                         <span
                           style={{
@@ -552,11 +559,12 @@ const PlayerBar = () => {
                     userSelect: 'none',
                   }}
                 >
-                  {format((isDragging ? manualSeek : seek) * 1000)}
+                  <DurationSpan>
+                    {format((isDragging ? manualSeek : seek) * 1000)}
+                  </DurationSpan>
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item colspan={16}>
                   {/* Seek Slider */}
-
                   <CustomSlider
                     progress
                     defaultValue={0}
@@ -578,10 +586,12 @@ const PlayerBar = () => {
                     userSelect: 'none',
                   }}
                 >
-                  {format(
-                    playQueue[currentEntryList][playQueue.currentIndex]
-                      ?.duration * 1000 || 0
-                  )}
+                  <DurationSpan>
+                    {format(
+                      playQueue[currentEntryList][playQueue.currentIndex]
+                        ?.duration * 1000 || 0
+                    )}
+                  </DurationSpan>
                 </FlexboxGrid.Item>
               </FlexboxGrid>
             </PlayerColumn>
@@ -698,7 +708,7 @@ const PlayerBar = () => {
                   }}
                 >
                   {/* Volume Slider */}
-                  <Icon
+                  <VolumeIcon
                     icon={
                       playQueue.volume > 0.7
                         ? 'volume-up'

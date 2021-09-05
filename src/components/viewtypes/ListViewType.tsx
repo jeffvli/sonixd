@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { DOMHelper } from 'rsuite';
 import { useAppSelector } from '../../redux/hooks';
-import Loader from '../loader/Loader';
+import PageLoader from '../loader/PageLoader';
 import SelectionBar from '../selectionbar/SelectionBar';
 import ListViewTable from './ListViewTable';
 
@@ -136,7 +136,7 @@ const ListViewType = (
 
   return (
     <>
-      {!show && <Loader />}
+      {!show && <PageLoader />}
       {multiSelect.selected.length >= 1 && (
         <SelectionBar
           handleUpClick={rest.handleUpClick}
