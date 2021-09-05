@@ -445,9 +445,11 @@ const ListViewTable = ({
                             }
                           }}
                           playing={
-                            rowData.id === playQueue?.currentSongId &&
-                            playQueue.currentIndex === rowIndex &&
-                            nowPlaying
+                            (rowData.id === playQueue?.currentSongId &&
+                              playQueue.currentIndex === rowIndex &&
+                              nowPlaying) ||
+                            (!nowPlaying &&
+                              rowData.id === playQueue?.currentSongId)
                               ? 'true'
                               : 'false'
                           }
