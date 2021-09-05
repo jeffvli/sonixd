@@ -43,13 +43,7 @@ const AlbumList = () => {
   const dispatch = useAppDispatch();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, albums, [
-    'name',
-    'artist',
-    'created',
-    'genre',
-    'year',
-  ]);
+  const filteredData = useSearchQuery(searchQuery, albums, ['name', 'artist']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -86,12 +80,10 @@ const AlbumList = () => {
               placeholder="Sort Type"
               menuAutoWidth
               onChange={async (value) => {
-                // setData([]);
                 setOffset(0);
                 setSortBy(value);
                 await queryClient.refetchQueries(['albumList'], {
                   active: true,
-                  exact: true,
                 });
               }}
             />

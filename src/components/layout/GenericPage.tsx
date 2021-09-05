@@ -5,7 +5,12 @@ import { PageContainer, PageHeader, PageContent } from './styled';
 const GenericPage = ({ header, children, hideDivider }: any) => {
   return (
     <PageContainer id="page-container">
-      <PageHeader id="page-header">{header}</PageHeader>
+      <PageHeader
+        id="page-header"
+        style={{ paddingBottom: hideDivider ? '20px' : '0px' }}
+      >
+        {header}
+      </PageHeader>
       {!hideDivider && <Divider />}
       <PageContent id="page-content">{children}</PageContent>
     </PageContainer>

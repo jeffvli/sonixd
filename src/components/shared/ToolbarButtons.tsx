@@ -81,3 +81,19 @@ export const DownloadButton = ({ ...rest }) => {
     </CustomTooltip>
   );
 };
+
+export const ShuffleButton = ({ ...rest }) => {
+  return (
+    <CustomTooltip text="Shuffle" placement="bottom">
+      <IconButton tabIndex={0} icon={<Icon icon="random" />} {...rest} />
+    </CustomTooltip>
+  );
+};
+
+export const ClearQueueButton = ({ ...rest }) => {
+  return (
+    <CustomTooltip text="Clear queue" placement="bottom">
+      <IconButton tabIndex={0} icon={<Icon icon="close" />} {...rest} />
+    </CustomTooltip>
+  );
+};

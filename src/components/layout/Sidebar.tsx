@@ -13,7 +13,6 @@ const Sidebar = ({
       <Sidenav
         style={{
           height: '100%',
-          borderRight: '1px solid #48545c',
         }}
         expanded={expand}
         appearance="default"

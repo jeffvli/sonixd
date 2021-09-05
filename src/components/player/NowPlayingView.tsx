@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
-import { Checkbox } from 'rsuite';
+import { ButtonToolbar, Checkbox } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -25,7 +25,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import Loader from '../loader/Loader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
-import { HeaderButton } from '../shared/styled';
+import { ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -120,30 +120,28 @@ const NowPlayingView = () => {
           title="Now Playing"
           subtitle={
             <>
-              <HeaderButton
-                size="sm"
-                onClick={() => {
-                  dispatch(clearPlayQueue());
-                  dispatch(setStatus('PAUSED'));
-                  // Needs a timeout otherwise the seek may still update after the pause due to
-                  // the delay timeout
-                  setTimeout(() => dispatch(resetPlayer()), 200);
-                }}
-              >
-                Clear queue
-              </HeaderButton>
-              <HeaderButton
-                size="sm"
-                onClick={() => {
-                  if (playQueue.shuffle) {
-                    dispatch(shuffleInPlace());
-                  } else {
-                    dispatch(toggleShuffle());
-                  }
-                }}
-              >
-                Shuffle
-              </HeaderButton>
+              <ButtonToolbar>
+                <ShuffleButton
+                  size="md"
+                  onClick={() => {
+                    if (playQueue.shuffle) {
+                      dispatch(shuffleInPlace());
+                    } else {
+                      dispatch(toggleShuffle());
+                    }
+                  }}
+                />
+                <ClearQueueButton
+                  size="md"
+                  onClick={() => {
+                    dispatch(clearPlayQueue());
+                    dispatch(setStatus('PAUSED'));
+                    // Needs a timeout otherwise the seek may still update after the pause due to
+                    // the delay timeout
+                    setTimeout(() => dispatch(resetPlayer()), 200);
+                  }}
+                />
+              </ButtonToolbar>
             </>
           }
           subsidetitle={

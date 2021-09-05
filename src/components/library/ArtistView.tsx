@@ -56,11 +56,9 @@ const ArtistView = () => {
   }: any = useQuery(['artistInfo', id], () => getArtistInfo(id, 8));
 
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.song, [
-    'title',
+  const filteredData = useSearchQuery(searchQuery, data?.album, [
+    'name',
     'artist',
-    'album',
-    'genre',
   ]);
 
   let timeout: any = null;
@@ -137,11 +135,8 @@ const ArtistView = () => {
               </CustomTooltip>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton appearance="primary" size="lg" circle />
-                  <PlayShuffleButton />
-                  <PlayAppendButton />
-                  <PlayShuffleAppendButton />
-                  <EditButton style={{ marginRight: '10px' }} />
+                  <PlayButton appearance="primary" size="lg" />
+                  <PlayAppendButton appearance="primary" size="lg" />
                   <Whisper
                     placement="bottomStart"
                     trigger="hover"
@@ -164,7 +159,7 @@ const ArtistView = () => {
                       </Popover>
                     }
                   >
-                    <Button>Related Artists</Button>
+                    <Button size="lg">Related Artists</Button>
                   </Whisper>
                 </ButtonToolbar>
               </div>
