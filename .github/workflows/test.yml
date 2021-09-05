@@ -29,5 +29,5 @@ jobs:
         run: |
           yarn package
           yarn lint
-          yarn tsc
+          yarn tsc-silent -p ./tsconfig.json --suppress 2702@/node_modules/react-chartjs-2/ 9006@/src/main.dev.js
           yarn test
