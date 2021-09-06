@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from 'rsuite';
+import { Button, Table } from 'rsuite';
 
 export const RsuiteLinkButton = styled(Button)<{
   subtitle?: string;
@@ -40,4 +40,23 @@ export const TableCellWrapper = styled.div<{
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`
   color: ${(props) =>
     props.playing === 'true' ? props.theme.primary.main : undefined};
+`;
+
+export const StyledTableHeaderCell = styled(Table.HeaderCell)`
+  .rs-table-column-resize-spanner::before {
+    border-color: transparent #000 transparent transparent !important;
+  }
+
+  .rs-table-column-resize-spanner::after {
+    border-color: transparent transparent transparent #000 !important;
+  }
+
+  .rs-table-cell-content:hover .rs-table-column-resize-spanner:hover {
+    background-color: #000 !important;
+  }
+
+  .rs-table-cell-header-icon-sort-desc::after,
+  .rs-table-cell-header-icon-sort-asc::after {
+    color: ${(props) => `${props.theme.primary.main} !important`};
+  }
 `;

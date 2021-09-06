@@ -11,6 +11,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {
   CombinedTitleTextWrapper,
   RsuiteLinkButton,
+  StyledTableHeaderCell,
   TableCellWrapper,
 } from './styled';
 import {
@@ -47,6 +48,8 @@ const ListViewTable = ({
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const [cachePath] = useState(path.join(getImageCachePath(), '/'));
+  const [sortColumn, setSortColumn] = useState<any>();
+  const [sortType, setSortType] = useState<any>();
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
@@ -74,6 +77,11 @@ const ListViewTable = ({
     setRating(rowData.id, e);
   };
 
+  const handleSortColumn = (column: any, type: any) => {
+    setSortColumn(column);
+    setSortType(type);
+  };
+
   return (
     <Table
       ref={tableRef}
@@ -87,6 +95,9 @@ const ListViewTable = ({
       affixHorizontalScrollbar
       shouldUpdateScroll={false}
       style={{ fontSize: `${fontSize}px` }}
+      sortColumn={sortColumn}
+      sortType={sortType}
+      onSortColumn={handleSortColumn}
       // onScroll={onScroll}
     >
       {columns.map((column: any) => (
@@ -98,6 +109,7 @@ const ListViewTable = ({
           width={column.width}
           fixed={column.fixed}
           verticalAlign="middle"
+          sortable
           onResize={(width: any) => {
             const resizedColumnIndex = columns.findIndex(
               (c: any) => c.dataKey === column.dataKey
@@ -109,10 +121,10 @@ const ListViewTable = ({
             );
           }}
         >
-          <Table.HeaderCell>{column.id}</Table.HeaderCell>
+          <StyledTableHeaderCell>{column.id}</StyledTableHeaderCell>
 
           {column.dataKey === 'index' ? (
-            <Table.Cell>
+            <Table.Cell dataKey={column.id}>
               {(rowData: any, rowIndex: any) => {
                 return (
                   <TableCellWrapper
@@ -152,7 +164,7 @@ const ListViewTable = ({
               }}
             </Table.Cell>
           ) : column.dataKey === 'combinedtitle' ? (
-            <Table.Cell>
+            <Table.Cell dataKey={column.id}>
               {(rowData: any, rowIndex: any) => {
                 return (
                   <TableCellWrapper
@@ -310,7 +322,7 @@ const ListViewTable = ({
               }}
             </Table.Cell>
           ) : column.dataKey === 'coverart' ? (
-            <Table.Cell>
+            <Table.Cell dataKey={column.id}>
               {(rowData: any) => {
                 return (
                   <TableCellWrapper
@@ -356,7 +368,7 @@ const ListViewTable = ({
               }}
             </Table.Cell>
           ) : (
-            <Table.Cell>
+            <Table.Cell dataKey={column.id}>
               {(rowData: any, rowIndex: any) => {
                 return (
                   <TableCellWrapper
