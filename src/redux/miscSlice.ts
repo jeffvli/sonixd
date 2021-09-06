@@ -4,10 +4,12 @@ import { getSettings } from '../shared/utils';
 const parsedSettings = getSettings();
 interface General {
   theme: string;
+  font: string;
 }
 
 const initialState: General = {
   theme: parsedSettings.theme,
+  font: parsedSettings.font,
 };
 
 const miscSlice = createSlice({
@@ -17,8 +19,12 @@ const miscSlice = createSlice({
     setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;
     },
+
+    setFont: (state, action: PayloadAction<string>) => {
+      state.font = action.payload;
+    },
   },
 });
 
-export const { setTheme } = miscSlice.actions;
+export const { setTheme, setFont } = miscSlice.actions;
 export default miscSlice.reducer;

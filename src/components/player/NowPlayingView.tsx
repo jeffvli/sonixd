@@ -124,7 +124,7 @@ const NowPlayingView = () => {
             <>
               <ButtonToolbar>
                 <ShuffleButton
-                  size="md"
+                  size="lg"
                   onClick={() => {
                     if (playQueue.shuffle) {
                       dispatch(shuffleInPlace());
@@ -134,7 +134,7 @@ const NowPlayingView = () => {
                   }}
                 />
                 <ClearQueueButton
-                  size="md"
+                  size="lg"
                   onClick={() => {
                     dispatch(clearPlayQueue());
                     dispatch(setStatus('PAUSED'));

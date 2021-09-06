@@ -1,5 +1,11 @@
 export const defaultDark = {
-  all: {},
+  all: {
+    fonts: {
+      pageTitleFontSize: '30px',
+      pageFontSize: '14px',
+      panelHeaderFontSize: '20px',
+    },
+  },
   primary: {
     main: '#2196F3',
     background: '#181a1f',
@@ -7,7 +13,7 @@ export const defaultDark = {
     titleText: '#FFFFFF',
     playerBar: '#101010',
     sideBar: '#101010',
-    text: '#e9ebf0',
+    text: '#D8D8D8',
     rowSelected: '#4D5156',
     playerBarText: '#e9ebf0',
     playerBarButtons: '#b3b3b3',

@@ -35,6 +35,7 @@ import {
   StyledCheckbox,
   StyledInput,
   StyledInputNumber,
+  StyledInputPicker,
   StyledNavItem,
   StyledRadio,
 } from '../shared/styled';
@@ -43,7 +44,8 @@ import {
   setPlaybackSetting,
   setPlayerVolume,
 } from '../../redux/playQueueSlice';
-import { setTheme } from '../../redux/miscSlice';
+import { Fonts } from './Fonts';
+import { setFont, setTheme } from '../../redux/miscSlice';
 
 const fsUtils = require('nodejs-fs-utils');
 
@@ -304,71 +306,89 @@ const Config = () => {
         </div>
       </ConfigPanel>
       <ConfigPanel header="Look & Feel" bordered>
-        <p>Select the main application theme.</p>
-        <RadioGroup
-          name="themeRadioList"
-          appearance="default"
-          defaultValue={String(settings.getSync('theme'))}
-          onChange={(e) => {
-            settings.setSync('theme', e);
-            dispatch(setTheme(e));
-          }}
-        >
-          <StyledRadio value="defaultDark">Default Dark</StyledRadio>
-          <StyledRadio value="defaultLight">Default Light</StyledRadio>
-        </RadioGroup>
+        <div style={{ width: '300px' }}>
+          <p>Select the main application theme.</p>
+          <RadioGroup
+            name="themeRadioList"
+            appearance="default"
+            defaultValue={String(settings.getSync('theme'))}
+            onChange={(e) => {
+              settings.setSync('theme', e);
+              dispatch(setTheme(e));
+            }}
+          >
+            <StyledRadio value="defaultDark">Default Dark</StyledRadio>
+            <StyledRadio value="defaultLight">Default Light</StyledRadio>
+          </RadioGroup>
+          <br />
+          <ControlLabel>Font</ControlLabel>
+          <br />
+          <StyledInputPicker
+            data={Fonts}
+            groupBy="role"
+            defaultValue={String(settings.getSync('font'))}
+            onChange={(e: string) => {
+              settings.setSync('font', e);
+              dispatch(setFont(e));
+            }}
+          />
+        </div>
         <br />
-        <p>Select the columns you want displayed on pages with a list-view.</p>
-        <Nav
-          style={{ paddingTop: '10px' }}
-          activeKey={currentLAFTab}
-          onSelect={(e) => setCurrentLAFTab(e)}
-        >
-          <StyledNavItem eventKey="songList">Song List</StyledNavItem>
-          <StyledNavItem eventKey="albumList">Album List</StyledNavItem>
-          <StyledNavItem eventKey="playlistList">Playlist List</StyledNavItem>
-        </Nav>
-        {currentLAFTab === 'songList' && (
-          <ListViewConfig
-            title="Song List"
-            defaultColumns={currentSongColumns}
-            columnPicker={songColumnPicker}
-            columnList={songColumnList}
-            settingsConfig={{
-              columnList: 'songListColumns',
-              rowHeight: 'songListRowHeight',
-              fontSize: 'songListFontSize',
-            }}
-          />
-        )}
+        <ConfigPanel bordered>
+          <p>
+            Select the columns you want displayed on pages with a list-view.
+          </p>
+          <Nav
+            style={{ paddingTop: '10px' }}
+            activeKey={currentLAFTab}
+            onSelect={(e) => setCurrentLAFTab(e)}
+          >
+            <StyledNavItem eventKey="songList">Song List</StyledNavItem>
+            <StyledNavItem eventKey="albumList">Album List</StyledNavItem>
+            <StyledNavItem eventKey="playlistList">Playlist List</StyledNavItem>
+          </Nav>
+          {currentLAFTab === 'songList' && (
+            <ListViewConfig
+              title="Song List"
+              defaultColumns={currentSongColumns}
+              columnPicker={songColumnPicker}
+              columnList={songColumnList}
+              settingsConfig={{
+                columnList: 'songListColumns',
+                rowHeight: 'songListRowHeight',
+                fontSize: 'songListFontSize',
+              }}
+            />
+          )}
 
-        {currentLAFTab === 'albumList' && (
-          <ListViewConfig
-            title="Album List"
-            defaultColumns={currentAlbumColumns}
-            columnPicker={albumColumnPicker}
-            columnList={albumColumnList}
-            settingsConfig={{
-              columnList: 'albumListColumns',
-              rowHeight: 'albumListRowHeight',
-              fontSize: 'albumListFontSize',
-            }}
-          />
-        )}
+          {currentLAFTab === 'albumList' && (
+            <ListViewConfig
+              title="Album List"
+              defaultColumns={currentAlbumColumns}
+              columnPicker={albumColumnPicker}
+              columnList={albumColumnList}
+              settingsConfig={{
+                columnList: 'albumListColumns',
+                rowHeight: 'albumListRowHeight',
+                fontSize: 'albumListFontSize',
+              }}
+            />
+          )}
 
-        {currentLAFTab === 'playlistList' && (
-          <ListViewConfig
-            title="Playlist List"
-            defaultColumns={currentPlaylistColumns}
-            columnPicker={playlistColumnPicker}
-            columnList={playlistColumnList}
-            settingsConfig={{
-              columnList: 'playlistListColumns',
-              rowHeight: 'playlistListRowHeight',
-              fontSize: 'playlistListFontSize',
-            }}
-          />
-        )}
+          {currentLAFTab === 'playlistList' && (
+            <ListViewConfig
+              title="Playlist List"
+              defaultColumns={currentPlaylistColumns}
+              columnPicker={playlistColumnPicker}
+              columnList={playlistColumnList}
+              settingsConfig={{
+                columnList: 'playlistListColumns',
+                rowHeight: 'playlistListRowHeight',
+                fontSize: 'playlistListFontSize',
+              }}
+            />
+          )}
+        </ConfigPanel>
       </ConfigPanel>
       <ConfigPanel header="Player" bordered>
         <p>

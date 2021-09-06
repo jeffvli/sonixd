@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 import { StyledInputGroup } from '../shared/styled';
-import { CoverArtWrapper } from './styled';
+import { CoverArtWrapper, PageHeaderTitle } from './styled';
 
 const GenericPageHeader = ({
   image,
@@ -53,15 +53,7 @@ const GenericPageHeader = ({
               overflow: 'hidden',
             }}
           >
-            <h1
-              style={{
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              }}
-            >
-              {title}
-            </h1>
+            <PageHeaderTitle>{title}</PageHeaderTitle>
           </span>
           <span
             style={{

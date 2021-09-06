@@ -26,6 +26,7 @@ export const getSettings = () => {
     volumeFade: parsedSettings.volumeFade,
     showDebugWindow: parsedSettings.showDebugWindow,
     theme: parsedSettings.theme,
+    font: parsedSettings.font,
   };
 };
 

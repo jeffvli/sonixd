@@ -5,8 +5,7 @@
 
 @import '~rsuite/lib/styles/themes/dark/index.less';
 @import 'custom-theme.less';
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&family=Cormorant:wght@300;400;500&family=Encode+Sans:wght@300;400;500&family=Epilogue:wght@300;400;500&family=Hahmlet:wght@300;400;500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&family=Manrope:wght@300;400;500&family=Montserrat:wght@300;400;500&family=Oswald:wght@300;400;500&family=Poppins:wght@300;400;500&family=Raleway:wght@300;400;500&family=Roboto:wght@300;400;500&family=Sora:wght@300;400;500&family=Spectral&family=Work+Sans:wght@300;400;500&display=swap');
 html,
 body {
   height: 100%;
@@ -18,10 +17,6 @@ body {
 
 #root {
   min-height: 100%;
-}
-
-h1 {
-  font-size: 30px !important;
 }
 
 .rhap_container {

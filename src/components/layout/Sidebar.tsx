@@ -7,9 +7,15 @@ const Sidebar = ({
   handleToggle,
   handleSidebarSelect,
   disableSidebar,
+  font,
 }: any) => {
   return (
-    <FixedSidebar id="sidebar" width={expand ? 193 : 56} collapsible>
+    <FixedSidebar
+      id="sidebar"
+      width={expand ? 193 : 56}
+      collapsible
+      font={font}
+    >
       <Sidenav
         style={{
           height: '100%',

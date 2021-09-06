@@ -8,6 +8,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('theme', 'defaultDark');
   }
 
+  if (force || !settings.hasSync('theme')) {
+    settings.setSync('font', 'Poppins');
+  }
+
   if (force || !settings.hasSync('showDebugWindow')) {
     settings.setSync('showDebugWindow', false);
   }

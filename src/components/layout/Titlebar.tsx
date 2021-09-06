@@ -6,7 +6,7 @@ import {
   WindowControlButton,
 } from './styled';
 
-const Titlebar = () => {
+const Titlebar = ({ font }: any) => {
   const [title, setTitle] = useState(document.title);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Titlebar = () => {
   });
 
   return (
-    <TitleHeader id="titlebar">
+    <TitleHeader id="titlebar" font={font}>
       <DragRegion id="drag-region">
         <div id="window-title-wrapper">
           <span id="window-title">{title}</span>

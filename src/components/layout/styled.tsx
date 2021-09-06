@@ -3,10 +3,14 @@ import styled from 'styled-components';
 import { Container, Content, Footer, Header, Sidebar } from 'rsuite';
 
 // Layout.tsx
-export const RootContainer = styled(Container)`
+export const RootContainer = styled(Container)<{ font: string }>`
   background: ${(props) => props.theme.primary.background};
   height: 100vh;
   color: ${(props) => props.theme.primary.text};
+  font-size: ${(props) => props.theme.all.fonts.pageFontSize};
+  font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
+  font-weight: ${(props) =>
+    props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
 `;
 
 interface ContainerProps {
@@ -35,7 +39,7 @@ export const RootFooter = styled(Footer)`
 
 // Titlebar.tsx
 // Subtract 2px from width if you add window border
-export const TitleHeader = styled.header`
+export const TitleHeader = styled.header<{ font: string }>`
   display: block;
   position: fixed;
   height: 32px;
@@ -44,6 +48,9 @@ export const TitleHeader = styled.header`
   background: ${(props) => props.theme.primary.titleBar};
   padding: 4px;
   color: ${(props) => props.theme.primary.titleText};
+  font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
+  font-weight: ${(props) =>
+    props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
 `;
 
 export const DragRegion = styled.div`
@@ -106,16 +113,26 @@ export const PageContent = styled(Content)`
 
 // Sidebar.tsx
 // Add 1 to top if you add window border
-export const FixedSidebar = styled(Sidebar)`
+export const FixedSidebar = styled(Sidebar)<{ font: string }>`
   background: ${(props) => props.theme.primary.sideBar} !important;
   position: fixed;
   top: 32px;
   z-index: 1;
   height: calc(100% - 130px);
+  font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
+  font-weight: ${(props) =>
+    props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
 `;
 
 export const CoverArtWrapper = styled.div`
   display: inline-block;
   filter: ${(props) =>
     `drop-shadow(0px 5px 8px ${props.theme.primary.coverArtShadow})`};
+`;
+
+export const PageHeaderTitle = styled.h1`
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: ${(props) => props.theme.all.fonts.pageTitleFontSize};
 `;

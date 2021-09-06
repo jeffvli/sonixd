@@ -28,6 +28,7 @@ const keyMap = {
 
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
+  const [font, setFont] = useState('Poppins');
   const misc = useAppSelector((state) => state.misc);
   useEffect(() => {
     switch (misc.theme) {
@@ -43,6 +44,10 @@ const App = () => {
     }
   }, [misc.theme]);
 
+  useEffect(() => {
+    setFont(misc.font);
+  }, [misc.font]);
+
   const focusSearchInput = useCallback(() => {
     document.getElementById('local-search-input')?.focus();
   }, []);
@@ -53,7 +58,7 @@ const App = () => {
   ) {
     return (
       <ThemeProvider theme={theme}>
-        <Layout disableSidebar footer={<MockFooter />}>
+        <Layout disableSidebar footer={<MockFooter />} font={font}>
           <Login />
         </Layout>
       </ThemeProvider>
@@ -71,7 +76,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <GlobalHotKeys keyMap={keyMap} handlers={handlers}>
         <Router>
-          <Layout footer={<PlayerBar />}>
+          <Layout footer={<PlayerBar />} font={font}>
             <Switch>
               <Route exact path="/library/album" component={AlbumList} />
               <Route exact path="/library/artist" component={ArtistList} />

@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
 
-const Layout = ({ footer, children, disableSidebar }: any) => {
+const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const [expandSidebar, setExpandSidebar] = useState(false);
   const history = useHistory();
 
@@ -54,14 +54,15 @@ const Layout = ({ footer, children, disableSidebar }: any) => {
 
   return (
     <>
-      <Titlebar />
+      <Titlebar font={font} />
       <Sidebar
         expand={expandSidebar}
         handleToggle={handleToggle}
         handleSidebarSelect={handleSidebarSelect}
         disableSidebar={disableSidebar}
+        font={font}
       />
-      <RootContainer id="container-root">
+      <RootContainer id="container-root" font={font}>
         <MainContainer id="container-main" expanded={expandSidebar}>
           <Content id="container-content">{children}</Content>
         </MainContainer>

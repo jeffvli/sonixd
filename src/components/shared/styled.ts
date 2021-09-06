@@ -10,6 +10,7 @@ import {
   Icon,
   Rate,
   Slider,
+  InputPicker,
 } from 'rsuite';
 import styled from 'styled-components';
 
@@ -95,6 +96,7 @@ export const StyledIconButton = styled(IconButton)`
     background-color: ${(props) =>
       props.appearance === 'primary' ? props.theme.primary.main : undefined};
   }
+  width: ${(props) => `${props.width}px`};
 `;
 
 export const StyledNavItem = styled(Nav.Item)`
@@ -125,5 +127,11 @@ export const StyledSlider = styled(Slider)`
     div {
       border: '2px solid #000 !important';
     }
+  }
+`;
+
+export const StyledInputPicker = styled(InputPicker)`
+  .rs-picker-toggle-value {
+    color: ${(props) => `${props.theme.primary.main} !important`};
   }
 `;
