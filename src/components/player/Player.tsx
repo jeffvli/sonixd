@@ -233,7 +233,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const player = useAppSelector((state) => state.player);
   const cacheSongs = settings.getSync('cacheSongs');
   const [debug, setDebug] = useState(playQueue.showDebugWindow);
-  const [title, setTitle] = useState('');
+  const [title] = useState('');
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
   const [fadeDuration, setFadeDuration] = useState(playQueue.fadeDuration);
   const [fadeType, setFadeType] = useState(playQueue.fadeType);
@@ -426,22 +426,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       description,
     });
   };
-
-  useEffect(() => {
-    const playStatus =
-      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0
-        ? '(Paused)'
-        : '';
-    const songTitle = playQueue[currentEntryList][playQueue.currentIndex]?.title
-      ? `(${playQueue.currentIndex + 1} / ${
-          playQueue[currentEntryList].length
-        }) ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.title} ~ ${
-          playQueue[currentEntryList][playQueue.currentIndex]?.artist
-        } `
-      : 'sonixd';
-
-    setTitle(`${playStatus} ${songTitle}`);
-  }, [currentEntryList, playQueue, playQueue.currentIndex, player.status]);
 
   const handleGaplessPlayer1 = () => {
     gaplessListenHandler(

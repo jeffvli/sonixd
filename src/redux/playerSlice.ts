@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Player {
+export interface Player {
   status: string;
   currentSeek: number;
   currentSeekable: number;

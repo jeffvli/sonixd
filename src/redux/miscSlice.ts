@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getSettings } from '../shared/utils';
 
 const parsedSettings = getSettings();
-interface General {
+export interface General {
   theme: string;
   font: string;
 }

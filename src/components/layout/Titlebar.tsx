@@ -5,8 +5,11 @@ import {
   WindowControl,
   WindowControlButton,
 } from './styled';
+import { useAppSelector } from '../../redux/hooks';
 
 const Titlebar = ({ font }: any) => {
+  const playQueue = useAppSelector((state) => state.playQueue);
+  const player = useAppSelector((state) => state.player);
   const [title, setTitle] = useState(document.title);
 
   useEffect(() => {
@@ -14,8 +17,24 @@ const Titlebar = ({ font }: any) => {
     // throws an error on render that this component is not wrapped in a redux provider.
     // Not sure if this is a bug or not, but this is the only workaround unless
     // someone knows of a better solution.
-    setInterval(() => setTitle(document.title), 1000);
-  });
+
+    const currentEntryList = playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+    const playStatus =
+      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0
+        ? '(Paused)'
+        : '';
+
+    const songTitle = playQueue[currentEntryList][playQueue.currentIndex]?.title
+      ? `(${playQueue.currentIndex + 1} / ${
+          playQueue[currentEntryList].length
+        }) ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.title} ~ ${
+          playQueue[currentEntryList][playQueue.currentIndex]?.artist
+        } `
+      : 'sonixd';
+
+    setTitle(`${playStatus} ${songTitle}`);
+  }, [playQueue, player.status]);
 
   return (
     <TitleHeader id="titlebar" font={font}>
