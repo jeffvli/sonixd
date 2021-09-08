@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
-import { Button, Icon } from 'rsuite';
+import { Button } from 'rsuite';
 import styled from 'styled-components';
 import Card from '../card/Card';
+import { StyledIcon } from '../shared/styled';
 
 const ScrollMenuContainer = styled.div`
   margin-bottom: 25px;
@@ -22,7 +23,7 @@ const LeftArrow = () => {
       disabled={isFirstItemVisible}
       onClick={() => scrollPrev()}
     >
-      <Icon icon="arrow-left" />
+      <StyledIcon icon="arrow-left" />
     </Button>
   );
 };
@@ -36,7 +37,7 @@ const RightArrow = () => {
       disabled={isLastItemVisible}
       onClick={() => scrollNext()}
     >
-      <Icon icon="arrow-right" />
+      <StyledIcon icon="arrow-right" />
     </Button>
   );
 };

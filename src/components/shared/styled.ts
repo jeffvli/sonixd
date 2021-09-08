@@ -135,3 +135,7 @@ export const StyledInputPicker = styled(InputPicker)`
     color: ${(props) => `${props.theme.primary.main} !important`};
   }
 `;
+
+export const StyledIcon = styled(Icon)`
+  color: ${(props) => `${props.theme.primary.main} !important`};
+`;
