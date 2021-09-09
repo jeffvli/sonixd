@@ -59,17 +59,6 @@ const PlaylistList = () => {
           showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}
-          subsidetitle={
-            <SelectPicker
-              data={PLAYLIST_SORT_TYPES}
-              searchable={false}
-              placeholder="Sort Type"
-              menuAutoWidth
-              onChange={(value) => {
-                setSortBy(value);
-              }}
-            />
-          }
         />
       }
     >

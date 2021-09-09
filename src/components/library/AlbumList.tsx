@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
-import { SelectPicker } from 'rsuite';
 import GridViewType from '../viewtypes/GridViewType';
 import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -16,6 +15,7 @@ import {
   toggleRangeSelected,
   setSelected,
 } from '../../redux/multiSelectSlice';
+import { StyledInputPicker } from '../shared/styled';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName' },
@@ -73,13 +73,12 @@ const AlbumList = () => {
         <GenericPageHeader
           title="Albums"
           subsidetitle={
-            <SelectPicker
+            <StyledInputPicker
+              width={120}
               defaultValue={sortBy}
               data={ALBUM_SORT_TYPES}
-              searchable={false}
               placeholder="Sort Type"
-              menuAutoWidth
-              onChange={async (value) => {
+              onChange={async (value: string) => {
                 setOffset(0);
                 setSortBy(value);
                 await queryClient.refetchQueries(['albumList'], {

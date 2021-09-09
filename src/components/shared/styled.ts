@@ -31,6 +31,7 @@ export const StyledButton = styled(Button)<{ width: number }>`
 export const StyledInputGroup = styled(InputGroup)`
   input {
     background-color: ${(props) => props.theme.primary.inputBackground};
+    color: ${(props) => `${props.theme.primary.text} !important`};
   }
 `;
 
@@ -139,10 +140,17 @@ export const StyledSlider = styled(Slider)`
   }
 `;
 
-export const StyledInputPicker = styled(InputPicker)`
+export const StyledInputPicker = styled(InputPicker)<{ width?: number }>`
   .rs-picker-toggle-value {
     color: ${(props) => `${props.theme.primary.main} !important`};
   }
+
+  .rs-btn-default {
+    background: ${(props) =>
+      `${props.theme.primary.inputBackground} !important`};
+  }
+
+  width: ${(props) => `${props.width}px`};
 `;
 
 export const StyledIcon = styled(Icon)`
