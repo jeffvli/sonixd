@@ -123,24 +123,26 @@ const NowPlayingView = () => {
           subtitle={
             <>
               <ButtonToolbar>
-                <ShuffleButton
-                  size="lg"
-                  onClick={() => {
-                    if (playQueue.shuffle) {
-                      dispatch(shuffleInPlace());
-                    } else {
-                      dispatch(toggleShuffle());
-                    }
-                  }}
-                />
                 <ClearQueueButton
-                  size="lg"
+                  size="sm"
+                  width={100}
                   onClick={() => {
                     dispatch(clearPlayQueue());
                     dispatch(setStatus('PAUSED'));
                     // Needs a timeout otherwise the seek may still update after the pause due to
                     // the delay timeout
                     setTimeout(() => dispatch(resetPlayer()), 200);
+                  }}
+                />
+                <ShuffleButton
+                  size="sm"
+                  width={100}
+                  onClick={() => {
+                    if (playQueue.shuffle) {
+                      dispatch(shuffleInPlace());
+                    } else {
+                      dispatch(toggleShuffle());
+                    }
                   }}
                 />
               </ButtonToolbar>

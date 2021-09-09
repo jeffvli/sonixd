@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from 'rsuite';
 import CustomTooltip from './CustomTooltip';
-import { StyledIconButton } from './styled';
+import { StyledButton, StyledIconButton } from './styled';
 
 export const PlayButton = ({ ...rest }) => {
   return (
@@ -93,7 +93,9 @@ export const DownloadButton = ({ ...rest }) => {
 export const ShuffleButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Shuffle" placement="bottom">
-      <StyledIconButton tabIndex={0} icon={<Icon icon="random" />} {...rest} />
+      <StyledButton tabIndex={0} {...rest}>
+        <Icon icon="random" /> Shuffle
+      </StyledButton>
     </CustomTooltip>
   );
 };
@@ -101,7 +103,9 @@ export const ShuffleButton = ({ ...rest }) => {
 export const ClearQueueButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Clear queue" placement="bottom">
-      <StyledIconButton tabIndex={0} icon={<Icon icon="close" />} {...rest} />
+      <StyledButton tabIndex={0} {...rest}>
+        <Icon icon="close" /> Clear
+      </StyledButton>
     </CustomTooltip>
   );
 };

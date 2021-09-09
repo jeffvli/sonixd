@@ -19,6 +19,15 @@ export const HeaderButton = styled(Button)`
   margin-right: 5px;
 `;
 
+export const StyledButton = styled(Button)<{ width: number }>`
+  background: ${(props) =>
+    props.appearance === 'primary'
+      ? `${props.theme.primary.main} !important`
+      : undefined};
+
+  width: ${(props) => `${props.width}px`};
+`;
+
 export const StyledInputGroup = styled(InputGroup)`
   input {
     background-color: ${(props) => props.theme.primary.inputBackground};
