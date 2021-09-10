@@ -59,6 +59,11 @@ const playerState: Player = {
 const miscState: General = {
   theme: 'defaultDark',
   font: 'Poppins',
+  modal: {
+    currentPageIndex: undefined,
+    show: false,
+  },
+  modalPages: [],
 };
 
 const mockInitialState = {
