@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { Tag, SelectPicker } from 'rsuite';
+import { Tag } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { getPlaylists } from '../../api/api';
@@ -11,14 +11,9 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
 
-const PLAYLIST_SORT_TYPES = [
-  { label: 'Date Modified', value: 'dateModified' },
-  { label: 'Date Created', value: 'dateCreated' },
-];
-
 const PlaylistList = () => {
   const history = useHistory();
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy] = useState('');
   const [viewType, setViewType] = useState(
     settings.getSync('playlistViewType') || 'list'
   );

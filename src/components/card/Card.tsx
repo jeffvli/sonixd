@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import path from 'path';
 import settings from 'electron-settings';
-import { Icon, Modal } from 'rsuite';
+import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import cacheImage from '../shared/cacheImage';

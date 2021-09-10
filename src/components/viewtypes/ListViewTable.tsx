@@ -6,7 +6,7 @@ import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
 import { nanoid } from 'nanoid';
-import { Table, Grid, Row, Col, Modal } from 'rsuite';
+import { Table, Grid, Row, Col } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {
