@@ -24,6 +24,14 @@ export const StyledPanel = styled(Panel)<Card>`
   height: ${(props) => props.cardsize + 55};
   &:hover {
     border: 1px solid ${(props) => props.theme.primary.main};
+    img {
+      filter: brightness(70%);
+      -webkit-filter: brightness(70%);
+    }
+  }
+
+  &:hover .rs-btn {
+    display: block;
   }
 `;
 
@@ -79,26 +87,16 @@ export const Overlay = styled.div<Card>`
   height: ${(props) => props.cardsize};
   width: ${(props) => props.cardsize};
   &:hover {
-    background-color: #000;
-    opacity: 0.6;
     cursor: pointer;
-    display: block;
-  }
-
-  &:hover .rs-btn {
-    display: block;
   }
 `;
 
-export const HoverControlButton = styled(IconButton)`
+const OverlayButton = styled(IconButton)`
   display: none;
-  opacity: 0.9;
-  border: 1px solid #fff;
   position: absolute !important;
+  opacity: 0.8;
   width: 0px;
   height: 0px;
-  top: 50%;
-  left: 50%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   background: #000;
@@ -107,4 +105,24 @@ export const HoverControlButton = styled(IconButton)`
     opacity: 1;
     background: ${(props) => props.theme.primary.main};
   }
+`;
+
+export const PlayOverlayButton = styled(OverlayButton)`
+  top: 50%;
+  left: 50%;
+`;
+
+export const AppendOverlayButton = styled(OverlayButton)`
+  top: 90%;
+  left: 90%;
+`;
+
+export const FavoriteOverlayButton = styled(OverlayButton)`
+  top: 90%;
+  left: 70%;
+`;
+
+export const ModalViewOverlayButton = styled(OverlayButton)`
+  top: 10%;
+  left: 90%;
 `;

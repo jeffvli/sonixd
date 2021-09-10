@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
@@ -5,7 +6,7 @@ import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
 import { nanoid } from 'nanoid';
-import { Table, Grid, Row, Col } from 'rsuite';
+import { Table, Grid, Row, Col, Modal } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {
@@ -25,6 +26,7 @@ import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
+import { addModalPage } from '../../redux/miscSlice';
 
 const ListViewTable = ({
   tableRef,
@@ -41,6 +43,7 @@ const ListViewTable = ({
   cacheImages,
   autoHeight,
   listType,
+  isModal,
   // onScroll,
   nowPlaying,
 }: any) => {
@@ -83,223 +86,174 @@ const ListViewTable = ({
   };
 
   return (
-    <Table
-      ref={tableRef}
-      height={height}
-      data={data}
-      virtualized={virtualized}
-      rowHeight={rowHeight}
-      hover
-      affixHeader
-      autoHeight={autoHeight}
-      affixHorizontalScrollbar
-      shouldUpdateScroll={false}
-      style={{ fontSize: `${fontSize}px` }}
-      sortColumn={sortColumn}
-      sortType={sortType}
-      onSortColumn={handleSortColumn}
-      // onScroll={onScroll}
-    >
-      {columns.map((column: any) => (
-        <Table.Column
-          key={nanoid()}
-          align={column.alignment}
-          flexGrow={column.flexGrow}
-          resizable={column.resizable}
-          width={column.width}
-          fixed={column.fixed}
-          verticalAlign="middle"
-          sortable
-          onResize={(width: any) => {
-            const resizedColumnIndex = columns.findIndex(
-              (c: any) => c.dataKey === column.dataKey
-            );
+    <>
+      <Table
+        ref={tableRef}
+        height={height}
+        data={data}
+        virtualized={virtualized}
+        rowHeight={rowHeight}
+        hover
+        affixHeader
+        autoHeight={autoHeight}
+        affixHorizontalScrollbar
+        shouldUpdateScroll={false}
+        style={{ fontSize: `${fontSize}px` }}
+        sortColumn={sortColumn}
+        sortType={sortType}
+        onSortColumn={handleSortColumn}
+        // onScroll={onScroll}
+      >
+        {columns.map((column: any) => (
+          <Table.Column
+            key={nanoid()}
+            align={column.alignment}
+            flexGrow={column.flexGrow}
+            resizable={column.resizable}
+            width={column.width}
+            fixed={column.fixed}
+            verticalAlign="middle"
+            sortable
+            onResize={(width: any) => {
+              const resizedColumnIndex = columns.findIndex(
+                (c: any) => c.dataKey === column.dataKey
+              );
 
-            settings.setSync(
-              `${listType}ListColumns[${resizedColumnIndex}].width`,
-              width
-            );
-          }}
-        >
-          <StyledTableHeaderCell>{column.id}</StyledTableHeaderCell>
+              settings.setSync(
+                `${listType}ListColumns[${resizedColumnIndex}].width`,
+                width
+              );
+            }}
+          >
+            <StyledTableHeaderCell>{column.id}</StyledTableHeaderCell>
 
-          {column.dataKey === 'index' ? (
-            <Table.Cell dataKey={column.id}>
-              {(rowData: any, rowIndex: any) => {
-                return (
-                  <TableCellWrapper
-                    playing={
-                      (rowData.id === playQueue?.currentSongId &&
-                        playQueue.currentIndex === rowIndex &&
-                        nowPlaying) ||
-                      (!nowPlaying && rowData.id === playQueue?.currentSongId)
-                        ? 'true'
-                        : 'false'
-                    }
-                    rowselected={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? 'true'
-                        : 'false'
-                    }
-                    height={rowHeight}
-                    onClick={(e: any) =>
-                      handleRowClick(e, {
-                        ...rowData,
-                        rowIndex,
-                      })
-                    }
-                    onDoubleClick={() =>
-                      handleRowDoubleClick({
-                        ...rowData,
-                        rowIndex,
-                      })
-                    }
-                  >
-                    {rowIndex + 1}
-                    {rowData['-empty']}
-                  </TableCellWrapper>
-                );
-              }}
-            </Table.Cell>
-          ) : column.dataKey === 'combinedtitle' ? (
-            <Table.Cell dataKey={column.id}>
-              {(rowData: any, rowIndex: any) => {
-                return (
-                  <TableCellWrapper
-                    rowselected={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? 'true'
-                        : 'false'
-                    }
-                    onClick={(e: any) =>
-                      handleRowClick(e, {
-                        ...rowData,
-                        rowIndex,
-                      })
-                    }
-                    onDoubleClick={() =>
-                      handleRowDoubleClick({
-                        ...rowData,
-                        rowIndex,
-                      })
-                    }
-                  >
-                    <Grid fluid>
-                      <Row
-                        style={{
-                          height: `${rowHeight}px`,
-                          display: 'flex',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Col
+            {column.dataKey === 'index' ? (
+              <Table.Cell dataKey={column.id}>
+                {(rowData: any, rowIndex: any) => {
+                  return (
+                    <TableCellWrapper
+                      playing={
+                        (rowData.id === playQueue?.currentSongId &&
+                          playQueue.currentIndex === rowIndex &&
+                          nowPlaying) ||
+                        (!nowPlaying && rowData.id === playQueue?.currentSongId)
+                          ? 'true'
+                          : 'false'
+                      }
+                      rowselected={
+                        multiSelect?.selected.find(
+                          (e: any) => e.id === rowData.id
+                        )
+                          ? 'true'
+                          : 'false'
+                      }
+                      height={rowHeight}
+                      onClick={(e: any) =>
+                        handleRowClick(e, {
+                          ...rowData,
+                          rowIndex,
+                        })
+                      }
+                      onDoubleClick={() =>
+                        handleRowDoubleClick({
+                          ...rowData,
+                          rowIndex,
+                        })
+                      }
+                    >
+                      {rowIndex + 1}
+                      {rowData['-empty']}
+                    </TableCellWrapper>
+                  );
+                }}
+              </Table.Cell>
+            ) : column.dataKey === 'combinedtitle' ? (
+              <Table.Cell dataKey={column.id}>
+                {(rowData: any, rowIndex: any) => {
+                  return (
+                    <TableCellWrapper
+                      rowselected={
+                        multiSelect?.selected.find(
+                          (e: any) => e.id === rowData.id
+                        )
+                          ? 'true'
+                          : 'false'
+                      }
+                      onClick={(e: any) =>
+                        handleRowClick(e, {
+                          ...rowData,
+                          rowIndex,
+                        })
+                      }
+                      onDoubleClick={() =>
+                        handleRowDoubleClick({
+                          ...rowData,
+                          rowIndex,
+                        })
+                      }
+                    >
+                      <Grid fluid>
+                        <Row
                           style={{
-                            paddingRight: '5px',
-                            width: `${rowHeight}px`,
+                            height: `${rowHeight}px`,
+                            display: 'flex',
+                            alignItems: 'center',
                           }}
                         >
-                          <LazyLoadImage
-                            src={
-                              isCached(
-                                `${cachePath}${cacheImages.cacheType}_${
-                                  rowData[cacheImages.cacheIdProperty]
-                                }.jpg`
-                              )
-                                ? `${cachePath}${cacheImages.cacheType}_${
+                          <Col
+                            style={{
+                              paddingRight: '5px',
+                              width: `${rowHeight}px`,
+                            }}
+                          >
+                            <LazyLoadImage
+                              src={
+                                isCached(
+                                  `${cachePath}${cacheImages.cacheType}_${
                                     rowData[cacheImages.cacheIdProperty]
                                   }.jpg`
-                                : rowData.image
-                            }
-                            alt="track-img"
-                            effect="opacity"
-                            width={rowHeight - 10}
-                            height={rowHeight - 10}
-                            visibleByDefault={cacheImages.enabled}
-                            afterLoad={() => {
-                              if (cacheImages.enabled) {
-                                cacheImage(
-                                  `${cacheImages.cacheType}_${
-                                    rowData[cacheImages.cacheIdProperty]
-                                  }.jpg`,
-                                  rowData.image.replace(/size=\d+/, 'size=350')
-                                );
+                                )
+                                  ? `${cachePath}${cacheImages.cacheType}_${
+                                      rowData[cacheImages.cacheIdProperty]
+                                    }.jpg`
+                                  : rowData.image
                               }
-                            }}
-                          />
-                        </Col>
-                        <Col
-                          style={{
-                            width: '100%',
-                            overflow: 'hidden',
-                            paddingLeft: '10px',
-                            paddingRight: '20px',
-                          }}
-                        >
-                          <Row
-                            style={{
-                              height: `${rowHeight / 2}px`,
-                              overflow: 'hidden',
-                              position: 'relative',
-                            }}
-                          >
-                            <CombinedTitleTextWrapper
-                              playing={
-                                (rowData.id === playQueue?.currentSongId &&
-                                  playQueue.currentIndex === rowIndex &&
-                                  nowPlaying) ||
-                                (!nowPlaying &&
-                                  rowData.id === playQueue?.currentSongId)
-                                  ? 'true'
-                                  : 'false'
-                              }
-                              style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                width: '100%',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
+                              alt="track-img"
+                              effect="opacity"
+                              width={rowHeight - 10}
+                              height={rowHeight - 10}
+                              visibleByDefault={cacheImages.enabled}
+                              afterLoad={() => {
+                                if (cacheImages.enabled) {
+                                  cacheImage(
+                                    `${cacheImages.cacheType}_${
+                                      rowData[cacheImages.cacheIdProperty]
+                                    }.jpg`,
+                                    rowData.image.replace(
+                                      /size=\d+/,
+                                      'size=350'
+                                    )
+                                  );
+                                }
                               }}
-                            >
-                              {rowData.title || rowData.name}
-                            </CombinedTitleTextWrapper>
-                          </Row>
-                          <Row
+                            />
+                          </Col>
+                          <Col
                             style={{
-                              height: `${rowHeight / 2}px`,
-                              fontSize: 'smaller',
-                              overflow: 'hidden',
-                              position: 'relative',
                               width: '100%',
+                              overflow: 'hidden',
+                              paddingLeft: '10px',
+                              paddingRight: '20px',
                             }}
                           >
-                            <span
+                            <Row
                               style={{
-                                position: 'absolute',
-                                top: 0,
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
+                                height: `${rowHeight / 2}px`,
                                 overflow: 'hidden',
-                                width: '100%',
+                                position: 'relative',
                               }}
                             >
-                              <RsuiteLinkButton
-                                subtitle="true"
-                                appearance="link"
-                                onClick={() => {
-                                  if (rowData.artistId) {
-                                    history.push(
-                                      `/library/artist/${rowData.artistId}`
-                                    );
-                                  }
-                                }}
-                                style={{
-                                  fontSize: `${fontSize}px`,
-                                }}
+                              <CombinedTitleTextWrapper
                                 playing={
                                   (rowData.id === playQueue?.currentSongId &&
                                     playQueue.currentIndex === rowIndex &&
@@ -309,207 +263,282 @@ const ListViewTable = ({
                                     ? 'true'
                                     : 'false'
                                 }
+                                style={{
+                                  position: 'absolute',
+                                  bottom: 0,
+                                  width: '100%',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                }}
                               >
-                                {rowData.artist}
-                              </RsuiteLinkButton>
-                            </span>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </Grid>
-                  </TableCellWrapper>
-                );
-              }}
-            </Table.Cell>
-          ) : column.dataKey === 'coverart' ? (
-            <Table.Cell dataKey={column.id}>
-              {(rowData: any) => {
-                return (
-                  <TableCellWrapper
-                    rowselected={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? 'true'
-                        : 'false'
-                    }
-                    height={rowHeight}
-                  >
-                    <LazyLoadImage
-                      src={
-                        isCached(
-                          `${cachePath}${cacheImages.cacheType}_${
-                            rowData[cacheImages.cacheIdProperty]
-                          }.jpg`
+                                {rowData.title || rowData.name}
+                              </CombinedTitleTextWrapper>
+                            </Row>
+                            <Row
+                              style={{
+                                height: `${rowHeight / 2}px`,
+                                fontSize: 'smaller',
+                                overflow: 'hidden',
+                                position: 'relative',
+                                width: '100%',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  width: '100%',
+                                }}
+                              >
+                                <RsuiteLinkButton
+                                  subtitle="true"
+                                  appearance="link"
+                                  onClick={() => {
+                                    if (rowData.artistId && !isModal) {
+                                      history.push(
+                                        `/library/artist/${rowData.artistId}`
+                                      );
+                                    } else if (rowData.artistId && isModal) {
+                                      dispatch(
+                                        addModalPage({
+                                          pageType: 'artist',
+                                          id: rowData.artistId,
+                                        })
+                                      );
+                                    }
+                                  }}
+                                  style={{
+                                    fontSize: `${fontSize}px`,
+                                  }}
+                                  playing={
+                                    (rowData.id === playQueue?.currentSongId &&
+                                      playQueue.currentIndex === rowIndex &&
+                                      nowPlaying) ||
+                                    (!nowPlaying &&
+                                      rowData.id === playQueue?.currentSongId)
+                                      ? 'true'
+                                      : 'false'
+                                  }
+                                >
+                                  {rowData.artist}
+                                </RsuiteLinkButton>
+                              </span>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Grid>
+                    </TableCellWrapper>
+                  );
+                }}
+              </Table.Cell>
+            ) : column.dataKey === 'coverart' ? (
+              <Table.Cell dataKey={column.id}>
+                {(rowData: any) => {
+                  return (
+                    <TableCellWrapper
+                      rowselected={
+                        multiSelect?.selected.find(
+                          (e: any) => e.id === rowData.id
                         )
-                          ? `${cachePath}${cacheImages.cacheType}_${
+                          ? 'true'
+                          : 'false'
+                      }
+                      height={rowHeight}
+                    >
+                      <LazyLoadImage
+                        src={
+                          isCached(
+                            `${cachePath}${cacheImages.cacheType}_${
                               rowData[cacheImages.cacheIdProperty]
                             }.jpg`
-                          : rowData.image
+                          )
+                            ? `${cachePath}${cacheImages.cacheType}_${
+                                rowData[cacheImages.cacheIdProperty]
+                              }.jpg`
+                            : rowData.image
+                        }
+                        alt="track-img"
+                        effect="opacity"
+                        width={rowHeight - 10}
+                        height={rowHeight - 10}
+                        visibleByDefault={cacheImages.enabled}
+                        afterLoad={() => {
+                          if (cacheImages.enabled) {
+                            cacheImage(
+                              `${cacheImages.cacheType}_${
+                                rowData[cacheImages.cacheIdProperty]
+                              }.jpg`,
+                              rowData.image.replace(/size=\d+/, 'size=350')
+                            );
+                          }
+                        }}
+                      />
+                    </TableCellWrapper>
+                  );
+                }}
+              </Table.Cell>
+            ) : (
+              <Table.Cell dataKey={column.id}>
+                {(rowData: any, rowIndex: any) => {
+                  return (
+                    <TableCellWrapper
+                      playing={
+                        (rowData.id === playQueue?.currentSongId &&
+                          playQueue.currentIndex === rowIndex &&
+                          nowPlaying) ||
+                        (!nowPlaying && rowData.id === playQueue?.currentSongId)
+                          ? 'true'
+                          : 'false'
                       }
-                      alt="track-img"
-                      effect="opacity"
-                      width={rowHeight - 10}
-                      height={rowHeight - 10}
-                      visibleByDefault={cacheImages.enabled}
-                      afterLoad={() => {
-                        if (cacheImages.enabled) {
-                          cacheImage(
-                            `${cacheImages.cacheType}_${
-                              rowData[cacheImages.cacheIdProperty]
-                            }.jpg`,
-                            rowData.image.replace(/size=\d+/, 'size=350')
-                          );
+                      rowselected={
+                        multiSelect?.selected.find(
+                          (e: any) => e.id === rowData.id
+                        )
+                          ? 'true'
+                          : 'false'
+                      }
+                      height={rowHeight}
+                      onClick={(e: any) => {
+                        if (
+                          !column.dataKey?.match(
+                            /starred|songCount|duration|userRating/
+                          )
+                        ) {
+                          handleRowClick(e, {
+                            ...rowData,
+                            rowIndex,
+                          });
                         }
                       }}
-                    />
-                  </TableCellWrapper>
-                );
-              }}
-            </Table.Cell>
-          ) : (
-            <Table.Cell dataKey={column.id}>
-              {(rowData: any, rowIndex: any) => {
-                return (
-                  <TableCellWrapper
-                    playing={
-                      (rowData.id === playQueue?.currentSongId &&
-                        playQueue.currentIndex === rowIndex &&
-                        nowPlaying) ||
-                      (!nowPlaying && rowData.id === playQueue?.currentSongId)
-                        ? 'true'
-                        : 'false'
-                    }
-                    rowselected={
-                      multiSelect?.selected.find(
-                        (e: any) => e.id === rowData.id
-                      )
-                        ? 'true'
-                        : 'false'
-                    }
-                    height={rowHeight}
-                    onClick={(e: any) => {
-                      if (
-                        !column.dataKey?.match(
-                          /starred|songCount|duration|userRating/
-                        )
-                      ) {
-                        handleRowClick(e, {
-                          ...rowData,
-                          rowIndex,
-                        });
-                      }
-                    }}
-                    onDoubleClick={() => {
-                      if (
-                        !column.dataKey?.match(
-                          /starred|songCount|duration|userRating/
-                        )
-                      ) {
-                        handleRowDoubleClick({
-                          ...rowData,
-                          rowIndex,
-                        });
-                      }
-                    }}
-                    className={
-                      (rowData.id === playQueue?.currentSongId &&
-                        (column.dataKey === 'title' ||
-                          column.dataKey === 'name') &&
-                        playQueue.currentIndex === rowIndex &&
-                        nowPlaying) ||
-                      (!nowPlaying &&
-                        rowData.id === playQueue?.currentSongId &&
-                        (column.dataKey === 'title' ||
-                          column.dataKey === 'name'))
-                        ? 'active'
-                        : ''
-                    }
-                  >
-                    <div
-                      style={{
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        paddingRight: !column.dataKey?.match(
-                          /starred|songCount|duration|userRating/
-                        )
-                          ? '10px'
-                          : undefined,
+                      onDoubleClick={() => {
+                        if (
+                          !column.dataKey?.match(
+                            /starred|songCount|duration|userRating/
+                          )
+                        ) {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }
                       }}
+                      className={
+                        (rowData.id === playQueue?.currentSongId &&
+                          (column.dataKey === 'title' ||
+                            column.dataKey === 'name') &&
+                          playQueue.currentIndex === rowIndex &&
+                          nowPlaying) ||
+                        (!nowPlaying &&
+                          rowData.id === playQueue?.currentSongId &&
+                          (column.dataKey === 'title' ||
+                            column.dataKey === 'name'))
+                          ? 'active'
+                          : ''
+                      }
                     >
-                      {column.dataKey.match(/album|artist/) ? (
-                        <RsuiteLinkButton
-                          appearance="link"
-                          onClick={() => {
-                            if (column.dataKey === 'album') {
-                              if (rowData.albumId) {
-                                history.push(
-                                  `/library/album/${rowData.albumId}`
-                                );
+                      <div
+                        style={{
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          paddingRight: !column.dataKey?.match(
+                            /starred|songCount|duration|userRating/
+                          )
+                            ? '10px'
+                            : undefined,
+                        }}
+                      >
+                        {column.dataKey.match(/album|artist/) ? (
+                          <RsuiteLinkButton
+                            appearance="link"
+                            onClick={() => {
+                              if (column.dataKey === 'album') {
+                                if (rowData.albumId && !isModal) {
+                                  history.push(
+                                    `/library/album/${rowData.albumId}`
+                                  );
+                                } else if (rowData.albumId && isModal) {
+                                  dispatch(
+                                    addModalPage({
+                                      pageType: 'album',
+                                      id: rowData.albumId,
+                                    })
+                                  );
+                                }
+                              } else if (column.dataKey === 'artist') {
+                                if (rowData.artistId && !isModal) {
+                                  history.push(
+                                    `/library/artist/${rowData.artistId}`
+                                  );
+                                } else if (rowData.artistId && isModal) {
+                                  dispatch(
+                                    addModalPage({
+                                      pageType: 'artist',
+                                      id: rowData.artistId,
+                                    })
+                                  );
+                                }
                               }
-                            } else if (column.dataKey === 'artist') {
-                              if (rowData.artistId) {
-                                history.push(
-                                  `/library/artist/${rowData.artistId}`
-                                );
-                              }
+                            }}
+                            playing={
+                              (rowData.id === playQueue?.currentSongId &&
+                                playQueue.currentIndex === rowIndex &&
+                                nowPlaying) ||
+                              (!nowPlaying &&
+                                rowData.id === playQueue?.currentSongId)
+                                ? 'true'
+                                : 'false'
                             }
-                          }}
-                          playing={
-                            (rowData.id === playQueue?.currentSongId &&
-                              playQueue.currentIndex === rowIndex &&
-                              nowPlaying) ||
-                            (!nowPlaying &&
-                              rowData.id === playQueue?.currentSongId)
-                              ? 'true'
-                              : 'false'
-                          }
-                          style={{
-                            fontSize: `${fontSize}px`,
-                          }}
-                        >
-                          {rowData[column.dataKey]}
-                        </RsuiteLinkButton>
-                      ) : column.dataKey === 'duration' ? (
-                        formatSongDuration(rowData[column.dataKey])
-                      ) : column.dataKey === 'changed' ||
-                        column.dataKey === 'created' ? (
-                        formatDate(rowData[column.dataKey])
-                      ) : column.dataKey === 'starred' ? (
-                        <StyledIconToggle
-                          tabIndex={0}
-                          icon={rowData?.starred ? 'heart' : 'heart-o'}
-                          size="lg"
-                          fixedWidth
-                          active={rowData?.starred ? 'true' : 'false'}
-                          onClick={() => handleFavorite(rowData)}
-                        />
-                      ) : column.dataKey === 'userRating' ? (
-                        <StyledRate
-                          size="xs"
-                          readOnly={false}
-                          defaultValue={
-                            rowData?.userRating ? rowData.userRating : 0
-                          }
-                          onChange={(e: any) => handleRating(rowData, e)}
-                        />
-                      ) : (
-                        rowData[column.dataKey]
-                      )}
+                            style={{
+                              fontSize: `${fontSize}px`,
+                            }}
+                          >
+                            {rowData[column.dataKey]}
+                          </RsuiteLinkButton>
+                        ) : column.dataKey === 'duration' ? (
+                          formatSongDuration(rowData[column.dataKey])
+                        ) : column.dataKey === 'changed' ||
+                          column.dataKey === 'created' ? (
+                          formatDate(rowData[column.dataKey])
+                        ) : column.dataKey === 'starred' ? (
+                          <StyledIconToggle
+                            tabIndex={0}
+                            icon={rowData?.starred ? 'heart' : 'heart-o'}
+                            size="lg"
+                            fixedWidth
+                            active={rowData?.starred ? 'true' : 'false'}
+                            onClick={() => handleFavorite(rowData)}
+                          />
+                        ) : column.dataKey === 'userRating' ? (
+                          <StyledRate
+                            size="xs"
+                            readOnly={false}
+                            defaultValue={
+                              rowData?.userRating ? rowData.userRating : 0
+                            }
+                            onChange={(e: any) => handleRating(rowData, e)}
+                          />
+                        ) : (
+                          rowData[column.dataKey]
+                        )}
 
-                      {column.dataKey === 'bitRate' && rowData[column.dataKey]
-                        ? ' kbps'
-                        : ''}
-                    </div>
-                  </TableCellWrapper>
-                );
-              }}
-            </Table.Cell>
-          )}
-        </Table.Column>
-      ))}
-    </Table>
+                        {column.dataKey === 'bitRate' && rowData[column.dataKey]
+                          ? ' kbps'
+                          : ''}
+                      </div>
+                    </TableCellWrapper>
+                  );
+                }}
+              </Table.Cell>
+            )}
+          </Table.Column>
+        ))}
+      </Table>
+    </>
   );
 };
 

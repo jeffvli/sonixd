@@ -30,19 +30,24 @@ import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { TagLink } from './styled';
 import { setStatus } from '../../redux/playerSlice';
+import { addModalPage } from '../../redux/miscSlice';
 
 interface AlbumParams {
   id: string;
 }
 
-const AlbumView = () => {
+const AlbumView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const history = useHistory();
   const queryClient = useQueryClient();
+
   const { id } = useParams<AlbumParams>();
-  const { isLoading, isError, data, error }: any = useQuery(['album', id], () =>
-    getAlbum(id)
+  const albumId = rest.id ? rest.id : id;
+
+  const { isLoading, isError, data, error }: any = useQuery(
+    ['album', albumId],
+    () => getAlbum(albumId)
   );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, data?.song, [
@@ -137,9 +142,18 @@ const AlbumView = () => {
                 {data.artist && (
                   <Tag>
                     <TagLink
-                      onClick={() =>
-                        history.push(`/library/artist/${data.artistId}`)
-                      }
+                      onClick={() => {
+                        if (!rest.isModal) {
+                          history.push(`/library/artist/${data.artistId}`);
+                        } else {
+                          dispatch(
+                            addModalPage({
+                              pageType: 'artist',
+                              id: data.artistId,
+                            })
+                          );
+                        }
+                      }}
                     >
                       Artist: {data.artist}
                     </TagLink>
@@ -199,6 +213,7 @@ const AlbumView = () => {
           cacheIdProperty: 'albumId',
         }}
         listType="song"
+        isModal={rest.isModal}
       />
     </GenericPage>
   );

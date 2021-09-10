@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
@@ -26,28 +27,32 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
 import { TagLink } from './styled';
 import { setStatus } from '../../redux/playerSlice';
+import { addModalPage } from '../../redux/miscSlice';
 
 interface ArtistParams {
   id: string;
 }
 
-const ArtistView = () => {
+const ArtistView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const [viewType, setViewType] = useState(
     settings.getSync('albumViewType') || 'list'
   );
+
   const { id } = useParams<ArtistParams>();
+  const artistId = rest.id ? rest.id : id;
+
   const { isLoading, isError, data, error }: any = useQuery(
-    ['artist', id],
-    () => getArtist(id)
+    ['artist', artistId],
+    () => getArtist(artistId)
   );
   const {
     isLoading: isLoadingAI,
     isError: isErrorAI,
     data: artistInfo,
     error: errorAI,
-  }: any = useQuery(['artistInfo', id], () => getArtistInfo(id, 8));
+  }: any = useQuery(['artistInfo', artistId], () => getArtistInfo(artistId, 8));
 
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, data?.album, [
@@ -141,9 +146,20 @@ const ArtistView = () => {
                           {artistInfo.similarArtist?.map((artist: any) => (
                             <Tag key={artist.id}>
                               <TagLink
-                                onClick={() =>
-                                  history.push(`/library/artist/${artist.id}`)
-                                }
+                                onClick={() => {
+                                  if (!rest.isModal) {
+                                    history.push(
+                                      `/library/artist/${artist.id}`
+                                    );
+                                  } else {
+                                    dispatch(
+                                      addModalPage({
+                                        pageType: 'artist',
+                                        id: artist.id,
+                                      })
+                                    );
+                                  }
+                                }}
                               >
                                 {artist.name}
                               </TagLink>
@@ -186,6 +202,7 @@ const ArtistView = () => {
               cacheIdProperty: 'albumId',
             }}
             listType="album"
+            isModal={rest.isModal}
           />
         )}
 
@@ -204,6 +221,7 @@ const ArtistView = () => {
             playClick={{ type: 'album', idProperty: 'id' }}
             size="150px"
             cacheType="album"
+            isModal={rest.isModal}
           />
         )}
       </>

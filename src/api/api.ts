@@ -96,7 +96,8 @@ export const getPlaylist = async (id: string) => {
   const { data } = await api.get(`/getPlaylist?id=${id}`);
   return {
     ...data.playlist,
-    entry: (data.playlist.entry || []).map((entry: any, index: any) => ({
+    entry: null, // Normalize to 'song' instead of 'entry'
+    song: (data.playlist.entry || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
@@ -151,7 +152,7 @@ export const getStarred = async () => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
-      starred: entry.starred || '',
+      starred: entry.starred || undefined,
       index,
     })),
   };
@@ -168,7 +169,7 @@ export const getAlbums = async (options: any, coverArtSize = 150) => {
       ...entry,
       albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
-      starred: entry.starred || '',
+      starred: entry.starred || undefined,
       index,
     })),
   };
@@ -184,7 +185,7 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
       ...entry,
       albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
-      starred: entry.starred || '',
+      starred: entry.starred || undefined,
       index,
     })
   );
@@ -215,7 +216,7 @@ export const getAllAlbums = (
           ...entry,
           albumId: entry.id,
           image: getCoverArtUrl(entry, coverArtSize),
-          starred: entry.starred || '',
+          starred: entry.starred || undefined,
           index,
         }));
       }
@@ -243,7 +244,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
-      starred: entry.starred || '',
+      starred: entry.starred || undefined,
       index,
     })),
   };
@@ -260,7 +261,7 @@ export const getRandomSongs = async (options: any, coverArtSize = 150) => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
-      starred: entry.starred || '',
+      starred: entry.starred || undefined,
       index,
     })),
   };
@@ -295,7 +296,7 @@ export const getArtist = async (id: string, coverArtSize = 150) => {
       ...entry,
       albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
-      starred: entry.starred || '',
+      starred: entry.starred || undefined,
       index,
     })),
   };

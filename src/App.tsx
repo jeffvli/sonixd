@@ -21,6 +21,7 @@ import ArtistList from './components/library/ArtistList';
 import { MockFooter } from './components/settings/styled';
 import { defaultDark, defaultLight } from './styles/styledTheme';
 import { useAppSelector } from './redux/hooks';
+import PageModal from './components/modal/PageModal';
 
 const keyMap = {
   FOCUS_SEARCH: 'ctrl+f',
@@ -92,6 +93,7 @@ const App = () => {
               <Route path="/" component={Dashboard} />
             </Switch>
           </Layout>
+          <PageModal />
         </Router>
       </GlobalHotKeys>
     </ThemeProvider>

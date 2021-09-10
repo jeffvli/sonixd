@@ -36,16 +36,19 @@ interface PlaylistParams {
   id: string;
 }
 
-const PlaylistView = () => {
+const PlaylistView = ({ ...rest }) => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
+
   const { id } = useParams<PlaylistParams>();
+  const playlistId = rest.id ? rest.id : id;
+
   const { isLoading, isError, data, error }: any = useQuery(
-    ['playlist', id],
-    () => getPlaylist(id)
+    ['playlist', playlistId],
+    () => getPlaylist(playlistId)
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.entry, [
+  const filteredData = useSearchQuery(searchQuery, data?.song, [
     'title',
     'artist',
     'album',
@@ -62,7 +65,7 @@ const PlaylistView = () => {
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
 
-          dispatch(toggleRangeSelected(data.entry));
+          dispatch(toggleRangeSelected(data.song));
         } else {
           dispatch(setSelected(rowData));
         }
@@ -77,7 +80,7 @@ const PlaylistView = () => {
     dispatch(clearSelected());
     dispatch(
       setPlayQueueByRowClick({
-        entries: data.entry,
+        entries: data.song,
         currentIndex: e.index,
         currentSongId: e.id,
       })
@@ -87,12 +90,12 @@ const PlaylistView = () => {
   };
 
   const handlePlay = () => {
-    dispatch(setPlayQueue({ entries: data.entry }));
+    dispatch(setPlayQueue({ entries: data.song }));
     dispatch(setStatus('PLAYING'));
   };
 
   const handlePlayAppend = () => {
-    dispatch(appendPlayQueue({ entries: data.entry }));
+    dispatch(appendPlayQueue({ entries: data.song }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
@@ -150,7 +153,7 @@ const PlaylistView = () => {
       }
     >
       <ListViewType
-        data={searchQuery !== '' ? filteredData : data.entry}
+        data={searchQuery !== '' ? filteredData : data.song}
         tableColumns={settings.getSync('songListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
@@ -164,6 +167,7 @@ const PlaylistView = () => {
           cacheIdProperty: 'albumId',
         }}
         listType="song"
+        isModal={rest.isModal}
       />
     </GenericPage>
   );

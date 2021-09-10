@@ -33,6 +33,7 @@ const ListViewType = (
     cacheImages,
     children,
     listType,
+    isModal,
     ...rest
   }: any,
   ref: any
@@ -76,11 +77,20 @@ const ListViewType = (
   }, [getHeight]);
 
   useEffect(() => {
-    window.requestAnimationFrame(() => {
-      setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
-      setShow(true);
-    });
-  }, [getHeight]);
+    if (!isModal) {
+      window.requestAnimationFrame(() => {
+        setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
+        setShow(true);
+      });
+    } else {
+      setTimeout(() => {
+        window.requestAnimationFrame(() => {
+          setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
+          setShow(true);
+        });
+      }, 250);
+    }
+  }, [getHeight, isModal]);
 
   useEffect(() => {
     let scrollDistance = 0;
@@ -324,6 +334,7 @@ const ListViewType = (
             cacheImages={cacheImages}
             listType={listType}
             nowPlaying={rest.nowPlaying}
+            isModal={isModal}
             // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
           />
         )}
