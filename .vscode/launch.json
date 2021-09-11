@@ -1,3 +1,4 @@
+// See https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/2757 for details
 {
   "version": "0.2.0",
   "configurations": [
@@ -7,7 +8,12 @@
       "request": "launch",
       "protocol": "inspector",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["start:main --inspect=5858 --remote-debugging-port=9223"],
+      "runtimeArgs": [
+        "start:main",
+        "--inspect=5858",
+        "--remote-debugging-port=9223"
+      ],
+
       "preLaunchTask": "Start Webpack Dev"
     },
     {
