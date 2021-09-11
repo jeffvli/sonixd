@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import path from 'path';
 import settings from 'electron-settings';
-import { Notification } from 'rsuite';
 import ReactAudioPlayer from 'react-audio-player';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -420,13 +419,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     }
   };
 
-  const notification = (description: string) => {
-    Notification.error({
-      title: 'Playback Error',
-      description,
-    });
-  };
-
   const handleGaplessPlayer1 = () => {
     gaplessListenHandler(
       player1Ref,
@@ -479,7 +471,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.player1.index === playQueue.currentIndex &&
           playQueue.currentPlayer === 1
         }
-        onError={(e: any) => notification(e.message)}
+        onError={(e: any) => console.log(e.message)}
       />
       <ReactAudioPlayer
         ref={player2Ref}
@@ -505,7 +497,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.player2.index === playQueue.currentIndex &&
           playQueue.currentPlayer === 2
         }
-        onError={(e: any) => notification(e.message)}
+        onError={(e: any) => console.log(e.message)}
       />
       {children}
     </>

@@ -62,11 +62,11 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(50, 50, 50, 0.6);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(192, 196, 205, 0.5) !important;
+  background-color: rgba(220, 220, 220, 0.5) !important;
   border-radius: 20px;
 }
 
