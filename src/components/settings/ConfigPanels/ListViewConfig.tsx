@@ -1,7 +1,7 @@
 import React from 'react';
 import settings from 'electron-settings';
 import { TagPicker, ControlLabel } from 'rsuite';
-import { StyledInputNumber } from '../shared/styled';
+import { StyledInputNumber } from '../../shared/styled';
 
 const ListViewConfig = ({
   defaultColumns,
