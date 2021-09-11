@@ -5,7 +5,7 @@ import settings from 'electron-settings';
 import { Button, Form, ControlLabel, Message } from 'rsuite';
 import axios from 'axios';
 import setDefaultSettings from '../shared/setDefaultSettings';
-import { StyledInput } from '../shared/styled';
+import { StyledInput, StyledInputGroup } from '../shared/styled';
 import { LoginPanel } from './styled';
 import GenericPage from '../layout/GenericPage';
 
@@ -29,14 +29,12 @@ const Login = () => {
       // Since a valid request will return a 200 response, we need to check that there
       // are no additional failures reported by the server
       if (testConnection.data['subsonic-response'].status === 'failed') {
-        setMessage(
-          `Connection error: ${testConnection.data['subsonic-response'].error.message}`
-        );
+        setMessage(`${testConnection.data['subsonic-response'].error.message}`);
         return;
       }
     } catch (err) {
       if (err instanceof Error) {
-        setMessage(`Connection error: ${err.message}`);
+        setMessage(`${err.message}`);
         return;
       }
       setMessage('An unknown error occurred');
@@ -69,31 +67,36 @@ const Login = () => {
       <LoginPanel bordered>
         {message !== '' && <Message type="error" description={message} />}
         <Form id="login-form" fluid style={{ paddingTop: '20px' }}>
-          <ControlLabel>Server hostname</ControlLabel>
-          <StyledInput
-            id="login-servername"
-            name="servername"
-            value={serverName}
-            onChange={(e: string) => setServerName(e)}
-          />
+          <ControlLabel>Server</ControlLabel>
+          <StyledInputGroup>
+            <StyledInput
+              id="login-servername"
+              name="servername"
+              value={serverName}
+              onChange={(e: string) => setServerName(e)}
+            />
+          </StyledInputGroup>
           <br />
           <ControlLabel>Username</ControlLabel>
-          <StyledInput
-            id="login-username"
-            name="name"
-            value={userName}
-            onChange={(e: string) => setUserName(e)}
-          />
+          <StyledInputGroup>
+            <StyledInput
+              id="login-username"
+              name="name"
+              value={userName}
+              onChange={(e: string) => setUserName(e)}
+            />
+          </StyledInputGroup>
           <br />
-
           <ControlLabel>Password</ControlLabel>
-          <StyledInput
-            id="login-password"
-            name="password"
-            type="password"
-            value={password}
-            onChange={(e: string) => setPassword(e)}
-          />
+          <StyledInputGroup>
+            <StyledInput
+              id="login-password"
+              name="password"
+              type="password"
+              value={password}
+              onChange={(e: string) => setPassword(e)}
+            />
+          </StyledInputGroup>
           <br />
           <Button
             id="login-button"
