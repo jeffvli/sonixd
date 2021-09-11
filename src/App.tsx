@@ -22,6 +22,7 @@ import { MockFooter } from './components/settings/styled';
 import { defaultDark, defaultLight } from './styles/styledTheme';
 import { useAppSelector } from './redux/hooks';
 import PageModal from './components/modal/PageModal';
+import NowPlayingMiniView from './components/player/NowPlayingMiniView';
 
 const keyMap = {
   FOCUS_SEARCH: 'ctrl+f',
@@ -94,6 +95,7 @@ const App = () => {
             </Switch>
           </Layout>
           <PageModal />
+          <NowPlayingMiniView />
         </Router>
       </GlobalHotKeys>
     </ThemeProvider>

@@ -91,3 +91,45 @@ export const DurationSpan = styled.span`
 export const VolumeIcon = styled(Icon)`
   color: ${(props) => props.theme.primary.playerBarText};
 `;
+
+export const MiniViewContainer = styled.div<{ display: string }>`
+  user-select: none;
+  pointer-events: ${(props) => (props.display === 'true' ? 'all' : 'none')};
+  position: absolute;
+  z-index: 7;
+  bottom: 100px;
+  right: 25px;
+  padding: 8px;
+  width: 400px;
+  height: 450px;
+  background: ${(props) => props.theme.primary.background};
+  border: 1px #000 solid;
+  filter: drop-shadow(0px 2px 5px #000);
+  overflow: hidden auto;
+  opacity: ${(props) => (props.display === 'true' ? 0.9 : 0)};
+  border-radius: 10px;
+  color: ${(props) => `${props.theme.primary.text} !important`};
+  animation-name: ${(props) =>
+    props.display === 'true' ? 'fadeInOpacity' : 'fadeOutOpacity'};
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+  animation-duration: 0.5s;
+
+  @keyframes fadeInOpacity {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes fadeOutOpacity {
+    0% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+`;

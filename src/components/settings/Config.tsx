@@ -74,11 +74,13 @@ const Config = () => {
   const songCols: any = settings.getSync('songListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
   const playlistCols: any = settings.getSync('playlistListColumns');
+  const miniCols: any = settings.getSync('miniListColumns');
   const currentSongColumns = songCols?.map((column: any) => column.label) || [];
   const currentAlbumColumns =
     albumCols?.map((column: any) => column.label) || [];
   const currentPlaylistColumns =
     playlistCols?.map((column: any) => column.label) || [];
+  const currentMiniColumns = miniCols?.map((column: any) => column.label) || [];
 
   useEffect(() => {
     // Retrieve cache sizes on render
@@ -346,6 +348,7 @@ const Config = () => {
             <StyledNavItem eventKey="songList">Song List</StyledNavItem>
             <StyledNavItem eventKey="albumList">Album List</StyledNavItem>
             <StyledNavItem eventKey="playlistList">Playlist List</StyledNavItem>
+            <StyledNavItem eventKey="miniList">Miniplayer List</StyledNavItem>
           </Nav>
           {currentLAFTab === 'songList' && (
             <ListViewConfig
@@ -385,6 +388,19 @@ const Config = () => {
                 columnList: 'playlistListColumns',
                 rowHeight: 'playlistListRowHeight',
                 fontSize: 'playlistListFontSize',
+              }}
+            />
+          )}
+          {currentLAFTab === 'miniList' && (
+            <ListViewConfig
+              title="Miniplayer List"
+              defaultColumns={currentMiniColumns}
+              columnPicker={songColumnPicker}
+              columnList={songColumnList}
+              settingsConfig={{
+                columnList: 'miniListColumns',
+                rowHeight: 'miniListRowHeight',
+                fontSize: 'miniListFontSize',
               }}
             />
           )}

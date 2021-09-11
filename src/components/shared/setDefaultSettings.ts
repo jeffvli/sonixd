@@ -269,6 +269,43 @@ const setDefaultSettings = (force: boolean) => {
       },
     ]);
   }
+
+  if (force || !settings.hasSync('miniListFontSize')) {
+    settings.setSync('miniListFontSize', '14');
+  }
+
+  if (force || !settings.hasSync('playlistListRowHeight')) {
+    settings.setSync('miniListRowHeight', '50');
+  }
+
+  if (force || !settings.hasSync('miniListColumns')) {
+    settings.setSync('miniListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: 'Title',
+        dataKey: 'combinedtitle',
+        alignment: 'left',
+        resizable: true,
+        width: 235,
+        label: 'Title (Combined)',
+      },
+      {
+        id: 'Duration',
+        dataKey: 'duration',
+        alignment: 'center',
+        resizable: true,
+        width: 80,
+        label: 'Duration',
+      },
+    ]);
+  }
 };
 
 export default setDefaultSettings;

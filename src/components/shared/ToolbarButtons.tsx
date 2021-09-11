@@ -104,7 +104,7 @@ export const ClearQueueButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Clear queue" placement="bottom">
       <StyledButton tabIndex={0} {...rest}>
-        <Icon icon="close" /> Clear
+        <Icon icon="trash2" /> Clear
       </StyledButton>
     </CustomTooltip>
   );

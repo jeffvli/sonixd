@@ -102,13 +102,13 @@ export const PageContainer = styled(Container)`
   height: 100%;
 `;
 
-export const PageHeader = styled(Header)`
-  padding: 10px 20px 0px 20px;
+export const PageHeader = styled(Header)<{ padding?: string }>`
+  padding: ${(props) => (props.padding ? props.padding : '10px 20px 0px 20px')};
 `;
 
-export const PageContent = styled(Content)`
+export const PageContent = styled(Content)<{ padding?: string }>`
   position: relative;
-  padding: 10px;
+  padding: ${(props) => (props.padding ? props.padding : '10px')};
 `;
 
 // Sidebar.tsx

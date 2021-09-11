@@ -69,12 +69,15 @@ const ListViewType = (
       setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
     }
 
-    window.addEventListener('resize', handleResize);
+    if (!rest.miniView) {
+      window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [getHeight]);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+    return undefined;
+  }, [getHeight, rest.miniView]);
 
   useEffect(() => {
     if (!isModal) {
@@ -147,7 +150,7 @@ const ListViewType = (
   return (
     <>
       {!show && <PageLoader />}
-      {multiSelect.selected.length >= 1 && (
+      {multiSelect.selected.length >= 1 && !rest.miniView && (
         <SelectionBar
           handleUpClick={rest.handleUpClick}
           handleDownClick={rest.handleDownClick}
