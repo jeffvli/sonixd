@@ -471,7 +471,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.player1.index === playQueue.currentIndex &&
           playQueue.currentPlayer === 1
         }
-        onError={(e: any) => console.log(e.message)}
+        onError={(e: any) => {
+          player1Ref.current.audioEl.current.src = '';
+          player1Ref.current.audioEl.current.src =
+            playQueue[currentEntryList][playQueue.player1.index].streamUrl;
+          console.log('player error', e);
+        }}
+        crossOrigin="use-credentials"
       />
       <ReactAudioPlayer
         ref={player2Ref}
@@ -497,7 +503,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.player2.index === playQueue.currentIndex &&
           playQueue.currentPlayer === 2
         }
-        onError={(e: any) => console.log(e.message)}
+        onError={(e: any) => {
+          player2Ref.current.audioEl.current.src = '';
+          player2Ref.current.audioEl.current.src =
+            playQueue[currentEntryList][playQueue.player2.index].streamUrl;
+          console.log('player error', e);
+        }}
+        crossOrigin="use-credentials"
       />
       {children}
     </>
