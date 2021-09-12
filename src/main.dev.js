@@ -11,7 +11,9 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
+import settings from 'electron-settings';
 import { app, BrowserWindow, shell, globalShortcut } from 'electron';
+import electronLocalshortcut from 'electron-localshortcut';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
@@ -25,6 +27,7 @@ import playQueueReducer, {
   decrementCurrentIndex,
   incrementCurrentIndex,
   fixPlayer2Index,
+  clearPlayQueue,
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
@@ -108,45 +111,113 @@ const createWindow = async () => {
     frame: false,
   });
 
-  globalShortcut.register('MediaPlayPause', () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle
-      ? 'shuffledEntry'
-      : 'entry';
+  if (settings.getSync('globalMediaHotkeys')) {
+    globalShortcut.register('MediaStop', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
 
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      if (storeValues.player.status === 'PAUSED') {
-        store.dispatch(setStatus('PLAYING'));
-      } else {
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        store.dispatch(clearPlayQueue());
         store.dispatch(setStatus('PAUSED'));
+        setTimeout(() => store.dispatch(resetPlayer()), 200);
       }
-    }
-  });
+    });
 
-  globalShortcut.register('MediaNextTrack', () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle
-      ? 'shuffledEntry'
-      : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(resetPlayer());
-      store.dispatch(incrementCurrentIndex('usingHotkey'));
-      store.dispatch(setStatus('PLAYING'));
-    }
-  });
+    globalShortcut.register('MediaPlayPause', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
 
-  globalShortcut.register('MediaPreviousTrack', () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle
-      ? 'shuffledEntry'
-      : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(resetPlayer());
-      store.dispatch(decrementCurrentIndex('usingHotkey'));
-      store.dispatch(fixPlayer2Index());
-      store.dispatch(setStatus('PLAYING'));
-    }
-  });
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        if (storeValues.player.status === 'PAUSED') {
+          store.dispatch(setStatus('PLAYING'));
+        } else {
+          store.dispatch(setStatus('PAUSED'));
+        }
+      }
+    });
+
+    globalShortcut.register('MediaNextTrack', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        store.dispatch(resetPlayer());
+        store.dispatch(incrementCurrentIndex('usingHotkey'));
+        store.dispatch(setStatus('PLAYING'));
+      }
+    });
+
+    globalShortcut.register('MediaPreviousTrack', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        store.dispatch(resetPlayer());
+        store.dispatch(decrementCurrentIndex('usingHotkey'));
+        store.dispatch(fixPlayer2Index());
+        store.dispatch(setStatus('PLAYING'));
+      }
+    });
+  } else {
+    electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
+
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        store.dispatch(clearPlayQueue());
+        store.dispatch(setStatus('PAUSED'));
+        setTimeout(() => store.dispatch(resetPlayer()), 200);
+      }
+    });
+
+    electronLocalshortcut.register(mainWindow, 'MediaPlayPause', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
+
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        if (storeValues.player.status === 'PAUSED') {
+          store.dispatch(setStatus('PLAYING'));
+        } else {
+          store.dispatch(setStatus('PAUSED'));
+        }
+      }
+    });
+
+    electronLocalshortcut.register(mainWindow, 'MediaNextTrack', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        store.dispatch(resetPlayer());
+        store.dispatch(incrementCurrentIndex('usingHotkey'));
+        store.dispatch(setStatus('PLAYING'));
+      }
+    });
+
+    electronLocalshortcut.register(mainWindow, 'MediaPreviousTrack', () => {
+      const storeValues = store.getState();
+      const currentEntryList = storeValues.playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
+      if (storeValues.playQueue[currentEntryList].length > 0) {
+        store.dispatch(resetPlayer());
+        store.dispatch(decrementCurrentIndex('usingHotkey'));
+        store.dispatch(fixPlayer2Index());
+        store.dispatch(setStatus('PLAYING'));
+      }
+    });
+  }
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 

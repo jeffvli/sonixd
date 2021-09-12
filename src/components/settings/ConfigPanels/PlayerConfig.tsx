@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { ControlLabel } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledInputNumber } from '../../shared/styled';
+import { StyledCheckbox, StyledInputNumber } from '../../shared/styled';
 
 const PlayerConfig = () => {
+  const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
+    Boolean(settings.getSync('globalMediaHotkeys'))
+  );
   return (
     <ConfigPanel header="Player" bordered>
       <p>
@@ -35,6 +38,19 @@ const PlayerConfig = () => {
           settings.setSync('seekBackwardInterval', Number(e));
         }}
       />
+      <br />
+      <StyledCheckbox
+        defaultChecked={globalMediaHotkeys}
+        onChange={() => {
+          settings.setSync(
+            'globalMediaHotkeys',
+            !settings.getSync('globalMediaHotkeys')
+          );
+          setGlobalMediaHotkeys(!globalMediaHotkeys);
+        }}
+      >
+        Enable global media hotkeys (requires app restart)
+      </StyledCheckbox>
     </ConfigPanel>
   );
 };

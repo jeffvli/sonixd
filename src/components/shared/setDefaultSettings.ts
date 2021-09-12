@@ -16,6 +16,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('showDebugWindow', false);
   }
 
+  if (force || !settings.hasSync('globalMediaHotkeys')) {
+    settings.setSync('globalMediaHotkeys', true);
+  }
+
   if (force || !settings.hasSync('cachePath')) {
     settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
