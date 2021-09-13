@@ -70,7 +70,11 @@ const NowPlayingMiniView = () => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(playQueue.entry));
+          dispatch(
+            toggleRangeSelected(
+              playQueue.shuffle ? playQueue.shuffledEntry : playQueue.entry
+            )
+          );
         } else {
           dispatch(setSelected(rowData));
         }

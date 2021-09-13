@@ -71,7 +71,11 @@ const NowPlayingView = () => {
           if (searchQuery !== '') {
             dispatch(toggleRangeSelected(filteredData));
           } else {
-            dispatch(toggleRangeSelected(playQueue.entry));
+            dispatch(
+              toggleRangeSelected(
+                playQueue.shuffle ? playQueue.shuffledEntry : playQueue.entry
+              )
+            );
           }
         } else {
           dispatch(setSelected(rowData));
