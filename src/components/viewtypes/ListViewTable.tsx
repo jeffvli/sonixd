@@ -597,13 +597,15 @@ const ListViewTable = ({
                             }
                             onChange={(e: any) => handleRating(rowData, e)}
                           />
+                        ) : column.dataKey === 'bitRate' ? (
+                          !rowData[column.dataKey] ? (
+                            'N/a'
+                          ) : (
+                            `${rowData[column.dataKey]} kbps`
+                          )
                         ) : (
                           rowData[column.dataKey]
                         )}
-
-                        {column.dataKey === 'bitRate' && rowData[column.dataKey]
-                          ? ' kbps'
-                          : ''}
                       </div>
                     </TableCellWrapper>
                   );
