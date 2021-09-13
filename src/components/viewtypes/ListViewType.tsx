@@ -34,7 +34,7 @@ const ListViewType = (
     children,
     listType,
     isModal,
-    handleMouseUp,
+    handleDragEnd,
     ...rest
   }: any,
   ref: any
@@ -339,7 +339,7 @@ const ListViewType = (
             listType={listType}
             nowPlaying={rest.nowPlaying}
             isModal={isModal}
-            handleMouseUp={handleMouseUp}
+            handleDragEnd={handleDragEnd}
             // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
           />
         )}

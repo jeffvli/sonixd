@@ -89,6 +89,7 @@ const ArtistView = ({ ...rest }: any) => {
         entries: data.album,
         currentIndex: e.index,
         currentSongId: e.id,
+        uniqueSongId: e.uniqueId,
       })
     );
     dispatch(setStatus('PLAYING'));

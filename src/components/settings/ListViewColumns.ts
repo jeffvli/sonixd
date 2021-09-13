@@ -1,13 +1,13 @@
 export const songColumnList = [
   {
-    label: '#',
+    label: '# (Drag/Drop)',
     value: {
       id: '#',
       dataKey: 'index',
       alignment: 'center',
       resizable: true,
       width: 50,
-      label: '#',
+      label: '# (Drag/Drop)',
     },
   },
   {
@@ -156,7 +156,7 @@ export const songColumnList = [
 ];
 
 export const songColumnPicker = [
-  { label: '#' },
+  { label: '# (Drag/Drop)' },
   { label: 'Album' },
   { label: 'Artist' },
   { label: 'Bitrate' },
@@ -174,14 +174,14 @@ export const songColumnPicker = [
 
 export const albumColumnList = [
   {
-    label: '#',
+    label: '# (Drag/Drop)',
     value: {
       id: '#',
       dataKey: 'index',
       alignment: 'center',
       resizable: true,
       width: 50,
-      label: '#',
+      label: '# (Drag/Drop)',
     },
   },
   {
@@ -297,7 +297,7 @@ export const albumColumnList = [
 ];
 
 export const albumColumnPicker = [
-  { label: '#' },
+  { label: '# (Drag/Drop)' },
   { label: 'Artist' },
   { label: 'CoverArt' },
   { label: 'Created' },
@@ -313,14 +313,14 @@ export const albumColumnPicker = [
 
 export const playlistColumnList = [
   {
-    label: '#',
+    label: '# (Drag/Drop)',
     value: {
       id: '#',
       dataKey: 'index',
       alignment: 'center',
       resizable: true,
       width: 50,
-      label: '#',
+      label: '# (Drag/Drop)',
     },
   },
   {
@@ -447,7 +447,7 @@ export const playlistColumnList = [
 ];
 
 export const playlistColumnPicker = [
-  { label: '#' },
+  { label: '# (Drag/Drop)' },
   { label: 'CoverArt' },
   { label: 'Created' },
   { label: 'Description' },

@@ -28,16 +28,27 @@ export const TableCellWrapper = styled.div<{
   rowselected: string;
   playing?: string;
   height?: number;
-  mouseover?: string;
+  dragover?: string;
+  dragselect?: string;
+  dragfield?: string;
 }>`
   background: ${(props) =>
     props.rowselected === 'true' ? props.theme.primary.rowSelected : undefined};
   color: ${(props) =>
     props.playing === 'true' ? props.theme.primary.main : undefined};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
-  cursor: pointer;
   border-top: ${(props) =>
-    props.mouseover === 'true' ? '1px blue solid' : undefined};
+    props.dragover === 'true'
+      ? `1px ${props.theme.primary.main} solid`
+      : undefined};
+  cursor: ${(props) =>
+    props.dragover === 'true'
+      ? 'grabbing'
+      : props.dragfield
+      ? 'grab'
+      : props.dragselect === 'true'
+      ? 'crosshair'
+      : 'pointer'};
 `;
 
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`

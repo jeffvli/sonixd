@@ -30,6 +30,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import {
   setCurrentMouseOverId,
   setIsDragging,
+  setSelectedSingle,
 } from '../../redux/multiSelectSlice';
 
 const ListViewTable = ({
@@ -50,7 +51,7 @@ const ListViewTable = ({
   isModal,
   // onScroll,
   nowPlaying,
-  handleMouseUp,
+  handleDragEnd,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -165,9 +166,14 @@ const ListViewTable = ({
                       //     rowIndex,
                       //   })
                       // }
-                      onMouseEnter={() => {
+                      onMouseOver={() => {
                         if (multiSelect.isDragging) {
-                          dispatch(setCurrentMouseOverId(rowData.uniqueId));
+                          dispatch(
+                            setCurrentMouseOverId({
+                              uniqueId: rowData.uniqueId,
+                              index: rowIndex,
+                            })
+                          );
                         }
                       }}
                       onMouseLeave={() => {
@@ -175,17 +181,52 @@ const ListViewTable = ({
                           multiSelect.currentMouseOverId ||
                           multiSelect.isDragging
                         ) {
-                          dispatch(setCurrentMouseOverId(undefined));
+                          dispatch(
+                            setCurrentMouseOverId({
+                              uniqueId: undefined,
+                              index: undefined,
+                            })
+                          );
                         }
                       }}
-                      onMouseDown={() => dispatch(setIsDragging(true))}
-                      onMouseUp={() => handleMouseUp()}
-                      mouseover={
+                      onMouseDown={(e: any) => {
+                        if (e.button === 0) {
+                          const isSelected = multiSelect.selected.find(
+                            (item: any) => item.uniqueId === rowData.uniqueId
+                          );
+
+                          // Handle cases where we want to quickly drag/drop single rows
+                          if (multiSelect.selected.length <= 1 || !isSelected) {
+                            dispatch(setSelectedSingle(rowData));
+                            dispatch(
+                              setCurrentMouseOverId({
+                                uniqueId: rowData.uniqueId,
+                                index: rowIndex,
+                              })
+                            );
+                            dispatch(setIsDragging(true));
+                          }
+
+                          // Otherwise use regular multi-drag behavior
+                          if (isSelected) {
+                            dispatch(
+                              setCurrentMouseOverId({
+                                uniqueId: rowData.uniqueId,
+                                index: rowIndex,
+                              })
+                            );
+                            dispatch(setIsDragging(true));
+                          }
+                        }
+                      }}
+                      onMouseUp={() => handleDragEnd()}
+                      dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
                           ? 'true'
                           : 'false'
                       }
+                      dragfield="true"
                     >
                       {rowIndex + 1}
                       {rowData['-empty']}
@@ -218,6 +259,12 @@ const ListViewTable = ({
                         })
                       }
                       onMouseUp={() => dispatch(setIsDragging(false))}
+                      dragover={
+                        multiSelect.currentMouseOverId === rowData.uniqueId &&
+                        multiSelect.isDragging
+                          ? 'true'
+                          : 'false'
+                      }
                     >
                       <Grid fluid>
                         <Row
@@ -376,6 +423,12 @@ const ListViewTable = ({
                       }
                       height={rowHeight}
                       onMouseUp={() => dispatch(setIsDragging(false))}
+                      dragover={
+                        multiSelect.currentMouseOverId === rowData.uniqueId &&
+                        multiSelect.isDragging
+                          ? 'true'
+                          : 'false'
+                      }
                     >
                       <LazyLoadImage
                         src={
@@ -455,6 +508,12 @@ const ListViewTable = ({
                         }
                       }}
                       onMouseUp={() => dispatch(setIsDragging(false))}
+                      dragover={
+                        multiSelect.currentMouseOverId === rowData.uniqueId &&
+                        multiSelect.isDragging
+                          ? 'true'
+                          : 'false'
+                      }
                     >
                       <div
                         style={{

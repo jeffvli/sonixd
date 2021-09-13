@@ -95,10 +95,6 @@ const NowPlayingView = () => {
     dispatch(setStatus('PLAYING'));
   };
 
-  if (!playQueue) {
-    return <PageLoader />;
-  }
-
   const handleUpClick = () => {
     const selectedIndexes: any[] = [];
     multiSelect.selected.map((selected: any) => {
@@ -119,15 +115,22 @@ const NowPlayingView = () => {
     dispatch(moveDown(selectedIndexes));
   };
 
-  const handleMouseUp = () => {
-    dispatch(
-      moveToIndex({
-        entries: multiSelect.selected,
-        moveBeforeId: multiSelect.currentMouseOverId,
-      })
-    );
-    dispatch(setIsDragging(false));
+  const handleDragEnd = () => {
+    if (multiSelect.isDragging) {
+      dispatch(
+        moveToIndex({
+          entries: multiSelect.selected,
+          moveBeforeId: multiSelect.currentMouseOverId,
+        })
+      );
+      dispatch(setIsDragging(false));
+      dispatch(fixPlayer2Index());
+    }
   };
+
+  if (!playQueue) {
+    return <PageLoader />;
+  }
 
   return (
     <GenericPage
@@ -199,7 +202,7 @@ const NowPlayingView = () => {
         handleRowDoubleClick={handleRowDoubleClick}
         handleUpClick={handleUpClick}
         handleDownClick={handleDownClick}
-        handleMouseUp={handleMouseUp}
+        handleDragEnd={handleDragEnd}
         virtualized
         rowHeight={Number(settings.getSync('songListRowHeight'))}
         fontSize={Number(settings.getSync('songListFontSize'))}

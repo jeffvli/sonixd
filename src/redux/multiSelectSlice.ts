@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Entry } from './playQueueSlice';
 
 interface MultiSelect {
   lastSelected: Record<string, unknown>;
@@ -7,6 +8,7 @@ interface MultiSelect {
     lastRangeSelected: Record<string, unknown>;
   };
   selected: any[];
+  currentMouseOverIndex?: number;
   currentMouseOverId?: string;
   isDragging: boolean;
   isSelectDragging: boolean;
@@ -20,6 +22,7 @@ const initialState: MultiSelect = {
   },
   selected: [],
   currentMouseOverId: undefined,
+  currentMouseOverIndex: undefined,
   isDragging: false,
   isSelectDragging: false,
 };
@@ -33,14 +36,18 @@ const multiSelectSlice = createSlice({
     },
 
     setIsSelectDragging: (state, action: PayloadAction<boolean>) => {
-      state.isDragging = action.payload;
+      state.isSelectDragging = action.payload;
     },
 
     setCurrentMouseOverId: (
       state,
-      action: PayloadAction<string | undefined>
+      action: PayloadAction<{
+        uniqueId: string | undefined;
+        index: number | undefined;
+      }>
     ) => {
-      state.currentMouseOverId = action.payload;
+      state.currentMouseOverId = action.payload.uniqueId;
+      state.currentMouseOverIndex = action.payload.index;
     },
 
     setSelected: (state, action: PayloadAction<any>) => {
@@ -57,6 +64,28 @@ const multiSelectSlice = createSlice({
       } else {
         state.selected = [];
         state.lastSelected = action.payload;
+        state.selected.push(action.payload);
+      }
+    },
+
+    setSelectedSingle: (state, action: PayloadAction<any>) => {
+      state.selected = [];
+      state.lastSelected = {};
+      state.lastRangeSelected = {
+        lastSelected: {},
+        lastRangeSelected: {},
+      };
+
+      state.lastSelected = action.payload;
+      state.selected.push(action.payload);
+    },
+
+    appendSelected: (state, action: PayloadAction<Entry>) => {
+      const alreadySelected = state.selected.find(
+        (item) => item.uniqueId === action.payload.uniqueId
+      );
+
+      if (!alreadySelected) {
         state.selected.push(action.payload);
       }
     },
@@ -115,6 +144,8 @@ const multiSelectSlice = createSlice({
 
 export const {
   setSelected,
+  setSelectedSingle,
+  appendSelected,
   setRangeSelected,
   toggleSelected,
   toggleRangeSelected,

@@ -86,6 +86,7 @@ const AlbumView = ({ ...rest }: any) => {
         entries: data.song,
         currentIndex: e.index,
         currentSongId: e.id,
+        uniqueSongId: e.uniqueId,
       })
     );
     dispatch(setStatus('PLAYING'));

@@ -35,6 +35,7 @@ export interface Entry {
   type: string;
   year: number;
   uniqueId: string;
+  rowIndex: number;
 }
 
 export interface PlayQueue {
@@ -60,6 +61,7 @@ export interface PlayQueue {
   volumeFade: boolean;
   currentIndex: number;
   currentSongId: string;
+  currentSongUniqueId: string;
   currentPlayer: number;
   isFading: boolean;
   autoIncremented: boolean;
@@ -96,6 +98,7 @@ const initialState: PlayQueue = {
   volumeFade: parsedSettings.volumeFade,
   currentIndex: 0,
   currentSongId: '',
+  currentSongUniqueId: '',
   currentPlayer: 1,
   isFading: false,
   autoIncremented: false,
@@ -185,6 +188,7 @@ const playQueueSlice = createSlice({
       resetPlayerDefaults(state);
       handleGaplessPlayback(state);
       state.currentSongId = state[currentEntry][0].id;
+      state.currentSongUniqueId = state[currentEntry][0].uniqueId;
     },
 
     setPlaybackSetting: (
@@ -440,6 +444,8 @@ const playQueueSlice = createSlice({
 
       handleGaplessPlayback(state);
       state.currentSongId = state[currentEntry][state.currentIndex].id;
+      state.currentSongUniqueId =
+        state[currentEntry][state.currentIndex].uniqueId;
     },
 
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
@@ -512,6 +518,7 @@ const playQueueSlice = createSlice({
       state.currentPlayer = 1;
       state.currentIndex = findIndex;
       state.currentSongId = action.payload.id;
+      state.currentSongUniqueId = action.payload.uniqueId;
     },
 
     setPlayerVolume: (
@@ -546,6 +553,8 @@ const playQueueSlice = createSlice({
 
         handleGaplessPlayback(state);
         state.currentSongId = state[currentEntry][state.currentIndex].id;
+        state.currentSongUniqueId =
+          state[currentEntry][state.currentIndex].uniqueId;
       }
     },
 
@@ -580,6 +589,7 @@ const playQueueSlice = createSlice({
 
       state.currentIndex = findIndex;
       state.currentSongId = action.payload.id;
+      state.currentSongUniqueId = action.payload.uniqueId;
     },
 
     setPlayQueue: (
@@ -598,9 +608,11 @@ const playQueueSlice = createSlice({
         const shuffledEntries = _.shuffle(action.payload.entries);
         shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
         state.currentSongId = shuffledEntries[0].id;
+        state.currentSongUniqueId = shuffledEntries[0].uniqueId;
       } else {
         // If shuffle is disabled, add all entries in order
         state.currentSongId = action.payload.entries[0].id;
+        state.currentSongUniqueId = action.payload.entries[0].uniqueId;
       }
     },
 
@@ -610,6 +622,7 @@ const playQueueSlice = createSlice({
         entries: Entry[];
         currentIndex: number;
         currentSongId: string;
+        uniqueSongId: string;
       }>
     ) => {
       /* Used with listview where you want to set the entry queue by double clicking on a row
@@ -635,11 +648,13 @@ const playQueueSlice = createSlice({
         state.currentIndex = 0;
         state.player1.index = 0;
         state.currentSongId = action.payload.currentSongId;
+        state.currentSongUniqueId = action.payload.uniqueSongId;
       } else {
         // Add all songs in order and set the current index to the selected row
         state.currentIndex = action.payload.currentIndex;
         state.player1.index = action.payload.currentIndex;
         state.currentSongId = action.payload.currentSongId;
+        state.currentSongUniqueId = action.payload.uniqueSongId;
       }
     },
 
@@ -686,16 +701,53 @@ const playQueueSlice = createSlice({
         return !uniqueIds.includes(item.uniqueId);
       });
 
-      // Find the slice index to add the selected entries to
-      const spliceIndex = getCurrentEntryIndexByUID(
+      // Used if dragging onto a selected row
+      const spliceIndexPre = getCurrentEntryIndexByUID(
+        tempQueue,
+        action.payload.moveBeforeId
+      );
+
+      // Used if dragging onto a non-selected row
+      const spliceIndexPost = getCurrentEntryIndexByUID(
         newQueue,
         action.payload.moveBeforeId
       );
 
-      // Splice the entries into the new queue array
-      newQueue.splice(spliceIndex, 0, ...action.payload.entries);
+      /* If we get a negative index, don't move the entry.
+      This can happen if you try to drag and drop too fast */
+      if (spliceIndexPre < 0 && spliceIndexPost < 0) {
+        return;
+      }
 
+      // Find the slice index to add the selected entries to
+      const spliceIndex =
+        spliceIndexPost >= 0 ? spliceIndexPost : spliceIndexPre;
+
+      // Sort the entries by their rowIndex so that we can add them in the proper order
+      const sortedEntries = action.payload.entries.sort(
+        (a, b) => a.rowIndex - b.rowIndex
+      );
+
+      // Splice the entries into the new queue array
+      newQueue.splice(spliceIndex, 0, ...sortedEntries);
+
+      // Finally, set the modified entry
       state[currentEntry] = newQueue;
+
+      // We'll need to fix the current player index after swapping the queue order
+      // This will be used in conjunction with fixPlayer2Index
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        newQueue,
+        state.currentSongUniqueId
+      );
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
     },
 
     moveUp: (state, action: PayloadAction<number[]>) => {
@@ -729,6 +781,21 @@ const playQueueSlice = createSlice({
       }
 
       state[currentEntry] = tempQueue;
+
+      // We'll need to fix the current player index after swapping the queue order
+      // This will be used in conjunction with fixPlayer2Index
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        tempQueue,
+        state.currentSongUniqueId
+      );
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
     },
 
     moveDown: (state, action: PayloadAction<number[]>) => {
@@ -762,6 +829,21 @@ const playQueueSlice = createSlice({
       }
 
       state[currentEntry] = tempQueue;
+
+      // We'll need to fix the current player index after swapping the queue order
+      // This will be used in conjunction with fixPlayer2Index
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        tempQueue,
+        state.currentSongUniqueId
+      );
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
     },
   },
 });

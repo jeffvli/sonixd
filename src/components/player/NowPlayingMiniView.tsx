@@ -8,6 +8,7 @@ import {
   toggleRangeSelected,
   setSelected,
   clearSelected,
+  setIsDragging,
 } from '../../redux/multiSelectSlice';
 import {
   setPlayerVolume,
@@ -18,6 +19,7 @@ import {
   clearPlayQueue,
   shuffleInPlace,
   toggleShuffle,
+  moveToIndex,
 } from '../../redux/playQueueSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import ListViewType from '../viewtypes/ListViewType';
@@ -111,6 +113,19 @@ const NowPlayingMiniView = () => {
     dispatch(moveDown(selectedIndexes));
   };
 
+  const handleMouseUp = () => {
+    if (multiSelect.isDragging) {
+      dispatch(
+        moveToIndex({
+          entries: multiSelect.selected,
+          moveBeforeId: multiSelect.currentMouseOverId,
+        })
+      );
+      dispatch(setIsDragging(false));
+      dispatch(fixPlayer2Index());
+    }
+  };
+
   return (
     <>
       {playQueue.displayQueue && (
@@ -191,6 +206,7 @@ const NowPlayingMiniView = () => {
               handleRowDoubleClick={handleRowDoubleClick}
               handleUpClick={handleUpClick}
               handleDownClick={handleDownClick}
+              handleMouseUp={handleMouseUp}
               virtualized
               rowHeight={Number(settings.getSync('miniListRowHeight'))}
               fontSize={Number(settings.getSync('miniListFontSize'))}
