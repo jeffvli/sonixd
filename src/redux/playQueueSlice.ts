@@ -9,7 +9,7 @@ import {
 
 const parsedSettings = getSettings();
 
-interface Entry {
+export interface Entry {
   id: string;
   album: string;
   albumId: string;
@@ -34,6 +34,7 @@ interface Entry {
   track: number;
   type: string;
   year: number;
+  uniqueId: string;
 }
 
 export interface PlayQueue {
@@ -157,8 +158,15 @@ const getNextPlayerIndex = (
   return 0;
 };
 
-const getCurrentEntryIndex = (entries: any[], currentSongId: string) => {
+export const getCurrentEntryIndex = (entries: any[], currentSongId: string) => {
   return entries.findIndex((entry: any) => entry.id === currentSongId);
+};
+
+export const getCurrentEntryIndexByUID = (
+  entries: any[],
+  currentSongId: string
+) => {
+  return entries.findIndex((entry: any) => entry.uniqueId === currentSongId);
 };
 
 const handleGaplessPlayback = (state: PlayQueue) => {
@@ -488,8 +496,9 @@ const playQueueSlice = createSlice({
     setPlayerIndex: (state, action: PayloadAction<Entry>) => {
       const currentEntry = entrySelect(state);
 
-      const findIndex = state[currentEntry].findIndex(
-        (track) => track.id === action.payload.id
+      const findIndex = getCurrentEntryIndexByUID(
+        state[currentEntry],
+        action.payload.uniqueId
       );
 
       state.isFading = false;
@@ -564,8 +573,9 @@ const playQueueSlice = createSlice({
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
       const currentEntry = entrySelect(state);
 
-      const findIndex = state[currentEntry].findIndex(
-        (track) => track.id === action.payload.id
+      const findIndex = getCurrentEntryIndexByUID(
+        state[currentEntry],
+        action.payload.uniqueId
       );
 
       state.currentIndex = findIndex;
@@ -612,7 +622,7 @@ const playQueueSlice = createSlice({
       if (state.shuffle) {
         // If shuffle is enabled, add the selected row to 0 and then shuffle the rest
         const shuffledEntriesWithoutCurrent = _.shuffle(
-          removeItem(action.payload.entries, action.payload.currentIndex)
+          removeItem(state.entry, action.payload.currentIndex)
         );
 
         const shuffledEntries = insertItem(
@@ -657,6 +667,35 @@ const playQueueSlice = createSlice({
 
     setIsFading: (state, action: PayloadAction<boolean>) => {
       state.isFading = action.payload;
+    },
+
+    moveToIndex: (
+      state,
+      action: PayloadAction<{ entries: Entry[]; moveBeforeId: string }>
+    ) => {
+      const currentEntry = entrySelect(state);
+      const tempQueue = state[currentEntry].slice();
+
+      const uniqueIds: any[] = [];
+      action.payload.entries.map((entry: Entry) =>
+        uniqueIds.push(entry.uniqueId)
+      );
+
+      // Remove the selected entries from the queue
+      const newQueue = tempQueue.filter((item: any) => {
+        return !uniqueIds.includes(item.uniqueId);
+      });
+
+      // Find the slice index to add the selected entries to
+      const spliceIndex = getCurrentEntryIndexByUID(
+        newQueue,
+        action.payload.moveBeforeId
+      );
+
+      // Splice the entries into the new queue array
+      newQueue.splice(spliceIndex, 0, ...action.payload.entries);
+
+      state[currentEntry] = newQueue;
     },
 
     moveUp: (state, action: PayloadAction<number[]>) => {
@@ -742,6 +781,7 @@ export const {
   setIsLoaded,
   moveUp,
   moveDown,
+  moveToIndex,
   setCurrentPlayer,
   setPlayerVolume,
   setVolume,

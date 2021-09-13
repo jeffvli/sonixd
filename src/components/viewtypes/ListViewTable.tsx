@@ -27,6 +27,10 @@ import { useAppDispatch } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage } from '../../redux/miscSlice';
+import {
+  setCurrentMouseOverId,
+  setIsDragging,
+} from '../../redux/multiSelectSlice';
 
 const ListViewTable = ({
   tableRef,
@@ -46,6 +50,7 @@ const ListViewTable = ({
   isModal,
   // onScroll,
   nowPlaying,
+  handleMouseUp,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -142,23 +147,44 @@ const ListViewTable = ({
                       }
                       rowselected={
                         multiSelect?.selected.find(
-                          (e: any) => e.id === rowData.id
+                          (e: any) => e.uniqueId === rowData.uniqueId
                         )
                           ? 'true'
                           : 'false'
                       }
                       height={rowHeight}
-                      onClick={(e: any) =>
-                        handleRowClick(e, {
-                          ...rowData,
-                          rowIndex,
-                        })
-                      }
-                      onDoubleClick={() =>
-                        handleRowDoubleClick({
-                          ...rowData,
-                          rowIndex,
-                        })
+                      // onClick={(e: any) =>
+                      //   handleRowClick(e, {
+                      //     ...rowData,
+                      //     rowIndex,
+                      //   })
+                      // }
+                      // onDoubleClick={() =>
+                      //   handleRowDoubleClick({
+                      //     ...rowData,
+                      //     rowIndex,
+                      //   })
+                      // }
+                      onMouseEnter={() => {
+                        if (multiSelect.isDragging) {
+                          dispatch(setCurrentMouseOverId(rowData.uniqueId));
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (
+                          multiSelect.currentMouseOverId ||
+                          multiSelect.isDragging
+                        ) {
+                          dispatch(setCurrentMouseOverId(undefined));
+                        }
+                      }}
+                      onMouseDown={() => dispatch(setIsDragging(true))}
+                      onMouseUp={() => handleMouseUp()}
+                      mouseover={
+                        multiSelect.currentMouseOverId === rowData.uniqueId &&
+                        multiSelect.isDragging
+                          ? 'true'
+                          : 'false'
                       }
                     >
                       {rowIndex + 1}
@@ -174,7 +200,7 @@ const ListViewTable = ({
                     <TableCellWrapper
                       rowselected={
                         multiSelect?.selected.find(
-                          (e: any) => e.id === rowData.id
+                          (e: any) => e.uniqueId === rowData.uniqueId
                         )
                           ? 'true'
                           : 'false'
@@ -191,6 +217,7 @@ const ListViewTable = ({
                           rowIndex,
                         })
                       }
+                      onMouseUp={() => dispatch(setIsDragging(false))}
                     >
                       <Grid fluid>
                         <Row
@@ -342,12 +369,13 @@ const ListViewTable = ({
                     <TableCellWrapper
                       rowselected={
                         multiSelect?.selected.find(
-                          (e: any) => e.id === rowData.id
+                          (e: any) => e.uniqueId === rowData.uniqueId
                         )
                           ? 'true'
                           : 'false'
                       }
                       height={rowHeight}
+                      onMouseUp={() => dispatch(setIsDragging(false))}
                     >
                       <LazyLoadImage
                         src={
@@ -396,7 +424,7 @@ const ListViewTable = ({
                       }
                       rowselected={
                         multiSelect?.selected.find(
-                          (e: any) => e.id === rowData.id
+                          (e: any) => e.uniqueId === rowData.uniqueId
                         )
                           ? 'true'
                           : 'false'
@@ -426,19 +454,7 @@ const ListViewTable = ({
                           });
                         }
                       }}
-                      className={
-                        (rowData.id === playQueue?.currentSongId &&
-                          (column.dataKey === 'title' ||
-                            column.dataKey === 'name') &&
-                          playQueue.currentIndex === rowIndex &&
-                          nowPlaying) ||
-                        (!nowPlaying &&
-                          rowData.id === playQueue?.currentSongId &&
-                          (column.dataKey === 'title' ||
-                            column.dataKey === 'name'))
-                          ? 'active'
-                          : ''
-                      }
+                      onMouseUp={() => dispatch(setIsDragging(false))}
                     >
                       <div
                         style={{

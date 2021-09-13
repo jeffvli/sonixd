@@ -12,6 +12,7 @@ import {
   clearPlayQueue,
   shuffleInPlace,
   toggleShuffle,
+  moveToIndex,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -19,6 +20,7 @@ import {
   toggleRangeSelected,
   setSelected,
   clearSelected,
+  setIsDragging,
 } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -117,6 +119,16 @@ const NowPlayingView = () => {
     dispatch(moveDown(selectedIndexes));
   };
 
+  const handleMouseUp = () => {
+    dispatch(
+      moveToIndex({
+        entries: multiSelect.selected,
+        moveBeforeId: multiSelect.currentMouseOverId,
+      })
+    );
+    dispatch(setIsDragging(false));
+  };
+
   return (
     <GenericPage
       hideDivider
@@ -187,6 +199,7 @@ const NowPlayingView = () => {
         handleRowDoubleClick={handleRowDoubleClick}
         handleUpClick={handleUpClick}
         handleDownClick={handleDownClick}
+        handleMouseUp={handleMouseUp}
         virtualized
         rowHeight={Number(settings.getSync('songListRowHeight'))}
         fontSize={Number(settings.getSync('songListFontSize'))}

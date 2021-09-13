@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 
 const getAuth = () => {
   const serverConfig = {
@@ -102,6 +103,7 @@ export const getPlaylist = async (id: string) => {
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
       index,
+      uniqueId: nanoid(),
     })),
     image:
       data.playlist.songCount > 0
@@ -154,6 +156,7 @@ export const getStarred = async () => {
       image: getCoverArtUrl(entry),
       starred: entry.starred || undefined,
       index,
+      uniqueId: nanoid(),
     })),
   };
 };
@@ -246,6 +249,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
       index,
+      uniqueId: nanoid(),
     })),
   };
 };
@@ -263,6 +267,7 @@ export const getRandomSongs = async (options: any, coverArtSize = 150) => {
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
       index,
+      uniqueId: nanoid(),
     })),
   };
 };
@@ -378,6 +383,7 @@ export const getSimilarSongs = async (
       ...entry,
       image: getCoverArtUrl(entry, coverArtSize),
       index,
+      uniqueId: nanoid(),
     })),
   };
 };

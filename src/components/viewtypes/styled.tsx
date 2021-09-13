@@ -28,6 +28,7 @@ export const TableCellWrapper = styled.div<{
   rowselected: string;
   playing?: string;
   height?: number;
+  mouseover?: string;
 }>`
   background: ${(props) =>
     props.rowselected === 'true' ? props.theme.primary.rowSelected : undefined};
@@ -35,6 +36,8 @@ export const TableCellWrapper = styled.div<{
     props.playing === 'true' ? props.theme.primary.main : undefined};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
   cursor: pointer;
+  border-top: ${(props) =>
+    props.mouseover === 'true' ? '1px blue solid' : undefined};
 `;
 
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`

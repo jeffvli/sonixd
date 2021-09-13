@@ -7,6 +7,9 @@ interface MultiSelect {
     lastRangeSelected: Record<string, unknown>;
   };
   selected: any[];
+  currentMouseOverId?: string;
+  isDragging: boolean;
+  isSelectDragging: boolean;
 }
 
 const initialState: MultiSelect = {
@@ -16,12 +19,30 @@ const initialState: MultiSelect = {
     lastRangeSelected: {},
   },
   selected: [],
+  currentMouseOverId: undefined,
+  isDragging: false,
+  isSelectDragging: false,
 };
 
 const multiSelectSlice = createSlice({
   name: 'multiSelect',
   initialState,
   reducers: {
+    setIsDragging: (state, action: PayloadAction<boolean>) => {
+      state.isDragging = action.payload;
+    },
+
+    setIsSelectDragging: (state, action: PayloadAction<boolean>) => {
+      state.isDragging = action.payload;
+    },
+
+    setCurrentMouseOverId: (
+      state,
+      action: PayloadAction<string | undefined>
+    ) => {
+      state.currentMouseOverId = action.payload;
+    },
+
     setSelected: (state, action: PayloadAction<any>) => {
       state.lastSelected = {};
       state.lastRangeSelected = {
@@ -29,7 +50,9 @@ const multiSelectSlice = createSlice({
         lastRangeSelected: {},
       };
 
-      if (state.selected.find((item) => item.id === action.payload.id)) {
+      if (
+        state.selected.find((item) => item.uniqueId === action.payload.uniqueId)
+      ) {
         state.selected = [];
       } else {
         state.selected = [];
@@ -44,9 +67,11 @@ const multiSelectSlice = createSlice({
     },
 
     toggleSelected: (state, action: PayloadAction<any>) => {
-      if (state.selected.find((item) => item.id === action.payload.id)) {
+      if (
+        state.selected.find((item) => item.uniqueId === action.payload.uniqueId)
+      ) {
         const indexOfItem = state.selected.findIndex(
-          (item) => item.id === action.payload.id
+          (item) => item.uniqueId === action.payload.uniqueId
         );
 
         if (indexOfItem >= 0) {
@@ -59,13 +84,17 @@ const multiSelectSlice = createSlice({
     },
 
     toggleRangeSelected: (state, action: PayloadAction<any[]>) => {
-      if (state.lastSelected.id === state.lastRangeSelected.lastSelected.id) {
+      if (
+        state.lastSelected.uniqueId ===
+        state.lastRangeSelected.lastSelected.uniqueId
+      ) {
         const beginningIndex = action.payload.findIndex(
-          (e) => e.id === state.lastSelected.id
+          (e) => e.uniqueId === state.lastSelected.uniqueId
         );
 
         const endingIndex = action.payload.findIndex(
-          (e) => e.id === state.lastRangeSelected.lastRangeSelected.id
+          (e) =>
+            e.uniqueId === state.lastRangeSelected.lastRangeSelected.uniqueId
         );
 
         // Handle both selection directions
@@ -90,5 +119,8 @@ export const {
   toggleSelected,
   toggleRangeSelected,
   clearSelected,
+  setCurrentMouseOverId,
+  setIsDragging,
+  setIsSelectDragging,
 } = multiSelectSlice.actions;
 export default multiSelectSlice.reducer;
