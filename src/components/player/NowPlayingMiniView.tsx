@@ -117,7 +117,7 @@ const NowPlayingMiniView = () => {
     dispatch(moveDown(selectedIndexes));
   };
 
-  const handleMouseUp = () => {
+  const handleDragEnd = () => {
     if (multiSelect.isDragging) {
       dispatch(
         moveToIndex({
@@ -210,7 +210,7 @@ const NowPlayingMiniView = () => {
               handleRowDoubleClick={handleRowDoubleClick}
               handleUpClick={handleUpClick}
               handleDownClick={handleDownClick}
-              handleMouseUp={handleMouseUp}
+              handleDragEnd={handleDragEnd}
               virtualized
               rowHeight={Number(settings.getSync('miniListRowHeight'))}
               fontSize={Number(settings.getSync('miniListFontSize'))}
@@ -222,6 +222,7 @@ const NowPlayingMiniView = () => {
               listType="mini"
               nowPlaying
               miniView
+              dnd
             />
           </GenericPage>
         </MiniViewContainer>
