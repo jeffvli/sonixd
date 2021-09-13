@@ -52,6 +52,7 @@ const ListViewTable = ({
   // onScroll,
   nowPlaying,
   handleDragEnd,
+  dnd,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -154,20 +155,24 @@ const ListViewTable = ({
                           : 'false'
                       }
                       height={rowHeight}
-                      // onClick={(e: any) =>
-                      //   handleRowClick(e, {
-                      //     ...rowData,
-                      //     rowIndex,
-                      //   })
-                      // }
-                      // onDoubleClick={() =>
-                      //   handleRowDoubleClick({
-                      //     ...rowData,
-                      //     rowIndex,
-                      //   })
-                      // }
+                      onClick={(e: any) => {
+                        if (!dnd) {
+                          handleRowClick(e, {
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }
+                      }}
+                      onDoubleClick={() => {
+                        if (!dnd) {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }
+                      }}
                       onMouseOver={() => {
-                        if (multiSelect.isDragging) {
+                        if (multiSelect.isDragging && dnd) {
                           dispatch(
                             setCurrentMouseOverId({
                               uniqueId: rowData.uniqueId,
@@ -178,8 +183,9 @@ const ListViewTable = ({
                       }}
                       onMouseLeave={() => {
                         if (
-                          multiSelect.currentMouseOverId ||
-                          multiSelect.isDragging
+                          (multiSelect.currentMouseOverId ||
+                            multiSelect.isDragging) &&
+                          dnd
                         ) {
                           dispatch(
                             setCurrentMouseOverId({
@@ -190,43 +196,52 @@ const ListViewTable = ({
                         }
                       }}
                       onMouseDown={(e: any) => {
-                        if (e.button === 0) {
-                          const isSelected = multiSelect.selected.find(
-                            (item: any) => item.uniqueId === rowData.uniqueId
-                          );
-
-                          // Handle cases where we want to quickly drag/drop single rows
-                          if (multiSelect.selected.length <= 1 || !isSelected) {
-                            dispatch(setSelectedSingle(rowData));
-                            dispatch(
-                              setCurrentMouseOverId({
-                                uniqueId: rowData.uniqueId,
-                                index: rowIndex,
-                              })
+                        if (dnd) {
+                          if (e.button === 0) {
+                            const isSelected = multiSelect.selected.find(
+                              (item: any) => item.uniqueId === rowData.uniqueId
                             );
-                            dispatch(setIsDragging(true));
-                          }
 
-                          // Otherwise use regular multi-drag behavior
-                          if (isSelected) {
-                            dispatch(
-                              setCurrentMouseOverId({
-                                uniqueId: rowData.uniqueId,
-                                index: rowIndex,
-                              })
-                            );
-                            dispatch(setIsDragging(true));
+                            // Handle cases where we want to quickly drag/drop single rows
+                            if (
+                              multiSelect.selected.length <= 1 ||
+                              !isSelected
+                            ) {
+                              dispatch(setSelectedSingle(rowData));
+                              dispatch(
+                                setCurrentMouseOverId({
+                                  uniqueId: rowData.uniqueId,
+                                  index: rowIndex,
+                                })
+                              );
+                              dispatch(setIsDragging(true));
+                            }
+
+                            // Otherwise use regular multi-drag behavior
+                            if (isSelected) {
+                              dispatch(
+                                setCurrentMouseOverId({
+                                  uniqueId: rowData.uniqueId,
+                                  index: rowIndex,
+                                })
+                              );
+                              dispatch(setIsDragging(true));
+                            }
                           }
                         }
                       }}
-                      onMouseUp={() => handleDragEnd()}
+                      onMouseUp={() => {
+                        if (dnd) {
+                          handleDragEnd();
+                        }
+                      }}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
                           ? 'true'
                           : 'false'
                       }
-                      dragfield="true"
+                      dragfield={dnd ? 'true' : 'false'}
                     >
                       {rowIndex + 1}
                       {rowData['-empty']}
@@ -603,8 +618,10 @@ const ListViewTable = ({
                           ) : (
                             `${rowData[column.dataKey]} kbps`
                           )
-                        ) : (
+                        ) : rowData[column.dataKey] ? (
                           rowData[column.dataKey]
+                        ) : (
+                          'N/a'
                         )}
                       </div>
                     </TableCellWrapper>

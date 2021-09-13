@@ -44,7 +44,7 @@ export const TableCellWrapper = styled.div<{
   cursor: ${(props) =>
     props.dragover === 'true'
       ? 'grabbing'
-      : props.dragfield
+      : props.dragfield === 'true'
       ? 'grab'
       : props.dragselect === 'true'
       ? 'crosshair'

@@ -213,6 +213,7 @@ const NowPlayingView = () => {
         }}
         listType="song"
         nowPlaying
+        dnd
       />
     </GenericPage>
   );
