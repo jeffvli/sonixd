@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -20,6 +20,7 @@ import {
   shuffleInPlace,
   toggleShuffle,
   moveToIndex,
+  setPlaybackSetting,
 } from '../../redux/playQueueSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import ListViewType from '../viewtypes/ListViewType';
@@ -38,12 +39,9 @@ const NowPlayingMiniView = () => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
-  const [scrollWithCurrent, setScrollWithCurrent] = useState(
-    Boolean(settings.getSync('scrollWithCurrentSong'))
-  );
 
   useEffect(() => {
-    if (scrollWithCurrent) {
+    if (playQueue.scrollWithCurrentSong) {
       setTimeout(() => {
         const rowHeight = Number(settings.getSync('miniListRowHeight'));
         tableRef?.current?.table.current.scrollTop(
@@ -55,9 +53,9 @@ const NowPlayingMiniView = () => {
     }
   }, [
     playQueue.currentIndex,
-    scrollWithCurrent,
     tableRef,
     playQueue.displayQueue,
+    playQueue.scrollWithCurrentSong,
   ]);
 
   let timeout: any = null;
@@ -185,13 +183,19 @@ const NowPlayingMiniView = () => {
                   )}
                   <FlexboxGrid.Item>
                     <StyledCheckbox
-                      defaultChecked={scrollWithCurrent}
+                      defaultChecked={playQueue.scrollWithCurrentSong}
+                      checked={playQueue.scrollWithCurrentSong}
                       onChange={() => {
                         settings.setSync(
                           'scrollWithCurrentSong',
                           !settings.getSync('scrollWithCurrentSong')
                         );
-                        setScrollWithCurrent(!scrollWithCurrent);
+                        dispatch(
+                          setPlaybackSetting({
+                            setting: 'scrollWithCurrentSong',
+                            value: !playQueue.scrollWithCurrentSong,
+                          })
+                        );
                       }}
                     />
                   </FlexboxGrid.Item>

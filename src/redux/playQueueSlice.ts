@@ -55,6 +55,7 @@ export interface PlayQueue {
       timeData: string[];
     };
   };
+  scrollWithCurrentSong: boolean;
   fadeDuration: number;
   fadeType: string;
   pollingInterval: number;
@@ -92,6 +93,7 @@ const initialState: PlayQueue = {
       timeData: [],
     },
   },
+  scrollWithCurrentSong: parsedSettings.scrollWithCurrentSong,
   fadeDuration: parsedSettings.fadeDuration,
   fadeType: parsedSettings.fadeType,
   pollingInterval: parsedSettings.pollingInterval,
@@ -210,6 +212,9 @@ const playQueueSlice = createSlice({
           break;
         case 'showDebugWindow':
           state.showDebugWindow = action.payload.value;
+          break;
+        case 'scrollWithCurrentSong':
+          state.scrollWithCurrentSong = action.payload.value;
           break;
         default:
           break;

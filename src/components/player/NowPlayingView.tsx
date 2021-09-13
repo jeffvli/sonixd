@@ -13,6 +13,7 @@ import {
   shuffleInPlace,
   toggleShuffle,
   moveToIndex,
+  setPlaybackSetting,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -36,9 +37,7 @@ const NowPlayingView = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [searchQuery, setSearchQuery] = useState('');
-  const [scrollWithCurrent, setScrollWithCurrent] = useState(
-    Boolean(settings.getSync('scrollWithCurrentSong'))
-  );
+
   const filteredData = useSearchQuery(searchQuery, playQueue.entry, [
     'title',
     'artist',
@@ -46,7 +45,7 @@ const NowPlayingView = () => {
   ]);
 
   useEffect(() => {
-    if (scrollWithCurrent) {
+    if (playQueue.scrollWithCurrentSong) {
       setTimeout(() => {
         const rowHeight = Number(settings.getSync('songListRowHeight'));
         tableRef?.current.table.current?.scrollTop(
@@ -56,7 +55,7 @@ const NowPlayingView = () => {
         );
       }, 100);
     }
-  }, [playQueue.currentIndex, scrollWithCurrent, tableRef]);
+  }, [playQueue.currentIndex, playQueue.scrollWithCurrentSong, tableRef]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -172,13 +171,19 @@ const NowPlayingView = () => {
           }
           subsidetitle={
             <StyledCheckbox
-              defaultChecked={scrollWithCurrent}
+              defaultChecked={playQueue.scrollWithCurrentSong}
+              checked={playQueue.scrollWithCurrentSong}
               onChange={() => {
                 settings.setSync(
                   'scrollWithCurrentSong',
                   !settings.getSync('scrollWithCurrentSong')
                 );
-                setScrollWithCurrent(!scrollWithCurrent);
+                dispatch(
+                  setPlaybackSetting({
+                    setting: 'scrollWithCurrentSong',
+                    value: !playQueue.scrollWithCurrentSong,
+                  })
+                );
               }}
             >
               Auto scroll

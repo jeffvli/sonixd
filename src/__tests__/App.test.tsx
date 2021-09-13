@@ -31,6 +31,7 @@ const playQueueState: PlayQueue = {
       timeData: [],
     },
   },
+  scrollWithCurrentSong: false,
   fadeDuration: 0,
   fadeType: 'equalPower',
   pollingInterval: 5,

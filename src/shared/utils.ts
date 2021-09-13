@@ -27,6 +27,7 @@ export const getSettings = () => {
     showDebugWindow: parsedSettings.showDebugWindow,
     theme: parsedSettings.theme,
     font: parsedSettings.font,
+    scrollWithCurrentSong: parsedSettings.scrollWithCurrentSong,
   };
 };
 
