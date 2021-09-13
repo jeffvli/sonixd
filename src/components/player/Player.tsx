@@ -477,7 +477,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
             playQueue[currentEntryList][playQueue.player1.index].streamUrl;
           console.log('player error', e);
         }}
-        crossOrigin="use-credentials"
+        crossOrigin="anonymous"
       />
       <ReactAudioPlayer
         ref={player2Ref}
@@ -509,7 +509,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
             playQueue[currentEntryList][playQueue.player2.index].streamUrl;
           console.log('player error', e);
         }}
-        crossOrigin="use-credentials"
+        crossOrigin="anonymous"
       />
       {children}
     </>
