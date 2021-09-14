@@ -31,6 +31,21 @@ const multiSelectSlice = createSlice({
   name: 'multiSelect',
   initialState,
   reducers: {
+    /* updateSelected: (state, action: PayloadAction<Entry[]>) => {
+      const newSelected: Entry[] = [];
+      state.selected.map((entry: Entry) => {
+        const matchedEntry = action.payload.find(
+          (item: Entry) => item.uniqueId === entry.uniqueId
+        );
+        if (matchedEntry) {
+          newSelected.push(matchedEntry);
+        }
+        return undefined;
+      });
+
+      state.selected = newSelected;
+    }, */
+
     setIsDragging: (state, action: PayloadAction<boolean>) => {
       state.isDragging = action.payload;
     },

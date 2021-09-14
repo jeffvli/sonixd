@@ -718,15 +718,29 @@ const playQueueSlice = createSlice({
         action.payload.moveBeforeId
       );
 
+      // If the moveBeforeId index is selected, then we find the first consecutive selected index to move to
+      let firstConesecutiveSelectedDragIndex = -1;
+      for (let i = spliceIndexPre - 1; i > 0; i -= 1) {
+        if (uniqueIds.includes(tempQueue[i].uniqueId)) {
+          firstConesecutiveSelectedDragIndex = i;
+        } else {
+          break;
+        }
+      }
+
       /* If we get a negative index, don't move the entry.
       This can happen if you try to drag and drop too fast */
-      if (spliceIndexPre < 0 && spliceIndexPost < 0) {
+      if (spliceIndexPre < 0 && spliceIndexPre < 0) {
         return;
       }
 
       // Find the slice index to add the selected entries to
       const spliceIndex =
-        spliceIndexPost >= 0 ? spliceIndexPost : spliceIndexPre;
+        spliceIndexPost >= 0
+          ? spliceIndexPost
+          : firstConesecutiveSelectedDragIndex >= 0
+          ? firstConesecutiveSelectedDragIndex
+          : spliceIndexPre;
 
       // Sort the entries by their rowIndex so that we can add them in the proper order
       const sortedEntries = action.payload.entries.sort(
