@@ -53,7 +53,7 @@ const ListViewConfig = ({
         />
       </div>
       <div style={{ marginTop: '20px' }}>
-        <ControlLabel>Font Size</ControlLabel>
+        <ControlLabel>Font size</ControlLabel>
         <StyledInputNumber
           defaultValue={
             String(settings.getSync(settingsConfig.fontSize)) || '0'

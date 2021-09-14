@@ -6,6 +6,7 @@ import {
   StyledRadio,
   StyledInputPicker,
   StyledNavItem,
+  StyledInputNumber,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -65,7 +66,7 @@ const LookAndFeelConfig = () => {
         />
       </div>
       <br />
-      <ConfigPanel bordered>
+      <ConfigPanel header="List-View" bordered>
         <p>Select the columns you want displayed on pages with a list-view.</p>
         <Nav
           style={{ paddingTop: '10px' }}
@@ -131,6 +132,19 @@ const LookAndFeelConfig = () => {
             }}
           />
         )}
+      </ConfigPanel>
+      <ConfigPanel header="Grid-View" bordered>
+        <ControlLabel>Card size</ControlLabel>
+        <StyledInputNumber
+          defaultValue={String(settings.getSync('gridCardSize'))}
+          step={1}
+          min={100}
+          max={350}
+          width={150}
+          onChange={(e: any) => {
+            settings.setSync('gridCardSize', Number(e));
+          }}
+        />
       </ConfigPanel>
     </ConfigPanel>
   );

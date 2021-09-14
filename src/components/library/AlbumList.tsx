@@ -132,7 +132,7 @@ const AlbumList = () => {
             unit: '',
           }}
           playClick={{ type: 'album', idProperty: 'id' }}
-          size="150px"
+          size={Number(settings.getSync('gridCardSize'))}
           cacheType="album"
         />
       )}

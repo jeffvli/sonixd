@@ -75,6 +75,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('fadeType', 'equalPower');
   }
 
+  if (force || !settings.hasSync('gridCardSize')) {
+    settings.setSync('gridCardSize', 150);
+  }
+
   if (force || !settings.hasSync('playlistViewType')) {
     settings.setSync('playlistViewType', 'list');
   }

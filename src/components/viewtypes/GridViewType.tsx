@@ -5,10 +5,6 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
 import 'react-virtualized/styles.css';
 
-const GAP_SIZE = 5;
-const CARD_HEIGHT = 225;
-const CARD_WIDTH = 175;
-
 const GridCard = ({ data, index, style }: any) => {
   const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
   const startIndex = index * columnCount;
@@ -37,7 +33,7 @@ const GridCard = ({ data, index, style }: any) => {
             data.cardSubtitle.unit
           }`}
           coverArt={data.data[i].image}
-          size={data.size}
+          size={`${data.size}px`}
           url={
             data.cardTitle.urlProperty
               ? `${data.cardTitle.prefix}/${
@@ -89,8 +85,11 @@ function ListWrapper({
   width,
   cacheType,
 }: any) {
+  const gapSize = 5;
+  const cardHeight = size + 75; // 225
+  const cardWidth = size + 25; // 175
   // How many cards can we show per row, given the current width?
-  const columnCount = Math.floor((width - GAP_SIZE) / (CARD_WIDTH + GAP_SIZE));
+  const columnCount = Math.floor((width - gapSize) / (cardWidth + gapSize));
   const rowCount = Math.ceil(itemCount / columnCount);
 
   const itemData = useMemo(
@@ -103,11 +102,13 @@ function ListWrapper({
       columnCount,
       itemCount,
       cacheType,
-      cardWidth: CARD_WIDTH,
-      cardHeight: CARD_HEIGHT,
-      gapSize: GAP_SIZE,
+      cardWidth,
+      cardHeight,
+      gapSize,
     }),
     [
+      cardHeight,
+      cardWidth,
       cacheType,
       cardSubtitle,
       cardTitle,
@@ -124,7 +125,7 @@ function ListWrapper({
       className="List"
       height={height}
       itemCount={rowCount}
-      itemSize={CARD_HEIGHT + GAP_SIZE}
+      itemSize={cardHeight + gapSize}
       width={width}
       itemData={itemData}
     >
