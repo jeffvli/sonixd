@@ -706,7 +706,8 @@ const playQueueSlice = createSlice({
         return !uniqueIds.includes(entry.uniqueId);
       });
 
-      // Used if dragging onto a selected row
+      /* Used if dragging onto the first selected row. We'll need to calculate the number of selected rows above the first selected row
+      so we can subtract it from the spliceIndexPre value when moving it into the newQueue, which has all selected entries removed */
       const spliceIndexPre = getCurrentEntryIndexByUID(
         tempQueue,
         action.payload.moveBeforeId
@@ -717,15 +718,14 @@ const playQueueSlice = createSlice({
         return uniqueIds.includes(entry.uniqueId);
       });
 
-      console.log(`selectedAbovePre.length()`, selectedAbovePre.length);
-
       // Used if dragging onto a non-selected row
       const spliceIndexPost = getCurrentEntryIndexByUID(
         newQueue,
         action.payload.moveBeforeId
       );
 
-      // If the moveBeforeId index is selected, then we find the first consecutive selected index to move to
+      /* Used if dragging onto consecutive selected rows
+      If the moveBeforeId index is selected, then we find the first consecutive selected index to move to */
       let firstConsecutiveSelectedDragIndex = -1;
       for (let i = spliceIndexPre - 1; i > 0; i -= 1) {
         if (uniqueIds.includes(tempQueue[i].uniqueId)) {
