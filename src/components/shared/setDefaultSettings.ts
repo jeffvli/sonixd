@@ -103,7 +103,7 @@ const setDefaultSettings = (force: boolean) => {
         alignment: 'center',
         resizable: true,
         width: 50,
-        label: '#',
+        label: '# (Drag/Drop)',
       },
       {
         id: 'Title',
@@ -294,7 +294,7 @@ const setDefaultSettings = (force: boolean) => {
         alignment: 'center',
         resizable: true,
         width: 50,
-        label: '#',
+        label: '# (Drag/Drop)',
       },
       {
         id: 'Title',
