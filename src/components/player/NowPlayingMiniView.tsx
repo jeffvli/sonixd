@@ -45,8 +45,8 @@ const NowPlayingMiniView = () => {
       setTimeout(() => {
         const rowHeight = Number(settings.getSync('miniListRowHeight'));
         tableRef?.current?.table.current.scrollTop(
-          rowHeight * playQueue.currentIndex - rowHeight > 0
-            ? rowHeight * playQueue.currentIndex - rowHeight
+          rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
+            ? rowHeight * playQueue.currentIndex - rowHeight * 2
             : 0
         );
       }, 100);
