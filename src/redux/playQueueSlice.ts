@@ -702,8 +702,8 @@ const playQueueSlice = createSlice({
       );
 
       // Remove the selected entries from the queue
-      const newQueue = tempQueue.filter((item: any) => {
-        return !uniqueIds.includes(item.uniqueId);
+      const newQueue = tempQueue.filter((entry: Entry) => {
+        return !uniqueIds.includes(entry.uniqueId);
       });
 
       // Used if dragging onto a selected row
@@ -712,6 +712,13 @@ const playQueueSlice = createSlice({
         action.payload.moveBeforeId
       );
 
+      const queueAbovePre = tempQueue.slice(0, spliceIndexPre);
+      const selectedAbovePre = queueAbovePre.filter((entry: Entry) => {
+        return uniqueIds.includes(entry.uniqueId);
+      });
+
+      console.log(`selectedAbovePre.length()`, selectedAbovePre.length);
+
       // Used if dragging onto a non-selected row
       const spliceIndexPost = getCurrentEntryIndexByUID(
         newQueue,
@@ -719,10 +726,10 @@ const playQueueSlice = createSlice({
       );
 
       // If the moveBeforeId index is selected, then we find the first consecutive selected index to move to
-      let firstConesecutiveSelectedDragIndex = -1;
+      let firstConsecutiveSelectedDragIndex = -1;
       for (let i = spliceIndexPre - 1; i > 0; i -= 1) {
         if (uniqueIds.includes(tempQueue[i].uniqueId)) {
-          firstConesecutiveSelectedDragIndex = i;
+          firstConsecutiveSelectedDragIndex = i;
         } else {
           break;
         }
@@ -738,19 +745,27 @@ const playQueueSlice = createSlice({
       const spliceIndex =
         spliceIndexPost >= 0
           ? spliceIndexPost
-          : firstConesecutiveSelectedDragIndex >= 0
-          ? firstConesecutiveSelectedDragIndex
-          : spliceIndexPre;
+          : firstConsecutiveSelectedDragIndex >= 0
+          ? firstConsecutiveSelectedDragIndex
+          : spliceIndexPre - selectedAbovePre.length;
 
-      // Sort the entries by their rowIndex so that we can add them in the proper order
-      const sortedEntries = action.payload.entries.sort(
+      // Get the updated entry rowIndexes since dragging an entry multiple times will change the existing selected rowIndex
+      const updatedEntries = action.payload.entries.map((entry: Entry) => {
+        const findIndex = state[currentEntry].findIndex(
+          (item: Entry) => item.uniqueId === entry.uniqueId
+        );
+        return { ...entry, rowIndex: findIndex };
+      });
+
+      // Sort the entries by their rowIndex so that we can re-add them in the proper order
+      const sortedEntries = updatedEntries.sort(
         (a, b) => a.rowIndex - b.rowIndex
       );
 
       // Splice the entries into the new queue array
       newQueue.splice(spliceIndex, 0, ...sortedEntries);
 
-      // Finally, set the modified entry
+      // Finally, set the modified entries into the redux state
       state[currentEntry] = newQueue;
 
       // We'll need to fix the current player index after swapping the queue order

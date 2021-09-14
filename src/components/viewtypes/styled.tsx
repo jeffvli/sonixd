@@ -37,9 +37,9 @@ export const TableCellWrapper = styled.div<{
   color: ${(props) =>
     props.playing === 'true' ? props.theme.primary.main : undefined};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
-  border-top: ${(props) =>
+  box-shadow: ${(props) =>
     props.dragover === 'true'
-      ? `1px ${props.theme.primary.main} solid`
+      ? `inset 0px 5px 0px -3px ${props.theme.primary.main}`
       : undefined};
   cursor: ${(props) =>
     props.dragover === 'true'
