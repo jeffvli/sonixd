@@ -229,8 +229,7 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       playing={
-                        (rowData.id === playQueue?.currentSongId &&
-                          playQueue.currentIndex === rowIndex &&
+                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                           nowPlaying) ||
                         (!nowPlaying && rowData.id === playQueue?.currentSongId)
                           ? 'true'
@@ -433,8 +432,8 @@ const ListViewTable = ({
                             >
                               <CombinedTitleTextWrapper
                                 playing={
-                                  (rowData.id === playQueue?.currentSongId &&
-                                    playQueue.currentIndex === rowIndex &&
+                                  (rowData.uniqueId ===
+                                    playQueue?.currentSongUniqueId &&
                                     nowPlaying) ||
                                   (!nowPlaying &&
                                     rowData.id === playQueue?.currentSongId)
@@ -493,8 +492,8 @@ const ListViewTable = ({
                                     fontSize: `${fontSize}px`,
                                   }}
                                   playing={
-                                    (rowData.id === playQueue?.currentSongId &&
-                                      playQueue.currentIndex === rowIndex &&
+                                    (rowData.uniqueId ===
+                                      playQueue?.currentSongUniqueId &&
                                       nowPlaying) ||
                                     (!nowPlaying &&
                                       rowData.id === playQueue?.currentSongId)
@@ -572,8 +571,7 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       playing={
-                        (rowData.id === playQueue?.currentSongId &&
-                          playQueue.currentIndex === rowIndex &&
+                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                           nowPlaying) ||
                         (!nowPlaying && rowData.id === playQueue?.currentSongId)
                           ? 'true'
@@ -664,8 +662,8 @@ const ListViewTable = ({
                               }
                             }}
                             playing={
-                              (rowData.id === playQueue?.currentSongId &&
-                                playQueue.currentIndex === rowIndex &&
+                              (rowData.uniqueId ===
+                                playQueue?.currentSongUniqueId &&
                                 nowPlaying) ||
                               (!nowPlaying &&
                                 rowData.id === playQueue?.currentSongId)
