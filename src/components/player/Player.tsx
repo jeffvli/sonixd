@@ -4,6 +4,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
   useState,
+  useCallback,
 } from 'react';
 import path from 'path';
 import settings from 'electron-settings';
@@ -243,6 +244,24 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     playQueue.pollingInterval
   );
 
+  const getSrc1 = useCallback(() => {
+    const cachedSongPath = `${cachePath}/${
+      playQueue[currentEntryList][playQueue.player1.index]?.id
+    }.mp3`;
+    return isCached(cachedSongPath)
+      ? cachedSongPath
+      : playQueue[currentEntryList][playQueue.player1.index]?.streamUrl;
+  }, [cachePath, currentEntryList, playQueue]);
+
+  const getSrc2 = useCallback(() => {
+    const cachedSongPath = `${cachePath}/${
+      playQueue[currentEntryList][playQueue.player2.index]?.id
+    }.mp3`;
+    return isCached(cachedSongPath)
+      ? cachedSongPath
+      : playQueue[currentEntryList][playQueue.player2.index]?.streamUrl;
+  }, [cachePath, currentEntryList, playQueue]);
+
   useImperativeHandle(ref, () => ({
     get player1() {
       return player1Ref.current;
@@ -254,43 +273,34 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
 
   useEffect(() => {
     if (player.status === 'PLAYING') {
-      setTimeout(
-        () => {
-          if (playQueue.currentPlayer === 1) {
-            try {
-              player1Ref.current.audioEl.current.play();
-            } catch (err) {
-              console.log(err);
-            }
-          } else {
-            try {
-              player2Ref.current.audioEl.current.play();
-            } catch (err) {
-              console.log(err);
-            }
+      setTimeout(() => {
+        if (playQueue.currentPlayer === 1) {
+          try {
+            player1Ref.current.audioEl.current.play();
+          } catch (err) {
+            console.log(err);
           }
-        },
-        player1Src ? 0 : 500
-      );
-    } else {
-      // Hacky way to pause the player because it sometimes doesn't pause if the
-      // polling interval is set to a low value
-      setTimeout(() => {
-        player1Ref.current.audioEl.current.pause();
-        player2Ref.current.audioEl.current.pause();
-      }, 10);
-      setTimeout(() => {
-        player1Ref.current.audioEl.current.pause();
-        player2Ref.current.audioEl.current.pause();
-      }, 25);
-      setTimeout(() => {
-        player1Ref.current.audioEl.current.pause();
-        player2Ref.current.audioEl.current.pause();
+        } else {
+          try {
+            player2Ref.current.audioEl.current.play();
+          } catch (err) {
+            console.log(err);
+          }
+        }
       }, 100);
+    } else {
+      // Hacky way to stop the player on quick polling intervals due to the fader continuously calling the play function
       setTimeout(() => {
-        player1Ref.current.audioEl.current.pause();
-        player2Ref.current.audioEl.current.pause();
-      }, 200);
+        for (let i = 0; i <= 100; i += 1) {
+          player1Ref.current.audioEl.current.pause();
+        }
+      }, 100);
+
+      setTimeout(() => {
+        for (let i = 0; i <= 100; i += 1) {
+          player2Ref.current.audioEl.current.pause();
+        }
+      }, 100);
     }
   }, [playQueue.currentPlayer, player.status, player1Src]);
 
@@ -298,23 +308,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     /* Adding a small delay when setting the track src helps to not break the player when we're modifying
     the currentSongIndex such as when sorting the table, shuffling, or drag and dropping rows.
      It can also prevent loading unneeded tracks when rapidly incrementing/decrementing the player. */
-    const getSrc1 = () => {
-      const cachedSongPath = `${cachePath}/${
-        playQueue[currentEntryList][playQueue.player1.index]?.id
-      }.mp3`;
-      return isCached(cachedSongPath)
-        ? cachedSongPath
-        : playQueue[currentEntryList][playQueue.player1.index]?.streamUrl;
-    };
-
-    const getSrc2 = () => {
-      const cachedSongPath = `${cachePath}/${
-        playQueue[currentEntryList][playQueue.player2.index]?.id
-      }.mp3`;
-      return isCached(cachedSongPath)
-        ? cachedSongPath
-        : playQueue[currentEntryList][playQueue.player2.index]?.streamUrl;
-    };
 
     /* Set the alternate player to a dummy src first to reset it, otherwise the player
     will continue running even when switched to the other due to the src not changing */
@@ -328,11 +321,11 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     if (playQueue[currentEntryList] && !playQueue.isFading) {
       const timer1 = setTimeout(() => {
         setPlayer1Src(getSrc1());
-      }, 250);
+      }, 100);
 
       const timer2 = setTimeout(() => {
         setPlayer2Src(getSrc2());
-      }, 250);
+      }, 100);
 
       return () => {
         clearTimeout(timer1);
@@ -345,7 +338,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     setPlayer1Src(getSrc1());
     setPlayer2Src(getSrc2());
     return undefined;
-  }, [cachePath, currentEntryList, playQueue]);
+  }, [cachePath, currentEntryList, getSrc1, getSrc2, playQueue]);
 
   useEffect(() => {
     // Update playback settings when changed in redux store
@@ -522,10 +515,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.currentPlayer === 1
         }
         onError={(e: any) => {
-          // player1Ref.current.audioEl.current.src = '';
-          // player1Ref.current.audioEl.current.src =
-          //   playQueue[currentEntryList][playQueue.player1.index].streamUrl;
           console.log('player error', e);
+          player1Ref.current.audioEl.current.src =
+            './components/player/dummy.mp3';
+          // player1Ref.current.audioEl.current.src = getSrc1();
         }}
         crossOrigin="anonymous"
       />
@@ -544,10 +537,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.currentPlayer === 2
         }
         onError={(e: any) => {
-          // player2Ref.current.audioEl.current.src = '';
-          // player2Ref.current.audioEl.current.src =
-          //   playQueue[currentEntryList][playQueue.player2.index].streamUrl;
           console.log('player error', e);
+          player2Ref.current.audioEl.current.src =
+            './components/player/dummy.mp3';
+          // player2Ref.current.audioEl.current.src = getSrc2();
         }}
         crossOrigin="anonymous"
       />
