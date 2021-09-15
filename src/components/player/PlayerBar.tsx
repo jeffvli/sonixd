@@ -499,10 +499,6 @@ const PlayerBar = () => {
                   icon={
                     player.status === 'PLAYING' ? 'pause-circle' : 'play-circle'
                   }
-                  spin={
-                    player.currentSeekable <= player.currentSeek &&
-                    player.status === 'PLAYING'
-                  }
                   size="3x"
                   onClick={handleClickPlayPause}
                   onKeyDown={(e: any) => {
