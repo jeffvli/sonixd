@@ -308,7 +308,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     the currentSongIndex such as when sorting the table, shuffling, or drag and dropping rows.
      It can also prevent loading unneeded tracks when rapidly incrementing/decrementing the player. */
 
-    if (playQueue[currentEntryList] && !playQueue.isFading) {
+    if (playQueue[currentEntryList].length > 0 && !playQueue.isFading) {
       const timer1 = setTimeout(() => {
         dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
       }, 100);
@@ -323,10 +323,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       };
     }
 
-    /* If fading, just instantly switch the track, otherwise the player breaks
+    if (playQueue[currentEntryList].length > 0) {
+      /* If fading, just instantly switch the track, otherwise the player breaks
      from the timeout due to the listen handlers that run during the fade */
-    dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
-    dispatch(setPlayerSrc({ player: 2, src: getSrc2() }));
+      dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
+      dispatch(setPlayerSrc({ player: 2, src: getSrc2() }));
+    }
+
     return undefined;
   }, [cachePath, currentEntryList, dispatch, getSrc1, getSrc2, playQueue]);
 
@@ -505,10 +508,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.currentPlayer === 1
         }
         onError={(e: any) => {
-          console.log('player error', e);
-          player1Ref.current.audioEl.current.src =
-            './components/player/dummy.mp3';
-          player1Ref.current.audioEl.current.src = getSrc1();
+          if (playQueue[currentEntryList].length > 0) {
+            console.log('player error', e);
+
+            player1Ref.current.audioEl.current.src =
+              './components/player/dummy.mp3';
+            player1Ref.current.audioEl.current.src = getSrc1();
+          }
         }}
         crossOrigin="anonymous"
       />
@@ -527,10 +533,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.currentPlayer === 2
         }
         onError={(e: any) => {
-          console.log('player error', e);
-          player2Ref.current.audioEl.current.src =
-            './components/player/dummy.mp3';
-          player2Ref.current.audioEl.current.src = getSrc2();
+          if (playQueue[currentEntryList].length > 0) {
+            console.log('player error', e);
+
+            player2Ref.current.audioEl.current.src =
+              './components/player/dummy.mp3';
+            player2Ref.current.audioEl.current.src = getSrc2();
+          }
         }}
         crossOrigin="anonymous"
       />

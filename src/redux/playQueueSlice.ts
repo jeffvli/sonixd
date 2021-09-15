@@ -83,7 +83,7 @@ export interface PlayQueue {
 
 const initialState: PlayQueue = {
   player1: {
-    src: '',
+    src: './components/player/dummy.mp3',
     index: 0,
     volume: 0.5,
     fadeData: {
@@ -92,7 +92,7 @@ const initialState: PlayQueue = {
     },
   },
   player2: {
-    src: '',
+    src: './components/player/dummy.mp3',
     index: 1,
     volume: 0,
     fadeData: {
@@ -129,6 +129,8 @@ const resetPlayerDefaults = (state: PlayQueue) => {
   state.currentIndex = 0;
   state.currentSongId = '';
   state.currentPlayer = 1;
+  state.player1.src = './components/player/dummy.mp3';
+  state.player2.src = './components/player/dummy.mp3';
   state.player1.index = 0;
   state.player1.volume = state.volume;
   state.player2.index = 0;
@@ -657,7 +659,7 @@ const playQueueSlice = createSlice({
       Player2 will continue playing even after decrementing. This reducer resets the Player2 index and
       then sets it to its proper index. */
 
-      state.player2.src = '';
+      state.player2.src = './components/player/dummy.mp3';
 
       state.player2.index = getNextPlayerIndex(
         state.entry.length,
