@@ -72,7 +72,11 @@ const NowPlayingView = () => {
           } else {
             dispatch(
               toggleRangeSelected(
-                playQueue.shuffle ? playQueue.shuffledEntry : playQueue.entry
+                playQueue.sortedEntry.length > 0
+                  ? playQueue.sortedEntry
+                  : playQueue.shuffle
+                  ? playQueue.shuffledEntry
+                  : playQueue.entry
               )
             );
           }
