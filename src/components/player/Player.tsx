@@ -21,6 +21,7 @@ import {
   fixPlayer2Index,
   setCurrentIndex,
   setFadeData,
+  setPlayerSrc,
 } from '../../redux/playQueueSlice';
 import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
@@ -229,8 +230,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const dispatch = useAppDispatch();
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
-  const [player1Src, setPlayer1Src] = useState('');
-  const [player2Src, setPlayer2Src] = useState('');
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const cacheSongs = settings.getSync('cacheSongs');
@@ -302,29 +301,20 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         }
       }, 100);
     }
-  }, [playQueue.currentPlayer, player.status, player1Src]);
+  }, [playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
     /* Adding a small delay when setting the track src helps to not break the player when we're modifying
     the currentSongIndex such as when sorting the table, shuffling, or drag and dropping rows.
      It can also prevent loading unneeded tracks when rapidly incrementing/decrementing the player. */
 
-    /* Set the alternate player to a dummy src first to reset it, otherwise the player
-    will continue running even when switched to the other due to the src not changing */
-    if (playQueue.currentPlayer === 2) {
-      setPlayer1Src('./components/player/dummy.mp3');
-    }
-    if (playQueue.currentPlayer === 1) {
-      setPlayer2Src('./components/player/dummy.mp3');
-    }
-
     if (playQueue[currentEntryList] && !playQueue.isFading) {
       const timer1 = setTimeout(() => {
-        setPlayer1Src(getSrc1());
+        dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
       }, 100);
 
       const timer2 = setTimeout(() => {
-        setPlayer2Src(getSrc2());
+        dispatch(setPlayerSrc({ player: 2, src: getSrc2() }));
       }, 100);
 
       return () => {
@@ -335,10 +325,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
 
     /* If fading, just instantly switch the track, otherwise the player breaks
      from the timeout due to the listen handlers that run during the fade */
-    setPlayer1Src(getSrc1());
-    setPlayer2Src(getSrc2());
+    dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
+    dispatch(setPlayerSrc({ player: 2, src: getSrc2() }));
     return undefined;
-  }, [cachePath, currentEntryList, getSrc1, getSrc2, playQueue]);
+  }, [cachePath, currentEntryList, dispatch, getSrc1, getSrc2, playQueue]);
 
   useEffect(() => {
     // Update playback settings when changed in redux store
@@ -502,7 +492,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
 
       <ReactAudioPlayer
         ref={player1Ref}
-        src={player1Src}
+        src={playQueue.player1.src}
         listenInterval={pollingInterval}
         preload="auto"
         onListen={
@@ -524,7 +514,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       />
       <ReactAudioPlayer
         ref={player2Ref}
-        src={player2Src}
+        src={playQueue.player2.src}
         listenInterval={pollingInterval}
         preload="auto"
         onListen={

@@ -40,6 +40,7 @@ export interface Entry {
 
 export interface PlayQueue {
   player1: {
+    src: string;
     index: number;
     volume: number;
     fadeData: {
@@ -48,6 +49,7 @@ export interface PlayQueue {
     };
   };
   player2: {
+    src: string;
     index: number;
     volume: number;
     fadeData: {
@@ -81,6 +83,7 @@ export interface PlayQueue {
 
 const initialState: PlayQueue = {
   player1: {
+    src: '',
     index: 0,
     volume: 0.5,
     fadeData: {
@@ -89,6 +92,7 @@ const initialState: PlayQueue = {
     },
   },
   player2: {
+    src: '',
     index: 1,
     volume: 0,
     fadeData: {
@@ -195,6 +199,17 @@ const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
   reducers: {
+    setPlayerSrc: (
+      state,
+      action: PayloadAction<{ player: number; src: string }>
+    ) => {
+      if (action.payload.player === 1) {
+        state.player1.src = action.payload.src;
+      } else {
+        state.player2.src = action.payload.src;
+      }
+    },
+
     updatePlayerIndices: (state, action: PayloadAction<any[]>) => {
       const newCurrentSongIndex = getCurrentEntryIndexByUID(
         action.payload,
@@ -642,6 +657,8 @@ const playQueueSlice = createSlice({
       Player2 will continue playing even after decrementing. This reducer resets the Player2 index and
       then sets it to its proper index. */
 
+      state.player2.src = '';
+
       state.player2.index = getNextPlayerIndex(
         state.entry.length,
         state.repeat,
@@ -949,6 +966,7 @@ const playQueueSlice = createSlice({
 });
 
 export const {
+  setPlayerSrc,
   updatePlayerIndices,
   setSort,
   sortPlayQueue,
