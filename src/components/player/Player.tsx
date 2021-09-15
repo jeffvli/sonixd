@@ -518,7 +518,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           console.log('player error', e);
           player1Ref.current.audioEl.current.src =
             './components/player/dummy.mp3';
-          // player1Ref.current.audioEl.current.src = getSrc1();
+          player1Ref.current.audioEl.current.src = getSrc1();
         }}
         crossOrigin="anonymous"
       />
@@ -540,7 +540,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           console.log('player error', e);
           player2Ref.current.audioEl.current.src =
             './components/player/dummy.mp3';
-          // player2Ref.current.audioEl.current.src = getSrc2();
+          player2Ref.current.audioEl.current.src = getSrc2();
         }}
         crossOrigin="anonymous"
       />

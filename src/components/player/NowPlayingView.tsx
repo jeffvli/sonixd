@@ -131,7 +131,9 @@ const NowPlayingView = () => {
         })
       );
       dispatch(setIsDragging(false));
-      dispatch(fixPlayer2Index());
+      if (playQueue.currentPlayer === 1) {
+        dispatch(fixPlayer2Index());
+      }
     }
   };
 
