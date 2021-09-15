@@ -254,19 +254,24 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
 
   useEffect(() => {
     if (player.status === 'PLAYING') {
-      if (playQueue.currentPlayer === 1) {
-        try {
-          player1Ref.current.audioEl.current.play();
-        } catch (err) {
-          console.log(err);
-        }
-      } else {
-        try {
-          player2Ref.current.audioEl.current.play();
-        } catch (err) {
-          console.log(err);
-        }
-      }
+      setTimeout(
+        () => {
+          if (playQueue.currentPlayer === 1) {
+            try {
+              player1Ref.current.audioEl.current.play();
+            } catch (err) {
+              console.log(err);
+            }
+          } else {
+            try {
+              player2Ref.current.audioEl.current.play();
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        },
+        player1Src ? 0 : 500
+      );
     } else {
       // Hacky way to pause the player because it sometimes doesn't pause if the
       // polling interval is set to a low value
@@ -287,7 +292,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         player2Ref.current.audioEl.current.pause();
       }, 200);
     }
-  }, [playQueue.currentPlayer, player.status]);
+  }, [playQueue.currentPlayer, player.status, player1Src]);
 
   useEffect(() => {
     /* Adding a small delay when setting the track src helps to not break the player when we're modifying
@@ -323,11 +328,11 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     if (playQueue[currentEntryList] && !playQueue.isFading) {
       const timer1 = setTimeout(() => {
         setPlayer1Src(getSrc1());
-      }, 300);
+      }, 250);
 
       const timer2 = setTimeout(() => {
         setPlayer2Src(getSrc2());
-      }, 300);
+      }, 250);
 
       return () => {
         clearTimeout(timer1);
