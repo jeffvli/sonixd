@@ -27,6 +27,7 @@ import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   fixPlayer2Index,
+  setSort,
   setStar,
   sortPlayQueue,
 } from '../../redux/playQueueSlice';
@@ -97,15 +98,27 @@ const ListViewTable = ({
   const handleSortColumn = (column: any, type: any) => {
     setSortColumn(column);
     setSortType(type);
+    dispatch(
+      setSort({
+        sortColumn: column,
+        sortType: type,
+      })
+    );
 
-    if (column === sortColumn) {
+    if (column === playQueue.sortColumn) {
       setSortedCount(sortedCount + 1);
     } else {
       setSortedCount(0);
     }
 
     if (sortedCount >= 1) {
-      setSortColumn(null);
+      dispatch(
+        setSort({
+          sortColumn: undefined,
+          sortType: 'asc',
+        })
+      );
+      setSortColumn(undefined);
       setSortType('asc');
       setSortedCount(0);
     }
@@ -130,8 +143,10 @@ const ListViewTable = ({
 
   useEffect(() => {
     if (nowPlaying) {
-      if (sortColumn && sortType) {
-        const actualSortColumn = columns.find((c: any) => c.id === sortColumn);
+      if (playQueue.sortColumn && playQueue.sortType) {
+        const actualSortColumn = columns.find(
+          (c: any) => c.id === playQueue.sortColumn
+        );
         const sortColumnDataKey =
           actualSortColumn.dataKey === 'combinedtitle'
             ? 'title'
@@ -140,7 +155,7 @@ const ListViewTable = ({
         dispatch(
           sortPlayQueue({
             columnDataKey: sortColumnDataKey,
-            sortType,
+            sortType: playQueue.sortType,
           })
         );
       } else {
@@ -148,7 +163,7 @@ const ListViewTable = ({
         dispatch(
           sortPlayQueue({
             columnDataKey: '',
-            sortType,
+            sortType: playQueue.sortType,
           })
         );
       }
@@ -161,8 +176,8 @@ const ListViewTable = ({
     dispatch,
     nowPlaying,
     playQueue.currentPlayer,
-    sortColumn,
-    sortType,
+    playQueue.sortColumn,
+    playQueue.sortType,
     sortedData,
   ]);
 
@@ -171,7 +186,7 @@ const ListViewTable = ({
       <Table
         ref={tableRef}
         height={height}
-        data={sortColumn && !nowPlaying ? sortedData : data}
+        data={playQueue.sortColumn && !nowPlaying ? sortedData : data}
         virtualized={virtualized}
         rowHeight={rowHeight}
         hover
@@ -180,8 +195,8 @@ const ListViewTable = ({
         affixHorizontalScrollbar
         shouldUpdateScroll={false}
         style={{ fontSize: `${fontSize}px` }}
-        sortColumn={sortColumn}
-        sortType={sortType}
+        sortColumn={nowPlaying ? playQueue.sortColumn : sortColumn}
+        sortType={nowPlaying ? playQueue.sortType : sortType}
         onSortColumn={handleSortColumn}
         // onScroll={onScroll}
       >

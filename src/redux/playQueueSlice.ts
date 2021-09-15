@@ -70,6 +70,8 @@ export interface PlayQueue {
   isLoading: boolean;
   repeat: string;
   shuffle: boolean;
+  sortColumn?: string;
+  sortType: 'asc' | 'desc';
   displayQueue: boolean;
   showDebugWindow: boolean;
   entry: Entry[];
@@ -109,6 +111,8 @@ const initialState: PlayQueue = {
   isLoading: false,
   repeat: parsedSettings.repeat,
   shuffle: parsedSettings.shuffle,
+  sortColumn: undefined,
+  sortType: 'asc',
   displayQueue: false,
   showDebugWindow: parsedSettings.showDebugWindow,
   entry: [],
@@ -204,6 +208,14 @@ const playQueueSlice = createSlice({
       }
 
       state.currentIndex = newCurrentSongIndex;
+    },
+
+    setSort: (
+      state,
+      action: PayloadAction<{ sortColumn?: string; sortType: 'asc' | 'desc' }>
+    ) => {
+      state.sortColumn = action.payload.sortColumn;
+      state.sortType = action.payload.sortType;
     },
 
     sortPlayQueue: (
@@ -938,6 +950,7 @@ const playQueueSlice = createSlice({
 
 export const {
   updatePlayerIndices,
+  setSort,
   sortPlayQueue,
   incrementCurrentIndex,
   decrementCurrentIndex,

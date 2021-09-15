@@ -46,6 +46,8 @@ const playQueueState: PlayQueue = {
   isLoading: false,
   repeat: 'all',
   shuffle: false,
+  sortColumn: undefined,
+  sortType: 'asc',
   displayQueue: false,
   showDebugWindow: false,
   entry: [],
