@@ -27,10 +27,8 @@ import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   fixPlayer2Index,
-  setPlayQueue,
   setStar,
   sortPlayQueue,
-  updatePlayerIndices,
 } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage } from '../../redux/miscSlice';
@@ -139,14 +137,12 @@ const ListViewTable = ({
             ? 'title'
             : actualSortColumn.dataKey;
 
-        // console.log(sortColumnDataKey);
         dispatch(
           sortPlayQueue({
             columnDataKey: sortColumnDataKey,
             sortType,
           })
         );
-        dispatch(fixPlayer2Index());
       } else {
         // Clear the sortedEntry[]
         dispatch(
@@ -155,10 +151,20 @@ const ListViewTable = ({
             sortType,
           })
         );
-        dispatch(fixPlayer2Index());
       }
     }
-  }, [columns, dispatch, nowPlaying, sortColumn, sortType, sortedData]);
+    if (playQueue.currentPlayer === 1) {
+      dispatch(fixPlayer2Index());
+    }
+  }, [
+    columns,
+    dispatch,
+    nowPlaying,
+    playQueue.currentPlayer,
+    sortColumn,
+    sortType,
+    sortedData,
+  ]);
 
   return (
     <>
