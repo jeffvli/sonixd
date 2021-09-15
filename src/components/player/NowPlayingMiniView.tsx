@@ -206,7 +206,11 @@ const NowPlayingMiniView = () => {
             <ListViewType
               ref={tableRef}
               data={
-                playQueue.shuffle ? playQueue.shuffledEntry : playQueue.entry
+                playQueue.sortedEntry.length > 0
+                  ? playQueue.sortedEntry
+                  : playQueue.shuffle
+                  ? playQueue.shuffledEntry
+                  : playQueue.entry
               }
               currentIndex={playQueue.currentIndex}
               tableColumns={settings.getSync('miniListColumns')}

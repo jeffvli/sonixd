@@ -201,6 +201,8 @@ const NowPlayingView = () => {
         data={
           searchQuery !== ''
             ? filteredData
+            : playQueue.sortedEntry.length > 0
+            ? playQueue.sortedEntry
             : playQueue.shuffle
             ? playQueue.shuffledEntry
             : playQueue.entry

@@ -57,12 +57,14 @@ const PlayerBar = () => {
   const history = useHistory();
 
   useEffect(() => {
-    if (playQueue.shuffle) {
+    if (playQueue.sortedEntry.length > 0) {
+      setCurrentEntryList('sortedEntry');
+    } else if (playQueue.shuffle) {
       setCurrentEntryList('shuffledEntry');
     } else {
       setCurrentEntryList('entry');
     }
-  }, [playQueue.shuffle]);
+  }, [playQueue.shuffle, playQueue.sortedEntry.length]);
 
   useEffect(() => {
     // Handle volume slider dragging

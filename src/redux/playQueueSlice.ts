@@ -74,6 +74,7 @@ export interface PlayQueue {
   showDebugWindow: boolean;
   entry: Entry[];
   shuffledEntry: Entry[];
+  sortedEntry: Entry[];
 }
 
 const initialState: PlayQueue = {
@@ -112,6 +113,7 @@ const initialState: PlayQueue = {
   showDebugWindow: parsedSettings.showDebugWindow,
   entry: [],
   shuffledEntry: [],
+  sortedEntry: [],
 };
 
 const resetPlayerDefaults = (state: PlayQueue) => {
@@ -125,6 +127,7 @@ const resetPlayerDefaults = (state: PlayQueue) => {
   state.player2.volume = 0;
   state.entry = [];
   state.shuffledEntry = [];
+  state.sortedEntry = [];
 };
 
 const resetToPlayer1 = (state: PlayQueue) => {
@@ -144,7 +147,11 @@ const removeItem = (array: any, index: any) => {
 };
 
 const entrySelect = (state: PlayQueue) =>
-  state.shuffle ? 'shuffledEntry' : 'entry';
+  state.sortedEntry.length > 0
+    ? 'sortedEntry'
+    : state.shuffle
+    ? 'shuffledEntry'
+    : 'entry';
 
 const getNextPlayerIndex = (
   length: number,
@@ -184,6 +191,53 @@ const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
   reducers: {
+    updatePlayerIndices: (state, action: PayloadAction<any[]>) => {
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        action.payload,
+        state.currentSongUniqueId
+      );
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
+    },
+
+    sortPlayQueue: (
+      state,
+      action: PayloadAction<{ columnDataKey: string; sortType: 'asc' | 'desc' }>
+    ) => {
+      if (action.payload.columnDataKey !== '') {
+        state.sortedEntry = _.orderBy(
+          state.entry,
+          action.payload.columnDataKey,
+          action.payload.sortType
+        );
+      } else {
+        state.sortedEntry = [];
+      }
+
+      const currentEntry = entrySelect(state);
+
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        action.payload.columnDataKey !== ''
+          ? state.sortedEntry
+          : state[currentEntry],
+        state.currentSongUniqueId
+      );
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
+    },
+
     resetPlayQueue: (state) => {
       const currentEntry = entrySelect(state);
 
@@ -883,6 +937,8 @@ const playQueueSlice = createSlice({
 });
 
 export const {
+  updatePlayerIndices,
+  sortPlayQueue,
   incrementCurrentIndex,
   decrementCurrentIndex,
   incrementPlayerIndex,

@@ -50,6 +50,7 @@ const playQueueState: PlayQueue = {
   showDebugWindow: false,
   entry: [],
   shuffledEntry: [],
+  sortedEntry: [],
 };
 
 const playerState: Player = {

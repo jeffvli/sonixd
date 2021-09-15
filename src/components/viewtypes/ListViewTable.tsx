@@ -1,7 +1,8 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
 import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
@@ -24,7 +25,13 @@ import {
 import cacheImage from '../shared/cacheImage';
 import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import { setStar } from '../../redux/playQueueSlice';
+import {
+  fixPlayer2Index,
+  setPlayQueue,
+  setStar,
+  sortPlayQueue,
+  updatePlayerIndices,
+} from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage } from '../../redux/miscSlice';
 import {
@@ -60,6 +67,8 @@ const ListViewTable = ({
   const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
+  const [sortedData, setSortedData] = useState(data);
+  const [sortedCount, setSortedCount] = useState(0);
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
@@ -90,14 +99,73 @@ const ListViewTable = ({
   const handleSortColumn = (column: any, type: any) => {
     setSortColumn(column);
     setSortType(type);
+
+    if (column === sortColumn) {
+      setSortedCount(sortedCount + 1);
+    } else {
+      setSortedCount(0);
+    }
+
+    if (sortedCount >= 1) {
+      setSortColumn(null);
+      setSortType('asc');
+      setSortedCount(0);
+    }
   };
+
+  useEffect(() => {
+    if (!nowPlaying) {
+      if (sortColumn && sortType) {
+        const actualSortColumn = columns.find((c: any) => c.id === sortColumn);
+        const sortColumnDataKey =
+          actualSortColumn.dataKey === 'combinedtitle'
+            ? 'title'
+            : actualSortColumn.dataKey;
+
+        const sortData = _.orderBy(data, sortColumnDataKey, sortType);
+        setSortedData(sortData);
+      } else {
+        setSortedData(data);
+      }
+    }
+  }, [columns, data, nowPlaying, sortColumn, sortType]);
+
+  useEffect(() => {
+    if (nowPlaying) {
+      if (sortColumn && sortType) {
+        const actualSortColumn = columns.find((c: any) => c.id === sortColumn);
+        const sortColumnDataKey =
+          actualSortColumn.dataKey === 'combinedtitle'
+            ? 'title'
+            : actualSortColumn.dataKey;
+
+        // console.log(sortColumnDataKey);
+        dispatch(
+          sortPlayQueue({
+            columnDataKey: sortColumnDataKey,
+            sortType,
+          })
+        );
+        dispatch(fixPlayer2Index());
+      } else {
+        // Clear the sortedEntry[]
+        dispatch(
+          sortPlayQueue({
+            columnDataKey: '',
+            sortType,
+          })
+        );
+        dispatch(fixPlayer2Index());
+      }
+    }
+  }, [columns, dispatch, nowPlaying, sortColumn, sortType, sortedData]);
 
   return (
     <>
       <Table
         ref={tableRef}
         height={height}
-        data={data}
+        data={sortColumn && !nowPlaying ? sortedData : data}
         virtualized={virtualized}
         rowHeight={rowHeight}
         hover
