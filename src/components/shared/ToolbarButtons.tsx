@@ -58,6 +58,14 @@ export const EditButton = ({ ...rest }) => {
   );
 };
 
+export const UndoButton = ({ ...rest }) => {
+  return (
+    <CustomTooltip text="Reset" placement="bottom">
+      <StyledIconButton tabIndex={0} icon={<Icon icon="undo" />} {...rest} />
+    </CustomTooltip>
+  );
+};
+
 export const DeleteButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Delete" placement="bottom">

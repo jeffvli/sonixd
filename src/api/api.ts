@@ -42,6 +42,15 @@ api.interceptors.response.use(
   }
 );
 
+const authParams = {
+  u: auth.username,
+  s: auth.salt,
+  t: auth.hash,
+  v: '1.15.0',
+  c: 'sonixd',
+  f: 'json',
+};
+
 const getCoverArtUrl = (item: any, size = 150) => {
   if (!item.coverArt) {
     return 'img/placeholder.jpg';
@@ -386,4 +395,21 @@ export const getSimilarSongs = async (
       uniqueId: nanoid(),
     })),
   };
+};
+
+export const updatePlaylistSongs = async (id: string, entry: any[]) => {
+  const playlistParams = new URLSearchParams();
+  const songIds = _.map(entry, 'id');
+
+  playlistParams.append('playlistId', id);
+  songIds.map((songId: string) => playlistParams.append('songId', songId));
+  _.mapValues(authParams, (value: string, key: string) => {
+    playlistParams.append(key, value);
+  });
+
+  const { data } = await api.get(`/createPlaylist?`, {
+    params: playlistParams,
+  });
+
+  return data;
 };

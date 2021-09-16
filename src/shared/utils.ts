@@ -191,3 +191,77 @@ export const consecutiveRanges = (a: number[]) => {
 
   return list;
 };
+
+export const moveToIndex = (
+  entryData: any,
+  selectedEntries: any,
+  moveBeforeId: string
+) => {
+  const uniqueIds: any[] = [];
+  selectedEntries.map((entry: any) => uniqueIds.push(entry.uniqueId));
+
+  // Remove the selected entries from the queue
+  const newList = entryData.filter((entry: any) => {
+    return !uniqueIds.includes(entry.uniqueId);
+  });
+
+  // Used if dragging onto the first selected row. We'll need to calculate the number of selected rows above the first selected row
+  // so we can subtract it from the spliceIndexPre value when moving it into the newList, which has all selected entries removed
+  const spliceIndexPre = entryData.findIndex(
+    (entry: any) => entry.uniqueId === moveBeforeId
+  );
+
+  const queueAbovePre = entryData.slice(0, spliceIndexPre);
+  const selectedAbovePre = queueAbovePre.filter((entry: any) =>
+    uniqueIds.includes(entry.uniqueId)
+  );
+
+  // Used if dragging onto a non-selected row
+  const spliceIndexPost = newList.findIndex(
+    (entry: any) => entry.uniqueId === moveBeforeId
+  );
+
+  // Used if dragging onto consecutive selected rows
+  // If the moveBeforeId index is selected, then we find the first consecutive selected index to move to
+  let firstConsecutiveSelectedDragIndex = -1;
+  for (let i = spliceIndexPre - 1; i > 0; i -= 1) {
+    if (uniqueIds.includes(entryData[i].uniqueId)) {
+      firstConsecutiveSelectedDragIndex = i;
+    } else {
+      break;
+    }
+  }
+
+  // If we get a negative index, don't move the entry.
+  // This can happen if you try to drag and drop too fast
+  if (spliceIndexPre < 0 && spliceIndexPre < 0) {
+    return entryData;
+  }
+
+  // Find the slice index to add the selected entries to
+  const spliceIndex =
+    spliceIndexPost >= 0
+      ? spliceIndexPost
+      : firstConsecutiveSelectedDragIndex >= 0
+      ? firstConsecutiveSelectedDragIndex
+      : spliceIndexPre - selectedAbovePre.length;
+
+  // Get the updated entry rowIndexes since dragging an entry multiple times will change the existing selected rowIndex
+  const updatedEntries = selectedEntries.map((entry: any) => {
+    const findIndex = entryData.findIndex(
+      (item: any) => item.uniqueId === entry.uniqueId
+    );
+    return { ...entry, rowIndex: findIndex };
+  });
+
+  // Sort the entries by their rowIndex so that we can re-add them in the proper order
+  const sortedEntries = updatedEntries.sort(
+    (a: any, b: any) => a.rowIndex - b.rowIndex
+  );
+
+  // Splice the entries into the new queue array
+  newList.splice(spliceIndex, 0, ...sortedEntries);
+
+  // Finally, return the modified list
+  return newList;
+};

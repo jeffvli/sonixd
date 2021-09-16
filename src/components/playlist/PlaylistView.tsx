@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
 import {
   DeleteButton,
@@ -9,8 +9,9 @@ import {
   PlayAppendButton,
   PlayButton,
   SaveButton,
+  UndoButton,
 } from '../shared/ToolbarButtons';
-import { getPlaylist } from '../../api/api';
+import { getPlaylist, updatePlaylistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
@@ -24,7 +25,9 @@ import {
   toggleRangeSelected,
   setSelected,
   clearSelected,
+  setIsDragging,
 } from '../../redux/multiSelectSlice';
+import { moveToIndex } from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
@@ -38,21 +41,39 @@ interface PlaylistParams {
 
 const PlaylistView = ({ ...rest }) => {
   const dispatch = useAppDispatch();
-  const playQueue = useAppSelector((state) => state.playQueue);
-
+  const queryClient = useQueryClient();
   const { id } = useParams<PlaylistParams>();
   const playlistId = rest.id ? rest.id : id;
-
   const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', playlistId],
-    () => getPlaylist(playlistId)
+    () => getPlaylist(playlistId),
+    {
+      refetchOnWindowFocus: false,
+    }
   );
+  const [localPlaylistData, setLocalPlaylistData] = useState(data);
+  const [isModified, setIsModified] = useState(false);
+  const playQueue = useAppSelector((state) => state.playQueue);
+  const multiSelect = useAppSelector((state) => state.multiSelect);
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.song, [
+  const filteredData = useSearchQuery(searchQuery, localPlaylistData, [
     'title',
     'artist',
     'album',
   ]);
+
+  useEffect(() => {
+    // Set the local playlist data on any changes
+    setLocalPlaylistData(data?.song);
+  }, [data]);
+
+  useEffect(() => {
+    if (data?.song !== localPlaylistData) {
+      setIsModified(true);
+    } else {
+      setIsModified(false);
+    }
+  }, [data?.song, localPlaylistData]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -64,8 +85,11 @@ const PlaylistView = ({ ...rest }) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-
-          dispatch(toggleRangeSelected(data.song));
+          dispatch(
+            toggleRangeSelected(
+              searchQuery !== '' ? filteredData : localPlaylistData
+            )
+          );
         } else {
           dispatch(setSelected(rowData));
         }
@@ -80,7 +104,7 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(clearSelected());
     dispatch(
       setPlayQueueByRowClick({
-        entries: data.song,
+        entries: localPlaylistData,
         currentIndex: e.index,
         currentSongId: e.id,
         uniqueSongId: e.uniqueId,
@@ -91,14 +115,43 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handlePlay = () => {
-    dispatch(setPlayQueue({ entries: data.song }));
+    dispatch(setPlayQueue({ entries: localPlaylistData }));
     dispatch(setStatus('PLAYING'));
   };
 
   const handlePlayAppend = () => {
-    dispatch(appendPlayQueue({ entries: data.song }));
+    dispatch(appendPlayQueue({ entries: localPlaylistData }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const res = await updatePlaylistSongs(data.id, localPlaylistData);
+
+      if (res.status === 'failed') {
+        console.log('error', res.error.message);
+      } else {
+        await queryClient.refetchQueries(['playlist'], {
+          active: true,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (multiSelect.isDragging) {
+      setLocalPlaylistData(
+        moveToIndex(
+          localPlaylistData,
+          multiSelect.selected,
+          multiSelect.currentMouseOverId
+        )
+      );
+      dispatch(setIsDragging(false));
     }
   };
 
@@ -139,7 +192,18 @@ const PlaylistView = ({ ...rest }) => {
                     size="lg"
                     onClick={handlePlayAppend}
                   />
-                  <SaveButton size="lg" />
+                  <SaveButton
+                    size="lg"
+                    color={isModified ? 'green' : undefined}
+                    disabled={!isModified}
+                    onClick={handleSave}
+                  />
+                  <UndoButton
+                    size="lg"
+                    color={isModified ? 'green' : undefined}
+                    disabled={!isModified}
+                    onClick={() => setLocalPlaylistData(data?.song)}
+                  />
                   <EditButton size="lg" />
                   <DeleteButton size="lg" />
                 </ButtonToolbar>
@@ -154,11 +218,11 @@ const PlaylistView = ({ ...rest }) => {
       }
     >
       <ListViewType
-        data={searchQuery !== '' ? filteredData : data.song}
+        data={searchQuery !== '' ? filteredData : localPlaylistData}
         tableColumns={settings.getSync('songListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
-        tableHeight={700}
+        handleDragEnd={handleDragEnd}
         virtualized
         rowHeight={Number(settings.getSync('songListRowHeight'))}
         fontSize={Number(settings.getSync('songListFontSize'))}
@@ -168,6 +232,7 @@ const PlaylistView = ({ ...rest }) => {
           cacheIdProperty: 'albumId',
         }}
         listType="song"
+        dnd
         isModal={rest.isModal}
       />
     </GenericPage>
