@@ -71,6 +71,7 @@ const miscState: General = {
     show: false,
   },
   modalPages: [],
+  isProcessingPlaylist: [],
 };
 
 const mockInitialState = {

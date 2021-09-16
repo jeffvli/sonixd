@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   DeleteButton,
   EditButton,
@@ -11,7 +11,13 @@ import {
   SaveButton,
   UndoButton,
 } from '../shared/ToolbarButtons';
-import { getPlaylist, updatePlaylistSongs } from '../../api/api';
+import {
+  clearPlaylist,
+  deletePlaylist,
+  getPlaylist,
+  populatePlaylist,
+  updatePlaylistSongs,
+} from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
@@ -35,6 +41,10 @@ import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
+import {
+  addProcessingPlaylist,
+  removeProcessingPlaylist,
+} from '../../redux/miscSlice';
 
 interface PlaylistParams {
   id: string;
@@ -42,20 +52,20 @@ interface PlaylistParams {
 
 const PlaylistView = ({ ...rest }) => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
   const queryClient = useQueryClient();
   const { id } = useParams<PlaylistParams>();
   const playlistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', playlistId],
     () => getPlaylist(playlistId),
-    {
-      refetchOnWindowFocus: false,
-    }
+    { refetchOnWindowFocus: false }
   );
   const [localPlaylistData, setLocalPlaylistData] = useState(data);
   const [isModified, setIsModified] = useState(false);
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const misc = useAppSelector((state) => state.misc);
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, localPlaylistData, [
     'title',
@@ -128,15 +138,46 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handleSave = async () => {
+    dispatch(clearSelected());
+    dispatch(addProcessingPlaylist(data.id));
     try {
-      const res = await updatePlaylistSongs(data.id, localPlaylistData);
+      // Smaller playlists can use the safe /createPlaylist method of saving
+      if (localPlaylistData.length <= 400) {
+        const res = await updatePlaylistSongs(data.id, localPlaylistData);
+        if (res.status === 'failed') {
+          notifyToast('error', res.error.message);
+        } else {
+          await queryClient.refetchQueries(['playlist'], {
+            active: true,
+          });
+        }
+        // For larger playlists, we'll need to split the request into smaller chunks to save
+      } else {
+        const res = await clearPlaylist(data.id, localPlaylistData.length);
+
+        if (res.status === 'failed') {
+          notifyToast('error', res.error.message);
+        } else {
+          await populatePlaylist(data.id, localPlaylistData);
+          await queryClient.refetchQueries(['playlist'], {
+            active: true,
+          });
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    dispatch(removeProcessingPlaylist(data.id));
+  };
+
+  const handleDelete = async () => {
+    try {
+      const res = await deletePlaylist(data.id);
 
       if (res.status === 'failed') {
         notifyToast('error', res.error.message);
       } else {
-        await queryClient.refetchQueries(['playlist'], {
-          active: true,
-        });
+        history.push('/playlist');
       }
     } catch (err) {
       console.log(err);
@@ -196,17 +237,31 @@ const PlaylistView = ({ ...rest }) => {
                   <SaveButton
                     size="lg"
                     color={isModified ? 'green' : undefined}
-                    disabled={!isModified}
+                    disabled={
+                      !isModified ||
+                      misc.isProcessingPlaylist.includes(data?.id)
+                    }
+                    loading={misc.isProcessingPlaylist.includes(data?.id)}
                     onClick={handleSave}
                   />
                   <UndoButton
                     size="lg"
                     color={isModified ? 'green' : undefined}
-                    disabled={!isModified}
+                    disabled={
+                      !isModified ||
+                      misc.isProcessingPlaylist.includes(data?.id)
+                    }
                     onClick={() => setLocalPlaylistData(data?.song)}
                   />
-                  <EditButton size="lg" />
-                  <DeleteButton size="lg" />
+                  <EditButton
+                    size="lg"
+                    disabled={misc.isProcessingPlaylist.includes(data?.id)}
+                  />
+                  <DeleteButton
+                    size="lg"
+                    onClick={handleDelete}
+                    disabled={misc.isProcessingPlaylist.includes(data?.id)}
+                  />
                 </ButtonToolbar>
               </div>
             </div>

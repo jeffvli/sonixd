@@ -1,6 +1,8 @@
+/* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
+import axiosRetry from 'axios-retry';
 
 const getAuth = () => {
   const serverConfig = {
@@ -41,6 +43,32 @@ api.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+axiosRetry(api, {
+  retries: 3,
+});
+
+export const playlistApi = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+playlistApi.interceptors.response.use(
+  (res) => {
+    // Return the subsonic response directly
+    res.data = res.data['subsonic-response'];
+    return res;
+  },
+  (err) => {
+    return Promise.reject(err);
+  }
+);
+
+axiosRetry(playlistApi, {
+  retries: 3,
+  retryCondition: (e: any) => {
+    return e.status !== 'ok';
+  },
+});
 
 const authParams = {
   u: auth.username,
@@ -407,9 +435,84 @@ export const updatePlaylistSongs = async (id: string, entry: any[]) => {
     playlistParams.append(key, value);
   });
 
-  const { data } = await api.get(`/createPlaylist?`, {
+  const { data } = await api.get(`/createPlaylist`, {
     params: playlistParams,
   });
 
   return data;
+};
+
+export const deletePlaylist = async (id: string) => {
+  const { data } = await api.get(`/deletePlaylist`, {
+    params: {
+      id,
+    },
+  });
+
+  return data;
+};
+
+export const createPlaylist = async (name: string) => {
+  const { data } = await api.get(`/createPlaylist`, {
+    params: {
+      name,
+    },
+  });
+
+  return data;
+};
+
+export const clearPlaylist = async (id: string, entryCount: number) => {
+  const mockEntries = _.range(entryCount);
+
+  // Set these in chunks so the api doesn't break
+  const entryChunks = _.chunk(mockEntries, 325);
+
+  let data;
+  for (let i = 0; i < entryChunks.length; i += 1) {
+    const params = new URLSearchParams();
+    const chunkIndexRange = _.range(entryChunks[i].length);
+
+    params.append('playlistId', id);
+    _.mapValues(authParams, (value: string, key: string) => {
+      params.append(key, value);
+    });
+
+    for (let x = 0; x < chunkIndexRange.length; x += 1) {
+      params.append('songIndexToRemove', String(x));
+    }
+
+    data = (
+      await playlistApi.get(`/updatePlaylist`, {
+        params,
+      })
+    ).data;
+  }
+
+  // Use this to check for permission or other errors
+  return data;
+};
+
+export const populatePlaylist = async (id: string, entry: any[]) => {
+  const entryIds = _.map(entry, 'id');
+
+  // Set these in chunks so the api doesn't break
+  const entryIdChunks = _.chunk(entryIds, 325);
+
+  for (let i = 0; i < entryIdChunks.length; i += 1) {
+    const params = new URLSearchParams();
+
+    params.append('playlistId', id);
+    _.mapValues(authParams, (value: string, key: string) => {
+      params.append(key, value);
+    });
+
+    for (let x = 0; x < entryIdChunks[i].length; x += 1) {
+      params.append('songIdToAdd', String(entryIdChunks[i][x]));
+    }
+
+    await playlistApi.get(`/updatePlaylist`, {
+      params,
+    });
+  }
 };

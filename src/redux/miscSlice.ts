@@ -17,6 +17,7 @@ export interface General {
   font: string;
   modal: Modal;
   modalPages: ModalPage[];
+  isProcessingPlaylist: string[];
 }
 
 const initialState: General = {
@@ -27,12 +28,25 @@ const initialState: General = {
     currentPageIndex: undefined,
   },
   modalPages: [],
+  isProcessingPlaylist: [],
 };
 
 const miscSlice = createSlice({
   name: 'misc',
   initialState,
   reducers: {
+    addProcessingPlaylist: (state, action: PayloadAction<string>) => {
+      state.isProcessingPlaylist.push(action.payload);
+    },
+
+    removeProcessingPlaylist: (state, action: PayloadAction<string>) => {
+      const filtered = state.isProcessingPlaylist.filter(
+        (id: string) => id !== action.payload
+      );
+
+      state.isProcessingPlaylist = filtered;
+    },
+
     setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;
     },
@@ -95,5 +109,7 @@ export const {
   addModalPage,
   incrementModalPage,
   decrementModalPage,
+  addProcessingPlaylist,
+  removeProcessingPlaylist,
 } = miscSlice.actions;
 export default miscSlice.reducer;
