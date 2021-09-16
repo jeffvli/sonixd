@@ -98,28 +98,33 @@ const ListViewTable = ({
   const handleSortColumn = (column: any, type: any) => {
     setSortColumn(column);
     setSortType(type);
-    dispatch(
-      setSort({
-        sortColumn: column,
-        sortType: type,
-      })
-    );
-
-    if (column === playQueue.sortColumn) {
-      setSortedCount(sortedCount + 1);
-    } else {
-      setSortedCount(0);
-    }
-
-    if (sortedCount >= 1) {
+    if (nowPlaying) {
       dispatch(
         setSort({
-          sortColumn: undefined,
-          sortType: 'asc',
+          sortColumn: column,
+          sortType: type,
         })
       );
-      setSortColumn(undefined);
-      setSortType('asc');
+    }
+
+    if (column === (nowPlaying ? playQueue.sortColumn : sortColumn)) {
+      setSortedCount(sortedCount + 1);
+
+      if (sortedCount >= 1) {
+        if (nowPlaying) {
+          dispatch(
+            setSort({
+              sortColumn: undefined,
+              sortType: 'asc',
+            })
+          );
+        }
+
+        setSortColumn(undefined);
+        setSortType('asc');
+        setSortedCount(0);
+      }
+    } else {
       setSortedCount(0);
     }
   };
@@ -186,7 +191,7 @@ const ListViewTable = ({
       <Table
         ref={tableRef}
         height={height}
-        data={playQueue.sortColumn && !nowPlaying ? sortedData : data}
+        data={sortColumn && !nowPlaying ? sortedData : data}
         virtualized={virtualized}
         rowHeight={rowHeight}
         hover
@@ -228,6 +233,7 @@ const ListViewTable = ({
                 {(rowData: any, rowIndex: any) => {
                   return (
                     <TableCellWrapper
+                      onContextMenu={() => console.log('fuck')}
                       playing={
                         (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                           nowPlaying) ||
