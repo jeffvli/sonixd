@@ -34,6 +34,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
+import { notifyToast } from '../shared/toast';
 
 interface PlaylistParams {
   id: string;
@@ -131,7 +132,7 @@ const PlaylistView = ({ ...rest }) => {
       const res = await updatePlaylistSongs(data.id, localPlaylistData);
 
       if (res.status === 'failed') {
-        console.log('error', res.error.message);
+        notifyToast('error', res.error.message);
       } else {
         await queryClient.refetchQueries(['playlist'], {
           active: true,
