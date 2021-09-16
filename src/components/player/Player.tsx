@@ -235,6 +235,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const cacheSongs = settings.getSync('cacheSongs');
   const [debug, setDebug] = useState(playQueue.showDebugWindow);
   const [title] = useState('');
+  const [srcIsSet, setSrcIsSet] = useState(false);
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
   const [fadeDuration, setFadeDuration] = useState(playQueue.fadeDuration);
   const [fadeType, setFadeType] = useState(playQueue.fadeType);
@@ -323,15 +324,16 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       };
     }
 
-    if (playQueue[currentEntryList].length > 0) {
+    if (playQueue[currentEntryList].length > 0 && !srcIsSet) {
       /* If fading, just instantly switch the track, otherwise the player breaks
      from the timeout due to the listen handlers that run during the fade */
       dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
       dispatch(setPlayerSrc({ player: 2, src: getSrc2() }));
+      setSrcIsSet(true);
     }
 
     return undefined;
-  }, [cachePath, currentEntryList, dispatch, getSrc1, getSrc2, playQueue]);
+  }, [currentEntryList, dispatch, getSrc1, getSrc2, playQueue, srcIsSet]);
 
   useEffect(() => {
     // Update playback settings when changed in redux store
@@ -420,6 +422,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         dispatch(setAutoIncremented(false));
       }
     }
+    setSrcIsSet(false);
   };
 
   const handleOnEndedPlayer2 = () => {
@@ -463,6 +466,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         dispatch(setAutoIncremented(false));
       }
     }
+    setSrcIsSet(false);
   };
 
   const handleGaplessPlayer1 = () => {
