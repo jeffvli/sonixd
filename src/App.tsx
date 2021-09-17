@@ -23,6 +23,7 @@ import { defaultDark, defaultLight } from './styles/styledTheme';
 import { useAppSelector } from './redux/hooks';
 import PageModal from './components/modal/PageModal';
 import NowPlayingMiniView from './components/player/NowPlayingMiniView';
+import { GlobalContextMenu } from './components/shared/ContextMenu';
 
 const keyMap = {
   FOCUS_SEARCH: 'ctrl+f',
@@ -96,6 +97,7 @@ const App = () => {
           </Layout>
           <PageModal />
           <NowPlayingMiniView />
+          <GlobalContextMenu />
         </Router>
       </GlobalHotKeys>
     </ThemeProvider>

@@ -170,7 +170,7 @@ export const ContextMenuWindow = styled.div<{
   left: ${(props) => `${props.xPos}px`};
   height: ${(props) =>
     `${
-      props.numOfButtons * 30 +
+      props.numOfButtons * 30.5 +
       props.numOfDividers * 7 +
       (props.hasTitle ? 16 : 0)
     }px`};
@@ -180,7 +180,7 @@ export const ContextMenuWindow = styled.div<{
   overflow: hidden;
   overflow-x: hidden;
   font-size: smaller;
-  background: ${(props) => props.theme.primary.background};
+  background: ${(props) => props.theme.primary.sideBar};
   border: 1px #3c4043 solid;
 `;
 

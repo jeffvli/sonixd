@@ -213,13 +213,11 @@ const ListViewTable = ({
               (entry: any) => entry.uniqueId === rowData.uniqueId
             ).length > 0
           ) {
-            const xFix = misc.expandSidebar ? 185 : 50;
-            const yFix = nowPlaying ? 150 : 215;
             dispatch(
               setContextMenu({
                 show: true,
-                xPos: e.pageX - xFix,
-                yPos: e.pageY - yFix,
+                xPos: e.pageX,
+                yPos: e.pageY,
                 rowId: rowData.uniqueId,
                 type: nowPlaying ? 'nowPlaying' : 'other',
               })
