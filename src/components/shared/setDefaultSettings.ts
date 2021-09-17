@@ -8,7 +8,7 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('theme', 'defaultDark');
   }
 
-  if (force || !settings.hasSync('theme')) {
+  if (force || !settings.hasSync('font')) {
     settings.setSync('font', 'Poppins');
   }
 
@@ -87,16 +87,16 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('albumViewType', 'list');
   }
 
-  if (force || !settings.hasSync('songListFontSize')) {
-    settings.setSync('songListFontSize', '14');
+  if (force || !settings.hasSync('musicListFontSize')) {
+    settings.setSync('musicListFontSize', '14');
   }
 
-  if (force || !settings.hasSync('songListRowHeight')) {
-    settings.setSync('songListRowHeight', '60.0');
+  if (force || !settings.hasSync('musicListRowHeight')) {
+    settings.setSync('musicListRowHeight', '60.0');
   }
 
-  if (force || !settings.hasSync('songListColumns')) {
-    settings.setSync('songListColumns', [
+  if (force || !settings.hasSync('musicListColumns')) {
+    settings.setSync('musicListColumns', [
       {
         id: '#',
         dataKey: 'index',
@@ -282,7 +282,7 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('miniListFontSize', '14');
   }
 
-  if (force || !settings.hasSync('playlistListRowHeight')) {
+  if (force || !settings.hasSync('miniListRowHeight')) {
     settings.setSync('miniListRowHeight', '50');
   }
 

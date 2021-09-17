@@ -35,6 +35,7 @@ const ListViewType = (
     isModal,
     handleDragEnd,
     dnd,
+    miniView,
     ...rest
   }: any,
   ref: any
@@ -70,7 +71,7 @@ const ListViewType = (
       setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
     }
 
-    if (!rest.miniView) {
+    if (!miniView) {
       window.addEventListener('resize', handleResize);
 
       return () => {
@@ -78,7 +79,7 @@ const ListViewType = (
       };
     }
     return undefined;
-  }, [getHeight, rest.miniView]);
+  }, [getHeight, miniView]);
 
   useEffect(() => {
     if (!isModal) {
@@ -333,6 +334,7 @@ const ListViewType = (
             isModal={isModal}
             handleDragEnd={handleDragEnd}
             dnd={dnd}
+            miniView={miniView}
             // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
           />
         )}

@@ -234,8 +234,8 @@ const NowPlayingMiniView = () => {
                 cacheIdProperty: 'albumId',
               }}
               listType="music"
-              nowPlaying
               miniView
+              nowPlaying
               dnd
             />
           </GenericPage>

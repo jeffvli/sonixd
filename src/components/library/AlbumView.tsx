@@ -201,13 +201,13 @@ const AlbumView = ({ ...rest }: any) => {
     >
       <ListViewType
         data={searchQuery !== '' ? filteredData : data.song}
-        tableColumns={settings.getSync('songListColumns')}
+        tableColumns={settings.getSync('musicListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         tableHeight={700}
         virtualized
-        rowHeight={Number(settings.getSync('songListRowHeight'))}
-        fontSize={Number(settings.getSync('songListFontSize'))}
+        rowHeight={Number(settings.getSync('musicListRowHeight'))}
+        fontSize={Number(settings.getSync('musicListFontSize'))}
         cacheImages={{
           enabled: settings.getSync('cacheImages'),
           cacheType: 'album',

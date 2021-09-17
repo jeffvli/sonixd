@@ -275,13 +275,13 @@ const PlaylistView = ({ ...rest }) => {
     >
       <ListViewType
         data={searchQuery !== '' ? filteredData : localPlaylistData}
-        tableColumns={settings.getSync('songListColumns')}
+        tableColumns={settings.getSync('musicListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         handleDragEnd={handleDragEnd}
         virtualized
-        rowHeight={Number(settings.getSync('songListRowHeight'))}
-        fontSize={Number(settings.getSync('songListFontSize'))}
+        rowHeight={Number(settings.getSync('musicListRowHeight'))}
+        fontSize={Number(settings.getSync('musicListFontSize'))}
         cacheImages={{
           enabled: settings.getSync('cacheImages'),
           cacheType: 'album',

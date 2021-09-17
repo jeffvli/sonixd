@@ -47,7 +47,7 @@ const NowPlayingView = () => {
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {
       setTimeout(() => {
-        const rowHeight = Number(settings.getSync('songListRowHeight'));
+        const rowHeight = Number(settings.getSync('musicListRowHeight'));
         tableRef?.current.table.current?.scrollTop(
           rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
             ? rowHeight * playQueue.currentIndex - rowHeight * 2
@@ -214,15 +214,15 @@ const NowPlayingView = () => {
             : playQueue.entry
         }
         currentIndex={playQueue.currentIndex}
-        tableColumns={settings.getSync('songListColumns')}
+        tableColumns={settings.getSync('musicListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         handleUpClick={handleUpClick}
         handleDownClick={handleDownClick}
         handleDragEnd={handleDragEnd}
         virtualized
-        rowHeight={Number(settings.getSync('songListRowHeight'))}
-        fontSize={Number(settings.getSync('songListFontSize'))}
+        rowHeight={Number(settings.getSync('musicListRowHeight'))}
+        fontSize={Number(settings.getSync('musicListFontSize'))}
         cacheImages={{
           enabled: settings.getSync('cacheImages'),
           cacheType: 'album',

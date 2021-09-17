@@ -25,7 +25,7 @@ const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
   const [currentLAFTab, setCurrentLAFTab] = useState('songList');
 
-  const songCols: any = settings.getSync('songListColumns');
+  const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
   const playlistCols: any = settings.getSync('playlistListColumns');
   const miniCols: any = settings.getSync('miniListColumns');
@@ -85,9 +85,9 @@ const LookAndFeelConfig = () => {
             columnPicker={songColumnPicker}
             columnList={songColumnList}
             settingsConfig={{
-              columnList: 'songListColumns',
-              rowHeight: 'songListRowHeight',
-              fontSize: 'songListFontSize',
+              columnList: 'musicListColumns',
+              rowHeight: 'musicListRowHeight',
+              fontSize: 'musicListFontSize',
             }}
           />
         )}

@@ -58,6 +58,7 @@ const ListViewTable = ({
   // onScroll,
   nowPlaying,
   handleDragEnd,
+  miniView,
   dnd,
 }: any) => {
   const history = useHistory();
@@ -247,10 +248,17 @@ const ListViewTable = ({
                 (c: any) => c.dataKey === column.dataKey
               );
 
-              settings.setSync(
-                `${listType}ListColumns[${resizedColumnIndex}].width`,
-                width
-              );
+              if (!miniView) {
+                settings.setSync(
+                  `${listType}ListColumns[${resizedColumnIndex}].width`,
+                  width
+                );
+              } else {
+                settings.setSync(
+                  `miniListColumns[${resizedColumnIndex}].width`,
+                  width
+                );
+              }
             }}
           >
             <StyledTableHeaderCell>{column.id}</StyledTableHeaderCell>

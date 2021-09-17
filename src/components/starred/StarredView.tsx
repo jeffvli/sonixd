@@ -130,11 +130,11 @@ const StarredView = () => {
       {currentPage === 'Tracks' && (
         <ListViewType
           data={searchQuery !== '' ? filteredData : data.song}
-          tableColumns={settings.getSync('songListColumns')}
+          tableColumns={settings.getSync('musicListColumns')}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          rowHeight={Number(settings.getSync('songListRowHeight'))}
-          fontSize={settings.getSync('songListFontSize')}
+          rowHeight={Number(settings.getSync('musicListRowHeight'))}
+          fontSize={settings.getSync('musicListFontSize')}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',
