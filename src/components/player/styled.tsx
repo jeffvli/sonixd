@@ -70,16 +70,24 @@ export const LinkButton = styled.a<{ subtitle?: string }>`
   }
 `;
 
-export const CustomSlider = styled(Slider)`
-  .rs-slider-progress-bar {
-    background-color: ${(props) => props.theme.primary.sliderBackground};
+export const CustomSlider = styled(Slider)<{ isDragging?: boolean }>`
+  &:hover {
+    .rs-slider-handle::before {
+      display: block;
+    }
+    .rs-slider-progress-bar {
+      background-color: ${(props) => props.theme.primary.main};
+    }
   }
-
-  .rs-slider-progress-bar::hover {
-    background-color: #ff0 !important;
+  .rs-slider-progress-bar {
+    background-color: ${(props) =>
+      props.$isDragging
+        ? props.theme.primary.main
+        : props.theme.primary.sliderBackground};
   }
 
   .rs-slider-handle::before {
+    display: none;
     border: ${(props) => `1px solid ${props.theme.primary.main} !important`};
   }
 `;

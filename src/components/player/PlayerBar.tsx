@@ -87,7 +87,7 @@ const PlayerBar = () => {
         }
         settings.setSync('volume', localVolume);
       }
-      setIsDragging(false);
+      setIsDraggingVolume(false);
     }, 10);
 
     return () => clearTimeout(debounce);
@@ -567,6 +567,7 @@ const PlayerBar = () => {
                     progress
                     defaultValue={0}
                     value={isDragging ? manualSeek : seek}
+                    $isDragging={isDragging}
                     tooltip={false}
                     max={
                       playQueue[currentEntryList][playQueue.currentIndex]
@@ -721,6 +722,7 @@ const PlayerBar = () => {
                     tabIndex={0}
                     progress
                     value={Math.floor(localVolume * 100)}
+                    $isDragging={isDraggingVolume}
                     tooltip={false}
                     style={{ width: '100px', marginRight: '10px' }}
                     onChange={handleVolumeSlider}
