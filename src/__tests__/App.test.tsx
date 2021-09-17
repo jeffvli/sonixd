@@ -66,6 +66,10 @@ const playerState: Player = {
 const miscState: General = {
   theme: 'defaultDark',
   font: 'Poppins',
+  contextMenu: {
+    show: false,
+  },
+  expandSidebar: false,
   modal: {
     currentPageIndex: undefined,
     show: false,

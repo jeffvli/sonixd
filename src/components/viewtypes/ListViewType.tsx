@@ -8,11 +8,16 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import { DOMHelper } from 'rsuite';
+import { DOMHelper, Rate } from 'rsuite';
 import { useAppSelector } from '../../redux/hooks';
 import PageLoader from '../loader/PageLoader';
 import SelectionBar from '../selectionbar/SelectionBar';
 import ListViewTable from './ListViewTable';
+import {
+  NowPlayingContextMenu,
+  ContextMenuButton,
+} from '../shared/ContextMenu';
+import { ContextMenuDivider, ContextMenuTitle } from '../shared/styled';
 
 declare global {
   interface Window {
@@ -40,6 +45,7 @@ const ListViewType = (
   }: any,
   ref: any
 ) => {
+  const misc = useAppSelector((state) => state.misc);
   const [isDragging, setIsDragging] = useState(false);
   const [dragDirection, setDragDirection] = useState('');
   const [dragSpeed, setDragSpeed] = useState('');
@@ -346,6 +352,38 @@ const ListViewType = (
           />
         )}
       </div>
+      {misc.contextMenu.show && misc.contextMenu.type === 'nowPlaying' && (
+        <NowPlayingContextMenu
+          xPos={misc.contextMenu.xPos}
+          yPos={misc.contextMenu.yPos}
+          width={130}
+          numOfButtons={6}
+          numOfDividers={5}
+          hasTitle
+        >
+          <ContextMenuTitle>
+            Selected: {multiSelect.selected.length}
+          </ContextMenuTitle>
+          <ContextMenuDivider />
+          <ContextMenuButton>Remove from queue</ContextMenuButton>
+          <ContextMenuDivider />
+
+          <ContextMenuButton>Add to playlist</ContextMenuButton>
+          <ContextMenuDivider />
+          <ContextMenuButton>Add favorite</ContextMenuButton>
+          <ContextMenuButton>Remove favorite</ContextMenuButton>
+          <ContextMenuDivider />
+
+          <ContextMenuButton>View details</ContextMenuButton>
+          <ContextMenuDivider />
+
+          <Rate
+            readOnly={false}
+            size="xs"
+            style={{ textAlign: 'center', marginLeft: '10px' }}
+          />
+        </NowPlayingContextMenu>
+      )}
     </>
   );
 };

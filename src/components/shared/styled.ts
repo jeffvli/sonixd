@@ -156,3 +156,45 @@ export const StyledInputPicker = styled(InputPicker)<{ width?: number }>`
 export const StyledIcon = styled(Icon)`
   color: ${(props) => `${props.theme.primary.main} !important`};
 `;
+
+export const ContextMenuWindow = styled.div<{
+  yPos: number;
+  xPos: number;
+  numOfButtons: number;
+  numOfDividers: number;
+  width: number;
+  hasTitle: boolean;
+}>`
+  position: absolute;
+  top: ${(props) => `${props.yPos}px`};
+  left: ${(props) => `${props.xPos}px`};
+  height: ${(props) =>
+    `${
+      props.numOfButtons * 30 +
+      props.numOfDividers * 7 +
+      (props.hasTitle ? 16 : 0)
+    }px`};
+  width: ${(props) => `${props.width}px`};
+  margin: 0px;
+  white-space: normal;
+  overflow: hidden;
+  overflow-x: hidden;
+  font-size: smaller;
+  background: ${(props) => props.theme.primary.background};
+  border: 1px #3c4043 solid;
+`;
+
+export const StyledContextMenuButton = styled(Button)`
+  text-align: left;
+`;
+
+export const ContextMenuDivider = styled.hr`
+  margin: 5px 0 5px 0;
+`;
+
+export const ContextMenuTitle = styled.div`
+  color: ${(props) => props.theme.primary.text};
+  margin-left: 5px;
+  margin-top: 5px;
+  user-select: none;
+`;

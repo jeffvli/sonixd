@@ -8,6 +8,7 @@ const Sidebar = ({
   handleSidebarSelect,
   disableSidebar,
   font,
+  ...rest
 }: any) => {
   return (
     <FixedSidebar
@@ -15,6 +16,7 @@ const Sidebar = ({
       width={expand ? 193 : 56}
       collapsible
       font={font}
+      onClick={rest.onClick}
     >
       <Sidenav
         style={{

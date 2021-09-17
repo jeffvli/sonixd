@@ -100,6 +100,7 @@ export const WindowControlButton = styled.div<{
 // GenericPage.tsx
 export const PageContainer = styled(Container)`
   height: 100%;
+  overflow-x: hidden;
 `;
 
 export const PageHeader = styled(Header)<{ padding?: string }>`

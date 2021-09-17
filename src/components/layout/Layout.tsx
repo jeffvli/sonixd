@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Content } from 'rsuite';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
+import { setContextMenu, setExpandSidebar } from '../../redux/miscSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
-  const [expandSidebar, setExpandSidebar] = useState(false);
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const misc = useAppSelector((state) => state.misc);
 
   const handleToggle = () => {
-    setExpandSidebar(!expandSidebar);
+    dispatch(setExpandSidebar(!misc.expandSidebar));
   };
 
   const handleSidebarSelect = (e: string) => {
@@ -56,14 +59,35 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
     <>
       <Titlebar font={font} />
       <Sidebar
-        expand={expandSidebar}
+        expand={misc.expandSidebar}
         handleToggle={handleToggle}
         handleSidebarSelect={handleSidebarSelect}
         disableSidebar={disableSidebar}
         font={font}
+        onClick={() => {
+          if (misc.contextMenu.show === true) {
+            dispatch(
+              setContextMenu({
+                show: false,
+              })
+            );
+          }
+        }}
       />
-      <RootContainer id="container-root" font={font}>
-        <MainContainer id="container-main" expanded={expandSidebar}>
+      <RootContainer
+        id="container-root"
+        font={font}
+        onClick={() => {
+          if (misc.contextMenu.show === true) {
+            dispatch(
+              setContextMenu({
+                show: false,
+              })
+            );
+          }
+        }}
+      >
+        <MainContainer id="container-main" expanded={misc.expandSidebar}>
           <Content id="container-content">{children}</Content>
         </MainContainer>
         <RootFooter id="container-footer">{footer}</RootFooter>

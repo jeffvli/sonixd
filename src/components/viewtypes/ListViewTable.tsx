@@ -24,7 +24,7 @@ import {
 } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
 import { setRating, star, unstar } from '../../api/api';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
   setSort,
@@ -32,7 +32,7 @@ import {
   sortPlayQueue,
 } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
-import { addModalPage } from '../../redux/miscSlice';
+import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
   setCurrentMouseOverId,
   setIsDragging,
@@ -62,6 +62,7 @@ const ListViewTable = ({
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const misc = useAppSelector((state) => state.misc);
   const queryClient = useQueryClient();
   const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const [sortColumn, setSortColumn] = useState<any>();
@@ -203,6 +204,34 @@ const ListViewTable = ({
         sortColumn={nowPlaying ? playQueue.sortColumn : sortColumn}
         sortType={nowPlaying ? playQueue.sortType : sortType}
         onSortColumn={handleSortColumn}
+        onRowContextMenu={(rowData: any, e: any) => {
+          e.preventDefault();
+          if (
+            (misc.contextMenu.show === false ||
+              misc.contextMenu.rowId !== rowData.uniqueId) &&
+            multiSelect.selected.filter(
+              (entry: any) => entry.uniqueId === rowData.uniqueId
+            ).length > 0
+          ) {
+            const xFix = misc.expandSidebar ? 185 : 50;
+            const yFix = nowPlaying ? 150 : 215;
+            dispatch(
+              setContextMenu({
+                show: true,
+                xPos: e.pageX - xFix,
+                yPos: e.pageY - yFix,
+                rowId: rowData.uniqueId,
+                type: nowPlaying ? 'nowPlaying' : 'other',
+              })
+            );
+          } else {
+            dispatch(
+              setContextMenu({
+                show: false,
+              })
+            );
+          }
+        }}
         // onScroll={onScroll}
       >
         {columns.map((column: any) => (
@@ -233,7 +262,6 @@ const ListViewTable = ({
                 {(rowData: any, rowIndex: any) => {
                   return (
                     <TableCellWrapper
-                      onContextMenu={() => console.log('fuck')}
                       playing={
                         (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                           nowPlaying) ||
@@ -698,7 +726,7 @@ const ListViewTable = ({
                           />
                         ) : column.dataKey === 'userRating' ? (
                           <StyledRate
-                            size="xs"
+                            size="sm"
                             readOnly={false}
                             defaultValue={
                               rowData?.userRating ? rowData.userRating : 0

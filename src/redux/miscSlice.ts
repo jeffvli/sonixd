@@ -12,12 +12,22 @@ export interface Modal {
   show: boolean;
   currentPageIndex: number | undefined;
 }
+
+export interface ContextMenu {
+  show: boolean;
+  xPos?: number;
+  yPos?: number;
+  rowId?: string;
+  type?: string;
+}
 export interface General {
   theme: string;
   font: string;
   modal: Modal;
   modalPages: ModalPage[];
+  expandSidebar: boolean;
   isProcessingPlaylist: string[];
+  contextMenu: ContextMenu;
 }
 
 const initialState: General = {
@@ -28,13 +38,29 @@ const initialState: General = {
     currentPageIndex: undefined,
   },
   modalPages: [],
+  expandSidebar: false,
   isProcessingPlaylist: [],
+  contextMenu: {
+    show: false,
+  },
 };
 
 const miscSlice = createSlice({
   name: 'misc',
   initialState,
   reducers: {
+    setExpandSidebar: (state, action: PayloadAction<boolean>) => {
+      state.expandSidebar = action.payload;
+    },
+
+    setContextMenu: (state, action: PayloadAction<ContextMenu>) => {
+      state.contextMenu.show = action.payload.show;
+      state.contextMenu.xPos = action.payload.xPos;
+      state.contextMenu.yPos = action.payload.yPos;
+      state.contextMenu.rowId = action.payload.rowId;
+      state.contextMenu.type = action.payload.type;
+    },
+
     addProcessingPlaylist: (state, action: PayloadAction<string>) => {
       state.isProcessingPlaylist.push(action.payload);
     },
@@ -111,5 +137,7 @@ export const {
   decrementModalPage,
   addProcessingPlaylist,
   removeProcessingPlaylist,
+  setContextMenu,
+  setExpandSidebar,
 } = miscSlice.actions;
 export default miscSlice.reducer;
