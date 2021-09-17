@@ -228,7 +228,7 @@
     "less-loader": "7.3.0",
     "lint-staged": "^10.2.11",
     "mini-css-extract-plugin": "^2.1.0",
-    "node-sass": "^5.0.0",
+    "node-sass": "^6.0.1",
     "opencollective-postinstall": "^2.0.3",
     "prettier": "^2.0.5",
     "react-refresh": "^0.10.0",
