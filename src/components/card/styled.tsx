@@ -22,6 +22,7 @@ export const StyledPanel = styled(Panel)<Card>`
   text-align: center;
   width: ${(props) => props.cardsize + 2};
   height: ${(props) => props.cardsize + 55};
+  border-radius: 0px !important;
   &:hover {
     border: 1px solid ${(props) => props.theme.primary.main};
     img {
