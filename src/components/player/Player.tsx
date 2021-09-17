@@ -324,7 +324,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       };
     }
 
-    if (playQueue[currentEntryList].length > 0 && !srcIsSet) {
+    if (playQueue[currentEntryList].length > 0) {
       /* If fading, just instantly switch the track, otherwise the player breaks
      from the timeout due to the listen handlers that run during the fade */
       dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
