@@ -1,16 +1,17 @@
+/* eslint-disable no-await-in-loop */
 import React, { useRef, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { Popover, Whisper } from 'rsuite';
-import { getPlaylists, populatePlaylist } from '../../api/api';
+import { getPlaylists, populatePlaylist, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addProcessingPlaylist,
   removeProcessingPlaylist,
   setContextMenu,
 } from '../../redux/miscSlice';
+import { setStar } from '../../redux/playQueueSlice';
 import {
-  ContextMenuTitle,
   ContextMenuDivider,
   ContextMenuWindow,
   StyledContextMenuButton,
@@ -18,10 +19,11 @@ import {
   StyledButton,
 } from './styled';
 import { notifyToast } from './toast';
+import { sleep } from '../../shared/utils';
 
 export const ContextMenuButton = ({ children, ...rest }: any) => {
   return (
-    <StyledContextMenuButton {...rest} appearance="subtle" size="xs" block>
+    <StyledContextMenuButton {...rest} appearance="subtle" size="sm" block>
       {children}
     </StyledContextMenuButton>
   );
@@ -53,6 +55,7 @@ export const ContextMenu = ({
 export const GlobalContextMenu = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playlistTriggerRef = useRef<any>();
@@ -111,6 +114,54 @@ export const GlobalContextMenu = () => {
     dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
   };
 
+  const refetchAfterFavorite = async () => {
+    await queryClient.refetchQueries(['starred'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['album'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['albumList'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['playlist'], {
+      active: true,
+    });
+  };
+
+  const handleFavorite = async (ordered: boolean) => {
+    dispatch(setContextMenu({ show: false }));
+
+    const sortedEntries = [...multiSelect.selected].sort(
+      (a: any, b: any) => a.rowIndex - b.rowIndex
+    );
+
+    for (let i = 0; i < sortedEntries.length; i += 1) {
+      await star(sortedEntries[i].id, sortedEntries[i].type);
+      dispatch(setStar({ id: sortedEntries[i].id, type: 'star' }));
+      if (ordered) {
+        await sleep(350);
+      }
+    }
+
+    await refetchAfterFavorite();
+  };
+
+  const handleUnfavorite = async () => {
+    dispatch(setContextMenu({ show: false }));
+
+    const starredEntries = multiSelect.selected.filter(
+      (entry: any) => entry.starred
+    );
+
+    for (let i = 0; i < starredEntries.length; i += 1) {
+      await unstar(starredEntries[i].id, starredEntries[i].type);
+      dispatch(setStar({ id: starredEntries[i].id, type: 'unstar' }));
+    }
+
+    await refetchAfterFavorite();
+  };
+
   return (
     <>
       {misc.contextMenu.show && misc.contextMenu.type === 'nowPlaying' && (
@@ -118,14 +169,13 @@ export const GlobalContextMenu = () => {
           <ContextMenu
             xPos={misc.contextMenu.xPos}
             yPos={misc.contextMenu.yPos}
-            width={140}
-            numOfButtons={5}
+            width={190}
+            numOfButtons={7}
             numOfDividers={3}
-            hasTitle
           >
-            <ContextMenuTitle>
+            <ContextMenuButton>
               Selected: {multiSelect.selected.length}
-            </ContextMenuTitle>
+            </ContextMenuButton>
             <ContextMenuDivider />
             <ContextMenuButton>Add to queue</ContextMenuButton>
             <ContextMenuButton>Remove from current</ContextMenuButton>
@@ -134,16 +184,17 @@ export const GlobalContextMenu = () => {
             <Whisper
               ref={playlistTriggerRef}
               enterable
-              placement="autoHorizontal"
+              placement="autoHorizontalStart"
               trigger="none"
               speaker={
                 <Popover>
                   <StyledInputPicker
                     data={playlists}
+                    placement="autoVerticalStart"
                     virtualized
-                    style={{ width: '150px' }}
                     labelKey="name"
                     valueKey="id"
+                    width={200}
                     onChange={(e: any) => setSelectedPlaylistId(e)}
                   />
                   <StyledButton
@@ -173,8 +224,15 @@ export const GlobalContextMenu = () => {
             </Whisper>
 
             <ContextMenuDivider />
-            <ContextMenuButton>Add to favorites</ContextMenuButton>
-            <ContextMenuButton>Remove from favorites</ContextMenuButton>
+            <ContextMenuButton onClick={() => handleFavorite(false)}>
+              Add to favorites
+            </ContextMenuButton>
+            <ContextMenuButton onClick={() => handleFavorite(true)}>
+              Add to favorites (ordered)
+            </ContextMenuButton>
+            <ContextMenuButton onClick={handleUnfavorite}>
+              Remove from favorites
+            </ContextMenuButton>
           </ContextMenu>
         </>
       )}

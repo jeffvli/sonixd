@@ -170,8 +170,8 @@ export const ContextMenuWindow = styled.div<{
   left: ${(props) => `${props.xPos}px`};
   height: ${(props) =>
     `${
-      props.numOfButtons * 30.5 +
-      props.numOfDividers * 7 +
+      props.numOfButtons * 30 +
+      props.numOfDividers * 2 +
       (props.hasTitle ? 16 : 0)
     }px`};
   width: ${(props) => `${props.width}px`};
@@ -186,15 +186,15 @@ export const ContextMenuWindow = styled.div<{
 
 export const StyledContextMenuButton = styled(Button)`
   text-align: left;
+  margin: 0px !important;
 `;
 
 export const ContextMenuDivider = styled.hr`
-  margin: 5px 0 5px 0;
+  margin: 0px;
 `;
 
 export const ContextMenuTitle = styled.div`
   color: ${(props) => props.theme.primary.text};
-  margin-left: 5px;
-  margin-top: 5px;
+  margin: 5px 0 5px 5px;
   user-select: none;
 `;

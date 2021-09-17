@@ -265,3 +265,26 @@ export const moveToIndex = (
   // Finally, return the modified list
   return newList;
 };
+
+export const getUpdatedEntryRowIndex = (
+  selectedEntries: any,
+  entryData: any
+) => {
+  const updatedEntries = selectedEntries.map((entry: any) => {
+    const findIndex = entryData.findIndex(
+      (item: any) => item.uniqueId === entry.uniqueId
+    );
+    return { ...entry, rowIndex: findIndex };
+  });
+
+  // Sort the entries by their rowIndex so that we can re-add them in the proper order
+  const sortedEntries = updatedEntries.sort(
+    (a: any, b: any) => a.rowIndex - b.rowIndex
+  );
+
+  return sortedEntries;
+};
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};

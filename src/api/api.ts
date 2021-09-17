@@ -46,13 +46,30 @@ api.interceptors.response.use(
 
 axiosRetry(api, {
   retries: 3,
+  retryDelay: (retryCount) => {
+    return retryCount * 1000;
+  },
 });
 
-export const playlistApi = axios.create({
+export const autoFailApi = axios.create({
   baseURL: API_BASE_URL,
+  validateStatus: () => {
+    return false;
+  },
 });
 
-playlistApi.interceptors.response.use(
+autoFailApi.interceptors.request.use((config) => {
+  config.params = config.params || {};
+  config.params.u = auth.username;
+  config.params.s = auth.salt;
+  config.params.t = auth.hash;
+  config.params.v = '1.15.0';
+  config.params.c = 'sonixd';
+  config.params.f = 'json';
+  return config;
+});
+
+autoFailApi.interceptors.response.use(
   (res) => {
     // Return the subsonic response directly
     res.data = res.data['subsonic-response'];
@@ -63,10 +80,13 @@ playlistApi.interceptors.response.use(
   }
 );
 
-axiosRetry(playlistApi, {
-  retries: 3,
+axiosRetry(autoFailApi, {
+  retries: 5,
   retryCondition: (e: any) => {
-    return e.status !== 'ok';
+    return e.response.data['subsonic-response'].status !== 'ok';
+  },
+  retryDelay: (retryCount) => {
+    return retryCount * 1000;
   },
 });
 
@@ -501,7 +521,7 @@ export const clearPlaylist = async (id: string, entryCount: number) => {
     }
 
     data = (
-      await playlistApi.get(`/updatePlaylist`, {
+      await api.get(`/updatePlaylist`, {
         params,
       })
     ).data;
@@ -531,7 +551,7 @@ export const populatePlaylist = async (id: string, entry: any[]) => {
     }
 
     data = (
-      await playlistApi.get(`/updatePlaylist`, {
+      await api.get(`/updatePlaylist`, {
         params,
       })
     ).data;
