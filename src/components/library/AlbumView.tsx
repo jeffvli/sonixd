@@ -213,7 +213,7 @@ const AlbumView = ({ ...rest }: any) => {
           cacheType: 'album',
           cacheIdProperty: 'albumId',
         }}
-        listType="song"
+        listType="music"
         isModal={rest.isModal}
       />
     </GenericPage>

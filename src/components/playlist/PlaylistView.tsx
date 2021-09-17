@@ -287,7 +287,7 @@ const PlaylistView = ({ ...rest }) => {
           cacheType: 'album',
           cacheIdProperty: 'albumId',
         }}
-        listType="song"
+        listType="music"
         dnd
         isModal={rest.isModal}
       />

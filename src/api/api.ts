@@ -220,6 +220,7 @@ export const getAlbums = async (options: any, coverArtSize = 150) => {
       albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
+      type: 'album',
       index,
     })),
   };
@@ -236,6 +237,7 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
       albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
+      type: 'album',
       index,
     })
   );
@@ -267,6 +269,7 @@ export const getAllAlbums = (
           albumId: entry.id,
           image: getCoverArtUrl(entry, coverArtSize),
           starred: entry.starred || undefined,
+          type: 'album',
           index,
         }));
       }
@@ -290,6 +293,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
   return {
     ...data.album,
     image: getCoverArtUrl(data.album, coverArtSize),
+    type: 'album',
     song: (data.album.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id),
@@ -328,7 +332,11 @@ export const getArtists = async () => {
   );
 
   artists.map((artist: any) =>
-    artistList.push({ ...artist, image: getCoverArtUrl(artist, 150) })
+    artistList.push({
+      ...artist,
+      image: getCoverArtUrl(artist, 150),
+      type: 'artist',
+    })
   );
 
   return artistList;
@@ -384,7 +392,7 @@ export const getScanStatus = async () => {
 export const star = async (id: string, type: string) => {
   const { data } = await api.get(`/star`, {
     params: {
-      id: type === 'song' ? id : undefined,
+      id: type === 'music' ? id : undefined,
       albumId: type === 'album' ? id : undefined,
       artistId: type === 'artist' ? id : undefined,
     },
@@ -396,7 +404,7 @@ export const star = async (id: string, type: string) => {
 export const unstar = async (id: string, type: string) => {
   const { data } = await api.get(`/unstar`, {
     params: {
-      id: type === 'song' ? id : undefined,
+      id: type === 'music' ? id : undefined,
       albumId: type === 'album' ? id : undefined,
       artistId: type === 'artist' ? id : undefined,
     },

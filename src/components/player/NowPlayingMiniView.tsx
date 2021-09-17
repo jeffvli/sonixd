@@ -233,7 +233,7 @@ const NowPlayingMiniView = () => {
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
-              listType="mini"
+              listType="music"
               nowPlaying
               miniView
               dnd

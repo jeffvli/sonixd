@@ -140,7 +140,7 @@ const StarredView = () => {
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}
-          listType="song"
+          listType="music"
           virtualized
         />
       )}

@@ -302,7 +302,7 @@ const PlayerBar = () => {
     if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
       await star(
         playQueue[currentEntryList][playQueue.currentIndex].id,
-        'song'
+        'music'
       );
       dispatch(
         setStar({
