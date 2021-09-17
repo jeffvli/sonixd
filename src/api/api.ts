@@ -120,6 +120,16 @@ export const getPlaylists = async (sortBy: string) => {
       ? data.playlists?.playlist.sort((a: any, b: any) => {
           return a.changed > b.changed ? -1 : a.changed < b.changed ? 1 : 0;
         })
+      : sortBy === 'name'
+      ? data.playlists?.playlist.sort((a: any, b: any) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        })
       : data.playlists?.playlist;
 
   return (newData || []).map((playlist: any) => ({
@@ -499,6 +509,7 @@ export const populatePlaylist = async (id: string, entry: any[]) => {
   // Set these in chunks so the api doesn't break
   const entryIdChunks = _.chunk(entryIds, 325);
 
+  let data;
   for (let i = 0; i < entryIdChunks.length; i += 1) {
     const params = new URLSearchParams();
 
@@ -511,8 +522,12 @@ export const populatePlaylist = async (id: string, entry: any[]) => {
       params.append('songIdToAdd', String(entryIdChunks[i][x]));
     }
 
-    await playlistApi.get(`/updatePlaylist`, {
-      params,
-    });
+    data = (
+      await playlistApi.get(`/updatePlaylist`, {
+        params,
+      })
+    ).data;
   }
+
+  return data;
 };

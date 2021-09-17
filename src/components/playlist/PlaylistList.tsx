@@ -13,7 +13,7 @@ import GridViewType from '../viewtypes/GridViewType';
 
 const PlaylistList = () => {
   const history = useHistory();
-  const [sortBy] = useState('');
+  const [sortBy] = useState('name');
   const [viewType, setViewType] = useState(
     settings.getSync('playlistViewType') || 'list'
   );
