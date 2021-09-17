@@ -463,7 +463,7 @@ const PlayerBar = () => {
           >
             <PlayerColumn center height="45px">
               {/* Seek Backward Button */}
-              <CustomTooltip text="Seek backward">
+              <CustomTooltip text="Seek backward" delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="backward"
@@ -478,7 +478,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Previous Song Button */}
-              <CustomTooltip text="Previous track">
+              <CustomTooltip text="Previous track" delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="step-backward"
@@ -493,7 +493,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Play/Pause Button */}
-              <CustomTooltip text="Play/Pause">
+              <CustomTooltip text="Play/Pause" delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon={
@@ -509,7 +509,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Next Song Button */}
-              <CustomTooltip text="Next track">
+              <CustomTooltip text="Next track" delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="step-forward"
@@ -524,7 +524,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Seek Forward Button */}
-              <CustomTooltip text="Seek forward">
+              <CustomTooltip text="Seek forward" delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="forward"

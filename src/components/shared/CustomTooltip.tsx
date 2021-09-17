@@ -1,7 +1,15 @@
 import React from 'react';
 import { Tooltip, Whisper } from 'rsuite';
+import styled from 'styled-components';
 
-export const tooltip = (text: string) => <Tooltip>{text}</Tooltip>;
+const StyledTooltip = styled(Tooltip)`
+  .rs-tooltip-inner {
+    background-color: #000000;
+    color: #ffffff;
+  }
+`;
+
+export const tooltip = (text: string) => <StyledTooltip>{text}</StyledTooltip>;
 
 const CustomTooltip = ({ children, text, delay, ...rest }: any) => {
   return (
