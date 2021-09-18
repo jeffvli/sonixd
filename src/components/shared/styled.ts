@@ -187,6 +187,7 @@ export const ContextMenuWindow = styled.div<{
 export const StyledContextMenuButton = styled(Button)`
   text-align: left;
   margin: 0px !important;
+  border-radius: 0px !important;
 `;
 
 export const ContextMenuDivider = styled.hr`

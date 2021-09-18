@@ -27,6 +27,7 @@ export const PlayerColumn = styled.div<{
 `;
 
 export const PlayerControlIcon = styled(Icon)`
+  font-size: medium;
   color: ${(props) =>
     props.active === 'true'
       ? props.theme.primary.main

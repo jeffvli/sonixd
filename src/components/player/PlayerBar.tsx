@@ -88,7 +88,7 @@ const PlayerBar = () => {
         settings.setSync('volume', localVolume);
       }
       setIsDraggingVolume(false);
-    }, 10);
+    }, 200);
 
     return () => clearTimeout(debounce);
   }, [
@@ -146,7 +146,9 @@ const PlayerBar = () => {
   };
 
   const handleVolumeSlider = (e: number) => {
-    setIsDraggingVolume(true);
+    if (!isDraggingVolume) {
+      setIsDraggingVolume(true);
+    }
     const vol = Number((e / 100).toFixed(2));
     setLocalVolume(vol);
   };
