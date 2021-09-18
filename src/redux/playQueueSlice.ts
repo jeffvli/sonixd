@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 import arrayMove from 'array-move';
 import {
   areConsecutive,
@@ -243,7 +244,12 @@ const playQueueSlice = createSlice({
       if (action.payload.columnDataKey !== '') {
         state.sortedEntry = _.orderBy(
           state.entry,
-          action.payload.columnDataKey,
+          [
+            (entry: any) =>
+              typeof entry[action.payload.columnDataKey] === 'string'
+                ? entry[action.payload.columnDataKey].toLowerCase()
+                : entry[action.payload.columnDataKey],
+          ],
           action.payload.sortType
         );
       } else {
@@ -251,7 +257,6 @@ const playQueueSlice = createSlice({
       }
 
       const currentEntry = entrySelect(state);
-
       const newCurrentSongIndex = getCurrentEntryIndexByUID(
         action.payload.columnDataKey !== ''
           ? state.sortedEntry

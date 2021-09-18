@@ -134,13 +134,25 @@ const ListViewTable = ({
   useEffect(() => {
     if (!nowPlaying) {
       if (sortColumn && sortType) {
-        const actualSortColumn = columns.find((c: any) => c.id === sortColumn);
+        // Since the column title(id) won't always match the actual column dataKey, we need to match it
+        const normalizedSortColumn = columns.find(
+          (c: any) => c.id === sortColumn
+        );
         const sortColumnDataKey =
-          actualSortColumn.dataKey === 'combinedtitle'
+          normalizedSortColumn.dataKey === 'combinedtitle'
             ? 'title'
-            : actualSortColumn.dataKey;
+            : normalizedSortColumn.dataKey;
 
-        const sortData = _.orderBy(data, sortColumnDataKey, sortType);
+        const sortData = _.orderBy(
+          data,
+          [
+            (entry: any) =>
+              typeof entry[sortColumnDataKey] === 'string'
+                ? entry[sortColumnDataKey].toLowerCase()
+                : entry[sortColumnDataKey],
+          ],
+          sortType
+        );
         setSortedData(sortData);
       } else {
         setSortedData(data);

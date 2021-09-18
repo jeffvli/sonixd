@@ -141,15 +141,11 @@ export const getPlaylists = async (sortBy: string) => {
           return a.changed > b.changed ? -1 : a.changed < b.changed ? 1 : 0;
         })
       : sortBy === 'name'
-      ? data.playlists?.playlist.sort((a: any, b: any) => {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        })
+      ? _.orderBy(
+          data.playlists.playlist || [],
+          [(entry) => entry.name.toLowerCase()],
+          'asc'
+        )
       : data.playlists?.playlist;
 
   return (newData || []).map((playlist: any) => ({
