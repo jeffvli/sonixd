@@ -104,7 +104,7 @@ const PlaylistView = ({ ...rest }) => {
         } else {
           dispatch(setSelected(rowData));
         }
-      }, 300);
+      }, 100);
     }
   };
 

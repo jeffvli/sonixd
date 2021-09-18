@@ -75,7 +75,7 @@ const ArtistView = ({ ...rest }: any) => {
         } else {
           dispatch(setSelected(rowData));
         }
-      }, 300);
+      }, 100);
     }
   };
 

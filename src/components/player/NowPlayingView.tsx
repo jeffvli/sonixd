@@ -83,7 +83,7 @@ const NowPlayingView = () => {
         } else {
           dispatch(setSelected(rowData));
         }
-      }, 300);
+      }, 100);
     }
   };
 

@@ -80,7 +80,7 @@ const NowPlayingMiniView = () => {
         } else {
           dispatch(setSelected(rowData));
         }
-      }, 300);
+      }, 100);
     }
   };
 

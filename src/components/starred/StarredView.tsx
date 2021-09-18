@@ -75,7 +75,7 @@ const StarredView = () => {
         } else {
           dispatch(setSelected(rowData));
         }
-      }, 300);
+      }, 100);
     }
   };
 

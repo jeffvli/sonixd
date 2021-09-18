@@ -63,7 +63,7 @@ const AlbumList = () => {
         } else {
           dispatch(setSelected(rowData));
         }
-      }, 300);
+      }, 100);
     }
   };
 
