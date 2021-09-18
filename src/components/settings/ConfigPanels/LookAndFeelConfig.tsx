@@ -7,11 +7,16 @@ import {
   StyledInputPicker,
   StyledNavItem,
   StyledInputNumber,
+  StyledCheckbox,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
 import { useAppDispatch } from '../../../redux/hooks';
-import { setTheme, setFont } from '../../../redux/miscSlice';
+import {
+  setTheme,
+  setFont,
+  setDynamicBackground,
+} from '../../../redux/miscSlice';
 import {
   songColumnPicker,
   songColumnList,
@@ -53,7 +58,26 @@ const LookAndFeelConfig = () => {
           <StyledRadio value="defaultLight">Default Light</StyledRadio>
         </RadioGroup>
         <br />
+
+        <StyledCheckbox
+          defaultChecked={settings.getSync('dynamicBackground')}
+          onChange={() => {
+            settings.setSync(
+              'dynamicBackground',
+              !settings.getSync('dynamicBackground')
+            );
+            dispatch(
+              setDynamicBackground(
+                Boolean(settings.getSync('dynamicBackground'))
+              )
+            );
+          }}
+        >
+          Enable dynamic background
+        </StyledCheckbox>
+        <br />
         <ControlLabel>Font</ControlLabel>
+
         <br />
         <StyledInputPicker
           data={Fonts}

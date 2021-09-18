@@ -12,6 +12,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('font', 'Poppins');
   }
 
+  if (force || !settings.hasSync('dynamicBackground')) {
+    settings.setSync('dynamicBackground', false);
+  }
+
   if (force || !settings.hasSync('showDebugWindow')) {
     settings.setSync('showDebugWindow', false);
   }

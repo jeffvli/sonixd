@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import settings from 'electron-settings';
 import moment from 'moment';
 
 let settingsPath = path.join(
@@ -28,6 +27,9 @@ export const getSettings = () => {
     theme: parsedSettings.theme,
     font: parsedSettings.font,
     scrollWithCurrentSong: parsedSettings.scrollWithCurrentSong,
+    dynamicBackground: parsedSettings.dynamicBackground,
+    cachePath: parsedSettings.cachePath,
+    serverBase64: parsedSettings.serverBase64,
   };
 };
 
@@ -36,10 +38,11 @@ export const isCached = (filePath: string) => {
 };
 
 export const getRootCachePath = () => {
+  const parsedSettings = getSettings();
   return path.join(
-    String(settings.getSync('cachePath')),
+    parsedSettings.cachePath,
     'sonixdCache',
-    `${settings.getSync('serverBase64')}`
+    parsedSettings.serverBase64
   );
 };
 

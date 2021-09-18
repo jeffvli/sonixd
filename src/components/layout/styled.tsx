@@ -40,6 +40,7 @@ export const RootFooter = styled(Footer)`
 // Titlebar.tsx
 // Subtract 2px from width if you add window border
 export const TitleHeader = styled.header<{ font: string }>`
+  z-index: 1;
   display: block;
   position: fixed;
   height: 32px;
@@ -98,13 +99,35 @@ export const WindowControlButton = styled.div<{
 `;
 
 // GenericPage.tsx
-export const PageContainer = styled(Container)`
+export const PageContainer = styled(Container)<{ $backgroundSrc?: string }>`
   height: 100%;
   overflow-x: hidden;
+
+  &:before {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+
+    display: block;
+    background-image: ${(props) =>
+      props.$backgroundSrc ? `url(${props.$backgroundSrc})` : undefined};
+    transition: background-image 1s ease-in-out;
+
+    width: 100%;
+    height: 92%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.3;
+
+    filter: blur(50px) brightness(0.8);
+  }
 `;
 
 export const PageHeader = styled(Header)<{ padding?: string }>`
   padding: ${(props) => (props.padding ? props.padding : '10px 20px 0px 20px')};
+  z-index: 1;
 `;
 
 export const PageContent = styled(Content)<{ padding?: string }>`
