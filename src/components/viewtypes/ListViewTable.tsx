@@ -448,7 +448,7 @@ const ListViewTable = ({
                                     }.jpg`,
                                     rowData.image.replace(
                                       /size=\d+/,
-                                      'size=350'
+                                      'size=500'
                                     )
                                   );
                                 }
@@ -596,7 +596,7 @@ const ListViewTable = ({
                               `${cacheImages.cacheType}_${
                                 rowData[cacheImages.cacheIdProperty]
                               }.jpg`,
-                              rowData.image.replace(/size=\d+/, 'size=350')
+                              rowData.image.replace(/size=\d+/, 'size=500')
                             );
                           }
                         }}
