@@ -66,6 +66,7 @@ export interface PlayQueue {
   currentSongId: string;
   currentSongUniqueId: string;
   currentPlayer: number;
+  current?: Entry;
   isFading: boolean;
   autoIncremented: boolean;
   volume: number;
@@ -272,6 +273,7 @@ const playQueueSlice = createSlice({
 
       resetPlayerDefaults(state);
       handleGaplessPlayback(state);
+      state.current = { ...state[currentEntry][0] };
       state.currentSongId = state[currentEntry][0].id;
       state.currentSongUniqueId = state[currentEntry][0].uniqueId;
     },
@@ -531,6 +533,7 @@ const playQueueSlice = createSlice({
       }
 
       handleGaplessPlayback(state);
+      state.current = { ...state[currentEntry][state.currentIndex] };
       state.currentSongId = state[currentEntry][state.currentIndex].id;
       state.currentSongUniqueId =
         state[currentEntry][state.currentIndex].uniqueId;
@@ -605,6 +608,7 @@ const playQueueSlice = createSlice({
 
       state.currentPlayer = 1;
       state.currentIndex = findIndex;
+      state.current = { ...action.payload };
       state.currentSongId = action.payload.id;
       state.currentSongUniqueId = action.payload.uniqueId;
     },
@@ -640,6 +644,7 @@ const playQueueSlice = createSlice({
         }
 
         handleGaplessPlayback(state);
+        state.current = { ...state[currentEntry][state.currentIndex] };
         state.currentSongId = state[currentEntry][state.currentIndex].id;
         state.currentSongUniqueId =
           state[currentEntry][state.currentIndex].uniqueId;
@@ -678,6 +683,7 @@ const playQueueSlice = createSlice({
       );
 
       state.currentIndex = findIndex;
+      state.current = { ...action.payload };
       state.currentSongId = action.payload.id;
       state.currentSongUniqueId = action.payload.uniqueId;
     },
@@ -697,10 +703,12 @@ const playQueueSlice = createSlice({
         // If shuffle is enabled, add all entries randomly
         const shuffledEntries = _.shuffle(action.payload.entries);
         shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
+        state.current = { ...shuffledEntries[0] };
         state.currentSongId = shuffledEntries[0].id;
         state.currentSongUniqueId = shuffledEntries[0].uniqueId;
       } else {
         // If shuffle is disabled, add all entries in order
+        state.current = { ...action.payload.entries[0] };
         state.currentSongId = action.payload.entries[0].id;
         state.currentSongUniqueId = action.payload.entries[0].uniqueId;
       }
@@ -737,10 +745,22 @@ const playQueueSlice = createSlice({
         state.shuffledEntry = shuffledEntries;
         state.currentIndex = 0;
         state.player1.index = 0;
+
+        const current = action.payload.entries.find(
+          (entry) => entry.uniqueId === action.payload.uniqueSongId
+        );
+
+        state.current = current;
         state.currentSongId = action.payload.currentSongId;
         state.currentSongUniqueId = action.payload.uniqueSongId;
       } else {
         // Add all songs in order and set the current index to the selected row
+
+        const current = action.payload.entries.find(
+          (entry) => entry.uniqueId === action.payload.uniqueSongId
+        );
+
+        state.current = current;
         state.currentIndex = action.payload.currentIndex;
         state.player1.index = action.payload.currentIndex;
         state.currentSongId = action.payload.currentSongId;
