@@ -774,10 +774,64 @@ const playQueueSlice = createSlice({
     },
 
     appendPlayQueue: (state, action: PayloadAction<{ entries: Entry[] }>) => {
-      action.payload.entries.map((entry: any) => state.entry.push(entry));
+      // We'll need to update the uniqueId otherwise selecting a song with duplicates
+      // will select them all at once
+      const refreshedEntries = action.payload.entries.map((entry: any) => {
+        return {
+          ...entry,
+          uniqueId: nanoid(),
+        };
+      });
+
+      refreshedEntries.map((entry: any) => state.entry.push(entry));
+
       if (state.shuffle) {
-        const shuffledEntries = _.shuffle(action.payload.entries);
+        const shuffledEntries = _.shuffle(refreshedEntries);
         shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
+      }
+    },
+
+    removeFromPlayQueue: (
+      state,
+      action: PayloadAction<{ entries: Entry[] }>
+    ) => {
+      const uniqueIds = _.map(action.payload.entries, 'uniqueId');
+
+      state.entry = state.entry.filter(
+        (entry) => !uniqueIds.includes(entry.uniqueId)
+      );
+
+      state.shuffledEntry = (state.shuffledEntry || []).filter(
+        (entry) => !uniqueIds.includes(entry.uniqueId)
+      );
+
+      state.sortedEntry = (state.sortedEntry || []).filter(
+        (entry) => !uniqueIds.includes(entry.uniqueId)
+      );
+
+      // If the current song is removed, then reset to the first entry
+      if (uniqueIds.includes(state.currentSongUniqueId)) {
+        if (state.sortColumn) {
+          state.current = { ...state.sortedEntry[0] };
+          state.currentSongId = state.sortedEntry[0].id;
+          state.currentSongUniqueId = state.sortedEntry[0].uniqueId;
+        } else if (state.shuffle) {
+          state.current = { ...state.shuffledEntry[0] };
+          state.currentSongId = state.shuffledEntry[0].id;
+          state.currentSongUniqueId = state.shuffledEntry[0].uniqueId;
+        } else {
+          state.current = { ...state.entry[0] };
+          state.currentSongId = state.entry[0].id;
+          state.currentSongUniqueId = state.entry[0].uniqueId;
+        }
+
+        if (state.currentPlayer === 1) {
+          state.player1.index = 0;
+        } else {
+          state.player2.index = 0;
+        }
+
+        state.currentIndex = 0;
       }
     },
 
@@ -1006,6 +1060,7 @@ export const {
   setPlayQueue,
   setPlayQueueByRowClick,
   appendPlayQueue,
+  removeFromPlayQueue,
   clearPlayQueue,
   setIsLoading,
   setIsLoaded,

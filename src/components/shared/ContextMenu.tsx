@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import React, { useRef, useState } from 'react';
+import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { Popover, Whisper } from 'rsuite';
@@ -10,7 +11,12 @@ import {
   removeProcessingPlaylist,
   setContextMenu,
 } from '../../redux/miscSlice';
-import { setStar } from '../../redux/playQueueSlice';
+import {
+  appendPlayQueue,
+  fixPlayer2Index,
+  removeFromPlayQueue,
+  setStar,
+} from '../../redux/playQueueSlice';
 import {
   ContextMenuDivider,
   ContextMenuWindow,
@@ -20,11 +26,13 @@ import {
 } from './styled';
 import { notifyToast } from './toast';
 import { sleep } from '../../shared/utils';
+import { setStatus } from '../../redux/playerSlice';
 
-export const ContextMenuButton = ({ children, ...rest }: any) => {
+export const ContextMenuButton = ({ text, children, ...rest }: any) => {
   return (
     <StyledContextMenuButton {...rest} appearance="subtle" size="sm" block>
       {children}
+      {text}
     </StyledContextMenuButton>
   );
 };
@@ -56,6 +64,7 @@ export const GlobalContextMenu = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
+  const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playlistTriggerRef = useRef<any>();
@@ -64,6 +73,40 @@ export const GlobalContextMenu = () => {
   const { data: playlists }: any = useQuery(['playlists', 'name'], () =>
     getPlaylists('name')
   );
+
+  const handleAddToQueue = () => {
+    const entriesByRowIndexAsc = _.orderBy(
+      multiSelect.selected,
+      'rowIndex',
+      'asc'
+    );
+
+    notifyToast(
+      'info',
+      `Added ${multiSelect.selected.length} song(s) to the queue`
+    );
+
+    dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
+    dispatch(setContextMenu({ show: false }));
+  };
+
+  const handleRemoveFromQueue = async () => {
+    dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+    if (playQueue.currentPlayer === 1) {
+      dispatch(fixPlayer2Index());
+    }
+    dispatch(setContextMenu({ show: false }));
+
+    // If the currently playing song is removed, then the player will autostart because
+    // the player src changed. If that happens, automatically set the playing status
+    if (
+      _.map(multiSelect.selected, 'uniqueId').includes(
+        playQueue.current.uniqueId
+      )
+    ) {
+      setTimeout(() => dispatch(setStatus('PLAYING')), 50);
+    }
+  };
 
   const handleAddToPlaylist = async () => {
     // If the window is closed, the selectedPlaylistId will be deleted
@@ -173,12 +216,15 @@ export const GlobalContextMenu = () => {
             numOfButtons={7}
             numOfDividers={3}
           >
-            <ContextMenuButton>
-              Selected: {multiSelect.selected.length}
-            </ContextMenuButton>
+            <ContextMenuButton
+              text={`Selected: ${multiSelect.selected.length}`}
+            />
             <ContextMenuDivider />
-            <ContextMenuButton>Add to queue</ContextMenuButton>
-            <ContextMenuButton>Remove from current</ContextMenuButton>
+            <ContextMenuButton text="Add to queue" onClick={handleAddToQueue} />
+            <ContextMenuButton
+              text="Remove from current"
+              onClick={handleRemoveFromQueue}
+            />
             <ContextMenuDivider />
 
             <Whisper
@@ -213,26 +259,27 @@ export const GlobalContextMenu = () => {
               }
             >
               <ContextMenuButton
+                text="Add to playlist"
                 onClick={() =>
                   playlistTriggerRef.current.state.isOverlayShown
                     ? playlistTriggerRef.current.close()
                     : playlistTriggerRef.current.open()
                 }
-              >
-                Add to playlist
-              </ContextMenuButton>
+              />
             </Whisper>
-
             <ContextMenuDivider />
-            <ContextMenuButton onClick={() => handleFavorite(false)}>
-              Add to favorites
-            </ContextMenuButton>
-            <ContextMenuButton onClick={() => handleFavorite(true)}>
-              Add to favorites (ordered)
-            </ContextMenuButton>
-            <ContextMenuButton onClick={handleUnfavorite}>
-              Remove from favorites
-            </ContextMenuButton>
+            <ContextMenuButton
+              text="Add to favorites"
+              onClick={() => handleFavorite(false)}
+            />
+            <ContextMenuButton
+              text="Add to favorites (ordered)"
+              onClick={() => handleFavorite(true)}
+            />
+            <ContextMenuButton
+              text="Remove from favorites"
+              onClick={handleUnfavorite}
+            />
           </ContextMenu>
         </>
       )}
