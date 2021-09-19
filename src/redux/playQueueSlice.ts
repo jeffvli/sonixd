@@ -1,14 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
 import arrayMove from 'array-move';
-import {
-  areConsecutive,
-  consecutiveRanges,
-  getSettings,
-} from '../shared/utils';
+import { areConsecutive, consecutiveRanges } from '../shared/utils';
 
-const parsedSettings = getSettings();
+if (process.env.NODE_ENV === 'test') {
+  settings.configure({
+    dir: '/src/__tests__/',
+    fileName: 'settings.json',
+  });
+}
+
+const parsedSettings = settings.getSync();
 
 export interface Entry {
   id: string;
@@ -102,25 +106,25 @@ const initialState: PlayQueue = {
       timeData: [],
     },
   },
-  scrollWithCurrentSong: parsedSettings.scrollWithCurrentSong,
-  fadeDuration: parsedSettings.fadeDuration,
-  fadeType: parsedSettings.fadeType,
-  pollingInterval: parsedSettings.pollingInterval,
-  volumeFade: parsedSettings.volumeFade,
+  scrollWithCurrentSong: Boolean(parsedSettings.scrollWithCurrentSong),
+  fadeDuration: Number(parsedSettings.fadeDuration),
+  fadeType: String(parsedSettings.fadeType),
+  pollingInterval: Number(parsedSettings.pollingInterval),
+  volumeFade: Boolean(parsedSettings.volumeFade),
   currentIndex: 0,
   currentSongId: '',
   currentSongUniqueId: '',
   currentPlayer: 1,
   isFading: false,
   autoIncremented: false,
-  volume: parsedSettings.volume,
-  isLoading: false,
-  repeat: parsedSettings.repeat,
-  shuffle: parsedSettings.shuffle,
+  volume: Number(parsedSettings.volume),
+  isLoading: Boolean(false),
+  repeat: String(parsedSettings.repeat),
+  shuffle: Boolean(parsedSettings.shuffle),
   sortColumn: undefined,
   sortType: 'asc',
   displayQueue: false,
-  showDebugWindow: parsedSettings.showDebugWindow,
+  showDebugWindow: Boolean(parsedSettings.showDebugWindow),
   entry: [],
   shuffledEntry: [],
   sortedEntry: [],
@@ -859,11 +863,7 @@ const playQueueSlice = createSlice({
     ) => {
       const currentEntry = entrySelect(state);
       const tempQueue = state[currentEntry].slice();
-
-      const uniqueIds: any[] = [];
-      action.payload.entries.map((entry: Entry) =>
-        uniqueIds.push(entry.uniqueId)
-      );
+      const uniqueIds = _.map(action.payload.entries, 'uniqueId');
 
       // Remove the selected entries from the queue
       const newQueue = tempQueue.filter((entry: Entry) => {

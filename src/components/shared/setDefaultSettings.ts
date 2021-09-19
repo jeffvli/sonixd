@@ -1,8 +1,6 @@
 import settings from 'electron-settings';
 import path from 'path';
-import fs from 'fs';
-import { getSongCachePath, getImageCachePath } from '../../shared/utils';
-// Set setting defaults on first login
+
 const setDefaultSettings = (force: boolean) => {
   if (force || !settings.hasSync('theme')) {
     settings.setSync('theme', 'defaultDark');
@@ -21,7 +19,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('globalMediaHotkeys')) {
-    settings.setSync('globalMediaHotkeys', true);
+    settings.setSync('globalMediaHotkeys', false);
   }
 
   if (force || !settings.hasSync('cachePath')) {
@@ -43,9 +41,6 @@ const setDefaultSettings = (force: boolean) => {
   if (force || !settings.hasSync('volumeFade')) {
     settings.setSync('volumeFade', true);
   }
-
-  fs.mkdirSync(getSongCachePath(), { recursive: true });
-  fs.mkdirSync(getImageCachePath(), { recursive: true });
 
   if (force || !settings.hasSync('repeat')) {
     settings.setSync('repeat', 'all');

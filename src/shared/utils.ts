@@ -1,48 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
-
-let settingsPath = path.join(
-  String(process.env.APPDATA),
-  process.env.NODE_ENV !== 'production' ? 'Electron' : 'sonixd',
-  'settings.json'
-);
-
-// For CI
-settingsPath = fs.existsSync(settingsPath)
-  ? settingsPath
-  : 'src/shared/settings.json';
-
-export const getSettings = () => {
-  const parsedSettings = JSON.parse(String(fs.readFileSync(settingsPath)));
-  return {
-    repeat: parsedSettings.repeat,
-    shuffle: parsedSettings.shuffle,
-    volume: parsedSettings.volume,
-    fadeDuration: parsedSettings.fadeDuration,
-    fadeType: parsedSettings.fadeType,
-    pollingInterval: parsedSettings.pollingInterval,
-    volumeFade: parsedSettings.volumeFade,
-    showDebugWindow: parsedSettings.showDebugWindow,
-    theme: parsedSettings.theme,
-    font: parsedSettings.font,
-    scrollWithCurrentSong: parsedSettings.scrollWithCurrentSong,
-    dynamicBackground: parsedSettings.dynamicBackground,
-    cachePath: parsedSettings.cachePath,
-    serverBase64: parsedSettings.serverBase64,
-  };
-};
+import settings from 'electron-settings';
 
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
 };
 
 export const getRootCachePath = () => {
-  const parsedSettings = getSettings();
   return path.join(
-    parsedSettings.cachePath,
+    String(settings.getSync('cachePath')),
     'sonixdCache',
-    parsedSettings.serverBase64
+    String(settings.getSync('serverBase64'))
   );
 };
 

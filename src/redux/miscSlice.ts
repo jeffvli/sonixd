@@ -1,7 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getSettings } from '../shared/utils';
+import settings from 'electron-settings';
 
-const parsedSettings = getSettings();
+if (process.env.NODE_ENV === 'test') {
+  settings.configure({
+    dir: '/src/__tests__/',
+    fileName: 'settings.json',
+  });
+}
+
+const parsedSettings = settings.getSync();
 
 export interface ModalPage {
   pageType: string;
@@ -32,8 +39,8 @@ export interface General {
 }
 
 const initialState: General = {
-  theme: parsedSettings.theme,
-  font: parsedSettings.font,
+  theme: String(parsedSettings.theme),
+  font: String(parsedSettings.font),
   modal: {
     show: false,
     currentPageIndex: undefined,
@@ -44,7 +51,7 @@ const initialState: General = {
   contextMenu: {
     show: false,
   },
-  dynamicBackground: parsedSettings.dynamicBackground,
+  dynamicBackground: Boolean(parsedSettings.dynamicBackground),
 };
 
 const miscSlice = createSlice({
