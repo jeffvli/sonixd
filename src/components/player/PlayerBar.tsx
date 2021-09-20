@@ -100,6 +100,12 @@ const PlayerBar = () => {
   ]);
 
   useEffect(() => {
+    // Set the seek back to 0 when the player is incremented/decremented, otherwise the
+    // slider bar will temporarily stick to the current time of the previous track before resetting to 0
+    playersRef.current.player1.audioEl.current.currentTime = 0;
+  }, [playQueue.playerUpdated]);
+
+  useEffect(() => {
     setSeek(player.currentSeek);
   }, [player.currentSeek]);
 

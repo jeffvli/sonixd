@@ -73,6 +73,7 @@ export interface PlayQueue {
   currentPlayer: number;
   current?: Entry;
   isFading: boolean;
+  playerUpdated: number;
   autoIncremented: boolean;
   volume: number;
   isLoading: boolean;
@@ -116,6 +117,7 @@ const initialState: PlayQueue = {
   currentSongUniqueId: '',
   currentPlayer: 1,
   isFading: false,
+  playerUpdated: 0,
   autoIncremented: false,
   volume: Number(parsedSettings.volume),
   isLoading: Boolean(false),
@@ -528,6 +530,9 @@ const playQueueSlice = createSlice({
           } else {
             state.player2.index = state.currentIndex + 1;
           }
+
+          // Use this in conjunction with useEffect to set the audioplayer currentTime back to 0
+          state.playerUpdated += 1;
         }
       } else if (state[currentEntry].length >= 1 && state.repeat === 'one') {
         // If repeating one, then we can just increment to the next track
@@ -650,6 +655,9 @@ const playQueueSlice = createSlice({
           // Use in conjunction with fixPlayer2Index reducer - see note
           state.player2.index = 0;
           state.player2.volume = 0;
+
+          // Use this in conjunction with useEffect to set the audioplayer currentTime back to 0
+          state.playerUpdated += 1;
         }
 
         handleGaplessPlayback(state);
@@ -815,19 +823,23 @@ const playQueueSlice = createSlice({
 
       // If the current song is removed, then reset to the first entry
       if (uniqueIds.includes(state.currentSongUniqueId)) {
-        if (state.sortColumn) {
-          state.current = { ...state.sortedEntry[0] };
-          state.currentSongId = state.sortedEntry[0].id;
-          state.currentSongUniqueId = state.sortedEntry[0].uniqueId;
-        } else if (state.shuffle) {
-          state.current = { ...state.shuffledEntry[0] };
-          state.currentSongId = state.shuffledEntry[0].id;
-          state.currentSongUniqueId = state.shuffledEntry[0].uniqueId;
-        } else {
-          state.current = { ...state.entry[0] };
-          state.currentSongId = state.entry[0].id;
-          state.currentSongUniqueId = state.entry[0].uniqueId;
-        }
+        state.current = state.sortColumn
+          ? state.sortedEntry[0]
+          : state.shuffle
+          ? state.shuffledEntry[0]
+          : state.entry[0];
+
+        state.currentSongId = state.sortColumn
+          ? state.sortedEntry[0].id
+          : state.shuffle
+          ? state.shuffledEntry[0].id
+          : state.entry[0].id;
+
+        state.currentSongUniqueId = state.sortColumn
+          ? state.sortedEntry[0].uniqueId
+          : state.shuffle
+          ? state.shuffledEntry[0].uniqueId
+          : state.entry[0].uniqueId;
 
         if (state.currentPlayer === 1) {
           state.player1.index = 0;
@@ -836,6 +848,25 @@ const playQueueSlice = createSlice({
         }
 
         state.currentIndex = 0;
+      } else {
+        // We'll recalculate the currentSongIndex just in case the existing index was modified
+        // due to removing row entries that are before the current song
+        const newCurrentSongIndex = getCurrentEntryIndexByUID(
+          state.sortColumn
+            ? state.sortedEntry
+            : state.shuffle
+            ? state.shuffledEntry
+            : state.entry,
+          state.currentSongUniqueId
+        );
+
+        if (state.currentPlayer === 1) {
+          state.player1.index = newCurrentSongIndex;
+        } else {
+          state.player2.index = newCurrentSongIndex;
+        }
+
+        state.currentIndex = newCurrentSongIndex;
       }
     },
 

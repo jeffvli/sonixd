@@ -43,6 +43,7 @@ const playQueueState: PlayQueue = {
   currentSongUniqueId: '',
   currentPlayer: 1,
   isFading: false,
+  playerUpdated: 0,
   autoIncremented: false,
   volume: 0.5,
   isLoading: false,
