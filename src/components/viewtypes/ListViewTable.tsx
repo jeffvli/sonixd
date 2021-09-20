@@ -186,7 +186,7 @@ const ListViewTable = ({
           })
         );
       }
-      if (playQueue.currentPlayer === 1) {
+      if (playQueue.currentPlayer === 1 && !playQueue.isFading) {
         dispatch(fixPlayer2Index());
       }
     }
@@ -195,6 +195,7 @@ const ListViewTable = ({
     dispatch,
     nowPlaying,
     playQueue.currentPlayer,
+    playQueue.isFading,
     playQueue.sortColumn,
     playQueue.sortType,
     sortedData,

@@ -96,16 +96,6 @@ export const GlobalContextMenu = () => {
       dispatch(fixPlayer2Index());
     }
     dispatch(setContextMenu({ show: false }));
-
-    // If the currently playing song is removed, then the player will autostart because
-    // the player src changed. If that happens, automatically set the playing status
-    if (
-      _.map(multiSelect.selected, 'uniqueId').includes(
-        playQueue.current.uniqueId
-      )
-    ) {
-      setTimeout(() => dispatch(setStatus('PLAYING')), 50);
-    }
   };
 
   const handleAddToPlaylist = async () => {
@@ -208,80 +198,78 @@ export const GlobalContextMenu = () => {
   return (
     <>
       {misc.contextMenu.show && misc.contextMenu.type === 'nowPlaying' && (
-        <>
-          <ContextMenu
-            xPos={misc.contextMenu.xPos}
-            yPos={misc.contextMenu.yPos}
-            width={190}
-            numOfButtons={7}
-            numOfDividers={3}
+        <ContextMenu
+          xPos={misc.contextMenu.xPos}
+          yPos={misc.contextMenu.yPos}
+          width={190}
+          numOfButtons={7}
+          numOfDividers={3}
+        >
+          <ContextMenuButton
+            text={`Selected: ${multiSelect.selected.length}`}
+          />
+          <ContextMenuDivider />
+          <ContextMenuButton text="Add to queue" onClick={handleAddToQueue} />
+          <ContextMenuButton
+            text="Remove from current"
+            onClick={handleRemoveFromQueue}
+          />
+          <ContextMenuDivider />
+
+          <Whisper
+            ref={playlistTriggerRef}
+            enterable
+            placement="autoHorizontalStart"
+            trigger="none"
+            speaker={
+              <Popover>
+                <StyledInputPicker
+                  data={playlists}
+                  placement="autoVerticalStart"
+                  virtualized
+                  labelKey="name"
+                  valueKey="id"
+                  width={200}
+                  onChange={(e: any) => setSelectedPlaylistId(e)}
+                />
+                <StyledButton
+                  disabled={
+                    !selectedPlaylistId ||
+                    misc.isProcessingPlaylist.includes(selectedPlaylistId)
+                  }
+                  loading={misc.isProcessingPlaylist.includes(
+                    selectedPlaylistId
+                  )}
+                  onClick={handleAddToPlaylist}
+                >
+                  Add
+                </StyledButton>
+              </Popover>
+            }
           >
             <ContextMenuButton
-              text={`Selected: ${multiSelect.selected.length}`}
-            />
-            <ContextMenuDivider />
-            <ContextMenuButton text="Add to queue" onClick={handleAddToQueue} />
-            <ContextMenuButton
-              text="Remove from current"
-              onClick={handleRemoveFromQueue}
-            />
-            <ContextMenuDivider />
-
-            <Whisper
-              ref={playlistTriggerRef}
-              enterable
-              placement="autoHorizontalStart"
-              trigger="none"
-              speaker={
-                <Popover>
-                  <StyledInputPicker
-                    data={playlists}
-                    placement="autoVerticalStart"
-                    virtualized
-                    labelKey="name"
-                    valueKey="id"
-                    width={200}
-                    onChange={(e: any) => setSelectedPlaylistId(e)}
-                  />
-                  <StyledButton
-                    disabled={
-                      !selectedPlaylistId ||
-                      misc.isProcessingPlaylist.includes(selectedPlaylistId)
-                    }
-                    loading={misc.isProcessingPlaylist.includes(
-                      selectedPlaylistId
-                    )}
-                    onClick={handleAddToPlaylist}
-                  >
-                    Add
-                  </StyledButton>
-                </Popover>
+              text="Add to playlist"
+              onClick={() =>
+                playlistTriggerRef.current.state.isOverlayShown
+                  ? playlistTriggerRef.current.close()
+                  : playlistTriggerRef.current.open()
               }
-            >
-              <ContextMenuButton
-                text="Add to playlist"
-                onClick={() =>
-                  playlistTriggerRef.current.state.isOverlayShown
-                    ? playlistTriggerRef.current.close()
-                    : playlistTriggerRef.current.open()
-                }
-              />
-            </Whisper>
-            <ContextMenuDivider />
-            <ContextMenuButton
-              text="Add to favorites"
-              onClick={() => handleFavorite(false)}
             />
-            <ContextMenuButton
-              text="Add to favorites (ordered)"
-              onClick={() => handleFavorite(true)}
-            />
-            <ContextMenuButton
-              text="Remove from favorites"
-              onClick={handleUnfavorite}
-            />
-          </ContextMenu>
-        </>
+          </Whisper>
+          <ContextMenuDivider />
+          <ContextMenuButton
+            text="Add to favorites"
+            onClick={() => handleFavorite(false)}
+          />
+          <ContextMenuButton
+            text="Add to favorites (ordered)"
+            onClick={() => handleFavorite(true)}
+          />
+          <ContextMenuButton
+            text="Remove from favorites"
+            onClick={handleUnfavorite}
+          />
+        </ContextMenu>
       )}
     </>
   );

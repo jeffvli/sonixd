@@ -77,17 +77,15 @@ const Card = ({
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
       dispatch(appendPlayQueue({ entries: res.song }));
-      if (playQueue.entry.length < 1) {
-        dispatch(setStatus('PLAYING'));
-      }
     }
 
     if (playClick.type === 'album' || playClick.type === 'artist') {
       const res = await getAlbum(playClick.id);
       dispatch(appendPlayQueue({ entries: res.song }));
-      if (playQueue.entry.length < 1) {
-        dispatch(setStatus('PLAYING'));
-      }
+    }
+
+    if (playQueue.entry.length < 1) {
+      dispatch(setStatus('PLAYING'));
     }
   };
 

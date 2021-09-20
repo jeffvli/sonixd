@@ -235,7 +235,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const cacheSongs = settings.getSync('cacheSongs');
   const [debug, setDebug] = useState(playQueue.showDebugWindow);
   const [title] = useState('');
-  const [srcIsSet, setSrcIsSet] = useState(false);
   const [cachePath] = useState(path.join(getSongCachePath(), '/'));
   const [fadeDuration, setFadeDuration] = useState(playQueue.fadeDuration);
   const [fadeType, setFadeType] = useState(playQueue.fadeType);
@@ -305,10 +304,9 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   }, [playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
-    /* Adding a small delay when setting the track src helps to not break the player when we're modifying
-    the currentSongIndex such as when sorting the table, shuffling, or drag and dropping rows.
-     It can also prevent loading unneeded tracks when rapidly incrementing/decrementing the player. */
-
+    // Adding a small delay when setting the track src helps to not break the player when we're modifying
+    // the currentSongIndex such as when sorting the table, shuffling, or drag and dropping rows.
+    // It can also prevent loading unneeded tracks when rapidly incrementing/decrementing the player.
     if (playQueue[currentEntryList].length > 0 && !playQueue.isFading) {
       const timer1 = setTimeout(() => {
         dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
@@ -325,15 +323,17 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     }
 
     if (playQueue[currentEntryList].length > 0) {
-      /* If fading, just instantly switch the track, otherwise the player breaks
-     from the timeout due to the listen handlers that run during the fade */
+      // If fading, just instantly switch the track, otherwise the player breaks
+      // from the timeout due to the listen handlers that run during the fade
+      // If switching to the NowPlayingView while on player1 and fading, dispatching
+      // the src for player1 will cause the player to break
+
       dispatch(setPlayerSrc({ player: 1, src: getSrc1() }));
       dispatch(setPlayerSrc({ player: 2, src: getSrc2() }));
-      setSrcIsSet(true);
     }
 
     return undefined;
-  }, [currentEntryList, dispatch, getSrc1, getSrc2, playQueue, srcIsSet]);
+  }, [currentEntryList, dispatch, getSrc1, getSrc2, playQueue]);
 
   useEffect(() => {
     // Update playback settings when changed in redux store
@@ -381,6 +381,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   };
 
   const handleOnEndedPlayer1 = () => {
+    player1Ref.current.audioEl.current.currentTime = 0;
     if (cacheSongs) {
       cacheSong(
         `${playQueue[currentEntryList][playQueue.player1.index].id}.mp3`,
@@ -422,10 +423,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         dispatch(setAutoIncremented(false));
       }
     }
-    setSrcIsSet(false);
   };
 
   const handleOnEndedPlayer2 = () => {
+    player2Ref.current.audioEl.current.currentTime = 0;
     if (cacheSongs) {
       cacheSong(
         `${playQueue[currentEntryList][playQueue.player2.index].id}.mp3`,
@@ -466,7 +467,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         dispatch(setAutoIncremented(false));
       }
     }
-    setSrcIsSet(false);
   };
 
   const handleGaplessPlayer1 = () => {
@@ -509,7 +509,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         volume={playQueue.player1.volume}
         autoPlay={
           playQueue.player1.index === playQueue.currentIndex &&
-          playQueue.currentPlayer === 1
+          playQueue.currentPlayer === 1 &&
+          player.status === 'PLAYING'
         }
         onError={(e: any) => {
           if (playQueue[currentEntryList].length > 0) {
@@ -534,7 +535,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         volume={playQueue.player2.volume}
         autoPlay={
           playQueue.player2.index === playQueue.currentIndex &&
-          playQueue.currentPlayer === 2
+          playQueue.currentPlayer === 2 &&
+          player.status === 'PLAYING'
         }
         onError={(e: any) => {
           if (playQueue[currentEntryList].length > 0) {
