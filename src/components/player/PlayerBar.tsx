@@ -102,7 +102,10 @@ const PlayerBar = () => {
   useEffect(() => {
     // Set the seek back to 0 when the player is incremented/decremented, otherwise the
     // slider bar will temporarily stick to the current time of the previous track before resetting to 0
+    playersRef.current.player1.audioEl.current.pause();
+    playersRef.current.player2.audioEl.current.pause();
     playersRef.current.player1.audioEl.current.currentTime = 0;
+    playersRef.current.player2.audioEl.current.currentTime = 0;
   }, [playQueue.playerUpdated]);
 
   useEffect(() => {
@@ -504,10 +507,9 @@ const PlayerBar = () => {
               <CustomTooltip text="Play/Pause" delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
-                  icon={
-                    player.status === 'PLAYING' ? 'pause-circle' : 'play-circle'
-                  }
-                  size="3x"
+                  icon={player.status === 'PLAYING' ? 'pause' : 'play'}
+                  size="2x"
+                  fixedWidth
                   onClick={handleClickPlayPause}
                   onKeyDown={(e: any) => {
                     if (e.keyCode === keyCodes.SPACEBAR) {
