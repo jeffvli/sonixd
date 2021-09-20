@@ -1,14 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
+import { mockSettings } from '../shared/mockSettings';
 
-if (process.env.NODE_ENV === 'test') {
-  settings.configure({
-    dir: '/src/__tests__/',
-    fileName: 'settings.json',
-  });
-}
-
-const parsedSettings = settings.getSync();
+const parsedSettings =
+  process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface ModalPage {
   pageType: string;

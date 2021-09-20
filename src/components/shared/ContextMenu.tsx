@@ -26,7 +26,6 @@ import {
 } from './styled';
 import { notifyToast } from './toast';
 import { sleep } from '../../shared/utils';
-import { setStatus } from '../../redux/playerSlice';
 
 export const ContextMenuButton = ({ text, children, ...rest }: any) => {
   return (

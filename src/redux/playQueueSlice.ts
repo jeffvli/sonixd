@@ -4,15 +4,10 @@ import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
 import arrayMove from 'array-move';
 import { areConsecutive, consecutiveRanges } from '../shared/utils';
+import { mockSettings } from '../shared/mockSettings';
 
-if (process.env.NODE_ENV === 'test') {
-  settings.configure({
-    dir: '/src/__tests__/',
-    fileName: 'settings.json',
-  });
-}
-
-const parsedSettings = settings.getSync();
+const parsedSettings =
+  process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface Entry {
   id: string;

@@ -2,17 +2,24 @@ import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
 import settings from 'electron-settings';
+import { mockSettings } from './mockSettings';
 
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
 };
 
 export const getRootCachePath = () => {
-  return path.join(
-    String(settings.getSync('cachePath')),
-    'sonixdCache',
-    String(settings.getSync('serverBase64'))
-  );
+  const baseCachePath =
+    process.env.NODE_ENV === 'test'
+      ? mockSettings.cachePath
+      : String(settings.getSync('cachePath'));
+
+  const serverBase64 =
+    process.env.NODE_ENV === 'test'
+      ? mockSettings.serverBase64
+      : String(settings.getSync('serverBase64'));
+
+  return path.join(baseCachePath, 'sonixdCache', serverBase64);
 };
 
 export const getImageCachePath = () => {
