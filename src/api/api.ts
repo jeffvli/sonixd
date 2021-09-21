@@ -529,6 +529,24 @@ export const createPlaylist = async (name: string) => {
   return data;
 };
 
+export const updatePlaylist = async (
+  playlistId: string,
+  name: string,
+  comment: string,
+  isPublic: boolean
+) => {
+  const { data } = await api.get(`/updatePlaylist`, {
+    params: {
+      playlistId,
+      name,
+      comment,
+      public: isPublic,
+    },
+  });
+
+  return data;
+};
+
 export const clearPlaylist = async (playlistId: string) => {
   // Specifying the playlistId without any songs will empty the existing playlist
   const { data } = await api.get(`/createPlaylist`, {

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
-import { ButtonToolbar } from 'rsuite';
+import { ButtonToolbar, Form, Input, Popover, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -19,6 +19,7 @@ import {
   getPlaylist,
   updatePlaylistSongsLg,
   updatePlaylistSongs,
+  updatePlaylist,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -53,6 +54,11 @@ import {
   addProcessingPlaylist,
   removeProcessingPlaylist,
 } from '../../redux/miscSlice';
+import {
+  StyledButton,
+  StyledCheckbox,
+  StyledInputGroup,
+} from '../shared/styled';
 
 interface PlaylistParams {
   id: string;
@@ -62,6 +68,7 @@ const PlaylistView = ({ ...rest }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
+  const editTriggerRef = useRef<any>();
   const { id } = useParams<PlaylistParams>();
   const playlistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(
@@ -69,6 +76,10 @@ const PlaylistView = ({ ...rest }) => {
     () => getPlaylist(playlistId),
     { refetchOnWindowFocus: false }
   );
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editPublic, setEditPublic] = useState(false);
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
   const [localPlaylistData, setLocalPlaylistData] = useState(data);
   const [isModified, setIsModified] = useState(false);
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -96,6 +107,9 @@ const PlaylistView = ({ ...rest }) => {
   useEffect(() => {
     // Set the local playlist data on any changes
     setLocalPlaylistData(data?.song);
+    setEditName(data?.name);
+    setEditDescription(data?.comment);
+    setEditPublic(data?.public);
   }, [data]);
 
   useEffect(() => {
@@ -217,6 +231,27 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(removeProcessingPlaylist(data.id));
   };
 
+  const handleEdit = async () => {
+    setIsSubmittingEdit(true);
+    const res = await updatePlaylist(
+      data.id,
+      editName,
+      editDescription,
+      editPublic
+    );
+
+    if (isFailedResponse(res)) {
+      notifyToast('error', errorMessages(res)[0]);
+    } else {
+      queryClient.refetchQueries(['playlist'], {
+        active: true,
+      });
+    }
+
+    setIsSubmittingEdit(false);
+    editTriggerRef.current.close();
+  };
+
   const handleDelete = async () => {
     try {
       const res = await deletePlaylist(data.id);
@@ -306,10 +341,57 @@ const PlaylistView = ({ ...rest }) => {
                     }
                     onClick={() => setLocalPlaylistData(data?.song)}
                   />
-                  <EditButton
-                    size="lg"
-                    disabled={misc.isProcessingPlaylist.includes(data?.id)}
-                  />
+                  <Whisper
+                    ref={editTriggerRef}
+                    enterable
+                    placement="auto"
+                    trigger="click"
+                    speaker={
+                      <Popover>
+                        <Form>
+                          <StyledInputGroup>
+                            <Input
+                              placeholder="Name"
+                              value={editName}
+                              onChange={(e) => setEditName(e)}
+                            />
+                          </StyledInputGroup>
+                          <StyledInputGroup>
+                            <Input
+                              placeholder="Description"
+                              value={editDescription}
+                              onChange={(e) => setEditDescription(e)}
+                            />
+                          </StyledInputGroup>
+                          <StyledCheckbox
+                            defaultChecked={editPublic}
+                            value={editPublic}
+                            onChange={() => setEditPublic(!editPublic)}
+                          >
+                            Public
+                          </StyledCheckbox>
+                          <br />
+                          <StyledButton
+                            size="sm"
+                            type="submit"
+                            block
+                            loading={isSubmittingEdit}
+                            disabled={isSubmittingEdit}
+                            onClick={handleEdit}
+                            appearance="primary"
+                          >
+                            Edit
+                          </StyledButton>
+                        </Form>
+                      </Popover>
+                    }
+                  >
+                    <EditButton
+                      size="lg"
+                      disabled={misc.isProcessingPlaylist.includes(data?.id)}
+                    />
+                  </Whisper>
+
                   <DeleteButton
                     size="lg"
                     onClick={handleDelete}
