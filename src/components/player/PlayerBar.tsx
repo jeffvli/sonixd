@@ -406,15 +406,21 @@ const PlayerBar = () => {
                       >
                         <LinkButton
                           tabIndex={0}
-                          onClick={() =>
-                            history.push(
-                              `/library/album/${
-                                playQueue[currentEntryList][
-                                  playQueue.currentIndex
-                                ]?.albumId
-                              }`
-                            )
-                          }
+                          onClick={() => {
+                            if (
+                              playQueue[currentEntryList][
+                                playQueue.currentIndex
+                              ]?.albumId
+                            ) {
+                              history.push(
+                                `/library/album/${
+                                  playQueue[currentEntryList][
+                                    playQueue.currentIndex
+                                  ]?.albumId
+                                }`
+                              );
+                            }
+                          }}
                         >
                           {playQueue[currentEntryList][playQueue.currentIndex]
                             ?.title || 'Unknown title'}
@@ -448,13 +454,19 @@ const PlayerBar = () => {
                             tabIndex={0}
                             subtitle="true"
                             onClick={() => {
-                              history.push(
-                                `/library/artist/${
-                                  playQueue[currentEntryList][
-                                    playQueue.currentIndex
-                                  ]?.artistId
-                                }`
-                              );
+                              if (
+                                playQueue[currentEntryList][
+                                  playQueue.currentIndex
+                                ]?.artistId
+                              ) {
+                                history.push(
+                                  `/library/artist/${
+                                    playQueue[currentEntryList][
+                                      playQueue.currentIndex
+                                    ]?.artistId
+                                  }`
+                                );
+                              }
                             }}
                           >
                             {playQueue[currentEntryList][playQueue.currentIndex]
