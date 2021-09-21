@@ -302,7 +302,7 @@ const PlaylistView = ({ ...rest }) => {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {data.comment ? data.comment : ' '}
+                {data.comment ? data.comment : <span>&#8203;</span>}
               </div>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
@@ -310,11 +310,13 @@ const PlaylistView = ({ ...rest }) => {
                     appearance="primary"
                     size="lg"
                     onClick={handlePlay}
+                    disabled={localPlaylistData.length < 1}
                   />
                   <PlayAppendButton
                     appearance="primary"
                     size="lg"
                     onClick={handlePlayAppend}
+                    disabled={localPlaylistData.length < 1}
                   />
                   <SaveButton
                     size="lg"

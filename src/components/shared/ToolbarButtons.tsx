@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from 'rsuite';
 import CustomTooltip from './CustomTooltip';
-import { StyledButton, StyledIconButton } from './styled';
+import { StyledIconButton } from './styled';
 
 export const PlayButton = ({ ...rest }) => {
   return (
