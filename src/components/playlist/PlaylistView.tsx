@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -15,7 +18,7 @@ import {
   clearPlaylist,
   deletePlaylist,
   getPlaylist,
-  populatePlaylist,
+  updatePlaylistSongsLg,
   updatePlaylistSongs,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -33,7 +36,11 @@ import {
   clearSelected,
   setIsDragging,
 } from '../../redux/multiSelectSlice';
-import { moveToIndex } from '../../shared/utils';
+import {
+  createRecoveryFile,
+  getRecoveryPath,
+  moveToIndex,
+} from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
@@ -67,11 +74,23 @@ const PlaylistView = ({ ...rest }) => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const misc = useAppSelector((state) => state.misc);
   const [searchQuery, setSearchQuery] = useState('');
+  const [recoveryPath, setRecoveryPath] = useState('');
+  const [needsRecovery, setNeedsRecovery] = useState(false);
   const filteredData = useSearchQuery(searchQuery, localPlaylistData, [
     'title',
     'artist',
     'album',
   ]);
+
+  useEffect(() => {
+    const recoveryFilePath = path.join(
+      getRecoveryPath(),
+      `playlist_${data?.id}.json`
+    );
+
+    setRecoveryPath(recoveryFilePath);
+    setNeedsRecovery(fs.existsSync(recoveryFilePath));
+  }, [data?.id]);
 
   useEffect(() => {
     // Set the local playlist data on any changes
@@ -137,13 +156,18 @@ const PlaylistView = ({ ...rest }) => {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (recovery: boolean) => {
     dispatch(clearSelected());
     dispatch(addProcessingPlaylist(data.id));
     try {
+      let res;
+      const playlistData = recovery
+        ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
+        : localPlaylistData;
+
       // Smaller playlists can use the safe /createPlaylist method of saving
-      if (localPlaylistData.length <= 400) {
-        const res = await updatePlaylistSongs(data.id, localPlaylistData);
+      if (playlistData.length <= 400 && !recovery) {
+        res = await updatePlaylistSongs(data.id, playlistData);
         if (res.status === 'failed') {
           notifyToast('error', res.error.message);
         } else {
@@ -151,21 +175,43 @@ const PlaylistView = ({ ...rest }) => {
             active: true,
           });
         }
-        // For larger playlists, we'll need to split the request into smaller chunks to save
       } else {
-        const res = await clearPlaylist(data.id, localPlaylistData.length);
+        // For larger playlists, we'll need to first clear out the playlist and then re-populate it
+        // Tested on Airsonic instances, /createPlaylist fails with around ~350+ songId params
+        res = await clearPlaylist(data.id);
 
         if (res.status === 'failed') {
           notifyToast('error', res.error.message);
         } else {
-          await populatePlaylist(data.id, localPlaylistData);
+          res = await updatePlaylistSongsLg(data.id, playlistData);
+
+          if (_.map(res, 'status').includes('failed')) {
+            res.forEach((response) => {
+              if (response.status === 'failed') {
+                return notifyToast('error', response.error);
+              }
+              return false;
+            });
+
+            // If there are any failures (network, etc.), then we'll need a way to recover the playlist.
+            // Write the localPlaylistData to a file so we can re-run the save command.
+            createRecoveryFile(data.id, 'playlist', playlistData);
+            setNeedsRecovery(true);
+          }
+
+          if (recovery) {
+            // If the recovery succeeds, we can remove the recovery file
+            fs.unlinkSync(recoveryPath);
+            setNeedsRecovery(false);
+          }
+
           await queryClient.refetchQueries(['playlist'], {
             active: true,
           });
         }
       }
     } catch (err) {
-      console.log(err);
+      notifyToast('error', err);
     }
     dispatch(removeProcessingPlaylist(data.id));
   };
@@ -180,7 +226,7 @@ const PlaylistView = ({ ...rest }) => {
         history.push('/playlist');
       }
     } catch (err) {
-      console.log(err);
+      notifyToast('error', err);
     }
   };
 
@@ -236,18 +282,24 @@ const PlaylistView = ({ ...rest }) => {
                   />
                   <SaveButton
                     size="lg"
-                    color={isModified ? 'green' : undefined}
+                    text={needsRecovery ? 'Recover playlist' : undefined}
+                    color={
+                      needsRecovery ? 'red' : isModified ? 'green' : undefined
+                    }
                     disabled={
-                      !isModified ||
+                      (!needsRecovery && !isModified) ||
                       misc.isProcessingPlaylist.includes(data?.id)
                     }
                     loading={misc.isProcessingPlaylist.includes(data?.id)}
-                    onClick={handleSave}
+                    onClick={() => handleSave(needsRecovery)}
                   />
                   <UndoButton
                     size="lg"
-                    color={isModified ? 'green' : undefined}
+                    color={
+                      needsRecovery ? 'red' : isModified ? 'green' : undefined
+                    }
                     disabled={
+                      needsRecovery ||
                       !isModified ||
                       misc.isProcessingPlaylist.includes(data?.id)
                     }

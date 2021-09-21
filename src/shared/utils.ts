@@ -30,6 +30,22 @@ export const getSongCachePath = () => {
   return path.join(getRootCachePath(), 'song');
 };
 
+export const getRecoveryPath = () => {
+  return path.join(getRootCachePath(), '__recovery');
+};
+
+export const createRecoveryFile = (id: any, type: string, data: any) => {
+  const recoveryPath = getRecoveryPath();
+
+  if (!fs.existsSync(recoveryPath)) {
+    fs.mkdirSync(recoveryPath, { recursive: true });
+  }
+
+  const filePath = path.join(recoveryPath, `${type}_${id}.json`);
+
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 4), 'utf-8');
+};
+
 export const shuffle = (array: any[]) => {
   let currentIndex = array.length;
   let randomIndex;

@@ -476,6 +476,39 @@ export const updatePlaylistSongs = async (id: string, entry: any[]) => {
   return data;
 };
 
+export const updatePlaylistSongsLg = async (
+  playlistId: string,
+  entry: any[]
+) => {
+  const entryIds = _.map(entry, 'id');
+
+  // Set these in chunks so the api doesn't break
+  // Testing on the airsonic api broke around ~350 entries
+  const entryIdChunks = _.chunk(entryIds, 325);
+
+  const res: any[] = [];
+  for (let i = 0; i < entryIdChunks.length; i += 1) {
+    const params = new URLSearchParams();
+
+    params.append('playlistId', playlistId);
+    _.mapValues(authParams, (value: string, key: string) => {
+      params.append(key, value);
+    });
+
+    for (let x = 0; x < entryIdChunks[i].length; x += 1) {
+      params.append('songIdToAdd', String(entryIdChunks[i][x]));
+    }
+
+    const { data } = await api.get(`/updatePlaylist`, {
+      params,
+    });
+
+    res.push(data);
+  }
+
+  return res;
+};
+
 export const deletePlaylist = async (id: string) => {
   const { data } = await api.get(`/deletePlaylist`, {
     params: {
@@ -496,62 +529,13 @@ export const createPlaylist = async (name: string) => {
   return data;
 };
 
-export const clearPlaylist = async (id: string, entryCount: number) => {
-  const mockEntries = _.range(entryCount);
-
-  // Set these in chunks so the api doesn't break
-  const entryChunks = _.chunk(mockEntries, 325);
-
-  let data;
-  for (let i = 0; i < entryChunks.length; i += 1) {
-    const params = new URLSearchParams();
-    const chunkIndexRange = _.range(entryChunks[i].length);
-
-    params.append('playlistId', id);
-    _.mapValues(authParams, (value: string, key: string) => {
-      params.append(key, value);
-    });
-
-    for (let x = 0; x < chunkIndexRange.length; x += 1) {
-      params.append('songIndexToRemove', String(x));
-    }
-
-    data = (
-      await api.get(`/updatePlaylist`, {
-        params,
-      })
-    ).data;
-  }
-
-  // Use this to check for permission or other errors
-  return data;
-};
-
-export const populatePlaylist = async (id: string, entry: any[]) => {
-  const entryIds = _.map(entry, 'id');
-
-  // Set these in chunks so the api doesn't break
-  const entryIdChunks = _.chunk(entryIds, 325);
-
-  let data;
-  for (let i = 0; i < entryIdChunks.length; i += 1) {
-    const params = new URLSearchParams();
-
-    params.append('playlistId', id);
-    _.mapValues(authParams, (value: string, key: string) => {
-      params.append(key, value);
-    });
-
-    for (let x = 0; x < entryIdChunks[i].length; x += 1) {
-      params.append('songIdToAdd', String(entryIdChunks[i][x]));
-    }
-
-    data = (
-      await api.get(`/updatePlaylist`, {
-        params,
-      })
-    ).data;
-  }
+export const clearPlaylist = async (playlistId: string) => {
+  // Specifying the playlistId without any songs will empty the existing playlist
+  const { data } = await api.get(`/createPlaylist`, {
+    params: {
+      playlistId,
+    },
+  });
 
   return data;
 };

@@ -42,9 +42,9 @@ export const PlayShuffleAppendButton = ({ ...rest }) => {
   );
 };
 
-export const SaveButton = ({ ...rest }) => {
+export const SaveButton = ({ text, ...rest }: any) => {
   return (
-    <CustomTooltip text="Save" placement="bottom">
+    <CustomTooltip text={text || 'Save'} placement="bottom">
       <StyledIconButton tabIndex={0} icon={<Icon icon="save" />} {...rest} />
     </CustomTooltip>
   );
