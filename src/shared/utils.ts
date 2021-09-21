@@ -1,4 +1,5 @@
 import fs from 'fs';
+import _ from 'lodash';
 import path from 'path';
 import moment from 'moment';
 import settings from 'electron-settings';
@@ -44,6 +45,37 @@ export const createRecoveryFile = (id: any, type: string, data: any) => {
   const filePath = path.join(recoveryPath, `${type}_${id}.json`);
 
   fs.writeFileSync(filePath, JSON.stringify(data, null, 4), 'utf-8');
+};
+
+export const isFailedResponse = (res: any) => {
+  if (res.length >= 1) {
+    const statuses = _.map(res, 'status');
+
+    if (statuses.includes('failed')) {
+      return true;
+    }
+  } else if (res.status === 'failed') return true;
+
+  return false;
+};
+
+export const errorMessages = (res: any) => {
+  const errors: any[] = [];
+
+  if (res.length >= 1) {
+    const statuses = _.map(res, 'status');
+    if (statuses.includes('failed')) {
+      res.forEach((response: any) => {
+        if (response.status === 'failed') {
+          errors.push(response.error.message);
+        }
+      });
+    }
+  } else {
+    errors.push(res.error.message);
+  }
+
+  return errors;
 };
 
 export const shuffle = (array: any[]) => {

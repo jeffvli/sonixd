@@ -4,7 +4,12 @@ import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { Popover, Whisper } from 'rsuite';
-import { getPlaylists, populatePlaylist, star, unstar } from '../../api/api';
+import {
+  getPlaylists,
+  updatePlaylistSongsLg,
+  star,
+  unstar,
+} from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addProcessingPlaylist,
@@ -25,7 +30,7 @@ import {
   StyledButton,
 } from './styled';
 import { notifyToast } from './toast';
-import { sleep } from '../../shared/utils';
+import { errorMessages, isFailedResponse, sleep } from '../../shared/utils';
 
 export const ContextMenuButton = ({ text, children, ...rest }: any) => {
   return (
@@ -107,13 +112,13 @@ export const GlobalContextMenu = () => {
     );
 
     try {
-      const res = await populatePlaylist(
+      const res = await updatePlaylistSongsLg(
         localSelectedPlaylistId,
         sortedEntries
       );
 
-      if (res.status === 'failed') {
-        notifyToast('error', res.error.message);
+      if (isFailedResponse(res)) {
+        notifyToast('error', errorMessages(res)[0]);
       } else {
         notifyToast(
           'success',
@@ -140,7 +145,7 @@ export const GlobalContextMenu = () => {
         );
       }
     } catch (err) {
-      console.log(err);
+      notifyToast('error', err);
     }
 
     dispatch(removeProcessingPlaylist(localSelectedPlaylistId));

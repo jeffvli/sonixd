@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
@@ -38,7 +37,9 @@ import {
 } from '../../redux/multiSelectSlice';
 import {
   createRecoveryFile,
+  errorMessages,
   getRecoveryPath,
+  isFailedResponse,
   moveToIndex,
 } from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -180,15 +181,15 @@ const PlaylistView = ({ ...rest }) => {
         // Tested on Airsonic instances, /createPlaylist fails with around ~350+ songId params
         res = await clearPlaylist(data.id);
 
-        if (res.status === 'failed') {
-          notifyToast('error', res.error.message);
+        if (isFailedResponse(res)) {
+          notifyToast('error', errorMessages(res)[0]);
         } else {
           res = await updatePlaylistSongsLg(data.id, playlistData);
 
-          if (_.map(res, 'status').includes('failed')) {
+          if (isFailedResponse(res)) {
             res.forEach((response) => {
-              if (response.status === 'failed') {
-                return notifyToast('error', response.error);
+              if (isFailedResponse(response)) {
+                return notifyToast('error', errorMessages(response)[0]);
               }
               return false;
             });
@@ -220,7 +221,7 @@ const PlaylistView = ({ ...rest }) => {
     try {
       const res = await deletePlaylist(data.id);
 
-      if (res.status === 'failed') {
+      if (isFailedResponse(res)) {
         notifyToast('error', res.error.message);
       } else {
         history.push('/playlist');
