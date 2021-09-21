@@ -115,7 +115,7 @@ export const PageContainer = styled(Container)<{ $backgroundSrc?: string }>`
     transition: background-image 1s ease-in-out;
 
     width: 100%;
-    height: 92%;
+    height: calc(100% - 130px);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
