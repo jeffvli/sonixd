@@ -150,7 +150,7 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(
       setPlayQueueByRowClick({
         entries: localPlaylistData,
-        currentIndex: e.index,
+        currentIndex: e.rowIndex,
         currentSongId: e.id,
         uniqueSongId: e.uniqueId,
       })
