@@ -392,11 +392,24 @@ const PlaylistView = ({ ...rest }) => {
                     />
                   </Whisper>
 
-                  <DeleteButton
-                    size="lg"
-                    onClick={handleDelete}
-                    disabled={misc.isProcessingPlaylist.includes(data?.id)}
-                  />
+                  <Whisper
+                    enterable
+                    placement="auto"
+                    trigger="click"
+                    speaker={
+                      <Popover>
+                        <p>Are you sure you want to delete this playlist?</p>
+                        <StyledButton onClick={handleDelete} appearance="link">
+                          Yes
+                        </StyledButton>
+                      </Popover>
+                    }
+                  >
+                    <DeleteButton
+                      size="lg"
+                      disabled={misc.isProcessingPlaylist.includes(data?.id)}
+                    />
+                  </Whisper>
                 </ButtonToolbar>
               </div>
             </div>
