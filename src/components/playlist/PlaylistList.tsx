@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { useRef, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { Tag } from 'rsuite';
+import { Form, Input, Popover, Whisper } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
-import { getPlaylists } from '../../api/api';
+import { createPlaylist, getPlaylists } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
+import { StyledButton, StyledInputGroup } from '../shared/styled';
+import { errorMessages, isFailedResponse } from '../../shared/utils';
+import { notifyToast } from '../shared/toast';
+import { AddPlaylistButton } from '../shared/ToolbarButtons';
 
 const PlaylistList = () => {
   const history = useHistory();
+  const queryClient = useQueryClient();
+  const playlistTriggerRef = useRef<any>();
   const [sortBy] = useState('name');
+  const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(
     settings.getSync('playlistViewType') || 'list'
   );
@@ -26,6 +33,23 @@ const PlaylistList = () => {
     'name',
     'comment',
   ]);
+
+  const handleCreatePlaylist = async (name: string) => {
+    try {
+      const res = await createPlaylist(name);
+
+      if (isFailedResponse(res)) {
+        notifyToast('error', errorMessages(res)[0]);
+      } else {
+        await queryClient.refetchQueries(['playlists'], {
+          active: true,
+        });
+        notifyToast('success', `Playlist "${name}" created!`);
+      }
+    } catch (err) {
+      notifyToast('error', err);
+    }
+  };
 
   const handleRowClick = (_e: any, rowData: any) => {
     history.push(`playlist/${rowData.id}`);
@@ -45,7 +69,50 @@ const PlaylistList = () => {
       header={
         <GenericPageHeader
           title="Playlists"
-          subtitle={<Tag>{playlists.length} playlists</Tag>}
+          subtitle={
+            <Whisper
+              ref={playlistTriggerRef}
+              enterable
+              placement="auto"
+              trigger="click"
+              speaker={
+                <Popover>
+                  <Form>
+                    <StyledInputGroup>
+                      <Input
+                        placeholder="Enter name..."
+                        value={newPlaylistName}
+                        onChange={(e) => setNewPlaylistName(e)}
+                      />
+                    </StyledInputGroup>
+                    <br />
+                    <StyledButton
+                      size="sm"
+                      type="submit"
+                      block
+                      loading={false}
+                      appearance="primary"
+                      onClick={() => {
+                        handleCreatePlaylist(newPlaylistName);
+                        playlistTriggerRef.current.close();
+                      }}
+                    >
+                      Create
+                    </StyledButton>
+                  </Form>
+                </Popover>
+              }
+            >
+              <AddPlaylistButton
+                size="sm"
+                onClick={() =>
+                  playlistTriggerRef.current.state.isOverlayShown
+                    ? playlistTriggerRef.current.close()
+                    : playlistTriggerRef.current.open()
+                }
+              />
+            </Whisper>
+          }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
