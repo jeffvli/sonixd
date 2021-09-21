@@ -106,7 +106,7 @@ const createWindow = async () => {
       preload: path.join(__dirname, 'preload.ts'), // Add custom titlebar functionality
     },
     autoHideMenuBar: true,
-    minWidth: 640,
+    minWidth: 768,
     minHeight: 600,
     frame: false,
   });
