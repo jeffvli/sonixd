@@ -34,8 +34,10 @@ import {
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
+  appendSelected,
   setCurrentMouseOverId,
   setIsDragging,
+  setIsSelectDragging,
   setSelectedSingle,
 } from '../../redux/multiSelectSlice';
 
@@ -414,7 +416,20 @@ const ListViewTable = ({
                           rowIndex,
                         })
                       }
-                      onMouseUp={() => dispatch(setIsDragging(false))}
+                      onMouseDown={(e: any) => {
+                        if (e.button === 0) {
+                          dispatch(setIsSelectDragging(true));
+                        }
+                      }}
+                      onMouseOver={() => {
+                        if (multiSelect.isSelectDragging) {
+                          dispatch(appendSelected(rowData));
+                        }
+                      }}
+                      onMouseUp={() => {
+                        dispatch(setIsDragging(false));
+                        dispatch(setIsSelectDragging(false));
+                      }}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
@@ -578,7 +593,20 @@ const ListViewTable = ({
                           : 'false'
                       }
                       height={rowHeight}
-                      onMouseUp={() => dispatch(setIsDragging(false))}
+                      onMouseDown={(e: any) => {
+                        if (e.button === 0) {
+                          dispatch(setIsSelectDragging(true));
+                        }
+                      }}
+                      onMouseOver={() => {
+                        if (multiSelect.isSelectDragging) {
+                          dispatch(appendSelected(rowData));
+                        }
+                      }}
+                      onMouseUp={() => {
+                        dispatch(setIsDragging(false));
+                        dispatch(setIsSelectDragging(false));
+                      }}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
@@ -662,7 +690,20 @@ const ListViewTable = ({
                           });
                         }
                       }}
-                      onMouseUp={() => dispatch(setIsDragging(false))}
+                      onMouseDown={(e: any) => {
+                        if (e.button === 0) {
+                          dispatch(setIsSelectDragging(true));
+                        }
+                      }}
+                      onMouseOver={() => {
+                        if (multiSelect.isSelectDragging) {
+                          dispatch(appendSelected(rowData));
+                        }
+                      }}
+                      onMouseUp={() => {
+                        dispatch(setIsDragging(false));
+                        dispatch(setIsSelectDragging(false));
+                      }}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
