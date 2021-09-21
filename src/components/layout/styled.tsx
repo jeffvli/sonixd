@@ -103,26 +103,31 @@ export const PageContainer = styled(Container)<{ $backgroundSrc?: string }>`
   height: 100%;
   overflow-x: hidden;
 
-  &:before {
-    content: '';
-    position: fixed;
-    left: 0;
-    right: 0;
+  ${(props) =>
+    props.$backgroundSrc &&
+    `
+    &:before {
+      content: '';
+      position: fixed;
+      left: 0;
+      right: 0;
 
-    display: block;
-    background-image: ${(props) =>
-      props.$backgroundSrc ? `url(${props.$backgroundSrc})` : undefined};
-    transition: background-image 1s ease-in-out;
+      display: block;
+      background-image: ${
+        props.$backgroundSrc ? `url(${props.$backgroundSrc})` : undefined
+      };
+      transition: background-image 1s ease-in-out;
 
-    width: 100%;
-    height: calc(100% - 130px);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 0.3;
+      width: 100%;
+      height: calc(100% - 130px);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      opacity: 0.3;
 
-    filter: blur(50px) brightness(0.8);
+      filter: blur(50px) brightness(0.8);
   }
+  `}
 `;
 
 export const PageHeader = styled(Header)<{ padding?: string }>`
