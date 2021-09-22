@@ -3,12 +3,13 @@ import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { Popover, Whisper } from 'rsuite';
+import { Form, Input, Popover, Whisper } from 'rsuite';
 import {
   getPlaylists,
   updatePlaylistSongsLg,
   star,
   unstar,
+  createPlaylist,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -28,6 +29,8 @@ import {
   StyledContextMenuButton,
   StyledInputPicker,
   StyledButton,
+  StyledInputGroup,
+  StyledPopover,
 } from './styled';
 import { notifyToast } from './toast';
 import { errorMessages, isFailedResponse, sleep } from '../../shared/utils';
@@ -73,6 +76,8 @@ export const GlobalContextMenu = () => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playlistTriggerRef = useRef<any>();
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('');
+  const [shouldCreatePlaylist, setShouldCreatePlaylist] = useState(false);
+  const [newPlaylistName, setNewPlaylistName] = useState('');
 
   const { data: playlists }: any = useQuery(['playlists', 'name'], () =>
     getPlaylists('name')
@@ -151,6 +156,23 @@ export const GlobalContextMenu = () => {
     dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
   };
 
+  const handleCreatePlaylist = async () => {
+    try {
+      const res = await createPlaylist(newPlaylistName);
+
+      if (isFailedResponse(res)) {
+        notifyToast('error', errorMessages(res)[0]);
+      } else {
+        await queryClient.refetchQueries(['playlists'], {
+          active: true,
+        });
+        notifyToast('success', `Playlist "${newPlaylistName}" created!`);
+      }
+    } catch (err) {
+      notifyToast('error', err);
+    }
+  };
+
   const refetchAfterFavorite = async () => {
     await queryClient.refetchQueries(['starred'], {
       active: true,
@@ -226,7 +248,7 @@ export const GlobalContextMenu = () => {
             placement="autoHorizontalStart"
             trigger="none"
             speaker={
-              <Popover>
+              <StyledPopover>
                 <StyledInputPicker
                   data={playlists}
                   placement="autoVerticalStart"
@@ -248,7 +270,43 @@ export const GlobalContextMenu = () => {
                 >
                   Add
                 </StyledButton>
-              </Popover>
+                <div>
+                  <StyledButton
+                    appearance="link"
+                    onClick={() =>
+                      setShouldCreatePlaylist(!shouldCreatePlaylist)
+                    }
+                  >
+                    Create new playlist
+                  </StyledButton>
+                </div>
+
+                {shouldCreatePlaylist && (
+                  <Form>
+                    <StyledInputGroup>
+                      <Input
+                        placeholder="Enter name..."
+                        value={newPlaylistName}
+                        onChange={(e) => setNewPlaylistName(e)}
+                      />
+                    </StyledInputGroup>
+                    <br />
+                    <StyledButton
+                      size="sm"
+                      type="submit"
+                      block
+                      loading={false}
+                      appearance="primary"
+                      onClick={() => {
+                        handleCreatePlaylist();
+                        setShouldCreatePlaylist(false);
+                      }}
+                    >
+                      Create playlist
+                    </StyledButton>
+                  </Form>
+                )}
+              </StyledPopover>
             }
           >
             <ContextMenuButton

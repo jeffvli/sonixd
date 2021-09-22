@@ -11,6 +11,7 @@ import {
   Rate,
   Slider,
   InputPicker,
+  Popover,
 } from 'rsuite';
 import styled from 'styled-components';
 
@@ -196,4 +197,9 @@ export const ContextMenuTitle = styled.div`
   color: ${(props) => props.theme.primary.text};
   margin: 5px 0 5px 5px;
   user-select: none;
+`;
+
+export const StyledPopover = styled(Popover)`
+  position: absolute;
+  z-index: 2;
 `;
