@@ -36,6 +36,7 @@ const ListViewType = (
     handleDragEnd,
     dnd,
     miniView,
+    disabledContextMenuOptions,
     ...rest
   }: any,
   ref: any
@@ -335,6 +336,7 @@ const ListViewType = (
             handleDragEnd={handleDragEnd}
             dnd={dnd}
             miniView={miniView}
+            disabledContextMenuOptions={disabledContextMenuOptions}
             // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
           />
         )}

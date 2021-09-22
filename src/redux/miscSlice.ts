@@ -15,12 +15,21 @@ export interface Modal {
   currentPageIndex: number | undefined;
 }
 
+type ContextMenuOptions =
+  | 'addToQueue'
+  | 'removeFromCurrent'
+  | 'addToPlaylist'
+  | 'addToFavorites'
+  | 'addToFavoritesOrdered'
+  | 'removeFromFavorites';
+
 export interface ContextMenu {
   show: boolean;
   xPos?: number;
   yPos?: number;
   rowId?: string;
   type?: string;
+  disabledOptions?: ContextMenuOptions[];
 }
 export interface General {
   theme: string;
@@ -67,6 +76,7 @@ const miscSlice = createSlice({
       state.contextMenu.yPos = action.payload.yPos;
       state.contextMenu.rowId = action.payload.rowId;
       state.contextMenu.type = action.payload.type;
+      state.contextMenu.disabledOptions = action.payload.disabledOptions;
     },
 
     addProcessingPlaylist: (state, action: PayloadAction<string>) => {

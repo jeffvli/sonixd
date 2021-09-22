@@ -223,7 +223,7 @@ export const GlobalContextMenu = () => {
 
   return (
     <>
-      {misc.contextMenu.show && misc.contextMenu.type === 'nowPlaying' && (
+      {misc.contextMenu.show && (
         <ContextMenu
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
@@ -235,10 +235,17 @@ export const GlobalContextMenu = () => {
             text={`Selected: ${multiSelect.selected.length}`}
           />
           <ContextMenuDivider />
-          <ContextMenuButton text="Add to queue" onClick={handleAddToQueue} />
+          <ContextMenuButton
+            text="Add to queue"
+            onClick={handleAddToQueue}
+            disabled={misc.contextMenu.disabledOptions.includes('addToQueue')}
+          />
           <ContextMenuButton
             text="Remove from current"
             onClick={handleRemoveFromQueue}
+            disabled={misc.contextMenu.disabledOptions.includes(
+              'removeFromCurrent'
+            )}
           />
           <ContextMenuDivider />
 
@@ -316,20 +323,32 @@ export const GlobalContextMenu = () => {
                   ? playlistTriggerRef.current.close()
                   : playlistTriggerRef.current.open()
               }
+              disabled={misc.contextMenu.disabledOptions.includes(
+                'addToPlaylist'
+              )}
             />
           </Whisper>
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to favorites"
             onClick={() => handleFavorite(false)}
+            disabled={misc.contextMenu.disabledOptions.includes(
+              'addToFavorites'
+            )}
           />
           <ContextMenuButton
             text="Add to favorites (ordered)"
             onClick={() => handleFavorite(true)}
+            disabled={misc.contextMenu.disabledOptions.includes(
+              'addToFavoritesOrdered'
+            )}
           />
           <ContextMenuButton
             text="Remove from favorites"
             onClick={handleUnfavorite}
+            disabled={misc.contextMenu.disabledOptions.includes(
+              'removeFromFavorites'
+            )}
           />
         </ContextMenu>
       )}

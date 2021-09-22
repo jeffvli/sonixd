@@ -211,7 +211,9 @@ export const getStarred = async () => {
       ...entry,
       albumId: entry.id,
       image: getCoverArtUrl(entry),
+      type: 'album',
       index,
+      uniqueId: nanoid(),
     })),
     song: (data.starred2.song || []).map((entry: any, index: any) => ({
       ...entry,
@@ -238,6 +240,7 @@ export const getAlbums = async (options: any, coverArtSize = 150) => {
       starred: entry.starred || undefined,
       type: 'album',
       index,
+      uniqueId: nanoid(),
     })),
   };
 };
@@ -255,6 +258,7 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
       starred: entry.starred || undefined,
       type: 'album',
       index,
+      uniqueId: nanoid(),
     })
   );
 
@@ -287,6 +291,7 @@ export const getAllAlbums = (
           starred: entry.starred || undefined,
           type: 'album',
           index,
+          uniqueId: nanoid(),
         }));
       }
 

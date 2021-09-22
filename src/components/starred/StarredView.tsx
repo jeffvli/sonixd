@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router';
 import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';
@@ -25,6 +26,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { StyledNavItem } from '../shared/styled';
 
 const StarredView = () => {
+  const history = useHistory();
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState('Tracks');
   const [viewType, setViewType] = useState(
@@ -66,7 +68,7 @@ const StarredView = () => {
             if (searchQuery !== '') {
               dispatch(toggleRangeSelected(filteredData));
             } else {
-              dispatch(toggleRangeSelected(data.album));
+              dispatch(toggleRangeSelected(data?.album));
             }
           } else {
             // !TODO
@@ -93,6 +95,10 @@ const StarredView = () => {
     );
     dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
+  };
+
+  const handleRowDoubleClickAlbum = (e: any) => {
+    history.push(`/library/album/${e.id}`);
   };
 
   if (isLoading) {
@@ -142,6 +148,7 @@ const StarredView = () => {
           }}
           listType="music"
           virtualized
+          disabledContextMenuOptions={['removeFromCurrent']}
         />
       )}
       {currentPage === 'Albums' && (
@@ -153,6 +160,7 @@ const StarredView = () => {
               rowHeight={Number(settings.getSync('albumListRowHeight'))}
               fontSize={settings.getSync('albumListFontSize')}
               handleRowClick={handleRowClick}
+              handleRowDoubleClick={handleRowDoubleClickAlbum}
               cacheImages={{
                 enabled: settings.getSync('cacheImages'),
                 cacheType: 'album',
@@ -160,6 +168,7 @@ const StarredView = () => {
               }}
               listType="album"
               virtualized
+              disabledContextMenuOptions={['removeFromCurrent']}
             />
           )}
           {viewType === 'grid' && (

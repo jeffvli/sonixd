@@ -62,6 +62,7 @@ const ListViewTable = ({
   handleDragEnd,
   miniView,
   dnd,
+  disabledContextMenuOptions,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -236,6 +237,7 @@ const ListViewTable = ({
                 yPos: e.pageY,
                 rowId: rowData.uniqueId,
                 type: nowPlaying ? 'nowPlaying' : 'other',
+                disabledOptions: disabledContextMenuOptions || [],
               })
             );
           } else {
