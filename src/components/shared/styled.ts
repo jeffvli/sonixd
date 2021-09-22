@@ -102,10 +102,8 @@ export const StyledIconButton = styled(IconButton)`
     color: ${(props) =>
       props.appearance === 'subtle' ? props.theme.primary.main : undefined};
   }
-  i {
-    background-color: ${(props) =>
-      props.appearance === 'primary' ? props.theme.primary.main : undefined};
-  }
+  background-color: ${(props) =>
+    props.appearance === 'primary' ? props.theme.primary.main : undefined};
   width: ${(props) => `${props.width}px`};
 `;
 
