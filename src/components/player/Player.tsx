@@ -35,24 +35,14 @@ const gaplessListenHandler = (
   dispatch: any,
   pollingInterval: number
 ) => {
-  const seek =
-    Math.round(currentPlayerRef.current.audioEl.current.currentTime * 100) /
-    100;
-  const duration =
-    Math.round(currentPlayerRef.current.audioEl.current.duration * 100) / 100;
+  const seek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
 
-  const seekable =
-    currentPlayerRef.current.audioEl.current.seekable.length >= 1
-      ? currentPlayerRef.current.audioEl.current.seekable.end(
-          currentPlayerRef.current.audioEl.current.seekable.length - 1
-        )
-      : 0;
+  const duration = currentPlayerRef.current?.audioEl.current?.duration;
 
   if (playQueue.currentPlayer === currentPlayer) {
     dispatch(
       setCurrentSeek({
         seek,
-        seekable,
       })
     );
   }
@@ -60,7 +50,7 @@ const gaplessListenHandler = (
   // Add a bit of leeway for the second track to start since the
   // seek value doesn't always reach the duration
   const durationPadding =
-    pollingInterval <= 10 ? 0.13 : pollingInterval <= 20 ? 0.14 : 0.15;
+    pollingInterval <= 10 ? 0.12 : pollingInterval <= 20 ? 0.13 : 0.15;
   if (seek + durationPadding >= duration) {
     nextPlayerRef.current.audioEl.current.play();
   }
@@ -80,12 +70,6 @@ const listenHandler = (
 ) => {
   const currentSeek =
     currentPlayerRef.current?.audioEl.current?.currentTime || 0;
-  const seekable =
-    currentPlayerRef.current.audioEl.current.seekable.length >= 1
-      ? currentPlayerRef.current.audioEl.current.seekable.end(
-          currentPlayerRef.current.audioEl.current.seekable.length - 1
-        )
-      : 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
   const fadeAtTime = duration - fadeDuration;
 
@@ -222,7 +206,7 @@ const listenHandler = (
     }
   }
   if (playQueue.currentPlayer === player) {
-    dispatch(setCurrentSeek({ seek: currentSeek, seekable }));
+    dispatch(setCurrentSeek({ seek: currentSeek }));
   }
 };
 

@@ -61,7 +61,6 @@ const playQueueState: PlayQueue = {
 const playerState: Player = {
   status: 'PAUSED',
   currentSeek: 0,
-  currentSeekable: 0,
 };
 
 const miscState: General = {
