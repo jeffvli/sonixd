@@ -3,13 +3,13 @@ import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { Form, Input, Popover, Whisper } from 'rsuite';
+import { Form, Input, Whisper } from 'rsuite';
 import {
   getPlaylists,
   updatePlaylistSongsLg,
-  star,
-  unstar,
   createPlaylist,
+  batchStar,
+  batchUnstar,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -33,7 +33,7 @@ import {
   StyledPopover,
 } from './styled';
 import { notifyToast } from './toast';
-import { errorMessages, isFailedResponse, sleep } from '../../shared/utils';
+import { errorMessages, isFailedResponse } from '../../shared/utils';
 
 export const ContextMenuButton = ({ text, children, ...rest }: any) => {
   return (
@@ -188,22 +188,28 @@ export const GlobalContextMenu = () => {
     });
   };
 
-  const handleFavorite = async (ordered: boolean) => {
+  const handleFavorite = async () => {
     dispatch(setContextMenu({ show: false }));
 
     const sortedEntries = [...multiSelect.selected].sort(
       (a: any, b: any) => a.rowIndex - b.rowIndex
     );
 
-    for (let i = 0; i < sortedEntries.length; i += 1) {
-      await star(sortedEntries[i].id, sortedEntries[i].type);
-      dispatch(setStar({ id: sortedEntries[i].id, type: 'star' }));
-      if (ordered) {
-        await sleep(350);
-      }
-    }
+    const ids = _.map(sortedEntries, 'id');
 
-    await refetchAfterFavorite();
+    try {
+      const res = await batchStar(ids, sortedEntries[0].type);
+
+      if (isFailedResponse(res)) {
+        notifyToast('error', errorMessages(res)[0]);
+      } else {
+        ids.forEach((id) => dispatch(setStar({ id, type: 'star' })));
+      }
+
+      await refetchAfterFavorite();
+    } catch (err) {
+      notifyToast('error', err);
+    }
   };
 
   const handleUnfavorite = async () => {
@@ -213,12 +219,21 @@ export const GlobalContextMenu = () => {
       (entry: any) => entry.starred
     );
 
-    for (let i = 0; i < starredEntries.length; i += 1) {
-      await unstar(starredEntries[i].id, starredEntries[i].type);
-      dispatch(setStar({ id: starredEntries[i].id, type: 'unstar' }));
-    }
+    const ids = _.map(starredEntries, 'id');
 
-    await refetchAfterFavorite();
+    try {
+      const res = await batchUnstar(ids, starredEntries[0].type);
+
+      if (isFailedResponse(res)) {
+        notifyToast('error', errorMessages(res)[0]);
+      } else {
+        ids.forEach((id) => dispatch(setStar({ id, type: 'unstar' })));
+      }
+
+      await refetchAfterFavorite();
+    } catch (err) {
+      notifyToast('error', err);
+    }
   };
 
   return (
@@ -228,7 +243,7 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={7}
+          numOfButtons={6}
           numOfDividers={3}
         >
           <ContextMenuButton
@@ -331,16 +346,9 @@ export const GlobalContextMenu = () => {
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to favorites"
-            onClick={() => handleFavorite(false)}
+            onClick={handleFavorite}
             disabled={misc.contextMenu.disabledOptions.includes(
               'addToFavorites'
-            )}
-          />
-          <ContextMenuButton
-            text="Add to favorites (ordered)"
-            onClick={() => handleFavorite(true)}
-            disabled={misc.contextMenu.disabledOptions.includes(
-              'addToFavoritesOrdered'
             )}
           />
           <ContextMenuButton

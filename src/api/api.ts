@@ -434,6 +434,84 @@ export const unstar = async (id: string, type: string) => {
   return data;
 };
 
+export const batchStar = async (ids: string[], type: string) => {
+  const idChunks = _.chunk(ids, 325);
+
+  let idParam: string;
+  switch (type) {
+    case 'music':
+      idParam = 'id';
+      break;
+    case 'album':
+      idParam = 'albumId';
+      break;
+    case 'artist':
+      idParam = 'artistId';
+      break;
+    default:
+      break;
+  }
+
+  const res: any[] = [];
+  for (let i = 0; i < idChunks.length; i += 1) {
+    const params = new URLSearchParams();
+
+    idChunks[i].forEach((id: string) => params.append(idParam, id));
+    _.mapValues(authParams, (value: string, key: string) => {
+      params.append(key, value);
+    });
+
+    res.push(
+      (
+        await api.get(`/star`, {
+          params,
+        })
+      ).data
+    );
+  }
+
+  return res;
+};
+
+export const batchUnstar = async (ids: string[], type: string) => {
+  const idChunks = _.chunk(ids, 325);
+
+  let idParam: string;
+  switch (type) {
+    case 'music':
+      idParam = 'id';
+      break;
+    case 'album':
+      idParam = 'albumId';
+      break;
+    case 'artist':
+      idParam = 'artistId';
+      break;
+    default:
+      break;
+  }
+
+  const res: any[] = [];
+  for (let i = 0; i < idChunks.length; i += 1) {
+    const params = new URLSearchParams();
+
+    idChunks[i].forEach((id: string) => params.append(idParam, id));
+    _.mapValues(authParams, (value: string, key: string) => {
+      params.append(key, value);
+    });
+
+    res.push(
+      (
+        await api.get(`/unstar`, {
+          params,
+        })
+      ).data
+    );
+  }
+
+  return res;
+};
+
 export const setRating = async (id: string, rating: number) => {
   const { data } = await api.get(`/setRating`, {
     params: {

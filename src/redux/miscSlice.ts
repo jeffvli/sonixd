@@ -20,7 +20,6 @@ type ContextMenuOptions =
   | 'removeFromCurrent'
   | 'addToPlaylist'
   | 'addToFavorites'
-  | 'addToFavoritesOrdered'
   | 'removeFromFavorites';
 
 export interface ContextMenu {
