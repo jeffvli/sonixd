@@ -37,11 +37,7 @@ const NowPlayingView = () => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredData = useSearchQuery(searchQuery, playQueue.entry, [
-    'title',
-    'artist',
-    'album',
-  ]);
+  const filteredData = useSearchQuery(searchQuery, playQueue.entry, ['title', 'artist', 'album']);
 
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {

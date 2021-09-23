@@ -54,9 +54,7 @@ const AlbumList = () => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(
-            toggleRangeSelected(searchQuery !== '' ? filteredData : albums)
-          );
+          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : albums));
         }
       }, 100);
     }

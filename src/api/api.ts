@@ -141,18 +141,13 @@ export const getPlaylists = async (sortBy: string) => {
           return a.changed > b.changed ? -1 : a.changed < b.changed ? 1 : 0;
         })
       : sortBy === 'name'
-      ? _.orderBy(
-          data.playlists.playlist || [],
-          [(entry) => entry.name.toLowerCase()],
-          'asc'
-        )
+      ? _.orderBy(data.playlists.playlist || [], [(entry) => entry.name.toLowerCase()], 'asc')
       : data.playlists?.playlist;
 
   return (newData || []).map((playlist: any) => ({
     ...playlist,
     name: playlist.name,
-    image:
-      playlist.songCount > 0 ? getCoverArtUrl(playlist) : 'img/placeholder.jpg',
+    image: playlist.songCount > 0 ? getCoverArtUrl(playlist) : 'img/placeholder.jpg',
   }));
 };
 
@@ -168,10 +163,7 @@ export const getPlaylist = async (id: string) => {
       index,
       uniqueId: nanoid(),
     })),
-    image:
-      data.playlist.songCount > 0
-        ? getCoverArtUrl(data.playlist)
-        : 'img/placeholder.jpg',
+    image: data.playlist.songCount > 0 ? getCoverArtUrl(data.playlist) : 'img/placeholder.jpg',
   };
 };
 
@@ -250,17 +242,15 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
     params: options,
   });
 
-  const albums = (data.albumList2.album || []).map(
-    (entry: any, index: any) => ({
-      ...entry,
-      albumId: entry.id,
-      image: getCoverArtUrl(entry, coverArtSize),
-      starred: entry.starred || undefined,
-      type: 'album',
-      index,
-      uniqueId: nanoid(),
-    })
-  );
+  const albums = (data.albumList2.album || []).map((entry: any, index: any) => ({
+    ...entry,
+    albumId: entry.id,
+    image: getCoverArtUrl(entry, coverArtSize),
+    starred: entry.starred || undefined,
+    type: 'album',
+    index,
+    uniqueId: nanoid(),
+  }));
 
   return albums;
 };
@@ -348,9 +338,7 @@ export const getArtists = async () => {
   const { data } = await api.get(`/getArtists`);
 
   const artistList: any[] = [];
-  const artists = (data.artists?.index || []).flatMap(
-    (index: any) => index.artist
-  );
+  const artists = (data.artists?.index || []).flatMap((index: any) => index.artist);
 
   artists.map((artist: any) =>
     artistList.push({
@@ -523,11 +511,7 @@ export const setRating = async (id: string, rating: number) => {
   return data;
 };
 
-export const getSimilarSongs = async (
-  id: string,
-  count: number,
-  coverArtSize = 150
-) => {
+export const getSimilarSongs = async (id: string, count: number, coverArtSize = 150) => {
   const { data } = await api.get(`/getSimilarSongs2`, {
     params: { id, count },
   });
@@ -559,10 +543,7 @@ export const updatePlaylistSongs = async (id: string, entry: any[]) => {
   return data;
 };
 
-export const updatePlaylistSongsLg = async (
-  playlistId: string,
-  entry: any[]
-) => {
+export const updatePlaylistSongsLg = async (playlistId: string, entry: any[]) => {
   const entryIds = _.map(entry, 'id');
 
   // Set these in chunks so the api doesn't break

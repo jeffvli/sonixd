@@ -29,15 +29,8 @@ export const PlayAppendButton = ({ ...rest }) => {
 
 export const PlayShuffleAppendButton = ({ ...rest }) => {
   return (
-    <CustomTooltip
-      text="Add shuffled to queue"
-      placement="bottom"
-      onClick={rest.onClick}
-    >
-      <StyledIconButton
-        tabIndex={0}
-        icon={<Icon icon="plus-square" {...rest} />}
-      />
+    <CustomTooltip text="Add shuffled to queue" placement="bottom" onClick={rest.onClick}>
+      <StyledIconButton tabIndex={0} icon={<Icon icon="plus-square" {...rest} />} />
     </CustomTooltip>
   );
 };
@@ -89,11 +82,7 @@ export const FavoriteButton = ({ isFavorite, ...rest }: any) => {
 export const DownloadButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Toggle favorite" placement="bottom">
-      <StyledIconButton
-        tabIndex={0}
-        icon={<Icon icon="download" />}
-        {...rest}
-      />
+      <StyledIconButton tabIndex={0} icon={<Icon icon="download" />} {...rest} />
     </CustomTooltip>
   );
 };

@@ -89,10 +89,7 @@ export const shuffle = (array: any[]) => {
     currentIndex -= 1;
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
   }
 
   return array;
@@ -219,11 +216,7 @@ export const consecutiveRanges = (a: number[]) => {
   return list;
 };
 
-export const moveToIndex = (
-  entryData: any,
-  selectedEntries: any,
-  moveBeforeId: string
-) => {
+export const moveToIndex = (entryData: any, selectedEntries: any, moveBeforeId: string) => {
   const uniqueIds: any[] = [];
   selectedEntries.map((entry: any) => uniqueIds.push(entry.uniqueId));
 
@@ -234,19 +227,13 @@ export const moveToIndex = (
 
   // Used if dragging onto the first selected row. We'll need to calculate the number of selected rows above the first selected row
   // so we can subtract it from the spliceIndexPre value when moving it into the newList, which has all selected entries removed
-  const spliceIndexPre = entryData.findIndex(
-    (entry: any) => entry.uniqueId === moveBeforeId
-  );
+  const spliceIndexPre = entryData.findIndex((entry: any) => entry.uniqueId === moveBeforeId);
 
   const queueAbovePre = entryData.slice(0, spliceIndexPre);
-  const selectedAbovePre = queueAbovePre.filter((entry: any) =>
-    uniqueIds.includes(entry.uniqueId)
-  );
+  const selectedAbovePre = queueAbovePre.filter((entry: any) => uniqueIds.includes(entry.uniqueId));
 
   // Used if dragging onto a non-selected row
-  const spliceIndexPost = newList.findIndex(
-    (entry: any) => entry.uniqueId === moveBeforeId
-  );
+  const spliceIndexPost = newList.findIndex((entry: any) => entry.uniqueId === moveBeforeId);
 
   // Used if dragging onto consecutive selected rows
   // If the moveBeforeId index is selected, then we find the first consecutive selected index to move to
@@ -275,16 +262,12 @@ export const moveToIndex = (
 
   // Get the updated entry rowIndexes since dragging an entry multiple times will change the existing selected rowIndex
   const updatedEntries = selectedEntries.map((entry: any) => {
-    const findIndex = entryData.findIndex(
-      (item: any) => item.uniqueId === entry.uniqueId
-    );
+    const findIndex = entryData.findIndex((item: any) => item.uniqueId === entry.uniqueId);
     return { ...entry, rowIndex: findIndex };
   });
 
   // Sort the entries by their rowIndex so that we can re-add them in the proper order
-  const sortedEntries = updatedEntries.sort(
-    (a: any, b: any) => a.rowIndex - b.rowIndex
-  );
+  const sortedEntries = updatedEntries.sort((a: any, b: any) => a.rowIndex - b.rowIndex);
 
   // Splice the entries into the new queue array
   newList.splice(spliceIndex, 0, ...sortedEntries);
@@ -293,21 +276,14 @@ export const moveToIndex = (
   return newList;
 };
 
-export const getUpdatedEntryRowIndex = (
-  selectedEntries: any,
-  entryData: any
-) => {
+export const getUpdatedEntryRowIndex = (selectedEntries: any, entryData: any) => {
   const updatedEntries = selectedEntries.map((entry: any) => {
-    const findIndex = entryData.findIndex(
-      (item: any) => item.uniqueId === entry.uniqueId
-    );
+    const findIndex = entryData.findIndex((item: any) => item.uniqueId === entry.uniqueId);
     return { ...entry, rowIndex: findIndex };
   });
 
   // Sort the entries by their rowIndex so that we can re-add them in the proper order
-  const sortedEntries = updatedEntries.sort(
-    (a: any, b: any) => a.rowIndex - b.rowIndex
-  );
+  const sortedEntries = updatedEntries.sort((a: any, b: any) => a.rowIndex - b.rowIndex);
 
   return sortedEntries;
 };

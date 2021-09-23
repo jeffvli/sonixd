@@ -22,9 +22,7 @@ export const HeaderButton = styled(Button)`
 
 export const StyledButton = styled(Button)<{ width: number }>`
   background: ${(props) =>
-    props.appearance === 'primary'
-      ? `${props.theme.primary.main} !important`
-      : undefined};
+    props.appearance === 'primary' ? `${props.theme.primary.main} !important` : undefined};
 
   width: ${(props) => `${props.width}px`};
 `;
@@ -60,9 +58,7 @@ export const StyledCheckbox = styled(Checkbox)`
         span {
           &:before {
             background-color: ${(props) =>
-              props.defaultChecked
-                ? `${props.theme.primary.main} !important`
-                : undefined};
+              props.defaultChecked ? `${props.theme.primary.main} !important` : undefined};
           }
           &:after {
             border: transparent !important;
@@ -94,14 +90,12 @@ export const StyledIconButton = styled(IconButton)`
   &:hover {
     background: ${(props) =>
       props.appearance === 'subtle' ? 'transparent !important' : undefined};
-    color: ${(props) =>
-      props.appearance === 'subtle' ? props.theme.primary.main : undefined};
+    color: ${(props) => (props.appearance === 'subtle' ? props.theme.primary.main : undefined)};
   }
   &:focus {
     background: ${(props) =>
       props.appearance === 'subtle' ? 'transparent !important' : undefined};
-    color: ${(props) =>
-      props.appearance === 'subtle' ? props.theme.primary.main : undefined};
+    color: ${(props) => (props.appearance === 'subtle' ? props.theme.primary.main : undefined)};
   }
   background-color: ${(props) =>
     props.appearance === 'primary' ? props.theme.primary.main : undefined};
@@ -110,8 +104,7 @@ export const StyledIconButton = styled(IconButton)`
 
 export const StyledNavItem = styled(Nav.Item)`
   a {
-    color: ${(props) =>
-      props.active ? `${props.theme.primary.main} !important;` : undefined};
+    color: ${(props) => (props.active ? `${props.theme.primary.main} !important;` : undefined)};
 
     &:hover {
       color: ${(props) => `${props.theme.primary.main} !important;`};
@@ -122,9 +115,7 @@ export const StyledNavItem = styled(Nav.Item)`
 export const StyledIconToggle = styled(Icon)<{ active: string }>`
   cursor: pointer;
   color: ${(props) =>
-    props.active === 'true'
-      ? props.theme.primary.main
-      : props.theme.primary.text};
+    props.active === 'true' ? props.theme.primary.main : props.theme.primary.text};
 `;
 
 export const StyledRate = styled(Rate)`
@@ -145,8 +136,7 @@ export const StyledInputPicker = styled(InputPicker)<{ width?: number }>`
   }
 
   .rs-btn-default {
-    background: ${(props) =>
-      `${props.theme.primary.inputBackground} !important`};
+    background: ${(props) => `${props.theme.primary.inputBackground} !important`};
   }
 
   width: ${(props) => `${props.width}px`};
@@ -168,11 +158,7 @@ export const ContextMenuWindow = styled.div<{
   top: ${(props) => `${props.yPos}px`};
   left: ${(props) => `${props.xPos}px`};
   height: ${(props) =>
-    `${
-      props.numOfButtons * 30 +
-      props.numOfDividers * 2 +
-      (props.hasTitle ? 16 : 0)
-    }px`};
+    `${props.numOfButtons * 30 + props.numOfDividers * 2 + (props.hasTitle ? 16 : 0)}px`};
   width: ${(props) => `${props.width}px`};
   margin: 0px;
   white-space: normal;

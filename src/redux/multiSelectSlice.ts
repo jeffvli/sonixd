@@ -72,9 +72,7 @@ const multiSelectSlice = createSlice({
         lastRangeSelected: {},
       };
 
-      if (
-        state.selected.find((item) => item.uniqueId === action.payload.uniqueId)
-      ) {
+      if (state.selected.find((item) => item.uniqueId === action.payload.uniqueId)) {
         state.selected = [];
       } else {
         state.selected = [];
@@ -111,9 +109,7 @@ const multiSelectSlice = createSlice({
     },
 
     toggleSelected: (state, action: PayloadAction<any>) => {
-      if (
-        state.selected.find((item) => item.uniqueId === action.payload.uniqueId)
-      ) {
+      if (state.selected.find((item) => item.uniqueId === action.payload.uniqueId)) {
         const indexOfItem = state.selected.findIndex(
           (item) => item.uniqueId === action.payload.uniqueId
         );
@@ -128,17 +124,13 @@ const multiSelectSlice = createSlice({
     },
 
     toggleRangeSelected: (state, action: PayloadAction<any[]>) => {
-      if (
-        state.lastSelected.uniqueId ===
-        state.lastRangeSelected.lastSelected.uniqueId
-      ) {
+      if (state.lastSelected.uniqueId === state.lastRangeSelected.lastSelected.uniqueId) {
         const beginningIndex = action.payload.findIndex(
           (e) => e.uniqueId === state.lastSelected.uniqueId
         );
 
         const endingIndex = action.payload.findIndex(
-          (e) =>
-            e.uniqueId === state.lastRangeSelected.lastRangeSelected.uniqueId
+          (e) => e.uniqueId === state.lastRangeSelected.lastRangeSelected.uniqueId
         );
 
         // Handle both selection directions

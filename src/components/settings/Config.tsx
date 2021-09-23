@@ -72,9 +72,7 @@ const Config = () => {
                 trigger="click"
                 speaker={
                   <Popover title="Confirm">
-                    <div>
-                      Are you sure you want to reset your settings to default?
-                    </div>
+                    <div>Are you sure you want to reset your settings to default?</div>
                     <div>
                       <Button
                         id="reset-submit-button"

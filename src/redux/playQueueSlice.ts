@@ -6,8 +6,7 @@ import arrayMove from 'array-move';
 import { areConsecutive, consecutiveRanges } from '../shared/utils';
 import { mockSettings } from '../shared/mockSettings';
 
-const parsedSettings =
-  process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
+const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface Entry {
   id: string;
@@ -160,17 +159,9 @@ const removeItem = (array: any, index: any) => {
 };
 
 const entrySelect = (state: PlayQueue) =>
-  state.sortedEntry.length > 0
-    ? 'sortedEntry'
-    : state.shuffle
-    ? 'shuffledEntry'
-    : 'entry';
+  state.sortedEntry.length > 0 ? 'sortedEntry' : state.shuffle ? 'shuffledEntry' : 'entry';
 
-const getNextPlayerIndex = (
-  length: number,
-  repeat: string,
-  currentIndex: number
-) => {
+const getNextPlayerIndex = (length: number, repeat: string, currentIndex: number) => {
   if (length >= 2 && repeat !== 'one') {
     if (currentIndex + 1 === length) {
       return 0;
@@ -187,10 +178,7 @@ export const getCurrentEntryIndex = (entries: any[], currentSongId: string) => {
   return entries.findIndex((entry: any) => entry.id === currentSongId);
 };
 
-export const getCurrentEntryIndexByUID = (
-  entries: any[],
-  currentSongId: string
-) => {
+export const getCurrentEntryIndexByUID = (entries: any[], currentSongId: string) => {
   return entries.findIndex((entry: any) => entry.uniqueId === currentSongId);
 };
 
@@ -204,10 +192,7 @@ const playQueueSlice = createSlice({
   name: 'nowPlaying',
   initialState,
   reducers: {
-    setPlayerSrc: (
-      state,
-      action: PayloadAction<{ player: number; src: string }>
-    ) => {
+    setPlayerSrc: (state, action: PayloadAction<{ player: number; src: string }>) => {
       if (action.payload.player === 1) {
         state.player1.src = action.payload.src;
       } else {
@@ -230,10 +215,7 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    setSort: (
-      state,
-      action: PayloadAction<{ sortColumn?: string; sortType: 'asc' | 'desc' }>
-    ) => {
+    setSort: (state, action: PayloadAction<{ sortColumn?: string; sortType: 'asc' | 'desc' }>) => {
       state.sortColumn = action.payload.sortColumn;
       state.sortType = action.payload.sortType;
     },
@@ -259,9 +241,7 @@ const playQueueSlice = createSlice({
 
       const currentEntry = entrySelect(state);
       const newCurrentSongIndex = getCurrentEntryIndexByUID(
-        action.payload.columnDataKey !== ''
-          ? state.sortedEntry
-          : state[currentEntry],
+        action.payload.columnDataKey !== '' ? state.sortedEntry : state[currentEntry],
         state.currentSongUniqueId
       );
 
@@ -284,10 +264,7 @@ const playQueueSlice = createSlice({
       state.currentSongUniqueId = state[currentEntry][0].uniqueId;
     },
 
-    setPlaybackSetting: (
-      state,
-      action: PayloadAction<{ setting: string; value: any }>
-    ) => {
+    setPlaybackSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
       switch (action.payload.setting) {
         case 'fadeDuration':
           state.fadeDuration = action.payload.value;
@@ -325,15 +302,11 @@ const playQueueSlice = createSlice({
         switch (action.payload.player) {
           case 1:
             state.player1.fadeData.volumeData.push(action.payload.volume || 0);
-            state.player1.fadeData.timeData.push(
-              action.payload.time?.toFixed(2) || '0'
-            );
+            state.player1.fadeData.timeData.push(action.payload.time?.toFixed(2) || '0');
             break;
           case 2:
             state.player2.fadeData.volumeData.push(action.payload.volume || 0);
-            state.player2.fadeData.timeData.push(
-              action.payload.time?.toFixed(2) || '0'
-            );
+            state.player2.fadeData.timeData.push(action.payload.time?.toFixed(2) || '0');
             break;
           default:
             break;
@@ -389,10 +362,7 @@ const playQueueSlice = createSlice({
         We want to swap the currentIndex over to the currently playing track since its row index
         will change */
 
-        const currentEntryIndex = getCurrentEntryIndex(
-          state.entry,
-          state.currentSongId
-        );
+        const currentEntryIndex = getCurrentEntryIndex(state.entry, state.currentSongId);
 
         /* Account for the currentPlayer and set the player indexes accordingly. Unfortunately
         since we're updating the indexes here, the transition won't be seamless and the currently
@@ -401,19 +371,11 @@ const playQueueSlice = createSlice({
         state.player1.index =
           state.currentPlayer === 1
             ? currentEntryIndex
-            : getNextPlayerIndex(
-                state.entry.length,
-                state.repeat,
-                state.currentIndex
-              );
+            : getNextPlayerIndex(state.entry.length, state.repeat, state.currentIndex);
         state.player2.index =
           state.currentPlayer === 2
             ? currentEntryIndex
-            : getNextPlayerIndex(
-                state.entry.length,
-                state.repeat,
-                state.currentIndex
-              );
+            : getNextPlayerIndex(state.entry.length, state.repeat, state.currentIndex);
 
         // Free up memory by clearing out the shuffled entries
         state.shuffledEntry = [];
@@ -544,8 +506,7 @@ const playQueueSlice = createSlice({
       handleGaplessPlayback(state);
       state.current = { ...state[currentEntry][state.currentIndex] };
       state.currentSongId = state[currentEntry][state.currentIndex].id;
-      state.currentSongUniqueId =
-        state[currentEntry][state.currentIndex].uniqueId;
+      state.currentSongUniqueId = state[currentEntry][state.currentIndex].uniqueId;
     },
 
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
@@ -556,10 +517,7 @@ const playQueueSlice = createSlice({
       without changing the index of either player */
       if (state[currentEntry].length > 2 && state.repeat !== 'one') {
         if (action.payload === 1) {
-          if (
-            state.player1.index + 1 === state[currentEntry].length &&
-            state.repeat === 'none'
-          ) {
+          if (state.player1.index + 1 === state[currentEntry].length && state.repeat === 'none') {
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
             handleGaplessPlayback(state);
@@ -576,10 +534,7 @@ const playQueueSlice = createSlice({
           }
           state.currentPlayer = 2;
         } else {
-          if (
-            state.player2.index + 1 === state[currentEntry].length &&
-            state.repeat === 'none'
-          ) {
+          if (state.player2.index + 1 === state[currentEntry].length && state.repeat === 'none') {
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
             handleGaplessPlayback(state);
@@ -602,10 +557,7 @@ const playQueueSlice = createSlice({
     setPlayerIndex: (state, action: PayloadAction<Entry>) => {
       const currentEntry = entrySelect(state);
 
-      const findIndex = getCurrentEntryIndexByUID(
-        state[currentEntry],
-        action.payload.uniqueId
-      );
+      const findIndex = getCurrentEntryIndexByUID(state[currentEntry], action.payload.uniqueId);
 
       state.isFading = false;
       state.player1.index = findIndex;
@@ -622,10 +574,7 @@ const playQueueSlice = createSlice({
       state.currentSongUniqueId = action.payload.uniqueId;
     },
 
-    setPlayerVolume: (
-      state,
-      action: PayloadAction<{ player: number; volume: number }>
-    ) => {
+    setPlayerVolume: (state, action: PayloadAction<{ player: number; volume: number }>) => {
       if (action.payload.player === 1) {
         state.player1.volume = action.payload.volume;
       } else {
@@ -658,8 +607,7 @@ const playQueueSlice = createSlice({
         handleGaplessPlayback(state);
         state.current = { ...state[currentEntry][state.currentIndex] };
         state.currentSongId = state[currentEntry][state.currentIndex].id;
-        state.currentSongUniqueId =
-          state[currentEntry][state.currentIndex].uniqueId;
+        state.currentSongUniqueId = state[currentEntry][state.currentIndex].uniqueId;
       }
     },
 
@@ -689,10 +637,7 @@ const playQueueSlice = createSlice({
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
       const currentEntry = entrySelect(state);
 
-      const findIndex = getCurrentEntryIndexByUID(
-        state[currentEntry],
-        action.payload.uniqueId
-      );
+      const findIndex = getCurrentEntryIndexByUID(state[currentEntry], action.payload.uniqueId);
 
       state.currentIndex = findIndex;
       state.current = { ...action.payload };
@@ -798,15 +743,10 @@ const playQueueSlice = createSlice({
       }
     },
 
-    removeFromPlayQueue: (
-      state,
-      action: PayloadAction<{ entries: Entry[] }>
-    ) => {
+    removeFromPlayQueue: (state, action: PayloadAction<{ entries: Entry[] }>) => {
       const uniqueIds = _.map(action.payload.entries, 'uniqueId');
 
-      state.entry = state.entry.filter(
-        (entry) => !uniqueIds.includes(entry.uniqueId)
-      );
+      state.entry = state.entry.filter((entry) => !uniqueIds.includes(entry.uniqueId));
 
       state.shuffledEntry = (state.shuffledEntry || []).filter(
         (entry) => !uniqueIds.includes(entry.uniqueId)
@@ -847,11 +787,7 @@ const playQueueSlice = createSlice({
         // We'll recalculate the currentSongIndex just in case the existing index was modified
         // due to removing row entries that are before the current song
         const newCurrentSongIndex = getCurrentEntryIndexByUID(
-          state.sortColumn
-            ? state.sortedEntry
-            : state.shuffle
-            ? state.shuffledEntry
-            : state.entry,
+          state.sortColumn ? state.sortedEntry : state.shuffle ? state.shuffledEntry : state.entry,
           state.currentSongUniqueId
         );
 
@@ -883,10 +819,7 @@ const playQueueSlice = createSlice({
       state.isFading = action.payload;
     },
 
-    moveToIndex: (
-      state,
-      action: PayloadAction<{ entries: Entry[]; moveBeforeId: string }>
-    ) => {
+    moveToIndex: (state, action: PayloadAction<{ entries: Entry[]; moveBeforeId: string }>) => {
       const currentEntry = entrySelect(state);
       const tempQueue = state[currentEntry].slice();
       const uniqueIds = _.map(action.payload.entries, 'uniqueId');
@@ -898,10 +831,7 @@ const playQueueSlice = createSlice({
 
       /* Used if dragging onto the first selected row. We'll need to calculate the number of selected rows above the first selected row
       so we can subtract it from the spliceIndexPre value when moving it into the newQueue, which has all selected entries removed */
-      const spliceIndexPre = getCurrentEntryIndexByUID(
-        tempQueue,
-        action.payload.moveBeforeId
-      );
+      const spliceIndexPre = getCurrentEntryIndexByUID(tempQueue, action.payload.moveBeforeId);
 
       const queueAbovePre = tempQueue.slice(0, spliceIndexPre);
       const selectedAbovePre = queueAbovePre.filter((entry: Entry) => {
@@ -909,10 +839,7 @@ const playQueueSlice = createSlice({
       });
 
       // Used if dragging onto a non-selected row
-      const spliceIndexPost = getCurrentEntryIndexByUID(
-        newQueue,
-        action.payload.moveBeforeId
-      );
+      const spliceIndexPost = getCurrentEntryIndexByUID(newQueue, action.payload.moveBeforeId);
 
       /* Used if dragging onto consecutive selected rows
       If the moveBeforeId index is selected, then we find the first consecutive selected index to move to */
@@ -948,9 +875,7 @@ const playQueueSlice = createSlice({
       });
 
       // Sort the entries by their rowIndex so that we can re-add them in the proper order
-      const sortedEntries = updatedEntries.sort(
-        (a, b) => a.rowIndex - b.rowIndex
-      );
+      const sortedEntries = updatedEntries.sort((a, b) => a.rowIndex - b.rowIndex);
 
       // Splice the entries into the new queue array
       newQueue.splice(spliceIndex, 0, ...sortedEntries);
@@ -960,10 +885,7 @@ const playQueueSlice = createSlice({
 
       // We'll need to fix the current player index after swapping the queue order
       // This will be used in conjunction with fixPlayer2Index
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(
-        newQueue,
-        state.currentSongUniqueId
-      );
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(newQueue, state.currentSongUniqueId);
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;
@@ -1008,10 +930,7 @@ const playQueueSlice = createSlice({
 
       // We'll need to fix the current player index after swapping the queue order
       // This will be used in conjunction with fixPlayer2Index
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(
-        tempQueue,
-        state.currentSongUniqueId
-      );
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(tempQueue, state.currentSongUniqueId);
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;
@@ -1056,10 +975,7 @@ const playQueueSlice = createSlice({
 
       // We'll need to fix the current player index after swapping the queue order
       // This will be used in conjunction with fixPlayer2Index
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(
-        tempQueue,
-        state.currentSongUniqueId
-      );
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(tempQueue, state.currentSongUniqueId);
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;

@@ -7,10 +7,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
 import { getArtist, getArtistInfo } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import {
-  fixPlayer2Index,
-  setPlayQueueByRowClick,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -35,16 +32,13 @@ interface ArtistParams {
 const ArtistView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const [viewType, setViewType] = useState(
-    settings.getSync('albumViewType') || 'list'
-  );
+  const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
 
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
 
-  const { isLoading, isError, data, error }: any = useQuery(
-    ['artist', artistId],
-    () => getArtist(artistId)
+  const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
+    getArtist(artistId)
   );
   const {
     isLoading: isLoadingAI,
@@ -54,10 +48,7 @@ const ArtistView = ({ ...rest }: any) => {
   }: any = useQuery(['artistInfo', artistId], () => getArtistInfo(artistId, 8));
 
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.album, [
-    'name',
-    'artist',
-  ]);
+  const filteredData = useSearchQuery(searchQuery, data?.album, ['name', 'artist']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -69,9 +60,7 @@ const ArtistView = ({ ...rest }: any) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(
-            toggleRangeSelected(searchQuery !== '' ? filteredData : data.album)
-          );
+          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : data.album));
         }
       }, 100);
     }
@@ -147,9 +136,7 @@ const ArtistView = ({ ...rest }: any) => {
                               <TagLink
                                 onClick={() => {
                                   if (!rest.isModal) {
-                                    history.push(
-                                      `/library/artist/${artist.id}`
-                                    );
+                                    history.push(`/library/artist/${artist.id}`);
                                   } else {
                                     dispatch(
                                       addModalPage({

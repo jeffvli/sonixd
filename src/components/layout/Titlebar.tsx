@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  TitleHeader,
-  DragRegion,
-  WindowControl,
-  WindowControlButton,
-} from './styled';
+import { TitleHeader, DragRegion, WindowControl, WindowControlButton } from './styled';
 import { useAppSelector } from '../../redux/hooks';
 
 const Titlebar = ({ font }: any) => {
@@ -21,16 +16,12 @@ const Titlebar = ({ font }: any) => {
     const currentEntryList = playQueue.shuffle ? 'shuffledEntry' : 'entry';
 
     const playStatus =
-      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0
-        ? '(Paused)'
-        : '';
+      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0 ? '(Paused)' : '';
 
     const songTitle = playQueue[currentEntryList][playQueue.currentIndex]?.title
-      ? `(${playQueue.currentIndex + 1} / ${
-          playQueue[currentEntryList].length
-        }) ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.title} ~ ${
-          playQueue[currentEntryList][playQueue.currentIndex]?.artist
-        } `
+      ? `(${playQueue.currentIndex + 1} / ${playQueue[currentEntryList].length}) ~ ${
+          playQueue[currentEntryList][playQueue.currentIndex]?.title
+        } ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.artist} `
       : 'sonixd';
 
     setTitle(`${playStatus} ${songTitle}`);
@@ -59,11 +50,7 @@ const Titlebar = ({ font }: any) => {
               alt=""
             />
           </WindowControlButton>
-          <WindowControlButton
-            restoreButton
-            className="button"
-            id="restore-button"
-          >
+          <WindowControlButton restoreButton className="button" id="restore-button">
             <img
               className="icon"
               srcSet="img/icons/restore-w-10.png 1x, img/icons/restore-w-12.png 1.25x, img/icons/restore-w-15.png 1.5x, img/icons/restore-w-15.png 1.75x, img/icons/restore-w-20.png 2x, img/icons/restore-w-20.png 2.25x, img/icons/restore-w-24.png 2.5x, img/icons/restore-w-30.png 3x, img/icons/restore-w-30.png 3.5x"

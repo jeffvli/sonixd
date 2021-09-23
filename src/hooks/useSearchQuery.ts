@@ -1,11 +1,7 @@
 import { useState, useEffect, SetStateAction } from 'react';
 import _ from 'lodash';
 
-const useSearchQuery = (
-  searchQuery: string,
-  data: any[],
-  filterProperties: string[]
-) => {
+const useSearchQuery = (searchQuery: string, data: any[], filterProperties: string[]) => {
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filterProps] = useState(filterProperties);
 
@@ -15,9 +11,7 @@ const useSearchQuery = (
         const matches: SetStateAction<any[]> = [];
         filterProps.map((prop: string) => {
           const filteredDataByProp = data.filter((entry: any) => {
-            return entry[prop]
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase());
+            return entry[prop]?.toLowerCase().includes(searchQuery.toLowerCase());
           });
 
           return filteredDataByProp.map((entry) => matches.push(entry));

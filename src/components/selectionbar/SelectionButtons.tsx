@@ -24,33 +24,15 @@ const CustomIconButton = ({ tooltipText, icon, handleClick, ...rest }: any) => {
 };
 
 export const MoveUpButton = ({ handleClick }: any) => {
-  return (
-    <CustomIconButton
-      handleClick={handleClick}
-      tooltipText="Move up"
-      icon="arrow-up2"
-    />
-  );
+  return <CustomIconButton handleClick={handleClick} tooltipText="Move up" icon="arrow-up2" />;
 };
 
 export const MoveDownButton = ({ handleClick }: any) => {
-  return (
-    <CustomIconButton
-      handleClick={handleClick}
-      tooltipText="Move down"
-      icon="arrow-down2"
-    />
-  );
+  return <CustomIconButton handleClick={handleClick} tooltipText="Move down" icon="arrow-down2" />;
 };
 
 export const MoveManualButton = ({ handleClick }: any) => {
-  return (
-    <CustomIconButton
-      handleClick={handleClick}
-      tooltipText="Move to index"
-      icon="arrows-v"
-    />
-  );
+  return <CustomIconButton handleClick={handleClick} tooltipText="Move to index" icon="arrows-v" />;
 };
 
 export const DeselectAllButton = ({ handleClick }: any) => {

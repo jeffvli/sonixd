@@ -15,25 +15,15 @@ const CacheConfig = () => {
   const [isEditingCachePath, setIsEditingCachePath] = useState(false);
   const [newCachePath, setNewCachePath] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [cacheSongs, setCacheSongs] = useState(
-    Boolean(settings.getSync('cacheSongs'))
-  );
-  const [cacheImages, setCacheImages] = useState(
-    Boolean(settings.getSync('cacheImages'))
-  );
+  const [cacheSongs, setCacheSongs] = useState(Boolean(settings.getSync('cacheSongs')));
+  const [cacheImages, setCacheImages] = useState(Boolean(settings.getSync('cacheImages')));
 
   useEffect(() => {
     // Retrieve cache sizes on render
     try {
-      setImgCacheSize(
-        Number(
-          (fsUtils.fsizeSync(getImageCachePath()) / 1000 / 1000).toFixed(0)
-        )
-      );
+      setImgCacheSize(Number((fsUtils.fsizeSync(getImageCachePath()) / 1000 / 1000).toFixed(0)));
 
-      setSongCacheSize(
-        Number((fsUtils.fsizeSync(getSongCachePath()) / 1000 / 1000).toFixed(0))
-      );
+      setSongCacheSize(Number((fsUtils.fsizeSync(getSongCachePath()) / 1000 / 1000).toFixed(0)));
     } catch (err) {
       setImgCacheSize(0);
       setSongCacheSize(0);
@@ -51,18 +41,15 @@ const CacheConfig = () => {
         </>
       )}
       <p>
-        Songs are cached only when playback for the track fully completes and
-        ends. Skipping to the next or previous track after only partially
-        completing the track will not begin the caching process.
+        Songs are cached only when playback for the track fully completes and ends. Skipping to the
+        next or previous track after only partially completing the track will not begin the caching
+        process.
       </p>
       <br />
       {isEditingCachePath && (
         <>
           <InputGroup>
-            <StyledInput
-              value={newCachePath}
-              onChange={(e: string) => setNewCachePath(e)}
-            />
+            <StyledInput value={newCachePath} onChange={(e: string) => setNewCachePath(e)} />
             <InputGroup.Button
               onClick={() => {
                 const check = fs.existsSync(newCachePath);
@@ -74,9 +61,7 @@ const CacheConfig = () => {
                   return setIsEditingCachePath(false);
                 }
 
-                return setErrorMessage(
-                  `Path: ${newCachePath} not found. Enter a valid path.`
-                );
+                return setErrorMessage(`Path: ${newCachePath} not found. Enter a valid path.`);
               }}
             >
               <Icon icon="check" />
@@ -91,8 +76,7 @@ const CacheConfig = () => {
             </InputGroup.Button>
           </InputGroup>
           <p style={{ fontSize: 'smaller' }}>
-            *You will need to manually move any existing cached files to their
-            new location.
+            *You will need to manually move any existing cached files to their new location.
           </p>
         </>
       )}
@@ -118,8 +102,7 @@ const CacheConfig = () => {
         >
           Songs{' '}
           <Tag>
-            {songCacheSize} MB{' '}
-            {imgCacheSize === 9999999 && '- Folder not found'}
+            {songCacheSize} MB {imgCacheSize === 9999999 && '- Folder not found'}
           </Tag>
         </StyledCheckbox>
         <StyledCheckbox
@@ -135,9 +118,7 @@ const CacheConfig = () => {
           </Tag>
         </StyledCheckbox>
         <br />
-        <Button onClick={() => setIsEditingCachePath(true)}>
-          Edit cache location
-        </Button>
+        <Button onClick={() => setIsEditingCachePath(true)}>Edit cache location</Button>
       </div>
     </ConfigPanel>
   );

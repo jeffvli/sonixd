@@ -2,8 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
 
-const parsedSettings =
-  process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
+const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface ModalPage {
   pageType: string;
@@ -83,9 +82,7 @@ const miscSlice = createSlice({
     },
 
     removeProcessingPlaylist: (state, action: PayloadAction<string>) => {
-      const filtered = state.isProcessingPlaylist.filter(
-        (id: string) => id !== action.payload
-      );
+      const filtered = state.isProcessingPlaylist.filter((id: string) => id !== action.payload);
 
       state.isProcessingPlaylist = filtered;
     },
@@ -109,9 +106,7 @@ const miscSlice = createSlice({
 
       if (
         state.modalPages[
-          state.modal.currentPageIndex === undefined
-            ? 0
-            : state.modal.currentPageIndex
+          state.modal.currentPageIndex === undefined ? 0 : state.modal.currentPageIndex
         ]?.id !== action.payload.id
       ) {
         state.modalPages.push(action.payload);

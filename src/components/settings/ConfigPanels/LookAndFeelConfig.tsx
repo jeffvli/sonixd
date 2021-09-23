@@ -12,11 +12,7 @@ import {
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
 import { useAppDispatch } from '../../../redux/hooks';
-import {
-  setTheme,
-  setFont,
-  setDynamicBackground,
-} from '../../../redux/miscSlice';
+import { setTheme, setFont, setDynamicBackground } from '../../../redux/miscSlice';
 import {
   songColumnPicker,
   songColumnList,
@@ -35,10 +31,8 @@ const LookAndFeelConfig = () => {
   const playlistCols: any = settings.getSync('playlistListColumns');
   const miniCols: any = settings.getSync('miniListColumns');
   const currentSongColumns = songCols?.map((column: any) => column.label) || [];
-  const currentAlbumColumns =
-    albumCols?.map((column: any) => column.label) || [];
-  const currentPlaylistColumns =
-    playlistCols?.map((column: any) => column.label) || [];
+  const currentAlbumColumns = albumCols?.map((column: any) => column.label) || [];
+  const currentPlaylistColumns = playlistCols?.map((column: any) => column.label) || [];
   const currentMiniColumns = miniCols?.map((column: any) => column.label) || [];
 
   return (
@@ -62,15 +56,8 @@ const LookAndFeelConfig = () => {
         <StyledCheckbox
           defaultChecked={settings.getSync('dynamicBackground')}
           onChange={() => {
-            settings.setSync(
-              'dynamicBackground',
-              !settings.getSync('dynamicBackground')
-            );
-            dispatch(
-              setDynamicBackground(
-                Boolean(settings.getSync('dynamicBackground'))
-              )
-            );
+            settings.setSync('dynamicBackground', !settings.getSync('dynamicBackground'));
+            dispatch(setDynamicBackground(Boolean(settings.getSync('dynamicBackground'))));
           }}
         >
           Enable dynamic background

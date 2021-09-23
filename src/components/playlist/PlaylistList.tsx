@@ -21,18 +21,12 @@ const PlaylistList = () => {
   const playlistTriggerRef = useRef<any>();
   const [sortBy] = useState('name');
   const [newPlaylistName, setNewPlaylistName] = useState('');
-  const [viewType, setViewType] = useState(
-    settings.getSync('playlistViewType') || 'list'
-  );
-  const { isLoading, isError, data: playlists, error }: any = useQuery(
-    ['playlists', sortBy],
-    () => getPlaylists(sortBy)
+  const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
+  const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists', sortBy], () =>
+    getPlaylists(sortBy)
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, playlists, [
-    'name',
-    'comment',
-  ]);
+  const filteredData = useSearchQuery(searchQuery, playlists, ['name', 'comment']);
 
   const handleCreatePlaylist = async (name: string) => {
     try {
@@ -131,12 +125,8 @@ const PlaylistList = () => {
               ? playlists
               : playlists.filter((playlist: any) => {
                   return (
-                    playlist.name
-                      .toLowerCase()
-                      .includes(searchQuery.toLowerCase()) ||
-                    playlist.comment
-                      ?.toLowerCase()
-                      .includes(searchQuery.toLowerCase())
+                    playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    playlist.comment?.toLowerCase().includes(searchQuery.toLowerCase())
                   );
                 })
           }

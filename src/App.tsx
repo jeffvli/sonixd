@@ -55,10 +55,7 @@ const App = () => {
     document.getElementById('local-search-input')?.focus();
   }, []);
 
-  if (
-    !localStorage.getItem('server') ||
-    !localStorage.getItem('serverBase64')
-  ) {
+  if (!localStorage.getItem('server') || !localStorage.getItem('serverBase64')) {
     return (
       <ThemeProvider theme={theme}>
         <Layout disableSidebar footer={<MockFooter />} font={font}>

@@ -17,11 +17,7 @@ import electronLocalshortcut from 'electron-localshortcut';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
-import {
-  forwardToRenderer,
-  triggerAlias,
-  replayActionMain,
-} from 'electron-redux';
+import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
 import playerReducer, { resetPlayer, setStatus } from './redux/playerSlice';
 import playQueueReducer, {
   decrementCurrentIndex,
@@ -58,10 +54,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
 }
 
@@ -79,10 +72,7 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 
@@ -114,9 +104,7 @@ const createWindow = async () => {
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
 
       if (storeValues.playQueue[currentEntryList].length > 0) {
         store.dispatch(clearPlayQueue());
@@ -127,9 +115,7 @@ const createWindow = async () => {
 
     globalShortcut.register('MediaPlayPause', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
 
       if (storeValues.playQueue[currentEntryList].length > 0) {
         if (storeValues.player.status === 'PAUSED') {
@@ -142,9 +128,7 @@ const createWindow = async () => {
 
     globalShortcut.register('MediaNextTrack', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
       if (storeValues.playQueue[currentEntryList].length > 0) {
         store.dispatch(resetPlayer());
         store.dispatch(incrementCurrentIndex('usingHotkey'));
@@ -154,9 +138,7 @@ const createWindow = async () => {
 
     globalShortcut.register('MediaPreviousTrack', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
       if (storeValues.playQueue[currentEntryList].length > 0) {
         store.dispatch(resetPlayer());
         store.dispatch(decrementCurrentIndex('usingHotkey'));
@@ -167,9 +149,7 @@ const createWindow = async () => {
   } else {
     electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
 
       if (storeValues.playQueue[currentEntryList].length > 0) {
         store.dispatch(clearPlayQueue());
@@ -180,9 +160,7 @@ const createWindow = async () => {
 
     electronLocalshortcut.register(mainWindow, 'MediaPlayPause', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
 
       if (storeValues.playQueue[currentEntryList].length > 0) {
         if (storeValues.player.status === 'PAUSED') {
@@ -195,9 +173,7 @@ const createWindow = async () => {
 
     electronLocalshortcut.register(mainWindow, 'MediaNextTrack', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
       if (storeValues.playQueue[currentEntryList].length > 0) {
         store.dispatch(resetPlayer());
         store.dispatch(incrementCurrentIndex('usingHotkey'));
@@ -207,9 +183,7 @@ const createWindow = async () => {
 
     electronLocalshortcut.register(mainWindow, 'MediaPreviousTrack', () => {
       const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
       if (storeValues.playQueue[currentEntryList].length > 0) {
         store.dispatch(resetPlayer());
         store.dispatch(decrementCurrentIndex('usingHotkey'));
@@ -222,7 +196,7 @@ const createWindow = async () => {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  // https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -266,10 +240,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.commandLine.appendSwitch(
-  'disable-features',
-  'HardwareMediaKeyHandling,MediaSessionService'
-);
+app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,MediaSessionService');
 
 app.whenReady().then(createWindow).catch(console.log);
 

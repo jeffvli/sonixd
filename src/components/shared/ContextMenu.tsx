@@ -79,21 +79,12 @@ export const GlobalContextMenu = () => {
   const [shouldCreatePlaylist, setShouldCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
 
-  const { data: playlists }: any = useQuery(['playlists', 'name'], () =>
-    getPlaylists('name')
-  );
+  const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'));
 
   const handleAddToQueue = () => {
-    const entriesByRowIndexAsc = _.orderBy(
-      multiSelect.selected,
-      'rowIndex',
-      'asc'
-    );
+    const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
 
-    notifyToast(
-      'info',
-      `Added ${multiSelect.selected.length} song(s) to the queue`
-    );
+    notifyToast('info', `Added ${multiSelect.selected.length} song(s) to the queue`);
 
     dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
     dispatch(setContextMenu({ show: false }));
@@ -117,10 +108,7 @@ export const GlobalContextMenu = () => {
     );
 
     try {
-      const res = await updatePlaylistSongsLg(
-        localSelectedPlaylistId,
-        sortedEntries
-      );
+      const res = await updatePlaylistSongsLg(localSelectedPlaylistId, sortedEntries);
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
@@ -130,11 +118,7 @@ export const GlobalContextMenu = () => {
           <>
             <p>
               Added {sortedEntries.length} song(s) to playlist &quot;
-              {
-                playlists.find(
-                  (playlist: any) => playlist.id === localSelectedPlaylistId
-                )?.name
-              }
+              {playlists.find((playlist: any) => playlist.id === localSelectedPlaylistId)?.name}
               &quot;
             </p>
             <StyledButton
@@ -215,9 +199,7 @@ export const GlobalContextMenu = () => {
   const handleUnfavorite = async () => {
     dispatch(setContextMenu({ show: false }));
 
-    const starredEntries = multiSelect.selected.filter(
-      (entry: any) => entry.starred
-    );
+    const starredEntries = multiSelect.selected.filter((entry: any) => entry.starred);
 
     const ids = _.map(starredEntries, 'id');
 
@@ -246,9 +228,7 @@ export const GlobalContextMenu = () => {
           numOfButtons={6}
           numOfDividers={3}
         >
-          <ContextMenuButton
-            text={`Selected: ${multiSelect.selected.length}`}
-          />
+          <ContextMenuButton text={`Selected: ${multiSelect.selected.length}`} />
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to queue"
@@ -258,9 +238,7 @@ export const GlobalContextMenu = () => {
           <ContextMenuButton
             text="Remove from current"
             onClick={handleRemoveFromQueue}
-            disabled={misc.contextMenu.disabledOptions.includes(
-              'removeFromCurrent'
-            )}
+            disabled={misc.contextMenu.disabledOptions.includes('removeFromCurrent')}
           />
           <ContextMenuDivider />
 
@@ -282,12 +260,9 @@ export const GlobalContextMenu = () => {
                 />
                 <StyledButton
                   disabled={
-                    !selectedPlaylistId ||
-                    misc.isProcessingPlaylist.includes(selectedPlaylistId)
+                    !selectedPlaylistId || misc.isProcessingPlaylist.includes(selectedPlaylistId)
                   }
-                  loading={misc.isProcessingPlaylist.includes(
-                    selectedPlaylistId
-                  )}
+                  loading={misc.isProcessingPlaylist.includes(selectedPlaylistId)}
                   onClick={handleAddToPlaylist}
                 >
                   Add
@@ -295,9 +270,7 @@ export const GlobalContextMenu = () => {
                 <div>
                   <StyledButton
                     appearance="link"
-                    onClick={() =>
-                      setShouldCreatePlaylist(!shouldCreatePlaylist)
-                    }
+                    onClick={() => setShouldCreatePlaylist(!shouldCreatePlaylist)}
                   >
                     Create new playlist
                   </StyledButton>
@@ -338,25 +311,19 @@ export const GlobalContextMenu = () => {
                   ? playlistTriggerRef.current.close()
                   : playlistTriggerRef.current.open()
               }
-              disabled={misc.contextMenu.disabledOptions.includes(
-                'addToPlaylist'
-              )}
+              disabled={misc.contextMenu.disabledOptions.includes('addToPlaylist')}
             />
           </Whisper>
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to favorites"
             onClick={handleFavorite}
-            disabled={misc.contextMenu.disabledOptions.includes(
-              'addToFavorites'
-            )}
+            disabled={misc.contextMenu.disabledOptions.includes('addToFavorites')}
           />
           <ContextMenuButton
             text="Remove from favorites"
             onClick={handleUnfavorite}
-            disabled={misc.contextMenu.disabledOptions.includes(
-              'removeFromFavorites'
-            )}
+            disabled={misc.contextMenu.disabledOptions.includes('removeFromFavorites')}
           />
         </ContextMenu>
       )}

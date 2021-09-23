@@ -18,11 +18,7 @@ const LeftArrow = () => {
   const { isFirstItemVisible, scrollPrev } = useContext(VisibilityContext);
 
   return (
-    <Button
-      appearance="link"
-      disabled={isFirstItemVisible}
-      onClick={() => scrollPrev()}
-    >
+    <Button appearance="link" disabled={isFirstItemVisible} onClick={() => scrollPrev()}>
       <StyledIcon icon="arrow-left" />
     </Button>
   );
@@ -32,23 +28,13 @@ const RightArrow = () => {
   const { isLastItemVisible, scrollNext } = useContext(VisibilityContext);
 
   return (
-    <Button
-      appearance="link"
-      disabled={isLastItemVisible}
-      onClick={() => scrollNext()}
-    >
+    <Button appearance="link" disabled={isLastItemVisible} onClick={() => scrollNext()}>
       <StyledIcon icon="arrow-right" />
     </Button>
   );
 };
 
-const ScrollingMenu = ({
-  cardTitle,
-  cardSubtitle,
-  data,
-  title,
-  cardSize,
-}: any) => {
+const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, cardSize }: any) => {
   return (
     <ScrollMenuContainer>
       <Title>{title}</Title>

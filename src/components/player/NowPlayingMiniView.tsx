@@ -50,12 +50,7 @@ const NowPlayingMiniView = () => {
         );
       }, 100);
     }
-  }, [
-    playQueue.currentIndex,
-    tableRef,
-    playQueue.displayQueue,
-    playQueue.scrollWithCurrentSong,
-  ]);
+  }, [playQueue.currentIndex, tableRef, playQueue.displayQueue, playQueue.scrollWithCurrentSong]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -143,11 +138,7 @@ const NowPlayingMiniView = () => {
             padding="0px"
             header={
               <>
-                <FlexboxGrid
-                  justify="space-between"
-                  align="middle"
-                  style={{ height: '50px' }}
-                >
+                <FlexboxGrid justify="space-between" align="middle" style={{ height: '50px' }}>
                   <FlexboxGrid.Item>
                     <ButtonToolbar>
                       <StyledIconButton

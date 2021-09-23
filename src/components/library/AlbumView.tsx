@@ -3,11 +3,7 @@ import settings from 'electron-settings';
 import { ButtonToolbar, Tag } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
-import {
-  FavoriteButton,
-  PlayAppendButton,
-  PlayButton,
-} from '../shared/ToolbarButtons';
+import { FavoriteButton, PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
 import { getAlbum, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -44,9 +40,8 @@ const AlbumView = ({ ...rest }: any) => {
   const { id } = useParams<AlbumParams>();
   const albumId = rest.id ? rest.id : id;
 
-  const { isLoading, isError, data, error }: any = useQuery(
-    ['album', albumId],
-    () => getAlbum(albumId)
+  const { isLoading, isError, data, error }: any = useQuery(['album', albumId], () =>
+    getAlbum(albumId)
   );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, data?.song, [
@@ -66,9 +61,7 @@ const AlbumView = ({ ...rest }: any) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(
-            toggleRangeSelected(searchQuery !== '' ? filteredData : data.song)
-          );
+          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : data.song));
         }
       }, 100);
     }
@@ -171,21 +164,9 @@ const AlbumView = ({ ...rest }: any) => {
               </div>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton
-                    appearance="primary"
-                    size="lg"
-                    onClick={handlePlay}
-                  />
-                  <PlayAppendButton
-                    appearance="primary"
-                    size="lg"
-                    onClick={handlePlayAppend}
-                  />
-                  <FavoriteButton
-                    size="lg"
-                    isFavorite={data.starred}
-                    onClick={handleFavorite}
-                  />
+                  <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
+                  <PlayAppendButton appearance="primary" size="lg" onClick={handlePlayAppend} />
+                  <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
                 </ButtonToolbar>
               </div>
             </div>

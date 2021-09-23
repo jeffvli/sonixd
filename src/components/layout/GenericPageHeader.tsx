@@ -60,9 +60,7 @@ const GenericPageHeader = ({
               alignSelf: 'center',
             }}
           >
-            {sidetitle && (
-              <span style={{ display: 'inline-block' }}>{sidetitle}</span>
-            )}
+            {sidetitle && <span style={{ display: 'inline-block' }}>{sidetitle}</span>}
             {showSearchBar && (
               <span style={{ display: 'inline-block' }}>
                 <StyledInputGroup inside>
@@ -74,10 +72,7 @@ const GenericPageHeader = ({
                     onChange={handleSearch}
                   />
                   {searchQuery !== '' && (
-                    <InputGroup.Button
-                      appearance="subtle"
-                      onClick={clearSearchQuery}
-                    >
+                    <InputGroup.Button appearance="subtle" onClick={clearSearchQuery}>
                       <Icon icon="close" />
                     </InputGroup.Button>
                   )}
@@ -105,9 +100,7 @@ const GenericPageHeader = ({
             {subtitle}
           </span>
           <span style={{ alignSelf: 'center' }}>
-            {subsidetitle && (
-              <span style={{ display: 'inline-block' }}>{subsidetitle}</span>
-            )}
+            {subsidetitle && <span style={{ display: 'inline-block' }}>{subsidetitle}</span>}
             {showViewTypeButtons && (
               <span style={{ display: 'inline-block' }}>
                 <ViewTypeButtons

@@ -14,10 +14,7 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
   useEffect(() => {
     if (misc.dynamicBackground) {
       const cachedImagePath = `${cachePath}album_${playQueue.current?.albumId}.jpg`;
-      const serverImagePath = playQueue.current?.image.replace(
-        /size=\d+/,
-        'size=500'
-      );
+      const serverImagePath = playQueue.current?.image.replace(/size=\d+/, 'size=500');
       const cssBackgroundImagePath = `${cachePath}album_${playQueue.current?.albumId}.jpg`.replaceAll(
         '\\',
         '/'
@@ -28,9 +25,7 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
         preloadImage.src = serverImagePath;
       }
 
-      const imagePath = isCached(cachedImagePath)
-        ? cssBackgroundImagePath
-        : serverImagePath;
+      const imagePath = isCached(cachedImagePath) ? cssBackgroundImagePath : serverImagePath;
 
       setBackgroundImage(imagePath);
     }

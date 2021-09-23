@@ -145,9 +145,7 @@ const DebugWindow = ({ ...rest }) => {
         <table style={{ tableLayout: 'fixed', textAlign: 'center' }}>
           <tbody>
             <tr>
-              <th style={{ textAlign: 'left' }}>
-                Player [{playQueue.currentPlayer}]
-              </th>
+              <th style={{ textAlign: 'left' }}>Player [{playQueue.currentPlayer}]</th>
               <th
                 style={{
                   color: 'rgb(0, 150, 0)',
@@ -170,12 +168,8 @@ const DebugWindow = ({ ...rest }) => {
             </tr>
             <tr>
               <td style={{ width: '80px', textAlign: 'left' }}>volume</td>
-              <td style={{ width: '65px' }}>
-                {Number(playQueue.player1.volume).toFixed(2)}
-              </td>
-              <td style={{ width: '65px' }}>
-                {Number(playQueue.player2.volume).toFixed(2)}
-              </td>
+              <td style={{ width: '65px' }}>{Number(playQueue.player1.volume).toFixed(2)}</td>
+              <td style={{ width: '65px' }}>{Number(playQueue.player2.volume).toFixed(2)}</td>
             </tr>
           </tbody>
         </table>
@@ -186,10 +180,7 @@ const DebugWindow = ({ ...rest }) => {
             <h6>Volume fade</h6>
           </FlexboxGrid.Item>
           <FlexboxGrid.Item>
-            <Button
-              size="xs"
-              onClick={() => dispatch(setFadeData({ clear: true }))}
-            >
+            <Button size="xs" onClick={() => dispatch(setFadeData({ clear: true }))}>
               Reset
             </Button>
           </FlexboxGrid.Item>
@@ -224,18 +215,16 @@ const DebugWindow = ({ ...rest }) => {
           }}
         >
           <li>
-            lastSelected: [{multiSelect.lastSelected.rowIndex}]{' '}
-            {multiSelect.lastSelected.title} {multiSelect.lastSelected.id}
+            lastSelected: [{multiSelect.lastSelected.rowIndex}] {multiSelect.lastSelected.title}{' '}
+            {multiSelect.lastSelected.id}
           </li>
           <li>
-            range (start): [
-            {multiSelect.lastRangeSelected.lastSelected.rowIndex}]{' '}
+            range (start): [{multiSelect.lastRangeSelected.lastSelected.rowIndex}]{' '}
             {multiSelect.lastRangeSelected.lastSelected.title}{' '}
             {multiSelect.lastRangeSelected.lastSelected.id}
           </li>
           <li>
-            range (end): [
-            {multiSelect.lastRangeSelected.lastRangeSelected.rowIndex}]{' '}
+            range (end): [{multiSelect.lastRangeSelected.lastRangeSelected.rowIndex}]{' '}
             {multiSelect.lastRangeSelected.lastRangeSelected.title}{' '}
             {multiSelect.lastRangeSelected.lastRangeSelected.id}
           </li>

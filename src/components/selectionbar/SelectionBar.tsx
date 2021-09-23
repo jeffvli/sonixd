@@ -27,12 +27,7 @@ const StyledTag = styled(Tag)`
   background: transparent;
 `;
 
-const SelectionBar = ({
-  children,
-  handleUpClick,
-  handleDownClick,
-  handleManualClick,
-}: any) => {
+const SelectionBar = ({ children, handleUpClick, handleDownClick, handleManualClick }: any) => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
 
   return (

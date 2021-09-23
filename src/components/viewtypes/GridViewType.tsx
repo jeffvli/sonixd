@@ -29,23 +29,17 @@ const GridCard = ({ data, index, style }: any) => {
       >
         <Card
           title={data.data[i][data.cardTitle.property]}
-          subtitle={`${data.data[i][data.cardSubtitle.property]}${
-            data.cardSubtitle.unit
-          }`}
+          subtitle={`${data.data[i][data.cardSubtitle.property]}${data.cardSubtitle.unit}`}
           coverArt={data.data[i].image}
           size={`${data.size}px`}
           url={
             data.cardTitle.urlProperty
-              ? `${data.cardTitle.prefix}/${
-                  data.data[i][data.cardTitle.urlProperty]
-                }`
+              ? `${data.cardTitle.prefix}/${data.data[i][data.cardTitle.urlProperty]}`
               : undefined
           }
           subUrl={
             data.cardSubtitle.urlProperty
-              ? `${data.cardSubtitle.prefix}/${
-                  data.data[i][data.cardSubtitle.urlProperty]
-                }`
+              ? `${data.cardSubtitle.prefix}/${data.data[i][data.cardSubtitle.urlProperty]}`
               : undefined
           }
           lazyLoad
@@ -134,14 +128,7 @@ function ListWrapper({
   );
 }
 
-const GridViewType = ({
-  data,
-  cardTitle,
-  cardSubtitle,
-  playClick,
-  size,
-  cacheType,
-}: any) => {
+const GridViewType = ({ data, cardTitle, cardSubtitle, playClick, size, cacheType }: any) => {
   return (
     <AutoSizer>
       {({ height, width }: any) => (

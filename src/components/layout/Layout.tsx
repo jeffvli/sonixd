@@ -74,10 +74,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
               })
             );
           }
-          if (
-            multiSelect.selected.length > 0 &&
-            !multiSelect.isSelectDragging
-          ) {
+          if (multiSelect.selected.length > 0 && !multiSelect.isSelectDragging) {
             dispatch(clearSelected());
           }
         }}

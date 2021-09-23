@@ -16,21 +16,11 @@ import {
   StyledTableHeaderCell,
   TableCellWrapper,
 } from './styled';
-import {
-  formatSongDuration,
-  isCached,
-  getImageCachePath,
-  formatDate,
-} from '../../shared/utils';
+import { formatSongDuration, isCached, getImageCachePath, formatDate } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
 import { setRating, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  fixPlayer2Index,
-  setSort,
-  setStar,
-  sortPlayQueue,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setSort, setStar, sortPlayQueue } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
@@ -170,9 +160,7 @@ const ListViewTable = ({
   // to the mouse-entered row
   const debouncedMouseEnterFn = _.debounce((rowData: any) => {
     dispatch(setRangeSelected(rowData));
-    dispatch(
-      toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data)
-    );
+    dispatch(toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data));
   }, 100);
 
   const handleSelectMouseEnter = (rowData: any) => {
@@ -185,13 +173,9 @@ const ListViewTable = ({
     if (!nowPlaying) {
       if (sortColumn && sortType) {
         // Since the column title(id) won't always match the actual column dataKey, we need to match it
-        const normalizedSortColumn = columns.find(
-          (c: any) => c.id === sortColumn
-        );
+        const normalizedSortColumn = columns.find((c: any) => c.id === sortColumn);
         const sortColumnDataKey =
-          normalizedSortColumn.dataKey === 'combinedtitle'
-            ? 'title'
-            : normalizedSortColumn.dataKey;
+          normalizedSortColumn.dataKey === 'combinedtitle' ? 'title' : normalizedSortColumn.dataKey;
 
         const sortData = _.orderBy(
           data,
@@ -213,13 +197,9 @@ const ListViewTable = ({
   useEffect(() => {
     if (nowPlaying) {
       if (playQueue.sortColumn && playQueue.sortType) {
-        const actualSortColumn = columns.find(
-          (c: any) => c.id === playQueue.sortColumn
-        );
+        const actualSortColumn = columns.find((c: any) => c.id === playQueue.sortColumn);
         const sortColumnDataKey =
-          actualSortColumn.dataKey === 'combinedtitle'
-            ? 'title'
-            : actualSortColumn.dataKey;
+          actualSortColumn.dataKey === 'combinedtitle' ? 'title' : actualSortColumn.dataKey;
 
         dispatch(
           sortPlayQueue({
@@ -271,11 +251,9 @@ const ListViewTable = ({
         onRowContextMenu={(rowData: any, e: any) => {
           e.preventDefault();
           if (
-            (misc.contextMenu.show === false ||
-              misc.contextMenu.rowId !== rowData.uniqueId) &&
-            multiSelect.selected.filter(
-              (entry: any) => entry.uniqueId === rowData.uniqueId
-            ).length > 0
+            (misc.contextMenu.show === false || misc.contextMenu.rowId !== rowData.uniqueId) &&
+            multiSelect.selected.filter((entry: any) => entry.uniqueId === rowData.uniqueId)
+              .length > 0
           ) {
             dispatch(
               setContextMenu({
@@ -313,15 +291,9 @@ const ListViewTable = ({
               );
 
               if (!miniView) {
-                settings.setSync(
-                  `${listType}ListColumns[${resizedColumnIndex}].width`,
-                  width
-                );
+                settings.setSync(`${listType}ListColumns[${resizedColumnIndex}].width`, width);
               } else {
-                settings.setSync(
-                  `miniListColumns[${resizedColumnIndex}].width`,
-                  width
-                );
+                settings.setSync(`miniListColumns[${resizedColumnIndex}].width`, width);
               }
             }}
           >
@@ -333,16 +305,13 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       playing={
-                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                          nowPlaying) ||
+                        (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
                         (!nowPlaying && rowData.id === playQueue?.currentSongId)
                           ? 'true'
                           : 'false'
                       }
                       rowselected={
-                        multiSelect?.selected.find(
-                          (e: any) => e.uniqueId === rowData.uniqueId
-                        )
+                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
                           ? 'true'
                           : 'false'
                       }
@@ -374,11 +343,7 @@ const ListViewTable = ({
                         }
                       }}
                       onMouseLeave={() => {
-                        if (
-                          (multiSelect.currentMouseOverId ||
-                            multiSelect.isDragging) &&
-                          dnd
-                        ) {
+                        if ((multiSelect.currentMouseOverId || multiSelect.isDragging) && dnd) {
                           dispatch(
                             setCurrentMouseOverId({
                               uniqueId: undefined,
@@ -395,10 +360,7 @@ const ListViewTable = ({
                             );
 
                             // Handle cases where we want to quickly drag/drop single rows
-                            if (
-                              multiSelect.selected.length <= 1 ||
-                              !isSelected
-                            ) {
+                            if (multiSelect.selected.length <= 1 || !isSelected) {
                               dispatch(setSelectedSingle(rowData));
                               dispatch(
                                 setCurrentMouseOverId({
@@ -447,9 +409,7 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       rowselected={
-                        multiSelect?.selected.find(
-                          (e: any) => e.uniqueId === rowData.uniqueId
-                        )
+                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
                           ? 'true'
                           : 'false'
                       }
@@ -465,9 +425,7 @@ const ListViewTable = ({
                           rowIndex,
                         })
                       }
-                      onMouseDown={(e: any) =>
-                        handleSelectMouseDown(e, rowData)
-                      }
+                      onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
                       onMouseEnter={() => handleSelectMouseEnter(rowData)}
                       onMouseUp={() => handleSelectMouseUp()}
                       dragover={
@@ -514,10 +472,7 @@ const ListViewTable = ({
                                     `${cacheImages.cacheType}_${
                                       rowData[cacheImages.cacheIdProperty]
                                     }.jpg`,
-                                    rowData.image.replace(
-                                      /size=\d+/,
-                                      'size=500'
-                                    )
+                                    rowData.image.replace(/size=\d+/, 'size=500')
                                   );
                                 }
                               }}
@@ -540,11 +495,9 @@ const ListViewTable = ({
                             >
                               <CombinedTitleTextWrapper
                                 playing={
-                                  (rowData.uniqueId ===
-                                    playQueue?.currentSongUniqueId &&
+                                  (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                                     nowPlaying) ||
-                                  (!nowPlaying &&
-                                    rowData.id === playQueue?.currentSongId)
+                                  (!nowPlaying && rowData.id === playQueue?.currentSongId)
                                     ? 'true'
                                     : 'false'
                                 }
@@ -584,9 +537,7 @@ const ListViewTable = ({
                                   appearance="link"
                                   onClick={() => {
                                     if (rowData.artistId && !isModal) {
-                                      history.push(
-                                        `/library/artist/${rowData.artistId}`
-                                      );
+                                      history.push(`/library/artist/${rowData.artistId}`);
                                     } else if (rowData.artistId && isModal) {
                                       dispatch(
                                         addModalPage({
@@ -600,11 +551,9 @@ const ListViewTable = ({
                                     fontSize: `${fontSize}px`,
                                   }}
                                   playing={
-                                    (rowData.uniqueId ===
-                                      playQueue?.currentSongUniqueId &&
+                                    (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                                       nowPlaying) ||
-                                    (!nowPlaying &&
-                                      rowData.id === playQueue?.currentSongId)
+                                    (!nowPlaying && rowData.id === playQueue?.currentSongId)
                                       ? 'true'
                                       : 'false'
                                   }
@@ -626,16 +575,12 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       rowselected={
-                        multiSelect?.selected.find(
-                          (e: any) => e.uniqueId === rowData.uniqueId
-                        )
+                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
                           ? 'true'
                           : 'false'
                       }
                       height={rowHeight}
-                      onMouseDown={(e: any) =>
-                        handleSelectMouseDown(e, rowData)
-                      }
+                      onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
                       onMouseEnter={() => handleSelectMouseEnter(rowData)}
                       onMouseUp={() => handleSelectMouseUp()}
                       dragover={
@@ -683,26 +628,19 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       playing={
-                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                          nowPlaying) ||
+                        (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
                         (!nowPlaying && rowData.id === playQueue?.currentSongId)
                           ? 'true'
                           : 'false'
                       }
                       rowselected={
-                        multiSelect?.selected.find(
-                          (e: any) => e.uniqueId === rowData.uniqueId
-                        )
+                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
                           ? 'true'
                           : 'false'
                       }
                       height={rowHeight}
                       onClick={(e: any) => {
-                        if (
-                          !column.dataKey?.match(
-                            /starred|songCount|duration|userRating/
-                          )
-                        ) {
+                        if (!column.dataKey?.match(/starred|songCount|duration|userRating/)) {
                           handleRowClick(e, {
                             ...rowData,
                             rowIndex,
@@ -710,20 +648,14 @@ const ListViewTable = ({
                         }
                       }}
                       onDoubleClick={() => {
-                        if (
-                          !column.dataKey?.match(
-                            /starred|songCount|duration|userRating/
-                          )
-                        ) {
+                        if (!column.dataKey?.match(/starred|songCount|duration|userRating/)) {
                           handleRowDoubleClick({
                             ...rowData,
                             rowIndex,
                           });
                         }
                       }}
-                      onMouseDown={(e: any) =>
-                        handleSelectMouseDown(e, rowData)
-                      }
+                      onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
                       onMouseEnter={() => handleSelectMouseEnter(rowData)}
                       onMouseUp={() => handleSelectMouseUp()}
                       dragover={
@@ -751,9 +683,7 @@ const ListViewTable = ({
                             onClick={() => {
                               if (column.dataKey === 'album') {
                                 if (rowData.albumId && !isModal) {
-                                  history.push(
-                                    `/library/album/${rowData.albumId}`
-                                  );
+                                  history.push(`/library/album/${rowData.albumId}`);
                                 } else if (rowData.albumId && isModal) {
                                   dispatch(
                                     addModalPage({
@@ -764,9 +694,7 @@ const ListViewTable = ({
                                 }
                               } else if (column.dataKey === 'artist') {
                                 if (rowData.artistId && !isModal) {
-                                  history.push(
-                                    `/library/artist/${rowData.artistId}`
-                                  );
+                                  history.push(`/library/artist/${rowData.artistId}`);
                                 } else if (rowData.artistId && isModal) {
                                   dispatch(
                                     addModalPage({
@@ -778,11 +706,8 @@ const ListViewTable = ({
                               }
                             }}
                             playing={
-                              (rowData.uniqueId ===
-                                playQueue?.currentSongUniqueId &&
-                                nowPlaying) ||
-                              (!nowPlaying &&
-                                rowData.id === playQueue?.currentSongId)
+                              (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
+                              (!nowPlaying && rowData.id === playQueue?.currentSongId)
                                 ? 'true'
                                 : 'false'
                             }
@@ -794,8 +719,7 @@ const ListViewTable = ({
                           </RsuiteLinkButton>
                         ) : column.dataKey === 'duration' ? (
                           formatSongDuration(rowData[column.dataKey])
-                        ) : column.dataKey === 'changed' ||
-                          column.dataKey === 'created' ? (
+                        ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
                           formatDate(rowData[column.dataKey])
                         ) : column.dataKey === 'starred' ? (
                           <StyledIconToggle
@@ -810,9 +734,7 @@ const ListViewTable = ({
                           <StyledRate
                             size="sm"
                             readOnly={false}
-                            defaultValue={
-                              rowData?.userRating ? rowData.userRating : 0
-                            }
+                            defaultValue={rowData?.userRating ? rowData.userRating : 0}
                             onChange={(e: any) => handleRating(rowData, e)}
                           />
                         ) : column.dataKey === 'bitRate' ? (

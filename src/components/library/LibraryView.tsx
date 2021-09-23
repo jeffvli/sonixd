@@ -28,21 +28,13 @@ const LibraryView = () => {
   const [data, setData] = useState<any[]>([]);
   const [offset, setOffset] = useState(0);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
-  const { isLoading: isLoadingArtists, data: artists }: any = useQuery(
-    'artists',
-    getArtists,
-    {
-      enabled: currentPage === 'artists',
-    }
-  );
+  const { isLoading: isLoadingArtists, data: artists }: any = useQuery('artists', getArtists, {
+    enabled: currentPage === 'artists',
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
     searchQuery,
-    currentPage === 'artists'
-      ? artists
-      : currentPage === 'albums'
-      ? data
-      : data,
+    currentPage === 'artists' ? artists : currentPage === 'albums' ? data : data,
     ['name', 'artist']
   );
 
@@ -116,10 +108,7 @@ const LibraryView = () => {
       {artists && (
         <>
           {currentPage === 'artists' && (
-            <ArtistList
-              viewType={viewType}
-              data={searchQuery === '' ? artists : filteredData}
-            />
+            <ArtistList viewType={viewType} data={searchQuery === '' ? artists : filteredData} />
           )}
         </>
       )}

@@ -10,12 +10,10 @@ const LoaderContainer = styled.div`
     div {
       span {
         &:after {
-          border-color: ${(props) =>
-            `${props.theme.primary.main} transparent transparent`};
+          border-color: ${(props) => `${props.theme.primary.main} transparent transparent`};
         }
         &:before {
-          border: ${(props) =>
-            `3px solid ${props.theme.primary.spinnerBackground}`};
+          border: ${(props) => `3px solid ${props.theme.primary.spinnerBackground}`};
         }
       }
     }

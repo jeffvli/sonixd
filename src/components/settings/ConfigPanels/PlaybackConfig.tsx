@@ -4,10 +4,7 @@ import { ControlLabel, RadioGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import { StyledInputNumber, StyledRadio } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import {
-  setPlaybackSetting,
-  setPlayerVolume,
-} from '../../../redux/playQueueSlice';
+import { setPlaybackSetting, setPlayerVolume } from '../../../redux/playQueueSlice';
 
 const PlaybackConfig = () => {
   const dispatch = useAppDispatch();
@@ -15,28 +12,25 @@ const PlaybackConfig = () => {
   return (
     <ConfigPanel header="Playback" bordered>
       <p>
-        Fading works by polling the audio player on an interval to determine
-        when to start fading to the next track. Due to this, you may notice the
-        fade timing may not be 100% perfect. Lowering the player polling
-        interval can increase the accuracy of the fade, but may also decrease
-        application performance as calculations are running for the fade.
+        Fading works by polling the audio player on an interval to determine when to start fading to
+        the next track. Due to this, you may notice the fade timing may not be 100% perfect.
+        Lowering the player polling interval can increase the accuracy of the fade, but may also
+        decrease application performance as calculations are running for the fade.
       </p>
 
       <p>
-        If volume fade is disabled, then the fading-in track will start at the
-        specified crossfade duration at full volume.
+        If volume fade is disabled, then the fading-in track will start at the specified crossfade
+        duration at full volume.
       </p>
 
       <p>
         Setting the crossfade duration to <code>0</code> will enable{' '}
-        <strong>gapless playback</strong>. All other playback settings except
-        the polling interval will be ignored. It is recommended that you use a
-        polling interval between <code>1</code> and <code>20</code> for
-        increased transition accuracy.
+        <strong>gapless playback</strong>. All other playback settings except the polling interval
+        will be ignored. It is recommended that you use a polling interval between <code>1</code>{' '}
+        and <code>20</code> for increased transition accuracy.
       </p>
       <p style={{ fontSize: 'smaller' }}>
-        *Enable the debug window if you want to view the differences between
-        each fade type
+        *Enable the debug window if you want to view the differences between each fade type
       </p>
 
       <div style={{ width: '300px', paddingTop: '20px' }}>
@@ -57,12 +51,8 @@ const PlaybackConfig = () => {
             );
 
             if (Number(e) === 0) {
-              dispatch(
-                setPlayerVolume({ player: 1, volume: playQueue.volume })
-              );
-              dispatch(
-                setPlayerVolume({ player: 2, volume: playQueue.volume })
-              );
+              dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
+              dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
             }
           }}
         />
@@ -100,15 +90,9 @@ const PlaybackConfig = () => {
           <StyledRadio value="linear">Linear</StyledRadio>
           <StyledRadio value="dipped">Dipped</StyledRadio>
           <StyledRadio value="constantPower">Constant Power</StyledRadio>
-          <StyledRadio value="constantPowerSlowFade">
-            Constant Power (slow fade)
-          </StyledRadio>
-          <StyledRadio value="constantPowerSlowCut">
-            Constant Power (slow cut)
-          </StyledRadio>
-          <StyledRadio value="constantPowerFastCut">
-            Constant Power (fast cut)
-          </StyledRadio>
+          <StyledRadio value="constantPowerSlowFade">Constant Power (slow fade)</StyledRadio>
+          <StyledRadio value="constantPowerSlowCut">Constant Power (slow cut)</StyledRadio>
+          <StyledRadio value="constantPowerFastCut">Constant Power (fast cut)</StyledRadio>
         </RadioGroup>
         <br />
         <ControlLabel>Volume fade</ControlLabel>

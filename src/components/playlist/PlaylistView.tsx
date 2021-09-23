@@ -49,15 +49,8 @@ import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
-import {
-  addProcessingPlaylist,
-  removeProcessingPlaylist,
-} from '../../redux/miscSlice';
-import {
-  StyledButton,
-  StyledCheckbox,
-  StyledInputGroup,
-} from '../shared/styled';
+import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
+import { StyledButton, StyledCheckbox, StyledInputGroup } from '../shared/styled';
 
 interface PlaylistParams {
   id: string;
@@ -73,7 +66,9 @@ const PlaylistView = ({ ...rest }) => {
   const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', playlistId],
     () => getPlaylist(playlistId),
-    { refetchOnWindowFocus: false }
+    {
+      refetchOnWindowFocus: false,
+    }
   );
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -87,17 +82,10 @@ const PlaylistView = ({ ...rest }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [recoveryPath, setRecoveryPath] = useState('');
   const [needsRecovery, setNeedsRecovery] = useState(false);
-  const filteredData = useSearchQuery(searchQuery, localPlaylistData, [
-    'title',
-    'artist',
-    'album',
-  ]);
+  const filteredData = useSearchQuery(searchQuery, localPlaylistData, ['title', 'artist', 'album']);
 
   useEffect(() => {
-    const recoveryFilePath = path.join(
-      getRecoveryPath(),
-      `playlist_${data?.id}.json`
-    );
+    const recoveryFilePath = path.join(getRecoveryPath(), `playlist_${data?.id}.json`);
 
     setRecoveryPath(recoveryFilePath);
     setNeedsRecovery(fs.existsSync(recoveryFilePath));
@@ -129,11 +117,7 @@ const PlaylistView = ({ ...rest }) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(
-            toggleRangeSelected(
-              searchQuery !== '' ? filteredData : localPlaylistData
-            )
-          );
+          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : localPlaylistData));
         }
       }, 100);
     }
@@ -230,12 +214,7 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleEdit = async () => {
     setIsSubmittingEdit(true);
-    const res = await updatePlaylist(
-      data.id,
-      editName,
-      editDescription,
-      editPublic
-    );
+    const res = await updatePlaylist(data.id, editName, editDescription, editPublic);
 
     if (isFailedResponse(res)) {
       notifyToast('error', errorMessages(res)[0]);
@@ -266,11 +245,7 @@ const PlaylistView = ({ ...rest }) => {
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {
       setLocalPlaylistData(
-        moveToIndex(
-          localPlaylistData,
-          multiSelect.selected,
-          multiSelect.currentMouseOverId
-        )
+        moveToIndex(localPlaylistData, multiSelect.selected, multiSelect.currentMouseOverId)
       );
       dispatch(setIsDragging(false));
     }
@@ -318,9 +293,7 @@ const PlaylistView = ({ ...rest }) => {
                   <SaveButton
                     size="lg"
                     text={needsRecovery ? 'Recover playlist' : undefined}
-                    color={
-                      needsRecovery ? 'red' : isModified ? 'green' : undefined
-                    }
+                    color={needsRecovery ? 'red' : isModified ? 'green' : undefined}
                     disabled={
                       (!needsRecovery && !isModified) ||
                       misc.isProcessingPlaylist.includes(data?.id)
@@ -330,13 +303,9 @@ const PlaylistView = ({ ...rest }) => {
                   />
                   <UndoButton
                     size="lg"
-                    color={
-                      needsRecovery ? 'red' : isModified ? 'green' : undefined
-                    }
+                    color={needsRecovery ? 'red' : isModified ? 'green' : undefined}
                     disabled={
-                      needsRecovery ||
-                      !isModified ||
-                      misc.isProcessingPlaylist.includes(data?.id)
+                      needsRecovery || !isModified || misc.isProcessingPlaylist.includes(data?.id)
                     }
                     onClick={() => setLocalPlaylistData(data?.song)}
                   />
@@ -385,10 +354,7 @@ const PlaylistView = ({ ...rest }) => {
                       </Popover>
                     }
                   >
-                    <EditButton
-                      size="lg"
-                      disabled={misc.isProcessingPlaylist.includes(data?.id)}
-                    />
+                    <EditButton size="lg" disabled={misc.isProcessingPlaylist.includes(data?.id)} />
                   </Whisper>
 
                   <Whisper

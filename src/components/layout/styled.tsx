@@ -19,12 +19,9 @@ interface ContainerProps {
   children: any;
 }
 
-const StyledContainer = ({
-  id,
-  expanded,
-  children,
-  ...props
-}: ContainerProps) => <Container {...props}>{children}</Container>;
+const StyledContainer = ({ id, expanded, children, ...props }: ContainerProps) => (
+  <Container {...props}>{children}</Container>
+);
 
 export const MainContainer = styled(StyledContainer)`
   padding-left: ${(props) => (props.expanded ? '193px' : '56px')};
@@ -44,8 +41,7 @@ export const TitleHeader = styled.header<{ font: string }>`
   display: block;
   position: fixed;
   height: 32px;
-  width: ${(props) =>
-    props.className?.includes('maximized') ? '100%' : 'calc(100%)'};
+  width: ${(props) => (props.className?.includes('maximized') ? '100%' : 'calc(100%)')};
   background: ${(props) => props.theme.primary.titleBar};
   padding: 4px;
   color: ${(props) => props.theme.primary.titleText};
@@ -86,8 +82,7 @@ export const WindowControlButton = styled.div<{
   align-items: center;
   width: 100%;
   height: 100%;
-  grid-column: ${(props) =>
-    props.minButton ? 1 : props.maxButton || props.restoreButton ? 2 : 3};
+  grid-column: ${(props) => (props.minButton ? 1 : props.maxButton || props.restoreButton ? 2 : 3)};
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -113,9 +108,7 @@ export const PageContainer = styled(Container)<{ $backgroundSrc?: string }>`
       right: 0;
 
       display: block;
-      background-image: ${
-        props.$backgroundSrc ? `url(${props.$backgroundSrc})` : undefined
-      };
+      background-image: ${props.$backgroundSrc ? `url(${props.$backgroundSrc})` : undefined};
       transition: background-image 1s ease-in-out;
 
       width: 100%;
@@ -155,8 +148,7 @@ export const FixedSidebar = styled(Sidebar)<{ font: string }>`
 
 export const CoverArtWrapper = styled.div`
   display: inline-block;
-  filter: ${(props) =>
-    `drop-shadow(0px 5px 8px ${props.theme.primary.coverArtShadow})`};
+  filter: ${(props) => `drop-shadow(0px 5px 8px ${props.theme.primary.coverArtShadow})`};
 `;
 
 export const PageHeaderTitle = styled.h1`

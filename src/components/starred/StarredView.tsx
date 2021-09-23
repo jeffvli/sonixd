@@ -5,10 +5,7 @@ import { Nav } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch } from '../../redux/hooks';
-import {
-  fixPlayer2Index,
-  setPlayQueueByRowClick,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import {
   clearSelected,
   toggleSelected,
@@ -28,21 +25,12 @@ const StarredView = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState('Tracks');
-  const [viewType, setViewType] = useState(
-    settings.getSync('albumViewType') || 'list'
-  );
-  const { isLoading, isError, data, error }: any = useQuery(
-    'starred',
-    getStarred
-  );
+  const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
+  const { isLoading, isError, data, error }: any = useQuery('starred', getStarred);
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
     searchQuery,
-    currentPage === 'Tracks'
-      ? data?.song
-      : currentPage === 'Albums'
-      ? data?.album
-      : data?.song,
+    currentPage === 'Tracks' ? data?.song : currentPage === 'Albums' ? data?.album : data?.song,
     ['title', 'artist', 'album', 'name', 'genre']
   );
 
@@ -64,11 +52,7 @@ const StarredView = () => {
             }
           } else if (currentPage === 'Albums') {
             dispatch(setRangeSelected(rowData));
-            dispatch(
-              toggleRangeSelected(
-                searchQuery !== '' ? filteredData : data?.album
-              )
-            );
+            dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : data?.album));
           }
         }
       }, 100);

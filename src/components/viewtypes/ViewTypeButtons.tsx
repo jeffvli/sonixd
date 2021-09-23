@@ -3,11 +3,7 @@ import { ButtonToolbar, ButtonGroup, Icon } from 'rsuite';
 import settings from 'electron-settings';
 import { StyledIconButton } from '../shared/styled';
 
-const ViewTypeButtons = ({
-  handleListClick,
-  handleGridClick,
-  viewTypeSetting,
-}: any) => {
+const ViewTypeButtons = ({ handleListClick, handleGridClick, viewTypeSetting }: any) => {
   return (
     <ButtonToolbar>
       <ButtonGroup>

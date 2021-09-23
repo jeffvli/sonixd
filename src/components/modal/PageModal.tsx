@@ -42,25 +42,14 @@ const PageModal = () => {
         </StyledButton>
       </Modal.Header>
       <Modal.Body style={{ height: '800px' }}>
-        {misc.modalPages[misc.modal.currentPageIndex]?.pageType ===
-          'artist' && (
-          <ArtistView
-            id={misc.modalPages[misc.modal.currentPageIndex].id}
-            isModal
-          />
+        {misc.modalPages[misc.modal.currentPageIndex]?.pageType === 'artist' && (
+          <ArtistView id={misc.modalPages[misc.modal.currentPageIndex].id} isModal />
         )}
         {misc.modalPages[misc.modal.currentPageIndex]?.pageType === 'album' && (
-          <AlbumView
-            id={misc.modalPages[misc.modal.currentPageIndex].id}
-            isModal
-          />
+          <AlbumView id={misc.modalPages[misc.modal.currentPageIndex].id} isModal />
         )}
-        {misc.modalPages[misc.modal.currentPageIndex]?.pageType ===
-          'playlist' && (
-          <PlaylistView
-            id={misc.modalPages[misc.modal.currentPageIndex].id}
-            isModal
-          />
+        {misc.modalPages[misc.modal.currentPageIndex]?.pageType === 'playlist' && (
+          <PlaylistView id={misc.modalPages[misc.modal.currentPageIndex].id} isModal />
         )}
       </Modal.Body>
     </StyledModal>

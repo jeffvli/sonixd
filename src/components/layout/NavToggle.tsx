@@ -20,10 +20,7 @@ const NavToggle = ({ expand, onChange }: any) => {
         </Nav>
 
         <Nav pullRight>
-          <Nav.Item
-            onClick={onChange}
-            style={{ width: 56, textAlign: 'center' }}
-          >
+          <Nav.Item onClick={onChange} style={{ width: 56, textAlign: 'center' }}>
             <Icon icon={expand ? 'angle-left' : 'angle-right'} />
           </Nav.Item>
         </Nav>

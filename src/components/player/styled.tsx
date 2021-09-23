@@ -17,21 +17,13 @@ export const PlayerColumn = styled.div<{
   display: flex;
   align-items: center;
   justify-content: ${(props) =>
-    props.left
-      ? 'flex-start'
-      : props.center
-      ? 'center'
-      : props.right
-      ? 'flex-end'
-      : 'center'};
+    props.left ? 'flex-start' : props.center ? 'center' : props.right ? 'flex-end' : 'center'};
 `;
 
 export const PlayerControlIcon = styled(Icon)`
   font-size: medium;
   color: ${(props) =>
-    props.active === 'true'
-      ? props.theme.primary.main
-      : props.theme.primary.playerBarButtons};
+    props.active === 'true' ? props.theme.primary.main : props.theme.primary.playerBarButtons};
   padding-left: 10px;
   padding-right: 10px;
   &:hover {
@@ -82,9 +74,7 @@ export const CustomSlider = styled(Slider)<{ isDragging?: boolean }>`
   }
   .rs-slider-progress-bar {
     background-color: ${(props) =>
-      props.$isDragging
-        ? props.theme.primary.main
-        : props.theme.primary.sliderBackground};
+      props.$isDragging ? props.theme.primary.main : props.theme.primary.sliderBackground};
   }
 
   .rs-slider-handle::before {
@@ -118,8 +108,7 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   opacity: ${(props) => (props.display === 'true' ? 0.9 : 0)};
   border-radius: 10px;
   color: ${(props) => `${props.theme.primary.text} !important`};
-  animation-name: ${(props) =>
-    props.display === 'true' ? 'fadeInOpacity' : 'fadeOutOpacity'};
+  animation-name: ${(props) => (props.display === 'true' ? 'fadeInOpacity' : 'fadeOutOpacity')};
   animation-iteration-count: 1;
   animation-timing-function: ease-in-out;
   animation-duration: 0.5s;

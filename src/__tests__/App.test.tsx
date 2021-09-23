@@ -9,9 +9,7 @@ import { Player } from '../redux/playerSlice';
 import { General } from '../redux/miscSlice';
 import App from '../App';
 
-const middlewares:
-  | Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[]
-  | undefined = [];
+const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
 
 const playQueueState: PlayQueue = {

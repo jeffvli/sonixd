@@ -50,9 +50,7 @@ const PlayerBar = () => {
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
   const [manualSeek, setManualSeek] = useState(0);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
-  const [localVolume, setLocalVolume] = useState(
-    Number(settings.getSync('volume'))
-  );
+  const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -91,13 +89,7 @@ const PlayerBar = () => {
     }, 200);
 
     return () => clearTimeout(debounce);
-  }, [
-    dispatch,
-    isDraggingVolume,
-    localVolume,
-    playQueue.currentPlayer,
-    playQueue.fadeDuration,
-  ]);
+  }, [dispatch, isDraggingVolume, localVolume, playQueue.currentPlayer, playQueue.fadeDuration]);
 
   useEffect(() => {
     // Set the seek back to 0 when the player is incremented/decremented, otherwise the
@@ -164,9 +156,7 @@ const PlayerBar = () => {
 
   const handleVolumeKey = (e: any) => {
     if (e.keyCode === keyCodes.UP) {
-      const vol = Number(
-        (playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2)
-      );
+      const vol = Number((playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2));
       dispatch(setVolume(vol));
       dispatch(
         setPlayerVolume({
@@ -175,9 +165,7 @@ const PlayerBar = () => {
         })
       );
     } else if (e.keyCode === keyCodes.DOWN) {
-      const vol = Number(
-        (playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2)
-      );
+      const vol = Number((playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2));
       dispatch(setVolume(vol));
       dispatch(
         setPlayerVolume({
@@ -190,9 +178,7 @@ const PlayerBar = () => {
 
   const handleClickForward = () => {
     if (playQueue[currentEntryList].length > 0) {
-      const seekForwardInterval = Number(
-        settings.getSync('seekForwardInterval')
-      );
+      const seekForwardInterval = Number(settings.getSync('seekForwardInterval'));
       setIsDragging(true);
 
       if (playQueue.isFading) {
@@ -211,30 +197,20 @@ const PlayerBar = () => {
 
       if (playQueue.currentPlayer === 1) {
         const calculatedTime =
-          playersRef.current.player1.audioEl.current.currentTime +
-          seekForwardInterval;
-        const songDuration =
-          playersRef.current.player1.audioEl.current.duration;
-        setManualSeek(
-          calculatedTime > songDuration ? songDuration - 1 : calculatedTime
-        );
+          playersRef.current.player1.audioEl.current.currentTime + seekForwardInterval;
+        const songDuration = playersRef.current.player1.audioEl.current.duration;
+        setManualSeek(calculatedTime > songDuration ? songDuration - 1 : calculatedTime);
       } else {
         const calculatedTime =
-          playersRef.current.player2.audioEl.current.currentTime +
-          seekForwardInterval;
-        const songDuration =
-          playersRef.current.player2.audioEl.current.duration;
-        setManualSeek(
-          calculatedTime > songDuration ? songDuration - 1 : calculatedTime
-        );
+          playersRef.current.player2.audioEl.current.currentTime + seekForwardInterval;
+        const songDuration = playersRef.current.player2.audioEl.current.duration;
+        setManualSeek(calculatedTime > songDuration ? songDuration - 1 : calculatedTime);
       }
     }
   };
 
   const handleClickBackward = () => {
-    const seekBackwardInterval = Number(
-      settings.getSync('seekBackwardInterval')
-    );
+    const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
     if (playQueue[currentEntryList].length > 0) {
       setIsDragging(true);
 
@@ -254,13 +230,11 @@ const PlayerBar = () => {
 
       if (playQueue.currentPlayer === 1) {
         const calculatedTime =
-          playersRef.current.player1.audioEl.current.currentTime -
-          seekBackwardInterval;
+          playersRef.current.player1.audioEl.current.currentTime - seekBackwardInterval;
         setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
       } else {
         const calculatedTime =
-          playersRef.current.player2.audioEl.current.currentTime -
-          seekBackwardInterval;
+          playersRef.current.player2.audioEl.current.currentTime - seekBackwardInterval;
         setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
       }
     }
@@ -290,12 +264,7 @@ const PlayerBar = () => {
 
   const handleRepeat = () => {
     const currentRepeat = settings.getSync('repeat');
-    const newRepeat =
-      currentRepeat === 'none'
-        ? 'all'
-        : currentRepeat === 'all'
-        ? 'one'
-        : 'none';
+    const newRepeat = currentRepeat === 'none' ? 'all' : currentRepeat === 'all' ? 'one' : 'none';
     dispatch(toggleRepeat());
     settings.setSync('repeat', newRepeat);
   };
@@ -311,10 +280,7 @@ const PlayerBar = () => {
 
   const handleFavorite = async () => {
     if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
-      await star(
-        playQueue[currentEntryList][playQueue.currentIndex].id,
-        'music'
-      );
+      await star(playQueue[currentEntryList][playQueue.currentIndex].id, 'music');
       dispatch(
         setStar({
           id: playQueue[currentEntryList][playQueue.currentIndex].id,
@@ -322,10 +288,7 @@ const PlayerBar = () => {
         })
       );
     } else {
-      await unstar(
-        playQueue[currentEntryList][playQueue.currentIndex].id,
-        'song'
-      );
+      await unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
       dispatch(
         setStar({
           id: playQueue[currentEntryList][playQueue.currentIndex].id,
@@ -347,15 +310,10 @@ const PlayerBar = () => {
 
   return (
     <Player ref={playersRef} currentEntryList={currentEntryList}>
-      {playQueue.showDebugWindow && (
-        <DebugWindow currentEntryList={currentEntryList} />
-      )}
+      {playQueue.showDebugWindow && <DebugWindow currentEntryList={currentEntryList} />}
       <PlayerContainer>
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
-          <FlexboxGrid.Item
-            colspan={6}
-            style={{ textAlign: 'left', paddingLeft: '10px' }}
-          >
+          <FlexboxGrid.Item colspan={6} style={{ textAlign: 'left', paddingLeft: '10px' }}>
             <PlayerColumn left height="80px">
               <Grid>
                 <Row
@@ -370,8 +328,8 @@ const PlayerBar = () => {
                       <LazyLoadImage
                         tabIndex={0}
                         src={
-                          playQueue[currentEntryList][playQueue.currentIndex]
-                            ?.image || placeholderImg
+                          playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                          placeholderImg
                         }
                         alt="trackImg"
                         effect="opacity"
@@ -400,30 +358,24 @@ const PlayerBar = () => {
                         enterable
                         placement="topStart"
                         text={
-                          playQueue[currentEntryList][playQueue.currentIndex]
-                            ?.title || 'Unknown title'
+                          playQueue[currentEntryList][playQueue.currentIndex]?.title ||
+                          'Unknown title'
                         }
                       >
                         <LinkButton
                           tabIndex={0}
                           onClick={() => {
-                            if (
-                              playQueue[currentEntryList][
-                                playQueue.currentIndex
-                              ]?.albumId
-                            ) {
+                            if (playQueue[currentEntryList][playQueue.currentIndex]?.albumId) {
                               history.push(
                                 `/library/album/${
-                                  playQueue[currentEntryList][
-                                    playQueue.currentIndex
-                                  ]?.albumId
+                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                                 }`
                               );
                             }
                           }}
                         >
-                          {playQueue[currentEntryList][playQueue.currentIndex]
-                            ?.title || 'Unknown title'}
+                          {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
+                            'Unknown title'}
                         </LinkButton>
                       </CustomTooltip>
                     </Row>
@@ -439,8 +391,8 @@ const PlayerBar = () => {
                         enterable
                         placement="topStart"
                         text={
-                          playQueue[currentEntryList][playQueue.currentIndex]
-                            ?.artist || 'Unknown artist'
+                          playQueue[currentEntryList][playQueue.currentIndex]?.artist ||
+                          'Unknown artist'
                         }
                       >
                         <span
@@ -454,23 +406,17 @@ const PlayerBar = () => {
                             tabIndex={0}
                             subtitle="true"
                             onClick={() => {
-                              if (
-                                playQueue[currentEntryList][
-                                  playQueue.currentIndex
-                                ]?.artistId
-                              ) {
+                              if (playQueue[currentEntryList][playQueue.currentIndex]?.artistId) {
                                 history.push(
                                   `/library/artist/${
-                                    playQueue[currentEntryList][
-                                      playQueue.currentIndex
-                                    ]?.artistId
+                                    playQueue[currentEntryList][playQueue.currentIndex]?.artistId
                                   }`
                                 );
                               }
                             }}
                           >
-                            {playQueue[currentEntryList][playQueue.currentIndex]
-                              ?.artist || 'Unknown artist'}
+                            {playQueue[currentEntryList][playQueue.currentIndex]?.artist ||
+                              'Unknown artist'}
                           </LinkButton>
                         </span>
                       </CustomTooltip>
@@ -480,10 +426,7 @@ const PlayerBar = () => {
               </Grid>
             </PlayerColumn>
           </FlexboxGrid.Item>
-          <FlexboxGrid.Item
-            colspan={12}
-            style={{ textAlign: 'center', verticalAlign: 'middle' }}
-          >
+          <FlexboxGrid.Item colspan={12} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
             <PlayerColumn center height="45px">
               {/* Seek Backward Button */}
               <CustomTooltip text="Seek backward" delay={1000}>
@@ -579,9 +522,7 @@ const PlayerBar = () => {
                     userSelect: 'none',
                   }}
                 >
-                  <DurationSpan>
-                    {format((isDragging ? manualSeek : seek) * 1000)}
-                  </DurationSpan>
+                  <DurationSpan>{format((isDragging ? manualSeek : seek) * 1000)}</DurationSpan>
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item colspan={16}>
                   {/* Seek Slider */}
@@ -591,10 +532,7 @@ const PlayerBar = () => {
                     value={isDragging ? manualSeek : seek}
                     $isDragging={isDragging}
                     tooltip={false}
-                    max={
-                      playQueue[currentEntryList][playQueue.currentIndex]
-                        ?.duration || 0
-                    }
+                    max={playQueue[currentEntryList][playQueue.currentIndex]?.duration || 0}
                     onChange={handleSeekSlider}
                     style={{ width: '100%' }}
                   />
@@ -609,18 +547,14 @@ const PlayerBar = () => {
                 >
                   <DurationSpan>
                     {format(
-                      playQueue[currentEntryList][playQueue.currentIndex]
-                        ?.duration * 1000 || 0
+                      playQueue[currentEntryList][playQueue.currentIndex]?.duration * 1000 || 0
                     )}
                   </DurationSpan>
                 </FlexboxGrid.Item>
               </FlexboxGrid>
             </PlayerColumn>
           </FlexboxGrid.Item>
-          <FlexboxGrid.Item
-            colspan={6}
-            style={{ textAlign: 'right', paddingRight: '10px' }}
-          >
+          <FlexboxGrid.Item colspan={6} style={{ textAlign: 'right', paddingRight: '10px' }}>
             <PlayerColumn right height="80px">
               <Grid>
                 <Row
@@ -637,16 +571,14 @@ const PlayerBar = () => {
                       <PlayerControlIcon
                         tabIndex={0}
                         icon={
-                          playQueue[currentEntryList][playQueue.currentIndex]
-                            ?.starred
+                          playQueue[currentEntryList][playQueue.currentIndex]?.starred
                             ? 'heart'
                             : 'heart-o'
                         }
                         size="lg"
                         fixedWidth
                         active={
-                          playQueue[currentEntryList][playQueue.currentIndex]
-                            ?.starred
+                          playQueue[currentEntryList][playQueue.currentIndex]?.starred
                             ? 'true'
                             : 'false'
                         }
@@ -676,14 +608,11 @@ const PlayerBar = () => {
                           }
                         }}
                         active={
-                          playQueue.repeat === 'all' ||
-                          playQueue.repeat === 'one'
+                          playQueue.repeat === 'all' || playQueue.repeat === 'one'
                             ? 'true'
                             : 'false'
                         }
-                        flip={
-                          playQueue.repeat === 'one' ? 'horizontal' : undefined
-                        }
+                        flip={playQueue.repeat === 'one' ? 'horizontal' : undefined}
                       />
                     </CustomTooltip>
                     {/* Shuffle Button */}

@@ -34,13 +34,10 @@ export const TableCellWrapper = styled.div<{
 }>`
   background: ${(props) =>
     props.rowselected === 'true' ? props.theme.primary.rowSelected : undefined};
-  color: ${(props) =>
-    props.playing === 'true' ? props.theme.primary.main : undefined};
+  color: ${(props) => (props.playing === 'true' ? props.theme.primary.main : undefined)};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
   box-shadow: ${(props) =>
-    props.dragover === 'true'
-      ? `inset 0px 5px 0px -3px ${props.theme.primary.main}`
-      : undefined};
+    props.dragover === 'true' ? `inset 0px 5px 0px -3px ${props.theme.primary.main}` : undefined};
   cursor: ${(props) =>
     props.dragover === 'true'
       ? 'grabbing'
@@ -52,8 +49,7 @@ export const TableCellWrapper = styled.div<{
 `;
 
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`
-  color: ${(props) =>
-    props.playing === 'true' ? props.theme.primary.main : undefined};
+  color: ${(props) => (props.playing === 'true' ? props.theme.primary.main : undefined)};
 `;
 
 export const StyledTableHeaderCell = styled(Table.HeaderCell)`

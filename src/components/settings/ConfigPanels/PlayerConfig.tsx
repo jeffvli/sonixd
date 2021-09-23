@@ -11,8 +11,8 @@ const PlayerConfig = () => {
   return (
     <ConfigPanel header="Player" bordered>
       <p>
-        Configure the number of seconds to skip forwards/backwards by when
-        clicking the seek forward/backward buttons.
+        Configure the number of seconds to skip forwards/backwards by when clicking the seek
+        forward/backward buttons.
       </p>
       <br />
       <ControlLabel>Seek forward (s)</ControlLabel>
@@ -42,10 +42,7 @@ const PlayerConfig = () => {
       <StyledCheckbox
         defaultChecked={globalMediaHotkeys}
         onChange={() => {
-          settings.setSync(
-            'globalMediaHotkeys',
-            !settings.getSync('globalMediaHotkeys')
-          );
+          settings.setSync('globalMediaHotkeys', !settings.getSync('globalMediaHotkeys'));
           setGlobalMediaHotkeys(!globalMediaHotkeys);
         }}
       >

@@ -3,12 +3,7 @@ import settings from 'electron-settings';
 import { TagPicker, ControlLabel } from 'rsuite';
 import { StyledInputNumber } from '../../shared/styled';
 
-const ListViewConfig = ({
-  defaultColumns,
-  columnPicker,
-  columnList,
-  settingsConfig,
-}: any) => {
+const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConfig }: any) => {
   return (
     <div style={{ width: '100%' }}>
       <br />
@@ -21,9 +16,7 @@ const ListViewConfig = ({
 
           if (e) {
             e.map((selected: string) => {
-              const selectedColumn = columnList.find(
-                (column: any) => column.label === selected
-              );
+              const selectedColumn = columnList.find((column: any) => column.label === selected);
               if (selectedColumn) {
                 return columns.push(selectedColumn.value);
               }
@@ -40,9 +33,7 @@ const ListViewConfig = ({
       <div style={{ marginTop: '20px' }}>
         <ControlLabel>Row height</ControlLabel>
         <StyledInputNumber
-          defaultValue={
-            String(settings.getSync(settingsConfig.rowHeight)) || '0'
-          }
+          defaultValue={String(settings.getSync(settingsConfig.rowHeight)) || '0'}
           step={1}
           min={15}
           max={100}
@@ -55,9 +46,7 @@ const ListViewConfig = ({
       <div style={{ marginTop: '20px' }}>
         <ControlLabel>Font size</ControlLabel>
         <StyledInputNumber
-          defaultValue={
-            String(settings.getSync(settingsConfig.fontSize)) || '0'
-          }
+          defaultValue={String(settings.getSync(settingsConfig.fontSize)) || '0'}
           step={0.5}
           min={1}
           max={100}

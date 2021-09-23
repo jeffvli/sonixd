@@ -7,11 +7,7 @@ import { useQueryClient } from 'react-query';
 import cacheImage from '../shared/cacheImage';
 import { getAlbum, getPlaylist, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  appendPlayQueue,
-  fixPlayer2Index,
-  setPlayQueue,
-} from '../../redux/playQueueSlice';
+import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import { isCached, getImageCachePath } from '../../shared/utils';
 
 import {
@@ -126,9 +122,7 @@ const Card = ({
           {lazyLoad ? (
             <LazyCardImg
               src={
-                isCached(
-                  `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
-                )
+                isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
                   ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
                   : rest.coverArt
               }
@@ -147,12 +141,7 @@ const Card = ({
               }}
             />
           ) : (
-            <CardImg
-              src={rest.coverArt}
-              alt="img"
-              onClick={handleClick}
-              cardsize={size}
-            />
+            <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
           )}
 
           {hasHoverButtons && (
@@ -172,9 +161,7 @@ const Card = ({
                 <FavoriteOverlayButton
                   onClick={handleFavorite}
                   size="xs"
-                  icon={
-                    <Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />
-                  }
+                  icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
                 />
               )}
               {!rest.isModal && (
@@ -189,12 +176,7 @@ const Card = ({
         </Overlay>
         <InfoPanel cardsize={size}>
           <InfoSpan>
-            <CardTitleButton
-              appearance="link"
-              size="sm"
-              onClick={handleClick}
-              cardsize={size}
-            >
+            <CardTitleButton appearance="link" size="sm" onClick={handleClick} cardsize={size}>
               {rest.title}
             </CardTitleButton>
           </InfoSpan>
