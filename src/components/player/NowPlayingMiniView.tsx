@@ -6,7 +6,6 @@ import {
   toggleSelected,
   setRangeSelected,
   toggleRangeSelected,
-  setSelected,
   clearSelected,
   setIsDragging,
 } from '../../redux/multiSelectSlice';
@@ -77,8 +76,6 @@ const NowPlayingMiniView = () => {
                 : playQueue.entry
             )
           );
-        } else {
-          dispatch(setSelected(rowData));
         }
       }, 100);
     }

@@ -11,7 +11,6 @@ import {
 } from '../../redux/playQueueSlice';
 import {
   clearSelected,
-  setSelected,
   toggleSelected,
   toggleRangeSelected,
   setRangeSelected,
@@ -65,17 +64,12 @@ const StarredView = () => {
             }
           } else if (currentPage === 'Albums') {
             dispatch(setRangeSelected(rowData));
-            if (searchQuery !== '') {
-              dispatch(toggleRangeSelected(filteredData));
-            } else {
-              dispatch(toggleRangeSelected(data?.album));
-            }
-          } else {
-            // !TODO
-            data.song.slice();
+            dispatch(
+              toggleRangeSelected(
+                searchQuery !== '' ? filteredData : data?.album
+              )
+            );
           }
-        } else {
-          dispatch(setSelected(rowData));
         }
       }, 100);
     }

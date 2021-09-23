@@ -32,7 +32,6 @@ import {
   toggleSelected,
   setRangeSelected,
   toggleRangeSelected,
-  setSelected,
   clearSelected,
   setIsDragging,
 } from '../../redux/multiSelectSlice';
@@ -135,8 +134,6 @@ const PlaylistView = ({ ...rest }) => {
               searchQuery !== '' ? filteredData : localPlaylistData
             )
           );
-        } else {
-          dispatch(setSelected(rowData));
         }
       }, 100);
     }

@@ -6,11 +6,13 @@ import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
 import { setContextMenu, setExpandSidebar } from '../../redux/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { clearSelected } from '../../redux/multiSelectSlice';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
+  const multiSelect = useAppSelector((state) => state.multiSelect);
 
   const handleToggle = () => {
     dispatch(setExpandSidebar(!misc.expandSidebar));
@@ -71,6 +73,12 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                 show: false,
               })
             );
+          }
+          if (
+            multiSelect.selected.length > 0 &&
+            !multiSelect.isSelectDragging
+          ) {
+            dispatch(clearSelected());
           }
         }}
       />

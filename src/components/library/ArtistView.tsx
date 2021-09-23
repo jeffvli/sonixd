@@ -15,7 +15,6 @@ import {
   toggleSelected,
   setRangeSelected,
   toggleRangeSelected,
-  setSelected,
   clearSelected,
 } from '../../redux/multiSelectSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -70,10 +69,9 @@ const ArtistView = ({ ...rest }: any) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-
-          dispatch(toggleRangeSelected(data.album));
-        } else {
-          dispatch(setSelected(rowData));
+          dispatch(
+            toggleRangeSelected(searchQuery !== '' ? filteredData : data.album)
+          );
         }
       }, 100);
     }

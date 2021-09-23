@@ -19,7 +19,6 @@ import {
   toggleSelected,
   setRangeSelected,
   toggleRangeSelected,
-  setSelected,
   clearSelected,
   setIsDragging,
 } from '../../redux/multiSelectSlice';
@@ -80,8 +79,6 @@ const NowPlayingView = () => {
               )
             );
           }
-        } else {
-          dispatch(setSelected(rowData));
         }
       }, 100);
     }

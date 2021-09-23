@@ -34,11 +34,14 @@ import {
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
-  appendSelected,
+  clearSelected,
   setCurrentMouseOverId,
   setIsDragging,
   setIsSelectDragging,
+  setRangeSelected,
   setSelectedSingle,
+  toggleRangeSelected,
+  toggleSelected,
 } from '../../redux/multiSelectSlice';
 
 const ListViewTable = ({
@@ -131,6 +134,46 @@ const ListViewTable = ({
       }
     } else {
       setSortedCount(0);
+    }
+  };
+
+  // Acts as our initial multiSelect handler by toggling the selected row
+  // and continuing the selection drag if the mouse button is held down
+  const handleSelectMouseDown = (e: any, rowData: any) => {
+    // If ctrl or shift is used, we want to ignore this drag selection handler
+    // and use the ones provided in handleRowClick
+    if (e.button === 0 && !e.ctrlKey && !e.shiftKey) {
+      if (
+        multiSelect.selected.length === 1 &&
+        multiSelect.selected[0].uniqueId === rowData.uniqueId
+      ) {
+        // Toggle single entry if the same entry is clicked
+        dispatch(clearSelected());
+      } else {
+        if (multiSelect.selected.length > 0) {
+          dispatch(clearSelected());
+        }
+        dispatch(setIsSelectDragging(true));
+        dispatch(toggleSelected(rowData));
+      }
+    }
+  };
+
+  // Completes the multiSelect handler once the mouse button is lifted
+  const handleSelectMouseUp = () => {
+    dispatch(setIsDragging(false));
+    dispatch(setIsSelectDragging(false));
+  };
+
+  // If mouse is still held down from the handleSelectMouseDown function, then
+  // mousing over a row will set the range selection from the initial mousedown location
+  // to the mouse-entered row
+  const handleSelectMouseEnter = (rowData: any) => {
+    if (multiSelect.isSelectDragging) {
+      dispatch(setRangeSelected(rowData));
+      dispatch(
+        toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data)
+      );
     }
   };
 
@@ -418,20 +461,11 @@ const ListViewTable = ({
                           rowIndex,
                         })
                       }
-                      onMouseDown={(e: any) => {
-                        if (e.button === 0) {
-                          dispatch(setIsSelectDragging(true));
-                        }
-                      }}
-                      onMouseOver={() => {
-                        if (multiSelect.isSelectDragging) {
-                          dispatch(appendSelected(rowData));
-                        }
-                      }}
-                      onMouseUp={() => {
-                        dispatch(setIsDragging(false));
-                        dispatch(setIsSelectDragging(false));
-                      }}
+                      onMouseDown={(e: any) =>
+                        handleSelectMouseDown(e, rowData)
+                      }
+                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
+                      onMouseUp={() => handleSelectMouseUp()}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
@@ -595,20 +629,11 @@ const ListViewTable = ({
                           : 'false'
                       }
                       height={rowHeight}
-                      onMouseDown={(e: any) => {
-                        if (e.button === 0) {
-                          dispatch(setIsSelectDragging(true));
-                        }
-                      }}
-                      onMouseOver={() => {
-                        if (multiSelect.isSelectDragging) {
-                          dispatch(appendSelected(rowData));
-                        }
-                      }}
-                      onMouseUp={() => {
-                        dispatch(setIsDragging(false));
-                        dispatch(setIsSelectDragging(false));
-                      }}
+                      onMouseDown={(e: any) =>
+                        handleSelectMouseDown(e, rowData)
+                      }
+                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
+                      onMouseUp={() => handleSelectMouseUp()}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
@@ -692,20 +717,11 @@ const ListViewTable = ({
                           });
                         }
                       }}
-                      onMouseDown={(e: any) => {
-                        if (e.button === 0) {
-                          dispatch(setIsSelectDragging(true));
-                        }
-                      }}
-                      onMouseOver={() => {
-                        if (multiSelect.isSelectDragging) {
-                          dispatch(appendSelected(rowData));
-                        }
-                      }}
-                      onMouseUp={() => {
-                        dispatch(setIsDragging(false));
-                        dispatch(setIsSelectDragging(false));
-                      }}
+                      onMouseDown={(e: any) =>
+                        handleSelectMouseDown(e, rowData)
+                      }
+                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
+                      onMouseUp={() => handleSelectMouseUp()}
                       dragover={
                         multiSelect.currentMouseOverId === rowData.uniqueId &&
                         multiSelect.isDragging
