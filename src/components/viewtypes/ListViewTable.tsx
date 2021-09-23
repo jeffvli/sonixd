@@ -168,12 +168,16 @@ const ListViewTable = ({
   // If mouse is still held down from the handleSelectMouseDown function, then
   // mousing over a row will set the range selection from the initial mousedown location
   // to the mouse-entered row
+  const debouncedMouseEnterFn = _.debounce((rowData: any) => {
+    dispatch(setRangeSelected(rowData));
+    dispatch(
+      toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data)
+    );
+  }, 100);
+
   const handleSelectMouseEnter = (rowData: any) => {
     if (multiSelect.isSelectDragging) {
-      dispatch(setRangeSelected(rowData));
-      dispatch(
-        toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data)
-      );
+      debouncedMouseEnterFn(rowData);
     }
   };
 
