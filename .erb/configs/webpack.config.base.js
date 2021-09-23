@@ -18,6 +18,10 @@ export default {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
+            query: {
+              plugins: ['lodash'],
+              presets: [['@babel/env', { targets: { node: 6 } }]],
+            },
           },
         },
       },
