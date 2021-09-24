@@ -148,6 +148,7 @@ export const getPlaylists = async (sortBy: string) => {
     ...playlist,
     name: playlist.name,
     image: playlist.songCount > 0 ? getCoverArtUrl(playlist) : 'img/placeholder.jpg',
+    uniqueId: nanoid(),
   }));
 };
 
