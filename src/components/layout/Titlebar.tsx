@@ -13,7 +13,12 @@ const Titlebar = ({ font }: any) => {
     // Not sure if this is a bug or not, but this is the only workaround unless
     // someone knows of a better solution.
 
-    const currentEntryList = playQueue.shuffle ? 'shuffledEntry' : 'entry';
+    const currentEntryList =
+      playQueue.sortedEntry.length > 0
+        ? 'sortedEntry'
+        : playQueue.shuffle
+        ? 'shuffledEntry'
+        : 'entry';
 
     const playStatus =
       player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0 ? '(Paused)' : '';
