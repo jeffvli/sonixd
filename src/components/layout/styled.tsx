@@ -144,6 +144,12 @@ export const FixedSidebar = styled(Sidebar)<{ font: string }>`
   font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
   font-weight: ${(props) =>
     props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const CoverArtWrapper = styled.div`

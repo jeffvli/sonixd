@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sidenav, Nav, Icon, Dropdown } from 'rsuite';
+import { Sidenav, Nav, Icon } from 'rsuite';
 import { FixedSidebar } from './styled';
 
 const Sidebar = ({
@@ -45,6 +45,14 @@ const Sidebar = ({
               Now Playing
             </Nav.Item>
             <Nav.Item
+              eventKey="playlists"
+              icon={<Icon icon="list-ul" />}
+              onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
+            >
+              Playlists
+            </Nav.Item>
+            <Nav.Item
               eventKey="starred"
               icon={<Icon icon="heart" />}
               onSelect={handleSidebarSelect}
@@ -53,12 +61,28 @@ const Sidebar = ({
               Favorites
             </Nav.Item>
             <Nav.Item
-              eventKey="playlists"
-              icon={<Icon icon="list-ul" />}
+              eventKey="albums"
+              icon={<Icon icon="book2" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
-              Playlists
+              Albums
+            </Nav.Item>
+            <Nav.Item
+              eventKey="artists"
+              icon={<Icon icon="people-group" />}
+              onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
+            >
+              Artists
+            </Nav.Item>
+            <Nav.Item
+              eventKey="genres"
+              icon={<Icon icon="globe2" />}
+              onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
+            >
+              Genres
             </Nav.Item>
             <Nav.Item
               eventKey="folders"
@@ -68,22 +92,8 @@ const Sidebar = ({
             >
               Folders
             </Nav.Item>
-            <Dropdown
-              placement="rightStart"
-              eventKey="library"
-              title="Library"
-              icon={<Icon icon="book2" />}
-            >
-              <Dropdown.Item eventKey="albums" onSelect={handleSidebarSelect}>
-                Albums
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="artists" onSelect={handleSidebarSelect}>
-                Artists
-              </Dropdown.Item>
-              <Dropdown.Item eventKey="genres" onSelect={handleSidebarSelect}>
-                Genres
-              </Dropdown.Item>
-            </Dropdown>
+          </Nav>
+          <Nav>
             <Nav.Item
               eventKey="config"
               icon={<Icon icon="gear-circle" />}
@@ -92,7 +102,6 @@ const Sidebar = ({
             >
               Config
             </Nav.Item>
-
             <Nav.Item
               icon={<Icon icon={expand ? 'arrow-left' : 'arrow-right'} />}
               onSelect={handleToggle}
