@@ -29,7 +29,6 @@ export const TableCellWrapper = styled.div<{
   playing?: string;
   height?: number;
   dragover?: string;
-  dragselect?: string;
   dragfield?: string;
 }>`
   background: ${(props) =>
@@ -39,13 +38,7 @@ export const TableCellWrapper = styled.div<{
   box-shadow: ${(props) =>
     props.dragover === 'true' ? `inset 0px 5px 0px -3px ${props.theme.primary.main}` : undefined};
   cursor: ${(props) =>
-    props.dragover === 'true'
-      ? 'grabbing'
-      : props.dragfield === 'true'
-      ? 'grab'
-      : props.dragselect === 'true'
-      ? 'crosshair'
-      : 'pointer'};
+    props.dragover === 'true' ? 'grabbing' : props.dragfield === 'true' ? 'grab' : 'default'};
 `;
 
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`
