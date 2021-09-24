@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import {
   clearSelected,
@@ -24,9 +24,12 @@ import { StyledNavItem } from '../shared/styled';
 const StarredView = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const multiSelect = useAppSelector((state) => state.multiSelect);
   const [currentPage, setCurrentPage] = useState('Tracks');
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
-  const { isLoading, isError, data, error }: any = useQuery('starred', getStarred);
+  const { isLoading, isError, data, error }: any = useQuery('starred', getStarred, {
+    refetchOnWindowFocus: multiSelect.selected.length < 1,
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
     searchQuery,

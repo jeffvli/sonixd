@@ -14,16 +14,20 @@ import { StyledButton, StyledInputGroup } from '../shared/styled';
 import { errorMessages, isFailedResponse } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { AddPlaylistButton } from '../shared/ToolbarButtons';
+import { useAppSelector } from '../../redux/hooks';
 
 const PlaylistList = () => {
   const history = useHistory();
   const queryClient = useQueryClient();
+  const multiSelect = useAppSelector((state) => state.multiSelect);
   const playlistTriggerRef = useRef<any>();
   const [sortBy] = useState('name');
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
-  const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists', sortBy], () =>
-    getPlaylists(sortBy)
+  const { isLoading, isError, data: playlists, error }: any = useQuery(
+    ['playlists', sortBy],
+    () => getPlaylists(sortBy),
+    { refetchOnWindowFocus: multiSelect.selected.length < 1 }
   );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, playlists, ['name', 'comment']);

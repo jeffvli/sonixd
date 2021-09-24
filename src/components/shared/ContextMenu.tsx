@@ -79,7 +79,9 @@ export const GlobalContextMenu = () => {
   const [shouldCreatePlaylist, setShouldCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
 
-  const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'));
+  const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'), {
+    refetchOnWindowFocus: false,
+  });
 
   const handleAddToQueue = () => {
     const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');

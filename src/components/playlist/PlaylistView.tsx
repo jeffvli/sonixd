@@ -57,7 +57,11 @@ interface PlaylistParams {
 }
 
 const PlaylistView = ({ ...rest }) => {
+  const [isModified, setIsModified] = useState(false);
   const dispatch = useAppDispatch();
+  const playQueue = useAppSelector((state) => state.playQueue);
+  const multiSelect = useAppSelector((state) => state.multiSelect);
+  const misc = useAppSelector((state) => state.misc);
   const history = useHistory();
   const queryClient = useQueryClient();
   const editTriggerRef = useRef<any>();
@@ -67,7 +71,7 @@ const PlaylistView = ({ ...rest }) => {
     ['playlist', playlistId],
     () => getPlaylist(playlistId),
     {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: multiSelect.selected.length < 1 || !isModified,
     }
   );
   const [editName, setEditName] = useState('');
@@ -75,10 +79,6 @@ const PlaylistView = ({ ...rest }) => {
   const [editPublic, setEditPublic] = useState(false);
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
   const [localPlaylistData, setLocalPlaylistData] = useState(data);
-  const [isModified, setIsModified] = useState(false);
-  const playQueue = useAppSelector((state) => state.playQueue);
-  const multiSelect = useAppSelector((state) => state.multiSelect);
-  const misc = useAppSelector((state) => state.misc);
   const [searchQuery, setSearchQuery] = useState('');
   const [recoveryPath, setRecoveryPath] = useState('');
   const [needsRecovery, setNeedsRecovery] = useState(false);
