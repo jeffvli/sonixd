@@ -24,10 +24,8 @@ module.exports = (api) => {
       require('@babel/preset-env'),
       require('@babel/preset-typescript'),
       [require('@babel/preset-react'), { development }],
-      require('@babel/env', { targets: { node: 6 } }),
     ],
     plugins: [
-      require('lodash'),
       // Stage 0
       require('@babel/plugin-proposal-function-bind'),
 
