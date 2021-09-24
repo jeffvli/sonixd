@@ -110,3 +110,11 @@ export const AddPlaylistButton = ({ ...rest }) => {
     </StyledIconButton>
   );
 };
+
+export const RefreshButton = ({ ...rest }) => {
+  return (
+    <StyledIconButton icon={<Icon icon="refresh2" />} tabIndex={0} {...rest}>
+      Refresh
+    </StyledIconButton>
+  );
+};

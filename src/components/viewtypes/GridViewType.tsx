@@ -134,7 +134,7 @@ const GridViewType = ({ data, cardTitle, cardSubtitle, playClick, size, cacheTyp
       {({ height, width }: any) => (
         <ListWrapper
           height={height}
-          itemCount={data.length}
+          itemCount={data?.length}
           width={width}
           data={data}
           cardTitle={cardTitle}
