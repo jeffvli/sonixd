@@ -2,8 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
-import arrayMove from 'array-move';
-import { areConsecutive, consecutiveRanges } from '../shared/utils';
+import {
+  moveSelectedDown,
+  moveSelectedToBottom,
+  moveSelectedToTop,
+  moveSelectedUp,
+} from '../shared/utils';
 import { mockSettings } from '../shared/mockSettings';
 
 const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
@@ -896,41 +900,14 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    moveUp: (state, action: PayloadAction<number[]>) => {
+    moveToTop: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
       const currentEntry = entrySelect(state);
-
-      // Create a copy of the queue so we can mutate it in place with arrayMove.mutate
-      const tempQueue = state[currentEntry].slice();
-
-      // Ascending index is needed to move the indexes in order
-      const selectedIndexesAsc = action.payload.sort((a, b) => a - b);
-      const cr = consecutiveRanges(selectedIndexesAsc);
-
-      // Handle case when index hits 0
-      if (
-        !(
-          selectedIndexesAsc.includes(0) &&
-          areConsecutive(selectedIndexesAsc, selectedIndexesAsc.length)
-        )
-      ) {
-        selectedIndexesAsc.map((index) => {
-          if (cr[0]?.includes(0)) {
-            if (!cr[0]?.includes(index) && index !== 0) {
-              return arrayMove.mutate(tempQueue, index, index - 1);
-            }
-          } else if (index !== 0) {
-            return arrayMove.mutate(tempQueue, index, index - 1);
-          }
-
-          return undefined;
-        });
-      }
-
-      state[currentEntry] = tempQueue;
+      const newQueue = moveSelectedToTop(state[currentEntry], action.payload.selectedEntries);
+      state[currentEntry] = newQueue;
 
       // We'll need to fix the current player index after swapping the queue order
       // This will be used in conjunction with fixPlayer2Index
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(tempQueue, state.currentSongUniqueId);
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(newQueue, state.currentSongUniqueId);
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;
@@ -941,41 +918,54 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    moveDown: (state, action: PayloadAction<number[]>) => {
+    moveToBottom: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
       const currentEntry = entrySelect(state);
-
-      // Create a copy of the queue so we can mutate it in place with arrayMove.mutate
-      const tempQueue = state[currentEntry].slice();
-
-      // Descending index is needed to move the indexes in order
-      const cr = consecutiveRanges(action.payload.sort((a, b) => a - b));
-      const selectedIndexesDesc = action.payload.sort((a, b) => b - a);
-
-      // Handle case when index hits the end
-      if (
-        !(
-          selectedIndexesDesc.includes(tempQueue.length - 1) &&
-          areConsecutive(selectedIndexesDesc, selectedIndexesDesc.length)
-        )
-      ) {
-        selectedIndexesDesc.map((index) => {
-          if (cr[0]?.includes(tempQueue.length - 1)) {
-            if (!cr[0]?.includes(index) && index !== tempQueue.length - 1) {
-              return arrayMove.mutate(tempQueue, index, index + 1);
-            }
-          } else if (index !== tempQueue.length - 1) {
-            return arrayMove.mutate(tempQueue, index, index + 1);
-          }
-
-          return undefined;
-        });
-      }
-
-      state[currentEntry] = tempQueue;
+      const newQueue = moveSelectedToBottom(state[currentEntry], action.payload.selectedEntries);
+      state[currentEntry] = newQueue;
 
       // We'll need to fix the current player index after swapping the queue order
       // This will be used in conjunction with fixPlayer2Index
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(tempQueue, state.currentSongUniqueId);
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(newQueue, state.currentSongUniqueId);
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
+    },
+
+    moveUp: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+      const currentEntry = entrySelect(state);
+      state[currentEntry] = moveSelectedUp(state[currentEntry], action.payload.selectedEntries);
+
+      // We'll need to fix the current player index after swapping the queue order
+      // This will be used in conjunction with fixPlayer2Index
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        state[currentEntry],
+        state.currentSongUniqueId
+      );
+
+      if (state.currentPlayer === 1) {
+        state.player1.index = newCurrentSongIndex;
+      } else {
+        state.player2.index = newCurrentSongIndex;
+      }
+
+      state.currentIndex = newCurrentSongIndex;
+    },
+
+    moveDown: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+      const currentEntry = entrySelect(state);
+      state[currentEntry] = moveSelectedDown(state[currentEntry], action.payload.selectedEntries);
+
+      // We'll need to fix the current player index after swapping the queue order
+      // This will be used in conjunction with fixPlayer2Index
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        state[currentEntry],
+        state.currentSongUniqueId
+      );
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;
@@ -1006,6 +996,8 @@ export const {
   clearPlayQueue,
   setIsLoading,
   setIsLoaded,
+  moveToTop,
+  moveToBottom,
   moveUp,
   moveDown,
   moveToIndex,

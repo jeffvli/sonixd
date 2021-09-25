@@ -158,7 +158,7 @@ export const ContextMenuWindow = styled.div<{
   top: ${(props) => `${props.yPos}px`};
   left: ${(props) => `${props.xPos}px`};
   height: ${(props) =>
-    `${props.numOfButtons * 30 + props.numOfDividers * 2 + (props.hasTitle ? 16 : 0)}px`};
+    `${props.numOfButtons * 30 + props.numOfDividers * 1.5 + (props.hasTitle ? 16 : 0)}px`};
   width: ${(props) => `${props.width}px`};
   margin: 0px;
   white-space: normal;

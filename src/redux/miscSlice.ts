@@ -19,7 +19,8 @@ type ContextMenuOptions =
   | 'removeFromCurrent'
   | 'addToPlaylist'
   | 'addToFavorites'
-  | 'removeFromFavorites';
+  | 'removeFromFavorites'
+  | 'moveSelectedTo';
 
 export interface ContextMenu {
   show: boolean;

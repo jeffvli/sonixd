@@ -2,6 +2,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import moment from 'moment';
+import arrayMove from 'array-move';
 import settings from 'electron-settings';
 import { mockSettings } from './mockSettings';
 
@@ -216,9 +217,120 @@ export const consecutiveRanges = (a: number[]) => {
   return list;
 };
 
-export const moveToIndex = (entryData: any, selectedEntries: any, moveBeforeId: string) => {
-  const uniqueIds: any[] = [];
-  selectedEntries.map((entry: any) => uniqueIds.push(entry.uniqueId));
+export const moveSelectedUp = (entryData: any[], selectedEntries: any[]) => {
+  // Ascending index is needed to move the indexes in order
+  const selectedIndices = selectedEntries.map((selected: any) => {
+    return entryData.findIndex((item: any) => item.uniqueId === selected.uniqueId);
+  });
+
+  const selectedIndexesAsc = selectedIndices.sort((a: number, b: number) => a - b);
+  const cr = consecutiveRanges(selectedIndexesAsc);
+
+  // Handle case when index hits 0
+  if (
+    !(
+      selectedIndexesAsc.includes(0) &&
+      areConsecutive(selectedIndexesAsc, selectedIndexesAsc.length)
+    )
+  ) {
+    selectedIndexesAsc.map((index: number) => {
+      if (cr[0]?.includes(0)) {
+        if (!cr[0]?.includes(index) && index !== 0) {
+          return arrayMove.mutate(entryData, index, index - 1);
+        }
+      } else if (index !== 0) {
+        return arrayMove.mutate(entryData, index, index - 1);
+      }
+
+      return undefined;
+    });
+  }
+
+  return entryData;
+};
+
+export const moveSelectedDown = (entryData: any[], selectedEntries: any[]) => {
+  // Descending index is needed to move the indexes in order
+  const selectedIndices = selectedEntries.map((selected: any) => {
+    return entryData.findIndex((item: any) => item.uniqueId === selected.uniqueId);
+  });
+
+  const cr = consecutiveRanges(selectedIndices.sort((a, b) => a - b));
+  const selectedIndexesDesc = selectedIndices.sort((a, b) => b - a);
+
+  // Handle case when index hits the end
+  if (
+    !(
+      selectedIndexesDesc.includes(entryData.length - 1) &&
+      areConsecutive(selectedIndexesDesc, selectedIndexesDesc.length)
+    )
+  ) {
+    selectedIndexesDesc.map((index) => {
+      if (cr[0]?.includes(entryData.length - 1)) {
+        if (!cr[0]?.includes(index) && index !== entryData.length - 1) {
+          return arrayMove.mutate(entryData, index, index + 1);
+        }
+      } else if (index !== entryData.length - 1) {
+        return arrayMove.mutate(entryData, index, index + 1);
+      }
+
+      return undefined;
+    });
+  }
+
+  return entryData;
+};
+
+export const moveSelectedToTop = (entryData: any, selectedEntries: any) => {
+  const uniqueIds = _.map(selectedEntries, 'uniqueId');
+
+  // Remove the selected entries from the queue
+  const newList = entryData.filter((entry: any) => {
+    return !uniqueIds.includes(entry.uniqueId);
+  });
+
+  // Get the updated entry rowIndexes since dragging an entry multiple times will change the existing selected rowIndex
+  const updatedEntries = selectedEntries.map((entry: any) => {
+    const findIndex = entryData.findIndex((item: any) => item.uniqueId === entry.uniqueId);
+    return { ...entry, rowIndex: findIndex };
+  });
+
+  // Sort the entries by their rowIndex so that we can re-add them in the proper order
+  const sortedEntries = updatedEntries.sort((a: any, b: any) => a.rowIndex - b.rowIndex);
+
+  newList.splice(0, 0, ...sortedEntries);
+
+  return newList;
+};
+
+export const moveSelectedToBottom = (entryData: any, selectedEntries: any) => {
+  const uniqueIds = _.map(selectedEntries, 'uniqueId');
+
+  // Remove the selected entries from the queue
+  const newList = entryData.filter((entry: any) => {
+    return !uniqueIds.includes(entry.uniqueId);
+  });
+
+  // Get the updated entry rowIndexes since dragging an entry multiple times will change the existing selected rowIndex
+  const updatedEntries = selectedEntries.map((entry: any) => {
+    const findIndex = entryData.findIndex((item: any) => item.uniqueId === entry.uniqueId);
+    return { ...entry, rowIndex: findIndex };
+  });
+
+  // Sort the entries by their rowIndex so that we can re-add them in the proper order
+  const sortedEntries = updatedEntries.sort((a: any, b: any) => a.rowIndex - b.rowIndex);
+
+  newList.push(...sortedEntries);
+
+  return newList;
+};
+
+export const moveSelectedToIndex = (
+  entryData: any,
+  selectedEntries: any,
+  moveBeforeId: string | number
+) => {
+  const uniqueIds = _.map(selectedEntries, 'uniqueId');
 
   // Remove the selected entries from the queue
   const newList = entryData.filter((entry: any) => {
@@ -290,4 +402,16 @@ export const getUpdatedEntryRowIndex = (selectedEntries: any, entryData: any) =>
 
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const getCurrentEntryList = (playQueue: any) => {
+  if (playQueue.sortedEntry.length > 0) {
+    return 'sortedEntry';
+  }
+
+  if (playQueue.shuffle) {
+    return 'shuffledEntry';
+  }
+
+  return 'entry';
 };

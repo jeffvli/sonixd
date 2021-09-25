@@ -129,7 +129,7 @@ const StarredView = () => {
           }}
           listType="music"
           virtualized
-          disabledContextMenuOptions={['removeFromCurrent']}
+          disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
         />
       )}
       {currentPage === 'Albums' && (
@@ -149,7 +149,7 @@ const StarredView = () => {
               }}
               listType="album"
               virtualized
-              disabledContextMenuOptions={['removeFromCurrent']}
+              disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
             />
           )}
           {viewType === 'grid' && (

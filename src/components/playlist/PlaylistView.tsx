@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
@@ -40,7 +41,6 @@ import {
   errorMessages,
   getRecoveryPath,
   isFailedResponse,
-  moveToIndex,
 } from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
@@ -51,6 +51,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
 import { StyledButton, StyledCheckbox, StyledInputGroup } from '../shared/styled';
+import { moveToIndex, setPlaylistData } from '../../redux/playlistSlice';
 
 interface PlaylistParams {
   id: string;
@@ -59,6 +60,7 @@ interface PlaylistParams {
 const PlaylistView = ({ ...rest }) => {
   const [isModified, setIsModified] = useState(false);
   const dispatch = useAppDispatch();
+  const playlist = useAppSelector((state) => state.playlist);
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const misc = useAppSelector((state) => state.misc);
@@ -78,11 +80,10 @@ const PlaylistView = ({ ...rest }) => {
   const [editDescription, setEditDescription] = useState('');
   const [editPublic, setEditPublic] = useState(false);
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
-  const [localPlaylistData, setLocalPlaylistData] = useState(data);
   const [searchQuery, setSearchQuery] = useState('');
   const [recoveryPath, setRecoveryPath] = useState('');
   const [needsRecovery, setNeedsRecovery] = useState(false);
-  const filteredData = useSearchQuery(searchQuery, localPlaylistData, ['title', 'artist', 'album']);
+  const filteredData = useSearchQuery(searchQuery, playlist.entry, ['title', 'artist', 'album']);
 
   useEffect(() => {
     const recoveryFilePath = path.join(getRecoveryPath(), `playlist_${data?.id}.json`);
@@ -93,19 +94,19 @@ const PlaylistView = ({ ...rest }) => {
 
   useEffect(() => {
     // Set the local playlist data on any changes
-    setLocalPlaylistData(data?.song);
+    dispatch(setPlaylistData(data?.song));
     setEditName(data?.name);
     setEditDescription(data?.comment);
     setEditPublic(data?.public);
-  }, [data]);
+  }, [data, dispatch]);
 
   useEffect(() => {
-    if (data?.song !== localPlaylistData) {
+    if (!_.isEqual(data?.song, playlist.entry)) {
       setIsModified(true);
     } else {
       setIsModified(false);
     }
-  }, [data?.song, localPlaylistData]);
+  }, [data?.song, playlist.entry]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -117,7 +118,7 @@ const PlaylistView = ({ ...rest }) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : localPlaylistData));
+          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : playlist.entry));
         }
       }, 100);
     }
@@ -130,7 +131,7 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(clearSelected());
     dispatch(
       setPlayQueueByRowClick({
-        entries: localPlaylistData,
+        entries: playlist.entry,
         currentIndex: e.rowIndex,
         currentSongId: e.id,
         uniqueSongId: e.uniqueId,
@@ -141,12 +142,12 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handlePlay = () => {
-    dispatch(setPlayQueue({ entries: localPlaylistData }));
+    dispatch(setPlayQueue({ entries: playlist.entry }));
     dispatch(setStatus('PLAYING'));
   };
 
   const handlePlayAppend = () => {
-    dispatch(appendPlayQueue({ entries: localPlaylistData }));
+    dispatch(appendPlayQueue({ entries: playlist.entry }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
@@ -159,7 +160,7 @@ const PlaylistView = ({ ...rest }) => {
       let res;
       const playlistData = recovery
         ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
-        : localPlaylistData;
+        : playlist.entry;
 
       // Smaller playlists can use the safe /createPlaylist method of saving
       if (playlistData.length <= 400 && !recovery) {
@@ -244,8 +245,8 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {
-      setLocalPlaylistData(
-        moveToIndex(localPlaylistData, multiSelect.selected, multiSelect.currentMouseOverId)
+      dispatch(
+        moveToIndex({ entries: multiSelect.selected, moveBeforeId: multiSelect.currentMouseOverId })
       );
       dispatch(setIsDragging(false));
     }
@@ -282,13 +283,13 @@ const PlaylistView = ({ ...rest }) => {
                     appearance="primary"
                     size="lg"
                     onClick={handlePlay}
-                    disabled={localPlaylistData?.length < 1}
+                    disabled={playlist.entry?.length < 1}
                   />
                   <PlayAppendButton
                     appearance="primary"
                     size="lg"
                     onClick={handlePlayAppend}
-                    disabled={localPlaylistData?.length < 1}
+                    disabled={playlist.entry?.length < 1}
                   />
                   <SaveButton
                     size="lg"
@@ -307,7 +308,7 @@ const PlaylistView = ({ ...rest }) => {
                     disabled={
                       needsRecovery || !isModified || misc.isProcessingPlaylist.includes(data?.id)
                     }
-                    onClick={() => setLocalPlaylistData(data?.song)}
+                    onClick={() => dispatch(setPlaylistData(data?.song))}
                   />
                   <Whisper
                     ref={editTriggerRef}
@@ -387,7 +388,7 @@ const PlaylistView = ({ ...rest }) => {
       }
     >
       <ListViewType
-        data={searchQuery !== '' ? filteredData : localPlaylistData}
+        data={searchQuery !== '' ? filteredData : playlist.entry}
         tableColumns={settings.getSync('musicListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
