@@ -72,9 +72,7 @@ const PlaylistView = ({ ...rest }) => {
   const { isLoading, isError, data, error }: any = useQuery(
     ['playlist', playlistId],
     () => getPlaylist(playlistId),
-    {
-      refetchOnWindowFocus: multiSelect.selected.length < 1 || !isModified,
-    }
+    { refetchOnWindowFocus: false }
   );
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -294,7 +292,7 @@ const PlaylistView = ({ ...rest }) => {
                   <SaveButton
                     size="lg"
                     text={needsRecovery ? 'Recover playlist' : undefined}
-                    color={needsRecovery ? 'red' : isModified ? 'green' : undefined}
+                    color={needsRecovery ? 'red' : undefined}
                     disabled={
                       (!needsRecovery && !isModified) ||
                       misc.isProcessingPlaylist.includes(data?.id)
@@ -304,7 +302,7 @@ const PlaylistView = ({ ...rest }) => {
                   />
                   <UndoButton
                     size="lg"
-                    color={needsRecovery ? 'red' : isModified ? 'green' : undefined}
+                    color={needsRecovery ? 'red' : undefined}
                     disabled={
                       needsRecovery || !isModified || misc.isProcessingPlaylist.includes(data?.id)
                     }
