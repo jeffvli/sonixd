@@ -26,12 +26,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import GenericPage from '../layout/GenericPage';
 import { StyledCheckbox, StyledIconButton } from '../shared/styled';
 import { MiniViewContainer } from './styled';
-import {
-  DeselectAllButton,
-  MoveDownButton,
-  MoveManualButton,
-  MoveUpButton,
-} from '../selectionbar/SelectionButtons';
+import { DeselectAllButton, MoveDownButton, MoveUpButton } from '../selectionbar/SelectionButtons';
 import { getCurrentEntryList } from '../../shared/utils';
 
 const NowPlayingMiniView = () => {
@@ -85,23 +80,11 @@ const NowPlayingMiniView = () => {
   };
 
   const handleUpClick = () => {
-    const selectedIndexes: any[] = [];
-    multiSelect.selected.map((selected: any) => {
-      return selectedIndexes.push(
-        playQueue.entry.findIndex((item: any) => item.id === selected.id)
-      );
-    });
-    dispatch(moveUp(selectedIndexes));
+    dispatch(moveUp({ selectedEntries: multiSelect.selected }));
   };
 
   const handleDownClick = () => {
-    const selectedIndexes: any[] = [];
-    multiSelect.selected.map((selected: any) => {
-      return selectedIndexes.push(
-        playQueue.entry.findIndex((item: any) => item.id === selected.id)
-      );
-    });
-    dispatch(moveDown(selectedIndexes));
+    dispatch(moveDown({ selectedEntries: multiSelect.selected }));
   };
 
   const handleDragEnd = () => {
@@ -156,18 +139,32 @@ const NowPlayingMiniView = () => {
                           }
                         }}
                       />
+                      {multiSelect.selected.length > 0 && (
+                        <>
+                          <MoveUpButton
+                            handleClick={() => {
+                              dispatch(moveUp({ selectedEntries: multiSelect.selected }));
+
+                              if (playQueue.currentPlayer === 1) {
+                                dispatch(fixPlayer2Index());
+                              }
+                            }}
+                          />
+                          <MoveDownButton
+                            handleClick={() => {
+                              dispatch(moveDown({ selectedEntries: multiSelect.selected }));
+
+                              if (playQueue.currentPlayer === 1) {
+                                dispatch(fixPlayer2Index());
+                              }
+                            }}
+                          />
+                          <DeselectAllButton />
+                        </>
+                      )}
                     </ButtonToolbar>
                   </FlexboxGrid.Item>
-                  {multiSelect.selected.length > 0 && (
-                    <FlexboxGrid.Item>
-                      <ButtonToolbar>
-                        <MoveUpButton />
-                        <MoveDownButton />
-                        <MoveManualButton />
-                        <DeselectAllButton />
-                      </ButtonToolbar>
-                    </FlexboxGrid.Item>
-                  )}
+
                   <FlexboxGrid.Item>
                     <StyledCheckbox
                       defaultChecked={playQueue.scrollWithCurrentSong}

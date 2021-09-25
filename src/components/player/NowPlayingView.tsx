@@ -4,8 +4,6 @@ import { ButtonToolbar } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
-  moveUp,
-  moveDown,
   setPlayerIndex,
   setPlayerVolume,
   fixPlayer2Index,
@@ -88,26 +86,6 @@ const NowPlayingView = () => {
     dispatch(setStatus('PLAYING'));
   };
 
-  const handleUpClick = () => {
-    const selectedIndexes: any[] = [];
-    multiSelect.selected.map((selected: any) => {
-      return selectedIndexes.push(
-        playQueue.entry.findIndex((item: any) => item.id === selected.id)
-      );
-    });
-    dispatch(moveUp(selectedIndexes));
-  };
-
-  const handleDownClick = () => {
-    const selectedIndexes: any[] = [];
-    multiSelect.selected.map((selected: any) => {
-      return selectedIndexes.push(
-        playQueue.entry.findIndex((item: any) => item.id === selected.id)
-      );
-    });
-    dispatch(moveDown(selectedIndexes));
-  };
-
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {
       dispatch(
@@ -122,10 +100,6 @@ const NowPlayingView = () => {
       }
     }
   };
-
-  if (!playQueue) {
-    return <PageLoader />;
-  }
 
   return (
     <GenericPage
@@ -188,28 +162,30 @@ const NowPlayingView = () => {
         />
       }
     >
-      <ListViewType
-        ref={tableRef}
-        data={searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]}
-        currentIndex={playQueue.currentIndex}
-        tableColumns={settings.getSync('musicListColumns')}
-        handleRowClick={handleRowClick}
-        handleRowDoubleClick={handleRowDoubleClick}
-        handleUpClick={handleUpClick}
-        handleDownClick={handleDownClick}
-        handleDragEnd={handleDragEnd}
-        virtualized
-        rowHeight={Number(settings.getSync('musicListRowHeight'))}
-        fontSize={Number(settings.getSync('musicListFontSize'))}
-        cacheImages={{
-          enabled: settings.getSync('cacheImages'),
-          cacheType: 'album',
-          cacheIdProperty: 'albumId',
-        }}
-        listType="music"
-        nowPlaying
-        dnd
-      />
+      {!playQueue ? (
+        <PageLoader />
+      ) : (
+        <ListViewType
+          ref={tableRef}
+          data={searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]}
+          currentIndex={playQueue.currentIndex}
+          tableColumns={settings.getSync('musicListColumns')}
+          handleRowClick={handleRowClick}
+          handleRowDoubleClick={handleRowDoubleClick}
+          handleDragEnd={handleDragEnd}
+          virtualized
+          rowHeight={Number(settings.getSync('musicListRowHeight'))}
+          fontSize={Number(settings.getSync('musicListFontSize'))}
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'album',
+            cacheIdProperty: 'albumId',
+          }}
+          listType="music"
+          nowPlaying
+          dnd
+        />
+      )}
     </GenericPage>
   );
 };

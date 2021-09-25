@@ -82,10 +82,6 @@ const StarredView = () => {
     history.push(`/library/album/${e.id}`);
   };
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
-
   if (isError) {
     return <span>Error: {error.message}</span>;
   }
@@ -114,62 +110,68 @@ const StarredView = () => {
         />
       }
     >
-      {currentPage === 'Tracks' && (
-        <ListViewType
-          data={searchQuery !== '' ? filteredData : data.song}
-          tableColumns={settings.getSync('musicListColumns')}
-          handleRowClick={handleRowClick}
-          handleRowDoubleClick={handleRowDoubleClick}
-          rowHeight={Number(settings.getSync('musicListRowHeight'))}
-          fontSize={settings.getSync('musicListFontSize')}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'album',
-            cacheIdProperty: 'albumId',
-          }}
-          listType="music"
-          virtualized
-          disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
-        />
-      )}
-      {currentPage === 'Albums' && (
+      {isLoading ? (
+        <PageLoader />
+      ) : (
         <>
-          {viewType === 'list' && (
+          {currentPage === 'Tracks' && (
             <ListViewType
-              data={searchQuery !== '' ? filteredData : data.album}
-              tableColumns={settings.getSync('albumListColumns')}
-              rowHeight={Number(settings.getSync('albumListRowHeight'))}
-              fontSize={settings.getSync('albumListFontSize')}
+              data={searchQuery !== '' ? filteredData : data.song}
+              tableColumns={settings.getSync('musicListColumns')}
               handleRowClick={handleRowClick}
-              handleRowDoubleClick={handleRowDoubleClickAlbum}
+              handleRowDoubleClick={handleRowDoubleClick}
+              rowHeight={Number(settings.getSync('musicListRowHeight'))}
+              fontSize={settings.getSync('musicListFontSize')}
               cacheImages={{
                 enabled: settings.getSync('cacheImages'),
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
-              listType="album"
+              listType="music"
               virtualized
               disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
             />
           )}
-          {viewType === 'grid' && (
-            <GridViewType
-              data={searchQuery === '' ? data.album : filteredData}
-              cardTitle={{
-                prefix: '/library/album',
-                property: 'name',
-                urlProperty: 'albumId',
-              }}
-              cardSubtitle={{
-                prefix: 'artist',
-                property: 'artist',
-                urlProperty: 'artistId',
-                unit: '',
-              }}
-              playClick={{ type: 'album', idProperty: 'id' }}
-              size={Number(settings.getSync('gridCardSize'))}
-              cacheType="album"
-            />
+          {currentPage === 'Albums' && (
+            <>
+              {viewType === 'list' && (
+                <ListViewType
+                  data={searchQuery !== '' ? filteredData : data.album}
+                  tableColumns={settings.getSync('albumListColumns')}
+                  rowHeight={Number(settings.getSync('albumListRowHeight'))}
+                  fontSize={settings.getSync('albumListFontSize')}
+                  handleRowClick={handleRowClick}
+                  handleRowDoubleClick={handleRowDoubleClickAlbum}
+                  cacheImages={{
+                    enabled: settings.getSync('cacheImages'),
+                    cacheType: 'album',
+                    cacheIdProperty: 'albumId',
+                  }}
+                  listType="album"
+                  virtualized
+                  disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
+                />
+              )}
+              {viewType === 'grid' && (
+                <GridViewType
+                  data={searchQuery === '' ? data.album : filteredData}
+                  cardTitle={{
+                    prefix: '/library/album',
+                    property: 'name',
+                    urlProperty: 'albumId',
+                  }}
+                  cardSubtitle={{
+                    prefix: 'artist',
+                    property: 'artist',
+                    urlProperty: 'artistId',
+                    unit: '',
+                  }}
+                  playClick={{ type: 'album', idProperty: 'id' }}
+                  size={Number(settings.getSync('gridCardSize'))}
+                  cacheType="album"
+                />
+              )}
+            </>
           )}
         </>
       )}
