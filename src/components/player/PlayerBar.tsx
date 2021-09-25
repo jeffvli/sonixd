@@ -33,6 +33,7 @@ import { star, unstar } from '../../api/api';
 import placeholderImg from '../../img/placeholder.jpg';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
+import { getCurrentEntryList } from '../../shared/utils';
 
 const keyCodes = {
   SPACEBAR: 32,
@@ -55,14 +56,8 @@ const PlayerBar = () => {
   const history = useHistory();
 
   useEffect(() => {
-    if (playQueue.sortedEntry.length > 0) {
-      setCurrentEntryList('sortedEntry');
-    } else if (playQueue.shuffle) {
-      setCurrentEntryList('shuffledEntry');
-    } else {
-      setCurrentEntryList('entry');
-    }
-  }, [playQueue.shuffle, playQueue.sortedEntry.length]);
+    setCurrentEntryList(getCurrentEntryList(playQueue));
+  }, [playQueue]);
 
   useEffect(() => {
     // Handle volume slider dragging

@@ -32,6 +32,7 @@ import {
   MoveManualButton,
   MoveUpButton,
 } from '../selectionbar/SelectionButtons';
+import { getCurrentEntryList } from '../../shared/utils';
 
 const NowPlayingMiniView = () => {
   const tableRef = useRef<any>();
@@ -62,15 +63,7 @@ const NowPlayingMiniView = () => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(
-            toggleRangeSelected(
-              playQueue.sortedEntry.length > 0
-                ? playQueue.sortedEntry
-                : playQueue.shuffle
-                ? playQueue.shuffledEntry
-                : playQueue.entry
-            )
-          );
+          dispatch(toggleRangeSelected(playQueue[getCurrentEntryList(playQueue)]));
         }
       }, 100);
     }
@@ -199,13 +192,7 @@ const NowPlayingMiniView = () => {
           >
             <ListViewType
               ref={tableRef}
-              data={
-                playQueue.sortedEntry.length > 0
-                  ? playQueue.sortedEntry
-                  : playQueue.shuffle
-                  ? playQueue.shuffledEntry
-                  : playQueue.entry
-              }
+              data={playQueue[getCurrentEntryList(playQueue)]}
               currentIndex={playQueue.currentIndex}
               tableColumns={settings.getSync('miniListColumns')}
               handleRowClick={handleRowClick}

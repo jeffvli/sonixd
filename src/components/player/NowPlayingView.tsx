@@ -29,6 +29,7 @@ import PageLoader from '../loader/PageLoader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import { ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
 import { StyledCheckbox } from '../shared/styled';
+import { getCurrentEntryList } from '../../shared/utils';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -65,15 +66,7 @@ const NowPlayingView = () => {
           if (searchQuery !== '') {
             dispatch(toggleRangeSelected(filteredData));
           } else {
-            dispatch(
-              toggleRangeSelected(
-                playQueue.sortedEntry.length > 0
-                  ? playQueue.sortedEntry
-                  : playQueue.shuffle
-                  ? playQueue.shuffledEntry
-                  : playQueue.entry
-              )
-            );
+            dispatch(toggleRangeSelected(playQueue[getCurrentEntryList(playQueue)]));
           }
         }
       }, 100);
@@ -197,15 +190,7 @@ const NowPlayingView = () => {
     >
       <ListViewType
         ref={tableRef}
-        data={
-          searchQuery !== ''
-            ? filteredData
-            : playQueue.sortedEntry.length > 0
-            ? playQueue.sortedEntry
-            : playQueue.shuffle
-            ? playQueue.shuffledEntry
-            : playQueue.entry
-        }
+        data={searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]}
         currentIndex={playQueue.currentIndex}
         tableColumns={settings.getSync('musicListColumns')}
         handleRowClick={handleRowClick}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TitleHeader, DragRegion, WindowControl, WindowControlButton } from './styled';
 import { useAppSelector } from '../../redux/hooks';
+import { getCurrentEntryList } from '../../shared/utils';
 
 const Titlebar = ({ font }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -13,12 +14,7 @@ const Titlebar = ({ font }: any) => {
     // Not sure if this is a bug or not, but this is the only workaround unless
     // someone knows of a better solution.
 
-    const currentEntryList =
-      playQueue.sortedEntry.length > 0
-        ? 'sortedEntry'
-        : playQueue.shuffle
-        ? 'shuffledEntry'
-        : 'entry';
+    const currentEntryList = getCurrentEntryList(playQueue);
 
     const playStatus =
       player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0 ? '(Paused)' : '';
