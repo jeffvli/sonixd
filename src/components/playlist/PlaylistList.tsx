@@ -103,6 +103,7 @@ const PlaylistList = () => {
             >
               <AddPlaylistButton
                 size="sm"
+                width={125}
                 onClick={() =>
                   playlistTriggerRef.current.state.isOverlayShown
                     ? playlistTriggerRef.current.close()

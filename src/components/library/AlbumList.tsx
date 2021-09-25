@@ -78,7 +78,7 @@ const AlbumList = () => {
           title="Albums"
           subtitle={
             <ButtonToolbar>
-              <RefreshButton onClick={handleRefresh} loading={isRefreshing} />
+              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
             </ButtonToolbar>
           }
           subsidetitle={
