@@ -368,6 +368,7 @@ export const getArtist = async (id: string, coverArtSize = 150) => {
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
       index,
+      uniqueId: nanoid(),
     })),
   };
 };
