@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import settings from 'electron-settings';
 import fs from 'fs';
 import path from 'path';
-import { InputGroup, Button, Tag, Message, Icon } from 'rsuite';
+import { InputGroup, Button, Tag, Message, Icon, ButtonToolbar, Whisper, Popover } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import { StyledInput, StyledCheckbox } from '../../shared/styled';
 import { getSongCachePath, getImageCachePath } from '../../../shared/utils';
+import { notifyToast } from '../../shared/toast';
 
 const fsUtils = require('nodejs-fs-utils');
 
@@ -31,6 +32,57 @@ const CacheConfig = () => {
       fs.mkdirSync(getImageCachePath(), { recursive: true });
     }
   }, []);
+
+  const handleClearSongCache = () => {
+    const songCachePath = getSongCachePath();
+    fs.readdir(songCachePath, (err, files) => {
+      if (err) {
+        return notifyToast('error', `Unable to scan directory: ${err}`);
+      }
+
+      return files.forEach((file) => {
+        const songPath = path.join(songCachePath, file);
+
+        // Simple validation
+        if (path.extname(songPath) === '.mp3') {
+          fs.unlink(songPath, (error) => {
+            if (err) {
+              return notifyToast('error', `Unable to clear cache item: ${error}`);
+            }
+            return null;
+          });
+        }
+      });
+    });
+  };
+
+  const handleClearImageCache = (type: 'playlist' | 'album') => {
+    const imageCachePath = getImageCachePath();
+    fs.readdir(imageCachePath, (err, files) => {
+      if (err) {
+        return notifyToast('error', `Unable to scan directory: ${err}`);
+      }
+
+      const selectedFiles =
+        type === 'playlist'
+          ? files.filter((file) => file.split('_')[0] === 'playlist')
+          : files.filter((file) => file.split('_')[0] === 'album');
+
+      return selectedFiles.forEach((file) => {
+        const imagePath = path.join(imageCachePath, file);
+
+        // Simple validation
+        if (path.extname(imagePath) === '.jpg') {
+          fs.unlink(imagePath, (error) => {
+            if (err) {
+              return notifyToast('error', `Unable to clear cache item: ${error}`);
+            }
+            return null;
+          });
+        }
+      });
+    });
+  };
 
   return (
     <ConfigPanel header="Cache" bordered>
@@ -117,9 +169,41 @@ const CacheConfig = () => {
             {imgCacheSize} MB {imgCacheSize === 9999999 && '- Folder not found'}
           </Tag>
         </StyledCheckbox>
-        <br />
-        <Button onClick={() => setIsEditingCachePath(true)}>Edit cache location</Button>
       </div>
+      <br />
+      <ButtonToolbar>
+        <Button onClick={() => setIsEditingCachePath(true)}>Edit cache location</Button>
+        <Whisper
+          trigger="click"
+          placement="autoVertical"
+          speaker={
+            <Popover>
+              Which cache would you like to clear?
+              <ButtonToolbar>
+                <Button appearance="primary" size="sm" onClick={handleClearSongCache}>
+                  Songs
+                </Button>
+                <Button
+                  appearance="primary"
+                  size="sm"
+                  onClick={() => handleClearImageCache('playlist')}
+                >
+                  Playlist images
+                </Button>
+                <Button
+                  appearance="primary"
+                  size="sm"
+                  onClick={() => handleClearImageCache('album')}
+                >
+                  Album images
+                </Button>
+              </ButtonToolbar>
+            </Popover>
+          }
+        >
+          <Button>Clear cache</Button>
+        </Whisper>
+      </ButtonToolbar>
     </ConfigPanel>
   );
 };
