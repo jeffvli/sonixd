@@ -33,6 +33,7 @@ import {
   moveToTop as plMoveToTop,
   moveUp as plMoveUp,
   moveDown as plMoveDown,
+  removeFromPlaylist,
 } from '../../redux/playlistSlice';
 import {
   ContextMenuDivider,
@@ -102,18 +103,21 @@ export const GlobalContextMenu = () => {
 
   const handleAddToQueue = () => {
     const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
-
     notifyToast('info', `Added ${multiSelect.selected.length} song(s) to the queue`);
-
     dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
     dispatch(setContextMenu({ show: false }));
   };
 
-  const handleRemoveFromQueue = async () => {
-    dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
-    if (playQueue.currentPlayer === 1) {
-      dispatch(fixPlayer2Index());
+  const handleRemoveFromCurrent = async () => {
+    if (misc.contextMenu.type === 'nowPlaying') {
+      dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+      if (playQueue.currentPlayer === 1) {
+        dispatch(fixPlayer2Index());
+      }
+    } else {
+      dispatch(removeFromPlaylist({ selectedEntries: multiSelect.selected }));
     }
+
     dispatch(setContextMenu({ show: false }));
   };
 
@@ -309,7 +313,7 @@ export const GlobalContextMenu = () => {
           />
           <ContextMenuButton
             text="Remove from current"
-            onClick={handleRemoveFromQueue}
+            onClick={handleRemoveFromCurrent}
             disabled={misc.contextMenu.disabledOptions.includes('removeFromCurrent')}
           />
           <ContextMenuDivider />

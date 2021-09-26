@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import _ from 'lodash';
 import {
   moveSelectedDown,
   moveSelectedToBottom,
@@ -22,6 +23,11 @@ const playlistSlice = createSlice({
   reducers: {
     setPlaylistData: (state, action: PayloadAction<Entry[]>) => {
       state.entry = action.payload;
+    },
+
+    removeFromPlaylist: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+      const uniqueIds = _.map(action.payload.selectedEntries, 'uniqueId');
+      state.entry = state.entry.filter((entry) => !uniqueIds.includes(entry.uniqueId));
     },
 
     moveToIndex: (state, action: PayloadAction<{ entries: Entry[]; moveBeforeId: string }>) => {
@@ -52,6 +58,7 @@ const playlistSlice = createSlice({
 
 export const {
   setPlaylistData,
+  removeFromPlaylist,
   moveToIndex,
   moveUp,
   moveDown,
