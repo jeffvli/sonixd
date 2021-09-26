@@ -130,7 +130,6 @@ const DebugWindow = ({ ...rest }) => {
             </span>
           </li>
           <li>currentSeek: {player.currentSeek.toFixed(2)}</li>
-          <li>currentSeekable: {player.currentSeekable.toFixed(2)}</li>
           <li>volume (global): {playQueue.volume.toFixed(2)}</li>
           <li>volumeFade: {playQueue.volumeFade ? 'true' : 'false'}</li>
           <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
@@ -203,6 +202,7 @@ const DebugWindow = ({ ...rest }) => {
           <li>currentSongId: {playQueue.currentSongId}</li>
           <li>entry: {playQueue.entry.length} tracks</li>
           <li>shuffledEntry: {playQueue.shuffledEntry.length} tracks</li>
+          <li>sortedEntry: {playQueue.sortedEntry.length} tracks</li>
         </ul>
 
         <Divider />
@@ -214,21 +214,16 @@ const DebugWindow = ({ ...rest }) => {
             wordWrap: 'break-word',
           }}
         >
-          <li>
-            lastSelected: [{multiSelect.lastSelected.rowIndex}] {multiSelect.lastSelected.title}{' '}
-            {multiSelect.lastSelected.id}
-          </li>
-          <li>
-            range (start): [{multiSelect.lastRangeSelected.lastSelected.rowIndex}]{' '}
-            {multiSelect.lastRangeSelected.lastSelected.title}{' '}
-            {multiSelect.lastRangeSelected.lastSelected.id}
-          </li>
-          <li>
-            range (end): [{multiSelect.lastRangeSelected.lastRangeSelected.rowIndex}]{' '}
-            {multiSelect.lastRangeSelected.lastRangeSelected.title}{' '}
-            {multiSelect.lastRangeSelected.lastRangeSelected.id}
-          </li>
           <li>selected: {multiSelect.selected.length} rows</li>
+          <li>lastSelected: {multiSelect.lastSelected.title}</li>
+          <li>range (start): {multiSelect.lastRangeSelected.lastSelected.title}</li>
+          <li>range (end): {multiSelect.lastRangeSelected.lastRangeSelected.title}</li>
+          <li>
+            currentMouseOverId (drop): [{multiSelect.currentMouseOverIndex}]{' '}
+            {multiSelect.currentMouseOverId}
+          </li>
+          <li>isDragging: {multiSelect.isDragging ? 'true' : 'false'}</li>
+          <li>isSelectDragging: {multiSelect.isSelectDragging ? 'true' : 'false'}</li>
         </ul>
       </div>
     </Panel>
