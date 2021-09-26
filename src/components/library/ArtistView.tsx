@@ -97,6 +97,7 @@ const ArtistView = ({ ...rest }: any) => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           image={data.image}
@@ -189,6 +190,7 @@ const ArtistView = ({ ...rest }: any) => {
             }}
             listType="album"
             isModal={rest.isModal}
+            disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
           />
         )}
 

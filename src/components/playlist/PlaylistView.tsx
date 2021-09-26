@@ -260,6 +260,7 @@ const PlaylistView = ({ ...rest }) => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           image={data.image}
