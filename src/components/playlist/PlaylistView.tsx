@@ -244,7 +244,10 @@ const PlaylistView = ({ ...rest }) => {
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {
       dispatch(
-        moveToIndex({ entries: multiSelect.selected, moveBeforeId: multiSelect.currentMouseOverId })
+        moveToIndex({
+          selectedEntries: multiSelect.selected,
+          moveBeforeId: multiSelect.currentMouseOverId,
+        })
       );
       dispatch(setIsDragging(false));
     }

@@ -29,6 +29,7 @@ import {
   setStar,
 } from '../../redux/playQueueSlice';
 import {
+  moveToIndex as plMoveToIndex,
   moveToBottom as plMoveToBottom,
   moveToTop as plMoveToTop,
   moveUp as plMoveUp,
@@ -88,6 +89,7 @@ export const GlobalContextMenu = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
+  const playlist = useAppSelector((state) => state.playlist);
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -242,10 +244,21 @@ export const GlobalContextMenu = () => {
   };
 
   const handleMoveSelectedToIndex = () => {
-    const currentEntryList = getCurrentEntryList(playQueue);
-    const uniqueIdOfIndexToMoveTo = playQueue[currentEntryList][indexToMoveTo].uniqueId;
-
-    dispatch(moveToIndex({ entries: multiSelect.selected, moveBeforeId: uniqueIdOfIndexToMoveTo }));
+    if (misc.contextMenu.type === 'nowPlaying') {
+      const currentEntryList = getCurrentEntryList(playQueue);
+      const uniqueIdOfIndexToMoveTo = playQueue[currentEntryList][indexToMoveTo].uniqueId;
+      dispatch(
+        moveToIndex({ entries: multiSelect.selected, moveBeforeId: uniqueIdOfIndexToMoveTo })
+      );
+    } else {
+      const uniqueIdOfIndexToMoveTo = playlist.entry[indexToMoveTo].uniqueId;
+      dispatch(
+        plMoveToIndex({
+          selectedEntries: multiSelect.selected,
+          moveBeforeId: uniqueIdOfIndexToMoveTo,
+        })
+      );
+    }
   };
 
   const handleMoveToTop = () => {
@@ -417,7 +430,11 @@ export const GlobalContextMenu = () => {
                     <StyledInputNumber
                       defaultValue={0}
                       min={0}
-                      max={playQueue[getCurrentEntryList(playQueue)].length}
+                      max={
+                        misc.contextMenu.type === 'nowPlaying'
+                          ? playQueue[getCurrentEntryList(playQueue)].length
+                          : playlist.entry.length
+                      }
                       value={indexToMoveTo}
                       onChange={(e: number) => setIndexToMoveTo(e)}
                     />
@@ -425,8 +442,9 @@ export const GlobalContextMenu = () => {
                       type="submit"
                       onClick={handleMoveSelectedToIndex}
                       disabled={
-                        indexToMoveTo > playQueue[getCurrentEntryList(playQueue)].length ||
-                        indexToMoveTo < 0
+                        (misc.contextMenu.type === 'nowPlaying'
+                          ? indexToMoveTo > playQueue[getCurrentEntryList(playQueue)].length
+                          : indexToMoveTo > playlist.entry.length) || indexToMoveTo < 0
                       }
                     >
                       Go

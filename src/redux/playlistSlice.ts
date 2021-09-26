@@ -30,10 +30,13 @@ const playlistSlice = createSlice({
       state.entry = state.entry.filter((entry) => !uniqueIds.includes(entry.uniqueId));
     },
 
-    moveToIndex: (state, action: PayloadAction<{ entries: Entry[]; moveBeforeId: string }>) => {
+    moveToIndex: (
+      state,
+      action: PayloadAction<{ selectedEntries: Entry[]; moveBeforeId: string }>
+    ) => {
       state.entry = moveSelectedToIndex(
         state.entry,
-        action.payload.entries,
+        action.payload.selectedEntries,
         action.payload.moveBeforeId
       );
     },
