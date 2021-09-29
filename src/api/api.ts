@@ -198,12 +198,14 @@ export const getPlayQueue = async () => {
 
 export const getStarred = async () => {
   const { data } = await api.get(`/getStarred2`);
+
   return {
     ...data.starred2,
     album: (data.starred2.album || []).map((entry: any, index: any) => ({
       ...entry,
       albumId: entry.id,
       image: getCoverArtUrl(entry),
+      starred: entry.starred || undefined,
       type: 'album',
       index,
       uniqueId: nanoid(),
@@ -213,6 +215,17 @@ export const getStarred = async () => {
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
       starred: entry.starred || undefined,
+      type: 'music',
+      index,
+      uniqueId: nanoid(),
+    })),
+    artist: (data.starred2.artist || []).map((entry: any, index: any) => ({
+      ...entry,
+      albumCount: entry.albumCount || undefined,
+      coverArt: getCoverArtUrl(entry),
+      image: getCoverArtUrl(entry),
+      starred: entry.starred || undefined,
+      type: 'artist',
       index,
       uniqueId: nanoid(),
     })),

@@ -66,20 +66,23 @@ const StarredView = () => {
     window.clearTimeout(timeout);
     timeout = null;
     dispatch(clearSelected());
-    dispatch(
-      setPlayQueueByRowClick({
-        entries: data.song,
-        currentIndex: e.index,
-        currentSongId: e.id,
-        uniqueSongId: e.uniqueId,
-      })
-    );
-    dispatch(setStatus('PLAYING'));
-    dispatch(fixPlayer2Index());
-  };
 
-  const handleRowDoubleClickAlbum = (e: any) => {
-    history.push(`/library/album/${e.id}`);
+    if (currentPage === 'Tracks') {
+      dispatch(
+        setPlayQueueByRowClick({
+          entries: data.song,
+          currentIndex: e.index,
+          currentSongId: e.id,
+          uniqueSongId: e.uniqueId,
+        })
+      );
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    } else if (currentPage === 'Albums') {
+      history.push(`/library/album/${e.id}`);
+    } else {
+      history.push(`/library/artist/${e.id}`);
+    }
   };
 
   if (isError) {
@@ -141,7 +144,7 @@ const StarredView = () => {
                   rowHeight={Number(settings.getSync('albumListRowHeight'))}
                   fontSize={settings.getSync('albumListFontSize')}
                   handleRowClick={handleRowClick}
-                  handleRowDoubleClick={handleRowDoubleClickAlbum}
+                  handleRowDoubleClick={handleRowDoubleClick}
                   cacheImages={{
                     enabled: settings.getSync('cacheImages'),
                     cacheType: 'album',
@@ -154,7 +157,7 @@ const StarredView = () => {
               )}
               {viewType === 'grid' && (
                 <GridViewType
-                  data={searchQuery === '' ? data.album : filteredData}
+                  data={searchQuery !== '' ? filteredData : data.album}
                   cardTitle={{
                     prefix: '/library/album',
                     property: 'name',
@@ -165,6 +168,49 @@ const StarredView = () => {
                     property: 'artist',
                     urlProperty: 'artistId',
                     unit: '',
+                  }}
+                  playClick={{ type: 'album', idProperty: 'id' }}
+                  size={Number(settings.getSync('gridCardSize'))}
+                  cacheType="album"
+                />
+              )}
+            </>
+          )}
+          {currentPage === 'Artists' && (
+            <>
+              {viewType === 'list' && (
+                <ListViewType
+                  data={searchQuery !== '' ? filteredData : data.artist}
+                  tableColumns={settings.getSync('artistListColumns')}
+                  rowHeight={Number(settings.getSync('artistListRowHeight'))}
+                  fontSize={settings.getSync('artistListFontSize')}
+                  handleRowClick={handleRowClick}
+                  handleRowDoubleClick={handleRowDoubleClick}
+                  cacheImages={{
+                    enabled: false,
+                    cacheType: 'artist',
+                    cacheIdProperty: 'id',
+                  }}
+                  listType="artist"
+                  virtualized
+                  disabledContextMenuOptions={[
+                    'removeFromCurrent',
+                    'moveSelectedTo',
+                    'addToPlaylist',
+                  ]}
+                />
+              )}
+              {viewType === 'grid' && (
+                <GridViewType
+                  data={searchQuery !== '' ? filteredData : data.artist}
+                  cardTitle={{
+                    prefix: '/library/artist',
+                    property: 'name',
+                    urlProperty: 'id',
+                  }}
+                  cardSubtitle={{
+                    property: 'albumCount',
+                    unit: ' albums',
                   }}
                   playClick={{ type: 'album', idProperty: 'id' }}
                   size={Number(settings.getSync('gridCardSize'))}

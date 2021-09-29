@@ -20,6 +20,8 @@ import {
   albumColumnList,
   playlistColumnPicker,
   playlistColumnList,
+  artistColumnPicker,
+  artistColumnList,
 } from '../ListViewColumns';
 
 const LookAndFeelConfig = () => {
@@ -29,10 +31,12 @@ const LookAndFeelConfig = () => {
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
   const playlistCols: any = settings.getSync('playlistListColumns');
+  const artistCols: any = settings.getSync('artistListColumns');
   const miniCols: any = settings.getSync('miniListColumns');
   const currentSongColumns = songCols?.map((column: any) => column.label) || [];
   const currentAlbumColumns = albumCols?.map((column: any) => column.label) || [];
   const currentPlaylistColumns = playlistCols?.map((column: any) => column.label) || [];
+  const currentArtistColumns = artistCols?.map((column: any) => column.label) || [];
   const currentMiniColumns = miniCols?.map((column: any) => column.label) || [];
 
   return (
@@ -87,6 +91,7 @@ const LookAndFeelConfig = () => {
           <StyledNavItem eventKey="songList">Song List</StyledNavItem>
           <StyledNavItem eventKey="albumList">Album List</StyledNavItem>
           <StyledNavItem eventKey="playlistList">Playlist List</StyledNavItem>
+          <StyledNavItem eventKey="artistList">Artist List</StyledNavItem>
           <StyledNavItem eventKey="miniList">Miniplayer List</StyledNavItem>
         </Nav>
         {currentLAFTab === 'songList' && (
@@ -130,6 +135,21 @@ const LookAndFeelConfig = () => {
             }}
           />
         )}
+
+        {currentLAFTab === 'artistList' && (
+          <ListViewConfig
+            title="Artist List"
+            defaultColumns={currentArtistColumns}
+            columnPicker={artistColumnPicker}
+            columnList={artistColumnList}
+            settingsConfig={{
+              columnList: 'artistListColumns',
+              rowHeight: 'artistListRowHeight',
+              fontSize: 'artistListFontSize',
+            }}
+          />
+        )}
+
         {currentLAFTab === 'miniList' && (
           <ListViewConfig
             title="Miniplayer List"

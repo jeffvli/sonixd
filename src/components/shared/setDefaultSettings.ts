@@ -277,6 +277,59 @@ const setDefaultSettings = (force: boolean) => {
     ]);
   }
 
+  if (force || !settings.hasSync('artistListFontSize')) {
+    settings.setSync('artistListFontSize', '14');
+  }
+
+  if (force || !settings.hasSync('artistListRowHeight')) {
+    settings.setSync('artistListRowHeight', '60.0');
+  }
+
+  if (force || !settings.hasSync('artistListColumns')) {
+    settings.setSync('artistListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: 'Art',
+        dataKey: 'coverart',
+        alignment: 'center',
+        resizable: true,
+        width: 100,
+        label: 'CoverArt',
+      },
+      {
+        id: 'Name',
+        dataKey: 'name',
+        alignment: 'left',
+        resizable: true,
+        width: 300,
+        label: 'Name',
+      },
+      {
+        id: 'Album Count',
+        dataKey: 'albumCount',
+        alignment: 'left',
+        resizable: true,
+        width: 100,
+        label: 'Album Count',
+      },
+      {
+        id: 'Fav',
+        dataKey: 'starred',
+        alignment: 'center',
+        resizable: true,
+        width: 100,
+        label: 'Favorite',
+      },
+    ]);
+  }
+
   if (force || !settings.hasSync('miniListFontSize')) {
     settings.setSync('miniListFontSize', '14');
   }

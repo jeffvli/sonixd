@@ -224,12 +224,13 @@ export const GlobalContextMenu = () => {
   const handleUnfavorite = async () => {
     dispatch(setContextMenu({ show: false }));
 
-    const starredEntries = multiSelect.selected.filter((entry: any) => entry.starred);
-
-    const ids = _.map(starredEntries, 'id');
+    // Run the unstar on all entries regardless of their starred status, since Airsonic
+    // does not output the 'starred' property for starred artists
+    const ids = _.map(multiSelect.selected, 'id');
 
     try {
-      const res = await batchUnstar(ids, starredEntries[0].type);
+      // Infer the type from the first selected entry
+      const res = await batchUnstar(ids, multiSelect.selected[0].type);
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);

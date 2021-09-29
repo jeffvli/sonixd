@@ -470,3 +470,69 @@ export const playlistColumnPicker = [
   { label: 'Track Count' },
   { label: 'Visiblity' },
 ];
+
+export const artistColumnList = [
+  {
+    label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      resizable: true,
+      width: 50,
+      label: '#',
+    },
+  },
+  {
+    label: 'Album Count',
+    value: {
+      id: 'Album Count',
+      dataKey: 'albumCount',
+      alignment: 'left',
+      resizable: true,
+      width: 100,
+      label: 'Album Count',
+    },
+  },
+  {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      resizable: true,
+      width: 100,
+      label: 'CoverArt',
+    },
+  },
+  {
+    label: 'Favorite',
+    value: {
+      id: 'Fav',
+      dataKey: 'starred',
+      alignment: 'center',
+      resizable: true,
+      width: 100,
+      label: 'Favorite',
+    },
+  },
+  {
+    label: 'Name',
+    value: {
+      id: 'Name',
+      dataKey: 'name',
+      alignment: 'left',
+      resizable: true,
+      width: 300,
+      label: 'Name',
+    },
+  },
+];
+
+export const artistColumnPicker = [
+  { label: '#' },
+  { label: 'Album Count' },
+  { label: 'CoverArt' },
+  { label: 'Favorite' },
+  { label: 'Name' },
+];

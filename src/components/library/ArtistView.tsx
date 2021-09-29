@@ -2,12 +2,11 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
-import { PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
-import { getArtist, getArtistInfo } from '../../api/api';
+import { FavoriteButton, PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
+import { getArtist, getArtistInfo, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
   setRangeSelected,
@@ -22,7 +21,6 @@ import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
 import { TagLink } from './styled';
-import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 
 interface ArtistParams {
@@ -31,12 +29,11 @@ interface ArtistParams {
 
 const ArtistView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const history = useHistory();
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
-
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
-
   const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
     getArtist(artistId)
   );
@@ -69,18 +66,20 @@ const ArtistView = ({ ...rest }: any) => {
   const handleRowDoubleClick = (e: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-
     dispatch(clearSelected());
-    dispatch(
-      setPlayQueueByRowClick({
-        entries: data.album,
-        currentIndex: e.index,
-        currentSongId: e.id,
-        uniqueSongId: e.uniqueId,
-      })
-    );
-    dispatch(setStatus('PLAYING'));
-    dispatch(fixPlayer2Index());
+    history.push(`/library/album/${e.id}`);
+  };
+
+  const handleFavorite = async () => {
+    if (!data.starred) {
+      await star(data.id, 'artist');
+    } else {
+      await unstar(data.id, 'artist');
+    }
+    await queryClient.refetchQueries(['artist', artistId], {
+      active: true,
+      exact: true,
+    });
   };
 
   if (isLoading || isLoadingAI) {
@@ -90,7 +89,7 @@ const ArtistView = ({ ...rest }: any) => {
   if (isError || isErrorAI) {
     return (
       <span>
-        Error: {error.message} {errorAI.message}
+        Error: {error?.message} {errorAI?.message}
       </span>
     );
   }
@@ -125,6 +124,7 @@ const ArtistView = ({ ...rest }: any) => {
                 <ButtonToolbar>
                   <PlayButton appearance="primary" size="lg" />
                   <PlayAppendButton appearance="primary" size="lg" />
+                  <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
                   <Whisper
                     placement="bottomStart"
                     trigger="hover"

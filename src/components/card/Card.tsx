@@ -191,7 +191,9 @@ const Card = ({
                 {rest.subtitle}
               </CardSubtitleButton>
             ) : (
-              <CardSubtitle cardsize={size}>{rest.subtitle}</CardSubtitle>
+              <CardSubtitle cardsize={size}>
+                {rest.subtitle !== 'undefined' ? rest.subtitle : <span>&#8203;</span>}
+              </CardSubtitle>
             )}
           </InfoSpan>
         </InfoPanel>
