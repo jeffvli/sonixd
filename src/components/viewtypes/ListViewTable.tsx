@@ -132,6 +132,7 @@ const ListViewTable = ({
   const handleSelectMouseDown = (e: any, rowData: any) => {
     // If ctrl or shift is used, we want to ignore this drag selection handler
     // and use the ones provided in handleRowClick
+    dispatch(setContextMenu({ show: false }));
     if (e.button === 0 && !e.ctrlKey && !e.shiftKey) {
       if (
         multiSelect.selected.length === 1 &&
@@ -262,7 +263,7 @@ const ListViewTable = ({
 
           // Use the calculated ContextMenu height
           // numOfButtons * 30 + props.numOfDividers * 1.5
-          const contextMenuHeight = 8 * 30 + 4 * 1.5;
+          const contextMenuHeight = 7 * 30 + 3 * 1.5;
           if (e.pageY + contextMenuHeight >= window.innerHeight) {
             pageY = e.pageY - contextMenuHeight;
           } else {
