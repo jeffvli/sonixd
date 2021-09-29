@@ -404,11 +404,9 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={8}
-          numOfDividers={4}
+          numOfButtons={7}
+          numOfDividers={3}
         >
-          <ContextMenuButton text={`Selected: ${multiSelect.selected?.length || 0}`} disabled />
-          <ContextMenuDivider />
           <ContextMenuButton
             text="Add to queue"
             onClick={handleAddToQueue}
