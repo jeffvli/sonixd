@@ -250,6 +250,25 @@ const ListViewTable = ({
         onSortColumn={handleSortColumn}
         onRowContextMenu={(rowData: any, e: any) => {
           e.preventDefault();
+
+          let pageX;
+          let pageY;
+          // Use ContextMenu width from the component
+          if (e.pageX + 190 >= window.innerWidth) {
+            pageX = e.pageX - 190;
+          } else {
+            pageX = e.pageX;
+          }
+
+          // Use the calculated ContextMenu height
+          // numOfButtons * 30 + props.numOfDividers * 1.5
+          const contextMenuHeight = 8 * 30 + 4 * 1.5;
+          if (e.pageY + contextMenuHeight >= window.innerHeight) {
+            pageY = e.pageY - contextMenuHeight;
+          } else {
+            pageY = e.pageY;
+          }
+
           if (
             (misc.contextMenu.show === false || misc.contextMenu.rowId !== rowData.uniqueId) &&
             multiSelect.selected.filter((entry: any) => entry.uniqueId === rowData.uniqueId)
@@ -258,17 +277,23 @@ const ListViewTable = ({
             dispatch(
               setContextMenu({
                 show: true,
-                xPos: e.pageX,
-                yPos: e.pageY,
+                xPos: pageX,
+                yPos: pageY,
                 rowId: rowData.uniqueId,
                 type: nowPlaying ? 'nowPlaying' : multiSelect.selected[0].type,
                 disabledOptions: disabledContextMenuOptions || [],
               })
             );
           } else {
+            dispatch(setSelectedSingle(rowData));
             dispatch(
               setContextMenu({
-                show: false,
+                show: true,
+                xPos: pageX,
+                yPos: pageY,
+                rowId: rowData.uniqueId,
+                type: nowPlaying ? 'nowPlaying' : multiSelect.selected[0].type,
+                disabledOptions: disabledContextMenuOptions || [],
               })
             );
           }
