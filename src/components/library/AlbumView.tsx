@@ -197,7 +197,7 @@ const AlbumView = ({ ...rest }: any) => {
         }}
         listType="music"
         isModal={rest.isModal}
-        disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
+        disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
       />
     </GenericPage>
   );

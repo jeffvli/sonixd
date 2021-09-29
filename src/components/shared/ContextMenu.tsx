@@ -10,6 +10,9 @@ import {
   createPlaylist,
   batchStar,
   batchUnstar,
+  getAlbum,
+  getPlaylist,
+  deletePlaylist,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -93,7 +96,8 @@ export const GlobalContextMenu = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
-  const playlistTriggerRef = useRef<any>();
+  const addToPlaylistTriggerRef = useRef<any>();
+  const deletePlaylistTriggerRef = useRef<any>();
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('');
   const [shouldCreatePlaylist, setShouldCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
@@ -103,11 +107,33 @@ export const GlobalContextMenu = () => {
     refetchOnWindowFocus: false,
   });
 
-  const handleAddToQueue = () => {
-    const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
-    notifyToast('info', `Added ${multiSelect.selected.length} song(s) to the queue`);
-    dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
+  const handleAddToQueue = async () => {
     dispatch(setContextMenu({ show: false }));
+    const promises = [];
+
+    if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
+      const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
+      dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
+      notifyToast('info', `Added ${multiSelect.selected.length} song(s) to the queue`);
+    } else if (misc.contextMenu.type === 'playlist') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(getPlaylist(multiSelect.selected[i].id));
+      }
+
+      const res = await Promise.all(promises);
+      const songs = _.flatten(_.map(res, 'song'));
+      dispatch(appendPlayQueue({ entries: songs }));
+      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+    } else if (misc.contextMenu.type === 'album') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(getAlbum(multiSelect.selected[i].id));
+      }
+
+      const res = await Promise.all(promises);
+      const songs = _.flatten(_.map(res, 'song'));
+      dispatch(appendPlayQueue({ entries: songs }));
+      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+    }
   };
 
   const handleRemoveFromCurrent = async () => {
@@ -123,46 +149,109 @@ export const GlobalContextMenu = () => {
     dispatch(setContextMenu({ show: false }));
   };
 
+  const playlistSuccessToast = (songCount: number, playlistId: string) => {
+    notifyToast(
+      'success',
+      <>
+        <p>
+          Added {songCount} song(s) to playlist &quot;
+          {playlists.find((pl: any) => pl.id === playlistId)?.name}
+          &quot;
+        </p>
+        <StyledButton
+          appearance="link"
+          onClick={() => {
+            history.push(`/playlist/${playlistId}`);
+            dispatch(setContextMenu({ show: false }));
+          }}
+        >
+          Go to playlist
+        </StyledButton>
+      </>
+    );
+  };
+
   const handleAddToPlaylist = async () => {
     // If the window is closed, the selectedPlaylistId will be deleted
+    const promises = [];
+    let res;
+    let songs;
     const localSelectedPlaylistId = selectedPlaylistId;
     dispatch(addProcessingPlaylist(selectedPlaylistId));
 
-    const sortedEntries = [...multiSelect.selected].sort(
-      (a: any, b: any) => a.rowIndex - b.rowIndex
-    );
-
     try {
-      const res = await updatePlaylistSongsLg(localSelectedPlaylistId, sortedEntries);
+      if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
+        songs = [...multiSelect.selected].sort((a: any, b: any) => a.rowIndex - b.rowIndex);
 
-      if (isFailedResponse(res)) {
-        notifyToast('error', errorMessages(res)[0]);
-      } else {
-        notifyToast(
-          'success',
-          <>
-            <p>
-              Added {sortedEntries.length} song(s) to playlist &quot;
-              {playlists.find((pl: any) => pl.id === localSelectedPlaylistId)?.name}
-              &quot;
-            </p>
-            <StyledButton
-              appearance="link"
-              onClick={() => {
-                history.push(`/playlist/${localSelectedPlaylistId}`);
-                dispatch(setContextMenu({ show: false }));
-              }}
-            >
-              Go to playlist
-            </StyledButton>
-          </>
-        );
+        res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
+
+        if (isFailedResponse(res)) {
+          notifyToast('error', errorMessages(res)[0]);
+        } else {
+          playlistSuccessToast(songs.length, localSelectedPlaylistId);
+        }
+      } else if (misc.contextMenu.type === 'playlist') {
+        for (let i = 0; i < multiSelect.selected.length; i += 1) {
+          promises.push(getPlaylist(multiSelect.selected[i].id));
+        }
+
+        res = await Promise.all(promises);
+        songs = _.flatten(_.map(res, 'song'));
+        res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
+
+        if (isFailedResponse(res)) {
+          notifyToast('error', errorMessages(res)[0]);
+        } else {
+          playlistSuccessToast(songs.length, localSelectedPlaylistId);
+        }
+      } else if (misc.contextMenu.type === 'album') {
+        for (let i = 0; i < multiSelect.selected.length; i += 1) {
+          promises.push(getAlbum(multiSelect.selected[i].id));
+        }
+
+        res = await Promise.all(promises);
+        songs = _.flatten(_.map(res, 'song'));
+        res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
+
+        if (isFailedResponse(res)) {
+          notifyToast('error', errorMessages(res)[0]);
+        } else {
+          playlistSuccessToast(songs.length, localSelectedPlaylistId);
+        }
       }
     } catch (err) {
       notifyToast('error', err);
     }
 
+    await queryClient.refetchQueries(['playlists'], {
+      active: true,
+    });
+
     dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
+  };
+
+  const handleDeletePlaylist = async () => {
+    dispatch(setContextMenu({ show: false }));
+
+    // Navidrome throws internal server error when using Promise.all() so we do it sequentially
+    const res = [];
+    for (let i = 0; i < multiSelect.selected.length; i += 1) {
+      try {
+        res.push(await deletePlaylist(multiSelect.selected[i].id));
+      } catch (err) {
+        notifyToast('error', err);
+      }
+    }
+
+    if (isFailedResponse(res)) {
+      notifyToast('error', errorMessages(res)[0]);
+    } else {
+      notifyToast('info', `Deleted ${multiSelect.selected.length} playlist(s)`);
+    }
+
+    await queryClient.refetchQueries(['playlists'], {
+      active: true,
+    });
   };
 
   const handleCreatePlaylist = async () => {
@@ -315,10 +404,10 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={7}
+          numOfButtons={8}
           numOfDividers={4}
         >
-          <ContextMenuButton text={`Selected: ${multiSelect.selected.length}`} disabled />
+          <ContextMenuButton text={`Selected: ${multiSelect.selected?.length || 0}`} disabled />
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to queue"
@@ -333,7 +422,7 @@ export const GlobalContextMenu = () => {
           <ContextMenuDivider />
 
           <Whisper
-            ref={playlistTriggerRef}
+            ref={addToPlaylistTriggerRef}
             enterable
             placement="autoHorizontalStart"
             trigger="none"
@@ -400,13 +489,38 @@ export const GlobalContextMenu = () => {
             <ContextMenuButton
               text="Add to playlist"
               onClick={() =>
-                playlistTriggerRef.current.state.isOverlayShown
-                  ? playlistTriggerRef.current.close()
-                  : playlistTriggerRef.current.open()
+                addToPlaylistTriggerRef.current.state.isOverlayShown
+                  ? addToPlaylistTriggerRef.current.close()
+                  : addToPlaylistTriggerRef.current.open()
               }
               disabled={misc.contextMenu.disabledOptions.includes('addToPlaylist')}
             />
           </Whisper>
+          <Whisper
+            ref={deletePlaylistTriggerRef}
+            enterable
+            placement="autoHorizontalStart"
+            trigger="none"
+            speaker={
+              <StyledPopover>
+                <p>Are you sure you want to delete {multiSelect.selected?.length} playlist(s)?</p>
+                <StyledButton onClick={handleDeletePlaylist} appearance="link">
+                  Yes
+                </StyledButton>
+              </StyledPopover>
+            }
+          >
+            <ContextMenuButton
+              text="Delete playlist(s)"
+              onClick={() =>
+                deletePlaylistTriggerRef.current.state.isOverlayShown
+                  ? deletePlaylistTriggerRef.current.close()
+                  : deletePlaylistTriggerRef.current.open()
+              }
+              disabled={misc.contextMenu.disabledOptions.includes('deletePlaylist')}
+            />
+          </Whisper>
+
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to favorites"
@@ -433,8 +547,8 @@ export const GlobalContextMenu = () => {
                       min={0}
                       max={
                         misc.contextMenu.type === 'nowPlaying'
-                          ? playQueue[getCurrentEntryList(playQueue)].length
-                          : playlist.entry.length
+                          ? playQueue[getCurrentEntryList(playQueue)]?.length
+                          : playlist.entry?.length
                       }
                       value={indexToMoveTo}
                       onChange={(e: number) => setIndexToMoveTo(e)}
@@ -444,8 +558,8 @@ export const GlobalContextMenu = () => {
                       onClick={handleMoveSelectedToIndex}
                       disabled={
                         (misc.contextMenu.type === 'nowPlaying'
-                          ? indexToMoveTo > playQueue[getCurrentEntryList(playQueue)].length
-                          : indexToMoveTo > playlist.entry.length) || indexToMoveTo < 0
+                          ? indexToMoveTo > playQueue[getCurrentEntryList(playQueue)]?.length
+                          : indexToMoveTo > playlist.entry?.length) || indexToMoveTo < 0
                       }
                     >
                       Go

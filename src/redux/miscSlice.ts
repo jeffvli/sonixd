@@ -18,6 +18,7 @@ type ContextMenuOptions =
   | 'addToQueue'
   | 'removeFromCurrent'
   | 'addToPlaylist'
+  | 'deletePlaylist'
   | 'addToFavorites'
   | 'removeFromFavorites'
   | 'moveSelectedTo';

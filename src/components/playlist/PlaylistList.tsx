@@ -14,9 +14,16 @@ import { StyledButton, StyledInputGroup } from '../shared/styled';
 import { errorMessages, isFailedResponse } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { AddPlaylistButton } from '../shared/ToolbarButtons';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import {
+  clearSelected,
+  setRangeSelected,
+  toggleRangeSelected,
+  toggleSelected,
+} from '../../redux/multiSelectSlice';
 
 const PlaylistList = () => {
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -49,7 +56,27 @@ const PlaylistList = () => {
     }
   };
 
-  const handleRowClick = (_e: any, rowData: any) => {
+  let timeout: any = null;
+  const handleRowClick = (e: any, rowData: any) => {
+    if (timeout === null) {
+      timeout = window.setTimeout(() => {
+        timeout = null;
+
+        if (e.ctrlKey) {
+          dispatch(toggleSelected(rowData));
+        } else if (e.shiftKey) {
+          dispatch(setRangeSelected(rowData));
+          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : playlists));
+        }
+      }, 100);
+    }
+  };
+
+  const handleRowDoubleClick = (rowData: any) => {
+    window.clearTimeout(timeout);
+    timeout = null;
+
+    dispatch(clearSelected());
     history.push(`playlist/${rowData.id}`);
   };
 
@@ -136,6 +163,7 @@ const PlaylistList = () => {
                 })
           }
           handleRowClick={handleRowClick}
+          handleRowDoubleClick={handleRowDoubleClick}
           tableColumns={settings.getSync('playlistListColumns')}
           rowHeight={Number(settings.getSync('playlistListRowHeight'))}
           fontSize={settings.getSync('playlistListFontSize')}
@@ -146,6 +174,12 @@ const PlaylistList = () => {
           }}
           listType="playlist"
           virtualized
+          disabledContextMenuOptions={[
+            'moveSelectedTo',
+            'addToFavorites',
+            'removeFromFavorites',
+            'removeFromCurrent',
+          ]}
         />
       )}
       {viewType === 'grid' && (

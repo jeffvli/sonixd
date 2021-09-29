@@ -132,7 +132,7 @@ const StarredView = () => {
               }}
               listType="music"
               virtualized
-              disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
+              disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
             />
           )}
           {currentPage === 'Albums' && (
@@ -152,7 +152,11 @@ const StarredView = () => {
                   }}
                   listType="album"
                   virtualized
-                  disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
+                  disabledContextMenuOptions={[
+                    'removeFromCurrent',
+                    'moveSelectedTo',
+                    'deletePlaylist',
+                  ]}
                 />
               )}
               {viewType === 'grid' && (
@@ -197,6 +201,7 @@ const StarredView = () => {
                     'removeFromCurrent',
                     'moveSelectedTo',
                     'addToPlaylist',
+                    'deletePlaylist',
                   ]}
                 />
               )}

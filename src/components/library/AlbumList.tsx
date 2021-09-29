@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
+import { useHistory } from 'react-router';
 import GridViewType from '../viewtypes/GridViewType';
 import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -14,6 +15,7 @@ import {
   toggleSelected,
   setRangeSelected,
   toggleRangeSelected,
+  clearSelected,
 } from '../../redux/multiSelectSlice';
 import { StyledInputPicker } from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
@@ -29,6 +31,7 @@ const ALBUM_SORT_TYPES = [
 
 const AlbumList = () => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortBy, setSortBy] = useState('random');
@@ -63,6 +66,14 @@ const AlbumList = () => {
         }
       }, 100);
     }
+  };
+
+  const handleRowDoubleClick = (rowData: any) => {
+    window.clearTimeout(timeout);
+    timeout = null;
+
+    dispatch(clearSelected());
+    history.push(`/library/album/${rowData.id}`);
   };
 
   const handleRefresh = async () => {
@@ -116,6 +127,7 @@ const AlbumList = () => {
           rowHeight={Number(settings.getSync('albumListRowHeight'))}
           fontSize={settings.getSync('albumListFontSize')}
           handleRowClick={handleRowClick}
+          handleRowDoubleClick={handleRowDoubleClick}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',
@@ -123,6 +135,7 @@ const AlbumList = () => {
           }}
           listType="album"
           virtualized
+          disabledContextMenuOptions={['moveSelectedTo', 'removeFromCurrent', 'deletePlaylist']}
         />
       )}
 

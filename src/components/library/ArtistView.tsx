@@ -190,7 +190,7 @@ const ArtistView = ({ ...rest }: any) => {
             }}
             listType="album"
             isModal={rest.isModal}
-            disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo']}
+            disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
           />
         )}
 

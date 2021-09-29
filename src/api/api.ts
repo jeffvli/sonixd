@@ -148,6 +148,7 @@ export const getPlaylists = async (sortBy: string) => {
     ...playlist,
     name: playlist.name,
     image: playlist.songCount > 0 ? getCoverArtUrl(playlist) : 'img/placeholder.jpg',
+    type: 'playlist',
     uniqueId: nanoid(),
   }));
 };
@@ -161,6 +162,7 @@ export const getPlaylist = async (id: string) => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry),
+      type: 'music',
       index,
       uniqueId: nanoid(),
     })),
@@ -323,6 +325,7 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
       ...entry,
       streamUrl: getStreamUrl(entry.id),
       image: getCoverArtUrl(entry, coverArtSize),
+      type: 'music',
       starred: entry.starred || undefined,
       index,
       uniqueId: nanoid(),
@@ -375,9 +378,11 @@ export const getArtist = async (id: string, coverArtSize = 150) => {
   return {
     ...data.artist,
     image: getCoverArtUrl(data.artist, coverArtSize),
+    type: 'artist',
     album: (data.artist.album || []).map((entry: any, index: any) => ({
       ...entry,
       albumId: entry.id,
+      type: 'album',
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
       index,

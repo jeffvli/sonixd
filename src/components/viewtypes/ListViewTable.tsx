@@ -261,7 +261,7 @@ const ListViewTable = ({
                 xPos: e.pageX,
                 yPos: e.pageY,
                 rowId: rowData.uniqueId,
-                type: nowPlaying ? 'nowPlaying' : 'other',
+                type: nowPlaying ? 'nowPlaying' : multiSelect.selected[0].type,
                 disabledOptions: disabledContextMenuOptions || [],
               })
             );

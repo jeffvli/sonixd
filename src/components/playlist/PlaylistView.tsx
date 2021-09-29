@@ -406,6 +406,7 @@ const PlaylistView = ({ ...rest }) => {
         listType="music"
         dnd
         isModal={rest.isModal}
+        disabledContextMenuOptions={['deletePlaylist']}
       />
     </GenericPage>
   );

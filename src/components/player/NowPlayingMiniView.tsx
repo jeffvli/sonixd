@@ -209,6 +209,7 @@ const NowPlayingMiniView = () => {
               miniView
               nowPlaying
               dnd
+              disabledContextMenuOptions={['deletePlaylist']}
             />
           </GenericPage>
         </MiniViewContainer>

@@ -184,6 +184,7 @@ const NowPlayingView = () => {
           listType="music"
           nowPlaying
           dnd
+          disabledContextMenuOptions={['deletePlaylist']}
         />
       )}
     </GenericPage>
