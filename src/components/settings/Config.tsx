@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Whisper, Popover } from 'rsuite';
+import { Button, Whisper, Popover, Nav, ButtonToolbar } from 'rsuite';
 import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import setDefaultSettings from '../shared/setDefaultSettings';
-import { HeaderButton } from '../shared/styled';
+import { StyledButton, StyledNavItem } from '../shared/styled';
 import PlaybackConfig from './ConfigPanels/PlaybackConfig';
 import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';
 import PlayerConfig from './ConfigPanels/PlayerConfig';
@@ -15,7 +15,7 @@ import DebugConfig from './ConfigPanels/DebugConfig';
 const Config = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
-  const [requiresReload] = useState(false);
+  const [page, setPage] = useState('playback');
 
   useEffect(() => {
     // Check scan status on render
@@ -58,7 +58,17 @@ const Config = () => {
           title="Config"
           subtitle={
             <>
-              <HeaderButton
+              <Nav activeKey={page} onSelect={(e) => setPage(e)}>
+                <StyledNavItem eventKey="playback">Playback</StyledNavItem>
+                <StyledNavItem eventKey="lookandfeel">Look & Feel</StyledNavItem>
+                <StyledNavItem eventKey="other">Other</StyledNavItem>
+              </Nav>
+            </>
+          }
+          sidetitle={<DisconnectButton />}
+          subsidetitle={
+            <ButtonToolbar>
+              <StyledButton
                 size="sm"
                 onClick={async () => {
                   startScan();
@@ -67,9 +77,10 @@ const Config = () => {
                 disabled={isScanning}
               >
                 {isScanning ? `Scanning: ${scanProgress}` : 'Scan Library'}
-              </HeaderButton>
+              </StyledButton>
               <Whisper
                 trigger="click"
+                placement="auto"
                 speaker={
                   <Popover title="Confirm">
                     <div>Are you sure you want to reset your settings to default?</div>
@@ -90,28 +101,28 @@ const Config = () => {
                   </Popover>
                 }
               >
-                <HeaderButton size="sm">Reset defaults</HeaderButton>
+                <StyledButton size="sm">Reset defaults</StyledButton>
               </Whisper>
-            </>
-          }
-          sidetitle={<DisconnectButton />}
-          subsidetitle={
-            <Button
-              color={requiresReload ? 'red' : undefined}
-              size="sm"
-              onClick={() => window.location.reload()}
-            >
-              Reload window {requiresReload ? '(pending)' : ''}
-            </Button>
+            </ButtonToolbar>
           }
         />
       }
     >
-      <PlaybackConfig />
-      <LookAndFeelConfig />
-      <PlayerConfig />
-      <CacheConfig />
-      <DebugConfig />
+      {page === 'playback' && (
+        <>
+          <PlaybackConfig />
+          <PlayerConfig />
+        </>
+      )}
+
+      {page === 'lookandfeel' && <LookAndFeelConfig />}
+
+      {page === 'other' && (
+        <>
+          <CacheConfig />
+          <DebugConfig />
+        </>
+      )}
     </GenericPage>
   );
 };
