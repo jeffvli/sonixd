@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
 import { ButtonToolbar, Form, Input, Popover, Whisper } from 'rsuite';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -51,7 +52,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
 import { StyledButton, StyledCheckbox, StyledInputGroup } from '../shared/styled';
-import { moveToIndex, setPlaylistData } from '../../redux/playlistSlice';
+import { moveToIndex, removeFromPlaylist, setPlaylistData } from '../../redux/playlistSlice';
 
 interface PlaylistParams {
   id: string;
@@ -82,6 +83,17 @@ const PlaylistView = ({ ...rest }) => {
   const [recoveryPath, setRecoveryPath] = useState('');
   const [needsRecovery, setNeedsRecovery] = useState(false);
   const filteredData = useSearchQuery(searchQuery, playlist.entry, ['title', 'artist', 'album']);
+
+  useHotkeys(
+    'del',
+    () => {
+      const selectedType = multiSelect.selected[0].type;
+      if (selectedType === 'music') {
+        dispatch(removeFromPlaylist({ selectedEntries: multiSelect.selected }));
+      }
+    },
+    [multiSelect.selected]
+  );
 
   useEffect(() => {
     const recoveryFilePath = path.join(getRecoveryPath(), `playlist_${data?.id}.json`);

@@ -6,6 +6,7 @@ import _ from 'lodash';
 import path from 'path';
 import settings from 'electron-settings';
 import { useQueryClient } from 'react-query';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { nanoid } from 'nanoid';
 import { Table, Grid, Row, Col } from 'rsuite';
 import { useHistory } from 'react-router';
@@ -24,6 +25,7 @@ import { fixPlayer2Index, setSort, setStar, sortPlayQueue } from '../../redux/pl
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
+  appendSelected,
   clearSelected,
   setCurrentMouseOverId,
   setIsDragging,
@@ -66,6 +68,20 @@ const ListViewTable = ({
   const [sortType, setSortType] = useState<any>();
   const [sortedData, setSortedData] = useState(data);
   const [sortedCount, setSortedCount] = useState(0);
+
+  useHotkeys(
+    'ctrl+a',
+    (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (multiSelect.selected.length === data.length) {
+        dispatch(clearSelected());
+      } else {
+        dispatch(clearSelected());
+        dispatch(appendSelected(sortColumn && !nowPlaying ? sortedData : data));
+      }
+    },
+    [multiSelect.selected, data]
+  );
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -20,6 +21,7 @@ import {
   toggleShuffle,
   moveToIndex,
   setPlaybackSetting,
+  removeFromPlayQueue,
 } from '../../redux/playQueueSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import ListViewType from '../viewtypes/ListViewType';
@@ -34,6 +36,24 @@ const NowPlayingMiniView = () => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+
+  useHotkeys(
+    'del',
+    () => {
+      if (multiSelect.selected.length === playQueue.entry.length) {
+        // Clear the queue instead of removing individually
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+        setTimeout(() => dispatch(resetPlayer()), 200);
+      } else {
+        dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+        if (playQueue.currentPlayer === 1) {
+          dispatch(fixPlayer2Index());
+        }
+      }
+    },
+    [multiSelect.selected]
+  );
 
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {

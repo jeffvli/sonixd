@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -12,6 +13,7 @@ import {
   toggleShuffle,
   moveToIndex,
   setPlaybackSetting,
+  removeFromPlayQueue,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -19,6 +21,7 @@ import {
   toggleRangeSelected,
   clearSelected,
   setIsDragging,
+  appendSelected,
 } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -35,8 +38,26 @@ const NowPlayingView = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [searchQuery, setSearchQuery] = useState('');
-
   const filteredData = useSearchQuery(searchQuery, playQueue.entry, ['title', 'artist', 'album']);
+
+  useHotkeys(
+    'del',
+    (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (multiSelect.selected.length === playQueue.entry.length) {
+        // Clear the queue instead of removing individually
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+        setTimeout(() => dispatch(resetPlayer()), 200);
+      } else {
+        dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+        if (playQueue.currentPlayer === 1) {
+          dispatch(fixPlayer2Index());
+        }
+      }
+    },
+    [multiSelect.selected]
+  );
 
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {

@@ -93,14 +93,14 @@ const multiSelectSlice = createSlice({
       state.selected.push(action.payload);
     },
 
-    appendSelected: (state, action: PayloadAction<Entry>) => {
-      const alreadySelected = state.selected.find(
-        (item) => item.uniqueId === action.payload.uniqueId
-      );
+    appendSelected: (state, action: PayloadAction<Entry[]>) => {
+      action.payload.forEach((entry: Entry) => {
+        const alreadySelected = state.selected.find((item) => item.uniqueId === entry.uniqueId);
 
-      if (!alreadySelected) {
-        state.selected.push(action.payload);
-      }
+        if (!alreadySelected) {
+          state.selected.push(entry);
+        }
+      });
     },
 
     setRangeSelected: (state, action: PayloadAction<any>) => {
