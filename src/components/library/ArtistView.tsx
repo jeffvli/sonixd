@@ -5,7 +5,7 @@ import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import { FavoriteButton, PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
-import { getArtist, getArtistInfo, star, unstar } from '../../api/api';
+import { getAllArtistSongs, getArtist, getArtistInfo, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -22,6 +22,8 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
 import { TagLink } from './styled';
 import { addModalPage } from '../../redux/miscSlice';
+import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
+import { notifyToast } from '../shared/toast';
 
 interface ArtistParams {
   id: string;
@@ -82,6 +84,18 @@ const ArtistView = ({ ...rest }: any) => {
     });
   };
 
+  const handlePlay = async () => {
+    const songs = await getAllArtistSongs(data.id);
+    dispatch(setPlayQueue({ entries: songs }));
+    notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+  };
+
+  const handlePlayAppend = async () => {
+    const songs = await getAllArtistSongs(data.id);
+    dispatch(appendPlayQueue({ entries: songs }));
+    notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+  };
+
   if (isLoading || isLoadingAI) {
     return <PageLoader />;
   }
@@ -122,8 +136,8 @@ const ArtistView = ({ ...rest }: any) => {
               </CustomTooltip>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton appearance="primary" size="lg" />
-                  <PlayAppendButton appearance="primary" size="lg" />
+                  <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
+                  <PlayAppendButton appearance="primary" size="lg" onClick={handlePlayAppend} />
                   <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
                   <Whisper
                     placement="bottomStart"

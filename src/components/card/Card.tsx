@@ -5,7 +5,7 @@ import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import cacheImage from '../shared/cacheImage';
-import { getAlbum, getPlaylist, star, unstar } from '../../api/api';
+import { getAlbum, getPlaylist, star, unstar, getAllArtistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import { isCached, getImageCachePath } from '../../shared/utils';
@@ -27,6 +27,7 @@ import {
 } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
+import { notifyToast } from '../shared/toast';
 
 const Card = ({
   onClick,
@@ -57,31 +58,47 @@ const Card = ({
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
       dispatch(setPlayQueue({ entries: res.song }));
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
+      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
     }
 
-    if (playClick.type === 'album' || playClick.type === 'artist') {
+    if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
       dispatch(setPlayQueue({ entries: res.song }));
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
+      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
     }
+
+    if (playClick.type === 'artist') {
+      const songs = await getAllArtistSongs(playClick.id);
+      dispatch(setPlayQueue({ entries: songs }));
+      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+    }
+
+    dispatch(setStatus('PLAYING'));
+    dispatch(fixPlayer2Index());
   };
 
   const handlePlayAppend = async () => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
       dispatch(appendPlayQueue({ entries: res.song }));
+      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
     }
 
-    if (playClick.type === 'album' || playClick.type === 'artist') {
+    if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
       dispatch(appendPlayQueue({ entries: res.song }));
+      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
     }
 
-    if (playQueue.entry.length < 1) {
+    if (playClick.type === 'artist') {
+      const songs = await getAllArtistSongs(playClick.id);
+      dispatch(appendPlayQueue({ entries: songs }));
+      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+    }
+
+    if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
       dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
     }
   };
 

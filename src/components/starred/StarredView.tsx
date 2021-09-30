@@ -217,9 +217,9 @@ const StarredView = () => {
                     property: 'albumCount',
                     unit: ' albums',
                   }}
-                  playClick={{ type: 'album', idProperty: 'id' }}
+                  playClick={{ type: 'artist', idProperty: 'id' }}
                   size={Number(settings.getSync('gridCardSize'))}
-                  cacheType="album"
+                  cacheType="artist"
                 />
               )}
             </>

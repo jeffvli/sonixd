@@ -21,7 +21,6 @@ import {
   toggleRangeSelected,
   clearSelected,
   setIsDragging,
-  appendSelected,
 } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';

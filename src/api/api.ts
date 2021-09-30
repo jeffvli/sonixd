@@ -404,6 +404,18 @@ export const getArtistInfo = async (id: string, count = 10) => {
   };
 };
 
+export const getAllArtistSongs = async (id: string) => {
+  const promises = [];
+  const artist = await getArtist(id);
+
+  for (let i = 0; i < artist.album.length; i += 1) {
+    promises.push(getAlbum(artist.album[i].id));
+  }
+
+  const res = await Promise.all(promises);
+  return _.flatten(_.map(res, 'song'));
+};
+
 export const startScan = async () => {
   const { data } = await api.get(`/startScan`);
   const scanStatus = data?.scanStatus;

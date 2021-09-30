@@ -13,6 +13,7 @@ import {
   getAlbum,
   getPlaylist,
   deletePlaylist,
+  getAllArtistSongs,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -52,6 +53,7 @@ import {
 } from './styled';
 import { notifyToast } from './toast';
 import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
+import { setStatus } from '../../redux/playerSlice';
 
 export const ContextMenuButton = ({ text, hotkey, children, ...rest }: any) => {
   return (
@@ -133,6 +135,18 @@ export const GlobalContextMenu = () => {
       const songs = _.flatten(_.map(res, 'song'));
       dispatch(appendPlayQueue({ entries: songs }));
       notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+    } else if (misc.contextMenu.type === 'artist') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(getAllArtistSongs(multiSelect.selected[i].id));
+      }
+
+      const res = await Promise.all(promises);
+      dispatch(appendPlayQueue({ entries: _.flatten(res) }));
+    }
+
+    if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
     }
   };
 
