@@ -62,7 +62,7 @@ const NowPlayingView = () => {
     if (playQueue.scrollWithCurrentSong) {
       setTimeout(() => {
         const rowHeight = Number(settings.getSync('musicListRowHeight'));
-        tableRef?.current.table.current?.scrollTop(
+        tableRef?.current?.table.current?.scrollTop(
           rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
             ? rowHeight * playQueue.currentIndex - rowHeight * 2
             : 0
