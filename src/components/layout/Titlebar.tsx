@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TitleHeader, DragRegion, WindowControl, WindowControlButton } from './styled';
 import { useAppSelector } from '../../redux/hooks';
 import { getCurrentEntryList } from '../../shared/utils';
+import logo from '../../../assets/icon.png';
 
 const Titlebar = ({ font }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -9,11 +10,6 @@ const Titlebar = ({ font }: any) => {
   const [title, setTitle] = useState(document.title);
 
   useEffect(() => {
-    // We are using an interval to set the title instead of redux because jest
-    // throws an error on render that this component is not wrapped in a redux provider.
-    // Not sure if this is a bug or not, but this is the only workaround unless
-    // someone knows of a better solution.
-
     const currentEntryList = getCurrentEntryList(playQueue);
 
     const playStatus =
@@ -32,7 +28,10 @@ const Titlebar = ({ font }: any) => {
     <TitleHeader id="titlebar" font={font}>
       <DragRegion id="drag-region">
         <div id="window-title-wrapper">
-          <span id="window-title">{title}</span>
+          <span id="window-title">
+            <img src={logo} height="20px" width="20px" alt="" style={{ marginRight: '5px' }} />
+            {title}
+          </span>
         </div>
         <WindowControl id="window-controls">
           <WindowControlButton minButton className="button" id="min-button">
