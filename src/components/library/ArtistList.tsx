@@ -58,7 +58,7 @@ const ArtistList = () => {
     timeout = null;
 
     dispatch(clearSelected());
-    history.push(`artist/${rowData.id}`);
+    history.push(`/library/artist/${rowData.id}`);
   };
 
   const handleRefresh = async () => {
@@ -69,6 +69,7 @@ const ArtistList = () => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           title="Artists"
