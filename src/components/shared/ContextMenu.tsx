@@ -168,12 +168,10 @@ export const GlobalContextMenu = () => {
   const playlistSuccessToast = (songCount: number, playlistId: string) => {
     notifyToast(
       'success',
+      `Added ${songCount} song(s) to playlist ${
+        playlists.find((pl: any) => pl.id === playlistId)?.name
+      }`,
       <>
-        <p>
-          Added {songCount} song(s) to playlist &quot;
-          {playlists.find((pl: any) => pl.id === playlistId)?.name}
-          &quot;
-        </p>
         <StyledButton
           appearance="link"
           onClick={() => {

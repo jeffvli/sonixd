@@ -1,8 +1,13 @@
 import { Notification } from 'rsuite';
 
-export const notifyToast = (type: 'info' | 'success' | 'warning' | 'error', message: any) => {
+export const notifyToast = (
+  type: 'info' | 'success' | 'warning' | 'error',
+  message: any,
+  description?: any
+) => {
   Notification[type]({
-    title: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
-    description: message,
+    title: message,
+    description,
+    duration: type === 'info' ? 1500 : type === 'success' ? 2500 : 3000,
   });
 };
