@@ -82,7 +82,14 @@ const PlaylistView = ({ ...rest }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [recoveryPath, setRecoveryPath] = useState('');
   const [needsRecovery, setNeedsRecovery] = useState(false);
-  const filteredData = useSearchQuery(searchQuery, playlist.entry, ['title', 'artist', 'album']);
+  const filteredData = useSearchQuery(searchQuery, playlist.entry, [
+    'title',
+    'artist',
+    'album',
+    'year',
+    'genre',
+    'path',
+  ]);
 
   useHotkeys(
     'del',

@@ -51,7 +51,9 @@ const AlbumView = ({ ...rest }: any) => {
     'title',
     'artist',
     'album',
+    'year',
     'genre',
+    'path',
   ]);
 
   let timeout: any = null;

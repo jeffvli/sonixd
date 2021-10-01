@@ -37,7 +37,7 @@ const PlaylistList = () => {
     { refetchOnWindowFocus: multiSelect.selected.length < 1 }
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, playlists, ['name', 'comment']);
+  const filteredData = useSearchQuery(searchQuery, playlists, ['name', 'comment', 'owner']);
 
   const handleCreatePlaylist = async (name: string) => {
     try {

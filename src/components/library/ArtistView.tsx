@@ -47,7 +47,12 @@ const ArtistView = ({ ...rest }: any) => {
   }: any = useQuery(['artistInfo', artistId], () => getArtistInfo(artistId, 8));
 
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.album, ['name', 'artist']);
+  const filteredData = useSearchQuery(searchQuery, data?.album, [
+    'name',
+    'artist',
+    'genre',
+    'year',
+  ]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {

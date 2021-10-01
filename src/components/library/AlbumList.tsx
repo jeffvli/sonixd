@@ -50,7 +50,7 @@ const AlbumList = () => {
     }
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, albums, ['name', 'artist']);
+  const filteredData = useSearchQuery(searchQuery, albums, ['name', 'artist', 'genre', 'year']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {

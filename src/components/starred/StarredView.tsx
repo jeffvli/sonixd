@@ -33,8 +33,12 @@ const StarredView = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
     searchQuery,
-    currentPage === 'Tracks' ? data?.song : currentPage === 'Albums' ? data?.album : data?.song,
-    ['title', 'artist', 'album', 'name', 'genre']
+    currentPage === 'Tracks' ? data?.song : currentPage === 'Albums' ? data?.album : data?.artist,
+    currentPage === 'Tracks'
+      ? ['title', 'artist', 'album', 'name', 'genre']
+      : currentPage === 'Albums'
+      ? ['name', 'artist', 'genre', 'year']
+      : ['name']
   );
 
   let timeout: any = null;

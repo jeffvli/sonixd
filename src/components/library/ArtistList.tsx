@@ -35,7 +35,7 @@ const ArtistList = () => {
     }
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, artists, ['name', 'artist']);
+  const filteredData = useSearchQuery(searchQuery, artists, ['name']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
