@@ -141,7 +141,9 @@ export const GlobalContextMenu = () => {
       }
 
       const res = await Promise.all(promises);
-      dispatch(appendPlayQueue({ entries: _.flatten(res) }));
+      const songs = _.flatten(res);
+      dispatch(appendPlayQueue({ entries: songs }));
+      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
     }
 
     if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
