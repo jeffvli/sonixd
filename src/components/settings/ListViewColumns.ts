@@ -92,7 +92,7 @@ export const songColumnList = [
     value: {
       id: 'Path',
       dataKey: 'path',
-      alignment: 'center',
+      alignment: 'left',
       resizable: true,
       width: 200,
       label: 'Path',
