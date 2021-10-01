@@ -362,6 +362,7 @@ export const getArtists = async () => {
       ...artist,
       image: getCoverArtUrl(artist, 150),
       type: 'artist',
+      uniqueId: nanoid(),
     })
   );
 
