@@ -18,6 +18,10 @@ const StyledModal = styled(Modal)`
   .rs-modal-content {
     background: ${(props) => `${props.theme.primary.background} !important`};
   }
+
+  .rs-container {
+    overflow-y: hidden;
+  }
 `;
 
 const PageModal = () => {
