@@ -26,6 +26,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { TagLink } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
+import { notifyToast } from '../shared/toast';
 
 interface AlbumParams {
   id: string;
@@ -92,6 +93,7 @@ const AlbumView = ({ ...rest }: any) => {
   const handlePlay = () => {
     dispatch(setPlayQueue({ entries: data.song }));
     dispatch(setStatus('PLAYING'));
+    notifyToast('info', `Playing ${data.song.length} song(s)`);
   };
 
   const handlePlayAppend = () => {
@@ -99,6 +101,7 @@ const AlbumView = ({ ...rest }: any) => {
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
+    notifyToast('info', `Added ${data.song.length} song(s) to the queue`);
   };
 
   const handleFavorite = async () => {

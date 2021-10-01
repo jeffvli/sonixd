@@ -161,6 +161,7 @@ const PlaylistView = ({ ...rest }) => {
   const handlePlay = () => {
     dispatch(setPlayQueue({ entries: playlist.entry }));
     dispatch(setStatus('PLAYING'));
+    notifyToast('info', `Playing ${playlist.entry.length} song(s)`);
   };
 
   const handlePlayAppend = () => {
@@ -168,6 +169,7 @@ const PlaylistView = ({ ...rest }) => {
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
+    notifyToast('info', `Added ${playlist.entry.length} song(s) to the queue`);
   };
 
   const handleSave = async (recovery: boolean) => {

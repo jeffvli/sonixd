@@ -58,19 +58,19 @@ const Card = ({
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
       dispatch(setPlayQueue({ entries: res.song }));
-      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
+      notifyToast('info', `Playing ${res.song.length} song(s)`);
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
       dispatch(setPlayQueue({ entries: res.song }));
-      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
+      notifyToast('info', `Playing ${res.song.length} song(s)`);
     }
 
     if (playClick.type === 'artist') {
       const songs = await getAllArtistSongs(playClick.id);
       dispatch(setPlayQueue({ entries: songs }));
-      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+      notifyToast('info', `Playing ${songs.length} song(s)`);
     }
 
     dispatch(setStatus('PLAYING'));

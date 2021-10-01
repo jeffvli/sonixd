@@ -92,7 +92,7 @@ const ArtistView = ({ ...rest }: any) => {
   const handlePlay = async () => {
     const songs = await getAllArtistSongs(data.id);
     dispatch(setPlayQueue({ entries: songs }));
-    notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+    notifyToast('info', `Playing ${songs.length} song(s)`);
   };
 
   const handlePlayAppend = async () => {
