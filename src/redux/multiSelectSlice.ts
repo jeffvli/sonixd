@@ -65,20 +65,8 @@ const multiSelectSlice = createSlice({
       state.currentMouseOverIndex = action.payload.index;
     },
 
-    setSelected: (state, action: PayloadAction<any>) => {
-      state.lastSelected = {};
-      state.lastRangeSelected = {
-        lastSelected: {},
-        lastRangeSelected: {},
-      };
-
-      if (state.selected.find((item) => item.uniqueId === action.payload.uniqueId)) {
-        state.selected = [];
-      } else {
-        state.selected = [];
-        state.lastSelected = action.payload;
-        state.selected.push(action.payload);
-      }
+    setSelected: (state, action: PayloadAction<Entry[]>) => {
+      state.selected = action.payload;
     },
 
     setSelectedSingle: (state, action: PayloadAction<any>) => {

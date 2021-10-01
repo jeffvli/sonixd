@@ -25,12 +25,12 @@ import { fixPlayer2Index, setSort, setStar, sortPlayQueue } from '../../redux/pl
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
-  appendSelected,
   clearSelected,
   setCurrentMouseOverId,
   setIsDragging,
   setIsSelectDragging,
   setRangeSelected,
+  setSelected,
   setSelectedSingle,
   toggleRangeSelected,
   toggleSelected,
@@ -77,7 +77,7 @@ const ListViewTable = ({
         dispatch(clearSelected());
       } else {
         dispatch(clearSelected());
-        dispatch(appendSelected(sortColumn && !nowPlaying ? sortedData : data));
+        dispatch(setSelected(sortColumn && !nowPlaying ? sortedData : data));
       }
     },
     [multiSelect.selected, data]
