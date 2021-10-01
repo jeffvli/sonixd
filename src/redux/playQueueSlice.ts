@@ -244,10 +244,23 @@ const playQueueSlice = createSlice({
       }
 
       const currentEntry = entrySelect(state);
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+      const checkIndex = getCurrentEntryIndexByUID(
         action.payload.columnDataKey !== '' ? state.sortedEntry : state[currentEntry],
         state.currentSongUniqueId
       );
+
+      // Fix the index being set to -1 when appending entries to an empty list
+      let newCurrentSongIndex;
+      if (checkIndex === -1) {
+        state.current =
+          action.payload.columnDataKey !== '' ? state.sortedEntry[0] : state[currentEntry][0];
+        state.currentIndex = 0;
+        state.currentSongId = state.current?.id;
+        state.currentSongUniqueId = state.current?.uniqueId;
+        newCurrentSongIndex = 0;
+      } else {
+        newCurrentSongIndex = checkIndex;
+      }
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;
@@ -730,6 +743,7 @@ const playQueueSlice = createSlice({
     },
 
     appendPlayQueue: (state, action: PayloadAction<{ entries: Entry[] }>) => {
+      const wasPlaying = state.entry.length > 0;
       // We'll need to update the uniqueId otherwise selecting a song with duplicates
       // will select them all at once
       const refreshedEntries = action.payload.entries.map((entry: any) => {
@@ -742,8 +756,19 @@ const playQueueSlice = createSlice({
       refreshedEntries.map((entry: any) => state.entry.push(entry));
 
       if (state.shuffle) {
-        const shuffledEntries = _.shuffle(refreshedEntries);
+        // If shuffle is enabled, add all entries randomly
+        const shuffledEntries = _.shuffle(action.payload.entries);
         shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
+        if (!wasPlaying) {
+          state.current = { ...shuffledEntries[0] };
+          state.currentSongId = shuffledEntries[0].id;
+          state.currentSongUniqueId = shuffledEntries[0].uniqueId;
+        }
+      } else if (!wasPlaying) {
+        // If shuffle is disabled, add all entries in order
+        state.current = { ...action.payload.entries[0] };
+        state.currentSongId = action.payload.entries[0].id;
+        state.currentSongUniqueId = action.payload.entries[0].uniqueId;
       }
     },
 
