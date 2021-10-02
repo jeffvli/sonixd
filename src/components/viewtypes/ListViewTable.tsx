@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import path from 'path';
 import settings from 'electron-settings';
+import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { nanoid } from 'nanoid';
@@ -35,6 +36,19 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
+
+const StyledTable = styled(Table)<{ rowHeight: number }>`
+  .rs-table-row.selected {
+    background: ${(props) => props.theme.primary.rowSelected};
+    // Resolve bug from rsuite-table where certain scrollpoints show a horizontal border
+    height: ${(props) => `${props.rowHeight + 1}px !important`};
+  }
+  .rs-table-row,
+  .rs-table-cell-group,
+  .rs-table-cell {
+    transition: none;
+  }
+`;
 
 const ListViewTable = ({
   tableRef,
@@ -250,13 +264,20 @@ const ListViewTable = ({
 
   return (
     <>
-      <Table
+      <StyledTable
+        rowClassName={(rowData: any) =>
+          multiSelect?.selected.find((e: any) => e?.uniqueId === rowData?.uniqueId)
+            ? 'selected'
+            : ''
+        }
         ref={tableRef}
         height={height}
         data={sortColumn && !nowPlaying ? sortedData : data}
         virtualized={virtualized}
         rowHeight={rowHeight}
         hover
+        cellBordered={false}
+        bordered={false}
         affixHeader
         autoHeight={autoHeight}
         affixHorizontalScrollbar
@@ -346,14 +367,14 @@ const ListViewTable = ({
                 {(rowData: any, rowIndex: any) => {
                   return (
                     <TableCellWrapper
+                      className={
+                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
+                          ? 'custom-cell selected'
+                          : 'custom-cell'
+                      }
                       playing={
                         (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
                         (!nowPlaying && rowData.id === playQueue?.currentSongId)
-                          ? 'true'
-                          : 'false'
-                      }
-                      rowselected={
-                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
                           ? 'true'
                           : 'false'
                       }
@@ -450,11 +471,6 @@ const ListViewTable = ({
                 {(rowData: any, rowIndex: any) => {
                   return (
                     <TableCellWrapper
-                      rowselected={
-                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
-                          ? 'true'
-                          : 'false'
-                      }
                       onClick={(e: any) =>
                         handleRowClick(e, {
                           ...rowData,
@@ -616,11 +632,6 @@ const ListViewTable = ({
                 {(rowData: any) => {
                   return (
                     <TableCellWrapper
-                      rowselected={
-                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
-                          ? 'true'
-                          : 'false'
-                      }
                       height={rowHeight}
                       onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
                       onMouseEnter={() => handleSelectMouseEnter(rowData)}
@@ -672,11 +683,6 @@ const ListViewTable = ({
                       playing={
                         (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
                         (!nowPlaying && rowData.id === playQueue?.currentSongId)
-                          ? 'true'
-                          : 'false'
-                      }
-                      rowselected={
-                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
                           ? 'true'
                           : 'false'
                       }
@@ -798,7 +804,7 @@ const ListViewTable = ({
             )}
           </Table.Column>
         ))}
-      </Table>
+      </StyledTable>
     </>
   );
 };

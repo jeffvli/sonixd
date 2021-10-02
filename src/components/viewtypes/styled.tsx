@@ -25,14 +25,11 @@ export const RsuiteLinkButton = styled(Button)<{
 `;
 
 export const TableCellWrapper = styled.div<{
-  rowselected: string;
   playing?: string;
   height?: number;
   dragover?: string;
   dragfield?: string;
 }>`
-  background: ${(props) =>
-    props.rowselected === 'true' ? props.theme.primary.rowSelected : undefined};
   color: ${(props) => (props.playing === 'true' ? props.theme.primary.main : undefined)};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
   box-shadow: ${(props) =>
