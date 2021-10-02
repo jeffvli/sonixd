@@ -76,6 +76,7 @@ const GenreList = () => {
           listType="genre"
           virtualized
           disabledContextMenuOptions={[
+            'play',
             'addToQueue',
             'moveSelectedTo',
             'removeFromCurrent',

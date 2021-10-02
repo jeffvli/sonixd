@@ -30,6 +30,7 @@ import {
   moveToTop,
   moveUp,
   removeFromPlayQueue,
+  setPlayQueue,
   setStar,
 } from '../../redux/playQueueSlice';
 import {
@@ -108,6 +109,49 @@ export const GlobalContextMenu = () => {
   const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'), {
     refetchOnWindowFocus: false,
   });
+
+  const handlePlay = async () => {
+    dispatch(setContextMenu({ show: false }));
+    const promises = [];
+
+    if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
+      const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
+      dispatch(setPlayQueue({ entries: entriesByRowIndexAsc }));
+      notifyToast('info', `Playing ${multiSelect.selected.length} song(s)`);
+    } else if (misc.contextMenu.type === 'playlist') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(getPlaylist(multiSelect.selected[i].id));
+      }
+
+      const res = await Promise.all(promises);
+      const songs = _.flatten(_.map(res, 'song'));
+      dispatch(setPlayQueue({ entries: songs }));
+      notifyToast('info', `Playing ${songs.length} song(s)`);
+    } else if (misc.contextMenu.type === 'album') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(getAlbum(multiSelect.selected[i].id));
+      }
+
+      const res = await Promise.all(promises);
+      const songs = _.flatten(_.map(res, 'song'));
+      dispatch(setPlayQueue({ entries: songs }));
+      notifyToast('info', `Playing ${songs.length} song(s)`);
+    } else if (misc.contextMenu.type === 'artist') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(getAllArtistSongs(multiSelect.selected[i].id));
+      }
+
+      const res = await Promise.all(promises);
+      const songs = _.flatten(res);
+      dispatch(setPlayQueue({ entries: songs }));
+      notifyToast('info', `Playing ${songs.length} song(s)`);
+    }
+
+    if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    }
+  };
 
   const handleAddToQueue = async () => {
     dispatch(setContextMenu({ show: false }));
@@ -418,9 +462,15 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={7}
-          numOfDividers={3}
+          numOfButtons={8}
+          numOfDividers={4}
         >
+          <ContextMenuButton
+            text="Play"
+            onClick={handlePlay}
+            disabled={misc.contextMenu.disabledOptions.includes('play')}
+          />
+          <ContextMenuDivider />
           <ContextMenuButton
             text="Add to queue"
             onClick={handleAddToQueue}
