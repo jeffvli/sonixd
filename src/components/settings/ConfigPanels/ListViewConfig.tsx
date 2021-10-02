@@ -36,7 +36,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
           defaultValue={String(settings.getSync(settingsConfig.rowHeight)) || '0'}
           step={1}
           min={15}
-          max={100}
+          max={250}
           width={150}
           onChange={(e: any) => {
             settings.setSync(settingsConfig.rowHeight, e);
