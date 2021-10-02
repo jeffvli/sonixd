@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import GridViewType from '../viewtypes/GridViewType';
 import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
-import { getAlbumsDirect, getAllAlbums } from '../../api/api';
+import { getAlbumsDirect, getAllAlbums, getGenres } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import { useAppDispatch } from '../../redux/hooks';
 import {
@@ -19,22 +20,25 @@ import {
 } from '../../redux/multiSelectSlice';
 import { StyledInputPicker } from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
+import useRouterQuery from '../../hooks/useRouterQuery';
 
 const ALBUM_SORT_TYPES = [
-  { label: 'A-Z (Name)', value: 'alphabeticalByName' },
-  { label: 'A-Z (Artist)', value: 'alphabeticalByArtist' },
-  { label: 'Most Played', value: 'frequent' },
-  { label: 'Newly Added', value: 'newest' },
-  { label: 'Random', value: 'random' },
-  { label: 'Recently Played', value: 'recent' },
+  { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
+  { label: 'A-Z (Artist)', value: 'alphabeticalByArtist', role: 'Default' },
+  { label: 'Most Played', value: 'frequent', role: 'Default' },
+  { label: 'Newly Added', value: 'newest', role: 'Default' },
+  { label: 'Random', value: 'random', role: 'Default' },
+  { label: 'Recently Played', value: 'recent', role: 'Default' },
 ];
 
 const AlbumList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const query = useRouterQuery();
   const queryClient = useQueryClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [sortBy, setSortBy] = useState('random');
+  const [sortBy, setSortBy] = useState(query.get('sortType') || 'random');
+  const [sortTypes, setSortTypes] = useState<any[]>();
   const [offset, setOffset] = useState(0);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const { isLoading, isError, data: albums, error }: any = useQuery(
@@ -49,8 +53,29 @@ const AlbumList = () => {
       staleTime: Infinity, // Only allow manual refresh
     }
   );
+  const { data: genres }: any = useQuery(
+    ['genreList'],
+    async () => {
+      const res = await getGenres();
+      return res.map((genre: any) => {
+        if (genre.albumCount !== 0) {
+          return {
+            label: `${genre.value} (${genre.albumCount})`,
+            value: genre.value,
+            role: 'Genre',
+          };
+        }
+        return null;
+      });
+    },
+    { refetchOnWindowFocus: false }
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, albums, ['name', 'artist', 'genre', 'year']);
+
+  useEffect(() => {
+    setSortTypes(_.compact(_.concat(ALBUM_SORT_TYPES, genres)));
+  }, [genres]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -84,6 +109,7 @@ const AlbumList = () => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           title="Albums"
@@ -93,19 +119,22 @@ const AlbumList = () => {
             </ButtonToolbar>
           }
           subsidetitle={
-            <StyledInputPicker
-              width={140}
-              defaultValue={sortBy}
-              data={ALBUM_SORT_TYPES}
-              cleanable={false}
-              placeholder="Sort Type"
-              onChange={async (value: string) => {
-                await queryClient.cancelQueries(['albumList', offset, sortBy]);
-                setSearchQuery('');
-                setOffset(0);
-                setSortBy(value);
-              }}
-            />
+            <>
+              <StyledInputPicker
+                width={180}
+                defaultValue={sortBy}
+                groupBy="role"
+                data={sortTypes}
+                cleanable={false}
+                placeholder="Sort Type"
+                onChange={async (value: string) => {
+                  await queryClient.cancelQueries(['albumList', offset, sortBy]);
+                  setSearchQuery('');
+                  setOffset(0);
+                  setSortBy(value);
+                }}
+              />
+            </>
           }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
@@ -138,7 +167,6 @@ const AlbumList = () => {
           disabledContextMenuOptions={['moveSelectedTo', 'removeFromCurrent', 'deletePlaylist']}
         />
       )}
-
       {!isLoading && !isError && viewType === 'grid' && (
         <GridViewType
           data={searchQuery !== '' ? filteredData : albums}

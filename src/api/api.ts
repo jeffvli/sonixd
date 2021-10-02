@@ -281,9 +281,14 @@ export const getAllAlbums = (
   const albums: any = api
     .get(`/getAlbumList2`, {
       params: {
-        type: sortType,
+        type: sortType.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
+          ? sortType
+          : 'byGenre',
         size: 500,
         offset,
+        genre: sortType.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
+          ? undefined
+          : sortType,
       },
     })
     .then((res) => {
@@ -654,3 +659,29 @@ export const clearPlaylist = async (playlistId: string) => {
 
   return data;
 };
+
+export const getGenres = async () => {
+  const { data } = await api.get(`/getGenres`);
+
+  return (data.genres.genre || []).map((entry: any, index: any) => ({
+    ...entry,
+    name: entry.value,
+    index,
+    uniqueId: nanoid(),
+  }));
+};
+
+// return {
+//   ...data.artist,
+//   image: getCoverArtUrl(data.artist, coverArtSize),
+//   type: 'artist',
+//   album: (data.artist.album || []).map((entry: any, index: any) => ({
+//     ...entry,
+//     albumId: entry.id,
+//     type: 'album',
+//     image: getCoverArtUrl(entry, coverArtSize),
+//     starred: entry.starred || undefined,
+//     index,
+//     uniqueId: nanoid(),
+//   })),
+// };

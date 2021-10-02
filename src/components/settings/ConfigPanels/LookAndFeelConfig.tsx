@@ -22,6 +22,8 @@ import {
   playlistColumnList,
   artistColumnPicker,
   artistColumnList,
+  genreColumnPicker,
+  genreColumnList,
 } from '../ListViewColumns';
 
 const LookAndFeelConfig = () => {
@@ -33,11 +35,13 @@ const LookAndFeelConfig = () => {
   const playlistCols: any = settings.getSync('playlistListColumns');
   const artistCols: any = settings.getSync('artistListColumns');
   const miniCols: any = settings.getSync('miniListColumns');
+  const genreCols: any = settings.getSync('genreListColumns');
   const currentSongColumns = songCols?.map((column: any) => column.label) || [];
   const currentAlbumColumns = albumCols?.map((column: any) => column.label) || [];
   const currentPlaylistColumns = playlistCols?.map((column: any) => column.label) || [];
   const currentArtistColumns = artistCols?.map((column: any) => column.label) || [];
   const currentMiniColumns = miniCols?.map((column: any) => column.label) || [];
+  const currentGenreColumns = genreCols?.map((column: any) => column.label) || [];
 
   return (
     <ConfigPanel header="Look & Feel" bordered>
@@ -88,11 +92,12 @@ const LookAndFeelConfig = () => {
           activeKey={currentLAFTab}
           onSelect={(e) => setCurrentLAFTab(e)}
         >
-          <StyledNavItem eventKey="songList">Song List</StyledNavItem>
-          <StyledNavItem eventKey="albumList">Album List</StyledNavItem>
-          <StyledNavItem eventKey="playlistList">Playlist List</StyledNavItem>
-          <StyledNavItem eventKey="artistList">Artist List</StyledNavItem>
-          <StyledNavItem eventKey="miniList">Miniplayer List</StyledNavItem>
+          <StyledNavItem eventKey="songList">Songs</StyledNavItem>
+          <StyledNavItem eventKey="albumList">Albums</StyledNavItem>
+          <StyledNavItem eventKey="playlistList">Playlists</StyledNavItem>
+          <StyledNavItem eventKey="artistList">Artists</StyledNavItem>
+          <StyledNavItem eventKey="genreList">Genres</StyledNavItem>
+          <StyledNavItem eventKey="miniList">Miniplayer</StyledNavItem>
         </Nav>
         {currentLAFTab === 'songList' && (
           <ListViewConfig
@@ -146,6 +151,20 @@ const LookAndFeelConfig = () => {
               columnList: 'artistListColumns',
               rowHeight: 'artistListRowHeight',
               fontSize: 'artistListFontSize',
+            }}
+          />
+        )}
+
+        {currentLAFTab === 'genreList' && (
+          <ListViewConfig
+            title="Genre List"
+            defaultColumns={currentGenreColumns}
+            columnPicker={genreColumnPicker}
+            columnList={genreColumnList}
+            settingsConfig={{
+              columnList: 'genreListColumns',
+              rowHeight: 'genreListRowHeight',
+              fontSize: 'genreListFontSize',
             }}
           />
         )}

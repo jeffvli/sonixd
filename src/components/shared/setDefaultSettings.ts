@@ -366,6 +366,51 @@ const setDefaultSettings = (force: boolean) => {
       },
     ]);
   }
+
+  if (force || !settings.hasSync('genreListFontSize')) {
+    settings.setSync('genreListFontSize', '14');
+  }
+
+  if (force || !settings.hasSync('genreListRowHeight')) {
+    settings.setSync('genreListRowHeight', '50');
+  }
+
+  if (force || !settings.hasSync('genreListColumns')) {
+    settings.setSync('genreListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: 'Name',
+        dataKey: 'name',
+        alignment: 'left',
+        resizable: true,
+        width: 300,
+        label: 'Name',
+      },
+      {
+        id: 'Album Count',
+        dataKey: 'albumCount',
+        alignment: 'left',
+        resizable: true,
+        width: 100,
+        label: 'Album Count',
+      },
+      {
+        id: 'Song Count',
+        dataKey: 'songCount',
+        alignment: 'left',
+        resizable: true,
+        width: 100,
+        label: 'Song Count',
+      },
+    ]);
+  }
 };
 
 export default setDefaultSettings;

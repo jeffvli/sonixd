@@ -536,3 +536,57 @@ export const artistColumnPicker = [
   { label: 'Favorite' },
   { label: 'Name' },
 ];
+
+export const genreColumnPicker = [
+  { label: '#' },
+  { label: 'Album Count' },
+  { label: 'Name' },
+  { label: 'Song Count' },
+];
+
+export const genreColumnList = [
+  {
+    label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      resizable: true,
+      width: 50,
+      label: '#',
+    },
+  },
+  {
+    label: 'Album Count',
+    value: {
+      id: 'Album Count',
+      dataKey: 'albumCount',
+      alignment: 'left',
+      resizable: true,
+      width: 100,
+      label: 'Album Count',
+    },
+  },
+  {
+    label: 'Name',
+    value: {
+      id: 'Name',
+      dataKey: 'name',
+      alignment: 'left',
+      resizable: true,
+      width: 300,
+      label: 'Name',
+    },
+  },
+  {
+    label: 'Song Count',
+    value: {
+      id: 'Song Count',
+      dataKey: 'songCount',
+      alignment: 'left',
+      resizable: true,
+      width: 100,
+      label: 'Song Count',
+    },
+  },
+];
