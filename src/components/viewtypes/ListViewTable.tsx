@@ -36,6 +36,7 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
+import CustomTooltip from '../shared/CustomTooltip';
 
 const StyledTable = styled(Table)<{ rowHeight: number }>`
   .rs-table-row.selected {
@@ -312,17 +313,19 @@ const ListViewTable = ({
             multiSelect.selected.filter((entry: any) => entry.uniqueId === rowData.uniqueId)
               .length > 0
           ) {
+            // Handle when right clicking a selected row
             dispatch(
               setContextMenu({
                 show: true,
                 xPos: pageX,
                 yPos: pageY,
                 rowId: rowData.uniqueId,
-                type: nowPlaying ? 'nowPlaying' : multiSelect.selected[0].type,
+                type: nowPlaying ? 'nowPlaying' : rowData.type,
                 disabledOptions: disabledContextMenuOptions || [],
               })
             );
           } else {
+            // Handle when right clicking a non-selected row
             dispatch(setSelectedSingle(rowData));
             dispatch(
               setContextMenu({
@@ -330,7 +333,7 @@ const ListViewTable = ({
                 xPos: pageX,
                 yPos: pageY,
                 rowId: rowData.uniqueId,
-                type: nowPlaying ? 'nowPlaying' : multiSelect.selected[0].type,
+                type: nowPlaying ? 'nowPlaying' : rowData.type,
                 disabledOptions: disabledContextMenuOptions || [],
               })
             );
@@ -590,34 +593,36 @@ const ListViewTable = ({
                                   width: '100%',
                                 }}
                               >
-                                <RsuiteLinkButton
-                                  subtitle="true"
-                                  appearance="link"
-                                  onClick={() => {
-                                    if (rowData.artistId && !isModal) {
-                                      history.push(`/library/artist/${rowData.artistId}`);
-                                    } else if (rowData.artistId && isModal) {
-                                      dispatch(
-                                        addModalPage({
-                                          pageType: 'artist',
-                                          id: rowData.artistId,
-                                        })
-                                      );
+                                <CustomTooltip text={rowData.artist} delay={1000}>
+                                  <RsuiteLinkButton
+                                    subtitle="true"
+                                    appearance="link"
+                                    onClick={() => {
+                                      if (rowData.artistId && !isModal) {
+                                        history.push(`/library/artist/${rowData.artistId}`);
+                                      } else if (rowData.artistId && isModal) {
+                                        dispatch(
+                                          addModalPage({
+                                            pageType: 'artist',
+                                            id: rowData.artistId,
+                                          })
+                                        );
+                                      }
+                                    }}
+                                    style={{
+                                      fontSize: `${fontSize}px`,
+                                    }}
+                                    playing={
+                                      (rowData.uniqueId === playQueue?.currentSongUniqueId &&
+                                        nowPlaying) ||
+                                      (!nowPlaying && rowData.id === playQueue?.currentSongId)
+                                        ? 'true'
+                                        : 'false'
                                     }
-                                  }}
-                                  style={{
-                                    fontSize: `${fontSize}px`,
-                                  }}
-                                  playing={
-                                    (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                      nowPlaying) ||
-                                    (!nowPlaying && rowData.id === playQueue?.currentSongId)
-                                      ? 'true'
-                                      : 'false'
-                                  }
-                                >
-                                  {rowData.artist}
-                                </RsuiteLinkButton>
+                                  >
+                                    {rowData.artist}
+                                  </RsuiteLinkButton>
+                                </CustomTooltip>
                               </span>
                             </Row>
                           </Col>
@@ -726,45 +731,48 @@ const ListViewTable = ({
                         }}
                       >
                         {column.dataKey.match(/album|artist/) ? (
-                          <RsuiteLinkButton
-                            appearance="link"
-                            onClick={() => {
-                              if (column.dataKey === 'album') {
-                                if (rowData.albumId && !isModal) {
-                                  history.push(`/library/album/${rowData.albumId}`);
-                                } else if (rowData.albumId && isModal) {
-                                  dispatch(
-                                    addModalPage({
-                                      pageType: 'album',
-                                      id: rowData.albumId,
-                                    })
-                                  );
+                          <CustomTooltip text={rowData[column.dataKey]} delay={1000}>
+                            <RsuiteLinkButton
+                              appearance="link"
+                              onClick={() => {
+                                if (column.dataKey === 'album') {
+                                  if (rowData.albumId && !isModal) {
+                                    history.push(`/library/album/${rowData.albumId}`);
+                                  } else if (rowData.albumId && isModal) {
+                                    dispatch(
+                                      addModalPage({
+                                        pageType: 'album',
+                                        id: rowData.albumId,
+                                      })
+                                    );
+                                  }
+                                } else if (column.dataKey === 'artist') {
+                                  if (rowData.artistId && !isModal) {
+                                    history.push(`/library/artist/${rowData.artistId}`);
+                                  } else if (rowData.artistId && isModal) {
+                                    dispatch(
+                                      addModalPage({
+                                        pageType: 'artist',
+                                        id: rowData.artistId,
+                                      })
+                                    );
+                                  }
                                 }
-                              } else if (column.dataKey === 'artist') {
-                                if (rowData.artistId && !isModal) {
-                                  history.push(`/library/artist/${rowData.artistId}`);
-                                } else if (rowData.artistId && isModal) {
-                                  dispatch(
-                                    addModalPage({
-                                      pageType: 'artist',
-                                      id: rowData.artistId,
-                                    })
-                                  );
-                                }
+                              }}
+                              playing={
+                                (rowData.uniqueId === playQueue?.currentSongUniqueId &&
+                                  nowPlaying) ||
+                                (!nowPlaying && rowData.id === playQueue?.currentSongId)
+                                  ? 'true'
+                                  : 'false'
                               }
-                            }}
-                            playing={
-                              (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
-                              (!nowPlaying && rowData.id === playQueue?.currentSongId)
-                                ? 'true'
-                                : 'false'
-                            }
-                            style={{
-                              fontSize: `${fontSize}px`,
-                            }}
-                          >
-                            {rowData[column.dataKey]}
-                          </RsuiteLinkButton>
+                              style={{
+                                fontSize: `${fontSize}px`,
+                              }}
+                            >
+                              {rowData[column.dataKey]}
+                            </RsuiteLinkButton>
+                          </CustomTooltip>
                         ) : column.dataKey === 'duration' ? (
                           formatSongDuration(rowData[column.dataKey])
                         ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
