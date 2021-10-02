@@ -184,9 +184,10 @@ const PlaylistView = ({ ...rest }) => {
       // Smaller playlists can use the safe /createPlaylist method of saving
       if (playlistData.length <= 400 && !recovery) {
         res = await updatePlaylistSongs(data.id, playlistData);
-        if (res.status === 'failed') {
+        if (isFailedResponse(res)) {
           notifyToast('error', res.error.message);
         } else {
+          notifyToast('success', `Saved playlist`);
           await queryClient.refetchQueries(['playlist'], {
             active: true,
           });
@@ -198,38 +199,49 @@ const PlaylistView = ({ ...rest }) => {
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
-        } else {
-          res = await updatePlaylistSongsLg(data.id, playlistData);
-
-          if (isFailedResponse(res)) {
-            res.forEach((response) => {
-              if (isFailedResponse(response)) {
-                return notifyToast('error', errorMessages(response)[0]);
-              }
-              return false;
-            });
-
-            // If there are any failures (network, etc.), then we'll need a way to recover the playlist.
-            // Write the localPlaylistData to a file so we can re-run the save command.
-            createRecoveryFile(data.id, 'playlist', playlistData);
-            setNeedsRecovery(true);
-          }
-
-          if (recovery) {
-            // If the recovery succeeds, we can remove the recovery file
-            fs.unlinkSync(recoveryPath);
-            setNeedsRecovery(false);
-          }
-
-          await queryClient.refetchQueries(['playlist'], {
-            active: true,
-          });
+          return dispatch(removeProcessingPlaylist(data.id));
         }
+
+        res = await updatePlaylistSongsLg(data.id, playlistData);
+
+        if (isFailedResponse(res)) {
+          res.forEach((response) => {
+            if (isFailedResponse(response)) {
+              notifyToast('error', errorMessages(response)[0]);
+            }
+          });
+
+          // If there are any failures (network, etc.), then we'll need a way to recover the playlist.
+          // Write the localPlaylistData to a file so we can re-run the save command.
+          createRecoveryFile(data.id, 'playlist', playlistData);
+          setNeedsRecovery(true);
+          return dispatch(removeProcessingPlaylist(data.id));
+        }
+
+        if (recovery) {
+          // If the recovery succeeds, we can remove the recovery file
+          fs.unlinkSync(recoveryPath);
+          setNeedsRecovery(false);
+          notifyToast('success', `Recovered playlist from backup`);
+        } else {
+          notifyToast('success', `Saved playlist`);
+        }
+
+        await queryClient.refetchQueries(['playlist'], {
+          active: true,
+        });
       }
     } catch (err) {
-      notifyToast('error', err);
+      notifyToast('error', 'Errored while saving playlist');
+      const playlistData = recovery
+        ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
+        : playlist.entry;
+
+      createRecoveryFile(data.id, 'playlist', playlistData);
+      setNeedsRecovery(true);
+      dispatch(removeProcessingPlaylist(data.id));
     }
-    dispatch(removeProcessingPlaylist(data.id));
+    return dispatch(removeProcessingPlaylist(data.id));
   };
 
   const handleEdit = async () => {

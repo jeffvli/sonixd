@@ -586,7 +586,7 @@ export const updatePlaylistSongsLg = async (playlistId: string, entry: any[]) =>
 
   // Set these in chunks so the api doesn't break
   // Testing on the airsonic api broke around ~350 entries
-  const entryIdChunks = _.chunk(entryIds, 325);
+  const entryIdChunks = _.chunk(entryIds, 300);
 
   const res: any[] = [];
   for (let i = 0; i < entryIdChunks.length; i += 1) {
@@ -654,6 +654,7 @@ export const clearPlaylist = async (playlistId: string) => {
   const { data } = await api.get(`/createPlaylist`, {
     params: {
       playlistId,
+      songId: '',
     },
   });
 
@@ -669,6 +670,45 @@ export const getGenres = async () => {
     index,
     uniqueId: nanoid(),
   }));
+};
+
+export const search3 = async (query: string) => {
+  const { data } = await api.get(`/search3`, {
+    params: {
+      query,
+    },
+  });
+
+  const results = data.searchResult3;
+
+  return {
+    artist: (results.artist || []).map((entry: any, index: any) => ({
+      ...entry,
+      image: getCoverArtUrl(entry),
+      starred: entry.starred || undefined,
+      type: 'artist',
+      index,
+      uniqueId: nanoid(),
+    })),
+    album: (results.album || []).map((entry: any, index: any) => ({
+      ...entry,
+      albumId: entry.id,
+      image: getCoverArtUrl(entry),
+      starred: entry.starred || undefined,
+      type: 'album',
+      index,
+      uniqueId: nanoid(),
+    })),
+    song: (results.song || []).map((entry: any, index: any) => ({
+      ...entry,
+      streamUrl: getStreamUrl(entry.id),
+      image: getCoverArtUrl(entry),
+      type: 'music',
+      starred: entry.starred || undefined,
+      index,
+      uniqueId: nanoid(),
+    })),
+  };
 };
 
 // return {
