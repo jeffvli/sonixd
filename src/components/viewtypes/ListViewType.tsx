@@ -157,11 +157,9 @@ const ListViewType = (
         onMouseDown={(e) => {
           e.preventDefault();
           if (e.button === 1) {
-            console.log('middle click');
             setIsDragging(true);
           }
           if (e.button === 0 && isDragging) {
-            console.log('left click');
             setIsDragging(false);
           }
         }}
