@@ -88,6 +88,17 @@ export const songColumnList = [
     },
   },
   {
+    label: 'Genre',
+    value: {
+      id: 'Genre',
+      dataKey: 'genre',
+      alignment: 'center',
+      resizable: true,
+      width: 150,
+      label: 'Genre',
+    },
+  },
+  {
     label: 'Path',
     value: {
       id: 'Path',
@@ -118,6 +129,17 @@ export const songColumnList = [
       resizable: true,
       width: 150,
       label: 'Rating',
+    },
+  },
+  {
+    label: 'Size',
+    value: {
+      id: 'Size',
+      dataKey: 'size',
+      alignment: 'center',
+      resizable: true,
+      width: 150,
+      label: 'size',
     },
   },
   {
@@ -166,6 +188,148 @@ export const songColumnList = [
   },
 ];
 
+export const songColumnAuto = [
+  {
+    label: '# (Drag/Drop)',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      label: '# (Drag/Drop)',
+    },
+  },
+  {
+    label: 'Album',
+    value: {
+      id: 'Album',
+      dataKey: 'album',
+      alignment: 'left',
+      label: 'Album',
+    },
+  },
+  {
+    label: 'Artist',
+    value: {
+      id: 'Artist',
+      dataKey: 'artist',
+      alignment: 'left',
+      label: 'Artist',
+    },
+  },
+  {
+    label: 'Bitrate',
+    value: {
+      id: 'Bitrate',
+      dataKey: 'bitRate',
+      alignment: 'left',
+      label: 'Bitrate',
+    },
+  },
+  {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      label: 'CoverArt',
+    },
+  },
+  {
+    label: 'Created',
+    value: {
+      id: 'Created',
+      dataKey: 'created',
+      alignment: 'left',
+      label: 'Created',
+    },
+  },
+  {
+    label: 'Duration',
+    value: {
+      id: 'Duration',
+      dataKey: 'duration',
+      alignment: 'center',
+      label: 'Duration',
+    },
+  },
+  {
+    label: 'Favorite',
+    value: {
+      id: 'Fav',
+      dataKey: 'starred',
+      alignment: 'center',
+      label: 'Favorite',
+    },
+  },
+  {
+    label: 'Path',
+    value: {
+      id: 'Path',
+      dataKey: 'path',
+      alignment: 'left',
+      label: 'Path',
+    },
+  },
+  {
+    label: 'Play Count',
+    value: {
+      id: 'Plays',
+      dataKey: 'playCount',
+      alignment: 'center',
+      label: 'Play Count',
+    },
+  },
+  {
+    label: 'Rating',
+    value: {
+      id: 'Rate',
+      dataKey: 'userRating',
+      alignment: 'center',
+      label: 'Rating',
+    },
+  },
+  {
+    label: 'Track',
+    value: {
+      id: 'Track',
+      dataKey: 'track',
+      alignment: 'left',
+      label: 'Track',
+    },
+  },
+  {
+    label: 'Title',
+    value: {
+      id: 'Title',
+      dataKey: 'title',
+      alignment: 'left',
+      label: 'Title',
+    },
+  },
+  {
+    label: 'Title (Combined)',
+    value: {
+      id: 'Title',
+      dataKey: 'combinedtitle',
+      alignment: 'left',
+      resizable: true,
+      width: 300,
+      label: 'Title (Combined)',
+    },
+  },
+  {
+    label: 'Year',
+    value: {
+      id: 'Year',
+      dataKey: 'year',
+      alignment: 'left',
+      resizable: true,
+      width: 60,
+      label: 'Year',
+    },
+  },
+];
+
 export const songColumnPicker = [
   { label: '# (Drag/Drop)' },
   { label: 'Album' },
@@ -175,9 +339,11 @@ export const songColumnPicker = [
   { label: 'Created' },
   { label: 'Duration' },
   { label: 'Favorite' },
+  { label: 'Genre' },
   { label: 'Path' },
   { label: 'Play Count' },
   { label: 'Rating' },
+  { label: 'Size' },
   { label: 'Track' },
   { label: 'Title' },
   { label: 'Title (Combined)' },
@@ -303,6 +469,119 @@ export const albumColumnList = [
       alignment: 'left',
       resizable: true,
       width: 60,
+      label: 'Year',
+    },
+  },
+];
+
+export const albumColumnListAuto = [
+  {
+    label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      flexGrow: 1,
+      label: '#',
+    },
+  },
+  {
+    label: 'Artist',
+    value: {
+      id: 'Artist',
+      dataKey: 'artist',
+      alignment: 'left',
+      flexGrow: 3,
+      label: 'Artist',
+    },
+  },
+  {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'CoverArt',
+    },
+  },
+  {
+    label: 'Created',
+    value: {
+      id: 'Created',
+      dataKey: 'created',
+      alignment: 'left',
+      flexGrow: 2,
+      label: 'Created',
+    },
+  },
+  {
+    label: 'Duration',
+    value: {
+      id: 'Duration',
+      dataKey: 'duration',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'Duration',
+    },
+  },
+  {
+    label: 'Favorite',
+    value: {
+      id: 'Fav',
+      dataKey: 'starred',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Favorite',
+    },
+  },
+  {
+    label: 'Genre',
+    value: {
+      id: 'Genre',
+      dataKey: 'genre',
+      alignment: 'left',
+      flexGrow: 2,
+      label: 'Genre',
+    },
+  },
+  {
+    label: 'Track Count',
+    value: {
+      id: 'Tracks',
+      dataKey: 'songCount',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Track Count',
+    },
+  },
+  {
+    label: 'Title',
+    value: {
+      id: 'Title',
+      dataKey: 'name',
+      alignment: 'left',
+      flexGrow: 5,
+      label: 'Title',
+    },
+  },
+  {
+    label: 'Title (Combined)',
+    value: {
+      id: 'Title',
+      dataKey: 'combinedtitle',
+      alignment: 'left',
+      flexGrow: 5,
+      label: 'Title (Combined)',
+    },
+  },
+  {
+    label: 'Year',
+    value: {
+      id: 'Year',
+      dataKey: 'year',
+      alignment: 'left',
+      flexGrow: 1,
       label: 'Year',
     },
   },
@@ -458,6 +737,129 @@ export const playlistColumnList = [
   },
 ];
 
+export const playlistColumnListAuto = [
+  {
+    label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      flexGrow: 1,
+      label: '#',
+    },
+  },
+  {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'CoverArt',
+    },
+  },
+  {
+    label: 'Created',
+    value: {
+      id: 'Created',
+      dataKey: 'created',
+      alignment: 'left',
+      flexGrow: 1,
+      label: 'Created',
+    },
+  },
+  {
+    label: 'Description',
+    value: {
+      id: 'Description',
+      dataKey: 'comment',
+      alignment: 'left',
+      flexGrow: 3,
+      label: 'Description',
+    },
+  },
+  {
+    label: 'Duration',
+    value: {
+      id: 'Duration',
+      dataKey: 'duration',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'Duration',
+    },
+  },
+  {
+    label: 'Genre',
+    value: {
+      id: 'Genre',
+      dataKey: 'genre',
+      alignment: 'left',
+      flexGrow: 1,
+      label: 'Genre',
+    },
+  },
+  {
+    label: 'Modified',
+    value: {
+      id: 'Modified',
+      dataKey: 'changed',
+      alignment: 'left',
+      flexGrow: 1,
+      label: 'Modified',
+    },
+  },
+  {
+    label: 'Owner',
+    value: {
+      id: 'Owner',
+      dataKey: 'owner',
+      alignment: 'left',
+      flexGrow: 2,
+      label: 'Owner',
+    },
+  },
+  {
+    label: 'Play Count',
+    value: {
+      id: 'Plays',
+      dataKey: 'playCount',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Play Count',
+    },
+  },
+  {
+    label: 'Track Count',
+    value: {
+      id: 'Tracks',
+      dataKey: 'songCount',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Track Count',
+    },
+  },
+  {
+    label: 'Title',
+    value: {
+      id: 'Title',
+      dataKey: 'name',
+      alignment: 'left',
+      flexGrow: 5,
+      label: 'Title',
+    },
+  },
+  {
+    label: 'Visibility',
+    value: {
+      id: 'Visibility',
+      dataKey: 'public',
+      alignment: 'left',
+      flexGrow: 2,
+      label: 'Visibility',
+    },
+  },
+];
+
 export const playlistColumnPicker = [
   { label: '#' },
   { label: 'CoverArt' },
@@ -529,6 +931,59 @@ export const artistColumnList = [
   },
 ];
 
+export const artistColumnListAuto = [
+  {
+    label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      flexGrow: 1,
+      label: '#',
+    },
+  },
+  {
+    label: 'Album Count',
+    value: {
+      id: 'Album Count',
+      dataKey: 'albumCount',
+      alignment: 'left',
+      flexGrow: 1,
+      label: 'Album Count',
+    },
+  },
+  {
+    label: 'CoverArt',
+    value: {
+      id: 'Art',
+      dataKey: 'coverart',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'CoverArt',
+    },
+  },
+  {
+    label: 'Favorite',
+    value: {
+      id: 'Fav',
+      dataKey: 'starred',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Favorite',
+    },
+  },
+  {
+    label: 'Name',
+    value: {
+      id: 'Name',
+      dataKey: 'name',
+      alignment: 'left',
+      flexGrow: 5,
+      label: 'Name',
+    },
+  },
+];
+
 export const artistColumnPicker = [
   { label: '#' },
   { label: 'Album Count' },
@@ -572,7 +1027,7 @@ export const genreColumnList = [
     value: {
       id: 'Name',
       dataKey: 'name',
-      alignment: 'left',
+      alignment: 'center',
       resizable: true,
       width: 300,
       label: 'Name',
@@ -583,10 +1038,53 @@ export const genreColumnList = [
     value: {
       id: 'Song Count',
       dataKey: 'songCount',
-      alignment: 'left',
+      alignment: 'center',
       resizable: true,
       width: 100,
       label: 'Song Count',
+    },
+  },
+];
+
+export const genreColumnListAuto = [
+  {
+    label: '#',
+    value: {
+      id: '#',
+      dataKey: 'index',
+      alignment: 'center',
+      flexGrow: 1,
+      label: '#',
+    },
+  },
+  {
+    label: 'Album Count',
+    value: {
+      id: 'Album Count',
+      dataKey: 'albumCount',
+      alignment: 'left',
+      flexGrow: 1,
+      label: 'Album Count',
+    },
+  },
+  {
+    label: 'Name',
+    value: {
+      id: 'Name',
+      dataKey: 'name',
+      alignment: 'center',
+      flexGrow: 5,
+      label: 'Name',
+    },
+  },
+  {
+    label: 'Track Count',
+    value: {
+      id: 'Tracks',
+      dataKey: 'songCount',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Track Count',
     },
   },
 ];
