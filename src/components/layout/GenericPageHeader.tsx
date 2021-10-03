@@ -70,6 +70,11 @@ const GenericPageHeader = ({
                     value={searchQuery}
                     placeholder="Search..."
                     onChange={handleSearch}
+                    onKeyDown={(e: KeyboardEvent) => {
+                      if (e.key === 'Escape') {
+                        clearSearchQuery();
+                      }
+                    }}
                   />
                   {searchQuery !== '' && (
                     <InputGroup.Button appearance="subtle" onClick={clearSearchQuery}>
