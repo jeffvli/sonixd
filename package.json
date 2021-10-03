@@ -274,7 +274,6 @@
     "react-chartjs-2": "^3.0.4",
     "react-dom": "^17.0.2",
     "react-helmet-async": "^1.1.2",
-    "react-horizontal-scrolling-menu": "^2.0.3",
     "react-hotkeys-hook": "^3.4.3",
     "react-lazy-load-image-component": "^1.5.1",
     "react-query": "^3.19.1",

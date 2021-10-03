@@ -1,63 +1,60 @@
-import React, { useContext } from 'react';
-import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
-import { Button } from 'rsuite';
+import React from 'react';
 import styled from 'styled-components';
 import Card from '../card/Card';
-import { StyledIcon } from '../shared/styled';
 
 const ScrollMenuContainer = styled.div`
   margin-bottom: 25px;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  ::-webkit-scrollbar {
+    height: 10px;
+  }
 `;
 
-const Title = styled.h1`
-  margin-left: 20px;
-  font-size: 20px !important;
+const TitleWrapper = styled.div`
+  margin-left: 10px;
+  margin-bottom: 10px;
 `;
 
-const LeftArrow = () => {
-  const { isFirstItemVisible, scrollPrev } = useContext(VisibilityContext);
+const Title = styled.a`
+  font-size: 20px;
+  color: white;
 
+  &:hover {
+    cursor: pointer;
+    text-decoration: none;
+  }
+`;
+
+const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle }: any) => {
   return (
-    <Button appearance="link" disabled={isFirstItemVisible} onClick={() => scrollPrev()}>
-      <StyledIcon icon="arrow-left" />
-    </Button>
-  );
-};
+    <>
+      <TitleWrapper>
+        <Title onClick={onClickTitle}>{title}</Title>
+      </TitleWrapper>
 
-const RightArrow = () => {
-  const { isLastItemVisible, scrollNext } = useContext(VisibilityContext);
-
-  return (
-    <Button appearance="link" disabled={isLastItemVisible} onClick={() => scrollNext()}>
-      <StyledIcon icon="arrow-right" />
-    </Button>
-  );
-};
-
-const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, cardSize }: any) => {
-  return (
-    <ScrollMenuContainer>
-      <Title>{title}</Title>
-      <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
+      <ScrollMenuContainer>
         {data.map((item: any) => (
-          <Card
-            itemId={item.id}
-            title={item[cardTitle.property] || item.title}
-            subtitle={item[cardSubtitle.property]}
-            key={item.id}
-            coverArt={item.image}
-            url={`library/${cardTitle.prefix}/${item.id}`}
-            subUrl={`library/${cardSubtitle.prefix}/${item.artistId}`}
-            playClick={{ type: 'album', id: item.id }}
-            hasHoverButtons
-            size={cardSize}
-            details={{ cacheType: 'album', ...item }}
-            lazyLoad
-            style={{ margin: '0px 5px 0px 5px' }}
-          />
+          <span key={item.id} style={{ display: 'inline-block' }}>
+            <Card
+              itemId={item.id}
+              title={item[cardTitle.property] || item.title}
+              subtitle={item[cardSubtitle.property]}
+              coverArt={item.image}
+              url={`library/${cardTitle.prefix}/${item.id}`}
+              subUrl={`library/${cardSubtitle.prefix}/${item.artistId}`}
+              playClick={{ type: 'album', id: item.id }}
+              hasHoverButtons
+              size={200}
+              details={{ cacheType: 'album', ...item }}
+              lazyLoad
+              style={{ margin: '0px 5px 0px 5px' }}
+            />
+          </span>
         ))}
-      </ScrollMenu>
-    </ScrollMenuContainer>
+      </ScrollMenuContainer>
+    </>
   );
 };
 
