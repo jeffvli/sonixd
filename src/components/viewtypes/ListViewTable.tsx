@@ -118,6 +118,9 @@ const ListViewTable = ({
     await queryClient.refetchQueries(['playlist'], {
       active: true,
     });
+    await queryClient.refetchQueries(['search'], {
+      active: true,
+    });
   };
 
   const handleRating = (rowData: any, e: number) => {
