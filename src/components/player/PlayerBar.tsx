@@ -81,7 +81,7 @@ const PlayerBar = () => {
         settings.setSync('volume', localVolume);
       }
       setIsDraggingVolume(false);
-    }, 200);
+    }, 100);
 
     return () => clearTimeout(debounce);
   }, [dispatch, isDraggingVolume, localVolume, playQueue.currentPlayer, playQueue.fadeDuration]);
