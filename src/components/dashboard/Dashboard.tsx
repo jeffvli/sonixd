@@ -15,13 +15,13 @@ const Dashboard = () => {
 
   const { isLoading: isLoadingRecent, data: recentAlbums }: any = useQuery(
     ['recentAlbums'],
-    () => getAlbums({ type: 'newest', size: 20 }, 250),
+    () => getAlbums({ type: 'recent', size: 20 }, 250),
     { refetchOnWindowFocus: false }
   );
 
   const { isLoading: isLoadingNewest, data: newestAlbums }: any = useQuery(
     ['newestAlbums'],
-    () => getAlbums({ type: 'recent', size: 20 }, 250),
+    () => getAlbums({ type: 'newest', size: 20 }, 250),
     { refetchOnWindowFocus: false }
   );
 
