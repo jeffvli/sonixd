@@ -20,12 +20,14 @@ import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 import { setStatus } from '../../redux/playerSlice';
 import { StyledNavItem } from '../shared/styled';
+import useRouterQuery from '../../hooks/useRouterQuery';
 
 const StarredView = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const query = useRouterQuery();
   const multiSelect = useAppSelector((state) => state.multiSelect);
-  const [currentPage, setCurrentPage] = useState('Tracks');
+  const [page, setPage] = useState(query.get('page') || 'tracks');
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const { isLoading, isError, data, error }: any = useQuery('starred', getStarred, {
     refetchOnWindowFocus: multiSelect.selected.length < 1,
@@ -33,10 +35,10 @@ const StarredView = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
     searchQuery,
-    currentPage === 'Tracks' ? data?.song : currentPage === 'Albums' ? data?.album : data?.artist,
-    currentPage === 'Tracks'
+    page === 'tracks' ? data?.song : page === 'albums' ? data?.album : data?.artist,
+    page === 'tracks'
       ? ['title', 'artist', 'album', 'name', 'genre']
-      : currentPage === 'Albums'
+      : page === 'albums'
       ? ['name', 'artist', 'genre', 'year']
       : ['name']
   );
@@ -50,14 +52,14 @@ const StarredView = () => {
         if (e.ctrlKey) {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
-          if (currentPage === 'Tracks') {
+          if (page === 'tracks') {
             dispatch(setRangeSelected(rowData));
             if (searchQuery !== '') {
               dispatch(toggleRangeSelected(filteredData));
             } else {
               dispatch(toggleRangeSelected(data.song));
             }
-          } else if (currentPage === 'Albums') {
+          } else if (page === 'albums') {
             dispatch(setRangeSelected(rowData));
             dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : data?.album));
           }
@@ -71,7 +73,7 @@ const StarredView = () => {
     timeout = null;
     dispatch(clearSelected());
 
-    if (currentPage === 'Tracks') {
+    if (page === 'tracks') {
       dispatch(
         setPlayQueueByRowClick({
           entries: data.song,
@@ -82,7 +84,7 @@ const StarredView = () => {
       );
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
-    } else if (currentPage === 'Albums') {
+    } else if (page === 'albums') {
       history.push(`/library/album/${e.id}`);
     } else {
       history.push(`/library/artist/${e.id}`);
@@ -100,16 +102,16 @@ const StarredView = () => {
         <GenericPageHeader
           title="Favorites"
           subtitle={
-            <Nav activeKey={currentPage} onSelect={(e) => setCurrentPage(e)}>
-              <StyledNavItem eventKey="Tracks">Tracks</StyledNavItem>
-              <StyledNavItem eventKey="Albums">Albums</StyledNavItem>
-              <StyledNavItem eventKey="Artists">Artists</StyledNavItem>
+            <Nav activeKey={page} onSelect={(e) => setPage(e)}>
+              <StyledNavItem eventKey="tracks">Tracks</StyledNavItem>
+              <StyledNavItem eventKey="albums">Albums</StyledNavItem>
+              <StyledNavItem eventKey="artists">Artists</StyledNavItem>
             </Nav>
           }
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
-          showViewTypeButtons={currentPage !== 'Tracks'}
+          showViewTypeButtons={page !== 'tracks'}
           viewTypeSetting="album"
           showSearchBar
           handleListClick={() => setViewType('list')}
@@ -121,7 +123,7 @@ const StarredView = () => {
         <PageLoader />
       ) : (
         <>
-          {currentPage === 'Tracks' && (
+          {page === 'tracks' && (
             <ListViewType
               data={searchQuery !== '' ? filteredData : data.song}
               tableColumns={settings.getSync('musicListColumns')}
@@ -139,7 +141,7 @@ const StarredView = () => {
               disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
             />
           )}
-          {currentPage === 'Albums' && (
+          {page === 'albums' && (
             <>
               {viewType === 'list' && (
                 <ListViewType
@@ -184,7 +186,7 @@ const StarredView = () => {
               )}
             </>
           )}
-          {currentPage === 'Artists' && (
+          {page === 'artists' && (
             <>
               {viewType === 'list' && (
                 <ListViewType

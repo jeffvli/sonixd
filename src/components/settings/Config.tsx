@@ -11,11 +11,13 @@ import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';
 import PlayerConfig from './ConfigPanels/PlayerConfig';
 import CacheConfig from './ConfigPanels/CacheConfig';
 import DebugConfig from './ConfigPanels/DebugConfig';
+import useRouterQuery from '../../hooks/useRouterQuery';
 
 const Config = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
-  const [page, setPage] = useState('playback');
+  const query = useRouterQuery();
+  const [page, setPage] = useState(query.get('page') || 'playback');
 
   useEffect(() => {
     // Check scan status on render
