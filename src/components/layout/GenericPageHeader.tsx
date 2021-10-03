@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 import { StyledInputGroup } from '../shared/styled';
@@ -20,6 +21,8 @@ const GenericPageHeader = ({
   handleGridClick,
   viewTypeSetting,
 }: any) => {
+  const history = useHistory();
+
   return (
     <>
       {image && (
@@ -70,6 +73,11 @@ const GenericPageHeader = ({
                     value={searchQuery}
                     placeholder="Search..."
                     onChange={handleSearch}
+                    onPressEnter={() => {
+                      if (searchQuery.trim()) {
+                        history.push(`/search?query=${searchQuery}`);
+                      }
+                    }}
                     onKeyDown={(e: KeyboardEvent) => {
                       if (e.key === 'Escape') {
                         clearSearchQuery();

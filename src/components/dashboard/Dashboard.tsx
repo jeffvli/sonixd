@@ -11,6 +11,7 @@ import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 const Dashboard = () => {
   const history = useHistory();
   const cardSize = Number(settings.getSync('gridCardSize'));
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { isLoading: isLoadingRecent, data: recentAlbums }: any = useQuery(
     ['recentAlbums'],
@@ -45,7 +46,18 @@ const Dashboard = () => {
   }
 
   return (
-    <GenericPage header={<GenericPageHeader title="Dashboard" />} hideDivider>
+    <GenericPage
+      header={
+        <GenericPageHeader
+          title="Dashboard"
+          showSearchBar
+          searchQuery={searchQuery}
+          handleSearch={(e: any) => setSearchQuery(e)}
+          clearSearchQuery={() => setSearchQuery('')}
+        />
+      }
+      hideDivider
+    >
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu
@@ -63,6 +75,7 @@ const Dashboard = () => {
             }}
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=recent`)}
+            type="album"
           />
 
           <ScrollingMenu
@@ -80,6 +93,7 @@ const Dashboard = () => {
             }}
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=newest`)}
+            type="album"
           />
 
           <ScrollingMenu
@@ -97,6 +111,7 @@ const Dashboard = () => {
             }}
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=random`)}
+            type="album"
           />
 
           <ScrollingMenu
@@ -114,6 +129,7 @@ const Dashboard = () => {
             }}
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=frequent`)}
+            type="album"
           />
         </>
       )}

@@ -23,6 +23,7 @@ import { useAppSelector } from './redux/hooks';
 import PageModal from './components/modal/PageModal';
 import NowPlayingMiniView from './components/player/NowPlayingMiniView';
 import { GlobalContextMenu } from './components/shared/ContextMenu';
+import SearchView from './components/search/SearchView';
 
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
@@ -75,6 +76,7 @@ const App = () => {
             <Route exact path="/playlist" component={PlaylistList} />
             <Route exact path="/starred" component={StarredView} />
             <Route exact path="/config" component={Config} />
+            <Route exact path="/search" component={SearchView} />
             <Route path="/" component={Dashboard} />
           </Switch>
         </Layout>

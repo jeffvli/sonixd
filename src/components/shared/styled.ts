@@ -189,3 +189,19 @@ export const StyledPopover = styled(Popover)`
   position: absolute;
   z-index: 2;
 `;
+
+export const SectionTitleWrapper = styled.div`
+  margin-left: 10px;
+  margin-bottom: 10px;
+`;
+
+export const SectionTitle = styled.a`
+  font-size: 20px;
+  color: ${(props) => props.theme.primary.text};
+
+  &:hover {
+    cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
+    text-decoration: none;
+    color: ${(props) => (!props.onClick ? props.theme.primary.text : undefined)};
+  }
+`;

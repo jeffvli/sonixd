@@ -676,6 +676,7 @@ export const search3 = async (query: string) => {
   const { data } = await api.get(`/search3`, {
     params: {
       query,
+      songCount: 100,
     },
   });
 
