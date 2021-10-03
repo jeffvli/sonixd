@@ -1,9 +1,12 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
 import React, { useMemo } from 'react';
+import path from 'path';
+import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
 import 'react-virtualized/styles.css';
+import { getImageCachePath } from '../../shared/utils';
 
 const GridCard = ({ data, index, style }: any) => {
   const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
@@ -49,6 +52,8 @@ const GridCard = ({ data, index, style }: any) => {
             id: data.data[i][data.playClick.idProperty],
           }}
           details={{ cacheType: data.cacheType, ...data.data[i] }}
+          cacheImages={data.cacheImages}
+          cachePath={data.cachePath}
         />
       </div>
     );
@@ -78,6 +83,8 @@ function ListWrapper({
   itemCount,
   width,
   cacheType,
+  cacheImages,
+  cachePath,
 }: any) {
   const gapSize = 5;
   const cardHeight = size + 75; // 225
@@ -99,6 +106,8 @@ function ListWrapper({
       cardWidth,
       cardHeight,
       gapSize,
+      cacheImages,
+      cachePath,
     }),
     [
       cardHeight,
@@ -111,6 +120,8 @@ function ListWrapper({
       itemCount,
       playClick,
       size,
+      cacheImages,
+      cachePath,
     ]
   );
 
@@ -129,6 +140,9 @@ function ListWrapper({
 }
 
 const GridViewType = ({ data, cardTitle, cardSubtitle, playClick, size, cacheType }: any) => {
+  const cacheImages = Boolean(settings.getSync('cacheImages'));
+  const cachePath = path.join(getImageCachePath(), '/');
+
   return (
     <AutoSizer>
       {({ height, width }: any) => (
@@ -142,6 +156,8 @@ const GridViewType = ({ data, cardTitle, cardSubtitle, playClick, size, cacheTyp
           playClick={playClick}
           size={size}
           cacheType={cacheType}
+          cacheImages={cacheImages}
+          cachePath={cachePath}
         />
       )}
     </AutoSizer>

@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import path from 'path';
-import settings from 'electron-settings';
+import React from 'react';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
@@ -8,7 +6,7 @@ import cacheImage from '../shared/cacheImage';
 import { getAlbum, getPlaylist, star, unstar, getAllArtistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
-import { isCached, getImageCachePath } from '../../shared/utils';
+import { isCached } from '../../shared/utils';
 
 import {
   StyledPanel,
@@ -37,14 +35,14 @@ const Card = ({
   lazyLoad,
   playClick,
   size,
+  cacheImages,
+  cachePath,
   ...rest
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const queryClient = useQueryClient();
-  const [cacheImages] = useState(Boolean(settings.getSync('cacheImages')));
-  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
 
   const handleClick = () => {
     history.push(url);
@@ -119,6 +117,9 @@ const Card = ({
       active: true,
     });
     await queryClient.refetchQueries(['playlist'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['search'], {
       active: true,
     });
   };

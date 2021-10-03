@@ -1,7 +1,10 @@
 import React from 'react';
+import path from 'path';
+import settings from 'electron-settings';
 import styled from 'styled-components';
 import Card from '../card/Card';
 import { SectionTitleWrapper, SectionTitle } from '../shared/styled';
+import { getImageCachePath } from '../../shared/utils';
 
 const ScrollMenuContainer = styled.div`
   margin-bottom: 25px;
@@ -14,6 +17,9 @@ const ScrollMenuContainer = styled.div`
 `;
 
 const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, type }: any) => {
+  const cacheImages = Boolean(settings.getSync('cacheImages'));
+  const cachePath = path.join(getImageCachePath(), '/');
+
   return (
     <>
       <SectionTitleWrapper>
@@ -26,19 +32,23 @@ const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, typ
             <Card
               itemId={item.id}
               title={item[cardTitle.property] || item.title}
-              subtitle={`${item[cardSubtitle.property]}${cardSubtitle.unit}`}
+              subtitle={
+                cardSubtitle.unit
+                  ? `${item[cardSubtitle.property]}${cardSubtitle.unit}`
+                  : item[cardSubtitle.property]
+              }
               coverArt={item.image}
-              url={cardTitle.urlProperty ? `library/${cardTitle.prefix}/${item.id}` : undefined}
+              url={cardTitle.urlProperty ? `${cardTitle.prefix}/${item.id}` : undefined}
               subUrl={
-                cardSubtitle.urlProperty
-                  ? `library/${cardSubtitle.prefix}/${item.artistId}`
-                  : undefined
+                cardSubtitle.urlProperty ? `${cardSubtitle.prefix}/${item.artistId}` : undefined
               }
               playClick={{ type, id: item.id }}
               details={{ cacheType: type, ...item }}
               hasHoverButtons
-              size={200}
+              size={settings.getSync('gridCardSize')}
               lazyLoad
+              cacheImages={cacheImages}
+              cachePath={cachePath}
               style={{ margin: '0px 5px 0px 5px' }}
             />
           </span>
