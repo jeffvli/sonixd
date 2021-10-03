@@ -58,14 +58,13 @@ const GenreList = () => {
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}
-          viewTypeSetting="genre"
           showSearchBar
         />
       }
     >
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
-      {!isLoading && !isError && (
+      {!isLoading && genres && !isError && (
         <ListViewType
           data={searchQuery !== '' ? filteredData : genres}
           tableColumns={settings.getSync('genreListColumns')}
