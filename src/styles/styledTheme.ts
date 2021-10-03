@@ -38,10 +38,10 @@ export const defaultLight = {
   primary: {
     main: '#285DA0',
     background: '#EBEEF5',
-    titleBar: '#272C36',
+    titleBar: '#21252B',
     titleText: '#FFFFFF',
-    playerBar: '#272C36',
-    sideBar: '#272C36',
+    playerBar: '#21252B',
+    sideBar: '#21252B',
     text: '#000000',
     rowSelected: '#BABCC2',
     playerBarText: '#EBEEF5',
