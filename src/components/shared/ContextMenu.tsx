@@ -463,14 +463,13 @@ export const GlobalContextMenu = () => {
           yPos={misc.contextMenu.yPos}
           width={190}
           numOfButtons={8}
-          numOfDividers={4}
+          numOfDividers={3}
         >
           <ContextMenuButton
             text="Play"
             onClick={handlePlay}
             disabled={misc.contextMenu.disabledOptions.includes('play')}
           />
-          <ContextMenuDivider />
           <ContextMenuButton
             text="Add to queue"
             onClick={handleAddToQueue}
