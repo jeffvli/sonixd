@@ -35,12 +35,6 @@ import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList } from '../../shared/utils';
 
-const keyCodes = {
-  SPACEBAR: 32,
-  UP: 38,
-  DOWN: 40,
-};
-
 const PlayerBar = () => {
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -150,7 +144,7 @@ const PlayerBar = () => {
   };
 
   const handleVolumeKey = (e: any) => {
-    if (e.keyCode === keyCodes.UP) {
+    if (e.key === 'ArrowUp') {
       const vol = Number((playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2));
       dispatch(setVolume(vol));
       dispatch(
@@ -159,7 +153,7 @@ const PlayerBar = () => {
           volume: vol,
         })
       );
-    } else if (e.keyCode === keyCodes.DOWN) {
+    } else if (e.key === 'ArrowDown') {
       const vol = Number((playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2));
       dispatch(setVolume(vol));
       dispatch(
@@ -333,7 +327,7 @@ const PlayerBar = () => {
                         style={{ cursor: 'pointer' }}
                         onClick={() => history.push(`/nowplaying`)}
                         onKeyDown={(e: any) => {
-                          if (e.keyCode === keyCodes.SPACEBAR) {
+                          if (e.key === ' ') {
                             history.push(`/nowplaying`);
                           }
                         }}
@@ -432,7 +426,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickBackward}
                   onKeyDown={(e: any) => {
-                    if (e.keyCode === keyCodes.SPACEBAR) {
+                    if (e.key === ' ') {
                       handleClickBackward();
                     }
                   }}
@@ -447,7 +441,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickPrevious}
                   onKeyDown={(e: any) => {
-                    if (e.keyCode === keyCodes.SPACEBAR) {
+                    if (e.key === ' ') {
                       handleClickPrevious();
                     }
                   }}
@@ -462,7 +456,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickPlayPause}
                   onKeyDown={(e: any) => {
-                    if (e.keyCode === keyCodes.SPACEBAR) {
+                    if (e.key === ' ') {
                       handleClickPlayPause();
                     }
                   }}
@@ -477,7 +471,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickNext}
                   onKeyDown={(e: any) => {
-                    if (e.keyCode === keyCodes.SPACEBAR) {
+                    if (e.key === ' ') {
                       handleClickNext();
                     }
                   }}
@@ -492,7 +486,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickForward}
                   onKeyDown={(e: any) => {
-                    if (e.keyCode === keyCodes.SPACEBAR) {
+                    if (e.key === ' ') {
                       handleClickForward();
                     }
                   }}
@@ -598,7 +592,7 @@ const PlayerBar = () => {
                         fixedWidth
                         onClick={handleRepeat}
                         onKeyDown={(e: any) => {
-                          if (e.keyCode === keyCodes.SPACEBAR) {
+                          if (e.key === ' ') {
                             handleRepeat();
                           }
                         }}
@@ -619,7 +613,7 @@ const PlayerBar = () => {
                         fixedWidth
                         onClick={handleShuffle}
                         onKeyDown={(e: any) => {
-                          if (e.keyCode === keyCodes.SPACEBAR) {
+                          if (e.key === ' ') {
                             handleShuffle();
                           }
                         }}
@@ -635,7 +629,7 @@ const PlayerBar = () => {
                         fixedWidth
                         onClick={handleDisplayQueue}
                         onKeyDown={(e: any) => {
-                          if (e.keyCode === keyCodes.SPACEBAR) {
+                          if (e.key === ' ') {
                             handleDisplayQueue();
                           }
                         }}
