@@ -31,7 +31,7 @@ const GridCard = ({ data, index, style }: any) => {
           title={data.data[i][data.cardTitle.property]}
           subtitle={`${data.data[i][data.cardSubtitle.property]}${data.cardSubtitle.unit}`}
           coverArt={data.data[i].image}
-          size={`${data.size}px`}
+          size={data.size}
           url={
             data.cardTitle.urlProperty
               ? `${data.cardTitle.prefix}/${data.data[i][data.cardTitle.urlProperty]}`

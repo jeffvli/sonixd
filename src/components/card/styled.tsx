@@ -20,8 +20,8 @@ interface Card {
 
 export const StyledPanel = styled(Panel)<Card>`
   text-align: center;
-  width: ${(props) => props.cardsize + 2};
-  height: ${(props) => props.cardsize + 55};
+  width: ${(props) => `${Number(props.cardsize) + 2}px`};
+  height: ${(props) => `${Number(props.cardsize) + 55}px`};
   border-radius: 0px !important;
   &:hover {
     border: 1px solid ${(props) => props.theme.primary.main};
@@ -37,7 +37,7 @@ export const StyledPanel = styled(Panel)<Card>`
 `;
 
 export const InfoPanel = styled(Panel)<Card>`
-  width: ${(props) => props.cardsize};
+  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const InfoSpan = styled.div`
@@ -54,13 +54,13 @@ export const CardTitleButton = styled(CardButton)`
   padding-top: 5px;
   padding-bottom: 2px;
   color: ${(props) => props.theme.primary.text};
-  width: ${(props) => props.cardsize};
+  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const CardSubtitleButton = styled(CardButton)`
   padding-bottom: 5px;
   color: ${(props) => props.theme.secondary.text};
-  width: ${(props) => props.cardsize};
+  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const CardSubtitle = styled.div<Card>`
@@ -69,24 +69,24 @@ export const CardSubtitle = styled.div<Card>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: ${(props) => props.cardsize};
+  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const CardImg = styled.img<Card>`
-  height: ${(props) => props.cardsize};
-  width: ${(props) => props.cardsize};
+  height: ${(props) => `${props.cardsize}px`};
+  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const LazyCardImg = styled(LazyLoadImage)<Card>`
-  height: ${(props) => props.cardsize};
-  width: ${(props) => props.cardsize};
+  height: ${(props) => `${props.cardsize}px`};
+  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const Overlay = styled.div<Card>`
   background-color: #1a1d24;
   position: relative;
-  height: ${(props) => props.cardsize};
-  width: ${(props) => props.cardsize};
+  height: ${(props) => `${props.cardsize}px`};
+  width: ${(props) => `${props.cardsize}px`};
   &:hover {
     cursor: pointer;
   }
