@@ -132,7 +132,8 @@ const ArtistView = ({ ...rest }: any) => {
                 <span>
                   {artistInfo.biography
                     ?.replace(/<[^>]*>/, '')
-                    .replace('Read more on Last.fm</a>', '') !== ''
+                    .replace('Read more on Last.fm</a>', '')
+                    ?.trim() !== ''
                     ? `${artistInfo.biography
                         ?.replace(/<[^>]*>/, '')
                         .replace('Read more on Last.fm</a>', '')}`
