@@ -95,7 +95,6 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   user-select: none;
   pointer-events: ${(props) => (props.display === 'true' ? 'all' : 'none')};
   position: absolute;
-  z-index: 7;
   bottom: 100px;
   right: 25px;
   padding: 8px;
