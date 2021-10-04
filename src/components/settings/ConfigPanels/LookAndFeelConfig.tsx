@@ -16,19 +16,25 @@ import { setTheme, setFont, setDynamicBackground } from '../../../redux/miscSlic
 import {
   songColumnPicker,
   songColumnList,
+  songColumnListAuto,
   albumColumnPicker,
   albumColumnList,
+  albumColumnListAuto,
   playlistColumnPicker,
   playlistColumnList,
+  playlistColumnListAuto,
   artistColumnPicker,
   artistColumnList,
+  artistColumnListAuto,
   genreColumnPicker,
   genreColumnList,
+  genreColumnListAuto,
 } from '../ListViewColumns';
 
 const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
   const [currentLAFTab, setCurrentLAFTab] = useState('songList');
+  const [resizableColumn, setResizableColumn] = useState(false);
 
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -87,6 +93,14 @@ const LookAndFeelConfig = () => {
       <br />
       <ConfigPanel header="List-View" bordered>
         <p>Select the columns you want displayed on pages with a list-view.</p>
+        <StyledCheckbox
+          defaultChecked={resizableColumn}
+          onChange={() => {
+            setResizableColumn(!resizableColumn);
+          }}
+        >
+          Use resizable columns (check/uncheck this before selecting columns)
+        </StyledCheckbox>
         <Nav
           style={{ paddingTop: '10px' }}
           activeKey={currentLAFTab}
@@ -104,7 +118,7 @@ const LookAndFeelConfig = () => {
             title="Song List"
             defaultColumns={currentSongColumns}
             columnPicker={songColumnPicker}
-            columnList={songColumnList}
+            columnList={resizableColumn ? songColumnList : songColumnListAuto}
             settingsConfig={{
               columnList: 'musicListColumns',
               rowHeight: 'musicListRowHeight',
@@ -118,7 +132,7 @@ const LookAndFeelConfig = () => {
             title="Album List"
             defaultColumns={currentAlbumColumns}
             columnPicker={albumColumnPicker}
-            columnList={albumColumnList}
+            columnList={resizableColumn ? albumColumnList : albumColumnListAuto}
             settingsConfig={{
               columnList: 'albumListColumns',
               rowHeight: 'albumListRowHeight',
@@ -132,7 +146,7 @@ const LookAndFeelConfig = () => {
             title="Playlist List"
             defaultColumns={currentPlaylistColumns}
             columnPicker={playlistColumnPicker}
-            columnList={playlistColumnList}
+            columnList={resizableColumn ? playlistColumnList : playlistColumnListAuto}
             settingsConfig={{
               columnList: 'playlistListColumns',
               rowHeight: 'playlistListRowHeight',
@@ -146,7 +160,7 @@ const LookAndFeelConfig = () => {
             title="Artist List"
             defaultColumns={currentArtistColumns}
             columnPicker={artistColumnPicker}
-            columnList={artistColumnList}
+            columnList={resizableColumn ? artistColumnList : artistColumnListAuto}
             settingsConfig={{
               columnList: 'artistListColumns',
               rowHeight: 'artistListRowHeight',
@@ -160,7 +174,7 @@ const LookAndFeelConfig = () => {
             title="Genre List"
             defaultColumns={currentGenreColumns}
             columnPicker={genreColumnPicker}
-            columnList={genreColumnList}
+            columnList={resizableColumn ? genreColumnList : genreColumnListAuto}
             settingsConfig={{
               columnList: 'genreListColumns',
               rowHeight: 'genreListRowHeight',
@@ -174,7 +188,7 @@ const LookAndFeelConfig = () => {
             title="Miniplayer List"
             defaultColumns={currentMiniColumns}
             columnPicker={songColumnPicker}
-            columnList={songColumnList}
+            columnList={resizableColumn ? songColumnList : songColumnListAuto}
             settingsConfig={{
               columnList: 'miniListColumns',
               rowHeight: 'miniListRowHeight',
