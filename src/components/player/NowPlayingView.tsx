@@ -179,16 +179,31 @@ const NowPlayingView = () => {
       return notifyToast('error', errorMessages(res)[0]);
     }
 
+    const cleanedSongs = res.song.filter((song: any) => {
+      // Remove invalid songs that may break the player
+      return song.bitRate && song.duration;
+    });
+
+    const difference = res.song.length - cleanedSongs.length;
+
     if (action === 'play') {
-      dispatch(setPlayQueue({ entries: res.song }));
+      dispatch(setPlayQueue({ entries: cleanedSongs }));
       dispatch(setStatus('PLAYING'));
-      notifyToast('info', `Playing ${res.song.length} song(s)`);
+      notifyToast(
+        'info',
+        `Playing ${cleanedSongs.length} ${
+          difference !== 0 ? `(-${difference} invalid)` : ''
+        } song(s)`
+      );
     } else {
-      dispatch(appendPlayQueue({ entries: res.song }));
+      dispatch(appendPlayQueue({ entries: cleanedSongs }));
       if (playQueue.entry.length < 1) {
         dispatch(setStatus('PLAYING'));
       }
-      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
+      notifyToast(
+        'info',
+        `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
+      );
     }
 
     setIsLoadingRandom(false);
