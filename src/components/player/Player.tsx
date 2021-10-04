@@ -443,10 +443,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.currentPlayer === 1 &&
           player.status === 'PLAYING'
         }
-        onError={(e: any) => {
+        onError={() => {
           if (playQueue[currentEntryList].length > 0) {
-            console.log('player error', e);
-
             player1Ref.current.audioEl.current.src = './components/player/dummy.mp3';
             player1Ref.current.audioEl.current.src = getSrc1();
           }
@@ -466,10 +464,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           playQueue.currentPlayer === 2 &&
           player.status === 'PLAYING'
         }
-        onError={(e: any) => {
+        onError={() => {
           if (playQueue[currentEntryList].length > 0) {
-            console.log('player error', e);
-
             player2Ref.current.audioEl.current.src = './components/player/dummy.mp3';
             player2Ref.current.audioEl.current.src = getSrc2();
           }
