@@ -8,6 +8,7 @@ import setDefaultSettings from '../shared/setDefaultSettings';
 import { StyledInput, StyledInputGroup } from '../shared/styled';
 import { LoginPanel } from './styled';
 import GenericPage from '../layout/GenericPage';
+import logo from '../../../assets/icon.png';
 
 const Login = () => {
   const [serverName, setServerName] = useState('');
@@ -61,10 +62,11 @@ const Login = () => {
 
   return (
     <GenericPage hideDivider>
-      <LoginPanel style={{ textAlign: 'center' }}>
-        <h1>Sign in to sonixd</h1>
-      </LoginPanel>
       <LoginPanel bordered>
+        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h1>Sign in</h1>
+          <img src={logo} height="80px" width="80px" alt="" />
+        </span>
         {message !== '' && <Message type="error" description={message} />}
         <Form id="login-form" fluid style={{ paddingTop: '20px' }}>
           <ControlLabel>Server</ControlLabel>
