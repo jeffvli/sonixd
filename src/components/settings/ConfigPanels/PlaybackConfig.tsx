@@ -14,8 +14,8 @@ const PlaybackConfig = () => {
       <p>
         Fading works by polling the audio player on an interval to determine when to start fading to
         the next track. Due to this, you may notice the fade timing may not be 100% perfect.
-        Lowering the player polling interval can increase the accuracy of the fade, but may also
-        decrease application performance as calculations are running for the fade.
+        Lowering the player polling interval may increase the accuracy of the fade, but also
+        increases the application&apos;s CPU usage.
       </p>
 
       <p>
@@ -25,9 +25,10 @@ const PlaybackConfig = () => {
 
       <p>
         Setting the crossfade duration to <code>0</code> will enable{' '}
-        <strong>gapless playback</strong>. All other playback settings except the polling interval
-        will be ignored. It is recommended that you use a polling interval between <code>1</code>{' '}
-        and <code>20</code> for increased transition accuracy.
+        <strong>gapless playback</strong> mode. All other playback settings except the polling
+        interval will be ignored. It is recommended that you use a polling interval between{' '}
+        <code>10</code> and <code>20</code> for increased transition accuracy. Note that the gapless
+        playback is not true gapless and may work better or worse on specific albums.
       </p>
       <p style={{ fontSize: 'smaller' }}>
         *Enable the debug window if you want to view the differences between each fade type
