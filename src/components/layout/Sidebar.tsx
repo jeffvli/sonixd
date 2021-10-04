@@ -88,7 +88,7 @@ const Sidebar = ({
               eventKey="folders"
               icon={<Icon icon="folder-open" />}
               onSelect={handleSidebarSelect}
-              disabled={disableSidebar}
+              disabled
             >
               Folders
             </Nav.Item>
