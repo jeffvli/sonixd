@@ -27,7 +27,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('volume')) {
-    settings.setSync('volume', 0.5);
+    settings.setSync('volume', 0.3);
   }
 
   if (force || !settings.hasSync('seekForwardInterval')) {
@@ -75,7 +75,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('gridCardSize')) {
-    settings.setSync('gridCardSize', 150);
+    settings.setSync('gridCardSize', 175);
   }
 
   if (force || !settings.hasSync('playlistViewType')) {
@@ -108,49 +108,36 @@ const setDefaultSettings = (force: boolean) => {
         id: 'Title',
         dataKey: 'combinedtitle',
         alignment: 'left',
-        resizable: true,
-        width: 450,
+        flexGrow: 5,
         label: 'Title (Combined)',
       },
       {
         id: 'Album',
         dataKey: 'album',
         alignment: 'left',
-        resizable: true,
-        width: 450,
+        flexGrow: 3,
         label: 'Album',
       },
       {
         id: 'Duration',
         dataKey: 'duration',
         alignment: 'center',
-        resizable: true,
-        width: 100,
+        flexGrow: 2,
         label: 'Duration',
       },
       {
         id: 'Bitrate',
         dataKey: 'bitRate',
         alignment: 'left',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Bitrate',
       },
       {
         id: 'Fav',
         dataKey: 'starred',
         alignment: 'center',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Favorite',
-      },
-      {
-        id: 'Rate',
-        dataKey: 'userRating',
-        alignment: 'center',
-        resizable: true,
-        width: 150,
-        label: 'Rating',
       },
     ]);
   }
@@ -177,32 +164,28 @@ const setDefaultSettings = (force: boolean) => {
         id: 'Title',
         dataKey: 'combinedtitle',
         alignment: 'left',
-        resizable: true,
-        width: 450,
+        flexGrow: 5,
         label: 'Title (Combined)',
       },
       {
         id: 'Tracks',
         dataKey: 'songCount',
         alignment: 'center',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Track Count',
       },
       {
         id: 'Duration',
         dataKey: 'duration',
         alignment: 'center',
-        resizable: true,
-        width: 100,
+        flexGrow: 2,
         label: 'Duration',
       },
       {
         id: 'Fav',
         dataKey: 'starred',
         alignment: 'center',
-        resizable: true,
-        width: 60,
+        flexGrow: 1,
         label: 'Favorite',
       },
     ]);
@@ -213,7 +196,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('playlistListRowHeight')) {
-    settings.setSync('playlistListRowHeight', '55.0');
+    settings.setSync('playlistListRowHeight', '45.0');
   }
 
   if (force || !settings.hasSync('playlistListColumns')) {
@@ -227,51 +210,38 @@ const setDefaultSettings = (force: boolean) => {
         label: '#',
       },
       {
-        id: 'Art',
-        dataKey: 'coverart',
-        alignment: 'center',
-        resizable: true,
-        width: 100,
-        label: 'CoverArt',
-      },
-      {
         id: 'Title',
         dataKey: 'name',
         alignment: 'left',
-        resizable: true,
-        width: 300,
+        flexGrow: 5,
         label: 'Title',
       },
       {
         id: 'Description',
         dataKey: 'comment',
         alignment: 'left',
-        resizable: true,
-        width: 200,
+        flexGrow: 3,
         label: 'Description',
       },
       {
         id: 'Tracks',
         dataKey: 'songCount',
         alignment: 'center',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Track Count',
       },
       {
         id: 'Owner',
         dataKey: 'owner',
         alignment: 'left',
-        resizable: true,
-        width: 150,
+        flexGrow: 2,
         label: 'Owner',
       },
       {
         id: 'Modified',
         dataKey: 'changed',
         alignment: 'left',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Modified',
       },
     ]);
@@ -300,42 +270,39 @@ const setDefaultSettings = (force: boolean) => {
         dataKey: 'coverart',
         alignment: 'center',
         resizable: true,
-        width: 100,
+        width: 50,
         label: 'CoverArt',
       },
       {
         id: 'Name',
         dataKey: 'name',
         alignment: 'left',
-        resizable: true,
-        width: 300,
+        flexGrow: 5,
         label: 'Name',
       },
       {
-        id: 'Album Count',
+        id: 'Albums',
         dataKey: 'albumCount',
         alignment: 'left',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Album Count',
       },
       {
         id: 'Fav',
         dataKey: 'starred',
         alignment: 'center',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Favorite',
       },
     ]);
   }
 
   if (force || !settings.hasSync('miniListFontSize')) {
-    settings.setSync('miniListFontSize', '14');
+    settings.setSync('miniListFontSize', '12');
   }
 
   if (force || !settings.hasSync('miniListRowHeight')) {
-    settings.setSync('miniListRowHeight', '50');
+    settings.setSync('miniListRowHeight', '40');
   }
 
   if (force || !settings.hasSync('miniListColumns')) {
@@ -352,16 +319,14 @@ const setDefaultSettings = (force: boolean) => {
         id: 'Title',
         dataKey: 'combinedtitle',
         alignment: 'left',
-        resizable: true,
-        width: 235,
+        flexGrow: 5,
         label: 'Title (Combined)',
       },
       {
         id: 'Duration',
         dataKey: 'duration',
         alignment: 'center',
-        resizable: true,
-        width: 80,
+        flexGrow: 2,
         label: 'Duration',
       },
     ]);
@@ -389,24 +354,21 @@ const setDefaultSettings = (force: boolean) => {
         id: 'Name',
         dataKey: 'name',
         alignment: 'left',
-        resizable: true,
-        width: 300,
+        flexGrow: 5,
         label: 'Name',
       },
       {
-        id: 'Album Count',
+        id: 'Albums',
         dataKey: 'albumCount',
         alignment: 'left',
-        resizable: true,
-        width: 100,
+        flexGrow: 3,
         label: 'Album Count',
       },
       {
-        id: 'Song Count',
+        id: 'Tracks',
         dataKey: 'songCount',
         alignment: 'left',
-        resizable: true,
-        width: 100,
+        flexGrow: 1,
         label: 'Song Count',
       },
     ]);
