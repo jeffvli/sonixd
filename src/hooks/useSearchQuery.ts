@@ -17,7 +17,7 @@ const useSearchQuery = (searchQuery: string, data: any[], filterProperties: stri
           return filteredDataByProp.map((entry) => matches.push(entry));
         });
 
-        setFilteredData(_.uniqBy(matches, 'id'));
+        setFilteredData(_.uniqBy(matches, 'uniqueId'));
       } else {
         setFilteredData([]);
       }
