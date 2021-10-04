@@ -160,7 +160,7 @@ export const GlobalContextMenu = () => {
     if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
       const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
       dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
-      notifyToast('info', `Added ${multiSelect.selected.length} song(s) to the queue`);
+      notifyToast('info', `Added ${multiSelect.selected.length} song(s)`);
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getPlaylist(multiSelect.selected[i].id));
@@ -169,7 +169,7 @@ export const GlobalContextMenu = () => {
       const res = await Promise.all(promises);
       const songs = _.flatten(_.map(res, 'song'));
       dispatch(appendPlayQueue({ entries: songs }));
-      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+      notifyToast('info', `Added ${songs.length} song(s)`);
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getAlbum(multiSelect.selected[i].id));
@@ -178,7 +178,7 @@ export const GlobalContextMenu = () => {
       const res = await Promise.all(promises);
       const songs = _.flatten(_.map(res, 'song'));
       dispatch(appendPlayQueue({ entries: songs }));
-      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+      notifyToast('info', `Added ${songs.length} song(s)`);
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getAllArtistSongs(multiSelect.selected[i].id));
@@ -187,7 +187,7 @@ export const GlobalContextMenu = () => {
       const res = await Promise.all(promises);
       const songs = _.flatten(res);
       dispatch(appendPlayQueue({ entries: songs }));
-      notifyToast('info', `Added ${songs.length} song(s) to the queue`);
+      notifyToast('info', `Added ${songs.length} song(s)`);
     }
 
     if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {

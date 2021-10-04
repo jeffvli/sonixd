@@ -177,7 +177,7 @@ const PlaylistView = ({ ...rest }) => {
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
-    notifyToast('info', `Added ${playlist.entry.length} song(s) to the queue`);
+    notifyToast('info', `Added ${playlist.entry.length} song(s)`);
   };
 
   const handleSave = async (recovery: boolean) => {

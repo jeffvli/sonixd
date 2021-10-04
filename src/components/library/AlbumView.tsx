@@ -103,7 +103,7 @@ const AlbumView = ({ ...rest }: any) => {
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
-    notifyToast('info', `Added ${data.song.length} song(s) to the queue`);
+    notifyToast('info', `Added ${data.song.length} song(s)`);
   };
 
   const handleFavorite = async () => {
