@@ -94,6 +94,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('musicListRowHeight', '60.0');
   }
 
+  if (force || !settings.hasSync('randomPlaylistTrackCount')) {
+    settings.setSync('randomPlaylistTrackCount', 50);
+  }
+
   if (force || !settings.hasSync('musicListColumns')) {
     settings.setSync('musicListColumns', [
       {

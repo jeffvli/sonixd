@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
-import { ButtonToolbar } from 'rsuite';
+import { useQuery } from 'react-query';
+import { ButtonToolbar, ControlLabel, FlexboxGrid, Icon, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -14,6 +15,8 @@ import {
   moveToIndex,
   setPlaybackSetting,
   removeFromPlayQueue,
+  setPlayQueue,
+  appendPlayQueue,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -27,15 +30,33 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
-import { ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
-import { StyledCheckbox } from '../shared/styled';
-import { getCurrentEntryList } from '../../shared/utils';
+import { AutoPlaylistButton, ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
+import {
+  StyledCheckbox,
+  StyledIconButton,
+  StyledInputGroup,
+  StyledInputNumber,
+  StyledInputPicker,
+  StyledPopover,
+} from '../shared/styled';
+import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
+import { getGenres, getRandomSongs } from '../../api/api';
+import { notifyToast } from '../shared/toast';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
+  const addRandomTriggerRef = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const [randomPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
+    Number(settings.getSync('randomPlaylistTrackCount'))
+  );
+  const [randomPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
+  const [randomPlaylistToYear, setRandomPlaylistToYear] = useState(0);
+  const [randomPlaylistGenre, setRandomPlaylistGenre] = useState('');
+  const [isLoadingRandom, setIsLoadingRandom] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, playQueue.entry, [
     'title',
@@ -45,6 +66,21 @@ const NowPlayingView = () => {
     'genre',
     'path',
   ]);
+
+  const { data: genres }: any = useQuery(
+    ['genreList'],
+    async () => {
+      const res = await getGenres();
+      return res.map((genre: any) => {
+        return {
+          label: `${genre.value} (${genre.songCount})`,
+          value: genre.value,
+          role: 'Genre',
+        };
+      });
+    },
+    { refetchOnWindowFocus: false }
+  );
 
   useHotkeys(
     'del',
@@ -128,6 +164,36 @@ const NowPlayingView = () => {
     }
   };
 
+  const handlePlayRandom = async (action: 'play' | 'add') => {
+    setIsLoadingRandom(true);
+    const res = await getRandomSongs({
+      size: randomPlaylistTrackCount,
+      fromYear: randomPlaylistFromYear !== 0 ? randomPlaylistFromYear : undefined,
+      toYear: randomPlaylistToYear !== 0 ? randomPlaylistToYear : undefined,
+      genre: randomPlaylistGenre,
+    });
+
+    if (isFailedResponse(res)) {
+      addRandomTriggerRef.current.close();
+      return notifyToast('error', errorMessages(res)[0]);
+    }
+
+    if (action === 'play') {
+      dispatch(setPlayQueue({ entries: res.song }));
+      dispatch(setStatus('PLAYING'));
+      notifyToast('info', `Playing ${res.song.length} song(s)`);
+    } else {
+      dispatch(appendPlayQueue({ entries: res.song }));
+      if (playQueue.entry.length < 1) {
+        dispatch(setStatus('PLAYING'));
+      }
+      notifyToast('info', `Added ${res.song.length} song(s) to the queue`);
+    }
+
+    setIsLoadingRandom(false);
+    return addRandomTriggerRef.current.close();
+  };
+
   return (
     <GenericPage
       hideDivider
@@ -139,7 +205,6 @@ const NowPlayingView = () => {
               <ButtonToolbar>
                 <ClearQueueButton
                   size="sm"
-                  width={100}
                   onClick={() => {
                     dispatch(clearPlayQueue());
                     dispatch(setStatus('PAUSED'));
@@ -150,7 +215,6 @@ const NowPlayingView = () => {
                 />
                 <ShuffleButton
                   size="sm"
-                  width={100}
                   onClick={() => {
                     if (playQueue.shuffle) {
                       dispatch(shuffleInPlace());
@@ -159,6 +223,106 @@ const NowPlayingView = () => {
                     }
                   }}
                 />
+                <Whisper
+                  ref={addRandomTriggerRef}
+                  placement="autoVertical"
+                  trigger="none"
+                  speaker={
+                    <StyledPopover>
+                      <ControlLabel>How many tracks? (1-500)*</ControlLabel>
+                      <StyledInputGroup>
+                        <StyledInputNumber
+                          min={1}
+                          max={500}
+                          step={10}
+                          defaultValue={randomPlaylistTrackCount}
+                          value={randomPlaylistTrackCount}
+                          onChange={(e: number) => {
+                            settings.setSync('randomPlaylistTrackCount', Number(e));
+                            setRandomPlaylistTrackCount(Number(e));
+                          }}
+                        />
+                      </StyledInputGroup>
+
+                      <br />
+
+                      <FlexboxGrid justify="space-between">
+                        <FlexboxGrid.Item>
+                          <ControlLabel>From year</ControlLabel>
+                          <div>
+                            <StyledInputGroup>
+                              <StyledInputNumber
+                                width={100}
+                                min={0}
+                                max={3000}
+                                step={1}
+                                defaultValue={randomPlaylistFromYear}
+                                value={randomPlaylistFromYear}
+                                onChange={(e: number) => {
+                                  setRandomPlaylistFromYear(Number(e));
+                                }}
+                              />
+                            </StyledInputGroup>
+                          </div>
+                        </FlexboxGrid.Item>
+                        <FlexboxGrid.Item>
+                          <ControlLabel>To year</ControlLabel>
+                          <div>
+                            <StyledInputGroup>
+                              <StyledInputNumber
+                                width={100}
+                                min={0}
+                                max={3000}
+                                step={1}
+                                defaultValue={randomPlaylistToYear}
+                                value={randomPlaylistToYear}
+                                onChange={(e: number) => setRandomPlaylistToYear(Number(e))}
+                              />
+                            </StyledInputGroup>
+                          </div>
+                        </FlexboxGrid.Item>
+                      </FlexboxGrid>
+                      <br />
+                      <ControlLabel>Genre</ControlLabel>
+                      <div>
+                        <StyledInputPicker
+                          data={genres}
+                          value={randomPlaylistGenre}
+                          virtualized
+                          onChange={(e: string) => setRandomPlaylistGenre(e)}
+                        />
+                      </div>
+                      <br />
+                      <ButtonToolbar>
+                        <StyledIconButton
+                          onClick={() => handlePlayRandom('play')}
+                          loading={isLoadingRandom}
+                          icon={<Icon icon="play" />}
+                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                        >
+                          Play
+                        </StyledIconButton>
+                        <StyledIconButton
+                          onClick={() => handlePlayRandom('add')}
+                          loading={isLoadingRandom}
+                          icon={<Icon icon="plus" />}
+                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                        >
+                          Add to queue
+                        </StyledIconButton>
+                      </ButtonToolbar>
+                    </StyledPopover>
+                  }
+                >
+                  <AutoPlaylistButton
+                    size="sm"
+                    onClick={() =>
+                      addRandomTriggerRef.current.state.isOverlayShown
+                        ? addRandomTriggerRef.current.close()
+                        : addRandomTriggerRef.current.open()
+                    }
+                  />
+                </Whisper>
               </ButtonToolbar>
             </>
           }

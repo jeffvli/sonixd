@@ -89,17 +89,17 @@ export const DownloadButton = ({ ...rest }) => {
 
 export const ShuffleButton = ({ ...rest }) => {
   return (
-    <StyledIconButton icon={<Icon icon="random" />} tabIndex={0} {...rest}>
-      Shuffle
-    </StyledIconButton>
+    <CustomTooltip text="Shuffle queue" placement="bottom">
+      <StyledIconButton icon={<Icon icon="random" />} tabIndex={0} {...rest} />
+    </CustomTooltip>
   );
 };
 
 export const ClearQueueButton = ({ ...rest }) => {
   return (
-    <StyledIconButton icon={<Icon icon="trash2" />} tabIndex={0} {...rest}>
-      Clear
-    </StyledIconButton>
+    <CustomTooltip text="Clear queue" placement="bottom">
+      <StyledIconButton icon={<Icon icon="trash2" />} tabIndex={0} {...rest} />
+    </CustomTooltip>
   );
 };
 
@@ -115,6 +115,14 @@ export const RefreshButton = ({ ...rest }) => {
   return (
     <StyledIconButton icon={<Icon icon="refresh2" />} tabIndex={0} {...rest}>
       Refresh
+    </StyledIconButton>
+  );
+};
+
+export const AutoPlaylistButton = ({ ...rest }) => {
+  return (
+    <StyledIconButton icon={<Icon icon="plus-square" />} tabIndex={0} {...rest}>
+      Add random
     </StyledIconButton>
   );
 };

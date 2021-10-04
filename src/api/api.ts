@@ -338,7 +338,16 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
   };
 };
 
-export const getRandomSongs = async (options: any, coverArtSize = 150) => {
+export const getRandomSongs = async (
+  options: {
+    size?: number;
+    genre?: string;
+    fromYear?: number;
+    toYear?: number;
+    musicFolderId?: number;
+  },
+  coverArtSize = 150
+) => {
   const { data } = await api.get(`/getRandomSongs`, {
     params: options,
   });
@@ -712,18 +721,3 @@ export const search3 = async (query: string) => {
     })),
   };
 };
-
-// return {
-//   ...data.artist,
-//   image: getCoverArtUrl(data.artist, coverArtSize),
-//   type: 'artist',
-//   album: (data.artist.album || []).map((entry: any, index: any) => ({
-//     ...entry,
-//     albumId: entry.id,
-//     type: 'album',
-//     image: getCoverArtUrl(entry, coverArtSize),
-//     starred: entry.starred || undefined,
-//     index,
-//     uniqueId: nanoid(),
-//   })),
-// };
