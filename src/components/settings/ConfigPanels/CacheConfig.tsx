@@ -54,9 +54,10 @@ const CacheConfig = () => {
         }
       });
     });
+    notifyToast('success', `Cleared song cache`);
   };
 
-  const handleClearImageCache = (type: 'playlist' | 'album') => {
+  const handleClearImageCache = (type: 'playlist' | 'album' | 'artist') => {
     const imageCachePath = getImageCachePath();
     fs.readdir(imageCachePath, (err, files) => {
       if (err) {
@@ -66,7 +67,9 @@ const CacheConfig = () => {
       const selectedFiles =
         type === 'playlist'
           ? files.filter((file) => file.split('_')[0] === 'playlist')
-          : files.filter((file) => file.split('_')[0] === 'album');
+          : type === 'album'
+          ? files.filter((file) => file.split('_')[0] === 'album')
+          : files.filter((file) => file.split('_')[0] === 'artist');
 
       return selectedFiles.forEach((file) => {
         const imagePath = path.join(imageCachePath, file);
@@ -82,6 +85,7 @@ const CacheConfig = () => {
         }
       });
     });
+    notifyToast('success', `Cleared ${type} image cache`);
   };
 
   return (
@@ -180,22 +184,17 @@ const CacheConfig = () => {
             <Popover>
               Which cache would you like to clear?
               <ButtonToolbar>
-                <Button appearance="primary" size="sm" onClick={handleClearSongCache}>
+                <Button size="sm" onClick={handleClearSongCache}>
                   Songs
                 </Button>
-                <Button
-                  appearance="primary"
-                  size="sm"
-                  onClick={() => handleClearImageCache('playlist')}
-                >
+                <Button size="sm" onClick={() => handleClearImageCache('playlist')}>
                   Playlist images
                 </Button>
-                <Button
-                  appearance="primary"
-                  size="sm"
-                  onClick={() => handleClearImageCache('album')}
-                >
+                <Button size="sm" onClick={() => handleClearImageCache('album')}>
                   Album images
+                </Button>
+                <Button size="sm" onClick={() => handleClearImageCache('artist')}>
+                  Artist images
                 </Button>
               </ButtonToolbar>
             </Popover>
