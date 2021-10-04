@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/playQueueSlice';
 import {
   clearSelected,
   toggleSelected,
   toggleRangeSelected,
   setRangeSelected,
 } from '../../redux/multiSelectSlice';
-import { getStarred } from '../../api/api';
+import { getStarred, unstar } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import PageLoader from '../loader/PageLoader';
@@ -26,6 +26,7 @@ const StarredView = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const query = useRouterQuery();
+  const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [page, setPage] = useState(query.get('page') || 'tracks');
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
@@ -91,6 +92,28 @@ const StarredView = () => {
     }
   };
 
+  const handleRowFavorite = async (rowData: any) => {
+    await unstar(rowData.id, 'music');
+    dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+    await queryClient.refetchQueries(['starred'], {
+      active: true,
+    });
+  };
+
+  const handleRowFavoriteAlbum = async (rowData: any) => {
+    await unstar(rowData.id, 'album');
+    await queryClient.refetchQueries(['starred'], {
+      active: true,
+    });
+  };
+
+  const handleRowFavoriteArtist = async (rowData: any) => {
+    await unstar(rowData.id, 'artist');
+    await queryClient.refetchQueries(['starred'], {
+      active: true,
+    });
+  };
+
   if (isError) {
     return <span>Error: {error.message}</span>;
   }
@@ -139,6 +162,7 @@ const StarredView = () => {
               listType="music"
               virtualized
               disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
+              handleFavorite={handleRowFavorite}
             />
           )}
           {page === 'albums' && (
@@ -163,6 +187,7 @@ const StarredView = () => {
                     'moveSelectedTo',
                     'deletePlaylist',
                   ]}
+                  handleFavorite={handleRowFavoriteAlbum}
                 />
               )}
               {viewType === 'grid' && (
@@ -209,6 +234,7 @@ const StarredView = () => {
                     'addToPlaylist',
                     'deletePlaylist',
                   ]}
+                  handleFavorite={handleRowFavoriteArtist}
                 />
               )}
               {viewType === 'grid' && (

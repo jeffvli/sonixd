@@ -226,7 +226,7 @@ export const getStarred = async () => {
       albumCount: entry.albumCount || undefined,
       coverArt: getCoverArtUrl(entry),
       image: getCoverArtUrl(entry),
-      starred: entry.starred || undefined,
+      starred: entry.starred || Date.now(), // Airsonic does not return the starred date
       type: 'artist',
       index,
       uniqueId: nanoid(),

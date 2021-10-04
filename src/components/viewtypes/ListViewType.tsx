@@ -31,6 +31,7 @@ const ListViewType = (
     dnd,
     miniView,
     disabledContextMenuOptions,
+    handleFavorite,
     ...rest
   }: any,
   ref: any
@@ -329,6 +330,7 @@ const ListViewType = (
             dnd={dnd}
             miniView={miniView}
             disabledContextMenuOptions={disabledContextMenuOptions}
+            handleFavorite={handleFavorite}
             // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
           />
         )}

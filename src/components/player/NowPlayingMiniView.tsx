@@ -22,6 +22,7 @@ import {
   moveToIndex,
   setPlaybackSetting,
   removeFromPlayQueue,
+  setStar,
 } from '../../redux/playQueueSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import ListViewType from '../viewtypes/ListViewType';
@@ -30,6 +31,7 @@ import { StyledCheckbox, StyledIconButton } from '../shared/styled';
 import { MiniViewContainer } from './styled';
 import { DeselectAllButton, MoveDownButton, MoveUpButton } from '../selectionbar/SelectionButtons';
 import { getCurrentEntryList } from '../../shared/utils';
+import { star, unstar } from '../../api/api';
 
 const NowPlayingMiniView = () => {
   const tableRef = useRef<any>();
@@ -119,6 +121,16 @@ const NowPlayingMiniView = () => {
       if (playQueue.currentPlayer === 1) {
         dispatch(fixPlayer2Index());
       }
+    }
+  };
+
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'playlist');
+      dispatch(setStar({ id: rowData.id, type: 'star' }));
+    } else {
+      await unstar(rowData.id, 'playlist');
+      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
     }
   };
 
@@ -230,6 +242,7 @@ const NowPlayingMiniView = () => {
               nowPlaying
               dnd
               disabledContextMenuOptions={['deletePlaylist']}
+              handleFavorite={handleRowFavorite}
             />
           </GenericPage>
         </MiniViewContainer>

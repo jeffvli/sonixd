@@ -22,6 +22,8 @@ import {
   updatePlaylistSongsLg,
   updatePlaylistSongs,
   updatePlaylist,
+  star,
+  unstar,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -29,6 +31,7 @@ import {
   setPlayQueueByRowClick,
   setPlayQueue,
   appendPlayQueue,
+  setStar,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -52,7 +55,12 @@ import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
 import { StyledButton, StyledCheckbox, StyledInputGroup } from '../shared/styled';
-import { moveToIndex, removeFromPlaylist, setPlaylistData } from '../../redux/playlistSlice';
+import {
+  moveToIndex,
+  removeFromPlaylist,
+  setPlaylistData,
+  setPlaylistStar,
+} from '../../redux/playlistSlice';
 
 interface PlaylistParams {
   id: string;
@@ -286,6 +294,36 @@ const PlaylistView = ({ ...rest }) => {
     }
   };
 
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'music');
+      dispatch(setStar({ id: rowData.id, type: 'star' }));
+      dispatch(setPlaylistStar({ id: rowData.id, type: 'star' }));
+
+      queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.song[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'music');
+      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+      dispatch(setPlaylistStar({ id: rowData.id, type: 'unstar' }));
+
+      queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.song[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -440,6 +478,7 @@ const PlaylistView = ({ ...rest }) => {
         dnd
         isModal={rest.isModal}
         disabledContextMenuOptions={['deletePlaylist']}
+        handleFavorite={handleRowFavorite}
       />
     </GenericPage>
   );

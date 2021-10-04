@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -11,6 +12,7 @@ import {
   fixPlayer2Index,
   setPlayQueue,
   setPlayQueueByRowClick,
+  setStar,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -107,13 +109,37 @@ const AlbumView = ({ ...rest }: any) => {
   const handleFavorite = async () => {
     if (!data.starred) {
       await star(data.id, 'album');
+      queryClient.setQueryData(['album', id], { ...data, starred: Date.now() });
     } else {
       await unstar(data.id, 'album');
+      queryClient.setQueryData(['album', id], { ...data, starred: undefined });
     }
-    await queryClient.refetchQueries(['album', id], {
-      active: true,
-      exact: true,
-    });
+  };
+
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'music');
+      dispatch(setStar({ id: rowData.id, type: 'star' }));
+      queryClient.setQueryData(['album', id], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.song[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'music');
+      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+      queryClient.setQueryData(['album', id], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.song[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
   };
 
   if (isLoading) {
@@ -203,6 +229,7 @@ const AlbumView = ({ ...rest }: any) => {
         listType="music"
         isModal={rest.isModal}
         disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
+        handleFavorite={handleRowFavorite}
       />
     </GenericPage>
   );

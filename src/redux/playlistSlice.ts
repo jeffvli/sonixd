@@ -56,6 +56,27 @@ const playlistSlice = createSlice({
     moveToBottom: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
       state.entry = moveSelectedToBottom(state.entry, action.payload.selectedEntries);
     },
+
+    setPlaylistStar: (state, action: PayloadAction<{ id: string; type: string }>) => {
+      // Since the playqueue can have multiples of the same song, we need to find
+      // all the indices of the starred/unstarred song.
+
+      const findIndices = state.entry
+        .map((entry, index) => (entry.id === action.payload.id ? index : ''))
+        .filter(String);
+
+      if (action.payload.type === 'unstar') {
+        findIndices?.map((rowIndex: any) => {
+          state.entry[rowIndex].starred = undefined;
+          return rowIndex;
+        });
+      } else {
+        findIndices?.map((rowIndex: any) => {
+          state.entry[rowIndex].starred = String(Date.now());
+          return rowIndex;
+        });
+      }
+    },
   },
 });
 
@@ -67,5 +88,6 @@ export const {
   moveDown,
   moveToBottom,
   moveToTop,
+  setPlaylistStar,
 } = playlistSlice.actions;
 export default playlistSlice.reducer;

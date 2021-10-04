@@ -9,7 +9,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
-import { getAlbumsDirect, getAllAlbums, getGenres } from '../../api/api';
+import { getAlbumsDirect, getAllAlbums, getGenres, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import { useAppDispatch } from '../../redux/hooks';
 import {
@@ -107,6 +107,30 @@ const AlbumList = () => {
     setIsRefreshing(false);
   };
 
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'album');
+      queryClient.setQueryData(['albumList', offset, sortBy], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      queryClient.setQueryData(['albumList', offset, sortBy], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
+
   return (
     <GenericPage
       hideDivider
@@ -165,6 +189,7 @@ const AlbumList = () => {
           listType="album"
           virtualized
           disabledContextMenuOptions={['moveSelectedTo', 'removeFromCurrent', 'deletePlaylist']}
+          handleFavorite={handleRowFavorite}
         />
       )}
       {!isLoading && !isError && viewType === 'grid' && (

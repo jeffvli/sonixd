@@ -1,5 +1,6 @@
 /* eslint-disable import/no-cycle */
 import React, { useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -80,13 +81,11 @@ const ArtistView = ({ ...rest }: any) => {
   const handleFavorite = async () => {
     if (!data.starred) {
       await star(data.id, 'artist');
+      queryClient.setQueryData(['artist', artistId], { ...data, starred: Date.now() });
     } else {
       await unstar(data.id, 'artist');
+      queryClient.setQueryData(['artist', artistId], { ...data, starred: undefined });
     }
-    await queryClient.refetchQueries(['artist', artistId], {
-      active: true,
-      exact: true,
-    });
   };
 
   const handlePlay = async () => {
@@ -112,6 +111,30 @@ const ArtistView = ({ ...rest }: any) => {
       </span>
     );
   }
+
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'album');
+      queryClient.setQueryData(['artist', artistId], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      queryClient.setQueryData(['artist', artistId], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
 
   return (
     <GenericPage
@@ -211,6 +234,7 @@ const ArtistView = ({ ...rest }: any) => {
             listType="album"
             isModal={rest.isModal}
             disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
+            handleFavorite={handleRowFavorite}
           />
         )}
 

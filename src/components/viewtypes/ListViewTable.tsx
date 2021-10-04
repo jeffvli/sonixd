@@ -6,7 +6,6 @@ import _ from 'lodash';
 import path from 'path';
 import settings from 'electron-settings';
 import styled from 'styled-components';
-import { useQueryClient } from 'react-query';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { nanoid } from 'nanoid';
 import { Table, Grid, Row, Col } from 'rsuite';
@@ -20,9 +19,9 @@ import {
 } from './styled';
 import { formatSongDuration, isCached, getImageCachePath, formatDate } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
-import { setRating, star, unstar } from '../../api/api';
+import { setRating } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setSort, setStar, sortPlayQueue } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setSort, sortPlayQueue } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
@@ -73,11 +72,11 @@ const ListViewTable = ({
   miniView,
   dnd,
   disabledContextMenuOptions,
+  handleFavorite,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
-  const queryClient = useQueryClient();
   const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
@@ -97,31 +96,6 @@ const ListViewTable = ({
     },
     [multiSelect.selected, data]
   );
-
-  const handleFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await star(rowData.id, listType);
-      dispatch(setStar({ id: rowData.id, type: 'star' }));
-    } else {
-      await unstar(rowData.id, listType);
-      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
-    }
-    await queryClient.refetchQueries(['starred'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['album'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['albumList'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['playlist'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['search'], {
-      active: true,
-    });
-  };
 
   const handleRating = (rowData: any, e: number) => {
     setRating(rowData.id, e);

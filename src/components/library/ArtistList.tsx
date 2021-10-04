@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { ButtonToolbar } from 'rsuite';
-import { getArtists } from '../../api/api';
+import { getArtists, star, unstar } from '../../api/api';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -67,6 +68,30 @@ const ArtistList = () => {
     setIsRefreshing(false);
   };
 
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'artist');
+      queryClient.setQueryData(['artistList'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'artist');
+      queryClient.setQueryData(['artistList'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
+
   return (
     <GenericPage
       hideDivider
@@ -107,6 +132,7 @@ const ArtistList = () => {
           listType="artist"
           virtualized
           disabledContextMenuOptions={['moveSelectedTo', 'removeFromCurrent', 'deletePlaylist']}
+          handleFavorite={handleRowFavorite}
         />
       )}
       {!isLoading && !isError && viewType === 'grid' && (

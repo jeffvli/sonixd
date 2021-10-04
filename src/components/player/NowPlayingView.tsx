@@ -17,6 +17,7 @@ import {
   removeFromPlayQueue,
   setPlayQueue,
   appendPlayQueue,
+  setStar,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -40,7 +41,7 @@ import {
   StyledPopover,
 } from '../shared/styled';
 import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
-import { getGenres, getRandomSongs } from '../../api/api';
+import { getGenres, getRandomSongs, star, unstar } from '../../api/api';
 import { notifyToast } from '../shared/toast';
 
 const NowPlayingView = () => {
@@ -192,6 +193,16 @@ const NowPlayingView = () => {
 
     setIsLoadingRandom(false);
     return addRandomTriggerRef.current.close();
+  };
+
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'playlist');
+      dispatch(setStar({ id: rowData.id, type: 'star' }));
+    } else {
+      await unstar(rowData.id, 'playlist');
+      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+    }
   };
 
   return (
@@ -376,6 +387,7 @@ const NowPlayingView = () => {
           nowPlaying
           dnd
           disabledContextMenuOptions={['deletePlaylist']}
+          handleFavorite={handleRowFavorite}
         />
       )}
     </GenericPage>
