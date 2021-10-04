@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
+import { Panel } from 'rsuite';
 import { search3 } from '../../api/api';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
@@ -112,28 +113,30 @@ const SearchView = () => {
           <SectionTitleWrapper>
             <SectionTitle>Songs</SectionTitle>
           </SectionTitleWrapper>
-          <ListViewTable
-            height={500}
-            data={data.song}
-            columns={settings.getSync('musicListColumns')}
-            rowHeight={Number(settings.getSync('albumListRowHeight'))}
-            fontSize={settings.getSync('albumListFontSize')}
-            handleRowClick={handleRowClick}
-            handleRowDoubleClick={handleRowDoubleClick}
-            listType="music"
-            cacheImages={{
-              enabled: settings.getSync('cacheImages'),
-              cacheType: 'album',
-              cacheIdProperty: 'albumId',
-            }}
-            disabledContextMenuOptions={['deletePlaylist']}
-            playQueue={playQueue}
-            multiSelect={multiSelect}
-            isModal={false}
-            miniView={false}
-            dnd={false}
-            virtualized
-          />
+          <Panel bodyFill bordered>
+            <ListViewTable
+              height={500}
+              data={data.song}
+              columns={settings.getSync('musicListColumns')}
+              rowHeight={Number(settings.getSync('albumListRowHeight'))}
+              fontSize={settings.getSync('albumListFontSize')}
+              handleRowClick={handleRowClick}
+              handleRowDoubleClick={handleRowDoubleClick}
+              listType="music"
+              cacheImages={{
+                enabled: settings.getSync('cacheImages'),
+                cacheType: 'album',
+                cacheIdProperty: 'albumId',
+              }}
+              disabledContextMenuOptions={['deletePlaylist']}
+              playQueue={playQueue}
+              multiSelect={multiSelect}
+              isModal={false}
+              miniView={false}
+              dnd={false}
+              virtualized
+            />
+          </Panel>
         </>
       )}
     </GenericPage>
