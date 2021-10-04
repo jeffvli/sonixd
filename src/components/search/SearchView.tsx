@@ -118,8 +118,8 @@ const SearchView = () => {
               height={500}
               data={data.song}
               columns={settings.getSync('musicListColumns')}
-              rowHeight={Number(settings.getSync('albumListRowHeight'))}
-              fontSize={settings.getSync('albumListFontSize')}
+              rowHeight={Number(settings.getSync('musicListRowHeight'))}
+              fontSize={settings.getSync('musicListFontSize')}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
               listType="music"
