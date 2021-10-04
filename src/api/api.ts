@@ -665,6 +665,7 @@ export const getGenres = async () => {
   const { data } = await api.get(`/getGenres`);
 
   return (data.genres.genre || []).map((entry: any, index: any) => ({
+    id: entry.value, // List view uses id to match the playing song so we need an arbitrary id here
     ...entry,
     name: entry.value,
     index,
