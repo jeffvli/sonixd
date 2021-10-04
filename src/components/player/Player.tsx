@@ -185,7 +185,7 @@ const listenHandler = (
         if (player === 1) {
           dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
         } else {
-          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
         }
         nextPlayerRef.current.audioEl.current.play();
         dispatch(setIsFading(true));
