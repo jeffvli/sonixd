@@ -621,7 +621,7 @@ const PlayerBar = () => {
                       />
                     </CustomTooltip>
                     {/* Display Queue Button */}
-                    <CustomTooltip text="Queue">
+                    <CustomTooltip text="Mini">
                       <PlayerControlIcon
                         tabIndex={0}
                         icon="tasks"
