@@ -359,7 +359,7 @@ export const GlobalContextMenu = () => {
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
       } else {
-        ids.forEach((id) => dispatch(setStar({ id, type: 'star' })));
+        dispatch(setStar({ id: ids, type: 'star' }));
       }
 
       await refetchAfterFavorite();
@@ -382,7 +382,7 @@ export const GlobalContextMenu = () => {
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
       } else {
-        ids.forEach((id) => dispatch(setStar({ id, type: 'unstar' })));
+        dispatch(setStar({ id: ids, type: 'unstar' }));
       }
 
       await refetchAfterFavorite();

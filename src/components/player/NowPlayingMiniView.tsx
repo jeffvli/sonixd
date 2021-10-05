@@ -126,11 +126,11 @@ const NowPlayingMiniView = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'playlist');
-      dispatch(setStar({ id: rowData.id, type: 'star' }));
+      await star(rowData.id, 'music');
+      dispatch(setStar({ id: [rowData.id], type: 'star' }));
     } else {
-      await unstar(rowData.id, 'playlist');
-      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+      await unstar(rowData.id, 'music');
+      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     }
   };
 

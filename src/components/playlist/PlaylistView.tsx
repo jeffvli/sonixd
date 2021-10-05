@@ -297,8 +297,8 @@ const PlaylistView = ({ ...rest }) => {
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'music');
-      dispatch(setStar({ id: rowData.id, type: 'star' }));
-      dispatch(setPlaylistStar({ id: rowData.id, type: 'star' }));
+      dispatch(setStar({ id: [rowData.id], type: 'star' }));
+      dispatch(setPlaylistStar({ id: [rowData.id], type: 'star' }));
 
       queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
@@ -310,8 +310,8 @@ const PlaylistView = ({ ...rest }) => {
       });
     } else {
       await unstar(rowData.id, 'music');
-      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
-      dispatch(setPlaylistStar({ id: rowData.id, type: 'unstar' }));
+      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
+      dispatch(setPlaylistStar({ id: [rowData.id], type: 'unstar' }));
 
       queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));

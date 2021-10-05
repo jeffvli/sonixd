@@ -272,7 +272,7 @@ const PlayerBar = () => {
       await star(playQueue[currentEntryList][playQueue.currentIndex].id, 'music');
       dispatch(
         setStar({
-          id: playQueue[currentEntryList][playQueue.currentIndex].id,
+          id: [playQueue[currentEntryList][playQueue.currentIndex].id],
           type: 'star',
         })
       );
@@ -280,7 +280,7 @@ const PlayerBar = () => {
       await unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
       dispatch(
         setStar({
-          id: playQueue[currentEntryList][playQueue.currentIndex].id,
+          id: [playQueue[currentEntryList][playQueue.currentIndex].id],
           type: 'unstar',
         })
       );

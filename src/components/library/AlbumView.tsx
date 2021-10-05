@@ -119,7 +119,7 @@ const AlbumView = ({ ...rest }: any) => {
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'music');
-      dispatch(setStar({ id: rowData.id, type: 'star' }));
+      dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['album', id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -130,7 +130,7 @@ const AlbumView = ({ ...rest }: any) => {
       });
     } else {
       await unstar(rowData.id, 'music');
-      dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['album', id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
         starredIndices.forEach((index) => {

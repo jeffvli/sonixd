@@ -403,39 +403,36 @@ const playQueueSlice = createSlice({
       state.autoIncremented = action.payload;
     },
 
-    setStar: (state, action: PayloadAction<{ id: string; type: string }>) => {
+    setStar: (state, action: PayloadAction<{ id: string[]; type: string }>) => {
       /* Since the playqueue can have multiples of the same song, we need to find
        all the indices of the starred/unstarred song. */
 
-      const findIndices = state.entry
-        .map((entry, index) => (entry.id === action.payload.id ? index : ''))
-        .filter(String);
+      action.payload.id.forEach((id: string) => {
+        const findIndices = _.keys(_.pickBy(state.entry, { id }));
+        const findShuffledIndices = _.keys(_.pickBy(state.shuffledEntry, { id }));
 
-      const findShuffledIndices = state.shuffledEntry
-        .map((entry, index) => (entry.id === action.payload.id ? index : ''))
-        .filter(String);
+        if (action.payload.type === 'unstar') {
+          findIndices?.forEach((rowIndex: any) => {
+            state.entry[rowIndex].starred = undefined;
+            return rowIndex;
+          });
 
-      if (action.payload.type === 'unstar') {
-        findIndices?.map((rowIndex: any) => {
-          state.entry[rowIndex].starred = undefined;
-          return rowIndex;
-        });
+          findShuffledIndices?.forEach((rowIndex: any) => {
+            state.shuffledEntry[rowIndex].starred = undefined;
+            return rowIndex;
+          });
+        } else {
+          findIndices?.forEach((rowIndex: any) => {
+            state.entry[rowIndex].starred = String(Date.now());
+            return rowIndex;
+          });
 
-        findShuffledIndices?.map((rowIndex: any) => {
-          state.shuffledEntry[rowIndex].starred = undefined;
-          return rowIndex;
-        });
-      } else {
-        findIndices?.map((rowIndex: any) => {
-          state.entry[rowIndex].starred = String(Date.now());
-          return rowIndex;
-        });
-
-        findShuffledIndices?.map((rowIndex: any) => {
-          state.shuffledEntry[rowIndex].starred = String(Date.now());
-          return rowIndex;
-        });
-      }
+          findShuffledIndices?.forEach((rowIndex: any) => {
+            state.shuffledEntry[rowIndex].starred = String(Date.now());
+            return rowIndex;
+          });
+        }
+      });
     },
 
     toggleRepeat: (state) => {

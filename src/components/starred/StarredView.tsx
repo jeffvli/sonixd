@@ -94,7 +94,7 @@ const StarredView = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     await unstar(rowData.id, 'music');
-    dispatch(setStar({ id: rowData.id, type: 'unstar' }));
+    dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     await queryClient.refetchQueries(['starred'], {
       active: true,
     });
