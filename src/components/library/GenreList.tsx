@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router';
@@ -19,9 +20,10 @@ import { getGenres } from '../../api/api';
 const GenreList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { isLoading, isError, data: genres, error }: any = useQuery(['genreList'], () =>
-    getGenres()
-  );
+  const { isLoading, isError, data: genres, error }: any = useQuery(['genreList'], async () => {
+    const res = await getGenres();
+    return _.orderBy(res, 'songCount', 'desc');
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, genres, ['value']);
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { ButtonToolbar, ControlLabel, FlexboxGrid, Icon, Whisper } from 'rsuite';
@@ -72,7 +73,8 @@ const NowPlayingView = () => {
     ['genreList'],
     async () => {
       const res = await getGenres();
-      return res.map((genre: any) => {
+      const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
+      return genresOrderedBySongCount.map((genre: any) => {
         return {
           label: `${genre.value} (${genre.songCount})`,
           value: genre.value,
