@@ -84,7 +84,11 @@ const SearchView = () => {
           <ScrollingMenu
             title="Artists"
             data={data.artist}
-            cardTitle={{ prefix: 'artist', property: 'name' }}
+            cardTitle={{
+              prefix: '/library/artist',
+              property: 'name',
+              urlProperty: 'id',
+            }}
             cardSubtitle={{
               property: 'albumCount',
               unit: ' albums',
