@@ -17,7 +17,13 @@ import {
   StyledTableHeaderCell,
   TableCellWrapper,
 } from './styled';
-import { formatSongDuration, isCached, getImageCachePath, formatDate } from '../../shared/utils';
+import {
+  formatSongDuration,
+  isCached,
+  getImageCachePath,
+  formatDate,
+  convertByteToMegabyte,
+} from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
 import { setRating } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -767,6 +773,8 @@ const ListViewTable = ({
                           formatSongDuration(rowData[column.dataKey])
                         ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
                           formatDate(rowData[column.dataKey])
+                        ) : column.dataKey === 'size' ? (
+                          `${convertByteToMegabyte(rowData[column.dataKey])} MB`
                         ) : column.dataKey === 'starred' ? (
                           <StyledIconToggle
                             tabIndex={0}
@@ -785,14 +793,14 @@ const ListViewTable = ({
                           />
                         ) : column.dataKey === 'bitRate' ? (
                           !rowData[column.dataKey] ? (
-                            'N/a'
+                            ''
                           ) : (
                             `${rowData[column.dataKey]} kbps`
                           )
                         ) : rowData[column.dataKey] ? (
                           rowData[column.dataKey]
                         ) : (
-                          'N/a'
+                          ''
                         )}
                       </div>
                     </TableCellWrapper>

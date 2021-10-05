@@ -139,7 +139,7 @@ export const songColumnList = [
       alignment: 'center',
       resizable: true,
       width: 150,
-      label: 'size',
+      label: 'Size',
     },
   },
   {
@@ -299,6 +299,16 @@ export const songColumnListAuto = [
       alignment: 'center',
       flexGrow: 2,
       label: 'Rating',
+    },
+  },
+  {
+    label: 'Size',
+    value: {
+      id: 'Size',
+      dataKey: 'size',
+      alignment: 'center',
+      flexGrow: 1,
+      label: 'Size',
     },
   },
   {

@@ -115,7 +115,11 @@ export const formatSongDuration = (duration: number) => {
 };
 
 export const formatDate = (date: string) => {
-  return moment(date).format('L');
+  return moment(date).format('MMM D YYYY');
+};
+
+export const convertByteToMegabyte = (kb: number) => {
+  return (kb * 0.000001).toFixed(1);
 };
 
 // https://www.geeksforgeeks.org/check-if-array-elements-are-consecutive/
