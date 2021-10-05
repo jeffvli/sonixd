@@ -37,12 +37,17 @@ import {
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 
-const StyledTable = styled(Table)<{ rowHeight: number }>`
+const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
     background: ${(props) => props.theme.primary.rowSelected};
     // Resolve bug from rsuite-table where certain scrollpoints show a horizontal border
     height: ${(props) => `${props.rowHeight + 1}px !important`};
   }
+
+  .rs-table-row.dragover {
+    box-shadow: ${(props) => `inset 0px 5px 0px -3px ${props.theme.primary.main}`};
+  }
+
   .rs-table-row,
   .rs-table-cell-group,
   .rs-table-cell {
@@ -244,9 +249,17 @@ const ListViewTable = ({
     <>
       <StyledTable
         rowClassName={(rowData: any) =>
-          multiSelect?.selected.find((e: any) => e?.uniqueId === rowData?.uniqueId)
-            ? 'selected'
-            : ''
+          `${
+            multiSelect?.selected.find((e: any) => e?.uniqueId === rowData?.uniqueId)
+              ? 'selected'
+              : ''
+          } ${
+            multiSelect?.currentMouseOverId === rowData?.uniqueId &&
+            multiSelect?.isDragging &&
+            multiSelect.currentMouseOverId
+              ? 'dragover'
+              : ''
+          }`
         }
         ref={tableRef}
         height={height}
