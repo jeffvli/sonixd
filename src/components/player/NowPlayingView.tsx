@@ -34,8 +34,8 @@ import PageLoader from '../loader/PageLoader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import { AutoPlaylistButton, ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
 import {
+  StyledButton,
   StyledCheckbox,
-  StyledIconButton,
   StyledInputGroup,
   StyledInputNumber,
   StyledInputPicker,
@@ -322,22 +322,21 @@ const NowPlayingView = () => {
                       </div>
                       <br />
                       <ButtonToolbar>
-                        <StyledIconButton
+                        <StyledButton
                           onClick={() => handlePlayRandom('play')}
                           loading={isLoadingRandom}
-                          icon={<Icon icon="play" />}
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
                         >
+                          <Icon icon="play" style={{ marginRight: '10px' }} />
                           Play
-                        </StyledIconButton>
-                        <StyledIconButton
+                        </StyledButton>
+                        <StyledButton
                           onClick={() => handlePlayRandom('add')}
                           loading={isLoadingRandom}
-                          icon={<Icon icon="plus" />}
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
                         >
-                          Add to queue
-                        </StyledIconButton>
+                          <Icon icon="plus" style={{ marginRight: '10px' }} /> Add to queue
+                        </StyledButton>
                       </ButtonToolbar>
                     </StyledPopover>
                   }
