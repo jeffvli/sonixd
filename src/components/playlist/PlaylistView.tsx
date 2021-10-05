@@ -24,6 +24,7 @@ import {
   updatePlaylist,
   star,
   unstar,
+  setRating,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -32,6 +33,7 @@ import {
   setPlayQueue,
   appendPlayQueue,
   setStar,
+  setRate,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -59,6 +61,7 @@ import {
   moveToIndex,
   removeFromPlaylist,
   setPlaylistData,
+  setPlaylistRate,
   setPlaylistStar,
 } from '../../redux/playlistSlice';
 
@@ -324,6 +327,12 @@ const PlaylistView = ({ ...rest }) => {
     }
   };
 
+  const handleRowRating = (rowData: any, e: number) => {
+    setRating(rowData.id, e);
+    dispatch(setRate({ id: [rowData.id], rating: e }));
+    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
+  };
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -479,6 +488,7 @@ const PlaylistView = ({ ...rest }) => {
         isModal={rest.isModal}
         disabledContextMenuOptions={['deletePlaylist']}
         handleFavorite={handleRowFavorite}
+        handleRating={handleRowRating}
       />
     </GenericPage>
   );

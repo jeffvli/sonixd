@@ -25,7 +25,6 @@ import {
   convertByteToMegabyte,
 } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
-import { setRating } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fixPlayer2Index, setSort, sortPlayQueue } from '../../redux/playQueueSlice';
 import { StyledIconToggle, StyledRate } from '../shared/styled';
@@ -84,6 +83,7 @@ const ListViewTable = ({
   dnd,
   disabledContextMenuOptions,
   handleFavorite,
+  handleRating,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -107,10 +107,6 @@ const ListViewTable = ({
     },
     [multiSelect.selected, data]
   );
-
-  const handleRating = (rowData: any, e: number) => {
-    setRating(rowData.id, e);
-  };
 
   const handleSortColumn = (column: any, type: any) => {
     setSortColumn(column);
@@ -394,6 +390,7 @@ const ListViewTable = ({
                           });
                         }
                       }}
+                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
                       onMouseOver={() => {
                         if (multiSelect.isDragging && dnd) {
                           dispatch(
@@ -444,11 +441,15 @@ const ListViewTable = ({
                               dispatch(setIsDragging(true));
                             }
                           }
+                        } else {
+                          handleSelectMouseDown(e, rowData);
                         }
                       }}
                       onMouseUp={() => {
                         if (dnd) {
                           handleDragEnd();
+                        } else {
+                          handleSelectMouseUp();
                         }
                       }}
                       dragover={
@@ -786,21 +787,22 @@ const ListViewTable = ({
                           />
                         ) : column.dataKey === 'userRating' ? (
                           <StyledRate
-                            size="sm"
+                            size="xs"
                             readOnly={false}
+                            value={rowData.userRating ? rowData.userRating : 0}
                             defaultValue={rowData?.userRating ? rowData.userRating : 0}
                             onChange={(e: any) => handleRating(rowData, e)}
                           />
                         ) : column.dataKey === 'bitRate' ? (
                           !rowData[column.dataKey] ? (
-                            ''
+                            <span>&#8203;</span>
                           ) : (
                             `${rowData[column.dataKey]} kbps`
                           )
                         ) : rowData[column.dataKey] ? (
                           rowData[column.dataKey]
                         ) : (
-                          ''
+                          <span>&#8203;</span>
                         )}
                       </div>
                     </TableCellWrapper>

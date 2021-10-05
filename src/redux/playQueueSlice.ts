@@ -37,6 +37,7 @@ export interface Entry {
   track: number;
   type: string;
   year: number;
+  userRating?: number;
   uniqueId: string;
   rowIndex: number;
 }
@@ -404,21 +405,25 @@ const playQueueSlice = createSlice({
     },
 
     setStar: (state, action: PayloadAction<{ id: string[]; type: string }>) => {
-      /* Since the playqueue can have multiples of the same song, we need to find
-       all the indices of the starred/unstarred song. */
+      //  Since the playqueue can have multiples of the same song, we need to find
+      //  all the indices of the starred/unstarred song
 
       action.payload.id.forEach((id: string) => {
         const findIndices = _.keys(_.pickBy(state.entry, { id }));
         const findShuffledIndices = _.keys(_.pickBy(state.shuffledEntry, { id }));
+        const findSortedIndices = _.keys(_.pickBy(state.sortedEntry, { id }));
 
         if (action.payload.type === 'unstar') {
           findIndices?.forEach((rowIndex: any) => {
             state.entry[rowIndex].starred = undefined;
             return rowIndex;
           });
-
           findShuffledIndices?.forEach((rowIndex: any) => {
             state.shuffledEntry[rowIndex].starred = undefined;
+            return rowIndex;
+          });
+          findSortedIndices?.forEach((rowIndex: any) => {
+            state.sortedEntry[rowIndex].starred = undefined;
             return rowIndex;
           });
         } else {
@@ -426,9 +431,48 @@ const playQueueSlice = createSlice({
             state.entry[rowIndex].starred = String(Date.now());
             return rowIndex;
           });
-
           findShuffledIndices?.forEach((rowIndex: any) => {
             state.shuffledEntry[rowIndex].starred = String(Date.now());
+            return rowIndex;
+          });
+          findSortedIndices?.forEach((rowIndex: any) => {
+            state.sortedEntry[rowIndex].starred = String(Date.now());
+            return rowIndex;
+          });
+        }
+      });
+    },
+
+    setRate: (state, action: PayloadAction<{ id: string[]; rating?: number }>) => {
+      action.payload.id.forEach((id: string) => {
+        const findIndices = _.keys(_.pickBy(state.entry, { id }));
+        const findShuffledIndices = _.keys(_.pickBy(state.shuffledEntry, { id }));
+        const findSortedIndices = _.keys(_.pickBy(state.sortedEntry, { id }));
+
+        if (action.payload.rating) {
+          findIndices?.forEach((rowIndex: any) => {
+            state.entry[rowIndex].userRating = action.payload.rating;
+            return rowIndex;
+          });
+          findShuffledIndices?.forEach((rowIndex: any) => {
+            state.shuffledEntry[rowIndex].userRating = action.payload.rating;
+            return rowIndex;
+          });
+          findSortedIndices?.forEach((rowIndex: any) => {
+            state.sortedEntry[rowIndex].userRating = action.payload.rating;
+            return rowIndex;
+          });
+        } else {
+          findIndices?.forEach((rowIndex: any) => {
+            state.entry[rowIndex].userRating = undefined;
+            return rowIndex;
+          });
+          findShuffledIndices?.forEach((rowIndex: any) => {
+            state.shuffledEntry[rowIndex].userRating = undefined;
+            return rowIndex;
+          });
+          findSortedIndices?.forEach((rowIndex: any) => {
+            state.sortedEntry[rowIndex].userRating = undefined;
             return rowIndex;
           });
         }
@@ -1033,6 +1077,7 @@ export const {
   toggleDisplayQueue,
   resetPlayQueue,
   setStar,
+  setRate,
   shuffleInPlace,
   setFadeData,
   setPlaybackSetting,

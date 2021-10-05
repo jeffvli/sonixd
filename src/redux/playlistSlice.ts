@@ -76,6 +76,23 @@ const playlistSlice = createSlice({
         }
       });
     },
+
+    setPlaylistRate: (state, action: PayloadAction<{ id: string[]; rating?: number }>) => {
+      action.payload.id.forEach((id: string) => {
+        const findIndices = _.keys(_.pickBy(state.entry, { id }));
+        if (action.payload.rating) {
+          findIndices?.forEach((rowIndex: any) => {
+            state.entry[rowIndex].userRating = action.payload.rating;
+            return rowIndex;
+          });
+        } else {
+          findIndices?.forEach((rowIndex: any) => {
+            state.entry[rowIndex].userRating = undefined;
+            return rowIndex;
+          });
+        }
+      });
+    },
   },
 });
 
@@ -88,5 +105,6 @@ export const {
   moveToBottom,
   moveToTop,
   setPlaylistStar,
+  setPlaylistRate,
 } = playlistSlice.actions;
 export default playlistSlice.reducer;
