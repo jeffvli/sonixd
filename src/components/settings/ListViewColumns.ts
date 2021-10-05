@@ -556,7 +556,7 @@ export const albumColumnListAuto = [
       id: 'Genre',
       dataKey: 'genre',
       alignment: 'left',
-      flexGrow: 2,
+      flexGrow: 1,
       label: 'Genre',
     },
   },
