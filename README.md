@@ -52,6 +52,8 @@ Once installed, run the application and sign in to your music server with the fo
 - User name - `e.g. admin`
 - Password - `e.g. supersecret!`
 
+If you have any questions, feel free to check out the [Usage Documentation & FAQ](https://github.com/jeffvli/sonixd/discussions/15).
+
 ## Development / Contributing
 
 This project is built off of [electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) v2.3.0.
