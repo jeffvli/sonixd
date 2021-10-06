@@ -262,8 +262,8 @@ const PlaylistView = ({ ...rest }) => {
     if (isFailedResponse(res)) {
       notifyToast('error', errorMessages(res)[0]);
     } else {
-      queryClient.refetchQueries(['playlist'], {
-        active: true,
+      queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
+        return { ...oldData, name: editName, comment: editDescription, public: editPublic };
       });
     }
 
