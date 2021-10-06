@@ -375,7 +375,11 @@ const PlaylistView = ({ ...rest }) => {
                   />
                   <SaveButton
                     size="lg"
-                    text={needsRecovery ? 'Recover playlist' : undefined}
+                    text={
+                      needsRecovery
+                        ? 'Recover playlist'
+                        : 'Save (WARNING: Closing the application while saving may result in data loss)'
+                    }
                     color={needsRecovery ? 'red' : undefined}
                     disabled={
                       (!needsRecovery && !isModified) ||
