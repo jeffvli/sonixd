@@ -3,16 +3,16 @@
 # Sonixd
 
   <a href="https://github.com/jeffvli/sonixd/releases">
-    <img src="https://img.shields.io/github/v/release/jeffvli/sonixd?style=flat-square&color=red"
+    <img src="https://img.shields.io/github/v/release/jeffvli/sonixd?style=flat-square&color=blue"
     alt="Release">
   </a>
 
   <a href="https://github.com/jeffvli/sonixd/tree/dev">
-    <img src="https://img.shields.io/github/commits-since/jeffvli/sonixd/latest/devstyle=flat-square"
+    <img src="https://img.shields.io/github/commits-since/jeffvli/sonixd/latest/dev?style=flat-square&color=red"
     alt="Commits">
   </a>
   <a href="https://github.com/jeffvli/sonixd/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/jeffvli/sonixd?style=flat-square&color=blue"
+    <img src="https://img.shields.io/github/license/jeffvli/sonixd?style=flat-square&color=green"
     alt="License">
   </a>
 
