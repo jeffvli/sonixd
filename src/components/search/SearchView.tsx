@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { Panel } from 'rsuite';
-import { search3 } from '../../api/api';
+import { search3, star, unstar } from '../../api/api';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -23,6 +24,7 @@ import { SectionTitle, SectionTitleWrapper } from '../shared/styled';
 const SearchView = () => {
   const dispatch = useAppDispatch();
   const query = useRouterQuery();
+  const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playQueue = useAppSelector((state) => state.playQueue);
   const urlQuery = query.get('query') || '';
@@ -63,6 +65,30 @@ const SearchView = () => {
     );
     dispatch(setStatus('PLAYING'));
     dispatch(fixPlayer2Index());
+  };
+
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'music');
+      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.song[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.song[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
   };
 
   return (
@@ -139,6 +165,7 @@ const SearchView = () => {
               miniView={false}
               dnd={false}
               virtualized
+              handleFavorite={handleRowFavorite}
             />
           </Panel>
         </>
