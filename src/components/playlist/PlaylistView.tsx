@@ -196,7 +196,7 @@ const PlaylistView = ({ ...rest }) => {
       if (playlistData.length <= 400 && !recovery) {
         res = await updatePlaylistSongs(data.id, playlistData);
         if (isFailedResponse(res)) {
-          notifyToast('error', res.error.message);
+          notifyToast('error', errorMessages(res)[0]);
         } else {
           notifyToast('success', `Saved playlist`);
           await queryClient.refetchQueries(['playlist'], {
