@@ -4,7 +4,7 @@ import { getImageCachePath } from '../../shared/utils';
 const download = require('image-downloader');
 
 const cacheImage = (fileName: string, url: string) => {
-  if (fileName.includes('undefined')) {
+  if (!fileName.includes('undefined')) {
     const cachePath = getImageCachePath();
 
     // We save the img to a temp path first so that React does not try to use the

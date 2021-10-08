@@ -5,7 +5,7 @@ import { getSongCachePath } from '../../shared/utils';
 const download = require('image-downloader');
 
 const cacheSong = (fileName: string, url: string) => {
-  if (fileName.includes('undefined')) {
+  if (!fileName.includes('undefined')) {
     const cachePath = getSongCachePath();
 
     // We save the song to a temp path first so that React does not try to use the
