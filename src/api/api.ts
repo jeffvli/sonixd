@@ -721,3 +721,11 @@ export const search3 = async (query: string) => {
     })),
   };
 };
+
+export const scrobble = async (options: { id: string; time?: number; submission?: boolean }) => {
+  const { data } = await api.get(`/scrobble`, {
+    params: options,
+  });
+
+  return data;
+};

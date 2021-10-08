@@ -23,9 +23,10 @@ import {
   setFadeData,
   setPlayerSrc,
 } from '../../redux/playQueueSlice';
-import { setCurrentSeek } from '../../redux/playerSlice';
+import { setCurrentSeek, setScrobbled } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 import { getSongCachePath, isCached } from '../../shared/utils';
+import { scrobble } from '../../api/api';
 
 const gaplessListenHandler = (
   currentPlayerRef: any,
@@ -33,16 +34,16 @@ const gaplessListenHandler = (
   playQueue: any,
   currentPlayer: number,
   dispatch: any,
-  pollingInterval: number
+  pollingInterval: number,
+  scrobbled: boolean
 ) => {
-  const seek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
-
+  const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
 
   if (playQueue.currentPlayer === currentPlayer) {
     dispatch(
       setCurrentSeek({
-        seek,
+        seek: currentSeek,
       })
     );
   }
@@ -50,8 +51,13 @@ const gaplessListenHandler = (
   // Add a bit of leeway for the second track to start since the
   // seek value doesn't always reach the duration
   const durationPadding = pollingInterval <= 10 ? 0.12 : pollingInterval <= 20 ? 0.13 : 0.15;
-  if (seek + durationPadding >= duration) {
+  if (currentSeek + durationPadding >= duration) {
     nextPlayerRef.current.audioEl.current.play();
+  }
+
+  if ((currentSeek >= 240 || currentSeek >= duration - 5) && !scrobbled) {
+    dispatch(setScrobbled(true));
+    scrobble({ id: playQueue.currentSongId, submission: true });
   }
 };
 
@@ -65,7 +71,8 @@ const listenHandler = (
   fadeDuration: number,
   fadeType: string,
   volumeFade: boolean,
-  debug: boolean
+  debug: boolean,
+  scrobbled: boolean
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
@@ -195,6 +202,15 @@ const listenHandler = (
   if (playQueue.currentPlayer === player) {
     dispatch(setCurrentSeek({ seek: currentSeek }));
   }
+
+  if (
+    (currentSeek >= 240 || currentSeek >= duration - fadeAtTime + 1) &&
+    !scrobbled &&
+    currentSeek <= fadeAtTime
+  ) {
+    dispatch(setScrobbled(true));
+    scrobble({ id: playQueue.currentSongId, submission: true });
+  }
 };
 
 const Player = ({ currentEntryList, children }: any, ref: any) => {
@@ -319,7 +335,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     playQueue.volumeFade,
   ]);
 
-  const handleListenPlayer1 = () => {
+  const handleListenPlayer1 = useCallback(() => {
     listenHandler(
       player1Ref,
       player2Ref,
@@ -330,11 +346,21 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       fadeDuration,
       fadeType,
       volumeFade,
-      debug
+      debug,
+      player.scrobbled
     );
-  };
+  }, [
+    currentEntryList,
+    debug,
+    dispatch,
+    fadeDuration,
+    fadeType,
+    playQueue,
+    player.scrobbled,
+    volumeFade,
+  ]);
 
-  const handleListenPlayer2 = () => {
+  const handleListenPlayer2 = useCallback(() => {
     listenHandler(
       player2Ref,
       player1Ref,
@@ -345,9 +371,19 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       fadeDuration,
       fadeType,
       volumeFade,
-      debug
+      debug,
+      player.scrobbled
     );
-  };
+  }, [
+    currentEntryList,
+    debug,
+    dispatch,
+    fadeDuration,
+    fadeType,
+    playQueue,
+    player.scrobbled,
+    volumeFade,
+  ]);
 
   const handleOnEndedPlayer1 = () => {
     player1Ref.current.audioEl.current.currentTime = 0;
@@ -417,11 +453,32 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   };
 
   const handleGaplessPlayer1 = () => {
-    gaplessListenHandler(player1Ref, player2Ref, playQueue, 1, dispatch, pollingInterval);
+    gaplessListenHandler(
+      player1Ref,
+      player2Ref,
+      playQueue,
+      1,
+      dispatch,
+      pollingInterval,
+      player.scrobbled
+    );
   };
 
   const handleGaplessPlayer2 = () => {
-    gaplessListenHandler(player2Ref, player1Ref, playQueue, 2, dispatch, pollingInterval);
+    gaplessListenHandler(
+      player2Ref,
+      player1Ref,
+      playQueue,
+      2,
+      dispatch,
+      pollingInterval,
+      player.scrobbled
+    );
+  };
+
+  const handleOnPlay = () => {
+    dispatch(setScrobbled(false));
+    scrobble({ id: playQueue.currentSongId, submission: false });
   };
 
   return (
@@ -433,6 +490,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.player1.src}
+        onPlay={handleOnPlay}
         listenInterval={pollingInterval}
         preload="auto"
         onListen={fadeDuration === 0 ? handleGaplessPlayer1 : handleListenPlayer1}
@@ -454,6 +512,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player2Ref}
         src={playQueue.player2.src}
+        onPlay={handleOnPlay}
         listenInterval={pollingInterval}
         preload="auto"
         onListen={fadeDuration === 0 ? handleGaplessPlayer2 : handleListenPlayer2}
