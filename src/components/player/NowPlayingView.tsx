@@ -338,18 +338,6 @@ const NowPlayingView = () => {
                       <br />
                       <ButtonToolbar>
                         <StyledButton
-                          block
-                          appearance="primary"
-                          onClick={() => handlePlayRandom('play')}
-                          loading={isLoadingRandom}
-                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
-                        >
-                          <Icon icon="play" style={{ marginRight: '10px' }} />
-                          Play
-                        </StyledButton>
-                      </ButtonToolbar>
-                      <ButtonToolbar>
-                        <StyledButton
                           onClick={() => handlePlayRandom('addNext')}
                           loading={isLoadingRandom}
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
@@ -362,6 +350,18 @@ const NowPlayingView = () => {
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
                         >
                           <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (later)
+                        </StyledButton>
+                      </ButtonToolbar>
+                      <ButtonToolbar>
+                        <StyledButton
+                          block
+                          appearance="primary"
+                          onClick={() => handlePlayRandom('play')}
+                          loading={isLoadingRandom}
+                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                        >
+                          <Icon icon="play" style={{ marginRight: '10px' }} />
+                          Play
                         </StyledButton>
                       </ButtonToolbar>
                     </StyledPopover>
