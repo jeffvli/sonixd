@@ -783,7 +783,10 @@ const playQueueSlice = createSlice({
       }
     },
 
-    appendPlayQueue: (state, action: PayloadAction<{ entries: Entry[] }>) => {
+    appendPlayQueue: (
+      state,
+      action: PayloadAction<{ entries: Entry[]; type: 'next' | 'later' }>
+    ) => {
       const wasPlaying = state.entry.length > 0;
       // We'll need to update the uniqueId otherwise selecting a song with duplicates
       // will select them all at once
@@ -794,12 +797,28 @@ const playQueueSlice = createSlice({
         };
       });
 
-      refreshedEntries.map((entry: any) => state.entry.push(entry));
+      if (action.payload.type === 'later') {
+        refreshedEntries.map((entry: any) => state.entry.push(entry));
+      } else {
+        state.entry = [
+          ...state.entry.slice(0, state.currentIndex + 1),
+          ...refreshedEntries,
+          ...state.entry.slice(state.currentIndex + 1),
+        ];
+      }
 
       if (state.shuffle) {
         // If shuffle is enabled, add all entries randomly
-        const shuffledEntries = _.shuffle(action.payload.entries);
-        shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
+        const shuffledEntries = _.shuffle(refreshedEntries);
+        if (action.payload.type === 'later') {
+          shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
+        } else {
+          state.shuffledEntry = [
+            ...state.shuffledEntry.slice(0, state.currentIndex + 1),
+            ...shuffledEntries,
+            ...state.shuffledEntry.slice(state.currentIndex + 1),
+          ];
+        }
         if (!wasPlaying) {
           state.current = { ...shuffledEntries[0] };
           state.currentSongId = shuffledEntries[0].id;
