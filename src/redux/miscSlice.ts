@@ -16,7 +16,8 @@ export interface Modal {
 
 type ContextMenuOptions =
   | 'play'
-  | 'addToQueue'
+  | 'addToQueueNext'
+  | 'addToQueueLast'
   | 'removeFromCurrent'
   | 'addToPlaylist'
   | 'deletePlaylist'
