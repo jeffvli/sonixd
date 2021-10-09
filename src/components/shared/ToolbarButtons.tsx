@@ -21,8 +21,16 @@ export const PlayShuffleButton = ({ ...rest }) => {
 
 export const PlayAppendButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text="Add to queue" placement="bottom">
+    <CustomTooltip text="Add to queue (last)" placement="bottom">
       <StyledIconButton tabIndex={0} icon={<Icon icon="plus" />} {...rest} />
+    </CustomTooltip>
+  );
+};
+
+export const PlayAppendNextButton = ({ ...rest }) => {
+  return (
+    <CustomTooltip text="Add to queue (next)" placement="bottom">
+      <StyledIconButton tabIndex={0} icon={<Icon icon="plus-circle" />} {...rest} />
     </CustomTooltip>
   );
 };
