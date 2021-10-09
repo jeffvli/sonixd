@@ -153,13 +153,13 @@ export const GlobalContextMenu = () => {
     }
   };
 
-  const handleAddToQueue = async () => {
+  const handleAddToQueue = async (type: 'next' | 'later') => {
     dispatch(setContextMenu({ show: false }));
     const promises = [];
 
     if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
       const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
-      dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc }));
+      dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc, type }));
       notifyToast('info', `Added ${multiSelect.selected.length} song(s)`);
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -168,7 +168,7 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = _.flatten(_.map(res, 'song'));
-      dispatch(appendPlayQueue({ entries: songs }));
+      dispatch(appendPlayQueue({ entries: songs, type }));
       notifyToast('info', `Added ${songs.length} song(s)`);
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -177,7 +177,7 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = _.flatten(_.map(res, 'song'));
-      dispatch(appendPlayQueue({ entries: songs }));
+      dispatch(appendPlayQueue({ entries: songs, type }));
       notifyToast('info', `Added ${songs.length} song(s)`);
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -186,7 +186,7 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = _.flatten(res);
-      dispatch(appendPlayQueue({ entries: songs }));
+      dispatch(appendPlayQueue({ entries: songs, type }));
       notifyToast('info', `Added ${songs.length} song(s)`);
     }
 
@@ -462,7 +462,7 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={8}
+          numOfButtons={9}
           numOfDividers={3}
         >
           <ContextMenuButton
@@ -471,9 +471,14 @@ export const GlobalContextMenu = () => {
             disabled={misc.contextMenu.disabledOptions.includes('play')}
           />
           <ContextMenuButton
-            text="Add to queue"
-            onClick={handleAddToQueue}
-            disabled={misc.contextMenu.disabledOptions.includes('addToQueue')}
+            text="Add to queue (next)"
+            onClick={() => handleAddToQueue('next')}
+            disabled={misc.contextMenu.disabledOptions.includes('addToQueueNext')}
+          />
+          <ContextMenuButton
+            text="Add to queue (later)"
+            onClick={() => handleAddToQueue('later')}
+            disabled={misc.contextMenu.disabledOptions.includes('addToQueueLast')}
           />
           <ContextMenuButton
             text="Remove from current"
