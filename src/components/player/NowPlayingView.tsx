@@ -168,7 +168,7 @@ const NowPlayingView = () => {
     }
   };
 
-  const handlePlayRandom = async (action: 'play' | 'add') => {
+  const handlePlayRandom = async (action: 'play' | 'addNext' | 'addLater') => {
     setIsLoadingRandom(true);
     const res = await getRandomSongs({
       size: randomPlaylistTrackCount,
@@ -198,8 +198,17 @@ const NowPlayingView = () => {
           difference !== 0 ? `(-${difference} invalid)` : ''
         } song(s)`
       );
+    } else if (action === 'addLater') {
+      dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'later' }));
+      if (playQueue.entry.length < 1) {
+        dispatch(setStatus('PLAYING'));
+      }
+      notifyToast(
+        'info',
+        `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
+      );
     } else {
-      dispatch(appendPlayQueue({ entries: cleanedSongs }));
+      dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'next' }));
       if (playQueue.entry.length < 1) {
         dispatch(setStatus('PLAYING'));
       }
@@ -329,6 +338,8 @@ const NowPlayingView = () => {
                       <br />
                       <ButtonToolbar>
                         <StyledButton
+                          block
+                          appearance="primary"
                           onClick={() => handlePlayRandom('play')}
                           loading={isLoadingRandom}
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
@@ -336,12 +347,21 @@ const NowPlayingView = () => {
                           <Icon icon="play" style={{ marginRight: '10px' }} />
                           Play
                         </StyledButton>
+                      </ButtonToolbar>
+                      <ButtonToolbar>
                         <StyledButton
-                          onClick={() => handlePlayRandom('add')}
+                          onClick={() => handlePlayRandom('addNext')}
                           loading={isLoadingRandom}
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
                         >
-                          <Icon icon="plus" style={{ marginRight: '10px' }} /> Add to queue
+                          <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (next)
+                        </StyledButton>
+                        <StyledButton
+                          onClick={() => handlePlayRandom('addLater')}
+                          loading={isLoadingRandom}
+                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                        >
+                          <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (later)
                         </StyledButton>
                       </ButtonToolbar>
                     </StyledPopover>
