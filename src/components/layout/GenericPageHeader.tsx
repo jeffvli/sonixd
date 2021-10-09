@@ -107,7 +107,7 @@ const GenericPageHeader = ({
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
-              width: '55%',
+              width: '60%',
             }}
           >
             {subtitle}
