@@ -4,7 +4,12 @@ import settings from 'electron-settings';
 import { ButtonToolbar, Tag } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
-import { FavoriteButton, PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
+import {
+  FavoriteButton,
+  PlayAppendButton,
+  PlayAppendNextButton,
+  PlayButton,
+} from '../shared/ToolbarButtons';
 import { getAlbum, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -98,8 +103,8 @@ const AlbumView = ({ ...rest }: any) => {
     notifyToast('info', `Playing ${data.song.length} song(s)`);
   };
 
-  const handlePlayAppend = () => {
-    dispatch(appendPlayQueue({ entries: data.song }));
+  const handlePlayAppend = (type: 'next' | 'later') => {
+    dispatch(appendPlayQueue({ entries: data.song, type }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
@@ -198,9 +203,18 @@ const AlbumView = ({ ...rest }: any) => {
               </div>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
-                  <PlayAppendButton appearance="primary" size="lg" onClick={handlePlayAppend} />
-                  <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
+                  <PlayButton appearance="primary" size="md" onClick={handlePlay} />
+                  <PlayAppendButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('later')}
+                  />
+                  <PlayAppendNextButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('next')}
+                  />
+                  <FavoriteButton size="md" isFavorite={data.starred} onClick={handleFavorite} />
                 </ButtonToolbar>
               </div>
             </div>

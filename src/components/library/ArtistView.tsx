@@ -5,7 +5,12 @@ import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
-import { FavoriteButton, PlayAppendButton, PlayButton } from '../shared/ToolbarButtons';
+import {
+  FavoriteButton,
+  PlayAppendButton,
+  PlayAppendNextButton,
+  PlayButton,
+} from '../shared/ToolbarButtons';
 import { getAllArtistSongs, getArtist, getArtistInfo, star, unstar } from '../../api/api';
 import { useAppDispatch } from '../../redux/hooks';
 import {
@@ -94,9 +99,9 @@ const ArtistView = ({ ...rest }: any) => {
     notifyToast('info', `Playing ${songs.length} song(s)`);
   };
 
-  const handlePlayAppend = async () => {
+  const handlePlayAppend = async (type: 'next' | 'later') => {
     const songs = await getAllArtistSongs(data.id);
-    dispatch(appendPlayQueue({ entries: songs }));
+    dispatch(appendPlayQueue({ entries: songs, type }));
     notifyToast('info', `Added ${songs.length} song(s)`);
   };
 
@@ -165,9 +170,18 @@ const ArtistView = ({ ...rest }: any) => {
               </CustomTooltip>
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
-                  <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
-                  <PlayAppendButton appearance="primary" size="lg" onClick={handlePlayAppend} />
-                  <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
+                  <PlayButton appearance="primary" size="md" onClick={handlePlay} />
+                  <PlayAppendButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('later')}
+                  />
+                  <PlayAppendNextButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('later')}
+                  />
+                  <FavoriteButton size="md" isFavorite={data.starred} onClick={handleFavorite} />
                   <Whisper
                     placement="bottomStart"
                     trigger="hover"
@@ -199,7 +213,7 @@ const ArtistView = ({ ...rest }: any) => {
                       </Popover>
                     }
                   >
-                    <Button size="lg">Related Artists</Button>
+                    <Button size="md">Related Artists</Button>
                   </Whisper>
                 </ButtonToolbar>
               </div>

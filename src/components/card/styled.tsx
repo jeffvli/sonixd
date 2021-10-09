@@ -118,9 +118,14 @@ export const AppendOverlayButton = styled(OverlayButton)`
   left: 90%;
 `;
 
-export const FavoriteOverlayButton = styled(OverlayButton)`
+export const AppendNextOverlayButton = styled(OverlayButton)`
   top: 90%;
   left: 70%;
+`;
+
+export const FavoriteOverlayButton = styled(OverlayButton)`
+  top: 90%;
+  left: 50%;
 `;
 
 export const ModalViewOverlayButton = styled(OverlayButton)`

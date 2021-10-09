@@ -11,6 +11,7 @@ import {
   DeleteButton,
   EditButton,
   PlayAppendButton,
+  PlayAppendNextButton,
   PlayButton,
   SaveButton,
   UndoButton,
@@ -175,8 +176,8 @@ const PlaylistView = ({ ...rest }) => {
     notifyToast('info', `Playing ${playlist.entry.length} song(s)`);
   };
 
-  const handlePlayAppend = () => {
-    dispatch(appendPlayQueue({ entries: playlist.entry }));
+  const handlePlayAppend = (type: 'next' | 'later') => {
+    dispatch(appendPlayQueue({ entries: playlist.entry, type }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
@@ -363,18 +364,24 @@ const PlaylistView = ({ ...rest }) => {
                 <ButtonToolbar>
                   <PlayButton
                     appearance="primary"
-                    size="lg"
+                    size="md"
                     onClick={handlePlay}
                     disabled={playlist.entry?.length < 1}
                   />
                   <PlayAppendButton
                     appearance="primary"
-                    size="lg"
-                    onClick={handlePlayAppend}
+                    size="md"
+                    onClick={() => handlePlayAppend('later')}
+                    disabled={playlist.entry?.length < 1}
+                  />
+                  <PlayAppendNextButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('next')}
                     disabled={playlist.entry?.length < 1}
                   />
                   <SaveButton
-                    size="lg"
+                    size="md"
                     text={
                       needsRecovery
                         ? 'Recover playlist'
@@ -389,7 +396,7 @@ const PlaylistView = ({ ...rest }) => {
                     onClick={() => handleSave(needsRecovery)}
                   />
                   <UndoButton
-                    size="lg"
+                    size="md"
                     color={needsRecovery ? 'red' : undefined}
                     disabled={
                       needsRecovery || !isModified || misc.isProcessingPlaylist.includes(data?.id)
@@ -427,7 +434,7 @@ const PlaylistView = ({ ...rest }) => {
                           </StyledCheckbox>
                           <br />
                           <StyledButton
-                            size="sm"
+                            size="md"
                             type="submit"
                             block
                             loading={isSubmittingEdit}
@@ -441,7 +448,7 @@ const PlaylistView = ({ ...rest }) => {
                       </Popover>
                     }
                   >
-                    <EditButton size="lg" disabled={misc.isProcessingPlaylist.includes(data?.id)} />
+                    <EditButton size="md" disabled={misc.isProcessingPlaylist.includes(data?.id)} />
                   </Whisper>
 
                   <Whisper
@@ -458,7 +465,7 @@ const PlaylistView = ({ ...rest }) => {
                     }
                   >
                     <DeleteButton
-                      size="lg"
+                      size="md"
                       disabled={misc.isProcessingPlaylist.includes(data?.id)}
                     />
                   </Whisper>

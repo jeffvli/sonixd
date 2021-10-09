@@ -22,6 +22,7 @@ import {
   FavoriteOverlayButton,
   AppendOverlayButton,
   ModalViewOverlayButton,
+  AppendNextOverlayButton,
 } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
@@ -75,22 +76,22 @@ const Card = ({
     dispatch(fixPlayer2Index());
   };
 
-  const handlePlayAppend = async () => {
+  const handlePlayAppend = async (type: 'next' | 'later') => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
-      dispatch(appendPlayQueue({ entries: res.song }));
+      dispatch(appendPlayQueue({ entries: res.song, type }));
       notifyToast('info', `Added ${res.song.length} song(s)`);
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
-      dispatch(appendPlayQueue({ entries: res.song }));
+      dispatch(appendPlayQueue({ entries: res.song, type }));
       notifyToast('info', `Added ${res.song.length} song(s)`);
     }
 
     if (playClick.type === 'artist') {
       const songs = await getAllArtistSongs(playClick.id);
-      dispatch(appendPlayQueue({ entries: songs }));
+      dispatch(appendPlayQueue({ entries: songs, type }));
       notifyToast('info', `Added ${songs.length} song(s)`);
     }
 
@@ -171,20 +172,25 @@ const Card = ({
                 onClick={handlePlayClick}
               />
               <AppendOverlayButton
-                onClick={handlePlayAppend}
-                size="xs"
+                onClick={() => handlePlayAppend('later')}
+                size={size <= 160 ? 'xs' : 'sm'}
                 icon={<Icon icon="plus" />}
+              />
+              <AppendNextOverlayButton
+                onClick={() => handlePlayAppend('next')}
+                size={size <= 160 ? 'xs' : 'sm'}
+                icon={<Icon icon="plus-circle" />}
               />
               {playClick.type !== 'playlist' && (
                 <FavoriteOverlayButton
                   onClick={handleFavorite}
-                  size="xs"
+                  size={size <= 160 ? 'xs' : 'sm'}
                   icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
                 />
               )}
               {!rest.isModal && (
                 <ModalViewOverlayButton
-                  size="xs"
+                  size={size <= 160 ? 'xs' : 'sm'}
                   icon={<Icon icon="external-link" />}
                   onClick={handleOpenModal}
                 />
