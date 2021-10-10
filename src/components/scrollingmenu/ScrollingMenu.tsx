@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import path from 'path';
 import settings from 'electron-settings';
 import styled from 'styled-components';
+import { ButtonGroup, ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
 import Card from '../card/Card';
-import { SectionTitleWrapper, SectionTitle } from '../shared/styled';
+import { SectionTitleWrapper, SectionTitle, StyledIconButton } from '../shared/styled';
 import { getImageCachePath } from '../../shared/utils';
 
 const ScrollMenuContainer = styled.div`
@@ -14,19 +15,56 @@ const ScrollMenuContainer = styled.div`
   ::-webkit-scrollbar {
     height: 10px;
   }
+
+  scroll-behavior: smooth;
 `;
 
 const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, type }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const cachePath = path.join(getImageCachePath(), '/');
+  const scrollContainerRef = useRef<any>();
+  const gridCardSize = Number(settings.getSync('gridCardSize'));
 
   return (
     <>
       <SectionTitleWrapper>
-        <SectionTitle onClick={onClickTitle}>{title}</SectionTitle>
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item>
+            <SectionTitle
+              tabIndex={0}
+              onClick={onClickTitle}
+              onKeyDown={(e: any) => {
+                console.log(e);
+                if (e.key === ' ' || e.key === 'Enter') {
+                  onClickTitle();
+                }
+              }}
+            >
+              {title}
+            </SectionTitle>
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item>
+            <ButtonToolbar>
+              <ButtonGroup>
+                <StyledIconButton
+                  icon={<Icon icon="arrow-left" />}
+                  onClick={() => {
+                    scrollContainerRef.current.scrollLeft -= gridCardSize * 5;
+                  }}
+                />
+                <StyledIconButton
+                  icon={<Icon icon="arrow-right" />}
+                  onClick={() => {
+                    scrollContainerRef.current.scrollLeft += gridCardSize * 5;
+                  }}
+                />
+              </ButtonGroup>
+            </ButtonToolbar>
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
       </SectionTitleWrapper>
 
-      <ScrollMenuContainer>
+      <ScrollMenuContainer ref={scrollContainerRef}>
         {data.map((item: any) => (
           <span key={item.id} style={{ display: 'inline-block' }}>
             <Card
