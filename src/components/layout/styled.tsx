@@ -71,6 +71,31 @@ export const WindowControl = styled.div`
   -webkit-app-region: no-drag;
 `;
 
+export const MacControl = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 30px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+
+  -webkit-app-region: no-drag;
+`;
+
+export const MacControlButton = styled.div<{
+  minButton?: boolean;
+  maxButton?: boolean;
+  restoreButton?: boolean;
+}>`
+  user-select: none;
+  grid-row: 1 / span 1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  grid-column: ${(props) => (props.minButton ? 2 : props.maxButton || props.restoreButton ? 3 : 1)};
+`;
+
 export const WindowControlButton = styled.div<{
   minButton?: boolean;
   maxButton?: boolean;

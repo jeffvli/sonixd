@@ -106,6 +106,25 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  user-select: none;
+}
+
+#window-title-wrapper-mac {
+  white-space: nowrap;
+  height: 100%;
+  padding: 2px;
+  text-align: center;
+}
+
+#window-title-mac {
+  max-width: 60%;
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
 }
 
 #restore-button {
