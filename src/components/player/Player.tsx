@@ -472,13 +472,15 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     setScrobbled(false);
     if (playQueue.scrobble) {
       if (playerNumber === 1) {
+        if (playQueue[currentEntryList][playQueue.player1.index]?.id) {
+          scrobble({
+            id: playQueue[currentEntryList][playQueue.player1.index]?.id,
+            submission: false,
+          });
+        }
+      } else if (playQueue[currentEntryList][playQueue.player2.index]?.id) {
         scrobble({
-          id: playQueue[currentEntryList][playQueue.player1.index].id,
-          submission: false,
-        });
-      } else {
-        scrobble({
-          id: playQueue[currentEntryList][playQueue.player2.index].id,
+          id: playQueue[currentEntryList][playQueue.player2.index]?.id,
           submission: false,
         });
       }
