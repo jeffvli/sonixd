@@ -165,6 +165,7 @@ const Card = ({
 
           {hasHoverButtons && (
             <>
+              {rest.details.starred && <div className="corner-triangle" />}
               <PlayOverlayButton
                 size="lg"
                 circle

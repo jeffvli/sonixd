@@ -90,6 +90,19 @@ export const Overlay = styled.div<Card>`
   &:hover {
     cursor: pointer;
   }
+
+  .corner-triangle {
+    position: absolute;
+    background-color: ${(props) => props.theme.primary.main};
+    box-shadow: 0 0 10px 8px rgba(0, 0, 0, 0.8);
+    height: 80px;
+    left: -50px;
+    top: -50px;
+    width: 80px;
+
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
 `;
 
 const OverlayButton = styled(IconButton)`
