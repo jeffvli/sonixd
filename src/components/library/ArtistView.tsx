@@ -171,12 +171,12 @@ const ArtistView = ({ ...rest }: any) => {
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
                   <PlayButton appearance="primary" size="md" onClick={handlePlay} />
-                  <PlayAppendButton
+                  <PlayAppendNextButton
                     appearance="primary"
                     size="md"
-                    onClick={() => handlePlayAppend('later')}
+                    onClick={() => handlePlayAppend('next')}
                   />
-                  <PlayAppendNextButton
+                  <PlayAppendButton
                     appearance="primary"
                     size="md"
                     onClick={() => handlePlayAppend('later')}

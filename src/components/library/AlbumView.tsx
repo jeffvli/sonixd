@@ -204,15 +204,15 @@ const AlbumView = ({ ...rest }: any) => {
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
                   <PlayButton appearance="primary" size="md" onClick={handlePlay} />
-                  <PlayAppendButton
-                    appearance="primary"
-                    size="md"
-                    onClick={() => handlePlayAppend('later')}
-                  />
                   <PlayAppendNextButton
                     appearance="primary"
                     size="md"
                     onClick={() => handlePlayAppend('next')}
+                  />
+                  <PlayAppendButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('later')}
                   />
                   <FavoriteButton size="md" isFavorite={data.starred} onClick={handleFavorite} />
                 </ButtonToolbar>
