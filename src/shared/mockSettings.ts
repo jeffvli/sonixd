@@ -15,6 +15,7 @@ export const mockSettings = {
   pollingInterval: 20,
   fadeDuration: 9,
   fadeType: 'equalPower',
+  scrobble: false,
   gridCardSize: 200,
   playlistViewType: 'grid',
   albumViewType: 'grid',

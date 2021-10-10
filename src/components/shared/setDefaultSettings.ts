@@ -26,6 +26,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
 
+  if (force || !settings.hasSync('scrobble')) {
+    settings.setSync('scrobble', false);
+  }
+
   if (force || !settings.hasSync('volume')) {
     settings.setSync('volume', 0.3);
   }

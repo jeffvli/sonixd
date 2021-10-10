@@ -44,6 +44,7 @@ const playQueueState: PlayQueue = {
   playerUpdated: 0,
   autoIncremented: false,
   volume: 0.5,
+  scrobble: false,
   isLoading: false,
   repeat: 'all',
   shuffle: false,

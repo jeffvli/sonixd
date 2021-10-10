@@ -75,6 +75,7 @@ export interface PlayQueue {
   playerUpdated: number;
   autoIncremented: boolean;
   volume: number;
+  scrobble: boolean;
   isLoading: boolean;
   repeat: string;
   shuffle: boolean;
@@ -119,6 +120,7 @@ const initialState: PlayQueue = {
   playerUpdated: 0,
   autoIncremented: false,
   volume: Number(parsedSettings.volume),
+  scrobble: Boolean(parsedSettings.scrobble),
   isLoading: Boolean(false),
   repeat: String(parsedSettings.repeat),
   shuffle: Boolean(parsedSettings.shuffle),
@@ -301,6 +303,9 @@ const playQueueSlice = createSlice({
           break;
         case 'scrollWithCurrentSong':
           state.scrollWithCurrentSong = action.payload.value;
+          break;
+        case 'scrobble':
+          state.scrobble = action.payload.value;
           break;
         default:
           break;
