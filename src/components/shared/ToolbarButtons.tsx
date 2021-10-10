@@ -21,7 +21,7 @@ export const PlayShuffleButton = ({ ...rest }) => {
 
 export const PlayAppendButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text="Add to queue (last)" placement="bottom">
+    <CustomTooltip text="Add to queue (later)" placement="bottom">
       <StyledIconButton tabIndex={0} icon={<Icon icon="plus" />} {...rest} />
     </CustomTooltip>
   );
