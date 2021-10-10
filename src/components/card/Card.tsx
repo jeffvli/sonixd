@@ -27,6 +27,7 @@ import {
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
+import CustomTooltip from '../shared/CustomTooltip';
 
 const Card = ({
   onClick,
@@ -201,20 +202,24 @@ const Card = ({
         </Overlay>
         <InfoPanel cardsize={size}>
           <InfoSpan>
-            <CardTitleButton appearance="link" size="sm" onClick={handleClick} cardsize={size}>
-              {rest.title}
-            </CardTitleButton>
+            <CustomTooltip text={rest.title}>
+              <CardTitleButton appearance="link" size="sm" onClick={handleClick} cardsize={size}>
+                {rest.title}
+              </CardTitleButton>
+            </CustomTooltip>
           </InfoSpan>
           <InfoSpan>
             {subUrl ? (
-              <CardSubtitleButton
-                appearance="link"
-                size="xs"
-                onClick={handleSubClick}
-                cardsize={size}
-              >
-                {rest.subtitle}
-              </CardSubtitleButton>
+              <CustomTooltip text={rest.subtitle}>
+                <CardSubtitleButton
+                  appearance="link"
+                  size="xs"
+                  onClick={handleSubClick}
+                  cardsize={size}
+                >
+                  {rest.subtitle}
+                </CardSubtitleButton>
+              </CustomTooltip>
             ) : (
               <CardSubtitle cardsize={size}>
                 {rest.subtitle !== 'undefined' ? rest.subtitle : <span>&#8203;</span>}

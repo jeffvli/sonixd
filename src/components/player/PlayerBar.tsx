@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
-import { FlexboxGrid, Grid, Row, Col } from 'rsuite';
+import { FlexboxGrid, Grid, Row, Col, Whisper, Popover } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
@@ -33,7 +33,7 @@ import { star, unstar } from '../../api/api';
 import placeholderImg from '../../img/placeholder.jpg';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import { getCurrentEntryList } from '../../shared/utils';
+import { getCurrentEntryList, getImageCachePath, isCached } from '../../shared/utils';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -46,6 +46,7 @@ const PlayerBar = () => {
   const [manualSeek, setManualSeek] = useState(0);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
+  const [cachePath] = useState(getImageCachePath());
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -314,24 +315,62 @@ const PlayerBar = () => {
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px' }}>
                     <CoverArtWrapper>
-                      <LazyLoadImage
-                        tabIndex={0}
-                        src={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.image ||
-                          placeholderImg
+                      <Whisper
+                        trigger="hover"
+                        delay={500}
+                        placement="topStart"
+                        preventOverflow
+                        speaker={
+                          <Popover>
+                            <div style={{ height: '500px' }}>
+                              <LazyLoadImage
+                                src={
+                                  isCached(
+                                    `${cachePath}/album_${
+                                      playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                    }.jpg`
+                                  )
+                                    ? `${cachePath}/album_${
+                                        playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                      }.jpg`
+                                    : playQueue[currentEntryList][
+                                        playQueue.currentIndex
+                                      ]?.image.replace(/size=\d+/, 'size=500') || placeholderImg
+                                }
+                                width={500}
+                                height={500}
+                              />
+                            </div>
+                          </Popover>
                         }
-                        alt="trackImg"
-                        effect="opacity"
-                        width="65"
-                        height="65"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => history.push(`/nowplaying`)}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ') {
-                            history.push(`/nowplaying`);
+                      >
+                        <LazyLoadImage
+                          tabIndex={0}
+                          src={
+                            isCached(
+                              `${cachePath}/album_${
+                                playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                              }.jpg`
+                            )
+                              ? `${cachePath}/album_${
+                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                }.jpg`
+                              : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                                placeholderImg
                           }
-                        }}
-                      />
+                          alt="trackImg"
+                          effect="opacity"
+                          width="65"
+                          height="65"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => history.push(`/nowplaying`)}
+                          onKeyDown={(e: any) => {
+                            if (e.key === ' ') {
+                              history.push(`/nowplaying`);
+                            }
+                          }}
+                        />
+                      </Whisper>
                     </CoverArtWrapper>
                   </Col>
                   <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>

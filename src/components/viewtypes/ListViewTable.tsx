@@ -590,7 +590,7 @@ const ListViewTable = ({
                                   width: '100%',
                                 }}
                               >
-                                <CustomTooltip text={rowData.artist} delay={1000}>
+                                <CustomTooltip text={rowData.artist}>
                                   <RsuiteLinkButton
                                     subtitle="true"
                                     appearance="link"
@@ -728,7 +728,7 @@ const ListViewTable = ({
                         }}
                       >
                         {column.dataKey.match(/album|artist/) ? (
-                          <CustomTooltip text={rowData[column.dataKey]} delay={1000}>
+                          <CustomTooltip text={rowData[column.dataKey]}>
                             <RsuiteLinkButton
                               appearance="link"
                               onClick={() => {
