@@ -26,6 +26,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
 
+  if (force || !settings.hasSync('titleBarStyle')) {
+    settings.setSync('titleBarStyle', 'windows');
+  }
+
   if (force || !settings.hasSync('scrobble')) {
     settings.setSync('scrobble', false);
   }

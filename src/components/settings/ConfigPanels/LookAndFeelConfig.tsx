@@ -12,7 +12,7 @@ import {
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
 import { useAppDispatch } from '../../../redux/hooks';
-import { setTheme, setFont, setDynamicBackground } from '../../../redux/miscSlice';
+import { setTheme, setFont, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
 import {
   songColumnPicker,
   songColumnList,
@@ -83,10 +83,35 @@ const LookAndFeelConfig = () => {
         <StyledInputPicker
           data={Fonts}
           groupBy="role"
+          cleanable={false}
           defaultValue={String(settings.getSync('font'))}
           onChange={(e: string) => {
             settings.setSync('font', e);
             dispatch(setFont(e));
+          }}
+        />
+      </div>
+      <br />
+      <div>
+        <ControlLabel>Titlebar style (requires app restart)</ControlLabel>
+
+        <br />
+        <StyledInputPicker
+          data={[
+            {
+              label: 'macOS',
+              value: 'mac',
+            },
+            {
+              label: 'Windows',
+              value: 'windows',
+            },
+          ]}
+          cleanable={false}
+          defaultValue={String(settings.getSync('titleBarStyle'))}
+          onChange={(e: string) => {
+            settings.setSync('titleBarStyle', e);
+            dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
           }}
         />
       </div>

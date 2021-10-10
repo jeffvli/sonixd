@@ -77,6 +77,7 @@ const miscState: General = {
   modalPages: [],
   isProcessingPlaylist: [],
   dynamicBackground: false,
+  titleBar: 'windows',
 };
 
 const mockInitialState = {

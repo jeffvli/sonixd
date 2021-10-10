@@ -42,6 +42,7 @@ export interface General {
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
   dynamicBackground: boolean;
+  titleBar: 'windows' | 'mac' | string;
 }
 
 const initialState: General = {
@@ -58,6 +59,7 @@ const initialState: General = {
     show: false,
   },
   dynamicBackground: Boolean(parsedSettings.dynamicBackground),
+  titleBar: String(parsedSettings.titleBarStyle),
 };
 
 const miscSlice = createSlice({
@@ -70,6 +72,16 @@ const miscSlice = createSlice({
 
     setExpandSidebar: (state, action: PayloadAction<boolean>) => {
       state.expandSidebar = action.payload;
+    },
+
+    setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
+      switch (action.payload.setting) {
+        case 'titleBar':
+          state.titleBar = action.payload.value;
+          break;
+        default:
+          break;
+      }
     },
 
     setContextMenu: (state, action: PayloadAction<ContextMenu>) => {
@@ -156,5 +168,6 @@ export const {
   setContextMenu,
   setExpandSidebar,
   setDynamicBackground,
+  setMiscSetting,
 } = miscSlice.actions;
 export default miscSlice.reducer;
