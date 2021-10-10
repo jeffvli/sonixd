@@ -342,7 +342,7 @@ const NowPlayingView = () => {
                           loading={isLoadingRandom}
                           disabled={!(typeof randomPlaylistTrackCount === 'number')}
                         >
-                          <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (next)
+                          <Icon icon="plus-circle" style={{ marginRight: '10px' }} /> Add (next)
                         </StyledButton>
                         <StyledButton
                           onClick={() => handlePlayRandom('addLater')}

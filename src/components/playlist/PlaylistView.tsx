@@ -368,16 +368,16 @@ const PlaylistView = ({ ...rest }) => {
                     onClick={handlePlay}
                     disabled={playlist.entry?.length < 1}
                   />
-                  <PlayAppendButton
-                    appearance="primary"
-                    size="md"
-                    onClick={() => handlePlayAppend('later')}
-                    disabled={playlist.entry?.length < 1}
-                  />
                   <PlayAppendNextButton
                     appearance="primary"
                     size="md"
                     onClick={() => handlePlayAppend('next')}
+                    disabled={playlist.entry?.length < 1}
+                  />
+                  <PlayAppendButton
+                    appearance="primary"
+                    size="md"
+                    onClick={() => handlePlayAppend('later')}
                     disabled={playlist.entry?.length < 1}
                   />
                   <SaveButton
