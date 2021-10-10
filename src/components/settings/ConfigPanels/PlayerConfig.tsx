@@ -3,11 +3,15 @@ import settings from 'electron-settings';
 import { ControlLabel } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import { StyledCheckbox, StyledInputNumber } from '../../shared/styled';
+import { useAppDispatch } from '../../../redux/hooks';
+import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 
 const PlayerConfig = () => {
+  const dispatch = useAppDispatch();
   const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
     Boolean(settings.getSync('globalMediaHotkeys'))
   );
+  const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
   return (
     <ConfigPanel header="Player" bordered>
       <p>
@@ -47,6 +51,16 @@ const PlayerConfig = () => {
         }}
       >
         Enable global media hotkeys (requires app restart)
+      </StyledCheckbox>
+      <StyledCheckbox
+        defaultChecked={scrobble}
+        onChange={() => {
+          settings.setSync('scrobble', !scrobble);
+          dispatch(setPlaybackSetting({ setting: 'scrobble', value: !scrobble }));
+          setScrobble(!scrobble);
+        }}
+      >
+        Enable scrobbling
       </StyledCheckbox>
     </ConfigPanel>
   );

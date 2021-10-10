@@ -23,7 +23,7 @@ import {
   setFadeData,
   setPlayerSrc,
 } from '../../redux/playQueueSlice';
-import { setCurrentSeek, setScrobbled } from '../../redux/playerSlice';
+import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 import { getSongCachePath, isCached } from '../../shared/utils';
 import { scrobble } from '../../api/api';
@@ -35,7 +35,9 @@ const gaplessListenHandler = (
   currentPlayer: number,
   dispatch: any,
   pollingInterval: number,
-  scrobbled: boolean
+  shouldScrobble: boolean,
+  scrobbled: boolean,
+  setScrobbled: any
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
@@ -55,8 +57,19 @@ const gaplessListenHandler = (
     nextPlayerRef.current.audioEl.current.play();
   }
 
-  if ((currentSeek >= 240 || currentSeek >= duration - 5) && !scrobbled) {
-    dispatch(setScrobbled(true));
+  // Conditions for scrobbling gapless track
+  // 1. Scrobble enabled in settings
+  // 2. Not already scrobbled
+  // 3. Track reached past 4 minutes or past the 90% mark
+  // 4. Not in the last 2 seconds of the track (gapless player starts second track before first ends)
+  // Step 4 sets the scrobbled value to false again which would trigger a second scrobble
+  if (
+    shouldScrobble &&
+    !scrobbled &&
+    (currentSeek >= 240 || currentSeek >= duration * 0.9) &&
+    currentSeek <= duration - 2
+  ) {
+    setScrobbled(true);
     scrobble({ id: playQueue.currentSongId, submission: true });
   }
 };
@@ -72,7 +85,9 @@ const listenHandler = (
   fadeType: string,
   volumeFade: boolean,
   debug: boolean,
-  scrobbled: boolean
+  shouldScrobble: boolean,
+  scrobbled: boolean,
+  setScrobbled: any
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
@@ -203,12 +218,18 @@ const listenHandler = (
     dispatch(setCurrentSeek({ seek: currentSeek }));
   }
 
+  // Conditions for scrobbling fading track
+  // 1. Scrobble enabled in settings
+  // 2. Not already scrobbled
+  // 3. Track reached past 4 minutes or past the fadeAtTime - 15 seconds
+  // 4. The track is not fading
   if (
-    (currentSeek >= 240 || currentSeek >= duration - fadeAtTime + 1) &&
+    shouldScrobble &&
     !scrobbled &&
+    (currentSeek >= 240 || currentSeek >= fadeAtTime - 15) &&
     currentSeek <= fadeAtTime
   ) {
-    dispatch(setScrobbled(true));
+    setScrobbled(true);
     scrobble({ id: playQueue.currentSongId, submission: true });
   }
 };
@@ -227,6 +248,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const [fadeType, setFadeType] = useState(playQueue.fadeType);
   const [volumeFade, setVolumeFade] = useState(playQueue.volumeFade);
   const [pollingInterval, setPollingInterval] = useState(playQueue.pollingInterval);
+  const [scrobbled, setScrobbled] = useState(false);
 
   const getSrc1 = useCallback(() => {
     const cachedSongPath = `${cachePath}/${
@@ -347,18 +369,11 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       fadeType,
       volumeFade,
       debug,
-      player.scrobbled
+      playQueue.scrobble,
+      scrobbled,
+      setScrobbled
     );
-  }, [
-    currentEntryList,
-    debug,
-    dispatch,
-    fadeDuration,
-    fadeType,
-    playQueue,
-    player.scrobbled,
-    volumeFade,
-  ]);
+  }, [currentEntryList, debug, dispatch, fadeDuration, fadeType, playQueue, scrobbled, volumeFade]);
 
   const handleListenPlayer2 = useCallback(() => {
     listenHandler(
@@ -372,18 +387,11 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       fadeType,
       volumeFade,
       debug,
-      player.scrobbled
+      playQueue.scrobble,
+      scrobbled,
+      setScrobbled
     );
-  }, [
-    currentEntryList,
-    debug,
-    dispatch,
-    fadeDuration,
-    fadeType,
-    playQueue,
-    player.scrobbled,
-    volumeFade,
-  ]);
+  }, [currentEntryList, debug, dispatch, fadeDuration, fadeType, playQueue, scrobbled, volumeFade]);
 
   const handleOnEndedPlayer1 = () => {
     player1Ref.current.audioEl.current.currentTime = 0;
@@ -452,7 +460,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     }
   };
 
-  const handleGaplessPlayer1 = () => {
+  const handleGaplessPlayer1 = useCallback(() => {
     gaplessListenHandler(
       player1Ref,
       player2Ref,
@@ -460,11 +468,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       1,
       dispatch,
       pollingInterval,
-      player.scrobbled
+      playQueue.scrobble,
+      scrobbled,
+      setScrobbled
     );
-  };
+  }, [dispatch, playQueue, scrobbled, pollingInterval]);
 
-  const handleGaplessPlayer2 = () => {
+  const handleGaplessPlayer2 = useCallback(() => {
     gaplessListenHandler(
       player2Ref,
       player1Ref,
@@ -472,13 +482,27 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       2,
       dispatch,
       pollingInterval,
-      player.scrobbled
+      playQueue.scrobble,
+      scrobbled,
+      setScrobbled
     );
-  };
+  }, [dispatch, playQueue, scrobbled, pollingInterval]);
 
-  const handleOnPlay = () => {
-    dispatch(setScrobbled(false));
-    scrobble({ id: playQueue.currentSongId, submission: false });
+  const handleOnPlay = (playerNumber: 1 | 2) => {
+    setScrobbled(false);
+    if (playQueue.scrobble) {
+      if (playerNumber === 1) {
+        scrobble({
+          id: playQueue[currentEntryList][playQueue.player1.index].id,
+          submission: false,
+        });
+      } else {
+        scrobble({
+          id: playQueue[currentEntryList][playQueue.player2.index].id,
+          submission: false,
+        });
+      }
+    }
   };
 
   return (
@@ -490,7 +514,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.player1.src}
-        onPlay={handleOnPlay}
+        onPlay={() => handleOnPlay(1)}
         listenInterval={pollingInterval}
         preload="auto"
         onListen={fadeDuration === 0 ? handleGaplessPlayer1 : handleListenPlayer1}
@@ -512,7 +536,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player2Ref}
         src={playQueue.player2.src}
-        onPlay={handleOnPlay}
+        onPlay={() => handleOnPlay(2)}
         listenInterval={pollingInterval}
         preload="auto"
         onListen={fadeDuration === 0 ? handleGaplessPlayer2 : handleListenPlayer2}
