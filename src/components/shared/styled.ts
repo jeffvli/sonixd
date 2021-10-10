@@ -204,4 +204,10 @@ export const SectionTitle = styled.a`
     text-decoration: none;
     color: ${(props) => (!props.onClick ? props.theme.primary.text : undefined)};
   }
+
+  &:active,
+  &:focus {
+    text-decoration: none;
+    color: ${(props) => (!props.onClick ? props.theme.primary.text : undefined)};
+  }
 `;
