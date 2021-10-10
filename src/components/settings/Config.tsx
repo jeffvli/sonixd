@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { shell } from 'electron';
 import { Button, Whisper, Popover, Nav, ButtonToolbar } from 'rsuite';
 import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
@@ -12,12 +14,25 @@ import PlayerConfig from './ConfigPanels/PlayerConfig';
 import CacheConfig from './ConfigPanels/CacheConfig';
 import DebugConfig from './ConfigPanels/DebugConfig';
 import useRouterQuery from '../../hooks/useRouterQuery';
+import packageJson from '../../package.json';
+
+const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
 const Config = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const query = useRouterQuery();
   const [page, setPage] = useState(query.get('page') || 'playback');
+  const [latestRelease, setLatestRelease] = useState(packageJson.version);
+
+  useEffect(() => {
+    const fetchReleases = async () => {
+      const releases = await axios.get(GITHUB_RELEASE_URL);
+      setLatestRelease(releases.data[0]?.name);
+    };
+
+    fetchReleases();
+  }, []);
 
   useEffect(() => {
     // Check scan status on render
@@ -104,6 +119,54 @@ const Config = () => {
                 }
               >
                 <StyledButton size="sm">Reset defaults</StyledButton>
+              </Whisper>
+              <Whisper
+                trigger="hover"
+                placement="auto"
+                enterable
+                preventOverflow
+                speaker={
+                  <Popover>
+                    <>
+                      Current version: {packageJson.version}
+                      <br />
+                      Latest version: {latestRelease}
+                      <br />
+                      Node: {process.versions.node}
+                      <br />
+                      Chrome: {process.versions.chrome}
+                      <br />
+                      Electron: {process.versions.electron}
+                      <StyledButton
+                        size="xs"
+                        block
+                        appearance="primary"
+                        onClick={() => shell.openExternal('https://github.com/jeffvli/sonixd')}
+                      >
+                        View on GitHub
+                      </StyledButton>
+                      <StyledButton
+                        size="xs"
+                        block
+                        appearance="primary"
+                        onClick={() =>
+                          shell.openExternal(
+                            'https://github.com/jeffvli/sonixd/blob/main/CHANGELOG.md'
+                          )
+                        }
+                      >
+                        View CHANGELOG
+                      </StyledButton>
+                    </>
+                  </Popover>
+                }
+              >
+                <StyledButton
+                  size="sm"
+                  color={packageJson.version === latestRelease ? undefined : 'green'}
+                >
+                  v{packageJson.version}
+                </StyledButton>
               </Whisper>
             </ButtonToolbar>
           }
