@@ -18,7 +18,15 @@ const ScrollMenuContainer = styled.div`
   scroll-behavior: smooth;
 `;
 
-const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, type }: any) => {
+const ScrollingMenu = ({
+  cardTitle,
+  cardSubtitle,
+  data,
+  title,
+  onClickTitle,
+  type,
+  handleFavorite,
+}: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
   const scrollContainerRef = useRef<any>();
@@ -89,6 +97,7 @@ const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, typ
               cacheImages={cacheImages}
               cachePath={misc.imageCachePath}
               style={{ margin: '0px 5px 0px 5px' }}
+              handleFavorite={handleFavorite}
             />
           </span>
         ))}
