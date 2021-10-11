@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
+import { getImageCachePath, getSongCachePath } from '../shared/utils';
 import { Entry } from './playQueueSlice';
 
 const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
@@ -45,6 +46,8 @@ export interface General {
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
   dynamicBackground: boolean;
+  imageCachePath: string;
+  songCachePath: string;
   titleBar: 'windows' | 'mac' | string;
 }
 
@@ -62,6 +65,8 @@ const initialState: General = {
     show: false,
   },
   dynamicBackground: Boolean(parsedSettings.dynamicBackground),
+  imageCachePath: getImageCachePath(),
+  songCachePath: getSongCachePath(),
   titleBar: String(parsedSettings.titleBarStyle),
 };
 
@@ -79,6 +84,12 @@ const miscSlice = createSlice({
 
     setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
       switch (action.payload.setting) {
+        case 'imageCachePath':
+          state.imageCachePath = action.payload.value;
+          break;
+        case 'songCachePath':
+          state.songCachePath = action.payload.value;
+          break;
         case 'titleBar':
           state.titleBar = action.payload.value;
           break;

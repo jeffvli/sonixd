@@ -4,13 +4,16 @@ import fs from 'fs';
 import path from 'path';
 import { InputGroup, Button, Tag, Message, Icon, ButtonToolbar, Whisper, Popover } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledInput, StyledCheckbox } from '../../shared/styled';
+import { StyledInput, StyledCheckbox, StyledInputGroup } from '../../shared/styled';
 import { getSongCachePath, getImageCachePath } from '../../../shared/utils';
 import { notifyToast } from '../../shared/toast';
+import { setMiscSetting } from '../../../redux/miscSlice';
+import { useAppDispatch } from '../../../redux/hooks';
 
 const fsUtils = require('nodejs-fs-utils');
 
 const CacheConfig = () => {
+  const dispatch = useAppDispatch();
   const [imgCacheSize, setImgCacheSize] = useState(0);
   const [songCacheSize, setSongCacheSize] = useState(0);
   const [isEditingCachePath, setIsEditingCachePath] = useState(false);
@@ -104,7 +107,7 @@ const CacheConfig = () => {
       <br />
       {isEditingCachePath && (
         <>
-          <InputGroup>
+          <StyledInputGroup>
             <StyledInput value={newCachePath} onChange={(e: string) => setNewCachePath(e)} />
             <InputGroup.Button
               onClick={() => {
@@ -113,6 +116,10 @@ const CacheConfig = () => {
                   settings.setSync('cachePath', newCachePath);
                   fs.mkdirSync(getSongCachePath(), { recursive: true });
                   fs.mkdirSync(getImageCachePath(), { recursive: true });
+                  dispatch(
+                    setMiscSetting({ setting: 'imageCachePath', value: getImageCachePath() })
+                  );
+                  dispatch(setMiscSetting({ setting: 'songCachePath', value: getSongCachePath() }));
                   setErrorMessage('');
                   return setIsEditingCachePath(false);
                 }
@@ -130,7 +137,19 @@ const CacheConfig = () => {
             >
               <Icon icon="close" />
             </InputGroup.Button>
-          </InputGroup>
+            <InputGroup.Button
+              onClick={() => {
+                const defaultPath = path.join(path.dirname(settings.file()));
+                settings.setSync('cachePath', defaultPath);
+                dispatch(setMiscSetting({ setting: 'imageCachePath', value: getImageCachePath() }));
+                dispatch(setMiscSetting({ setting: 'songCachePath', value: getSongCachePath() }));
+                setErrorMessage('');
+                return setIsEditingCachePath(false);
+              }}
+            >
+              Reset to default
+            </InputGroup.Button>
+          </StyledInputGroup>
           <p style={{ fontSize: 'smaller' }}>
             *You will need to manually move any existing cached files to their new location.
           </p>

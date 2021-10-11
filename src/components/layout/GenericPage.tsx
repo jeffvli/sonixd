@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import path from 'path';
 import { Divider } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppSelector } from '../../redux/hooks';
 import { PageContainer, PageHeader, PageContent } from './styled';
-import { isCached, getImageCachePath } from '../../shared/utils';
+import { isCached } from '../../shared/utils';
 
 const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
-  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const [backgroundImage, setBackgroundImage] = useState('');
   useHotkeys('ctrl+f', () => document.getElementById('local-search-input')?.focus());
 
   useEffect(() => {
     if (misc.dynamicBackground) {
-      const cachedImagePath = `${cachePath}album_${playQueue.current?.albumId}.jpg`;
+      const cachedImagePath = `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`;
       const serverImagePath = playQueue.current?.image.replace(/size=\d+/, 'size=500');
-      const cssBackgroundImagePath = `${cachePath}album_${playQueue.current?.albumId}.jpg`.replaceAll(
+      const cssBackgroundImagePath = `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`.replaceAll(
         '\\',
         '/'
       );
@@ -31,7 +29,7 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
 
       setBackgroundImage(imagePath);
     }
-  }, [cachePath, misc.dynamicBackground, playQueue]);
+  }, [misc.imageCachePath, misc.dynamicBackground, playQueue]);
 
   return (
     <PageContainer

@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
-import path from 'path';
 import settings from 'electron-settings';
 import styled from 'styled-components';
 import { ButtonGroup, ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
 import Card from '../card/Card';
 import { SectionTitleWrapper, SectionTitle, StyledIconButton } from '../shared/styled';
-import { getImageCachePath } from '../../shared/utils';
+import { useAppSelector } from '../../redux/hooks';
 
 const ScrollMenuContainer = styled.div`
   margin-bottom: 25px;
@@ -21,7 +20,7 @@ const ScrollMenuContainer = styled.div`
 
 const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, type }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
-  const cachePath = path.join(getImageCachePath(), '/');
+  const misc = useAppSelector((state) => state.misc);
   const scrollContainerRef = useRef<any>();
   const gridCardSize = Number(settings.getSync('gridCardSize'));
 
@@ -88,7 +87,7 @@ const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, typ
               size={settings.getSync('gridCardSize')}
               lazyLoad
               cacheImages={cacheImages}
-              cachePath={cachePath}
+              cachePath={misc.imageCachePath}
               style={{ margin: '0px 5px 0px 5px' }}
             />
           </span>

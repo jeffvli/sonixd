@@ -6,7 +6,6 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import path from 'path';
 import settings from 'electron-settings';
 import ReactAudioPlayer from 'react-audio-player';
 import { Helmet } from 'react-helmet-async';
@@ -25,7 +24,7 @@ import {
 } from '../../redux/playQueueSlice';
 import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
-import { getSongCachePath, isCached } from '../../shared/utils';
+import { isCached } from '../../shared/utils';
 import { scrobble } from '../../api/api';
 
 const gaplessListenHandler = (
@@ -240,28 +239,28 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const player2Ref = useRef<any>();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
+  const misc = useAppSelector((state) => state.misc);
   const cacheSongs = settings.getSync('cacheSongs');
   const [title] = useState('');
-  const [cachePath] = useState(path.join(getSongCachePath(), '/'));
   const [scrobbled, setScrobbled] = useState(false);
 
   const getSrc1 = useCallback(() => {
-    const cachedSongPath = `${cachePath}/${
+    const cachedSongPath = `${misc.imageCachePath}/${
       playQueue[currentEntryList][playQueue.player1.index]?.id
     }.mp3`;
     return isCached(cachedSongPath)
       ? cachedSongPath
       : playQueue[currentEntryList][playQueue.player1.index]?.streamUrl;
-  }, [cachePath, currentEntryList, playQueue]);
+  }, [misc.imageCachePath, currentEntryList, playQueue]);
 
   const getSrc2 = useCallback(() => {
-    const cachedSongPath = `${cachePath}/${
+    const cachedSongPath = `${misc.imageCachePath}/${
       playQueue[currentEntryList][playQueue.player2.index]?.id
     }.mp3`;
     return isCached(cachedSongPath)
       ? cachedSongPath
       : playQueue[currentEntryList][playQueue.player2.index]?.streamUrl;
-  }, [cachePath, currentEntryList, playQueue]);
+  }, [misc.imageCachePath, currentEntryList, playQueue]);
 
   useImperativeHandle(ref, () => ({
     get player1() {

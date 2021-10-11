@@ -1,12 +1,11 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
 import React, { useMemo } from 'react';
-import path from 'path';
 import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
 import 'react-virtualized/styles.css';
-import { getImageCachePath } from '../../shared/utils';
+import { useAppSelector } from '../../redux/hooks';
 
 const GridCard = ({ data, index, style }: any) => {
   const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
@@ -153,7 +152,7 @@ const GridViewType = ({
   handleFavorite,
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
-  const cachePath = path.join(getImageCachePath(), '/');
+  const misc = useAppSelector((state) => state.misc);
 
   return (
     <AutoSizer>
@@ -169,7 +168,7 @@ const GridViewType = ({
           size={size}
           cacheType={cacheType}
           cacheImages={cacheImages}
-          cachePath={cachePath}
+          cachePath={misc.imageCachePath}
           handleFavorite={handleFavorite}
         />
       )}

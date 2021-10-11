@@ -77,6 +77,8 @@ const miscState: General = {
   modalPages: [],
   isProcessingPlaylist: [],
   dynamicBackground: false,
+  imageCachePath: '',
+  songCachePath: '',
   titleBar: 'windows',
 };
 

@@ -3,7 +3,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
-import path from 'path';
 import settings from 'electron-settings';
 import styled from 'styled-components';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -20,7 +19,6 @@ import {
 import {
   formatSongDuration,
   isCached,
-  getImageCachePath,
   formatDate,
   convertByteToMegabyte,
 } from '../../shared/utils';
@@ -88,7 +86,6 @@ const ListViewTable = ({
   const history = useHistory();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
-  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
   const [sortedData, setSortedData] = useState(data);
@@ -511,11 +508,11 @@ const ListViewTable = ({
                             <LazyLoadImage
                               src={
                                 isCached(
-                                  `${cachePath}${cacheImages.cacheType}_${
+                                  `${misc.imageCachePath}${cacheImages.cacheType}_${
                                     rowData[cacheImages.cacheIdProperty]
                                   }.jpg`
                                 )
-                                  ? `${cachePath}${cacheImages.cacheType}_${
+                                  ? `${misc.imageCachePath}${cacheImages.cacheType}_${
                                       rowData[cacheImages.cacheIdProperty]
                                     }.jpg`
                                   : rowData.image
@@ -649,11 +646,11 @@ const ListViewTable = ({
                       <LazyLoadImage
                         src={
                           isCached(
-                            `${cachePath}${cacheImages.cacheType}_${
+                            `${misc.imageCachePath}${cacheImages.cacheType}_${
                               rowData[cacheImages.cacheIdProperty]
                             }.jpg`
                           )
-                            ? `${cachePath}${cacheImages.cacheType}_${
+                            ? `${misc.imageCachePath}${cacheImages.cacheType}_${
                                 rowData[cacheImages.cacheIdProperty]
                               }.jpg`
                             : rowData.image
