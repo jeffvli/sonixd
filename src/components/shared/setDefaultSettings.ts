@@ -94,6 +94,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('albumViewType', 'list');
   }
 
+  if (force || !settings.hasSync('artistViewType')) {
+    settings.setSync('atistViewType', 'list');
+  }
+
   if (force || !settings.hasSync('musicListFontSize')) {
     settings.setSync('musicListFontSize', '14');
   }
