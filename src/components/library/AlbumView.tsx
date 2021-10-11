@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
-import { ButtonToolbar, Tag } from 'rsuite';
+import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -30,11 +30,11 @@ import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import { TagLink } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
 import { isCached } from '../../shared/utils';
+import { StyledLink } from '../shared/styled';
 
 interface AlbumParams {
   id: string;
@@ -183,11 +183,30 @@ const AlbumView = ({ ...rest }: any) => {
                 }}
               >
                 {data.artist && (
-                  <Tag>
-                    <TagLink
+                  <StyledLink
+                    onClick={() => {
+                      if (!rest.isModal) {
+                        history.push(`/library/artist/${data.artistId}`);
+                      } else {
+                        dispatch(
+                          addModalPage({
+                            pageType: 'artist',
+                            id: data.artistId,
+                          })
+                        );
+                      }
+                    }}
+                  >
+                    {data.artist}
+                  </StyledLink>
+                )}
+                {data.genre && (
+                  <>
+                    {' • '}
+                    <StyledLink
                       onClick={() => {
                         if (!rest.isModal) {
-                          history.push(`/library/artist/${data.artistId}`);
+                          history.push(`/library/album?sortType=${data.genre}`);
                         } else {
                           dispatch(
                             addModalPage({
@@ -198,19 +217,16 @@ const AlbumView = ({ ...rest }: any) => {
                         }
                       }}
                     >
-                      Artist: {data.artist}
-                    </TagLink>
-                  </Tag>
+                      {data.genre}
+                    </StyledLink>
+                  </>
                 )}
+
                 {data.year && (
-                  <Tag>
-                    <TagLink>Year: {data.year}</TagLink>
-                  </Tag>
-                )}
-                {data.genre && (
-                  <Tag>
-                    <TagLink>Genre: {data.genre}</TagLink>
-                  </Tag>
+                  <>
+                    {' • '}
+                    {data.year}
+                  </>
                 )}
               </div>
               <div style={{ marginTop: '10px' }}>
