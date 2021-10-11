@@ -150,6 +150,7 @@ const ArtistList = () => {
           playClick={{ type: 'artist', idProperty: 'id' }}
           size={Number(settings.getSync('gridCardSize'))}
           cacheType="artist"
+          handleFavorite={handleRowFavorite}
         />
       )}
     </GenericPage>

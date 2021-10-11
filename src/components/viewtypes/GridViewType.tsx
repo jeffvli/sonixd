@@ -54,6 +54,7 @@ const GridCard = ({ data, index, style }: any) => {
           details={{ cacheType: data.cacheType, ...data.data[i] }}
           cacheImages={data.cacheImages}
           cachePath={data.cachePath}
+          handleFavorite={data.handleFavorite}
         />
       </div>
     );
@@ -85,6 +86,7 @@ function ListWrapper({
   cacheType,
   cacheImages,
   cachePath,
+  handleFavorite,
 }: any) {
   const gapSize = 5;
   const cardHeight = size + 75; // 225
@@ -108,6 +110,7 @@ function ListWrapper({
       gapSize,
       cacheImages,
       cachePath,
+      handleFavorite,
     }),
     [
       cardHeight,
@@ -122,6 +125,7 @@ function ListWrapper({
       size,
       cacheImages,
       cachePath,
+      handleFavorite,
     ]
   );
 
@@ -139,7 +143,15 @@ function ListWrapper({
   );
 }
 
-const GridViewType = ({ data, cardTitle, cardSubtitle, playClick, size, cacheType }: any) => {
+const GridViewType = ({
+  data,
+  cardTitle,
+  cardSubtitle,
+  playClick,
+  size,
+  cacheType,
+  handleFavorite,
+}: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const cachePath = path.join(getImageCachePath(), '/');
 
@@ -158,6 +170,7 @@ const GridViewType = ({ data, cardTitle, cardSubtitle, playClick, size, cacheTyp
           cacheType={cacheType}
           cacheImages={cacheImages}
           cachePath={cachePath}
+          handleFavorite={handleFavorite}
         />
       )}
     </AutoSizer>

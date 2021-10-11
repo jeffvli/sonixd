@@ -209,6 +209,7 @@ const AlbumList = () => {
           playClick={{ type: 'album', idProperty: 'id' }}
           size={Number(settings.getSync('gridCardSize'))}
           cacheType="album"
+          handleFavorite={handleRowFavorite}
         />
       )}
     </GenericPage>

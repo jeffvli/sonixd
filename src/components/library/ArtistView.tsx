@@ -268,6 +268,7 @@ const ArtistView = ({ ...rest }: any) => {
             size={Number(settings.getSync('gridCardSize'))}
             cacheType="album"
             isModal={rest.isModal}
+            handleFavorite={handleRowFavorite}
           />
         )}
       </>
