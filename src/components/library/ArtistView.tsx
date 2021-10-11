@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import React, { useState } from 'react';
 import _ from 'lodash';
+import path from 'path';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -30,6 +31,7 @@ import { TagLink } from './styled';
 import { addModalPage } from '../../redux/miscSlice';
 import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
+import { getImageCachePath, isCached } from '../../shared/utils';
 
 interface ArtistParams {
   id: string;
@@ -39,6 +41,7 @@ const ArtistView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const history = useHistory();
+  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
@@ -146,23 +149,36 @@ const ArtistView = ({ ...rest }: any) => {
       hideDivider
       header={
         <GenericPageHeader
-          image={data.image}
+          image={
+            isCached(`${cachePath}artist_${data.id}.jpg`)
+              ? `${cachePath}artist_${data.id}.jpg`
+              : data.image.includes('placeholder')
+              ? artistInfo?.largeImageUrl
+                ? artistInfo.largeImageUrl
+                : data.image
+              : data.image
+          }
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'artist',
+            id: data.id,
+          }}
           imageHeight={145}
           title={data.name}
           subtitle={
             <>
               <CustomTooltip
-                text={artistInfo.biography
+                text={artistInfo?.biography
                   ?.replace(/<[^>]*>/, '')
                   .replace('Read more on Last.fm</a>', '')}
                 placement="bottomStart"
               >
                 <span>
-                  {artistInfo.biography
+                  {artistInfo?.biography
                     ?.replace(/<[^>]*>/, '')
                     .replace('Read more on Last.fm</a>', '')
-                    ?.trim() !== ''
-                    ? `${artistInfo.biography
+                    ?.trim()
+                    ? `${artistInfo?.biography
                         ?.replace(/<[^>]*>/, '')
                         .replace('Read more on Last.fm</a>', '')}`
                     : 'No artist biography found'}
@@ -188,28 +204,39 @@ const ArtistView = ({ ...rest }: any) => {
                     enterable
                     speaker={
                       <Popover style={{ width: '400px' }}>
-                        <TagGroup>
-                          {artistInfo.similarArtist?.map((artist: any) => (
-                            <Tag key={artist.id}>
-                              <TagLink
-                                onClick={() => {
-                                  if (!rest.isModal) {
-                                    history.push(`/library/artist/${artist.id}`);
-                                  } else {
-                                    dispatch(
-                                      addModalPage({
-                                        pageType: 'artist',
-                                        id: artist.id,
-                                      })
-                                    );
-                                  }
-                                }}
-                              >
-                                {artist.name}
-                              </TagLink>
-                            </Tag>
-                          ))}
-                        </TagGroup>
+                        <div>
+                          <h6>Related artists</h6>
+                          <TagGroup>
+                            {artistInfo?.similarArtist?.map((artist: any) => (
+                              <Tag key={artist.id}>
+                                <TagLink
+                                  onClick={() => {
+                                    if (!rest.isModal) {
+                                      history.push(`/library/artist/${artist.id}`);
+                                    } else {
+                                      dispatch(
+                                        addModalPage({
+                                          pageType: 'artist',
+                                          id: artist.id,
+                                        })
+                                      );
+                                    }
+                                  }}
+                                >
+                                  {artist.name}
+                                </TagLink>
+                              </Tag>
+                            ))}
+                          </TagGroup>
+                        </div>
+                        <br />
+                        <StyledButton
+                          appearance="primary"
+                          disabled={!artistInfo?.lastFmUrl}
+                          onClick={() => shell.openExternal(artistInfo?.lastFmUrl)}
+                        >
+                          View on Last.FM
+                        </StyledButton>
                       </Popover>
                     }
                   >

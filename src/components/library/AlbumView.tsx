@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import path from 'path';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag } from 'rsuite';
@@ -34,6 +35,7 @@ import { TagLink } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
+import { getImageCachePath, isCached } from '../../shared/utils';
 
 interface AlbumParams {
   id: string;
@@ -41,6 +43,7 @@ interface AlbumParams {
 
 const AlbumView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
+  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playQueue = useAppSelector((state) => state.playQueue);
   const history = useHistory();
@@ -159,7 +162,16 @@ const AlbumView = ({ ...rest }: any) => {
     <GenericPage
       header={
         <GenericPageHeader
-          image={data.image}
+          image={
+            isCached(`${cachePath}album_${data.albumId}.jpg`)
+              ? `${cachePath}album_${data.albumId}.jpg`
+              : data.image
+          }
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'album',
+            id: data.albumId,
+          }}
           title={data.name}
           subtitle={
             <div>
