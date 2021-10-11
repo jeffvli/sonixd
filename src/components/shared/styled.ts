@@ -211,3 +211,8 @@ export const SectionTitle = styled.a`
     color: ${(props) => (!props.onClick ? props.theme.primary.text : undefined)};
   }
 `;
+
+export const StyledLink = styled.a`
+  color: ${(props) => props.theme.primary.text};
+  cursor: pointer;
+`;
