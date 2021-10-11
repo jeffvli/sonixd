@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import settings from 'electron-settings';
+import { shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { InputGroup, Button, Tag, Message, Icon, ButtonToolbar, Whisper, Popover } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledInput, StyledCheckbox, StyledInputGroup } from '../../shared/styled';
-import { getSongCachePath, getImageCachePath } from '../../../shared/utils';
+import { StyledInput, StyledCheckbox, StyledInputGroup, StyledLink } from '../../shared/styled';
+import { getSongCachePath, getImageCachePath, getRootCachePath } from '../../../shared/utils';
 import { notifyToast } from '../../shared/toast';
 import { setMiscSetting } from '../../../redux/miscSlice';
 import { useAppDispatch } from '../../../redux/hooks';
@@ -156,16 +157,14 @@ const CacheConfig = () => {
         </>
       )}
       {!isEditingCachePath && (
-        <div style={{ overflow: 'auto' }}>
+        <>
           Location:{' '}
-          <code>
-            {path.join(
-              String(settings.getSync('cachePath')),
-              'sonixdCache',
-              String(localStorage.getItem('serverBase64'))
-            )}
-          </code>
-        </div>
+          <div style={{ overflow: 'auto' }}>
+            <StyledLink onClick={() => shell.openPath(getRootCachePath())}>
+              {getRootCachePath()}
+            </StyledLink>
+          </div>
+        </>
       )}
       <div style={{ width: '300px', marginTop: '20px' }}>
         <StyledCheckbox
