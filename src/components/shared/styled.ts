@@ -132,7 +132,7 @@ export const StyledSlider = styled(Slider)`
 
 export const StyledInputPicker = styled(InputPicker)<{ width?: number }>`
   .rs-picker-toggle-value {
-    color: ${(props) => `${props.theme.primary.main} !important`};
+    color: ${(props) => `${props.theme.primary.text} !important`};
   }
 
   .rs-btn-default {
