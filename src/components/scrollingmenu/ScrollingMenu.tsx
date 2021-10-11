@@ -78,7 +78,9 @@ const ScrollingMenu = ({ cardTitle, cardSubtitle, data, title, onClickTitle, typ
               coverArt={item.image}
               url={cardTitle.urlProperty ? `${cardTitle.prefix}/${item.id}` : undefined}
               subUrl={
-                cardSubtitle.urlProperty ? `${cardSubtitle.prefix}/${item.artistId}` : undefined
+                cardSubtitle.urlProperty
+                  ? `${cardSubtitle.prefix}/${item[cardSubtitle.urlProperty]}`
+                  : undefined
               }
               playClick={{ type, id: item.id }}
               details={{ cacheType: type, ...item }}

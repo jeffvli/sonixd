@@ -69,7 +69,7 @@ const Dashboard = () => {
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
-              prefix: 'artist',
+              prefix: '/library/artist',
               property: 'artist',
               urlProperty: 'artistId',
             }}
@@ -87,7 +87,7 @@ const Dashboard = () => {
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
-              prefix: 'artist',
+              prefix: '/library/artist',
               property: 'artist',
               urlProperty: 'artistId',
             }}
@@ -105,7 +105,7 @@ const Dashboard = () => {
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
-              prefix: 'artist',
+              prefix: '/library/artist',
               property: 'artist',
               urlProperty: 'artistId',
             }}
@@ -123,7 +123,7 @@ const Dashboard = () => {
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
-              prefix: 'artist',
+              prefix: '/library/artist',
               property: 'artist',
               urlProperty: 'artistId',
             }}
