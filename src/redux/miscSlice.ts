@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
+import { Entry } from './playQueueSlice';
 
 const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
@@ -23,6 +24,7 @@ type ContextMenuOptions =
   | 'deletePlaylist'
   | 'addToFavorites'
   | 'removeFromFavorites'
+  | 'viewInModal'
   | 'moveSelectedTo';
 
 export interface ContextMenu {
@@ -31,6 +33,7 @@ export interface ContextMenu {
   yPos?: number;
   rowId?: string;
   type?: string;
+  details?: Entry;
   disabledOptions?: ContextMenuOptions[];
 }
 export interface General {
@@ -88,8 +91,8 @@ const miscSlice = createSlice({
       state.contextMenu.show = action.payload.show;
       state.contextMenu.xPos = action.payload.xPos;
       state.contextMenu.yPos = action.payload.yPos;
-      state.contextMenu.rowId = action.payload.rowId;
       state.contextMenu.type = action.payload.type;
+      state.contextMenu.details = action.payload.details;
       state.contextMenu.disabledOptions = action.payload.disabledOptions;
     },
 

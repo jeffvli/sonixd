@@ -158,7 +158,7 @@ const SearchView = () => {
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
-              disabledContextMenuOptions={['deletePlaylist']}
+              disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
               playQueue={playQueue}
               multiSelect={multiSelect}
               isModal={false}

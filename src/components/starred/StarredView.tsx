@@ -161,7 +161,12 @@ const StarredView = () => {
               }}
               listType="music"
               virtualized
-              disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
+              disabledContextMenuOptions={[
+                'removeFromCurrent',
+                'moveSelectedTo',
+                'deletePlaylist',
+                'viewInModal',
+              ]}
               handleFavorite={handleRowFavorite}
             />
           )}

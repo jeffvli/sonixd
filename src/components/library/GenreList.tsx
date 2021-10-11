@@ -86,6 +86,7 @@ const GenreList = () => {
             'deletePlaylist',
             'addToFavorites',
             'removeFromFavorites',
+            'viewInModal',
           ]}
         />
       )}

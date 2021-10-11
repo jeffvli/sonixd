@@ -17,6 +17,7 @@ import {
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
+  addModalPage,
   addProcessingPlaylist,
   removeProcessingPlaylist,
   setContextMenu,
@@ -455,6 +456,20 @@ export const GlobalContextMenu = () => {
     }
   };
 
+  const handleViewInModal = () => {
+    dispatch(setContextMenu({ show: false }));
+    if (misc.contextMenu.type !== 'music' && multiSelect.selected.length === 1) {
+      dispatch(
+        addModalPage({
+          pageType: misc.contextMenu.type,
+          id: misc.contextMenu.details.id,
+        })
+      );
+    } else {
+      notifyToast('error', 'Select only one row');
+    }
+  };
+
   return (
     <>
       {misc.contextMenu.show && (
@@ -462,7 +477,7 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={9}
+          numOfButtons={10}
           numOfDividers={3}
         >
           <ContextMenuButton
@@ -599,7 +614,11 @@ export const GlobalContextMenu = () => {
             disabled={misc.contextMenu.disabledOptions.includes('removeFromFavorites')}
           />
           <ContextMenuDivider />
-
+          <ContextMenuButton
+            text="View in modal"
+            onClick={handleViewInModal}
+            disabled={misc.contextMenu.disabledOptions.includes('viewInModal')}
+          />
           <Whisper
             enterable
             placement="autoHorizontalStart"

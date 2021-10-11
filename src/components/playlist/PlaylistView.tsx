@@ -497,7 +497,7 @@ const PlaylistView = ({ ...rest }) => {
         listType="music"
         dnd
         isModal={rest.isModal}
-        disabledContextMenuOptions={['deletePlaylist']}
+        disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
         handleFavorite={handleRowFavorite}
         handleRating={handleRowRating}
       />
