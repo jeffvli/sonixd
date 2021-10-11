@@ -132,7 +132,7 @@ const SearchView = () => {
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
-              prefix: 'artist',
+              prefix: '/library/artist',
               property: 'artist',
               urlProperty: 'artistId',
               unit: '',
