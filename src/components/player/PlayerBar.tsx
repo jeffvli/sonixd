@@ -33,12 +33,13 @@ import { star, unstar } from '../../api/api';
 import placeholderImg from '../../img/placeholder.jpg';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import { getCurrentEntryList, getImageCachePath, isCached } from '../../shared/utils';
+import { getCurrentEntryList, isCached } from '../../shared/utils';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
+  const misc = useAppSelector((state) => state.misc);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -46,7 +47,6 @@ const PlayerBar = () => {
   const [manualSeek, setManualSeek] = useState(0);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
-  const [cachePath] = useState(getImageCachePath());
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -326,11 +326,11 @@ const PlayerBar = () => {
                               <LazyLoadImage
                                 src={
                                   isCached(
-                                    `${cachePath}/album_${
+                                    `${misc.imageCachePath}album_${
                                       playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                                     }.jpg`
                                   )
-                                    ? `${cachePath}/album_${
+                                    ? `${misc.imageCachePath}album_${
                                         playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                                       }.jpg`
                                     : playQueue[currentEntryList][
@@ -348,11 +348,11 @@ const PlayerBar = () => {
                           tabIndex={0}
                           src={
                             isCached(
-                              `${cachePath}/album_${
+                              `${misc.imageCachePath}album_${
                                 playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                               }.jpg`
                             )
-                              ? `${cachePath}/album_${
+                              ? `${misc.imageCachePath}album_${
                                   playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                                 }.jpg`
                               : playQueue[currentEntryList][playQueue.currentIndex]?.image ||

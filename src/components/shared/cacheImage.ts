@@ -11,8 +11,8 @@ const cacheImage = (fileName: string, url: string) => {
     // in-progress downloaded image which would cause the image to be cut off
     // Also we use string concatenation here instead of path joins because too many
     // joins start to kill performance
-    const tempImgPath = `${cachePath}/TEMP_${fileName}`;
-    const cachedImgPath = `${cachePath}/${fileName}`;
+    const tempImgPath = `${cachePath}TEMP_${fileName}`;
+    const cachedImgPath = `${cachePath}${fileName}`;
 
     // Check if an existing cached image exists
     if (!fs.existsSync(cachedImgPath) && !fs.existsSync(tempImgPath)) {

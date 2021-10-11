@@ -348,6 +348,11 @@ const PlaylistView = ({ ...rest }) => {
       header={
         <GenericPageHeader
           image={data.image}
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'playlist',
+            id: data.id,
+          }}
           title={data.name}
           subtitle={
             <div>

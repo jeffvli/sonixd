@@ -1,7 +1,6 @@
 /* eslint-disable import/no-cycle */
 import React, { useState } from 'react';
 import _ from 'lodash';
-import path from 'path';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -13,7 +12,7 @@ import {
   PlayButton,
 } from '../shared/ToolbarButtons';
 import { getAllArtistSongs, getArtist, getArtistInfo, star, unstar } from '../../api/api';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
   setRangeSelected,
@@ -31,7 +30,7 @@ import { TagLink } from './styled';
 import { addModalPage } from '../../redux/miscSlice';
 import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
-import { getImageCachePath, isCached } from '../../shared/utils';
+import { isCached } from '../../shared/utils';
 
 interface ArtistParams {
   id: string;
@@ -41,7 +40,7 @@ const ArtistView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const history = useHistory();
-  const [cachePath] = useState(path.join(getImageCachePath(), '/'));
+  const misc = useAppSelector((state) => state.misc);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
@@ -150,8 +149,8 @@ const ArtistView = ({ ...rest }: any) => {
       header={
         <GenericPageHeader
           image={
-            isCached(`${cachePath}artist_${data.id}.jpg`)
-              ? `${cachePath}artist_${data.id}.jpg`
+            isCached(`${misc.imageCachePath}artist_${data.id}.jpg`)
+              ? `${misc.imageCachePath}artist_${data.id}.jpg`
               : data.image.includes('placeholder')
               ? artistInfo?.largeImageUrl
                 ? artistInfo.largeImageUrl

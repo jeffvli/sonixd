@@ -25,11 +25,11 @@ export const getRootCachePath = () => {
 };
 
 export const getImageCachePath = () => {
-  return path.join(getRootCachePath(), 'image');
+  return path.join(getRootCachePath(), 'image', '/');
 };
 
 export const getSongCachePath = () => {
-  return path.join(getRootCachePath(), 'song');
+  return path.join(getRootCachePath(), 'song', '/');
 };
 
 export const getRecoveryPath = () => {
