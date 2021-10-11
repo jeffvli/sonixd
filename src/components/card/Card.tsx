@@ -1,9 +1,8 @@
 import React from 'react';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
-import { useQueryClient } from 'react-query';
 import cacheImage from '../shared/cacheImage';
-import { getAlbum, getPlaylist, star, unstar, getAllArtistSongs } from '../../api/api';
+import { getAlbum, getPlaylist, getAllArtistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import { isCached } from '../../shared/utils';
@@ -39,12 +38,12 @@ const Card = ({
   size,
   cacheImages,
   cachePath,
+  handleFavorite,
   ...rest
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
-  const queryClient = useQueryClient();
 
   const handleClick = () => {
     history.push(url);
@@ -100,30 +99,6 @@ const Card = ({
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
     }
-  };
-
-  const handleFavorite = async () => {
-    if (!rest.details.starred) {
-      await star(rest.details.id, 'album');
-    } else {
-      await unstar(rest.details.id, 'album');
-    }
-
-    await queryClient.refetchQueries(['artist'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['album'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['starred'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['playlist'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['search'], {
-      active: true,
-    });
   };
 
   const handleOpenModal = () => {
@@ -185,7 +160,7 @@ const Card = ({
               />
               {playClick.type !== 'playlist' && (
                 <FavoriteOverlayButton
-                  onClick={handleFavorite}
+                  onClick={() => handleFavorite(rest.details)}
                   size={size <= 160 ? 'xs' : 'sm'}
                   icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
                 />

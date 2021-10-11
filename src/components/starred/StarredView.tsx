@@ -207,6 +207,7 @@ const StarredView = () => {
                   playClick={{ type: 'album', idProperty: 'id' }}
                   size={Number(settings.getSync('gridCardSize'))}
                   cacheType="album"
+                  handleFavorite={handleRowFavoriteAlbum}
                 />
               )}
             </>
@@ -252,6 +253,7 @@ const StarredView = () => {
                   playClick={{ type: 'artist', idProperty: 'id' }}
                   size={Number(settings.getSync('gridCardSize'))}
                   cacheType="artist"
+                  handleFavorite={handleRowFavoriteArtist}
                 />
               )}
             </>
