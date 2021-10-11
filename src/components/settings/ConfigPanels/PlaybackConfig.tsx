@@ -2,7 +2,7 @@ import React from 'react';
 import settings from 'electron-settings';
 import { ControlLabel, RadioGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledInputNumber, StyledRadio } from '../../shared/styled';
+import { StyledInputNumber, StyledInputPicker, StyledRadio } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting, setPlayerVolume } from '../../../redux/playQueueSlice';
 
@@ -77,24 +77,49 @@ const PlaybackConfig = () => {
           }}
         />
         <br />
-        <ControlLabel>Crossfade type</ControlLabel>
-        <RadioGroup
-          name="fadeTypeRadioList"
-          appearance="default"
-          defaultValue={String(settings.getSync('fadeType'))}
-          onChange={(e) => {
-            settings.setSync('fadeType', e);
-            dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
-          }}
-        >
-          <StyledRadio value="equalPower">Equal Power</StyledRadio>
-          <StyledRadio value="linear">Linear</StyledRadio>
-          <StyledRadio value="dipped">Dipped</StyledRadio>
-          <StyledRadio value="constantPower">Constant Power</StyledRadio>
-          <StyledRadio value="constantPowerSlowFade">Constant Power (slow fade)</StyledRadio>
-          <StyledRadio value="constantPowerSlowCut">Constant Power (slow cut)</StyledRadio>
-          <StyledRadio value="constantPowerFastCut">Constant Power (fast cut)</StyledRadio>
-        </RadioGroup>
+        <div>
+          <ControlLabel>Crossfade type</ControlLabel>
+          <br />
+          <StyledInputPicker
+            data={[
+              {
+                label: 'Equal Power',
+                value: 'equalPower',
+              },
+              {
+                label: 'Linear',
+                value: 'linear',
+              },
+              {
+                label: 'Dipped',
+                value: 'dipped',
+              },
+              {
+                label: 'Constant Power',
+                value: 'constantPower',
+              },
+              {
+                label: 'Constant Power (slow fade)',
+                value: 'constantPowerSlowFade',
+              },
+              {
+                label: 'Constant Power (slow cut)',
+                value: 'constantPowerSlowCut',
+              },
+              {
+                label: 'Constant Power (fast cut)',
+                value: 'constantPowerFastCut',
+              },
+            ]}
+            cleanable={false}
+            defaultValue={String(settings.getSync('fadeType'))}
+            onChange={(e: string) => {
+              settings.setSync('fadeType', e);
+              dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
+            }}
+          />
+        </div>
+
         <br />
         <ControlLabel>Volume fade</ControlLabel>
         <RadioGroup
