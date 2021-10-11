@@ -21,7 +21,7 @@ const cacheImage = (fileName: string, url: string) => {
         dest: tempImgPath,
       };
 
-      if (!options.url.includes('placeholder')) {
+      if (!options.url.match('placeholder|2a96cbd8b46e442fc41c2b86b821562f')) {
         try {
           download
             .image(options)
