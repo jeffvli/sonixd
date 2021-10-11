@@ -95,7 +95,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('artistViewType')) {
-    settings.setSync('atistViewType', 'list');
+    settings.setSync('artistViewType', 'list');
   }
 
   if (force || !settings.hasSync('musicListFontSize')) {
