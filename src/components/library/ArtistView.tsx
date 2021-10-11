@@ -154,7 +154,8 @@ const ArtistView = ({ ...rest }: any) => {
             isCached(`${misc.imageCachePath}artist_${data.id}.jpg`)
               ? `${misc.imageCachePath}artist_${data.id}.jpg`
               : data.image.includes('placeholder')
-              ? !artistInfo?.largeImageUrl.match('2a96cbd8b46e442fc41c2b86b821562f')
+              ? artistInfo?.largeImageUrl &&
+                !artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
                 ? artistInfo.largeImageUrl
                 : data.image
               : data.image
