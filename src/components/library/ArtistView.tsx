@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import React, { useState } from 'react';
 import _ from 'lodash';
+import { shell } from 'electron';
 import settings from 'electron-settings';
 import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -31,6 +32,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
 import { isCached } from '../../shared/utils';
+import { StyledButton } from '../shared/styled';
 
 interface ArtistParams {
   id: string;
@@ -164,6 +166,7 @@ const ArtistView = ({ ...rest }: any) => {
           }}
           imageHeight={145}
           title={data.name}
+          showTitleTooltip
           subtitle={
             <>
               <CustomTooltip
@@ -198,7 +201,7 @@ const ArtistView = ({ ...rest }: any) => {
                   />
                   <FavoriteButton size="md" isFavorite={data.starred} onClick={handleFavorite} />
                   <Whisper
-                    placement="bottomStart"
+                    placement="auto"
                     trigger="hover"
                     enterable
                     speaker={
@@ -206,7 +209,7 @@ const ArtistView = ({ ...rest }: any) => {
                         <div>
                           <h6>Related artists</h6>
                           <TagGroup>
-                            {artistInfo?.similarArtist?.map((artist: any) => (
+                            {artistInfo.similarArtist?.map((artist: any) => (
                               <Tag key={artist.id}>
                                 <TagLink
                                   onClick={() => {
@@ -239,7 +242,7 @@ const ArtistView = ({ ...rest }: any) => {
                       </Popover>
                     }
                   >
-                    <Button size="md">Related Artists</Button>
+                    <Button size="md">Info</Button>
                   </Whisper>
                 </ButtonToolbar>
               </div>
