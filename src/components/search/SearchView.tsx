@@ -91,6 +91,54 @@ const SearchView = () => {
     }
   };
 
+  const handleArtistFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'artist');
+      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.artist[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.artist[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
+
+  const handleAlbumFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'artist');
+      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
+
   return (
     <GenericPage
       header={
@@ -121,6 +169,7 @@ const SearchView = () => {
             }}
             cardSize={cardSize}
             type="artist"
+            handleFavorite={handleArtistFavorite}
           />
 
           <ScrollingMenu
@@ -139,6 +188,7 @@ const SearchView = () => {
             }}
             cardSize={cardSize}
             type="album"
+            handleFavorite={handleAlbumFavorite}
           />
           <SectionTitleWrapper>
             <SectionTitle>Songs</SectionTitle>

@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { useHistory } from 'react-router-dom';
-import { useQuery } from 'react-query';
-import { getAlbums } from '../../api/api';
+import { useQuery, useQueryClient } from 'react-query';
+import { getAlbums, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
+import { useAppDispatch } from '../../redux/hooks';
+import { setStar } from '../../redux/playQueueSlice';
 
 const Dashboard = () => {
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const cardSize = Number(settings.getSync('gridCardSize'));
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -36,6 +41,80 @@ const Dashboard = () => {
     () => getAlbums({ type: 'frequent', size: 20 }, 250),
     { refetchOnWindowFocus: false }
   );
+
+  const handleFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'album');
+      dispatch(setStar({ id: [rowData.id], type: 'star' }));
+      queryClient.setQueryData(['recentAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+      queryClient.setQueryData(['newestAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+      queryClient.setQueryData(['randomAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+      queryClient.setQueryData(['frequentAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
+      queryClient.setQueryData(['recentAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+      queryClient.setQueryData(['newestAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+      queryClient.setQueryData(['randomAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+      queryClient.setQueryData(['frequentAlbums'], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.album[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
 
   if (isLoadingRecent || isLoadingNewest || isLoadingRandom || isLoadingFrequent) {
     return (
@@ -76,6 +155,7 @@ const Dashboard = () => {
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=recent`)}
             type="album"
+            handleFavorite={handleFavorite}
           />
 
           <ScrollingMenu
@@ -94,6 +174,7 @@ const Dashboard = () => {
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=newest`)}
             type="album"
+            handleFavorite={handleFavorite}
           />
 
           <ScrollingMenu
@@ -112,6 +193,7 @@ const Dashboard = () => {
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=random`)}
             type="album"
+            handleFavorite={handleFavorite}
           />
 
           <ScrollingMenu
@@ -130,6 +212,7 @@ const Dashboard = () => {
             cardSize={cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=frequent`)}
             type="album"
+            handleFavorite={handleFavorite}
           />
         </>
       )}
