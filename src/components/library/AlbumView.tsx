@@ -172,6 +172,7 @@ const AlbumView = ({ ...rest }: any) => {
             id: data.albumId,
           }}
           title={data.name}
+          showTitleTooltip
           subtitle={
             <div>
               <div
