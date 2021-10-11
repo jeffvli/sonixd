@@ -428,7 +428,7 @@ const NowPlayingView = () => {
           listType="music"
           nowPlaying
           dnd
-          disabledContextMenuOptions={['deletePlaylist']}
+          disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
           handleFavorite={handleRowFavorite}
           handleRating={handleRowRating}
         />

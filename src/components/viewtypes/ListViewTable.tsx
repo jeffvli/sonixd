@@ -293,7 +293,7 @@ const ListViewTable = ({
 
           // Use the calculated ContextMenu height
           // numOfButtons * 30 + props.numOfDividers * 1.5
-          const contextMenuHeight = 8 * 30 + 3 * 1.5;
+          const contextMenuHeight = 9 * 30 + 3 * 1.5;
           if (e.pageY + contextMenuHeight >= window.innerHeight) {
             pageY = e.pageY - contextMenuHeight;
           } else {
@@ -301,7 +301,8 @@ const ListViewTable = ({
           }
 
           if (
-            (misc.contextMenu.show === false || misc.contextMenu.rowId !== rowData.uniqueId) &&
+            (misc.contextMenu.show === false ||
+              misc.contextMenu.details.uniqueId !== rowData.uniqueId) &&
             multiSelect.selected.filter((entry: any) => entry.uniqueId === rowData.uniqueId)
               .length > 0
           ) {
@@ -311,8 +312,8 @@ const ListViewTable = ({
                 show: true,
                 xPos: pageX,
                 yPos: pageY,
-                rowId: rowData.uniqueId,
                 type: nowPlaying ? 'nowPlaying' : rowData.type,
+                details: rowData,
                 disabledOptions: disabledContextMenuOptions || [],
               })
             );
@@ -324,8 +325,8 @@ const ListViewTable = ({
                 show: true,
                 xPos: pageX,
                 yPos: pageY,
-                rowId: rowData.uniqueId,
                 type: nowPlaying ? 'nowPlaying' : rowData.type,
+                details: rowData,
                 disabledOptions: disabledContextMenuOptions || [],
               })
             );

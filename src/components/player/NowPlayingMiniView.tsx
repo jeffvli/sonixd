@@ -241,7 +241,7 @@ const NowPlayingMiniView = () => {
               miniView
               nowPlaying
               dnd
-              disabledContextMenuOptions={['deletePlaylist']}
+              disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
               handleFavorite={handleRowFavorite}
             />
           </GenericPage>
