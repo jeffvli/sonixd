@@ -6,6 +6,7 @@ import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 import { StyledInputGroup } from '../shared/styled';
 import { CoverArtWrapper, PageHeaderTitle } from './styled';
 import cacheImage from '../shared/cacheImage';
+import CustomTooltip from '../shared/CustomTooltip';
 
 const GenericPageHeader = ({
   image,
@@ -23,6 +24,7 @@ const GenericPageHeader = ({
   handleGridClick,
   viewTypeSetting,
   cacheImages,
+  showTitleTooltip,
 }: any) => {
   const history = useHistory();
 
@@ -68,7 +70,13 @@ const GenericPageHeader = ({
               overflow: 'hidden',
             }}
           >
-            <PageHeaderTitle>{title}</PageHeaderTitle>
+            {showTitleTooltip ? (
+              <CustomTooltip text={title} placement="bottom">
+                <PageHeaderTitle>{title}</PageHeaderTitle>
+              </CustomTooltip>
+            ) : (
+              <PageHeaderTitle>{title}</PageHeaderTitle>
+            )}
           </span>
           <span
             style={{
