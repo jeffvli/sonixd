@@ -1,7 +1,7 @@
 {
   "name": "sonixd",
   "productName": "sonixd",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An electron-based subsonic-api compatible desktop media player",
   "main": "./main.prod.js",
   "author": {
