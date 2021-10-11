@@ -1,9 +1,11 @@
 import React from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useHistory } from 'react-router-dom';
 import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 import { StyledInputGroup } from '../shared/styled';
 import { CoverArtWrapper, PageHeaderTitle } from './styled';
+import cacheImage from '../shared/cacheImage';
 
 const GenericPageHeader = ({
   image,
@@ -20,6 +22,7 @@ const GenericPageHeader = ({
   handleListClick,
   handleGridClick,
   viewTypeSetting,
+  cacheImages,
 }: any) => {
   const history = useHistory();
 
@@ -27,11 +30,20 @@ const GenericPageHeader = ({
     <>
       {image && (
         <CoverArtWrapper>
-          <img
+          <LazyLoadImage
             src={image}
             alt="header-img"
             height={imageHeight || '145px'}
             width={imageHeight || '145px'}
+            visibleByDefault
+            afterLoad={() => {
+              if (cacheImages.enabled) {
+                cacheImage(
+                  `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
+                  image.replace(/size=\d+/, 'size=500')
+                );
+              }
+            }}
           />
         </CoverArtWrapper>
       )}
