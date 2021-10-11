@@ -33,6 +33,7 @@ import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
 import { isCached } from '../../shared/utils';
 import { StyledButton } from '../shared/styled';
+import { setStatus } from '../../redux/playerSlice';
 
 interface ArtistParams {
   id: string;
@@ -42,6 +43,7 @@ const ArtistView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const history = useHistory();
+  const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const { id } = useParams<ArtistParams>();
@@ -100,12 +102,16 @@ const ArtistView = ({ ...rest }: any) => {
   const handlePlay = async () => {
     const songs = await getAllArtistSongs(data.id);
     dispatch(setPlayQueue({ entries: songs }));
+    dispatch(setStatus('PLAYING'));
     notifyToast('info', `Playing ${songs.length} song(s)`);
   };
 
   const handlePlayAppend = async (type: 'next' | 'later') => {
     const songs = await getAllArtistSongs(data.id);
     dispatch(appendPlayQueue({ entries: songs, type }));
+    if (playQueue.entry.length < 1) {
+      dispatch(setStatus('PLAYING'));
+    }
     notifyToast('info', `Added ${songs.length} song(s)`);
   };
 
