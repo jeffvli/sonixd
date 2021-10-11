@@ -7,7 +7,7 @@
     alt="Release">
   </a>
 
-  <a href="https://github.com/jeffvli/sonixd/tree/dev">
+  <a href="https://github.com/jeffvli/sonixd/compare/dev">
     <img src="https://img.shields.io/github/commits-since/jeffvli/sonixd/latest/dev?style=flat-square&color=red"
     alt="Commits">
   </a>
@@ -27,7 +27,7 @@ Sonixd is a cross-platform desktop client built for Subsonic-API compatible musi
 - Global mediakeys support
 - Multi-theme support
 - Supports all Subsonic API compatible servers targeting v1.15.0
-- Built with Electron, React with the [rsuite](https://github.com/rsuite/rsuite) component library
+- Built with Electron, React with the [rsuite v4](https://github.com/rsuite/rsuite) component library
 
 <h5>* Gapless playback is artifically created using the crossfading players so it may not be perfect, YMMV.</h5>
 
