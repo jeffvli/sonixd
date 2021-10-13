@@ -28,6 +28,8 @@ import playQueueReducer, {
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
 
+const isWindows = process.platform === 'win32';
+
 export const store = configureStore({
   reducer: {
     player: playerReducer,
@@ -101,95 +103,82 @@ const createWindow = async () => {
     frame: false,
   });
 
+  const stop = () => {
+    const storeValues = store.getState();
+    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+    if (storeValues.playQueue[currentEntryList].length > 0) {
+      store.dispatch(clearPlayQueue());
+      store.dispatch(setStatus('PAUSED'));
+      setTimeout(() => store.dispatch(resetPlayer()), 200);
+    }
+  };
+
+  const playPause = () => {
+    const storeValues = store.getState();
+    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+    if (storeValues.playQueue[currentEntryList].length > 0) {
+      if (storeValues.player.status === 'PAUSED') {
+        store.dispatch(setStatus('PLAYING'));
+      } else {
+        store.dispatch(setStatus('PAUSED'));
+      }
+    }
+  };
+
+  const nextTrack = () => {
+    const storeValues = store.getState();
+    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+    if (storeValues.playQueue[currentEntryList].length > 0) {
+      store.dispatch(resetPlayer());
+      store.dispatch(incrementCurrentIndex('usingHotkey'));
+      store.dispatch(setStatus('PLAYING'));
+    }
+  };
+
+  const previousTrack = () => {
+    const storeValues = store.getState();
+    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+    if (storeValues.playQueue[currentEntryList].length > 0) {
+      store.dispatch(resetPlayer());
+      store.dispatch(decrementCurrentIndex('usingHotkey'));
+      store.dispatch(fixPlayer2Index());
+      store.dispatch(setStatus('PLAYING'));
+    }
+  };
+
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        store.dispatch(clearPlayQueue());
-        store.dispatch(setStatus('PAUSED'));
-        setTimeout(() => store.dispatch(resetPlayer()), 200);
-      }
+      stop();
     });
 
     globalShortcut.register('MediaPlayPause', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        if (storeValues.player.status === 'PAUSED') {
-          store.dispatch(setStatus('PLAYING'));
-        } else {
-          store.dispatch(setStatus('PAUSED'));
-        }
-      }
+      playPause();
     });
 
     globalShortcut.register('MediaNextTrack', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        store.dispatch(resetPlayer());
-        store.dispatch(incrementCurrentIndex('usingHotkey'));
-        store.dispatch(setStatus('PLAYING'));
-      }
+      nextTrack();
     });
 
     globalShortcut.register('MediaPreviousTrack', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        store.dispatch(resetPlayer());
-        store.dispatch(decrementCurrentIndex('usingHotkey'));
-        store.dispatch(fixPlayer2Index());
-        store.dispatch(setStatus('PLAYING'));
-      }
+      previousTrack();
     });
   } else {
     electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        store.dispatch(clearPlayQueue());
-        store.dispatch(setStatus('PAUSED'));
-        setTimeout(() => store.dispatch(resetPlayer()), 200);
-      }
+      stop();
     });
 
     electronLocalshortcut.register(mainWindow, 'MediaPlayPause', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        if (storeValues.player.status === 'PAUSED') {
-          store.dispatch(setStatus('PLAYING'));
-        } else {
-          store.dispatch(setStatus('PAUSED'));
-        }
-      }
+      playPause();
     });
 
     electronLocalshortcut.register(mainWindow, 'MediaNextTrack', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        store.dispatch(resetPlayer());
-        store.dispatch(incrementCurrentIndex('usingHotkey'));
-        store.dispatch(setStatus('PLAYING'));
-      }
+      nextTrack();
     });
 
     electronLocalshortcut.register(mainWindow, 'MediaPreviousTrack', () => {
-      const storeValues = store.getState();
-      const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-      if (storeValues.playQueue[currentEntryList].length > 0) {
-        store.dispatch(resetPlayer());
-        store.dispatch(decrementCurrentIndex('usingHotkey'));
-        store.dispatch(fixPlayer2Index());
-        store.dispatch(setStatus('PLAYING'));
-      }
+      previousTrack();
     });
   }
 
@@ -206,6 +195,26 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
       mainWindow.focus();
+
+      if (isWindows) {
+        mainWindow.setThumbarButtons([
+          {
+            tooltip: 'Previous Track',
+            icon: getAssetPath('skip-previous.png'),
+            click: () => previousTrack(),
+          },
+          {
+            tooltip: 'Play/Pause',
+            icon: getAssetPath('play-circle.png'),
+            click: () => playPause(),
+          },
+          {
+            tooltip: 'Next Track',
+            icon: getAssetPath('skip-next.png'),
+            click: () => nextTrack(),
+          },
+        ]);
+      }
     }
   });
 
