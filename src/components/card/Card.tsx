@@ -148,29 +148,40 @@ const Card = ({
                 icon={<Icon icon="play" />}
                 onClick={handlePlayClick}
               />
-              <AppendOverlayButton
-                onClick={() => handlePlayAppend('later')}
-                size={size <= 160 ? 'xs' : 'sm'}
-                icon={<Icon icon="plus" />}
-              />
-              <AppendNextOverlayButton
-                onClick={() => handlePlayAppend('next')}
-                size={size <= 160 ? 'xs' : 'sm'}
-                icon={<Icon icon="plus-circle" />}
-              />
-              {playClick.type !== 'playlist' && (
-                <FavoriteOverlayButton
-                  onClick={() => handleFavorite(rest.details)}
+
+              <CustomTooltip text="Add to queue (later)">
+                <AppendOverlayButton
+                  onClick={() => handlePlayAppend('later')}
                   size={size <= 160 ? 'xs' : 'sm'}
-                  icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
+                  icon={<Icon icon="plus" />}
                 />
+              </CustomTooltip>
+
+              <CustomTooltip text="Add to queue (next)">
+                <AppendNextOverlayButton
+                  onClick={() => handlePlayAppend('next')}
+                  size={size <= 160 ? 'xs' : 'sm'}
+                  icon={<Icon icon="plus-circle" />}
+                />
+              </CustomTooltip>
+
+              {playClick.type !== 'playlist' && (
+                <CustomTooltip text="Toggle favorite">
+                  <FavoriteOverlayButton
+                    onClick={() => handleFavorite(rest.details)}
+                    size={size <= 160 ? 'xs' : 'sm'}
+                    icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
+                  />
+                </CustomTooltip>
               )}
               {!rest.isModal && (
-                <ModalViewOverlayButton
-                  size={size <= 160 ? 'xs' : 'sm'}
-                  icon={<Icon icon="external-link" />}
-                  onClick={handleOpenModal}
-                />
+                <CustomTooltip text="View in modal">
+                  <ModalViewOverlayButton
+                    size={size <= 160 ? 'xs' : 'sm'}
+                    icon={<Icon icon="external-link" />}
+                    onClick={handleOpenModal}
+                  />
+                </CustomTooltip>
               )}
             </>
           )}
