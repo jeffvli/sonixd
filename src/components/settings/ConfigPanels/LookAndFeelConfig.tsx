@@ -117,6 +117,21 @@ const LookAndFeelConfig = () => {
       </div>
       <br />
       <ConfigPanel header="List-View" bordered>
+        <StyledCheckbox
+          defaultChecked={settings.getSync('highlightOnRowHover')}
+          onChange={() => {
+            settings.setSync('highlightOnRowHover', !settings.getSync('highlightOnRowHover'));
+            dispatch(
+              setMiscSetting({
+                setting: 'highlightOnRowHover',
+                value: Boolean(settings.getSync('highlightOnRowHover')),
+              })
+            );
+          }}
+        >
+          Show highlight on row hover
+        </StyledCheckbox>
+        <br />
         <p>Select the columns you want displayed on pages with a list-view.</p>
         <StyledCheckbox
           defaultChecked={resizableColumn}

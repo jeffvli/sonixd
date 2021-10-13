@@ -46,6 +46,7 @@ export interface General {
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
   dynamicBackground: boolean;
+  highlightOnRowHover: boolean;
   imageCachePath: string;
   songCachePath: string;
   titleBar: 'windows' | 'mac' | string;
@@ -65,6 +66,7 @@ const initialState: General = {
     show: false,
   },
   dynamicBackground: Boolean(parsedSettings.dynamicBackground),
+  highlightOnRowHover: Boolean(parsedSettings.highlightOnRowHover),
   imageCachePath: getImageCachePath(),
   songCachePath: getSongCachePath(),
   titleBar: String(parsedSettings.titleBarStyle),
@@ -92,6 +94,9 @@ const miscSlice = createSlice({
           break;
         case 'titleBar':
           state.titleBar = action.payload.value;
+          break;
+        case 'highlightOnRowHover':
+          state.highlightOnRowHover = action.payload.value;
           break;
         default:
           break;

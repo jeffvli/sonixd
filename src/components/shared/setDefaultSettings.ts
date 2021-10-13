@@ -14,6 +14,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('dynamicBackground', false);
   }
 
+  if (force || !settings.hasSync('highlightOnRowHover')) {
+    settings.setSync('highlightOnRowHover', true);
+  }
+
   if (force || !settings.hasSync('showDebugWindow')) {
     settings.setSync('showDebugWindow', false);
   }
