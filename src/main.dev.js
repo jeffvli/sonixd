@@ -88,8 +88,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: settings.getSync('windowPosition.width') || 1024,
+    height: settings.getSync('windowPosition.height') || 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -148,16 +148,6 @@ const createWindow = async () => {
     }
   };
 
-  const getCurrentTrackName = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      return storeValues.playQueue.current.name;
-    }
-
-    return 'sonixd';
-  };
-
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
       stop();
@@ -206,6 +196,15 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
 
+      if (settings.getSync('windowMaximize')) {
+        mainWindow.maximize();
+      } else {
+        const windowPosition = settings.getSync('windowPosition');
+        if (windowPosition) {
+          mainWindow.setPosition(windowPosition.x, windowPosition.y);
+        }
+      }
+
       if (isWindows) {
         mainWindow.setThumbarButtons([
           {
@@ -235,7 +234,9 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.on('resize', () => {
+  mainWindow.on('resized', () => {
+    const window = mainWindow.getContentBounds();
+
     // Set the current song image as thumbnail
     mainWindow.setThumbnailClip({
       x: 15,
@@ -243,6 +244,33 @@ const createWindow = async () => {
       height: 65,
       width: 65,
     });
+
+    settings.setSync('windowPosition', {
+      x: window.x,
+      y: window.y,
+      width: window.width,
+      height: window.height,
+    });
+  });
+
+  mainWindow.on('moved', () => {
+    const window = mainWindow.getContentBounds();
+    settings.setSync('windowPosition', {
+      x: window.x,
+      y: window.y,
+      width: window.width,
+      height: window.height,
+    });
+  });
+
+  mainWindow.on('maximize', () => {
+    console.log('entered maximize');
+    settings.setSync('windowMaximize', true);
+  });
+
+  mainWindow.on('unmaximize', () => {
+    console.log('entered unmaximize');
+    settings.setSync('windowMaximize', false);
   });
 
   mainWindow.on('closed', () => {
