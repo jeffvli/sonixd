@@ -148,6 +148,16 @@ const createWindow = async () => {
     }
   };
 
+  const getCurrentTrackName = () => {
+    const storeValues = store.getState();
+    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+    if (storeValues.playQueue[currentEntryList].length > 0) {
+      return storeValues.playQueue.current.name;
+    }
+
+    return 'sonixd';
+  };
+
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
       stop();
@@ -214,8 +224,25 @@ const createWindow = async () => {
             click: () => nextTrack(),
           },
         ]);
+
+        mainWindow.setThumbnailClip({
+          x: 15,
+          y: mainWindow.getContentSize()[1] - 83,
+          height: 65,
+          width: 65,
+        });
       }
     }
+  });
+
+  mainWindow.on('resize', () => {
+    // Set the current song image as thumbnail
+    mainWindow.setThumbnailClip({
+      x: 15,
+      y: mainWindow.getContentSize()[1] - 83,
+      height: 65,
+      width: 65,
+    });
   });
 
   mainWindow.on('closed', () => {
