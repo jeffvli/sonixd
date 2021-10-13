@@ -107,26 +107,4 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   opacity: ${(props) => (props.display === 'true' ? 0.9 : 0)};
   border-radius: 10px;
   color: ${(props) => `${props.theme.primary.text} !important`};
-  animation-name: ${(props) => (props.display === 'true' ? 'fadeInOpacity' : 'fadeOutOpacity')};
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
-  animation-duration: 0.5s;
-
-  @keyframes fadeInOpacity {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0.9;
-    }
-  }
-
-  @keyframes fadeOutOpacity {
-    0% {
-      opacity: 0.9;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
 `;
