@@ -467,24 +467,48 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     );
   }, [dispatch, playQueue, scrobbled]);
 
-  const handleOnPlay = (playerNumber: 1 | 2) => {
-    setScrobbled(false);
-    if (playQueue.scrobble) {
-      if (playerNumber === 1) {
-        if (playQueue[currentEntryList][playQueue.player1.index]?.id) {
-          scrobble({
-            id: playQueue[currentEntryList][playQueue.player1.index]?.id,
-            submission: false,
-          });
+  const handleOnPlay = useCallback(
+    (playerNumber: 1 | 2) => {
+      // Don't run this if resuming a song, so we'll use a 30 second check
+      if (playQueue.scrobble) {
+        let fadeAtTime;
+        let duration;
+        if (playQueue.currentPlayer === 1) {
+          duration = player1Ref.current.audioEl.current?.duration;
+          fadeAtTime = duration - playQueue.fadeDuration;
+        } else {
+          duration = player2Ref.current.audioEl.current?.duration;
+          fadeAtTime = duration - playQueue.fadeDuration;
         }
-      } else if (playQueue[currentEntryList][playQueue.player2.index]?.id) {
-        scrobble({
-          id: playQueue[currentEntryList][playQueue.player2.index]?.id,
-          submission: false,
-        });
+
+        // Set the reset scrobble condition based on fade or gapless
+        if (
+          playQueue.fadeDuration > 0
+            ? !(player.currentSeek >= 240 || player.currentSeek >= fadeAtTime - 15) &&
+              player.currentSeek <= fadeAtTime
+            : !(player.currentSeek >= 240 || player.currentSeek >= duration * 0.9)
+        ) {
+          setScrobbled(false);
+          if (playQueue.scrobble) {
+            if (playerNumber === 1) {
+              if (playQueue[currentEntryList][playQueue.player1.index]?.id) {
+                scrobble({
+                  id: playQueue[currentEntryList][playQueue.player1.index]?.id,
+                  submission: false,
+                });
+              }
+            } else if (playQueue[currentEntryList][playQueue.player2.index]?.id) {
+              scrobble({
+                id: playQueue[currentEntryList][playQueue.player2.index]?.id,
+                submission: false,
+              });
+            }
+          }
+        }
       }
-    }
-  };
+    },
+    [currentEntryList, playQueue, player.currentSeek]
+  );
 
   return (
     <>
