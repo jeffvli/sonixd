@@ -265,7 +265,7 @@ const ListViewTable = ({
         data={sortColumn && !nowPlaying ? sortedData : data}
         virtualized={virtualized}
         rowHeight={rowHeight}
-        hover
+        hover={misc.highlightOnRowHover}
         cellBordered={false}
         bordered={false}
         affixHeader
