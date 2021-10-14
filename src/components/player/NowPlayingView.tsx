@@ -93,10 +93,12 @@ const NowPlayingView = () => {
       if (multiSelect.selected.length === playQueue.entry.length) {
         // Clear the queue instead of removing individually
         dispatch(clearPlayQueue());
+        dispatch(clearSelected());
         dispatch(setStatus('PAUSED'));
         setTimeout(() => dispatch(resetPlayer()), 200);
       } else {
         dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+        dispatch(clearSelected());
         if (playQueue.currentPlayer === 1) {
           dispatch(fixPlayer2Index());
         }
