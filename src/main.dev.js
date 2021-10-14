@@ -235,16 +235,6 @@ const createWindow = async () => {
   });
 
   mainWindow.on('resize', () => {
-    // Set the current song image as thumbnail
-    mainWindow.setThumbnailClip({
-      x: 15,
-      y: mainWindow.getContentSize()[1] - 83,
-      height: 65,
-      width: 65,
-    });
-  });
-
-  mainWindow.on('resized', () => {
     const window = mainWindow.getContentBounds();
 
     // Set the current song image as thumbnail
