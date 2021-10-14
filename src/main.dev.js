@@ -29,6 +29,7 @@ import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
 
 const isWindows = process.platform === 'win32';
+const isMacOS = process.platform === 'darwin';
 
 export const store = configureStore({
   reducer: {
@@ -234,34 +235,67 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.on('resize', () => {
-    const window = mainWindow.getContentBounds();
+  if (isWindows) {
+    mainWindow.on('resize', () => {
+      const window = mainWindow.getContentBounds();
 
-    // Set the current song image as thumbnail
-    mainWindow.setThumbnailClip({
-      x: 15,
-      y: mainWindow.getContentSize()[1] - 83,
-      height: 65,
-      width: 65,
+      // Set the current song image as thumbnail
+      mainWindow.setThumbnailClip({
+        x: 15,
+        y: mainWindow.getContentSize()[1] - 83,
+        height: 65,
+        width: 65,
+      });
+
+      settings.setSync('windowPosition', {
+        x: window.x,
+        y: window.y,
+        width: window.width,
+        height: window.height,
+      });
     });
 
-    settings.setSync('windowPosition', {
-      x: window.x,
-      y: window.y,
-      width: window.width,
-      height: window.height,
+    mainWindow.on('moved', () => {
+      const window = mainWindow.getContentBounds();
+      settings.setSync('windowPosition', {
+        x: window.x,
+        y: window.y,
+        width: window.width,
+        height: window.height,
+      });
     });
-  });
+  }
 
-  mainWindow.on('moved', () => {
-    const window = mainWindow.getContentBounds();
-    settings.setSync('windowPosition', {
-      x: window.x,
-      y: window.y,
-      width: window.width,
-      height: window.height,
+  if (isMacOS) {
+    mainWindow.on('resize', () => {
+      const window = mainWindow.getContentBounds();
+
+      // Set the current song image as thumbnail
+      mainWindow.setThumbnailClip({
+        x: 15,
+        y: mainWindow.getContentSize()[1] - 83,
+        height: 65,
+        width: 65,
+      });
+
+      settings.setSync('windowPosition', {
+        x: window.x,
+        y: window.y,
+        width: window.width,
+        height: window.height,
+      });
     });
-  });
+
+    mainWindow.on('moved', () => {
+      const window = mainWindow.getContentBounds();
+      settings.setSync('windowPosition', {
+        x: window.x,
+        y: window.y,
+        width: window.width,
+        height: window.height,
+      });
+    });
+  }
 
   mainWindow.on('maximize', () => {
     console.log('entered maximize');
