@@ -29,9 +29,9 @@ import ListViewType from '../viewtypes/ListViewType';
 import GenericPage from '../layout/GenericPage';
 import { StyledCheckbox, StyledIconButton } from '../shared/styled';
 import { MiniViewContainer } from './styled';
-import { DeselectAllButton, MoveDownButton, MoveUpButton } from '../selectionbar/SelectionButtons';
 import { getCurrentEntryList } from '../../shared/utils';
 import { star, unstar } from '../../api/api';
+import CustomTooltip from '../shared/CustomTooltip';
 
 const NowPlayingMiniView = () => {
   const tableRef = useRef<any>();
@@ -45,10 +45,12 @@ const NowPlayingMiniView = () => {
       if (multiSelect.selected.length === playQueue.entry.length) {
         // Clear the queue instead of removing individually
         dispatch(clearPlayQueue());
+        dispatch(clearSelected());
         dispatch(setStatus('PAUSED'));
         setTimeout(() => dispatch(resetPlayer()), 200);
       } else {
         dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+        dispatch(clearSelected());
         if (playQueue.currentPlayer === 1) {
           dispatch(fixPlayer2Index());
         }
@@ -173,25 +175,53 @@ const NowPlayingMiniView = () => {
                       />
                       {multiSelect.selected.length > 0 && (
                         <>
-                          <MoveUpButton
-                            handleClick={() => {
-                              dispatch(moveUp({ selectedEntries: multiSelect.selected }));
+                          <CustomTooltip text="Move up">
+                            <StyledIconButton
+                              size="xs"
+                              icon={<Icon icon="arrow-up2" />}
+                              onClick={() => {
+                                dispatch(moveUp({ selectedEntries: multiSelect.selected }));
 
-                              if (playQueue.currentPlayer === 1) {
-                                dispatch(fixPlayer2Index());
-                              }
-                            }}
-                          />
-                          <MoveDownButton
-                            handleClick={() => {
-                              dispatch(moveDown({ selectedEntries: multiSelect.selected }));
+                                if (playQueue.currentPlayer === 1) {
+                                  dispatch(fixPlayer2Index());
+                                }
+                              }}
+                            />
+                          </CustomTooltip>
+                          <CustomTooltip text="Move down">
+                            <StyledIconButton
+                              size="xs"
+                              icon={<Icon icon="arrow-down2" />}
+                              onClick={() => {
+                                dispatch(moveDown({ selectedEntries: multiSelect.selected }));
 
-                              if (playQueue.currentPlayer === 1) {
-                                dispatch(fixPlayer2Index());
-                              }
-                            }}
-                          />
-                          <DeselectAllButton />
+                                if (playQueue.currentPlayer === 1) {
+                                  dispatch(fixPlayer2Index());
+                                }
+                              }}
+                            />
+                          </CustomTooltip>
+
+                          <CustomTooltip text="Remove selected">
+                            <StyledIconButton
+                              size="xs"
+                              icon={<Icon icon="close" />}
+                              onClick={() => {
+                                if (multiSelect.selected.length === playQueue.entry.length) {
+                                  // Clear the queue instead of removing individually
+                                  dispatch(clearPlayQueue());
+                                  dispatch(setStatus('PAUSED'));
+                                  setTimeout(() => dispatch(resetPlayer()), 200);
+                                } else {
+                                  dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+                                  dispatch(clearSelected());
+                                  if (playQueue.currentPlayer === 1) {
+                                    dispatch(fixPlayer2Index());
+                                  }
+                                }
+                              }}
+                            />
+                          </CustomTooltip>
                         </>
                       )}
                     </ButtonToolbar>
