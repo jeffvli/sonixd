@@ -272,6 +272,16 @@ export const songColumnListAuto = [
     },
   },
   {
+    label: 'Genre',
+    value: {
+      id: 'Genre',
+      dataKey: 'genre',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'Genre',
+    },
+  },
+  {
     label: 'Path',
     value: {
       id: 'Path',
