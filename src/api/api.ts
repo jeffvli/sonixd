@@ -729,3 +729,97 @@ export const scrobble = async (options: { id: string; time?: number; submission?
 
   return data;
 };
+
+export const getIndexes = async () => {
+  const { data } = await api.get(`/getIndexes`);
+
+  let folders: any[] = [];
+  data.indexes.index.forEach((entry: any) => {
+    entry.artist.forEach((artist: any) => {
+      folders.push({ uniqueId: nanoid(), ...artist });
+    });
+  });
+
+  folders = _.flatten(folders);
+
+  return folders;
+};
+
+export const getMusicDirectory = async (options: { id: string }) => {
+  const { data } = await api.get(`/getMusicDirectory`, {
+    params: options,
+  });
+
+  const child: any[] = [];
+  const folders = data.directory?.child?.filter((entry: any) => entry.isDir);
+  const songs = data.directory?.child?.filter((entry: any) => entry.isDir === false);
+
+  (folders || []).forEach((folder: any) =>
+    child.push({
+      ...folder,
+      image: getCoverArtUrl(folder),
+      uniqueId: nanoid(),
+      type: 'folder',
+    })
+  );
+
+  (songs || []).forEach((song: any, index: any) =>
+    child.push({
+      ...song,
+      index,
+      type: 'music',
+      streamUrl: getStreamUrl(song.id),
+      image: getCoverArtUrl(song),
+      uniqueId: nanoid(),
+    })
+  );
+
+  return {
+    ...data.directory,
+    child,
+  };
+};
+
+export const getAllDirectorySongs = async (options: { id: string }, data: any[] = []) => {
+  if (options.id === 'stop') {
+    const songs: any[] = [];
+
+    (data || []).forEach((song: any, index: any) => {
+      (song?.child || []).forEach((entry: any) => {
+        if (entry.isDir === false) {
+          songs.push({
+            ...entry,
+            index,
+            type: 'music',
+            streamUrl: getStreamUrl(entry.id),
+            image: getCoverArtUrl(entry),
+            uniqueId: nanoid(),
+          });
+        }
+      });
+    });
+
+    return songs;
+  }
+  const folders: any = getMusicDirectory({ id: options.id })
+    .then(async (res) => {
+      // If there are no more entries with isDir === true (folder), then return
+      if (res.child.filter((entry: any) => entry.isDir === true).length === 0) {
+        // Add the last directory if there are no other directories
+        data.push(res);
+        return getAllDirectorySongs({ id: 'stop' }, data);
+      }
+
+      data.push(res);
+      const nestedFolders = res.child.filter((entry: any) => entry.isDir === true);
+
+      for (let i = 0; i < nestedFolders.length; i += 1) {
+        await getAllDirectorySongs({ id: nestedFolders[i].id }, data);
+      }
+
+      return getAllDirectorySongs({ id: 'stop' }, data);
+    })
+    .catch((err) => console.log(err));
+
+  return folders;
+};
