@@ -44,7 +44,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
         route = '/library/genre';
         break;
       case 'folders':
-        route = '/folder';
+        route = '/library/folder';
         break;
       case 'config':
         route = '/config';

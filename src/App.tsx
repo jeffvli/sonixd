@@ -24,6 +24,7 @@ import PageModal from './components/modal/PageModal';
 import NowPlayingMiniView from './components/player/NowPlayingMiniView';
 import { GlobalContextMenu } from './components/shared/ContextMenu';
 import SearchView from './components/search/SearchView';
+import FolderList from './components/library/FolderList';
 
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
@@ -70,7 +71,8 @@ const App = () => {
             <Route exact path="/library/genre" component={GenreList} />
             <Route exact path="/library/artist/:id" component={ArtistView} />
             <Route exact path="/library/album/:id" component={AlbumView} />
-            <Route exact path="/folder" />
+            <Route exact path="/library/folder" component={FolderList} />
+            <Route exact path="/library/folder/:id" component={FolderList} />
             <Route exact path="/nowplaying" component={NowPlayingView} />
             <Route exact path="/playlist/:id" component={PlaylistView} />
             <Route exact path="/playlist" component={PlaylistList} />
