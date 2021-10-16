@@ -102,9 +102,8 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   height: 450px;
   background: ${(props) => props.theme.primary.background};
   border: 1px #000 solid;
-  filter: drop-shadow(0px 2px 5px #000);
+  filter: drop-shadow(0px 1px 2px #121316);
   overflow: hidden auto;
-  opacity: ${(props) => (props.display === 'true' ? 0.9 : 0)};
-  border-radius: 10px;
+  opacity: ${(props) => (props.display === 'true' ? 0.95 : 0)};
   color: ${(props) => `${props.theme.primary.text} !important`};
 `;
