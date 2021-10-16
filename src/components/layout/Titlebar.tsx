@@ -104,7 +104,7 @@ const Titlebar = ({ font }: any) => {
           </>
         )}
 
-        {misc.titleBar === 'windows' && (
+        {misc.titleBar !== 'mac' && (
           <>
             <div id="window-title-wrapper">
               <span id="window-title">
