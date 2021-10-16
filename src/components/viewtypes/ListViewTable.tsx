@@ -7,7 +7,7 @@ import settings from 'electron-settings';
 import styled from 'styled-components';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { nanoid } from 'nanoid';
-import { Table, Grid, Row, Col } from 'rsuite';
+import { Table, Grid, Row, Col, Icon } from 'rsuite';
 import { useHistory } from 'react-router';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {
@@ -258,7 +258,7 @@ const ListViewTable = ({
             multiSelect.currentMouseOverId
               ? 'dragover'
               : ''
-          }`
+          } ${rowData?.isDir ? 'isdir' : ''}`
         }
         ref={tableRef}
         height={height}
@@ -458,7 +458,11 @@ const ListViewTable = ({
                       }
                       dragfield={dnd ? 'true' : 'false'}
                     >
-                      {rowIndex + 1}
+                      {rowData.isDir ? (
+                        <Icon size="lg" icon="folder-open" style={{ color: '#FFD662' }} />
+                      ) : (
+                        rowIndex + 1
+                      )}
                       {rowData['-empty']}
                     </TableCellWrapper>
                   );
@@ -775,14 +779,20 @@ const ListViewTable = ({
                         ) : column.dataKey === 'size' ? (
                           `${convertByteToMegabyte(rowData[column.dataKey])} MB`
                         ) : column.dataKey === 'starred' ? (
-                          <StyledIconToggle
-                            tabIndex={0}
-                            icon={rowData?.starred ? 'heart' : 'heart-o'}
-                            size="lg"
-                            fixedWidth
-                            active={rowData?.starred ? 'true' : 'false'}
-                            onClick={() => handleFavorite(rowData)}
-                          />
+                          <>
+                            {rowData.isDir ? (
+                              <></>
+                            ) : (
+                              <StyledIconToggle
+                                tabIndex={0}
+                                icon={rowData?.starred ? 'heart' : 'heart-o'}
+                                size="lg"
+                                fixedWidth
+                                active={rowData?.starred ? 'true' : 'false'}
+                                onClick={() => handleFavorite(rowData)}
+                              />
+                            )}
+                          </>
                         ) : column.dataKey === 'userRating' ? (
                           <StyledRate
                             size="xs"
