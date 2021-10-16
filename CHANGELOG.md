@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2021-10-16
+
+### Added
+
+- Added folder browser (#1)
+  - Added context menu button `View in folder`
+  - Requires that your server has support for the original `/getIndexes` and `/getMusicDirectory` endpoints
+- Added configurable row-hover highlight for list-view
+- (Windows) Added playback controls in thumbnail toolbar (#32)
+- (Windows/macOS) Added window size/position remembering on application close (#31)
+
+### Changed
+
+- Changed styling for various views/components
+  - Tooltips added on grid-view card hover buttons
+  - Mini-player removed rounded borders and increased opacity
+  - Mini-player removed animation on open/close
+  - Search bar now activated from button -> input on click / CTRL+F
+  - Page header toolbar buttons styling consistency
+  - Album list filter moved from right -> left
+  - Reordered context menu button `Move selected to [...]`
+  - Decreased horizontal width of expanded sidebar from 193px -> 165px
+
+### Fixed
+
+- Fixed duplicate scrobble requests when pause/resuming a song after the scrobble threshold (#30)
+- Fixed genre column not applying in the song list-view
+- Fixed default titlebar set on first run
+
 ## [0.2.1] - 2021-10-11
 
 ### Fixed
