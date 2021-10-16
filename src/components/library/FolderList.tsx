@@ -29,10 +29,14 @@ const FolderList = () => {
   const query = useRouterQuery();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
-  const { isLoading, isError, data, error }: any = useQuery(['folders'], () => getIndexes(), {
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading, isError, data: indexData, error }: any = useQuery(
+    ['indexes'],
+    () => getIndexes(),
+    {
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
   const { data: folderData }: any = useQuery(
     ['folder', folder.id],
     () => getMusicDirectory({ id: folder.id }),
@@ -42,19 +46,17 @@ const FolderList = () => {
       refetchOnWindowFocus: false,
     }
   );
+
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, folderData?.child, [
-    'title',
-    'artist',
-    'album',
-    'year',
-    'genre',
-    'path',
-  ]);
+  const filteredData = useSearchQuery(
+    searchQuery,
+    folderData?.id ? folderData?.child : indexData?.child,
+    ['title', 'artist', 'album', 'year', 'genre', 'path']
+  );
 
   useEffect(() => {
     if (query.get('folderId') !== 'null') {
-      dispatch(setFolder({ id: query.get('folderId') || undefined }));
+      dispatch(setFolder({ id: query.get('folderId') || '' }));
     }
   }, [dispatch, query]);
 
@@ -83,9 +85,10 @@ const FolderList = () => {
       history.push(`/library/folder?folderId=${rowData.id}`);
       dispatch(setFolder({ id: rowData.id }));
     } else {
+      const selected = folderData?.id ? folderData?.child : indexData?.child;
       dispatch(
         setPlayQueueByRowClick({
-          entries: folderData?.child?.filter((entry: any) => entry.isDir === false),
+          entries: selected.filter((entry: any) => entry.isDir === false),
           currentIndex: rowData.index,
           currentSongId: rowData.id,
           uniqueSongId: rowData.uniqueId,
@@ -129,7 +132,7 @@ const FolderList = () => {
     <>
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
-      {!isLoading && data && (
+      {!isLoading && indexData && (
         <GenericPage
           hideDivider
           header={
@@ -144,7 +147,7 @@ const FolderList = () => {
                 <>
                   <ButtonToolbar>
                     <StyledInputPicker
-                      data={data}
+                      data={indexData.folders}
                       size="sm"
                       labelKey="name"
                       valueKey="id"
@@ -175,7 +178,13 @@ const FolderList = () => {
           }
         >
           <ListViewType
-            data={searchQuery !== '' ? filteredData : folderData?.child}
+            data={
+              searchQuery !== ''
+                ? filteredData
+                : folderData?.id
+                ? folderData?.child
+                : indexData?.child
+            }
             tableColumns={settings.getSync('musicListColumns')}
             rowHeight={Number(settings.getSync('musicListRowHeight'))}
             fontSize={Number(settings.getSync('musicListFontSize'))}

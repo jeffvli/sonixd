@@ -742,7 +742,19 @@ export const getIndexes = async () => {
 
   folders = _.flatten(folders);
 
-  return folders;
+  const child: any[] = [];
+  (data.indexes?.child || []).forEach((song: any, index: any) =>
+    child.push({
+      ...song,
+      index,
+      type: 'music',
+      streamUrl: getStreamUrl(song.id),
+      image: getCoverArtUrl(song),
+      uniqueId: nanoid(),
+    })
+  );
+
+  return { folders, child };
 };
 
 export const getMusicDirectory = async (options: { id: string }) => {
