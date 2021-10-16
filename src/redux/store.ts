@@ -5,6 +5,7 @@ import playQueueReducer, { PlayQueue } from './playQueueSlice';
 import multiSelectReducer from './multiSelectSlice';
 import miscReducer from './miscSlice';
 import playlistReducer from './playlistSlice';
+import folderReducer from './folderSlice';
 
 export const store = configureStore<PlayQueue | any>({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore<PlayQueue | any>({
     multiSelect: multiSelectReducer,
     misc: miscReducer,
     playlist: playlistReducer,
+    folder: folderReducer,
   },
   middleware: [forwardToMain],
 });

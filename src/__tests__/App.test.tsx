@@ -8,6 +8,7 @@ import { PlayQueue } from '../redux/playQueueSlice';
 import { Player } from '../redux/playerSlice';
 import { General } from '../redux/miscSlice';
 import App from '../App';
+import { FolderSelection } from '../redux/folderSlice';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
@@ -83,10 +84,15 @@ const miscState: General = {
   titleBar: 'windows',
 };
 
+const folderState: FolderSelection = {
+  id: undefined,
+};
+
 const mockInitialState = {
   playQueue: playQueueState,
   player: playerState,
   misc: miscState,
+  folder: folderState,
 };
 
 describe('App', () => {
