@@ -5,7 +5,7 @@ import { ButtonToolbar, Icon } from 'rsuite';
 import { getIndexes, getMusicDirectory } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   clearSelected,
   setRangeSelected,
@@ -18,19 +18,20 @@ import { StyledButton, StyledInputPicker } from '../shared/styled';
 import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
+import { setFolder } from '../../redux/folderSlice';
 
 const FolderList = () => {
   const dispatch = useAppDispatch();
-  const [folderId, setFolderId] = useState('');
+  const folder = useAppSelector((state) => state.folder);
   const { isLoading, isError, data, error }: any = useQuery(['folders'], () => getIndexes(), {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
   const { data: folderData }: any = useQuery(
-    ['folder', folderId],
-    () => getMusicDirectory({ id: folderId }),
+    ['folder', folder.id],
+    () => getMusicDirectory({ id: folder.id }),
     {
-      enabled: folderId !== '',
+      enabled: folder.id !== '',
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     }
@@ -67,7 +68,7 @@ const FolderList = () => {
 
     dispatch(clearSelected());
     if (rowData.isDir) {
-      setFolderId(rowData.id);
+      dispatch(setFolder({ id: rowData.id }));
     } else {
       dispatch(
         setPlayQueueByRowClick({
@@ -106,7 +107,9 @@ const FolderList = () => {
                       labelKey="name"
                       valueKey="id"
                       virtualized
-                      onChange={(e: string) => setFolderId(e)}
+                      onChange={(e: string) => {
+                        dispatch(setFolder({ id: e }));
+                      }}
                     />
 
                     <StyledButton
@@ -114,7 +117,7 @@ const FolderList = () => {
                       disabled={!folderData?.parent}
                       onClick={() => {
                         if (folderData?.parent) {
-                          setFolderId(folderData?.parent);
+                          dispatch(setFolder({ id: folderData?.parent }));
                         }
                       }}
                     >
