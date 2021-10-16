@@ -13,7 +13,7 @@ const Sidebar = ({
   return (
     <FixedSidebar
       id="sidebar"
-      width={expand ? 193 : 56}
+      width={expand ? 165 : 56}
       collapsible
       font={font}
       onClick={rest.onClick}
