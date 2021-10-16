@@ -283,7 +283,12 @@ const ArtistView = ({ ...rest }: any) => {
             }}
             listType="album"
             isModal={rest.isModal}
-            disabledContextMenuOptions={['removeFromCurrent', 'moveSelectedTo', 'deletePlaylist']}
+            disabledContextMenuOptions={[
+              'removeFromCurrent',
+              'moveSelectedTo',
+              'deletePlaylist',
+              'viewInFolder',
+            ]}
             handleFavorite={handleRowFavorite}
           />
         )}

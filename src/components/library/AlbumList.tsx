@@ -188,7 +188,12 @@ const AlbumList = () => {
           }}
           listType="album"
           virtualized
-          disabledContextMenuOptions={['moveSelectedTo', 'removeFromCurrent', 'deletePlaylist']}
+          disabledContextMenuOptions={[
+            'moveSelectedTo',
+            'removeFromCurrent',
+            'deletePlaylist',
+            'viewInFolder',
+          ]}
           handleFavorite={handleRowFavorite}
         />
       )}

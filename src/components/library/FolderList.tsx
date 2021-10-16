@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
+import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Icon } from 'rsuite';
 import { getIndexes, getMusicDirectory } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
@@ -19,9 +20,12 @@ import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSl
 import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { setFolder } from '../../redux/folderSlice';
+import useRouterQuery from '../../hooks/useRouterQuery';
 
 const FolderList = () => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
+  const query = useRouterQuery();
   const folder = useAppSelector((state) => state.folder);
   const { isLoading, isError, data, error }: any = useQuery(['folders'], () => getIndexes(), {
     refetchOnReconnect: false,
@@ -46,6 +50,12 @@ const FolderList = () => {
     'path',
   ]);
 
+  useEffect(() => {
+    if (query.get('folderId') !== 'null') {
+      dispatch(setFolder({ id: query.get('folderId') || undefined }));
+    }
+  }, [dispatch, query]);
+
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
     if (timeout === null) {
@@ -68,6 +78,7 @@ const FolderList = () => {
 
     dispatch(clearSelected());
     if (rowData.isDir) {
+      history.push(`/library/folder?folderId=${rowData.id}`);
       dispatch(setFolder({ id: rowData.id }));
     } else {
       dispatch(
@@ -108,6 +119,7 @@ const FolderList = () => {
                       valueKey="id"
                       virtualized
                       onChange={(e: string) => {
+                        history.push(`/library/folder?folderId=${e}`);
                         dispatch(setFolder({ id: e }));
                       }}
                     />
@@ -117,6 +129,7 @@ const FolderList = () => {
                       disabled={!folderData?.parent}
                       onClick={() => {
                         if (folderData?.parent) {
+                          history.push(`/library/folder?folderId=${folderData?.parent}`);
                           dispatch(setFolder({ id: folderData?.parent }));
                         }
                       }}
@@ -151,6 +164,7 @@ const FolderList = () => {
               'moveSelectedTo',
               'removeFromCurrent',
               'deletePlaylist',
+              'viewInFolder',
             ]}
           />
         </GenericPage>
