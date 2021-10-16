@@ -26,6 +26,7 @@ type ContextMenuOptions =
   | 'addToFavorites'
   | 'removeFromFavorites'
   | 'viewInModal'
+  | 'viewInFolder'
   | 'moveSelectedTo';
 
 export interface ContextMenu {
