@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import settings from 'electron-settings';
-import { useQuery } from 'react-query';
+import _ from 'lodash';
+import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Icon } from 'rsuite';
-import { getIndexes, getMusicDirectory } from '../../api/api';
+import { getIndexes, getMusicDirectory, setRating, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -16,7 +17,7 @@ import {
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { StyledButton, StyledInputPicker } from '../shared/styled';
-import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { setFolder } from '../../redux/folderSlice';
@@ -26,6 +27,7 @@ const FolderList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const query = useRouterQuery();
+  const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const { isLoading, isError, data, error }: any = useQuery(['folders'], () => getIndexes(), {
     refetchOnReconnect: false,
@@ -94,6 +96,35 @@ const FolderList = () => {
     }
   };
 
+  const handleRowFavorite = async (rowData: any) => {
+    if (!rowData.starred) {
+      await star(rowData.id, 'album');
+      queryClient.setQueryData(['folder', folder.id], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.child[index].starred = Date.now();
+        });
+
+        return oldData;
+      });
+    } else {
+      await unstar(rowData.id, 'album');
+      queryClient.setQueryData(['folder', folder.id], (oldData: any) => {
+        const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
+        starredIndices.forEach((index) => {
+          oldData.child[index].starred = undefined;
+        });
+
+        return oldData;
+      });
+    }
+  };
+
+  const handleRowRating = (rowData: any, e: number) => {
+    setRating(rowData.id, e);
+    dispatch(setRate({ id: [rowData.id], rating: e }));
+  };
+
   return (
     <>
       {isLoading && <PageLoader />}
@@ -150,6 +181,8 @@ const FolderList = () => {
             fontSize={Number(settings.getSync('musicListFontSize'))}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
+            handleFavorite={handleRowFavorite}
+            handleRating={handleRowRating}
             cacheImages={{
               enabled: settings.getSync('cacheImages'),
               cacheType: 'folder',
