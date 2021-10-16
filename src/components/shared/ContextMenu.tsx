@@ -514,6 +514,15 @@ export const GlobalContextMenu = () => {
     }
   };
 
+  const handleViewInFolder = () => {
+    dispatch(setContextMenu({ show: false }));
+    if (misc.contextMenu.type.match('music|nowPlaying') && multiSelect.selected.length === 1) {
+      history.push(`/library/folder?folderId=${multiSelect.selected[0].parent}`);
+    } else {
+      notifyToast('error', 'Select only one row');
+    }
+  };
+
   return (
     <>
       {misc.contextMenu.show && (
@@ -521,7 +530,7 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={10}
+          numOfButtons={11}
           numOfDividers={3}
         >
           <ContextMenuButton
@@ -544,6 +553,90 @@ export const GlobalContextMenu = () => {
             onClick={handleRemoveFromCurrent}
             disabled={misc.contextMenu.disabledOptions.includes('removeFromCurrent')}
           />
+          <Whisper
+            enterable
+            placement="autoHorizontalStart"
+            trigger="hover"
+            speaker={
+              <StyledPopover>
+                <Form>
+                  <StyledInputGroup>
+                    <StyledInputNumber
+                      defaultValue={0}
+                      min={0}
+                      max={
+                        misc.contextMenu.type === 'nowPlaying'
+                          ? playQueue[getCurrentEntryList(playQueue)]?.length
+                          : playlist.entry?.length
+                      }
+                      value={indexToMoveTo}
+                      onChange={(e: number) => setIndexToMoveTo(e)}
+                    />
+                    <StyledButton
+                      type="submit"
+                      onClick={handleMoveSelectedToIndex}
+                      disabled={
+                        (misc.contextMenu.type === 'nowPlaying'
+                          ? indexToMoveTo > playQueue[getCurrentEntryList(playQueue)]?.length
+                          : indexToMoveTo > playlist.entry?.length) || indexToMoveTo < 0
+                      }
+                    >
+                      Go
+                    </StyledButton>
+                  </StyledInputGroup>
+                </Form>
+
+                <Grid fluid>
+                  <Row>
+                    <Col xs={12}>
+                      <StyledIconButton
+                        icon={<Icon icon="angle-double-up" />}
+                        onClick={handleMoveToTop}
+                        block
+                      >
+                        Top
+                      </StyledIconButton>
+                    </Col>
+                    <Col xs={12}>
+                      <StyledIconButton
+                        icon={<Icon icon="angle-up" />}
+                        onClick={handleMoveUpOne}
+                        block
+                      >
+                        Up
+                      </StyledIconButton>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12}>
+                      <StyledIconButton
+                        icon={<Icon icon="angle-double-down" />}
+                        onClick={handleMoveToBottom}
+                        block
+                      >
+                        Bottom
+                      </StyledIconButton>
+                    </Col>
+
+                    <Col xs={12}>
+                      <StyledIconButton
+                        icon={<Icon icon="angle-down" />}
+                        onClick={handleMoveDownOne}
+                        block
+                      >
+                        Down
+                      </StyledIconButton>
+                    </Col>
+                  </Row>
+                </Grid>
+              </StyledPopover>
+            }
+          >
+            <ContextMenuButton
+              text="Move selected to [...]"
+              disabled={misc.contextMenu.disabledOptions.includes('moveSelectedTo')}
+            />
+          </Whisper>
           <ContextMenuDivider />
 
           <Whisper
@@ -663,90 +756,11 @@ export const GlobalContextMenu = () => {
             onClick={handleViewInModal}
             disabled={misc.contextMenu.disabledOptions.includes('viewInModal')}
           />
-          <Whisper
-            enterable
-            placement="autoHorizontalStart"
-            trigger="hover"
-            speaker={
-              <StyledPopover>
-                <Form>
-                  <StyledInputGroup>
-                    <StyledInputNumber
-                      defaultValue={0}
-                      min={0}
-                      max={
-                        misc.contextMenu.type === 'nowPlaying'
-                          ? playQueue[getCurrentEntryList(playQueue)]?.length
-                          : playlist.entry?.length
-                      }
-                      value={indexToMoveTo}
-                      onChange={(e: number) => setIndexToMoveTo(e)}
-                    />
-                    <StyledButton
-                      type="submit"
-                      onClick={handleMoveSelectedToIndex}
-                      disabled={
-                        (misc.contextMenu.type === 'nowPlaying'
-                          ? indexToMoveTo > playQueue[getCurrentEntryList(playQueue)]?.length
-                          : indexToMoveTo > playlist.entry?.length) || indexToMoveTo < 0
-                      }
-                    >
-                      Go
-                    </StyledButton>
-                  </StyledInputGroup>
-                </Form>
-
-                <Grid fluid>
-                  <Row>
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-double-up" />}
-                        onClick={handleMoveToTop}
-                        block
-                      >
-                        Top
-                      </StyledIconButton>
-                    </Col>
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-up" />}
-                        onClick={handleMoveUpOne}
-                        block
-                      >
-                        Up
-                      </StyledIconButton>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-double-down" />}
-                        onClick={handleMoveToBottom}
-                        block
-                      >
-                        Bottom
-                      </StyledIconButton>
-                    </Col>
-
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-down" />}
-                        onClick={handleMoveDownOne}
-                        block
-                      >
-                        Down
-                      </StyledIconButton>
-                    </Col>
-                  </Row>
-                </Grid>
-              </StyledPopover>
-            }
-          >
-            <ContextMenuButton
-              text="Move selected to [...]"
-              disabled={misc.contextMenu.disabledOptions.includes('moveSelectedTo')}
-            />
-          </Whisper>
+          <ContextMenuButton
+            text="View in folder"
+            onClick={handleViewInFolder}
+            disabled={misc.contextMenu.disabledOptions.includes('viewInFolder')}
+          />
         </ContextMenu>
       )}
     </>

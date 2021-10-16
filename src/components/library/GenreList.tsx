@@ -87,6 +87,7 @@ const GenreList = () => {
             'addToFavorites',
             'removeFromFavorites',
             'viewInModal',
+            'viewInFolder',
           ]}
         />
       )}

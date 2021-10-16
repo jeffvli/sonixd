@@ -179,6 +179,7 @@ const PlaylistList = () => {
             'addToFavorites',
             'removeFromFavorites',
             'removeFromCurrent',
+            'viewInFolder',
           ]}
         />
       )}

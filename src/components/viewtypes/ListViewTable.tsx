@@ -290,7 +290,7 @@ const ListViewTable = ({
 
           // Use the calculated ContextMenu height
           // numOfButtons * 30 + props.numOfDividers * 1.5
-          const contextMenuHeight = 9 * 30 + 3 * 1.5;
+          const contextMenuHeight = 11 * 30 + 3 * 1.5;
           if (e.pageY + contextMenuHeight >= window.innerHeight) {
             pageY = e.pageY - contextMenuHeight;
           } else {

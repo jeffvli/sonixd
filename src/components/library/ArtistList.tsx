@@ -131,7 +131,12 @@ const ArtistList = () => {
           }}
           listType="artist"
           virtualized
-          disabledContextMenuOptions={['moveSelectedTo', 'removeFromCurrent', 'deletePlaylist']}
+          disabledContextMenuOptions={[
+            'moveSelectedTo',
+            'removeFromCurrent',
+            'deletePlaylist',
+            'viewInFolder',
+          ]}
           handleFavorite={handleRowFavorite}
         />
       )}
