@@ -473,10 +473,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       if (playQueue.scrobble) {
         let fadeAtTime;
         let duration;
-        if (playQueue.currentPlayer === 1) {
+        let currentSeek;
+        if (playerNumber === 1) {
+          currentSeek = player1Ref.current.audioEl.current?.currentTime;
           duration = player1Ref.current.audioEl.current?.duration;
           fadeAtTime = duration - playQueue.fadeDuration;
         } else {
+          currentSeek = player2Ref.current.audioEl.current?.currentTime;
           duration = player2Ref.current.audioEl.current?.duration;
           fadeAtTime = duration - playQueue.fadeDuration;
         }
@@ -484,30 +487,25 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         // Set the reset scrobble condition based on fade or gapless
         if (
           playQueue.fadeDuration > 0
-            ? !(player.currentSeek >= 240 || player.currentSeek >= fadeAtTime - 15) &&
-              player.currentSeek <= fadeAtTime
-            : !(player.currentSeek >= 240 || player.currentSeek >= duration * 0.9)
+            ? !(currentSeek >= 240 || currentSeek >= fadeAtTime - 15) && currentSeek <= fadeAtTime
+            : !(currentSeek >= 240 || currentSeek >= duration * 0.9)
         ) {
           setScrobbled(false);
-          if (playQueue.scrobble) {
-            if (playerNumber === 1) {
-              if (playQueue[currentEntryList][playQueue.player1.index]?.id) {
-                scrobble({
-                  id: playQueue[currentEntryList][playQueue.player1.index]?.id,
-                  submission: false,
-                });
-              }
-            } else if (playQueue[currentEntryList][playQueue.player2.index]?.id) {
-              scrobble({
-                id: playQueue[currentEntryList][playQueue.player2.index]?.id,
-                submission: false,
-              });
-            }
+          if (playerNumber === 1) {
+            scrobble({
+              id: playQueue[currentEntryList][playQueue.player1.index]?.id,
+              submission: false,
+            });
+          } else {
+            scrobble({
+              id: playQueue[currentEntryList][playQueue.player2.index]?.id,
+              submission: false,
+            });
           }
         }
       }
     },
-    [currentEntryList, playQueue, player.currentSeek]
+    [currentEntryList, playQueue]
   );
 
   return (
