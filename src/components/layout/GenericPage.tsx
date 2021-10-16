@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Divider } from 'rsuite';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppSelector } from '../../redux/hooks';
 import { PageContainer, PageHeader, PageContent } from './styled';
 import { isCached } from '../../shared/utils';
@@ -9,7 +8,6 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const [backgroundImage, setBackgroundImage] = useState('');
-  useHotkeys('ctrl+f', () => document.getElementById('local-search-input')?.focus());
 
   useEffect(() => {
     if (misc.dynamicBackground) {

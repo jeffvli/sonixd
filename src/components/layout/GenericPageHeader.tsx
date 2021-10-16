@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useHistory } from 'react-router-dom';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { Icon, Input, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
-import { StyledInputGroup } from '../shared/styled';
+import { StyledIconButton, StyledInputGroup } from '../shared/styled';
 import { CoverArtWrapper, PageHeaderTitle } from './styled';
 import cacheImage from '../shared/cacheImage';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -27,6 +28,12 @@ const GenericPageHeader = ({
   showTitleTooltip,
 }: any) => {
   const history = useHistory();
+  const [openSearch, setOpenSearch] = useState(false);
+
+  useHotkeys('ctrl+f', () => {
+    setOpenSearch(true);
+    document.getElementById('local-search-input')?.focus();
+  });
 
   return (
     <>
@@ -86,30 +93,50 @@ const GenericPageHeader = ({
             {sidetitle && <span style={{ display: 'inline-block' }}>{sidetitle}</span>}
             {showSearchBar && (
               <span style={{ display: 'inline-block' }}>
-                <StyledInputGroup inside>
-                  <Input
-                    id="local-search-input"
-                    size="md"
-                    value={searchQuery}
-                    placeholder="Search..."
-                    onChange={handleSearch}
-                    onPressEnter={() => {
-                      if (searchQuery.trim()) {
-                        history.push(`/search?query=${searchQuery}`);
-                      }
-                    }}
-                    onKeyDown={(e: KeyboardEvent) => {
-                      if (e.key === 'Escape') {
+                {searchQuery !== '' || openSearch ? (
+                  <StyledInputGroup inside onClick={() => console.log('click')}>
+                    <InputGroup.Addon>
+                      <Icon icon="search" />
+                    </InputGroup.Addon>
+                    <Input
+                      id="local-search-input"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      onPressEnter={() => {
+                        if (searchQuery.trim()) {
+                          history.push(`/search?query=${searchQuery}`);
+                        }
+                      }}
+                      onKeyDown={(e: KeyboardEvent) => {
+                        if (e.key === 'Escape') {
+                          clearSearchQuery();
+                          setOpenSearch(false);
+                        }
+                      }}
+                      style={{ width: '180px' }}
+                    />
+                    <InputGroup.Button
+                      appearance="subtle"
+                      onClick={() => {
                         clearSearchQuery();
-                      }
-                    }}
-                  />
-                  {searchQuery !== '' && (
-                    <InputGroup.Button appearance="subtle" onClick={clearSearchQuery}>
+                        setOpenSearch(false);
+                      }}
+                    >
                       <Icon icon="close" />
                     </InputGroup.Button>
-                  )}
-                </StyledInputGroup>
+                  </StyledInputGroup>
+                ) : (
+                  <StyledIconButton
+                    onClick={() => {
+                      setOpenSearch(true);
+                      setTimeout(() => {
+                        document.getElementById('local-search-input')?.focus();
+                      }, 50);
+                    }}
+                    appearance="subtle"
+                    icon={<Icon icon="search" />}
+                  />
+                )}
               </span>
             )}
           </span>
