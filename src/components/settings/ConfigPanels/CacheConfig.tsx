@@ -61,7 +61,7 @@ const CacheConfig = () => {
     notifyToast('success', `Cleared song cache`);
   };
 
-  const handleClearImageCache = (type: 'playlist' | 'album' | 'artist') => {
+  const handleClearImageCache = (type: 'playlist' | 'album' | 'artist' | 'folder') => {
     const imageCachePath = getImageCachePath();
     fs.readdir(imageCachePath, (err, files) => {
       if (err) {
@@ -73,6 +73,8 @@ const CacheConfig = () => {
           ? files.filter((file) => file.split('_')[0] === 'playlist')
           : type === 'album'
           ? files.filter((file) => file.split('_')[0] === 'album')
+          : type === 'folder'
+          ? files.filter((file) => file.split('_')[0] === 'folder')
           : files.filter((file) => file.split('_')[0] === 'artist');
 
       return selectedFiles.forEach((file) => {
@@ -213,6 +215,9 @@ const CacheConfig = () => {
                 </Button>
                 <Button size="sm" onClick={() => handleClearImageCache('artist')}>
                   Artist images
+                </Button>
+                <Button size="sm" onClick={() => handleClearImageCache('folder')}>
+                  Folder images
                 </Button>
               </ButtonToolbar>
             </Popover>
