@@ -139,12 +139,8 @@ const AlbumList = () => {
           title="Albums"
           subtitle={
             <ButtonToolbar>
-              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
-            </ButtonToolbar>
-          }
-          subsidetitle={
-            <>
               <StyledInputPicker
+                size="sm"
                 width={180}
                 defaultValue={sortBy}
                 groupBy="role"
@@ -158,8 +154,10 @@ const AlbumList = () => {
                   setSortBy(value);
                 }}
               />
-            </>
+              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
+            </ButtonToolbar>
           }
+          subsidetitle={<></>}
           searchQuery={searchQuery}
           handleSearch={(e: any) => setSearchQuery(e)}
           clearSearchQuery={() => setSearchQuery('')}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from 'rsuite';
 import CustomTooltip from './CustomTooltip';
-import { StyledIconButton } from './styled';
+import { StyledButton, StyledIconButton } from './styled';
 
 export const PlayButton = ({ ...rest }) => {
   return (
@@ -113,24 +113,27 @@ export const ClearQueueButton = ({ ...rest }) => {
 
 export const AddPlaylistButton = ({ ...rest }) => {
   return (
-    <StyledIconButton icon={<Icon icon="plus-square" />} tabIndex={0} {...rest}>
+    <StyledButton tabIndex={0} {...rest}>
+      <Icon icon="plus-square" style={{ marginRight: '10px' }} />
       Add playlist
-    </StyledIconButton>
+    </StyledButton>
   );
 };
 
 export const RefreshButton = ({ ...rest }) => {
   return (
-    <StyledIconButton icon={<Icon icon="refresh2" />} tabIndex={0} {...rest}>
+    <StyledButton tabIndex={0} {...rest}>
+      <Icon icon="refresh" style={{ marginRight: '10px' }} />
       Refresh
-    </StyledIconButton>
+    </StyledButton>
   );
 };
 
 export const AutoPlaylistButton = ({ ...rest }) => {
   return (
-    <StyledIconButton icon={<Icon icon="plus-square" />} tabIndex={0} {...rest}>
+    <StyledButton tabIndex={0} {...rest}>
+      <Icon icon="plus-square" style={{ marginRight: '10px' }} />
       Add random
-    </StyledIconButton>
+    </StyledButton>
   );
 };
