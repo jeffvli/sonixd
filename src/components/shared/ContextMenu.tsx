@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import React, { useRef, useState } from 'react';
 import _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { Col, FlexboxGrid, Form, Grid, Icon, Input, Row, Whisper } from 'rsuite';
@@ -14,6 +15,7 @@ import {
   getPlaylist,
   deletePlaylist,
   getAllArtistSongs,
+  getAllDirectorySongs,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -115,10 +117,24 @@ export const GlobalContextMenu = () => {
     dispatch(setContextMenu({ show: false }));
     const promises = [];
 
-    if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
-      const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
-      dispatch(setPlayQueue({ entries: entriesByRowIndexAsc }));
-      notifyToast('info', `Playing ${multiSelect.selected.length} song(s)`);
+    if (misc.contextMenu.type.match('music|nowPlaying|folder')) {
+      const folders = multiSelect.selected.filter((entry: any) => entry.type === 'folder');
+      const music = multiSelect.selected
+        .filter((entry: any) => entry.type === 'music')
+        .map((entry: any) => {
+          return { ...entry, uniqueId: nanoid() };
+        });
+
+      for (let i = 0; i < folders.length; i += 1) {
+        promises.push(getAllDirectorySongs({ id: folders[i].id }));
+      }
+
+      const res = await Promise.all(promises);
+      res.push(_.orderBy(music, 'rowIndex', 'asc'));
+      const songs = _.flatten(res);
+
+      dispatch(setPlayQueue({ entries: songs }));
+      notifyToast('info', `Playing ${songs.length} song(s)`);
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getPlaylist(multiSelect.selected[i].id));
@@ -158,10 +174,24 @@ export const GlobalContextMenu = () => {
     dispatch(setContextMenu({ show: false }));
     const promises = [];
 
-    if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
-      const entriesByRowIndexAsc = _.orderBy(multiSelect.selected, 'rowIndex', 'asc');
-      dispatch(appendPlayQueue({ entries: entriesByRowIndexAsc, type }));
-      notifyToast('info', `Added ${multiSelect.selected.length} song(s)`);
+    if (misc.contextMenu.type.match('music|nowPlaying|folder')) {
+      const folders = multiSelect.selected.filter((entry: any) => entry.type === 'folder');
+      const music = multiSelect.selected
+        .filter((entry: any) => entry.type === 'music')
+        .map((entry: any) => {
+          return { ...entry, uniqueId: nanoid() };
+        });
+
+      for (let i = 0; i < folders.length; i += 1) {
+        promises.push(getAllDirectorySongs({ id: multiSelect.selected[i].id }));
+      }
+
+      const res = await Promise.all(promises);
+      res.push(_.orderBy(music, 'rowIndex', 'asc'));
+      const songs = _.flatten(res);
+
+      dispatch(appendPlayQueue({ entries: songs, type }));
+      notifyToast('info', `Added ${songs.length} song(s)`);
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getPlaylist(multiSelect.selected[i].id));
@@ -239,8 +269,22 @@ export const GlobalContextMenu = () => {
     dispatch(addProcessingPlaylist(selectedPlaylistId));
 
     try {
-      if (misc.contextMenu.type === 'music' || misc.contextMenu.type === 'nowPlaying') {
-        songs = [...multiSelect.selected].sort((a: any, b: any) => a.rowIndex - b.rowIndex);
+      if (misc.contextMenu.type.match('music|nowPlaying|folder')) {
+        const folders = multiSelect.selected.filter((entry: any) => entry.type === 'folder');
+        const music = multiSelect.selected
+          .filter((entry: any) => entry.type === 'music')
+          .map((entry: any) => {
+            return { ...entry, uniqueId: nanoid() };
+          });
+
+        for (let i = 0; i < folders.length; i += 1) {
+          promises.push(getAllDirectorySongs({ id: multiSelect.selected[i].id }));
+        }
+
+        const folderSongs = await Promise.all(promises);
+
+        folderSongs.push(_.orderBy(music, 'rowIndex', 'asc'));
+        songs = _.flatten(folderSongs);
 
         res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
 
