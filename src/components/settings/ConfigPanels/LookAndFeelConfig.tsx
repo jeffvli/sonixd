@@ -35,6 +35,12 @@ const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
   const [currentLAFTab, setCurrentLAFTab] = useState('songList');
   const [resizableColumn, setResizableColumn] = useState(false);
+  const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
+    Boolean(settings.getSync('dynamicBackground'))
+  );
+  const [highlightOnRowHoverChk, setHighlightOnRowHoverChk] = useState(
+    Boolean(settings.getSync('highlightOnRowHover'))
+  );
 
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -68,10 +74,12 @@ const LookAndFeelConfig = () => {
         <br />
 
         <StyledCheckbox
-          defaultChecked={settings.getSync('dynamicBackground')}
+          defaultChecked={dynamicBackgroundChk}
+          checked={dynamicBackgroundChk}
           onChange={() => {
-            settings.setSync('dynamicBackground', !settings.getSync('dynamicBackground'));
-            dispatch(setDynamicBackground(Boolean(settings.getSync('dynamicBackground'))));
+            settings.setSync('dynamicBackground', !dynamicBackgroundChk);
+            dispatch(setDynamicBackground(!dynamicBackgroundChk));
+            setDynamicBackgroundChk(!dynamicBackgroundChk);
           }}
         >
           Enable dynamic background
@@ -118,15 +126,17 @@ const LookAndFeelConfig = () => {
       <br />
       <ConfigPanel header="List-View" bordered>
         <StyledCheckbox
-          defaultChecked={settings.getSync('highlightOnRowHover')}
+          defaultChecked={highlightOnRowHoverChk}
+          checked={highlightOnRowHoverChk}
           onChange={() => {
-            settings.setSync('highlightOnRowHover', !settings.getSync('highlightOnRowHover'));
+            settings.setSync('highlightOnRowHover', !highlightOnRowHoverChk);
             dispatch(
               setMiscSetting({
                 setting: 'highlightOnRowHover',
-                value: Boolean(settings.getSync('highlightOnRowHover')),
+                value: !highlightOnRowHoverChk,
               })
             );
+            setHighlightOnRowHoverChk(!highlightOnRowHoverChk);
           }}
         >
           Show highlight on row hover
