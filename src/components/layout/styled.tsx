@@ -24,7 +24,7 @@ const StyledContainer = ({ id, expanded, children, ...props }: ContainerProps) =
 );
 
 export const MainContainer = styled(StyledContainer)`
-  padding-left: ${(props) => (props.expanded ? '193px' : '56px')};
+  padding-left: ${(props) => (props.expanded ? '165px' : '56px')};
   height: calc(100% - 32px);
   margin-top: 32px;
   overflow-y: auto;
