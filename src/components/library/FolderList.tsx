@@ -37,7 +37,7 @@ const FolderList = () => {
       refetchOnWindowFocus: false,
     }
   );
-  const { data: folderData }: any = useQuery(
+  const { isLoading: isLoadingFolderData, data: folderData }: any = useQuery(
     ['folder', folder.id],
     () => getMusicDirectory({ id: folder.id }),
     {
@@ -177,38 +177,38 @@ const FolderList = () => {
             />
           }
         >
-          <ListViewType
-            data={
-              searchQuery !== ''
-                ? filteredData
-                : folderData?.id
-                ? folderData?.child
-                : indexData?.child
-            }
-            tableColumns={settings.getSync('musicListColumns')}
-            rowHeight={Number(settings.getSync('musicListRowHeight'))}
-            fontSize={Number(settings.getSync('musicListFontSize'))}
-            handleRowClick={handleRowClick}
-            handleRowDoubleClick={handleRowDoubleClick}
-            handleFavorite={handleRowFavorite}
-            handleRating={handleRowRating}
-            cacheImages={{
-              enabled: settings.getSync('cacheImages'),
-              cacheType: 'folder',
-              cacheIdProperty: 'albumId',
-            }}
-            listType="folder"
-            virtualized
-            disabledContextMenuOptions={[
-              'addToFavorites',
-              'removeFromFavorites',
-              'viewInModal',
-              'moveSelectedTo',
-              'removeFromCurrent',
-              'deletePlaylist',
-              'viewInFolder',
-            ]}
-          />
+          {isLoadingFolderData ? (
+            <PageLoader />
+          ) : (
+            <ListViewType
+              data={
+                searchQuery !== '' ? filteredData : folder.id ? folderData?.child : indexData?.child
+              }
+              tableColumns={settings.getSync('musicListColumns')}
+              rowHeight={Number(settings.getSync('musicListRowHeight'))}
+              fontSize={Number(settings.getSync('musicListFontSize'))}
+              handleRowClick={handleRowClick}
+              handleRowDoubleClick={handleRowDoubleClick}
+              handleFavorite={handleRowFavorite}
+              handleRating={handleRowRating}
+              cacheImages={{
+                enabled: settings.getSync('cacheImages'),
+                cacheType: 'folder',
+                cacheIdProperty: 'albumId',
+              }}
+              listType="folder"
+              virtualized
+              disabledContextMenuOptions={[
+                'addToFavorites',
+                'removeFromFavorites',
+                'viewInModal',
+                'moveSelectedTo',
+                'removeFromCurrent',
+                'deletePlaylist',
+                'viewInFolder',
+              ]}
+            />
+          )}
         </GenericPage>
       )}
     </>
