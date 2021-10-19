@@ -84,6 +84,92 @@ const getAssetPath = (...paths) => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
+const createWinThumbnailClip = () => {
+  if (isWindows) {
+    // Set the current song image as thumbnail
+    mainWindow.setThumbnailClip({
+      x: 15,
+      y: mainWindow.getContentSize()[1] - 83,
+      height: 65,
+      width: 65,
+    });
+  }
+};
+
+const stop = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(clearPlayQueue());
+    store.dispatch(setStatus('PAUSED'));
+    setTimeout(() => store.dispatch(resetPlayer()), 200);
+  }
+};
+
+const playPause = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    if (storeValues.player.status === 'PAUSED') {
+      store.dispatch(setStatus('PLAYING'));
+    } else {
+      store.dispatch(setStatus('PAUSED'));
+    }
+  }
+};
+
+const nextTrack = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(resetPlayer());
+    store.dispatch(incrementCurrentIndex('usingHotkey'));
+    store.dispatch(setStatus('PLAYING'));
+  }
+};
+
+const previousTrack = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(resetPlayer());
+    store.dispatch(decrementCurrentIndex('usingHotkey'));
+    store.dispatch(fixPlayer2Index());
+    store.dispatch(setStatus('PLAYING'));
+  }
+};
+
+const createWinThumbarButtons = () => {
+  if (isWindows) {
+    mainWindow.setThumbarButtons([
+      {
+        tooltip: 'Previous Track',
+        icon: getAssetPath('skip-previous.png'),
+        click: () => previousTrack(),
+      },
+      {
+        tooltip: 'Play/Pause',
+        icon: getAssetPath('play-circle.png'),
+        click: () => playPause(),
+      },
+      {
+        tooltip: 'Next Track',
+        icon: getAssetPath('skip-next.png'),
+        click: () => nextTrack(),
+      },
+    ]);
+
+    mainWindow.setThumbnailClip({
+      x: 15,
+      y: mainWindow.getContentSize()[1] - 83,
+      height: 65,
+      width: 65,
+    });
+  }
+};
+
 const createWindow = async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
@@ -105,51 +191,6 @@ const createWindow = async () => {
     minHeight: 600,
     frame: false,
   });
-
-  const stop = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(clearPlayQueue());
-      store.dispatch(setStatus('PAUSED'));
-      setTimeout(() => store.dispatch(resetPlayer()), 200);
-    }
-  };
-
-  const playPause = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      if (storeValues.player.status === 'PAUSED') {
-        store.dispatch(setStatus('PLAYING'));
-      } else {
-        store.dispatch(setStatus('PAUSED'));
-      }
-    }
-  };
-
-  const nextTrack = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(resetPlayer());
-      store.dispatch(incrementCurrentIndex('usingHotkey'));
-      store.dispatch(setStatus('PLAYING'));
-    }
-  };
-
-  const previousTrack = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(resetPlayer());
-      store.dispatch(decrementCurrentIndex('usingHotkey'));
-      store.dispatch(fixPlayer2Index());
-      store.dispatch(setStatus('PLAYING'));
-    }
-  };
 
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
@@ -208,37 +249,11 @@ const createWindow = async () => {
         }
       }
 
-      if (isWindows) {
-        mainWindow.setThumbarButtons([
-          {
-            tooltip: 'Previous Track',
-            icon: getAssetPath('skip-previous.png'),
-            click: () => previousTrack(),
-          },
-          {
-            tooltip: 'Play/Pause',
-            icon: getAssetPath('play-circle.png'),
-            click: () => playPause(),
-          },
-          {
-            tooltip: 'Next Track',
-            icon: getAssetPath('skip-next.png'),
-            click: () => nextTrack(),
-          },
-        ]);
-
-        mainWindow.setThumbnailClip({
-          x: 15,
-          y: mainWindow.getContentSize()[1] - 83,
-          height: 65,
-          width: 65,
-        });
-      }
+      createWinThumbarButtons();
     }
   });
 
   mainWindow.on('minimize', (event) => {
-    console.log('entered minimize');
     if (settings.getSync('minimizeToTray')) {
       event.preventDefault();
       mainWindow.hide();
@@ -246,7 +261,6 @@ const createWindow = async () => {
   });
 
   mainWindow.on('close', (event) => {
-    console.log('entered close');
     if (!exitFromTray && settings.getSync('exitToTray')) {
       event.preventDefault();
       mainWindow.hide();
@@ -257,14 +271,7 @@ const createWindow = async () => {
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
 
-      // Set the current song image as thumbnail
-      mainWindow.setThumbnailClip({
-        x: 15,
-        y: mainWindow.getContentSize()[1] - 83,
-        height: 65,
-        width: 65,
-      });
-
+      createWinThumbnailClip();
       settings.setSync('windowPosition', {
         x: window.x,
         y: window.y,
@@ -316,12 +323,10 @@ const createWindow = async () => {
   }
 
   mainWindow.on('maximize', () => {
-    console.log('entered maximize');
     settings.setSync('windowMaximize', true);
   });
 
   mainWindow.on('unmaximize', () => {
-    console.log('entered unmaximize');
     settings.setSync('windowMaximize', false);
   });
 
@@ -343,7 +348,7 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
-const createTray = async () => {
+const createTray = () => {
   if (isMacOS) {
     return;
   }
@@ -351,13 +356,18 @@ const createTray = async () => {
   tray = new Tray(getAssetPath('icon.ico'));
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Sonixd',
+      label: 'Open main window',
       click: () => {
         mainWindow.show();
+        createWinThumbarButtons();
+        createWinThumbnailClip();
       },
     },
     {
-      label: 'Quit',
+      type: 'separator',
+    },
+    {
+      label: 'Quit Sonixd',
       click: () => {
         exitFromTray = true;
         app.quit();
@@ -367,6 +377,8 @@ const createTray = async () => {
 
   tray.on('double-click', () => {
     mainWindow.show();
+    createWinThumbarButtons();
+    createWinThumbnailClip();
   });
 
   tray.setToolTip('Sonixd');
