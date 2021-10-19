@@ -12,7 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
 import settings from 'electron-settings';
-import { app, BrowserWindow, shell, globalShortcut } from 'electron';
+import { app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -51,6 +51,8 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+let tray = null;
+let exitFromTray = false;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -74,18 +76,104 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../assets');
+
+const getAssetPath = (...paths) => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
+const createWinThumbnailClip = () => {
+  if (isWindows) {
+    // Set the current song image as thumbnail
+    mainWindow.setThumbnailClip({
+      x: 15,
+      y: mainWindow.getContentSize()[1] - 83,
+      height: 65,
+      width: 65,
+    });
+  }
+};
+
+const stop = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(clearPlayQueue());
+    store.dispatch(setStatus('PAUSED'));
+    setTimeout(() => store.dispatch(resetPlayer()), 200);
+  }
+};
+
+const playPause = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    if (storeValues.player.status === 'PAUSED') {
+      store.dispatch(setStatus('PLAYING'));
+    } else {
+      store.dispatch(setStatus('PAUSED'));
+    }
+  }
+};
+
+const nextTrack = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(resetPlayer());
+    store.dispatch(incrementCurrentIndex('usingHotkey'));
+    store.dispatch(setStatus('PLAYING'));
+  }
+};
+
+const previousTrack = () => {
+  const storeValues = store.getState();
+  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(resetPlayer());
+    store.dispatch(decrementCurrentIndex('usingHotkey'));
+    store.dispatch(fixPlayer2Index());
+    store.dispatch(setStatus('PLAYING'));
+  }
+};
+
+const createWinThumbarButtons = () => {
+  if (isWindows) {
+    mainWindow.setThumbarButtons([
+      {
+        tooltip: 'Previous Track',
+        icon: getAssetPath('skip-previous.png'),
+        click: () => previousTrack(),
+      },
+      {
+        tooltip: 'Play/Pause',
+        icon: getAssetPath('play-circle.png'),
+        click: () => playPause(),
+      },
+      {
+        tooltip: 'Next Track',
+        icon: getAssetPath('skip-next.png'),
+        click: () => nextTrack(),
+      },
+    ]);
+
+    mainWindow.setThumbnailClip({
+      x: 15,
+      y: mainWindow.getContentSize()[1] - 83,
+      height: 65,
+      width: 65,
+    });
+  }
+};
+
 const createWindow = async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../assets');
-
-  const getAssetPath = (...paths) => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -103,51 +191,6 @@ const createWindow = async () => {
     minHeight: 600,
     frame: false,
   });
-
-  const stop = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(clearPlayQueue());
-      store.dispatch(setStatus('PAUSED'));
-      setTimeout(() => store.dispatch(resetPlayer()), 200);
-    }
-  };
-
-  const playPause = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      if (storeValues.player.status === 'PAUSED') {
-        store.dispatch(setStatus('PLAYING'));
-      } else {
-        store.dispatch(setStatus('PAUSED'));
-      }
-    }
-  };
-
-  const nextTrack = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(resetPlayer());
-      store.dispatch(incrementCurrentIndex('usingHotkey'));
-      store.dispatch(setStatus('PLAYING'));
-    }
-  };
-
-  const previousTrack = () => {
-    const storeValues = store.getState();
-    const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
-    if (storeValues.playQueue[currentEntryList].length > 0) {
-      store.dispatch(resetPlayer());
-      store.dispatch(decrementCurrentIndex('usingHotkey'));
-      store.dispatch(fixPlayer2Index());
-      store.dispatch(setStatus('PLAYING'));
-    }
-  };
 
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
@@ -206,32 +249,21 @@ const createWindow = async () => {
         }
       }
 
-      if (isWindows) {
-        mainWindow.setThumbarButtons([
-          {
-            tooltip: 'Previous Track',
-            icon: getAssetPath('skip-previous.png'),
-            click: () => previousTrack(),
-          },
-          {
-            tooltip: 'Play/Pause',
-            icon: getAssetPath('play-circle.png'),
-            click: () => playPause(),
-          },
-          {
-            tooltip: 'Next Track',
-            icon: getAssetPath('skip-next.png'),
-            click: () => nextTrack(),
-          },
-        ]);
+      createWinThumbarButtons();
+    }
+  });
 
-        mainWindow.setThumbnailClip({
-          x: 15,
-          y: mainWindow.getContentSize()[1] - 83,
-          height: 65,
-          width: 65,
-        });
-      }
+  mainWindow.on('minimize', (event) => {
+    if (settings.getSync('minimizeToTray')) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
+  mainWindow.on('close', (event) => {
+    if (!exitFromTray && settings.getSync('exitToTray')) {
+      event.preventDefault();
+      mainWindow.hide();
     }
   });
 
@@ -239,14 +271,7 @@ const createWindow = async () => {
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
 
-      // Set the current song image as thumbnail
-      mainWindow.setThumbnailClip({
-        x: 15,
-        y: mainWindow.getContentSize()[1] - 83,
-        height: 65,
-        width: 65,
-      });
-
+      createWinThumbnailClip();
       settings.setSync('windowPosition', {
         x: window.x,
         y: window.y,
@@ -298,12 +323,10 @@ const createWindow = async () => {
   }
 
   mainWindow.on('maximize', () => {
-    console.log('entered maximize');
     settings.setSync('windowMaximize', true);
   });
 
   mainWindow.on('unmaximize', () => {
-    console.log('entered unmaximize');
     settings.setSync('windowMaximize', false);
   });
 
@@ -325,6 +348,52 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
+const createTray = () => {
+  if (isMacOS) {
+    return;
+  }
+
+  tray = new Tray(getAssetPath('icon.ico'));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Open main window',
+      click: () => {
+        mainWindow.show();
+        createWinThumbarButtons();
+        createWinThumbnailClip();
+      },
+    },
+    {
+      type: 'separator',
+    },
+    {
+      label: 'Quit Sonixd',
+      click: () => {
+        exitFromTray = true;
+        app.quit();
+      },
+    },
+  ]);
+
+  tray.on('double-click', () => {
+    mainWindow.show();
+    createWinThumbarButtons();
+    createWinThumbnailClip();
+  });
+
+  tray.setToolTip('Sonixd');
+  tray.setContextMenu(contextMenu);
+};
+
+const gotProcessLock = app.requestSingleInstanceLock();
+if (!gotProcessLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    mainWindow.show();
+  });
+}
+
 /**
  * Add event listeners...
  */
@@ -340,7 +409,14 @@ app.on('window-all-closed', () => {
 
 app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,MediaSessionService');
 
-app.whenReady().then(createWindow).catch(console.log);
+app
+  .whenReady()
+  .then(() => {
+    createWindow();
+    createTray();
+    return null;
+  })
+  .catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
