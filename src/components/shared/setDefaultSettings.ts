@@ -18,6 +18,14 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('highlightOnRowHover', true);
   }
 
+  if (force || !settings.hasSync('minimizeToTray')) {
+    settings.setSync('minimizeToTray', false);
+  }
+
+  if (force || !settings.hasSync('exitToTray')) {
+    settings.setSync('exitToTray', false);
+  }
+
   if (force || !settings.hasSync('showDebugWindow')) {
     settings.setSync('showDebugWindow', false);
   }

@@ -13,6 +13,7 @@ import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';
 import PlayerConfig from './ConfigPanels/PlayerConfig';
 import CacheConfig from './ConfigPanels/CacheConfig';
 import DebugConfig from './ConfigPanels/DebugConfig';
+import WindowConfig from './ConfigPanels/WindowConfig';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import packageJson from '../../package.json';
 
@@ -24,6 +25,7 @@ const Config = () => {
   const query = useRouterQuery();
   const [page, setPage] = useState(query.get('page') || 'playback');
   const [latestRelease, setLatestRelease] = useState(packageJson.version);
+  const showWindowConfig = process.platform === 'darwin';
 
   useEffect(() => {
     const fetchReleases = async () => {
@@ -185,6 +187,7 @@ const Config = () => {
       {page === 'other' && (
         <>
           <CacheConfig />
+          {!showWindowConfig && <WindowConfig />}
           <DebugConfig />
         </>
       )}

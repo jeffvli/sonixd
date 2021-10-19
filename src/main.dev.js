@@ -12,7 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
 import settings from 'electron-settings';
-import { app, BrowserWindow, shell, globalShortcut } from 'electron';
+import { app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -51,6 +51,8 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+let tray = null;
+let exitFromTray = false;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -74,18 +76,18 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../assets');
+
+const getAssetPath = (...paths) => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 const createWindow = async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
-
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../assets');
-
-  const getAssetPath = (...paths) => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -235,6 +237,22 @@ const createWindow = async () => {
     }
   });
 
+  mainWindow.on('minimize', (event) => {
+    console.log('entered minimize');
+    if (settings.getSync('minimizeToTray')) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
+  mainWindow.on('close', (event) => {
+    console.log('entered close');
+    if (!exitFromTray && settings.getSync('exitToTray')) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
   if (isWindows) {
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
@@ -325,6 +343,45 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
+const createTray = async () => {
+  if (isMacOS) {
+    return;
+  }
+
+  tray = new Tray(getAssetPath('icon.ico'));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Sonixd',
+      click: () => {
+        mainWindow.show();
+      },
+    },
+    {
+      label: 'Quit',
+      click: () => {
+        exitFromTray = true;
+        app.quit();
+      },
+    },
+  ]);
+
+  tray.on('double-click', () => {
+    mainWindow.show();
+  });
+
+  tray.setToolTip('Sonixd');
+  tray.setContextMenu(contextMenu);
+};
+
+const gotProcessLock = app.requestSingleInstanceLock();
+if (!gotProcessLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    mainWindow.show();
+  });
+}
+
 /**
  * Add event listeners...
  */
@@ -340,7 +397,14 @@ app.on('window-all-closed', () => {
 
 app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,MediaSessionService');
 
-app.whenReady().then(createWindow).catch(console.log);
+app
+  .whenReady()
+  .then(() => {
+    createWindow();
+    createTray();
+    return null;
+  })
+  .catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
