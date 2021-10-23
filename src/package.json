@@ -13,5 +13,7 @@
     "postinstall": "yarn electron-rebuild"
   },
   "license": "GPL-2.0",
-  "dependencies": {}
+  "dependencies": {
+    "mpris-service": "^2.1.2"
+  }
 }
