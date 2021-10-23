@@ -10,9 +10,10 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import Player from 'mpris-service';
 import path from 'path';
 import settings from 'electron-settings';
-import { app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
+import { ipcMain, app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -27,9 +28,11 @@ import playQueueReducer, {
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
+import { getCurrentEntryList } from './shared/utils';
 
 const isWindows = process.platform === 'win32';
 const isMacOS = process.platform === 'darwin';
+const isLinux = process.platform === 'linux';
 
 export const store = configureStore({
   reducer: {
@@ -98,7 +101,7 @@ const createWinThumbnailClip = () => {
 
 const stop = () => {
   const storeValues = store.getState();
-  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
 
   if (storeValues.playQueue[currentEntryList].length > 0) {
     store.dispatch(clearPlayQueue());
@@ -109,7 +112,7 @@ const stop = () => {
 
 const playPause = () => {
   const storeValues = store.getState();
-  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
 
   if (storeValues.playQueue[currentEntryList].length > 0) {
     if (storeValues.player.status === 'PAUSED') {
@@ -122,7 +125,8 @@ const playPause = () => {
 
 const nextTrack = () => {
   const storeValues = store.getState();
-  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
+
   if (storeValues.playQueue[currentEntryList].length > 0) {
     store.dispatch(resetPlayer());
     store.dispatch(incrementCurrentIndex('usingHotkey'));
@@ -132,7 +136,8 @@ const nextTrack = () => {
 
 const previousTrack = () => {
   const storeValues = store.getState();
-  const currentEntryList = storeValues.playQueue.shuffle ? 'shuffledEntry' : 'entry';
+  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
+
   if (storeValues.playQueue[currentEntryList].length > 0) {
     store.dispatch(resetPlayer());
     store.dispatch(decrementCurrentIndex('usingHotkey'));
@@ -140,6 +145,63 @@ const previousTrack = () => {
     store.dispatch(setStatus('PLAYING'));
   }
 };
+
+if (isLinux) {
+  const mprisPlayer = Player({
+    name: 'Sonixd',
+    identity: 'A full-featured Subsonic API compatible cross-platform desktop client',
+    supportedUriSchemes: ['file'],
+    supportedMimeTypes: ['audio/mpeg', 'application/ogg'],
+    supportedInterfaces: ['player'],
+  });
+
+  mprisPlayer.on('quit', () => {
+    process.exit();
+  });
+
+  mprisPlayer.on('stop', () => {
+    stop();
+
+    mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_STOPPED;
+  });
+
+  mprisPlayer.on('playpause', () => {
+    playPause();
+
+    if (mprisPlayer.playbackStatus !== 'Playing') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
+    } else {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    }
+  });
+
+  mprisPlayer.on('next', () => {
+    nextTrack();
+
+    if (mprisPlayer.playbackStatus !== 'Playing') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    }
+  });
+
+  mprisPlayer.on('previous', () => {
+    previousTrack();
+
+    if (mprisPlayer.playbackStatus !== 'Playing') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    }
+  });
+
+  ipcMain.on('current-song', (event, arg) => {
+    mprisPlayer.metadata = {
+      'mpris:length': (arg.duration || 0) * 1000 * 1000,
+      'mpris:artUrl': arg.image.match('placeholder') ? null : arg.image,
+      'xesam:title': arg.title || null,
+      'xesam:album': arg.album || null,
+      'xesam:artist': [arg.artist || null],
+      'xesam:genre': arg.genre || null,
+    };
+  });
+}
 
 const createWinThumbarButtons = () => {
   if (isWindows) {
@@ -157,7 +219,9 @@ const createWinThumbarButtons = () => {
       {
         tooltip: 'Next Track',
         icon: getAssetPath('skip-next.png'),
-        click: () => nextTrack(),
+        click: () => {
+          nextTrack();
+        },
       },
     ]);
 
