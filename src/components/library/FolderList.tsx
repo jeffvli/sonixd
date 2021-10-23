@@ -20,7 +20,7 @@ import { StyledButton, StyledInputPicker } from '../shared/styled';
 import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
-import { setFolder } from '../../redux/folderSlice';
+import { setCurrentViewedFolder } from '../../redux/folderSlice';
 import useRouterQuery from '../../hooks/useRouterQuery';
 
 const FolderList = () => {
@@ -38,10 +38,10 @@ const FolderList = () => {
     }
   );
   const { isLoading: isLoadingFolderData, data: folderData }: any = useQuery(
-    ['folder', folder.id],
-    () => getMusicDirectory({ id: folder.id }),
+    ['folder', folder.currentViewedFolder],
+    () => getMusicDirectory({ id: folder.currentViewedFolder }),
     {
-      enabled: folder.id !== '',
+      enabled: folder.currentViewedFolder !== '',
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     }
@@ -56,7 +56,7 @@ const FolderList = () => {
 
   useEffect(() => {
     if (query.get('folderId') !== 'null') {
-      dispatch(setFolder({ id: query.get('folderId') || '' }));
+      dispatch(setCurrentViewedFolder(query.get('folderId') || ''));
     }
   }, [dispatch, query]);
 
@@ -83,7 +83,7 @@ const FolderList = () => {
     dispatch(clearSelected());
     if (rowData.isDir) {
       history.push(`/library/folder?folderId=${rowData.id}`);
-      dispatch(setFolder({ id: rowData.id }));
+      dispatch(setCurrentViewedFolder(rowData.id));
     } else {
       const selected = folderData?.id ? folderData?.child : indexData?.child;
       dispatch(
@@ -102,7 +102,7 @@ const FolderList = () => {
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'album');
-      queryClient.setQueryData(['folder', folder.id], (oldData: any) => {
+      queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.child[index].starred = Date.now();
@@ -112,7 +112,7 @@ const FolderList = () => {
       });
     } else {
       await unstar(rowData.id, 'album');
-      queryClient.setQueryData(['folder', folder.id], (oldData: any) => {
+      queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.child[index].starred = undefined;
@@ -154,18 +154,19 @@ const FolderList = () => {
                       virtualized
                       onChange={(e: string) => {
                         history.push(`/library/folder?folderId=${e}`);
-                        dispatch(setFolder({ id: e }));
+                        dispatch(setCurrentViewedFolder(e));
                       }}
                     />
 
                     <StyledButton
                       size="sm"
-                      disabled={!folderData?.parent}
                       onClick={() => {
-                        if (folderData?.parent) {
-                          history.push(`/library/folder?folderId=${folderData?.parent}`);
-                          dispatch(setFolder({ id: folderData?.parent }));
-                        }
+                        history.push(
+                          `/library/folder?folderId=${folderData?.parent ? folderData.parent : ''}`
+                        );
+                        dispatch(
+                          setCurrentViewedFolder(folderData?.parent ? folderData.parent : '')
+                        );
                       }}
                     >
                       <Icon icon="level-up" style={{ marginRight: '10px' }} />
@@ -182,7 +183,11 @@ const FolderList = () => {
           ) : (
             <ListViewType
               data={
-                searchQuery !== '' ? filteredData : folder.id ? folderData?.child : indexData?.child
+                searchQuery !== ''
+                  ? filteredData
+                  : folder.currentViewedFolder
+                  ? folderData?.child
+                  : indexData
               }
               tableColumns={settings.getSync('musicListColumns')}
               rowHeight={Number(settings.getSync('musicListRowHeight'))}

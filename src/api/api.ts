@@ -735,8 +735,14 @@ export const getIndexes = async () => {
 
   let folders: any[] = [];
   data.indexes.index.forEach((entry: any) => {
-    entry.artist.forEach((artist: any) => {
-      folders.push({ uniqueId: nanoid(), ...artist });
+    entry.artist.forEach((folder: any) => {
+      folders.push({
+        ...folder,
+        isDir: true,
+        image: getCoverArtUrl(folder),
+        uniqueId: nanoid(),
+        type: 'folder',
+      });
     });
   });
 
@@ -754,7 +760,13 @@ export const getIndexes = async () => {
     })
   );
 
-  return { folders, child };
+  return _.concat(folders, child);
+};
+
+export const getMusicFolders = async () => {
+  const { data } = await api.get(`/getMusicFolders`);
+
+  return data?.musicFolders?.musicFolder;
 };
 
 export const getMusicDirectory = async (options: { id: string }) => {
