@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
 } from 'react';
+import { ipcRenderer } from 'electron';
 import settings from 'electron-settings';
 import ReactAudioPlayer from 'react-audio-player';
 import { Helmet } from 'react-helmet-async';
@@ -469,6 +470,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
 
   const handleOnPlay = useCallback(
     (playerNumber: 1 | 2) => {
+      ipcRenderer.send('current-song', playQueue.current);
+
       // Don't run this if resuming a song, so we'll use a 30 second check
       if (playQueue.scrobble) {
         let fadeAtTime;
