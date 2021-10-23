@@ -46,6 +46,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('scrobble', false);
   }
 
+  if (force || !settings.hasSync('musicFolder')) {
+    settings.setSync('musicFolder', 0);
+  }
+
   if (force || !settings.hasSync('volume')) {
     settings.setSync('volume', 0.3);
   }
