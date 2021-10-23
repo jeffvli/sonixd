@@ -1,22 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import settings from 'electron-settings';
+import { mockSettings } from '../shared/mockSettings';
+
+const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface FolderSelection {
-  id?: string;
+  musicFolder: string | number;
+  currentViewedFolder?: string;
 }
 
 const initialState: FolderSelection = {
-  id: undefined,
+  musicFolder: Number(parsedSettings.musicFolder) || 0,
+  currentViewedFolder: undefined,
 };
 
 const folderSlice = createSlice({
   name: 'folder',
   initialState,
   reducers: {
-    setFolder: (state, action: PayloadAction<FolderSelection>) => {
-      state.id = action.payload.id;
+    setMusicFolder: (state, action: PayloadAction<string | number>) => {
+      state.musicFolder = action.payload;
+    },
+
+    setCurrentViewedFolder: (state, action: PayloadAction<string>) => {
+      state.currentViewedFolder = action.payload;
     },
   },
 });
 
-export const { setFolder } = folderSlice.actions;
+export const { setMusicFolder, setCurrentViewedFolder } = folderSlice.actions;
 export default folderSlice.reducer;

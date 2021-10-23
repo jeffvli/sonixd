@@ -16,6 +16,7 @@ import DebugConfig from './ConfigPanels/DebugConfig';
 import WindowConfig from './ConfigPanels/WindowConfig';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import packageJson from '../../package.json';
+import ServerConfig from './ConfigPanels/ServerConfig';
 
 const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
@@ -186,6 +187,7 @@ const Config = () => {
 
       {page === 'other' && (
         <>
+          <ServerConfig />
           <CacheConfig />
           {!showWindowConfig && <WindowConfig />}
           <DebugConfig />
