@@ -198,8 +198,8 @@ export const getPlayQueue = async () => {
   };
 };
 
-export const getStarred = async () => {
-  const { data } = await api.get(`/getStarred2`);
+export const getStarred = async (options: { musicFolderId?: string | number }) => {
+  const { data } = await api.get(`/getStarred2`, { params: options });
 
   return {
     ...data.starred2,
@@ -234,7 +234,28 @@ export const getStarred = async () => {
   };
 };
 
-export const getAlbums = async (options: any, coverArtSize = 150) => {
+export const getAlbums = async (
+  options: {
+    type:
+      | 'random'
+      | 'newest'
+      | 'highest'
+      | 'frequent'
+      | 'recent'
+      | 'alphabeticalByName'
+      | 'alphabeticalByArtist'
+      | 'starred'
+      | 'byYear'
+      | 'byGenre';
+    size?: number;
+    offset?: number;
+    fromYear?: number;
+    toYear?: number;
+    genre?: string;
+    musicFolderId?: string | number;
+  },
+  coverArtSize = 150
+) => {
   const { data } = await api.get(`/getAlbumList2`, {
     params: options,
   });
@@ -253,7 +274,28 @@ export const getAlbums = async (options: any, coverArtSize = 150) => {
   };
 };
 
-export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
+export const getAlbumsDirect = async (
+  options: {
+    type:
+      | 'random'
+      | 'newest'
+      | 'highest'
+      | 'frequent'
+      | 'recent'
+      | 'alphabeticalByName'
+      | 'alphabeticalByArtist'
+      | 'starred'
+      | 'byYear'
+      | 'byGenre';
+    size?: number;
+    offset?: number;
+    fromYear?: number;
+    toYear?: number;
+    genre?: string;
+    musicFolderId?: string | number;
+  },
+  coverArtSize = 150
+) => {
   const { data } = await api.get(`/getAlbumList2`, {
     params: options,
   });
@@ -271,24 +313,42 @@ export const getAlbumsDirect = async (options: any, coverArtSize = 150) => {
   return albums;
 };
 
-// ! Rewrite as async function
 export const getAllAlbums = (
-  offset: number,
-  sortType: string,
+  options: {
+    type:
+      | string // Handle generic genres
+      | 'random'
+      | 'newest'
+      | 'highest'
+      | 'frequent'
+      | 'recent'
+      | 'alphabeticalByName'
+      | 'alphabeticalByArtist'
+      | 'starred'
+      | 'byYear'
+      | 'byGenre';
+    size: number;
+    offset: number;
+    fromYear?: number;
+    toYear?: number;
+    genre?: string;
+    musicFolderId?: string | number;
+  },
   data: any[] = [],
   coverArtSize = 150
 ) => {
   const albums: any = api
     .get(`/getAlbumList2`, {
       params: {
-        type: sortType.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
-          ? sortType
+        type: options.type.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
+          ? options.type
           : 'byGenre',
         size: 500,
-        offset,
-        genre: sortType.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
+        offset: options.offset,
+        genre: options.type.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
           ? undefined
-          : sortType,
+          : options.type,
+        musicFolderId: options.musicFolderId,
       },
     })
     .then((res) => {
@@ -308,7 +368,15 @@ export const getAllAlbums = (
 
       // On every iteration, push the existing combined album array and increase the offset
       data.push(res.data.albumList2.album);
-      return getAllAlbums(offset + 500, sortType, data);
+      return getAllAlbums(
+        {
+          type: options.type,
+          size: options.size,
+          offset: options.offset + options.size,
+          musicFolderId: options.musicFolderId,
+        },
+        data
+      );
     })
     .catch((err) => console.log(err));
 
@@ -365,8 +433,10 @@ export const getRandomSongs = async (
   };
 };
 
-export const getArtists = async () => {
-  const { data } = await api.get(`/getArtists`);
+export const getArtists = async (options: { musicFolderId?: string | number }) => {
+  const { data } = await api.get(`/getArtists`, {
+    params: options,
+  });
 
   const artistList: any[] = [];
   const artists = (data.artists?.index || []).flatMap((index: any) => index.artist);
@@ -682,13 +752,17 @@ export const getGenres = async () => {
   }));
 };
 
-export const search3 = async (query: string) => {
-  const { data } = await api.get(`/search3`, {
-    params: {
-      query,
-      songCount: 100,
-    },
-  });
+export const search3 = async (options: {
+  query: string;
+  artistCount?: number;
+  artistOffset?: 0;
+  albumCount?: number;
+  albumOffset?: 0;
+  songCount?: number;
+  songOffset?: 0;
+  musicFolderId?: string | number;
+}) => {
+  const { data } = await api.get(`/search3`, { params: options });
 
   const results = data.searchResult3;
 
@@ -730,8 +804,13 @@ export const scrobble = async (options: { id: string; time?: number; submission?
   return data;
 };
 
-export const getIndexes = async () => {
-  const { data } = await api.get(`/getIndexes`);
+export const getIndexes = async (options: {
+  musicFolderId?: string | number;
+  ifModifiedSince?: any;
+}) => {
+  const { data } = await api.get(`/getIndexes`, {
+    params: options,
+  });
 
   let folders: any[] = [];
   data.indexes.index.forEach((entry: any) => {
