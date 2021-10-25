@@ -46,8 +46,28 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('scrobble', false);
   }
 
-  if (force || !settings.hasSync('musicFolder')) {
-    settings.setSync('musicFolder', 0);
+  if (force || !settings.hasSync('musicFolder.id')) {
+    settings.setSync('musicFolder.id', null);
+  }
+
+  if (force || !settings.hasSync('musicFolder.albums')) {
+    settings.setSync('musicFolder.albums', true);
+  }
+
+  if (force || !settings.hasSync('musicFolder.artists')) {
+    settings.setSync('musicFolder.artists', true);
+  }
+
+  if (force || !settings.hasSync('musicFolder.dashboard')) {
+    settings.setSync('musicFolder.dashboard', false);
+  }
+
+  if (force || !settings.hasSync('musicFolder.search')) {
+    settings.setSync('musicFolder.search', false);
+  }
+
+  if (force || !settings.hasSync('musicFolder.starred')) {
+    settings.setSync('musicFolder.starred', false);
   }
 
   if (force || !settings.hasSync('volume')) {

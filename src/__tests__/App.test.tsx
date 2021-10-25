@@ -85,7 +85,15 @@ const miscState: General = {
 };
 
 const folderState: FolderSelection = {
-  id: undefined,
+  musicFolder: undefined,
+  applied: {
+    albums: true,
+    artists: true,
+    dashboard: false,
+    search: false,
+    starred: false,
+  },
+  currentViewedFolder: undefined,
 };
 
 const mockInitialState = {

@@ -11,7 +11,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
 import { getAlbumsDirect, getAllAlbums, getGenres, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
   setRangeSelected,
@@ -36,17 +36,34 @@ const AlbumList = () => {
   const history = useHistory();
   const query = useRouterQuery();
   const queryClient = useQueryClient();
+  const folder = useAppSelector((state) => state.folder);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortBy, setSortBy] = useState(query.get('sortType') || 'random');
   const [sortTypes, setSortTypes] = useState<any[]>();
-  const [offset, setOffset] = useState(0);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.albums) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
+
   const { isLoading, isError, data: albums, error }: any = useQuery(
-    ['albumList', offset, sortBy],
+    ['albumList', sortBy, musicFolder],
     () =>
       sortBy === 'random'
-        ? getAlbumsDirect({ type: 'random', size: settings.getSync('gridCardSize') })
-        : getAllAlbums(offset, sortBy),
+        ? getAlbumsDirect({
+            type: 'random',
+            size: Number(settings.getSync('gridCardSize')),
+            musicFolderId: musicFolder,
+          })
+        : getAllAlbums({
+            type: sortBy,
+            size: 500,
+            offset: 0,
+            musicFolderId: musicFolder,
+          }),
     {
       refetchOnWindowFocus: false,
       cacheTime: 3600000, // Stay in cache for 1 hour
@@ -110,7 +127,7 @@ const AlbumList = () => {
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'album');
-      queryClient.setQueryData(['albumList', offset, sortBy], (oldData: any) => {
+      queryClient.setQueryData(['albumList', sortBy, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -120,7 +137,7 @@ const AlbumList = () => {
       });
     } else {
       await unstar(rowData.id, 'album');
-      queryClient.setQueryData(['albumList', offset, sortBy], (oldData: any) => {
+      queryClient.setQueryData(['albumList', sortBy, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
@@ -148,9 +165,8 @@ const AlbumList = () => {
                 cleanable={false}
                 placeholder="Sort Type"
                 onChange={async (value: string) => {
-                  await queryClient.cancelQueries(['albumList', offset, sortBy]);
+                  await queryClient.cancelQueries(['albumList', sortBy, musicFolder]);
                   setSearchQuery('');
-                  setOffset(0);
                   setSortBy(value);
                 }}
               />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
@@ -27,11 +27,20 @@ const SearchView = () => {
   const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playQueue = useAppSelector((state) => state.playQueue);
+  const folder = useAppSelector((state) => state.folder);
   const urlQuery = query.get('query') || '';
   const cardSize = Number(settings.getSync('gridCardSize'));
   const [searchQuery, setSearchQuery] = useState(query.get('query') || '');
-  const { isLoading, isError, data, error }: any = useQuery(['search', urlQuery], () =>
-    search3(urlQuery)
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.search) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
+
+  const { isLoading, isError, data, error }: any = useQuery(['search', urlQuery, musicFolder], () =>
+    search3({ query: urlQuery, songCount: 100, musicFolderId: musicFolder })
   );
 
   let timeout: any = null;
@@ -70,7 +79,7 @@ const SearchView = () => {
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'music');
-      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.song[index].starred = Date.now();
@@ -80,7 +89,7 @@ const SearchView = () => {
       });
     } else {
       await unstar(rowData.id, 'album');
-      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.song[index].starred = undefined;
@@ -94,7 +103,7 @@ const SearchView = () => {
   const handleArtistFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'artist');
-      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.artist[index].starred = Date.now();
@@ -104,7 +113,7 @@ const SearchView = () => {
       });
     } else {
       await unstar(rowData.id, 'album');
-      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.artist[index].starred = undefined;
@@ -118,7 +127,7 @@ const SearchView = () => {
   const handleAlbumFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'artist');
-      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.album[index].starred = Date.now();
@@ -128,7 +137,7 @@ const SearchView = () => {
       });
     } else {
       await unstar(rowData.id, 'album');
-      queryClient.setQueryData(['search', urlQuery], (oldData: any) => {
+      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData.album[index].starred = undefined;
