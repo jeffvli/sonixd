@@ -12,6 +12,7 @@ import { ConfigPage } from '../redux/configSlice';
 import { FolderSelection } from '../redux/folderSlice';
 import { FavoritePage } from '../redux/favoriteSlice';
 import App from '../App';
+import { AlbumPage } from '../redux/albumSlice';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
@@ -116,6 +117,12 @@ const favoriteState: FavoritePage = {
   },
 };
 
+const albumState: AlbumPage = {
+  active: {
+    filter: 'random',
+  },
+};
+
 const mockInitialState = {
   player: playerState,
   playQueue: playQueueState,
@@ -124,6 +131,7 @@ const mockInitialState = {
   folder: folderState,
   config: configState,
   favorite: favoriteState,
+  album: albumState,
 };
 
 describe('App', () => {
