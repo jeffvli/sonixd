@@ -7,6 +7,7 @@ import { render } from '@testing-library/react';
 import { PlayQueue } from '../redux/playQueueSlice';
 import { Player } from '../redux/playerSlice';
 import { General } from '../redux/miscSlice';
+import { Playlist } from '../redux/playlistSlice';
 import App from '../App';
 import { FolderSelection } from '../redux/folderSlice';
 
@@ -84,6 +85,11 @@ const miscState: General = {
   titleBar: 'windows',
 };
 
+const playlistState: Playlist = {
+  entry: [],
+  sortedEntry: [],
+};
+
 const folderState: FolderSelection = {
   musicFolder: undefined,
   applied: {
@@ -97,9 +103,10 @@ const folderState: FolderSelection = {
 };
 
 const mockInitialState = {
-  playQueue: playQueueState,
   player: playerState,
+  playQueue: playQueueState,
   misc: miscState,
+  playlist: playlistState,
   folder: folderState,
 };
 

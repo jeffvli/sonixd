@@ -39,6 +39,7 @@ import {
   toggleSelected,
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
+import { sortPlaylist } from '../../redux/playlistSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -76,6 +77,7 @@ const ListViewTable = ({
   isModal,
   // onScroll,
   nowPlaying,
+  playlist,
   handleDragEnd,
   miniView,
   dnd,
@@ -232,6 +234,26 @@ const ListViewTable = ({
       if (playQueue.currentPlayer === 1 && !playQueue.isFading) {
         dispatch(fixPlayer2Index());
       }
+    } else if (playlist) {
+      if (sortColumn && sortType) {
+        const actualSortColumn = columns.find((c: any) => c.id === sortColumn);
+        const sortColumnDataKey =
+          actualSortColumn.dataKey === 'combinedtitle' ? 'title' : actualSortColumn.dataKey;
+
+        dispatch(
+          sortPlaylist({
+            columnDataKey: sortColumnDataKey,
+            sortType,
+          })
+        );
+      } else {
+        dispatch(
+          sortPlaylist({
+            columnDataKey: '',
+            sortType,
+          })
+        );
+      }
     }
   }, [
     columns,
@@ -241,7 +263,9 @@ const ListViewTable = ({
     playQueue.isFading,
     playQueue.sortColumn,
     playQueue.sortType,
-    sortedData,
+    playlist,
+    sortColumn,
+    sortType,
   ]);
 
   return (
