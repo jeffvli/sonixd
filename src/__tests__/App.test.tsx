@@ -9,8 +9,9 @@ import { Player } from '../redux/playerSlice';
 import { General } from '../redux/miscSlice';
 import { Playlist } from '../redux/playlistSlice';
 import { ConfigPage } from '../redux/configSlice';
-import App from '../App';
 import { FolderSelection } from '../redux/folderSlice';
+import { FavoritePage } from '../redux/favoriteSlice';
+import App from '../App';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
@@ -109,6 +110,12 @@ const configState: ConfigPage = {
   },
 };
 
+const favoriteState: FavoritePage = {
+  active: {
+    tab: 'tracks',
+  },
+};
+
 const mockInitialState = {
   player: playerState,
   playQueue: playQueueState,
@@ -116,6 +123,7 @@ const mockInitialState = {
   playlist: playlistState,
   folder: folderState,
   config: configState,
+  favorite: favoriteState,
 };
 
 describe('App', () => {
