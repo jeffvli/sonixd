@@ -8,6 +8,7 @@ import { PlayQueue } from '../redux/playQueueSlice';
 import { Player } from '../redux/playerSlice';
 import { General } from '../redux/miscSlice';
 import { Playlist } from '../redux/playlistSlice';
+import { ConfigPage } from '../redux/configSlice';
 import App from '../App';
 import { FolderSelection } from '../redux/folderSlice';
 
@@ -102,12 +103,19 @@ const folderState: FolderSelection = {
   currentViewedFolder: undefined,
 };
 
+const configState: ConfigPage = {
+  active: {
+    tab: 'playback',
+  },
+};
+
 const mockInitialState = {
   player: playerState,
   playQueue: playQueueState,
   misc: miscState,
   playlist: playlistState,
   folder: folderState,
+  config: configState,
 };
 
 describe('App', () => {
