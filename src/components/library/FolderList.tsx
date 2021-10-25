@@ -4,7 +4,14 @@ import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Icon } from 'rsuite';
-import { getIndexes, getMusicDirectory, setRating, star, unstar } from '../../api/api';
+import {
+  getIndexes,
+  getMusicDirectory,
+  getMusicFolders,
+  setRating,
+  star,
+  unstar,
+} from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -29,9 +36,11 @@ const FolderList = () => {
   const query = useRouterQuery();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
   const { isLoading, isError, data: indexData, error }: any = useQuery(
-    ['indexes'],
-    () => getIndexes(),
+    ['indexes', musicFolder],
+    () => getIndexes({ musicFolderId: musicFolder }),
     {
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -45,6 +54,11 @@ const FolderList = () => {
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
     }
+  );
+
+  const { isLoading: isLoadingMusicFolders, data: musicFolders } = useQuery(
+    ['musicFolders'],
+    getMusicFolders
   );
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -137,7 +151,13 @@ const FolderList = () => {
           hideDivider
           header={
             <GenericPageHeader
-              title={`${folderData?.name ? folderData.name : 'Select a folder'}`}
+              title={`${
+                folderData?.name
+                  ? folderData.name
+                  : isLoadingFolderData
+                  ? 'Loading...'
+                  : 'Select a folder'
+              }`}
               showSearchBar
               searchQuery={searchQuery}
               handleSearch={(e: any) => setSearchQuery(e)}
@@ -147,15 +167,14 @@ const FolderList = () => {
                 <>
                   <ButtonToolbar>
                     <StyledInputPicker
-                      data={indexData.folders}
-                      size="sm"
-                      labelKey="name"
+                      data={isLoadingMusicFolders ? [] : musicFolders}
+                      defaultValue={settings.getSync('musicFolder.id') || undefined}
                       valueKey="id"
-                      virtualized
-                      onChange={(e: string) => {
-                        history.push(`/library/folder?folderId=${e}`);
-                        dispatch(setCurrentViewedFolder(e));
+                      labelKey="name"
+                      onChange={(e: any) => {
+                        setMusicFolder(e);
                       }}
+                      style={{ width: '250px' }}
                     />
 
                     <StyledButton
