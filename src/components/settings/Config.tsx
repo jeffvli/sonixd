@@ -96,7 +96,7 @@ const Config = () => {
                 }}
                 disabled={isScanning}
               >
-                {isScanning ? `Scanning: ${scanProgress}` : 'Scan Library'}
+                {isScanning ? `${scanProgress}` : 'Scan'}
               </StyledButton>
               <Whisper
                 trigger="click"
