@@ -20,25 +20,24 @@ import {
 } from '../../redux/multiSelectSlice';
 import { StyledInputPicker } from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
-import useRouterQuery from '../../hooks/useRouterQuery';
+import { setActive } from '../../redux/albumSlice';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
   { label: 'A-Z (Artist)', value: 'alphabeticalByArtist', role: 'Default' },
   { label: 'Most Played', value: 'frequent', role: 'Default' },
-  { label: 'Newly Added', value: 'newest', role: 'Default' },
   { label: 'Random', value: 'random', role: 'Default' },
+  { label: 'Recently Added', value: 'newest', role: 'Default' },
   { label: 'Recently Played', value: 'recent', role: 'Default' },
 ];
 
 const AlbumList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const query = useRouterQuery();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
+  const album = useAppSelector((state) => state.album);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [sortBy, setSortBy] = useState(query.get('sortType') || 'random');
   const [sortTypes, setSortTypes] = useState<any[]>();
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
@@ -50,16 +49,16 @@ const AlbumList = () => {
   }, [folder]);
 
   const { isLoading, isError, data: albums, error }: any = useQuery(
-    ['albumList', sortBy, musicFolder],
+    ['albumList', album.active.filter, musicFolder],
     () =>
-      sortBy === 'random'
+      album.active.filter === 'random'
         ? getAlbumsDirect({
             type: 'random',
             size: Number(settings.getSync('gridCardSize')),
             musicFolderId: musicFolder,
           })
         : getAllAlbums({
-            type: sortBy,
+            type: album.active.filter,
             size: 500,
             offset: 0,
             musicFolderId: musicFolder,
@@ -127,7 +126,7 @@ const AlbumList = () => {
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'album');
-      queryClient.setQueryData(['albumList', sortBy, musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['albumList', album.active.filter, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -137,7 +136,7 @@ const AlbumList = () => {
       });
     } else {
       await unstar(rowData.id, 'album');
-      queryClient.setQueryData(['albumList', sortBy, musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['albumList', album.active.filter, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
@@ -159,15 +158,15 @@ const AlbumList = () => {
               <StyledInputPicker
                 size="sm"
                 width={180}
-                defaultValue={sortBy}
+                defaultValue={album.active.filter}
                 groupBy="role"
                 data={sortTypes}
                 cleanable={false}
                 placeholder="Sort Type"
                 onChange={async (value: string) => {
-                  await queryClient.cancelQueries(['albumList', sortBy, musicFolder]);
+                  await queryClient.cancelQueries(['albumList', album.active.filter, musicFolder]);
                   setSearchQuery('');
-                  setSortBy(value);
+                  dispatch(setActive({ filter: value }));
                 }}
               />
               <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
