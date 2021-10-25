@@ -227,7 +227,7 @@ const FolderList = () => {
                 'removeFromFavorites',
                 'viewInModal',
                 'moveSelectedTo',
-                'removeFromCurrent',
+                'removeSelected',
                 'deletePlaylist',
                 'viewInFolder',
               ]}

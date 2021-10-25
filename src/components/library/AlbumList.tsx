@@ -204,7 +204,7 @@ const AlbumList = () => {
           virtualized
           disabledContextMenuOptions={[
             'moveSelectedTo',
-            'removeFromCurrent',
+            'removeSelected',
             'deletePlaylist',
             'viewInFolder',
           ]}

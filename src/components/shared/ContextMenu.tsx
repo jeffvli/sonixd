@@ -227,7 +227,7 @@ export const GlobalContextMenu = () => {
     }
   };
 
-  const handleRemoveFromCurrent = async () => {
+  const handleRemoveSelected = async () => {
     if (misc.contextMenu.type === 'nowPlaying') {
       dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
       if (playQueue.currentPlayer === 1) {
@@ -549,9 +549,9 @@ export const GlobalContextMenu = () => {
             disabled={misc.contextMenu.disabledOptions.includes('addToQueueLast')}
           />
           <ContextMenuButton
-            text="Remove from current"
-            onClick={handleRemoveFromCurrent}
-            disabled={misc.contextMenu.disabledOptions.includes('removeFromCurrent')}
+            text="Remove selected"
+            onClick={handleRemoveSelected}
+            disabled={misc.contextMenu.disabledOptions.includes('removeSelected')}
           />
           <Whisper
             enterable

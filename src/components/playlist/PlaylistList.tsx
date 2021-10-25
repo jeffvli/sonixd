@@ -178,7 +178,7 @@ const PlaylistList = () => {
             'moveSelectedTo',
             'addToFavorites',
             'removeFromFavorites',
-            'removeFromCurrent',
+            'removeSelected',
             'viewInFolder',
           ]}
         />

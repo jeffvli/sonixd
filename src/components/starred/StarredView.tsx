@@ -175,7 +175,7 @@ const StarredView = () => {
               listType="music"
               virtualized
               disabledContextMenuOptions={[
-                'removeFromCurrent',
+                'removeSelected',
                 'moveSelectedTo',
                 'deletePlaylist',
                 'viewInModal',
@@ -201,7 +201,7 @@ const StarredView = () => {
                   listType="album"
                   virtualized
                   disabledContextMenuOptions={[
-                    'removeFromCurrent',
+                    'removeSelected',
                     'moveSelectedTo',
                     'deletePlaylist',
                   ]}
@@ -248,7 +248,7 @@ const StarredView = () => {
                   listType="artist"
                   virtualized
                   disabledContextMenuOptions={[
-                    'removeFromCurrent',
+                    'removeSelected',
                     'moveSelectedTo',
                     'addToPlaylist',
                     'deletePlaylist',

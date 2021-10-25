@@ -20,7 +20,7 @@ type ContextMenuOptions =
   | 'play'
   | 'addToQueueNext'
   | 'addToQueueLast'
-  | 'removeFromCurrent'
+  | 'removeSelected'
   | 'addToPlaylist'
   | 'deletePlaylist'
   | 'addToFavorites'
