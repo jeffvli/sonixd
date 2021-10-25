@@ -14,17 +14,18 @@ import PlayerConfig from './ConfigPanels/PlayerConfig';
 import CacheConfig from './ConfigPanels/CacheConfig';
 import DebugConfig from './ConfigPanels/DebugConfig';
 import WindowConfig from './ConfigPanels/WindowConfig';
-import useRouterQuery from '../../hooks/useRouterQuery';
 import packageJson from '../../package.json';
 import ServerConfig from './ConfigPanels/ServerConfig';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { setActive } from '../../redux/configSlice';
 
 const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
 const Config = () => {
+  const dispatch = useAppDispatch();
+  const config = useAppSelector((state) => state.config);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
-  const query = useRouterQuery();
-  const [page, setPage] = useState(query.get('page') || 'playback');
   const [latestRelease, setLatestRelease] = useState(packageJson.version);
   const showWindowConfig = process.platform === 'darwin';
 
@@ -78,7 +79,7 @@ const Config = () => {
           title="Config"
           subtitle={
             <>
-              <Nav activeKey={page} onSelect={(e) => setPage(e)}>
+              <Nav activeKey={config.active.tab} onSelect={(e) => dispatch(setActive({ tab: e }))}>
                 <StyledNavItem eventKey="playback">Playback</StyledNavItem>
                 <StyledNavItem eventKey="lookandfeel">Look & Feel</StyledNavItem>
                 <StyledNavItem eventKey="other">Other</StyledNavItem>
@@ -176,16 +177,16 @@ const Config = () => {
         />
       }
     >
-      {page === 'playback' && (
+      {(config.active.tab === 'playback' || '') && (
         <>
           <PlaybackConfig />
           <PlayerConfig />
         </>
       )}
 
-      {page === 'lookandfeel' && <LookAndFeelConfig />}
+      {config.active.tab === 'lookandfeel' && <LookAndFeelConfig />}
 
-      {page === 'other' && (
+      {config.active.tab === 'other' && (
         <>
           <ServerConfig />
           <CacheConfig />
