@@ -326,6 +326,7 @@ const ListViewType = (
             cacheImages={cacheImages}
             listType={listType}
             nowPlaying={rest.nowPlaying}
+            playlist={rest.playlist}
             isModal={isModal}
             handleDragEnd={handleDragEnd}
             dnd={dnd}

@@ -11,10 +11,12 @@ import { Entry } from './playQueueSlice';
 
 export interface Playlist {
   entry: Entry[];
+  sortedEntry: Entry[];
 }
 
 const initialState: Playlist = {
   entry: [],
+  sortedEntry: [],
 };
 
 const playlistSlice = createSlice({
@@ -23,6 +25,26 @@ const playlistSlice = createSlice({
   reducers: {
     setPlaylistData: (state, action: PayloadAction<Entry[]>) => {
       state.entry = action.payload;
+    },
+
+    sortPlaylist: (
+      state,
+      action: PayloadAction<{ columnDataKey: string; sortType: 'asc' | 'desc' }>
+    ) => {
+      if (action.payload.columnDataKey !== '') {
+        state.sortedEntry = _.orderBy(
+          state.entry,
+          [
+            (entry: any) =>
+              typeof entry[action.payload.columnDataKey] === 'string'
+                ? entry[action.payload.columnDataKey].toLowerCase()
+                : entry[action.payload.columnDataKey],
+          ],
+          action.payload.sortType
+        );
+      } else {
+        state.sortedEntry = [];
+      }
     },
 
     removeFromPlaylist: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
@@ -98,6 +120,7 @@ const playlistSlice = createSlice({
 
 export const {
   setPlaylistData,
+  sortPlaylist,
   removeFromPlaylist,
   moveToIndex,
   moveUp,

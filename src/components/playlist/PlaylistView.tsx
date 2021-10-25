@@ -46,6 +46,7 @@ import {
 import {
   createRecoveryFile,
   errorMessages,
+  getCurrentEntryList,
   getRecoveryPath,
   isFailedResponse,
 } from '../../shared/utils';
@@ -130,12 +131,12 @@ const PlaylistView = ({ ...rest }) => {
   }, [data, dispatch]);
 
   useEffect(() => {
-    if (!_.isEqual(data?.song, playlist.entry)) {
+    if (!_.isEqual(data?.song, playlist[getCurrentEntryList(playlist)])) {
       setIsModified(true);
     } else {
       setIsModified(false);
     }
-  }, [data?.song, playlist.entry]);
+  }, [data?.song, playlist]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any) => {
@@ -147,7 +148,11 @@ const PlaylistView = ({ ...rest }) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(searchQuery !== '' ? filteredData : playlist.entry));
+          dispatch(
+            toggleRangeSelected(
+              searchQuery !== '' ? filteredData : playlist[getCurrentEntryList(playlist)]
+            )
+          );
         }
       }, 100);
     }
@@ -160,7 +165,7 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(clearSelected());
     dispatch(
       setPlayQueueByRowClick({
-        entries: playlist.entry,
+        entries: playlist[getCurrentEntryList(playlist)],
         currentIndex: e.rowIndex,
         currentSongId: e.id,
         uniqueSongId: e.uniqueId,
@@ -171,13 +176,13 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handlePlay = () => {
-    dispatch(setPlayQueue({ entries: playlist.entry }));
+    dispatch(setPlayQueue({ entries: playlist[getCurrentEntryList(playlist)] }));
     dispatch(setStatus('PLAYING'));
     notifyToast('info', `Playing ${playlist.entry.length} song(s)`);
   };
 
   const handlePlayAppend = (type: 'next' | 'later') => {
-    dispatch(appendPlayQueue({ entries: playlist.entry, type }));
+    dispatch(appendPlayQueue({ entries: playlist[getCurrentEntryList(playlist)], type }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
@@ -191,7 +196,7 @@ const PlaylistView = ({ ...rest }) => {
       let res;
       const playlistData = recovery
         ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
-        : playlist.entry;
+        : playlist[getCurrentEntryList(playlist)];
 
       // Smaller playlists can use the safe /createPlaylist method of saving
       if (playlistData.length <= 400 && !recovery) {
@@ -247,7 +252,7 @@ const PlaylistView = ({ ...rest }) => {
       notifyToast('error', 'Errored while saving playlist');
       const playlistData = recovery
         ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
-        : playlist.entry;
+        : playlist[getCurrentEntryList(playlist)];
 
       createRecoveryFile(data.id, 'playlist', playlistData);
       setNeedsRecovery(true);
@@ -486,7 +491,7 @@ const PlaylistView = ({ ...rest }) => {
       }
     >
       <ListViewType
-        data={searchQuery !== '' ? filteredData : playlist.entry}
+        data={searchQuery !== '' ? filteredData : playlist[getCurrentEntryList(playlist)]}
         tableColumns={settings.getSync('musicListColumns')}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
@@ -500,6 +505,7 @@ const PlaylistView = ({ ...rest }) => {
           cacheIdProperty: 'albumId',
         }}
         listType="music"
+        playlist
         dnd
         isModal={rest.isModal}
         disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
