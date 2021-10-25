@@ -81,7 +81,7 @@ const GenreList = () => {
             'addToQueueNext',
             'addToQueueLast',
             'moveSelectedTo',
-            'removeFromCurrent',
+            'removeSelected',
             'addToPlaylist',
             'deletePlaylist',
             'addToFavorites',

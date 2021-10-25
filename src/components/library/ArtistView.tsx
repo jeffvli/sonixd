@@ -284,7 +284,7 @@ const ArtistView = ({ ...rest }: any) => {
             listType="album"
             isModal={rest.isModal}
             disabledContextMenuOptions={[
-              'removeFromCurrent',
+              'removeSelected',
               'moveSelectedTo',
               'deletePlaylist',
               'viewInFolder',

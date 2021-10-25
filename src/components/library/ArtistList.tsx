@@ -142,7 +142,7 @@ const ArtistList = () => {
           virtualized
           disabledContextMenuOptions={[
             'moveSelectedTo',
-            'removeFromCurrent',
+            'removeSelected',
             'deletePlaylist',
             'viewInFolder',
           ]}
