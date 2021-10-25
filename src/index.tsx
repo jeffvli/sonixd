@@ -6,7 +6,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import { store } from './redux/store';
 import App from './App';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 render(
   <Provider store={store}>
