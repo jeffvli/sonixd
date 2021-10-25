@@ -45,19 +45,19 @@ const PlayerConfig = () => {
       <br />
       <StyledCheckbox
         defaultChecked={globalMediaHotkeys}
-        onChange={() => {
-          settings.setSync('globalMediaHotkeys', !settings.getSync('globalMediaHotkeys'));
-          setGlobalMediaHotkeys(!globalMediaHotkeys);
+        onChange={(_v: any, e: boolean) => {
+          settings.setSync('globalMediaHotkeys', e);
+          setGlobalMediaHotkeys(e);
         }}
       >
         Enable global media hotkeys (requires app restart)
       </StyledCheckbox>
       <StyledCheckbox
         defaultChecked={scrobble}
-        onChange={() => {
-          settings.setSync('scrobble', !scrobble);
-          dispatch(setPlaybackSetting({ setting: 'scrobble', value: !scrobble }));
-          setScrobble(!scrobble);
+        onChange={(_v: any, e: boolean) => {
+          settings.setSync('scrobble', e);
+          dispatch(setPlaybackSetting({ setting: 'scrobble', value: e }));
+          setScrobble(e);
         }}
       >
         Enable scrobbling

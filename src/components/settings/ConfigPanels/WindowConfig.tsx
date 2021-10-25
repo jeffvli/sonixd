@@ -12,9 +12,9 @@ const WindowConfig = () => {
       <StyledCheckbox
         defaultChecked={minimizeToTray}
         checked={minimizeToTray}
-        onChange={() => {
-          settings.setSync('minimizeToTray', !settings.getSync('minimizeToTray'));
-          setMinimizeToTray(!minimizeToTray);
+        onChange={(_v: any, e: boolean) => {
+          settings.setSync('minimizeToTray', e);
+          setMinimizeToTray(e);
         }}
       >
         Minimize to tray
@@ -23,9 +23,9 @@ const WindowConfig = () => {
       <StyledCheckbox
         defaultChecked={exitToTray}
         checked={exitToTray}
-        onChange={() => {
-          settings.setSync('exitToTray', !settings.getSync('exitToTray'));
-          setExitToTray(!exitToTray);
+        onChange={(_v: any, e: boolean) => {
+          settings.setSync('exitToTray', e);
+          setExitToTray(e);
         }}
       >
         Exit to tray

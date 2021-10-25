@@ -433,7 +433,7 @@ const PlaylistView = ({ ...rest }) => {
                           <StyledCheckbox
                             defaultChecked={editPublic}
                             value={editPublic}
-                            onChange={() => setEditPublic(!editPublic)}
+                            onChange={(_v: any, e: boolean) => setEditPublic(e)}
                           >
                             Public
                           </StyledCheckbox>
