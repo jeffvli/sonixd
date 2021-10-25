@@ -94,7 +94,7 @@ const GenericPageHeader = ({
             {showSearchBar && (
               <span style={{ display: 'inline-block' }}>
                 {searchQuery !== '' || openSearch ? (
-                  <StyledInputGroup inside onClick={() => console.log('click')}>
+                  <StyledInputGroup inside>
                     <InputGroup.Addon>
                       <Icon icon="search" />
                     </InputGroup.Addon>
