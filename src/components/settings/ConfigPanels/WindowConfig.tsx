@@ -2,11 +2,8 @@ import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { ConfigPanel } from '../styled';
 import { StyledCheckbox } from '../../shared/styled';
-import { useAppDispatch } from '../../../redux/hooks';
-import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 
 const WindowConfig = () => {
-  const dispatch = useAppDispatch();
   const [minimizeToTray, setMinimizeToTray] = useState(Boolean(settings.getSync('minimizeToTray')));
   const [exitToTray, setExitToTray] = useState(Boolean(settings.getSync('exitToTray')));
   return (
@@ -17,12 +14,6 @@ const WindowConfig = () => {
         checked={minimizeToTray}
         onChange={() => {
           settings.setSync('minimizeToTray', !settings.getSync('minimizeToTray'));
-          dispatch(
-            setPlaybackSetting({
-              setting: 'minimizeToTray',
-              value: settings.getSync('minimizeToTray'),
-            })
-          );
           setMinimizeToTray(!minimizeToTray);
         }}
       >
@@ -34,12 +25,6 @@ const WindowConfig = () => {
         checked={exitToTray}
         onChange={() => {
           settings.setSync('exitToTray', !settings.getSync('exitToTray'));
-          dispatch(
-            setPlaybackSetting({
-              setting: 'exitToTray',
-              value: settings.getSync('exitToTray'),
-            })
-          );
           setExitToTray(!exitToTray);
         }}
       >
