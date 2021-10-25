@@ -76,10 +76,10 @@ const LookAndFeelConfig = () => {
         <StyledCheckbox
           defaultChecked={dynamicBackgroundChk}
           checked={dynamicBackgroundChk}
-          onChange={() => {
-            settings.setSync('dynamicBackground', !dynamicBackgroundChk);
-            dispatch(setDynamicBackground(!dynamicBackgroundChk));
-            setDynamicBackgroundChk(!dynamicBackgroundChk);
+          onChange={(_v: any, e: boolean) => {
+            settings.setSync('dynamicBackground', e);
+            dispatch(setDynamicBackground(e));
+            setDynamicBackgroundChk(e);
           }}
         >
           Enable dynamic background
@@ -128,15 +128,15 @@ const LookAndFeelConfig = () => {
         <StyledCheckbox
           defaultChecked={highlightOnRowHoverChk}
           checked={highlightOnRowHoverChk}
-          onChange={() => {
-            settings.setSync('highlightOnRowHover', !highlightOnRowHoverChk);
+          onChange={(_v: any, e: boolean) => {
+            settings.setSync('highlightOnRowHover', e);
             dispatch(
               setMiscSetting({
                 setting: 'highlightOnRowHover',
-                value: !highlightOnRowHoverChk,
+                value: e,
               })
             );
-            setHighlightOnRowHoverChk(!highlightOnRowHoverChk);
+            setHighlightOnRowHoverChk(e);
           }}
         >
           Show highlight on row hover
@@ -145,8 +145,8 @@ const LookAndFeelConfig = () => {
         <p>Select the columns you want displayed on pages with a list-view.</p>
         <StyledCheckbox
           defaultChecked={resizableColumn}
-          onChange={() => {
-            setResizableColumn(!resizableColumn);
+          onChange={(_v: any, e: boolean) => {
+            setResizableColumn(e);
           }}
         >
           Use resizable columns (check/uncheck this before selecting columns)

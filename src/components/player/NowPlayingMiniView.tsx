@@ -231,15 +231,12 @@ const NowPlayingMiniView = () => {
                     <StyledCheckbox
                       defaultChecked={playQueue.scrollWithCurrentSong}
                       checked={playQueue.scrollWithCurrentSong}
-                      onChange={() => {
-                        settings.setSync(
-                          'scrollWithCurrentSong',
-                          !settings.getSync('scrollWithCurrentSong')
-                        );
+                      onChange={(_v: any, e: boolean) => {
+                        settings.setSync('scrollWithCurrentSong', e);
                         dispatch(
                           setPlaybackSetting({
                             setting: 'scrollWithCurrentSong',
-                            value: !playQueue.scrollWithCurrentSong,
+                            value: e,
                           })
                         );
                       }}

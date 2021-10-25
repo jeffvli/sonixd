@@ -14,15 +14,15 @@ const DebugConfig = () => {
     <ConfigPanel header="Advanced" bordered>
       <StyledCheckbox
         defaultChecked={showDebugWindow}
-        onChange={() => {
-          settings.setSync('showDebugWindow', !settings.getSync('showDebugWindow'));
+        onChange={(_v: any, e: boolean) => {
+          settings.setSync('showDebugWindow', e);
           dispatch(
             setPlaybackSetting({
               setting: 'showDebugWindow',
-              value: settings.getSync('showDebugWindow'),
+              value: e,
             })
           );
-          setShowDebugWindow(!showDebugWindow);
+          setShowDebugWindow(e);
         }}
       >
         Show debug window

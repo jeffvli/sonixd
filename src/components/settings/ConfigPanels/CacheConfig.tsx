@@ -171,9 +171,9 @@ const CacheConfig = () => {
       <div style={{ width: '300px', marginTop: '20px' }}>
         <StyledCheckbox
           defaultChecked={cacheSongs}
-          onChange={() => {
-            settings.setSync('cacheSongs', !settings.getSync('cacheSongs'));
-            setCacheSongs(!cacheSongs);
+          onChange={(_v: any, e: boolean) => {
+            settings.setSync('cacheSongs', e);
+            setCacheSongs(e);
           }}
         >
           Songs{' '}
@@ -183,9 +183,9 @@ const CacheConfig = () => {
         </StyledCheckbox>
         <StyledCheckbox
           defaultChecked={cacheImages}
-          onChange={() => {
-            settings.setSync('cacheImages', !settings.getSync('cacheImages'));
-            setCacheImages(!cacheImages);
+          onChange={(_v: any, e: boolean) => {
+            settings.setSync('cacheImages', e);
+            setCacheImages(e);
           }}
         >
           Images{' '}
