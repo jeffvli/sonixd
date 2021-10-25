@@ -268,6 +268,7 @@ export const getAlbums = async (
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
       type: 'album',
+      isDir: false,
       index,
       uniqueId: nanoid(),
     })),
@@ -306,6 +307,7 @@ export const getAlbumsDirect = async (
     image: getCoverArtUrl(entry, coverArtSize),
     starred: entry.starred || undefined,
     type: 'album',
+    isDir: false,
     index,
     uniqueId: nanoid(),
   }));
@@ -361,6 +363,7 @@ export const getAllAlbums = (
           image: getCoverArtUrl(entry, coverArtSize),
           starred: entry.starred || undefined,
           type: 'album',
+          isDir: false,
           index,
           uniqueId: nanoid(),
         }));
