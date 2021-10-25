@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useQuery, useQueryClient } from 'react-query';
 import { Nav } from 'rsuite';
@@ -28,11 +28,24 @@ const StarredView = () => {
   const query = useRouterQuery();
   const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const folder = useAppSelector((state) => state.folder);
   const [page, setPage] = useState(query.get('page') || 'tracks');
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
-  const { isLoading, isError, data, error }: any = useQuery('starred', getStarred, {
-    refetchOnWindowFocus: multiSelect.selected.length < 1,
-  });
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.starred) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
+
+  const { isLoading, isError, data, error }: any = useQuery(
+    ['starred', musicFolder],
+    () => getStarred({ musicFolderId: musicFolder }),
+    {
+      refetchOnWindowFocus: multiSelect.selected.length < 1,
+    }
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
     searchQuery,
@@ -95,21 +108,21 @@ const StarredView = () => {
   const handleRowFavorite = async (rowData: any) => {
     await unstar(rowData.id, 'music');
     dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-    await queryClient.refetchQueries(['starred'], {
+    await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });
   };
 
   const handleRowFavoriteAlbum = async (rowData: any) => {
     await unstar(rowData.id, 'album');
-    await queryClient.refetchQueries(['starred'], {
+    await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });
   };
 
   const handleRowFavoriteArtist = async (rowData: any) => {
     await unstar(rowData.id, 'artist');
-    await queryClient.refetchQueries(['starred'], {
+    await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });
   };

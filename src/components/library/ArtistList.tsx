@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
@@ -10,7 +10,7 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   clearSelected,
   setRangeSelected,
@@ -24,11 +24,20 @@ const ArtistList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
+  const folder = useAppSelector((state) => state.folder);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [viewType, setViewType] = useState(settings.getSync('artistViewType'));
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.artists) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
+
   const { isLoading, isError, data: artists, error }: any = useQuery(
-    ['artistList'],
-    () => getArtists(),
+    ['artistList', musicFolder],
+    () => getArtists({ musicFolderId: musicFolder }),
     {
       refetchOnWindowFocus: false,
       cacheTime: 3600000, // Stay in cache for 1 hour
@@ -64,14 +73,14 @@ const ArtistList = () => {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await queryClient.refetchQueries(['artistList'], { active: true });
+    await queryClient.refetchQueries(['artistList', musicFolder], { active: true });
     setIsRefreshing(false);
   };
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'artist');
-      queryClient.setQueryData(['artistList'], (oldData: any) => {
+      queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -81,7 +90,7 @@ const ArtistList = () => {
       });
     } else {
       await unstar(rowData.id, 'artist');
-      queryClient.setQueryData(['artistList'], (oldData: any) => {
+      queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
