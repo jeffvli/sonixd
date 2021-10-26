@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid/non-secure';
-import _ from 'lodash';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
@@ -10,6 +9,7 @@ const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : set
 export interface ConfigPage {
   active: {
     tab: string;
+    columnSelectorTab: string;
   };
   lookAndFeel: {
     listView: {
@@ -28,6 +28,7 @@ export type ColumnList = 'music' | 'album' | 'playlist' | 'artist' | 'genre' | '
 const initialState: ConfigPage = {
   active: {
     tab: 'playback',
+    columnSelectorTab: 'music',
   },
   lookAndFeel: {
     listView: {
@@ -81,8 +82,8 @@ const configSlice = createSlice({
   name: 'config',
   initialState,
   reducers: {
-    setActive: (state, action: PayloadAction<{ tab: string }>) => {
-      state.active.tab = action.payload.tab;
+    setActive: (state, action: PayloadAction<any>) => {
+      state.active = action.payload;
     },
 
     setColumnList: (state, action: PayloadAction<{ listType: ColumnList; entries: any }>) => {
