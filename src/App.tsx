@@ -13,7 +13,6 @@ import Dashboard from './components/dashboard/Dashboard';
 import PlayerBar from './components/player/PlayerBar';
 import AlbumView from './components/library/AlbumView';
 import ArtistView from './components/library/ArtistView';
-import setDefaultSettings from './components/shared/setDefaultSettings';
 import AlbumList from './components/library/AlbumList';
 import ArtistList from './components/library/ArtistList';
 import GenreList from './components/library/GenreList';
@@ -57,9 +56,6 @@ const App = () => {
       </ThemeProvider>
     );
   }
-
-  // Always check for default settings
-  setDefaultSettings(false);
 
   return (
     <ThemeProvider theme={theme}>
