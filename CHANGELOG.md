@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2021-10-26
+
+### Added
+
+- Added music folder selector (#52)
+- Added media hotkeys / MPRIS support for Linux (#50)
+  - This is due to dbus overriding the global shortcuts that electron sends
+- Added advanced column selector component
+  - Drag-n-drop list
+  - Individual resizable columns
+- (Windows) Added tray (Thanks @ncarmic4) (#45)
+  - Settings to minimize/exit to tray
+
+### Changed
+
+- Page selections are now persistent
+  - Active tab on config page
+  - Active tab on favorites page
+  - Filter selector on album list page
+- Playlists can now be saved after being sorted using column filters
+- Folder view
+  - Now shows all root folders in the list instead of in the input picker
+  - Now shows music folders in the input picker
+  - Now uses loader when switching pages
+- Changed styling for various views/components
+  - Look & Feel setting page now split up into multiple panels
+  - Renamed context menu button `Remove from current` -> `Remove selected`
+  - Page header titles width increased from `45%` -> `80%`
+
+### Fixed
+
+- Fixed shift-click multi select on a column-sorted list-view
+- Fixed right-click context menu showing up behind all modals (#55)
+- Fixed mini player showing up behind tag picker elements
+- Fixed duration showing up as `NaN:NaN` when duration is null or invalid
+
 ## [0.3.0] - 2021-10-16
 
 ### Added
