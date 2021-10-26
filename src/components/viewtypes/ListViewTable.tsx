@@ -25,7 +25,7 @@ import {
 import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fixPlayer2Index, setSort, sortPlayQueue } from '../../redux/playQueueSlice';
-import { StyledIconToggle, StyledRate } from '../shared/styled';
+import { StyledCheckbox, StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
   clearSelected,
@@ -40,6 +40,7 @@ import {
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { sortPlaylist } from '../../redux/playlistSlice';
+import { setColumnList } from '../../redux/configSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -97,6 +98,7 @@ const ListViewTable = ({
   const history = useHistory();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
+  const configState = useAppSelector((state) => state.config);
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
   const [sortedData, setSortedData] = useState(data);
@@ -379,16 +381,31 @@ const ListViewTable = ({
             fixed={column.fixed}
             verticalAlign="middle"
             sortable
-            onResize={(width: any) => {
+            onResize={(newWidth: any) => {
               const resizedColumnIndex = columns.findIndex(
                 (c: any) => c.dataKey === column.dataKey
               );
 
               if (!miniView) {
-                settings.setSync(`${listType}ListColumns[${resizedColumnIndex}].width`, width);
+                settings.setSync(`${listType}ListColumns[${resizedColumnIndex}].width`, newWidth);
               } else {
-                settings.setSync(`miniListColumns[${resizedColumnIndex}].width`, width);
+                settings.setSync(`miniListColumns[${resizedColumnIndex}].width`, newWidth);
               }
+
+              const newCols = configState.lookAndFeel.listView[listType].columns.map((c: any) => {
+                if (c.dataKey === column.dataKey) {
+                  const { width, ...rest } = c;
+                  return { width: newWidth, ...rest };
+                }
+
+                return { ...c };
+              });
+              dispatch(
+                setColumnList({
+                  listType,
+                  entries: newCols,
+                })
+              );
             }}
           >
             <StyledTableHeaderCell>{column.id}</StyledTableHeaderCell>
@@ -730,7 +747,11 @@ const ListViewTable = ({
                       }
                       height={rowHeight}
                       onClick={(e: any) => {
-                        if (!column.dataKey?.match(/starred|songCount|duration|userRating/)) {
+                        if (
+                          !column.dataKey?.match(
+                            /starred|songCount|duration|userRating|columnResizable|columnDefaultSort/
+                          )
+                        ) {
                           handleRowClick(e, {
                             ...rowData,
                             rowIndex,
@@ -738,7 +759,11 @@ const ListViewTable = ({
                         }
                       }}
                       onDoubleClick={() => {
-                        if (!column.dataKey?.match(/starred|songCount|duration|userRating/)) {
+                        if (
+                          !column.dataKey?.match(
+                            /starred|songCount|duration|userRating|columnResizable|columnDefaultSort/
+                          )
+                        ) {
                           handleRowDoubleClick({
                             ...rowData,
                             rowIndex,
@@ -761,7 +786,7 @@ const ListViewTable = ({
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           paddingRight: !column.dataKey?.match(
-                            /starred|songCount|duration|userRating/
+                            /starred|songCount|duration|userRating|columnResizable|columnDefaultSort/
                           )
                             ? '10px'
                             : undefined,
@@ -846,7 +871,55 @@ const ListViewTable = ({
                             `${rowData[column.dataKey]} kbps`
                           )
                         ) : column.dataKey === 'custom' ? (
-                          <>{rowData.uniqueId}</>
+                          <div>{column.custom}</div>
+                        ) : column.dataKey === 'columnResizable' ? (
+                          <div>
+                            <StyledCheckbox
+                              defaultChecked={
+                                configState.lookAndFeel.listView[config.option].columns[
+                                  configState.lookAndFeel.listView[config.option].columns.findIndex(
+                                    (col: any) => col.dataKey === rowData.dataKey
+                                  )
+                                ]?.resizable === true
+                              }
+                              checked={
+                                configState.lookAndFeel.listView[config.option].columns[
+                                  configState.lookAndFeel.listView[config.option].columns.findIndex(
+                                    (col: any) => col.dataKey === rowData.dataKey
+                                  )
+                                ]?.resizable === true
+                              }
+                              onChange={(_v: any, e: any) => {
+                                const cols = configState.lookAndFeel.listView[
+                                  config.option
+                                ].columns.map((col: any) => {
+                                  if (rowData.dataKey === col.dataKey) {
+                                    if (e === true) {
+                                      const { flexGrow, ...newCols } = col;
+                                      return { ...newCols, resizable: e };
+                                    }
+                                    const columnPickerMatch = config.columnList.findIndex(
+                                      (picker: any) => picker.value.dataKey === rowData.dataKey
+                                    );
+                                    const matchedFlexGrowValue =
+                                      config.columnList[columnPickerMatch]?.value.flexGrow || 1;
+
+                                    const { width, rowIndex: r, ...newCols } = col;
+
+                                    return {
+                                      ...newCols,
+                                      flexGrow: matchedFlexGrowValue,
+                                      resizable: e,
+                                    };
+                                  }
+
+                                  return { ...col };
+                                });
+
+                                dispatch(setColumnList({ listType: config.option, entries: cols }));
+                              }}
+                            />
+                          </div>
                         ) : rowData[column.dataKey] ? (
                           rowData[column.dataKey]
                         ) : (

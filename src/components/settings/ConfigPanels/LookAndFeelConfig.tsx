@@ -56,23 +56,60 @@ const LookAndFeelConfig = () => {
   const currentGenreColumns = genreCols?.map((column: any) => column.label) || [];
 
   return (
-    <ConfigPanel header="Look & Feel" bordered>
-      <div style={{ width: '300px' }}>
-        <p>Select the main application theme.</p>
-        <RadioGroup
-          name="themeRadioList"
-          appearance="default"
-          defaultValue={String(settings.getSync('theme'))}
-          onChange={(e) => {
-            settings.setSync('theme', e);
-            dispatch(setTheme(e));
-          }}
-        >
-          <StyledRadio value="defaultDark">Default Dark</StyledRadio>
-          <StyledRadio value="defaultLight">Default Light</StyledRadio>
-        </RadioGroup>
+    <>
+      <ConfigPanel header="Look & Feel" bordered>
+        <div style={{ width: '300px' }}>
+          <p>Select the main application theme.</p>
+          <RadioGroup
+            name="themeRadioList"
+            appearance="default"
+            defaultValue={String(settings.getSync('theme'))}
+            onChange={(e) => {
+              settings.setSync('theme', e);
+              dispatch(setTheme(e));
+            }}
+          >
+            <StyledRadio value="defaultDark">Default Dark</StyledRadio>
+            <StyledRadio value="defaultLight">Default Light</StyledRadio>
+          </RadioGroup>
+          <br />
+          <ControlLabel>Font</ControlLabel>
+          <br />
+          <StyledInputPicker
+            data={Fonts}
+            groupBy="role"
+            cleanable={false}
+            defaultValue={String(settings.getSync('font'))}
+            onChange={(e: string) => {
+              settings.setSync('font', e);
+              dispatch(setFont(e));
+            }}
+          />
+        </div>
         <br />
-
+        <div>
+          <ControlLabel>Titlebar style (requires app restart)</ControlLabel>
+          <br />
+          <StyledInputPicker
+            data={[
+              {
+                label: 'macOS',
+                value: 'mac',
+              },
+              {
+                label: 'Windows',
+                value: 'windows',
+              },
+            ]}
+            cleanable={false}
+            defaultValue={String(settings.getSync('titleBarStyle'))}
+            onChange={(e: string) => {
+              settings.setSync('titleBarStyle', e);
+              dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
+            }}
+          />
+        </div>
+        <br />
         <StyledCheckbox
           defaultChecked={dynamicBackgroundChk}
           checked={dynamicBackgroundChk}
@@ -84,78 +121,9 @@ const LookAndFeelConfig = () => {
         >
           Enable dynamic background
         </StyledCheckbox>
-        <br />
-        <ControlLabel>Font</ControlLabel>
-
-        <br />
-        <StyledInputPicker
-          data={Fonts}
-          groupBy="role"
-          cleanable={false}
-          defaultValue={String(settings.getSync('font'))}
-          onChange={(e: string) => {
-            settings.setSync('font', e);
-            dispatch(setFont(e));
-          }}
-        />
-      </div>
-      <br />
-      <div>
-        <ControlLabel>Titlebar style (requires app restart)</ControlLabel>
-
-        <br />
-        <StyledInputPicker
-          data={[
-            {
-              label: 'macOS',
-              value: 'mac',
-            },
-            {
-              label: 'Windows',
-              value: 'windows',
-            },
-          ]}
-          cleanable={false}
-          defaultValue={String(settings.getSync('titleBarStyle'))}
-          onChange={(e: string) => {
-            settings.setSync('titleBarStyle', e);
-            dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
-          }}
-        />
-      </div>
-      <br />
+      </ConfigPanel>
       <ConfigPanel header="List-View" bordered>
-        <StyledCheckbox
-          defaultChecked={highlightOnRowHoverChk}
-          checked={highlightOnRowHoverChk}
-          onChange={(_v: any, e: boolean) => {
-            settings.setSync('highlightOnRowHover', e);
-            dispatch(
-              setMiscSetting({
-                setting: 'highlightOnRowHover',
-                value: e,
-              })
-            );
-            setHighlightOnRowHoverChk(e);
-          }}
-        >
-          Show highlight on row hover
-        </StyledCheckbox>
-        <br />
-        <p>Select the columns you want displayed on pages with a list-view.</p>
-        <StyledCheckbox
-          defaultChecked={resizableColumn}
-          onChange={(_v: any, e: boolean) => {
-            setResizableColumn(e);
-          }}
-        >
-          Use resizable columns (check/uncheck this before selecting columns)
-        </StyledCheckbox>
-        <Nav
-          style={{ paddingTop: '10px' }}
-          activeKey={currentLAFTab}
-          onSelect={(e) => setCurrentLAFTab(e)}
-        >
+        <Nav activeKey={currentLAFTab} onSelect={(e) => setCurrentLAFTab(e)}>
           <StyledNavItem eventKey="songList">Songs</StyledNavItem>
           <StyledNavItem eventKey="albumList">Albums</StyledNavItem>
           <StyledNavItem eventKey="playlistList">Playlists</StyledNavItem>
@@ -246,6 +214,24 @@ const LookAndFeelConfig = () => {
             }}
           />
         )}
+
+        <br />
+        <StyledCheckbox
+          defaultChecked={highlightOnRowHoverChk}
+          checked={highlightOnRowHoverChk}
+          onChange={(_v: any, e: boolean) => {
+            settings.setSync('highlightOnRowHover', e);
+            dispatch(
+              setMiscSetting({
+                setting: 'highlightOnRowHover',
+                value: e,
+              })
+            );
+            setHighlightOnRowHoverChk(e);
+          }}
+        >
+          Show highlight on row hover
+        </StyledCheckbox>
       </ConfigPanel>
       <ConfigPanel header="Grid-View" bordered>
         <ControlLabel>Card size</ControlLabel>
@@ -260,7 +246,7 @@ const LookAndFeelConfig = () => {
           }}
         />
       </ConfigPanel>
-    </ConfigPanel>
+    </>
   );
 };
 
