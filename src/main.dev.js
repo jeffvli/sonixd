@@ -29,10 +29,13 @@ import playQueueReducer, {
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
 import { getCurrentEntryList } from './shared/utils';
+import setDefaultSettings from './components/shared/setDefaultSettings';
 
 const isWindows = process.platform === 'win32';
 const isMacOS = process.platform === 'darwin';
 const isLinux = process.platform === 'linux';
+
+setDefaultSettings(false);
 
 export const store = configureStore({
   reducer: {
