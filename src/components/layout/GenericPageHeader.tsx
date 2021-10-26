@@ -73,7 +73,7 @@ const GenericPageHeader = ({
           <span
             style={{
               display: 'flex',
-              width: '45%',
+              width: '80%',
               overflow: 'hidden',
             }}
           >

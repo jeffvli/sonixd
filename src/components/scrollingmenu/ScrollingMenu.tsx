@@ -29,8 +29,8 @@ const ScrollingMenu = ({
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
   const scrollContainerRef = useRef<any>();
-  const gridCardSize = Number(settings.getSync('gridCardSize'));
 
   return (
     <>
@@ -56,13 +56,15 @@ const ScrollingMenu = ({
                 <StyledIconButton
                   icon={<Icon icon="arrow-left" />}
                   onClick={() => {
-                    scrollContainerRef.current.scrollLeft -= gridCardSize * 5;
+                    scrollContainerRef.current.scrollLeft -=
+                      config.lookAndFeel.gridView.cardSize * 5;
                   }}
                 />
                 <StyledIconButton
                   icon={<Icon icon="arrow-right" />}
                   onClick={() => {
-                    scrollContainerRef.current.scrollLeft += gridCardSize * 5;
+                    scrollContainerRef.current.scrollLeft +=
+                      config.lookAndFeel.gridView.cardSize * 5;
                   }}
                 />
               </ButtonGroup>
@@ -92,7 +94,7 @@ const ScrollingMenu = ({
               playClick={{ type, id: item.id }}
               details={{ cacheType: type, ...item }}
               hasHoverButtons
-              size={settings.getSync('gridCardSize')}
+              size={config.lookAndFeel.gridView.cardSize}
               lazyLoad
               cacheImages={cacheImages}
               cachePath={misc.imageCachePath}

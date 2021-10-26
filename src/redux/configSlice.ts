@@ -20,6 +20,9 @@ export interface ConfigPage {
       genre: { columns: any; rowHeight: number; fontSize: number };
       mini: { columns: any; rowHeight: number; fontSize: number };
     };
+    gridView: {
+      cardSize: number;
+    };
   };
 }
 
@@ -75,6 +78,9 @@ const initialState: ConfigPage = {
         fontSize: Number(parsedSettings.miniListFontSize),
       },
     },
+    gridView: {
+      cardSize: Number(parsedSettings.gridCardSize),
+    },
   },
 };
 
@@ -96,6 +102,10 @@ const configSlice = createSlice({
 
     setFontSize: (state, action: PayloadAction<{ listType: ColumnList; size: number }>) => {
       state.lookAndFeel.listView[action.payload.listType].fontSize = action.payload.size;
+    },
+
+    setGridCardSize: (state, action: PayloadAction<{ size: number }>) => {
+      state.lookAndFeel.gridView.cardSize = action.payload.size;
     },
 
     moveToIndex: (
@@ -120,6 +130,7 @@ export const {
   setColumnList,
   setRowHeight,
   setFontSize,
+  setGridCardSize,
   moveToIndex,
 } = configSlice.actions;
 export default configSlice.reducer;

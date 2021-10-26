@@ -359,6 +359,9 @@ const configState: ConfigPage = {
         fontSize: 14,
       },
     },
+    gridView: {
+      cardSize: 160,
+    },
   },
 };
 

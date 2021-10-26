@@ -222,7 +222,7 @@ const StarredView = () => {
                     unit: '',
                   }}
                   playClick={{ type: 'album', idProperty: 'id' }}
-                  size={Number(settings.getSync('gridCardSize'))}
+                  size={config.lookAndFeel.gridView.cardSize}
                   cacheType="album"
                   handleFavorite={handleRowFavoriteAlbum}
                 />
@@ -268,7 +268,7 @@ const StarredView = () => {
                     unit: ' albums',
                   }}
                   playClick={{ type: 'artist', idProperty: 'id' }}
-                  size={Number(settings.getSync('gridCardSize'))}
+                  size={config.lookAndFeel.gridView.cardSize}
                   cacheType="artist"
                   handleFavorite={handleRowFavoriteArtist}
                 />

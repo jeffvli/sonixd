@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { getAlbums, star, unstar } from '../../api/api';
@@ -16,7 +15,7 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
-  const cardSize = Number(settings.getSync('gridCardSize'));
+  const config = useAppSelector((state) => state.config);
   const [searchQuery, setSearchQuery] = useState('');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
@@ -156,7 +155,7 @@ const Dashboard = () => {
               property: 'artist',
               urlProperty: 'artistId',
             }}
-            cardSize={cardSize}
+            cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=recent`)}
             type="album"
             handleFavorite={handleFavorite}
@@ -175,7 +174,7 @@ const Dashboard = () => {
               property: 'artist',
               urlProperty: 'artistId',
             }}
-            cardSize={cardSize}
+            cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=newest`)}
             type="album"
             handleFavorite={handleFavorite}
@@ -194,7 +193,7 @@ const Dashboard = () => {
               property: 'artist',
               urlProperty: 'artistId',
             }}
-            cardSize={cardSize}
+            cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=random`)}
             type="album"
             handleFavorite={handleFavorite}
@@ -213,7 +212,7 @@ const Dashboard = () => {
               property: 'artist',
               urlProperty: 'artistId',
             }}
-            cardSize={cardSize}
+            cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => history.push(`/library/album?sortType=frequent`)}
             type="album"
             handleFavorite={handleFavorite}
