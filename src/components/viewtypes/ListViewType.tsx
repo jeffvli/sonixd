@@ -30,6 +30,7 @@ const ListViewType = (
     handleDragEnd,
     dnd,
     miniView,
+    disableContextMenu,
     disabledContextMenuOptions,
     handleFavorite,
     handleRating,
@@ -331,6 +332,7 @@ const ListViewType = (
             handleDragEnd={handleDragEnd}
             dnd={dnd}
             miniView={miniView}
+            disableContextMenu={disableContextMenu}
             disabledContextMenuOptions={disabledContextMenuOptions}
             handleFavorite={handleFavorite}
             handleRating={handleRating}
