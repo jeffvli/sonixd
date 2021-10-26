@@ -749,7 +749,7 @@ const ListViewTable = ({
                       onClick={(e: any) => {
                         if (
                           !column.dataKey?.match(
-                            /starred|songCount|duration|userRating|columnResizable|columnDefaultSort/
+                            /starred|userRating|columnResizable|columnDefaultSort/
                           )
                         ) {
                           handleRowClick(e, {
@@ -761,7 +761,7 @@ const ListViewTable = ({
                       onDoubleClick={() => {
                         if (
                           !column.dataKey?.match(
-                            /starred|songCount|duration|userRating|columnResizable|columnDefaultSort/
+                            /starred|userRating|columnResizable|columnDefaultSort/
                           )
                         ) {
                           handleRowDoubleClick({
@@ -836,7 +836,11 @@ const ListViewTable = ({
                             </RsuiteLinkButton>
                           </CustomTooltip>
                         ) : column.dataKey === 'duration' ? (
-                          formatSongDuration(rowData[column.dataKey])
+                          !formatSongDuration(rowData[column.dataKey]) ? (
+                            <span>&#8203;</span>
+                          ) : (
+                            formatSongDuration(rowData[column.dataKey])
+                          )
                         ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
                           formatDate(rowData[column.dataKey])
                         ) : column.dataKey === 'size' ? (
