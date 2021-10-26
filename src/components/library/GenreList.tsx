@@ -15,6 +15,7 @@ import {
   toggleSelected,
 } from '../../redux/multiSelectSlice';
 import { getGenres } from '../../api/api';
+import { setActive } from '../../redux/albumSlice';
 
 const GenreList = () => {
   const dispatch = useAppDispatch();
@@ -46,9 +47,13 @@ const GenreList = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-
+    dispatch(setActive({ filter: rowData.value }));
     dispatch(clearSelected());
-    history.push(`/library/album?sortType=${rowData.value}`);
+
+    // Needs a small delay or the filter won't set properly when navigating to the album list
+    setTimeout(() => {
+      history.push(`/library/album?sortType=${rowData.value}`);
+    }, 50);
   };
 
   return (
