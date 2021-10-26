@@ -29,6 +29,7 @@ const StarredView = () => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const folder = useAppSelector((state) => state.folder);
   const favorite = useAppSelector((state) => state.favorite);
+  const config = useAppSelector((state) => state.config);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
@@ -165,11 +166,11 @@ const StarredView = () => {
           {favorite.active.tab === 'tracks' && (
             <ListViewType
               data={searchQuery !== '' ? filteredData : data.song}
-              tableColumns={settings.getSync('musicListColumns')}
+              tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
-              rowHeight={Number(settings.getSync('musicListRowHeight'))}
-              fontSize={settings.getSync('musicListFontSize')}
+              rowHeight={config.lookAndFeel.listView.music.rowHeight}
+              fontSize={config.lookAndFeel.listView.music.fontSize}
               cacheImages={{
                 enabled: settings.getSync('cacheImages'),
                 cacheType: 'album',
@@ -191,9 +192,9 @@ const StarredView = () => {
               {viewType === 'list' && (
                 <ListViewType
                   data={searchQuery !== '' ? filteredData : data.album}
-                  tableColumns={settings.getSync('albumListColumns')}
-                  rowHeight={Number(settings.getSync('albumListRowHeight'))}
-                  fontSize={settings.getSync('albumListFontSize')}
+                  tableColumns={config.lookAndFeel.listView.album.columns}
+                  rowHeight={config.lookAndFeel.listView.album.rowHeight}
+                  fontSize={config.lookAndFeel.listView.album.fontSize}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
                   cacheImages={{
@@ -238,9 +239,9 @@ const StarredView = () => {
               {viewType === 'list' && (
                 <ListViewType
                   data={searchQuery !== '' ? filteredData : data.artist}
-                  tableColumns={settings.getSync('artistListColumns')}
-                  rowHeight={Number(settings.getSync('artistListRowHeight'))}
-                  fontSize={settings.getSync('artistListFontSize')}
+                  tableColumns={config.lookAndFeel.listView.artist.columns}
+                  rowHeight={config.lookAndFeel.listView.artist.rowHeight}
+                  fontSize={config.lookAndFeel.listView.artist.fontSize}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
                   cacheImages={{

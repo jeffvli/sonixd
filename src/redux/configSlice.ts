@@ -89,6 +89,14 @@ const configSlice = createSlice({
       state.lookAndFeel.listView[action.payload.listType].columns = action.payload.entries;
     },
 
+    setRowHeight: (state, action: PayloadAction<{ listType: ColumnList; height: number }>) => {
+      state.lookAndFeel.listView[action.payload.listType].rowHeight = action.payload.height;
+    },
+
+    setFontSize: (state, action: PayloadAction<{ listType: ColumnList; size: number }>) => {
+      state.lookAndFeel.listView[action.payload.listType].fontSize = action.payload.size;
+    },
+
     moveToIndex: (
       state,
       action: PayloadAction<{
@@ -106,5 +114,11 @@ const configSlice = createSlice({
   },
 });
 
-export const { setActive, setColumnList, moveToIndex } = configSlice.actions;
+export const {
+  setActive,
+  setColumnList,
+  setRowHeight,
+  setFontSize,
+  moveToIndex,
+} = configSlice.actions;
 export default configSlice.reducer;
