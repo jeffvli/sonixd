@@ -11,30 +11,25 @@ import {
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
-import { useAppDispatch } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setTheme, setFont, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
 import {
   songColumnPicker,
-  songColumnList,
   songColumnListAuto,
   albumColumnPicker,
-  albumColumnList,
   albumColumnListAuto,
   playlistColumnPicker,
-  playlistColumnList,
   playlistColumnListAuto,
   artistColumnPicker,
-  artistColumnList,
   artistColumnListAuto,
   genreColumnPicker,
-  genreColumnList,
   genreColumnListAuto,
 } from '../ListViewColumns';
+import { setActive } from '../../../redux/configSlice';
 
 const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
-  const [currentLAFTab, setCurrentLAFTab] = useState('songList');
-  const [resizableColumn, setResizableColumn] = useState(false);
+  const config = useAppSelector((state) => state.config);
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
     Boolean(settings.getSync('dynamicBackground'))
   );
@@ -123,20 +118,23 @@ const LookAndFeelConfig = () => {
         </StyledCheckbox>
       </ConfigPanel>
       <ConfigPanel header="List-View" bordered>
-        <Nav activeKey={currentLAFTab} onSelect={(e) => setCurrentLAFTab(e)}>
-          <StyledNavItem eventKey="songList">Songs</StyledNavItem>
-          <StyledNavItem eventKey="albumList">Albums</StyledNavItem>
-          <StyledNavItem eventKey="playlistList">Playlists</StyledNavItem>
-          <StyledNavItem eventKey="artistList">Artists</StyledNavItem>
-          <StyledNavItem eventKey="genreList">Genres</StyledNavItem>
-          <StyledNavItem eventKey="miniList">Miniplayer</StyledNavItem>
+        <Nav
+          activeKey={config.active.columnSelectorTab}
+          onSelect={(e) => dispatch(setActive({ ...config.active, columnSelectorTab: e }))}
+        >
+          <StyledNavItem eventKey="music">Songs</StyledNavItem>
+          <StyledNavItem eventKey="album">Albums</StyledNavItem>
+          <StyledNavItem eventKey="playlist">Playlists</StyledNavItem>
+          <StyledNavItem eventKey="artist">Artists</StyledNavItem>
+          <StyledNavItem eventKey="genre">Genres</StyledNavItem>
+          <StyledNavItem eventKey="mini">Miniplayer</StyledNavItem>
         </Nav>
-        {currentLAFTab === 'songList' && (
+        {config.active.columnSelectorTab === 'music' && (
           <ListViewConfig
             title="Song List"
             defaultColumns={currentSongColumns}
             columnPicker={songColumnPicker}
-            columnList={resizableColumn ? songColumnList : songColumnListAuto}
+            columnList={songColumnListAuto}
             settingsConfig={{
               columnList: 'musicListColumns',
               rowHeight: 'musicListRowHeight',
@@ -145,12 +143,12 @@ const LookAndFeelConfig = () => {
           />
         )}
 
-        {currentLAFTab === 'albumList' && (
+        {config.active.columnSelectorTab === 'album' && (
           <ListViewConfig
             title="Album List"
             defaultColumns={currentAlbumColumns}
             columnPicker={albumColumnPicker}
-            columnList={resizableColumn ? albumColumnList : albumColumnListAuto}
+            columnList={albumColumnListAuto}
             settingsConfig={{
               columnList: 'albumListColumns',
               rowHeight: 'albumListRowHeight',
@@ -159,12 +157,12 @@ const LookAndFeelConfig = () => {
           />
         )}
 
-        {currentLAFTab === 'playlistList' && (
+        {config.active.columnSelectorTab === 'playlist' && (
           <ListViewConfig
             title="Playlist List"
             defaultColumns={currentPlaylistColumns}
             columnPicker={playlistColumnPicker}
-            columnList={resizableColumn ? playlistColumnList : playlistColumnListAuto}
+            columnList={playlistColumnListAuto}
             settingsConfig={{
               columnList: 'playlistListColumns',
               rowHeight: 'playlistListRowHeight',
@@ -173,12 +171,12 @@ const LookAndFeelConfig = () => {
           />
         )}
 
-        {currentLAFTab === 'artistList' && (
+        {config.active.columnSelectorTab === 'artist' && (
           <ListViewConfig
             title="Artist List"
             defaultColumns={currentArtistColumns}
             columnPicker={artistColumnPicker}
-            columnList={resizableColumn ? artistColumnList : artistColumnListAuto}
+            columnList={artistColumnListAuto}
             settingsConfig={{
               columnList: 'artistListColumns',
               rowHeight: 'artistListRowHeight',
@@ -187,12 +185,12 @@ const LookAndFeelConfig = () => {
           />
         )}
 
-        {currentLAFTab === 'genreList' && (
+        {config.active.columnSelectorTab === 'genre' && (
           <ListViewConfig
             title="Genre List"
             defaultColumns={currentGenreColumns}
             columnPicker={genreColumnPicker}
-            columnList={resizableColumn ? genreColumnList : genreColumnListAuto}
+            columnList={genreColumnListAuto}
             settingsConfig={{
               columnList: 'genreListColumns',
               rowHeight: 'genreListRowHeight',
@@ -201,12 +199,12 @@ const LookAndFeelConfig = () => {
           />
         )}
 
-        {currentLAFTab === 'miniList' && (
+        {config.active.columnSelectorTab === 'mini' && (
           <ListViewConfig
             title="Miniplayer List"
             defaultColumns={currentMiniColumns}
             columnPicker={songColumnPicker}
-            columnList={resizableColumn ? songColumnList : songColumnListAuto}
+            columnList={songColumnListAuto}
             settingsConfig={{
               columnList: 'miniListColumns',
               rowHeight: 'miniListRowHeight',
