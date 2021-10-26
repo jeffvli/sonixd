@@ -28,8 +28,8 @@ const SearchView = () => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playQueue = useAppSelector((state) => state.playQueue);
   const folder = useAppSelector((state) => state.folder);
+  const config = useAppSelector((state) => state.config);
   const urlQuery = query.get('query') || '';
-  const cardSize = Number(settings.getSync('gridCardSize'));
   const [searchQuery, setSearchQuery] = useState(query.get('query') || '');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
@@ -176,7 +176,7 @@ const SearchView = () => {
               property: 'albumCount',
               unit: ' albums',
             }}
-            cardSize={cardSize}
+            cardSize={config.lookAndFeel.gridView.cardSize}
             type="artist"
             handleFavorite={handleArtistFavorite}
           />
@@ -195,7 +195,7 @@ const SearchView = () => {
               urlProperty: 'artistId',
               unit: '',
             }}
-            cardSize={cardSize}
+            cardSize={config.lookAndFeel.gridView.cardSize}
             type="album"
             handleFavorite={handleAlbumFavorite}
           />

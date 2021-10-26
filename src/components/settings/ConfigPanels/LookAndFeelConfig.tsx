@@ -25,7 +25,7 @@ import {
   genreColumnPicker,
   genreColumnListAuto,
 } from '../ListViewColumns';
-import { setActive } from '../../../redux/configSlice';
+import { setActive, setGridCardSize } from '../../../redux/configSlice';
 
 const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
@@ -234,13 +234,14 @@ const LookAndFeelConfig = () => {
       <ConfigPanel header="Grid-View" bordered>
         <ControlLabel>Card size</ControlLabel>
         <StyledInputNumber
-          defaultValue={String(settings.getSync('gridCardSize'))}
+          defaultValue={config.lookAndFeel.gridView.cardSize}
           step={1}
           min={100}
           max={350}
           width={150}
           onChange={(e: any) => {
             settings.setSync('gridCardSize', Number(e));
+            dispatch(setGridCardSize({ size: Number(e) }));
           }}
         />
       </ConfigPanel>

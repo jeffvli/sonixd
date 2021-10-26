@@ -189,7 +189,7 @@ const PlaylistList = () => {
             unit: ' tracks',
           }}
           playClick={{ type: 'playlist', idProperty: 'id' }}
-          size={Number(settings.getSync('gridCardSize'))}
+          size={config.lookAndFeel.gridView.cardSize}
           cacheType="playlist"
         />
       )}

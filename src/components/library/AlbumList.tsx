@@ -55,7 +55,7 @@ const AlbumList = () => {
       album.active.filter === 'random'
         ? getAlbumsDirect({
             type: 'random',
-            size: Number(settings.getSync('gridCardSize')),
+            size: config.lookAndFeel.gridView.cardSize,
             musicFolderId: musicFolder,
           })
         : getAllAlbums({
@@ -221,7 +221,7 @@ const AlbumList = () => {
             unit: '',
           }}
           playClick={{ type: 'album', idProperty: 'id' }}
-          size={Number(settings.getSync('gridCardSize'))}
+          size={config.lookAndFeel.gridView.cardSize}
           cacheType="album"
           handleFavorite={handleRowFavorite}
         />

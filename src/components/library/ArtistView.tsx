@@ -307,7 +307,7 @@ const ArtistView = ({ ...rest }: any) => {
               unit: ' tracks',
             }}
             playClick={{ type: 'album', idProperty: 'id' }}
-            size={Number(settings.getSync('gridCardSize'))}
+            size={config.lookAndFeel.gridView.cardSize}
             cacheType="album"
             isModal={rest.isModal}
             handleFavorite={handleRowFavorite}
