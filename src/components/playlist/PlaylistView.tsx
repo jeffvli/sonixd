@@ -77,6 +77,7 @@ const PlaylistView = ({ ...rest }) => {
   const playlist = useAppSelector((state) => state.playlist);
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -492,13 +493,13 @@ const PlaylistView = ({ ...rest }) => {
     >
       <ListViewType
         data={searchQuery !== '' ? filteredData : playlist[getCurrentEntryList(playlist)]}
-        tableColumns={settings.getSync('musicListColumns')}
+        tableColumns={config.lookAndFeel.listView.music.columns}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}
         handleDragEnd={handleDragEnd}
         virtualized
-        rowHeight={Number(settings.getSync('musicListRowHeight'))}
-        fontSize={Number(settings.getSync('musicListFontSize'))}
+        rowHeight={config.lookAndFeel.listView.music.rowHeight}
+        fontSize={config.lookAndFeel.listView.music.fontSize}
         cacheImages={{
           enabled: settings.getSync('cacheImages'),
           cacheType: 'album',

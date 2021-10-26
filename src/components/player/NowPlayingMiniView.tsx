@@ -38,6 +38,7 @@ const NowPlayingMiniView = () => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const config = useAppSelector((state) => state.config);
 
   useHotkeys(
     'del',
@@ -250,15 +251,15 @@ const NowPlayingMiniView = () => {
               ref={tableRef}
               data={playQueue[getCurrentEntryList(playQueue)]}
               currentIndex={playQueue.currentIndex}
-              tableColumns={settings.getSync('miniListColumns')}
+              tableColumns={config.lookAndFeel.listView.mini.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
               handleUpClick={handleUpClick}
               handleDownClick={handleDownClick}
               handleDragEnd={handleDragEnd}
               virtualized
-              rowHeight={Number(settings.getSync('miniListRowHeight'))}
-              fontSize={Number(settings.getSync('miniListFontSize'))}
+              rowHeight={config.lookAndFeel.listView.mini.rowHeight}
+              fontSize={config.lookAndFeel.listView.mini.fontSize}
               cacheImages={{
                 enabled: settings.getSync('cacheImages'),
                 cacheType: 'album',

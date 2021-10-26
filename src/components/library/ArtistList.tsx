@@ -25,6 +25,7 @@ const ArtistList = () => {
   const history = useHistory();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
+  const config = useAppSelector((state) => state.config);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [viewType, setViewType] = useState(settings.getSync('artistViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
@@ -128,9 +129,9 @@ const ArtistList = () => {
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
           data={searchQuery !== '' ? filteredData : artists}
-          tableColumns={settings.getSync('artistListColumns')}
-          rowHeight={Number(settings.getSync('artistListRowHeight'))}
-          fontSize={settings.getSync('artistListFontSize')}
+          tableColumns={config.lookAndFeel.listView.artist.columns}
+          rowHeight={config.lookAndFeel.listView.artist.rowHeight}
+          fontSize={config.lookAndFeel.listView.artist.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           cacheImages={{
