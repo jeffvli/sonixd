@@ -111,6 +111,10 @@ export const formatSongDuration = (duration: number) => {
     return `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`;
   }
 
+  if (Number.isNaN(minutes)) {
+    return null;
+  }
+
   return `${minutes}:${seconds}`;
 };
 
