@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Modal } from 'rsuite';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { decrementModalPage, hideModal } from '../../redux/miscSlice';
+import { decrementModalPage, hideModal, setContextMenu } from '../../redux/miscSlice';
 import { StyledButton } from '../shared/styled';
 import ArtistView from '../library/ArtistView';
 import AlbumView from '../library/AlbumView';
@@ -35,7 +35,7 @@ const PageModal = () => {
       onExit={() => dispatch(hideModal())}
       full
     >
-      <Modal.Header>
+      <Modal.Header onClick={() => dispatch(setContextMenu({ show: false }))}>
         <StyledButton
           appearance="link"
           onClick={() => {
@@ -45,7 +45,10 @@ const PageModal = () => {
           <Icon icon="arrow-circle-left" />
         </StyledButton>
       </Modal.Header>
-      <Modal.Body style={{ height: '800px' }}>
+      <Modal.Body
+        style={{ height: '800px' }}
+        onClick={() => dispatch(setContextMenu({ show: false }))}
+      >
         {misc.modalPages[misc.modal.currentPageIndex]?.pageType === 'artist' && (
           <ArtistView id={misc.modalPages[misc.modal.currentPageIndex].id} isModal />
         )}
