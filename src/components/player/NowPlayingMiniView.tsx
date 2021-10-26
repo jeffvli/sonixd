@@ -74,7 +74,7 @@ const NowPlayingMiniView = () => {
   }, [playQueue.currentIndex, tableRef, playQueue.displayQueue, playQueue.scrollWithCurrentSong]);
 
   let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any) => {
+  const handleRowClick = (e: any, rowData: any, tableData: any) => {
     if (timeout === null) {
       timeout = window.setTimeout(() => {
         timeout = null;
@@ -83,7 +83,7 @@ const NowPlayingMiniView = () => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(playQueue[getCurrentEntryList(playQueue)]));
+          dispatch(toggleRangeSelected(tableData));
         }
       }, 100);
     }

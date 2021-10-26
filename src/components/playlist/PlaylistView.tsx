@@ -138,7 +138,7 @@ const PlaylistView = ({ ...rest }) => {
   }, [data?.song, playlist]);
 
   let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any) => {
+  const handleRowClick = (e: any, rowData: any, tableData: any) => {
     if (timeout === null) {
       timeout = window.setTimeout(() => {
         timeout = null;
@@ -147,11 +147,7 @@ const PlaylistView = ({ ...rest }) => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(
-            toggleRangeSelected(
-              searchQuery !== '' ? filteredData : playlist[getCurrentEntryList(playlist)]
-            )
-          );
+          dispatch(toggleRangeSelected(tableData));
         }
       }, 100);
     }

@@ -118,7 +118,7 @@ const NowPlayingView = () => {
   }, [playQueue.currentIndex, playQueue.scrollWithCurrentSong, tableRef]);
 
   let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any) => {
+  const handleRowClick = (e: any, rowData: any, tableData: any) => {
     if (timeout === null) {
       timeout = window.setTimeout(() => {
         timeout = null;
@@ -130,7 +130,7 @@ const NowPlayingView = () => {
           if (searchQuery !== '') {
             dispatch(toggleRangeSelected(filteredData));
           } else {
-            dispatch(toggleRangeSelected(playQueue[getCurrentEntryList(playQueue)]));
+            dispatch(toggleRangeSelected(tableData));
           }
         }
       }, 100);
