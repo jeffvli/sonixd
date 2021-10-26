@@ -40,7 +40,6 @@ const ArtistList = () => {
     ['artistList', musicFolder],
     () => getArtists({ musicFolderId: musicFolder }),
     {
-      refetchOnWindowFocus: false,
       cacheTime: 3600000, // Stay in cache for 1 hour
       staleTime: Infinity, // Only allow manual refresh
     }

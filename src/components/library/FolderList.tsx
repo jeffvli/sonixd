@@ -40,19 +40,13 @@ const FolderList = () => {
 
   const { isLoading, isError, data: indexData, error }: any = useQuery(
     ['indexes', musicFolder],
-    () => getIndexes({ musicFolderId: musicFolder }),
-    {
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
+    () => getIndexes({ musicFolderId: musicFolder })
   );
   const { isLoading: isLoadingFolderData, data: folderData }: any = useQuery(
     ['folder', folder.currentViewedFolder],
     () => getMusicDirectory({ id: folder.currentViewedFolder }),
     {
       enabled: folder.currentViewedFolder !== '',
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
     }
   );
 

@@ -26,7 +26,6 @@ const StarredView = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const multiSelect = useAppSelector((state) => state.multiSelect);
   const folder = useAppSelector((state) => state.folder);
   const favorite = useAppSelector((state) => state.favorite);
   const config = useAppSelector((state) => state.config);
@@ -39,12 +38,8 @@ const StarredView = () => {
     }
   }, [folder]);
 
-  const { isLoading, isError, data, error }: any = useQuery(
-    ['starred', musicFolder],
-    () => getStarred({ musicFolderId: musicFolder }),
-    {
-      refetchOnWindowFocus: multiSelect.selected.length < 1,
-    }
+  const { isLoading, isError, data, error }: any = useQuery(['starred', musicFolder], () =>
+    getStarred({ musicFolderId: musicFolder })
   );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(

@@ -109,9 +109,7 @@ export const GlobalContextMenu = () => {
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [indexToMoveTo, setIndexToMoveTo] = useState(0);
 
-  const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'), {
-    refetchOnWindowFocus: false,
-  });
+  const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'));
 
   const handlePlay = async () => {
     dispatch(setContextMenu({ show: false }));
