@@ -84,10 +84,8 @@ const PlaylistView = ({ ...rest }) => {
   const editTriggerRef = useRef<any>();
   const { id } = useParams<PlaylistParams>();
   const playlistId = rest.id ? rest.id : id;
-  const { isLoading, isError, data, error }: any = useQuery(
-    ['playlist', playlistId],
-    () => getPlaylist(playlistId),
-    { refetchOnWindowFocus: false }
+  const { isLoading, isError, data, error }: any = useQuery(['playlist', playlistId], () =>
+    getPlaylist(playlistId)
   );
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');

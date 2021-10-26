@@ -28,26 +28,22 @@ const Dashboard = () => {
 
   const { isLoading: isLoadingRecent, data: recentAlbums }: any = useQuery(
     ['recentAlbums', musicFolder],
-    () => getAlbums({ type: 'recent', size: 20, musicFolderId: musicFolder }, 250),
-    { refetchOnWindowFocus: false }
+    () => getAlbums({ type: 'recent', size: 20, musicFolderId: musicFolder }, 250)
   );
 
   const { isLoading: isLoadingNewest, data: newestAlbums }: any = useQuery(
     ['newestAlbums', musicFolder],
-    () => getAlbums({ type: 'newest', size: 20, musicFolderId: musicFolder }, 250),
-    { refetchOnWindowFocus: false }
+    () => getAlbums({ type: 'newest', size: 20, musicFolderId: musicFolder }, 250)
   );
 
   const { isLoading: isLoadingRandom, data: randomAlbums }: any = useQuery(
     ['randomAlbums', musicFolder],
-    () => getAlbums({ type: 'random', size: 20, musicFolderId: musicFolder }, 250),
-    { refetchOnWindowFocus: false }
+    () => getAlbums({ type: 'random', size: 20, musicFolderId: musicFolder }, 250)
   );
 
   const { isLoading: isLoadingFrequent, data: frequentAlbums }: any = useQuery(
     ['frequentAlbums', musicFolder],
-    () => getAlbums({ type: 'frequent', size: 20, musicFolderId: musicFolder }, 250),
-    { refetchOnWindowFocus: false }
+    () => getAlbums({ type: 'frequent', size: 20, musicFolderId: musicFolder }, 250)
   );
 
   const handleFavorite = async (rowData: any) => {

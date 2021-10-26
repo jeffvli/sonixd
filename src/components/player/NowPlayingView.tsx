@@ -71,21 +71,17 @@ const NowPlayingView = () => {
     'path',
   ]);
 
-  const { data: genres }: any = useQuery(
-    ['genreList'],
-    async () => {
-      const res = await getGenres();
-      const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
-      return genresOrderedBySongCount.map((genre: any) => {
-        return {
-          label: `${genre.value} (${genre.songCount})`,
-          value: genre.value,
-          role: 'Genre',
-        };
-      });
-    },
-    { refetchOnWindowFocus: false }
-  );
+  const { data: genres }: any = useQuery(['genreList'], async () => {
+    const res = await getGenres();
+    const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
+    return genresOrderedBySongCount.map((genre: any) => {
+      return {
+        label: `${genre.value} (${genre.songCount})`,
+        value: genre.value,
+        role: 'Genre',
+      };
+    });
+  });
 
   useHotkeys(
     'del',

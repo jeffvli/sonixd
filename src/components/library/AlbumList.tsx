@@ -65,28 +65,23 @@ const AlbumList = () => {
             musicFolderId: musicFolder,
           }),
     {
-      refetchOnWindowFocus: false,
       cacheTime: 3600000, // Stay in cache for 1 hour
       staleTime: Infinity, // Only allow manual refresh
     }
   );
-  const { data: genres }: any = useQuery(
-    ['genreList'],
-    async () => {
-      const res = await getGenres();
-      return res.map((genre: any) => {
-        if (genre.albumCount !== 0) {
-          return {
-            label: `${genre.value} (${genre.albumCount})`,
-            value: genre.value,
-            role: 'Genre',
-          };
-        }
-        return null;
-      });
-    },
-    { refetchOnWindowFocus: false }
-  );
+  const { data: genres }: any = useQuery(['genreList'], async () => {
+    const res = await getGenres();
+    return res.map((genre: any) => {
+      if (genre.albumCount !== 0) {
+        return {
+          label: `${genre.value} (${genre.albumCount})`,
+          value: genre.value,
+          role: 'Genre',
+        };
+      }
+      return null;
+    });
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, albums, ['name', 'artist', 'genre', 'year']);
 

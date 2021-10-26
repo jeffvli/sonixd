@@ -42,7 +42,6 @@ interface AlbumParams {
 
 const AlbumView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
-  const multiSelect = useAppSelector((state) => state.multiSelect);
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const history = useHistory();
@@ -51,10 +50,8 @@ const AlbumView = ({ ...rest }: any) => {
   const { id } = useParams<AlbumParams>();
   const albumId = rest.id ? rest.id : id;
 
-  const { isLoading, isError, data, error }: any = useQuery(
-    ['album', albumId],
-    () => getAlbum(albumId),
-    { refetchOnWindowFocus: multiSelect.selected.length < 1 }
+  const { isLoading, isError, data, error }: any = useQuery(['album', albumId], () =>
+    getAlbum(albumId)
   );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, data?.song, [
