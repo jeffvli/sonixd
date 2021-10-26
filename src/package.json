@@ -1,7 +1,7 @@
 {
   "name": "sonixd",
   "productName": "sonixd",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "An electron-based subsonic-api compatible desktop media player",
   "main": "./main.prod.js",
   "author": {
@@ -12,7 +12,7 @@
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
     "postinstall": "yarn electron-rebuild"
   },
-  "license": "GPL-2.0",
+  "license": "GPL-3.0",
   "dependencies": {
     "mpris-service": "^2.1.2"
   }
