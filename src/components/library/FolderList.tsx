@@ -36,7 +36,7 @@ const FolderList = () => {
   const query = useRouterQuery();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
-  const [musicFolder, setMusicFolder] = useState(undefined);
+  const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
   const { isLoading, isError, data: indexData, error }: any = useQuery(
     ['indexes', musicFolder],
@@ -138,7 +138,7 @@ const FolderList = () => {
 
   return (
     <>
-      {isLoading && <PageLoader />}
+      {(isLoading || isLoadingMusicFolders) && <PageLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && indexData && (
         <GenericPage
@@ -161,8 +161,8 @@ const FolderList = () => {
                 <>
                   <ButtonToolbar>
                     <StyledInputPicker
-                      data={isLoadingMusicFolders ? [] : musicFolders}
-                      defaultValue={settings.getSync('musicFolder.id')}
+                      data={musicFolders}
+                      defaultValue={musicFolder}
                       valueKey="id"
                       labelKey="name"
                       onChange={(e: any) => {

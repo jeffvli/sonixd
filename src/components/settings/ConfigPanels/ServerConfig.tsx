@@ -19,7 +19,7 @@ const ServerConfig = () => {
       <br />
       <StyledInputPicker
         data={isLoading ? [] : musicFolders}
-        defaultValue={settings.getSync('musicFolder.id')}
+        defaultValue={folder.musicFolder}
         valueKey="id"
         labelKey="name"
         onChange={(e: any) => {
