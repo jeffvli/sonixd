@@ -57,6 +57,13 @@ const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-cell {
     transition: none;
   }
+
+  // Prevent default drag
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 const ListViewTable = ({
@@ -78,9 +85,11 @@ const ListViewTable = ({
   // onScroll,
   nowPlaying,
   playlist,
+  config,
   handleDragEnd,
   miniView,
   dnd,
+  disableContextMenu,
   disabledContextMenuOptions,
   handleFavorite,
   handleRating,
@@ -108,36 +117,38 @@ const ListViewTable = ({
   );
 
   const handleSortColumn = (column: any, type: any) => {
-    setSortColumn(column);
-    setSortType(type);
-    if (nowPlaying) {
-      dispatch(
-        setSort({
-          sortColumn: column,
-          sortType: type,
-        })
-      );
-    }
+    if (!config) {
+      setSortColumn(column);
+      setSortType(type);
+      if (nowPlaying) {
+        dispatch(
+          setSort({
+            sortColumn: column,
+            sortType: type,
+          })
+        );
+      }
 
-    if (column === (nowPlaying ? playQueue.sortColumn : sortColumn)) {
-      setSortedCount(sortedCount + 1);
+      if (column === (nowPlaying ? playQueue.sortColumn : sortColumn)) {
+        setSortedCount(sortedCount + 1);
 
-      if (sortedCount >= 1) {
-        if (nowPlaying) {
-          dispatch(
-            setSort({
-              sortColumn: undefined,
-              sortType: 'asc',
-            })
-          );
+        if (sortedCount >= 1) {
+          if (nowPlaying) {
+            dispatch(
+              setSort({
+                sortColumn: undefined,
+                sortType: 'asc',
+              })
+            );
+          }
+
+          setSortColumn(undefined);
+          setSortType('asc');
+          setSortedCount(0);
         }
-
-        setSortColumn(undefined);
-        setSortType('asc');
+      } else {
         setSortedCount(0);
       }
-    } else {
-      setSortedCount(0);
     }
   };
 
@@ -271,6 +282,7 @@ const ListViewTable = ({
   return (
     <>
       <StyledTable
+        draggable="false"
         rowClassName={(rowData: any) =>
           `${
             multiSelect?.selected.find((e: any) => e?.uniqueId === rowData?.uniqueId)
@@ -303,54 +315,56 @@ const ListViewTable = ({
         onRowContextMenu={(rowData: any, e: any) => {
           e.preventDefault();
 
-          let pageX;
-          let pageY;
-          // Use ContextMenu width from the component
-          if (e.pageX + 190 >= window.innerWidth) {
-            pageX = e.pageX - 190;
-          } else {
-            pageX = e.pageX;
-          }
+          if (!disableContextMenu) {
+            let pageX;
+            let pageY;
+            // Use ContextMenu width from the component
+            if (e.pageX + 190 >= window.innerWidth) {
+              pageX = e.pageX - 190;
+            } else {
+              pageX = e.pageX;
+            }
 
-          // Use the calculated ContextMenu height
-          // numOfButtons * 30 + props.numOfDividers * 1.5
-          const contextMenuHeight = 11 * 30 + 3 * 1.5;
-          if (e.pageY + contextMenuHeight >= window.innerHeight) {
-            pageY = e.pageY - contextMenuHeight;
-          } else {
-            pageY = e.pageY;
-          }
+            // Use the calculated ContextMenu height
+            // numOfButtons * 30 + props.numOfDividers * 1.5
+            const contextMenuHeight = 11 * 30 + 3 * 1.5;
+            if (e.pageY + contextMenuHeight >= window.innerHeight) {
+              pageY = e.pageY - contextMenuHeight;
+            } else {
+              pageY = e.pageY;
+            }
 
-          if (
-            (misc.contextMenu.show === false ||
-              misc.contextMenu.details.uniqueId !== rowData.uniqueId) &&
-            multiSelect.selected.filter((entry: any) => entry.uniqueId === rowData.uniqueId)
-              .length > 0
-          ) {
-            // Handle when right clicking a selected row
-            dispatch(
-              setContextMenu({
-                show: true,
-                xPos: pageX,
-                yPos: pageY,
-                type: nowPlaying ? 'nowPlaying' : rowData.type,
-                details: rowData,
-                disabledOptions: disabledContextMenuOptions || [],
-              })
-            );
-          } else {
-            // Handle when right clicking a non-selected row
-            dispatch(setSelectedSingle(rowData));
-            dispatch(
-              setContextMenu({
-                show: true,
-                xPos: pageX,
-                yPos: pageY,
-                type: nowPlaying ? 'nowPlaying' : rowData.type,
-                details: rowData,
-                disabledOptions: disabledContextMenuOptions || [],
-              })
-            );
+            if (
+              (misc.contextMenu.show === false ||
+                misc.contextMenu.details.uniqueId !== rowData.uniqueId) &&
+              multiSelect.selected.filter((entry: any) => entry.uniqueId === rowData.uniqueId)
+                .length > 0
+            ) {
+              // Handle when right clicking a selected row
+              dispatch(
+                setContextMenu({
+                  show: true,
+                  xPos: pageX,
+                  yPos: pageY,
+                  type: nowPlaying ? 'nowPlaying' : rowData.type,
+                  details: rowData,
+                  disabledOptions: disabledContextMenuOptions || [],
+                })
+              );
+            } else {
+              // Handle when right clicking a non-selected row
+              dispatch(setSelectedSingle(rowData));
+              dispatch(
+                setContextMenu({
+                  show: true,
+                  xPos: pageX,
+                  yPos: pageY,
+                  type: nowPlaying ? 'nowPlaying' : rowData.type,
+                  details: rowData,
+                  disabledOptions: disabledContextMenuOptions || [],
+                })
+              );
+            }
           }
         }}
         // onScroll={onScroll}
@@ -831,6 +845,8 @@ const ListViewTable = ({
                           ) : (
                             `${rowData[column.dataKey]} kbps`
                           )
+                        ) : column.dataKey === 'custom' ? (
+                          <>{rowData.uniqueId}</>
                         ) : rowData[column.dataKey] ? (
                           rowData[column.dataKey]
                         ) : (
