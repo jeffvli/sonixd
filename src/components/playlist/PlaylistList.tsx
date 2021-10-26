@@ -27,6 +27,7 @@ const PlaylistList = () => {
   const history = useHistory();
   const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const config = useAppSelector((state) => state.config);
   const playlistTriggerRef = useRef<any>();
   const [sortBy] = useState('name');
   const [newPlaylistName, setNewPlaylistName] = useState('');
@@ -152,21 +153,12 @@ const PlaylistList = () => {
     >
       {viewType === 'list' && (
         <ListViewType
-          data={
-            searchQuery === ''
-              ? playlists
-              : playlists.filter((playlist: any) => {
-                  return (
-                    playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    playlist.comment?.toLowerCase().includes(searchQuery.toLowerCase())
-                  );
-                })
-          }
+          data={searchQuery === '' ? playlists : filteredData}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          tableColumns={settings.getSync('playlistListColumns')}
-          rowHeight={Number(settings.getSync('playlistListRowHeight'))}
-          fontSize={settings.getSync('playlistListFontSize')}
+          tableColumns={config.lookAndFeel.listView.playlist.columns}
+          rowHeight={config.lookAndFeel.listView.playlist.rowHeight}
+          fontSize={config.lookAndFeel.listView.playlist.fontSize}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'playlist',

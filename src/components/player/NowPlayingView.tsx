@@ -52,6 +52,7 @@ const NowPlayingView = () => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const config = useAppSelector((state) => state.config);
   const [randomPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
     Number(settings.getSync('randomPlaylistTrackCount'))
   );
@@ -412,13 +413,13 @@ const NowPlayingView = () => {
           ref={tableRef}
           data={searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]}
           currentIndex={playQueue.currentIndex}
-          tableColumns={settings.getSync('musicListColumns')}
+          tableColumns={config.lookAndFeel.listView.music.columns}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleDragEnd={handleDragEnd}
           virtualized
-          rowHeight={Number(settings.getSync('musicListRowHeight'))}
-          fontSize={Number(settings.getSync('musicListFontSize'))}
+          rowHeight={config.lookAndFeel.listView.music.rowHeight}
+          fontSize={config.lookAndFeel.listView.music.fontSize}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',

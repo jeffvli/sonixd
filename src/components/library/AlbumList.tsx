@@ -37,6 +37,7 @@ const AlbumList = () => {
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const album = useAppSelector((state) => state.album);
+  const config = useAppSelector((state) => state.config);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortTypes, setSortTypes] = useState<any[]>();
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
@@ -189,9 +190,9 @@ const AlbumList = () => {
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
           data={searchQuery !== '' ? filteredData : albums}
-          tableColumns={settings.getSync('albumListColumns')}
-          rowHeight={Number(settings.getSync('albumListRowHeight'))}
-          fontSize={settings.getSync('albumListFontSize')}
+          tableColumns={config.lookAndFeel.listView.album.columns}
+          rowHeight={config.lookAndFeel.listView.album.rowHeight}
+          fontSize={config.lookAndFeel.listView.album.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           cacheImages={{

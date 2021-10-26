@@ -45,6 +45,7 @@ const ArtistView = ({ ...rest }: any) => {
   const history = useHistory();
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
@@ -270,12 +271,12 @@ const ArtistView = ({ ...rest }: any) => {
         {viewType === 'list' && (
           <ListViewType
             data={searchQuery !== '' ? filteredData : data.album}
-            tableColumns={settings.getSync('albumListColumns')}
+            tableColumns={config.lookAndFeel.listView.album.columns}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
             virtualized
-            rowHeight={Number(settings.getSync('albumListRowHeight'))}
-            fontSize={Number(settings.getSync('albumListFontSize'))}
+            rowHeight={config.lookAndFeel.listView.album.rowHeight}
+            fontSize={config.lookAndFeel.listView.album.fontSize}
             cacheImages={{
               enabled: settings.getSync('cacheImages'),
               cacheType: 'album',

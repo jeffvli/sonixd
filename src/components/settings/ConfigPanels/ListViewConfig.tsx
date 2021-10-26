@@ -11,7 +11,13 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../../redux/multiSelectSlice';
-import { ColumnList, moveToIndex, setColumnList } from '../../../redux/configSlice';
+import {
+  ColumnList,
+  moveToIndex,
+  setColumnList,
+  setFontSize,
+  setRowHeight,
+} from '../../../redux/configSlice';
 
 const columnSelectorColumns = [
   {
@@ -162,13 +168,14 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
       <div>
         <ControlLabel>Row height</ControlLabel>
         <StyledInputNumber
-          defaultValue={Number(settings.getSync(settingsConfig.rowHeight)) || 0}
+          defaultValue={config.lookAndFeel.listView[columnListType]?.rowHeight || 40}
           step={1}
           min={15}
           max={250}
           width={150}
           onChange={(e: number) => {
             settings.setSync(settingsConfig.rowHeight, Number(e));
+            dispatch(setRowHeight({ listType: columnListType, height: Number(e) }));
           }}
         />
       </div>
@@ -176,13 +183,14 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
       <div>
         <ControlLabel>Font size</ControlLabel>
         <StyledInputNumber
-          defaultValue={Number(settings.getSync(settingsConfig.fontSize)) || 0}
+          defaultValue={config.lookAndFeel.listView[columnListType]?.fontSize || 12}
           step={0.5}
           min={1}
           max={100}
           width={150}
           onChange={(e: number) => {
             settings.setSync(settingsConfig.fontSize, Number(e));
+            dispatch(setFontSize({ listType: columnListType, size: Number(e) }));
           }}
         />
       </div>
