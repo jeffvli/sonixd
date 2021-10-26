@@ -429,10 +429,14 @@ const ListViewTable = ({
                       height={rowHeight}
                       onClick={(e: any) => {
                         if (!dnd) {
-                          handleRowClick(e, {
-                            ...rowData,
-                            rowIndex,
-                          });
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
                         }
                       }}
                       onDoubleClick={() => {
@@ -529,10 +533,14 @@ const ListViewTable = ({
                   return (
                     <TableCellWrapper
                       onClick={(e: any) =>
-                        handleRowClick(e, {
-                          ...rowData,
-                          rowIndex,
-                        })
+                        handleRowClick(
+                          e,
+                          {
+                            ...rowData,
+                            rowIndex,
+                          },
+                          sortColumn && !nowPlaying ? sortedData : data
+                        )
                       }
                       onDoubleClick={() =>
                         handleRowDoubleClick({
@@ -752,10 +760,14 @@ const ListViewTable = ({
                             /starred|userRating|columnResizable|columnDefaultSort/
                           )
                         ) {
-                          handleRowClick(e, {
-                            ...rowData,
-                            rowIndex,
-                          });
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
                         }
                       }}
                       onDoubleClick={() => {

@@ -68,7 +68,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
   }, [columnListType, config.lookAndFeel.listView, settingsConfig.columnList]);
 
   let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any) => {
+  const handleRowClick = (e: any, rowData: any, tableData: any) => {
     if (timeout === null) {
       timeout = window.setTimeout(() => {
         timeout = null;
@@ -77,7 +77,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(config.lookAndFeel.listView[columnListType].columns));
+          dispatch(toggleRangeSelected(tableData));
         }
       }, 100);
     }
