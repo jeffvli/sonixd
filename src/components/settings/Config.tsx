@@ -79,7 +79,10 @@ const Config = () => {
           title="Config"
           subtitle={
             <>
-              <Nav activeKey={config.active.tab} onSelect={(e) => dispatch(setActive({ tab: e }))}>
+              <Nav
+                activeKey={config.active.tab}
+                onSelect={(e) => dispatch(setActive({ ...config.active, tab: e }))}
+              >
                 <StyledNavItem eventKey="playback">Playback</StyledNavItem>
                 <StyledNavItem eventKey="lookandfeel">Look & Feel</StyledNavItem>
                 <StyledNavItem eventKey="other">Other</StyledNavItem>
