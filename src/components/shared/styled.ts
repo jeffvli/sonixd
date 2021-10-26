@@ -167,6 +167,7 @@ export const ContextMenuWindow = styled.div<{
   font-size: smaller;
   background: ${(props) => props.theme.primary.sideBar};
   border: 1px #3c4043 solid;
+  z-index: 2000;
 `;
 
 export const StyledContextMenuButton = styled(Button)`
