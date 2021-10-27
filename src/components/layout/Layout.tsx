@@ -1,12 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Content } from 'rsuite';
+import { ButtonToolbar, Content, FlexboxGrid, Icon } from 'rsuite';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
 import { setContextMenu, setExpandSidebar } from '../../redux/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
+import { StyledIconButton } from '../shared/styled';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const history = useHistory();
@@ -93,6 +94,25 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
         }}
       >
         <MainContainer id="container-main" expanded={misc.expandSidebar}>
+          <FlexboxGrid justify="space-between" style={{ padding: '10px 10px 0px 10px' }}>
+            <FlexboxGrid.Item>
+              <ButtonToolbar style={{ height: '20px' }}>
+                <StyledIconButton
+                  appearance="subtle"
+                  size="sm"
+                  icon={<Icon icon="arrow-circle-left" />}
+                  onClick={() => history.goBack()}
+                />
+                <StyledIconButton
+                  appearance="subtle"
+                  size="sm"
+                  icon={<Icon icon="arrow-circle-right" />}
+                  onClick={() => history.goForward()}
+                />
+              </ButtonToolbar>
+            </FlexboxGrid.Item>
+          </FlexboxGrid>
+
           <Content id="container-content">{children}</Content>
         </MainContainer>
         <RootFooter id="container-footer">{footer}</RootFooter>

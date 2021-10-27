@@ -3,7 +3,7 @@ import { Icon, Modal } from 'rsuite';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { decrementModalPage, hideModal, setContextMenu } from '../../redux/miscSlice';
-import { StyledButton } from '../shared/styled';
+import { StyledIconButton } from '../shared/styled';
 import ArtistView from '../library/ArtistView';
 import AlbumView from '../library/AlbumView';
 import PlaylistView from '../playlist/PlaylistView';
@@ -36,14 +36,13 @@ const PageModal = () => {
       full
     >
       <Modal.Header onClick={() => dispatch(setContextMenu({ show: false }))}>
-        <StyledButton
-          appearance="link"
+        <StyledIconButton
+          appearance="subtle"
+          icon={<Icon icon="arrow-circle-left" />}
           onClick={() => {
             dispatch(decrementModalPage());
           }}
-        >
-          <Icon icon="arrow-circle-left" />
-        </StyledButton>
+        />
       </Modal.Header>
       <Modal.Body
         style={{ height: '800px' }}
