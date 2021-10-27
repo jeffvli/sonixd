@@ -9,6 +9,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
+import { setActive } from '../../redux/albumSlice';
 
 const Dashboard = () => {
   const history = useHistory();
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
+  const album = useAppSelector((state) => state.album);
   const [searchQuery, setSearchQuery] = useState('');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
@@ -156,7 +158,12 @@ const Dashboard = () => {
               urlProperty: 'artistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
-            onClickTitle={() => history.push(`/library/album?sortType=recent`)}
+            onClickTitle={() => {
+              dispatch(setActive({ ...album.active, filter: 'recent' }));
+              setTimeout(() => {
+                history.push(`/library/album?sortType=recent`);
+              }, 50);
+            }}
             type="album"
             handleFavorite={handleFavorite}
           />
@@ -175,7 +182,12 @@ const Dashboard = () => {
               urlProperty: 'artistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
-            onClickTitle={() => history.push(`/library/album?sortType=newest`)}
+            onClickTitle={() => {
+              dispatch(setActive({ ...album.active, filter: 'newest' }));
+              setTimeout(() => {
+                history.push(`/library/album?sortType=newest`);
+              }, 50);
+            }}
             type="album"
             handleFavorite={handleFavorite}
           />
@@ -194,7 +206,12 @@ const Dashboard = () => {
               urlProperty: 'artistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
-            onClickTitle={() => history.push(`/library/album?sortType=random`)}
+            onClickTitle={() => {
+              dispatch(setActive({ ...album.active, filter: 'random' }));
+              setTimeout(() => {
+                history.push(`/library/album?sortType=random`);
+              }, 50);
+            }}
             type="album"
             handleFavorite={handleFavorite}
           />
@@ -213,7 +230,12 @@ const Dashboard = () => {
               urlProperty: 'artistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
-            onClickTitle={() => history.push(`/library/album?sortType=frequent`)}
+            onClickTitle={() => {
+              dispatch(setActive({ ...album.active, filter: 'frequent' }));
+              setTimeout(() => {
+                history.push(`/library/album?sortType=frequent`);
+              }, 50);
+            }}
             type="album"
             handleFavorite={handleFavorite}
           />

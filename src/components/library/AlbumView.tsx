@@ -35,6 +35,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
 import { isCached } from '../../shared/utils';
 import { StyledLink } from '../shared/styled';
+import { setActive } from '../../redux/albumSlice';
 
 interface AlbumParams {
   id: string;
@@ -44,6 +45,7 @@ const AlbumView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
+  const album = useAppSelector((state) => state.album);
   const history = useHistory();
   const queryClient = useQueryClient();
 
@@ -156,6 +158,7 @@ const AlbumView = ({ ...rest }: any) => {
 
   return (
     <GenericPage
+      hideDivider
       header={
         <GenericPageHeader
           image={
@@ -203,7 +206,10 @@ const AlbumView = ({ ...rest }: any) => {
                     <StyledLink
                       onClick={() => {
                         if (!rest.isModal) {
-                          history.push(`/library/album?sortType=${data.genre}`);
+                          dispatch(setActive({ ...album.active, filter: data.genre }));
+                          setTimeout(() => {
+                            history.push(`/library/album?sortType=${data.genre}`);
+                          }, 50);
                         } else {
                           dispatch(
                             addModalPage({
