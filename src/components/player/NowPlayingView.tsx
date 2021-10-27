@@ -127,11 +127,7 @@ const NowPlayingView = () => {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
           dispatch(setRangeSelected(rowData));
-          if (searchQuery !== '') {
-            dispatch(toggleRangeSelected(filteredData));
-          } else {
-            dispatch(toggleRangeSelected(tableData));
-          }
+          dispatch(toggleRangeSelected(tableData));
         }
       }, 100);
     }

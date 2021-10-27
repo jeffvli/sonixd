@@ -65,17 +65,8 @@ const StarredView = () => {
         if (e.ctrlKey) {
           dispatch(toggleSelected(rowData));
         } else if (e.shiftKey) {
-          if (favorite.active.tab === 'tracks') {
-            dispatch(setRangeSelected(rowData));
-            if (searchQuery !== '') {
-              dispatch(toggleRangeSelected(filteredData));
-            } else {
-              dispatch(toggleRangeSelected(data.song));
-            }
-          } else if (favorite.active.tab === 'albums') {
-            dispatch(setRangeSelected(rowData));
-            dispatch(toggleRangeSelected(tableData));
-          }
+          dispatch(setRangeSelected(rowData));
+          dispatch(toggleRangeSelected(tableData));
         }
       }, 100);
     }
