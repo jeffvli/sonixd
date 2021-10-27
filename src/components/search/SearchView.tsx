@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
+import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { search3, star, unstar } from '../../api/api';
 import useRouterQuery from '../../hooks/useRouterQuery';
@@ -22,6 +23,7 @@ import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled
 
 const SearchView = () => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
   const query = useRouterQuery();
   const queryClient = useQueryClient();
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -58,21 +60,25 @@ const SearchView = () => {
     }
   };
 
-  const handleRowDoubleClick = (e: any) => {
+  const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
 
     dispatch(clearSelected());
-    dispatch(
-      setPlayQueueByRowClick({
-        entries: data.song,
-        currentIndex: e.index,
-        currentSongId: e.id,
-        uniqueSongId: e.uniqueId,
-      })
-    );
-    dispatch(setStatus('PLAYING'));
-    dispatch(fixPlayer2Index());
+    if (rowData.isDir) {
+      history.push(`/library/folder?folderId=${rowData.parent}`);
+    } else {
+      dispatch(
+        setPlayQueueByRowClick({
+          entries: data.song.filter((entry: any) => entry.isDir !== true),
+          currentIndex: rowData.index,
+          currentSongId: rowData.id,
+          uniqueSongId: rowData.uniqueId,
+        })
+      );
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    }
   };
 
   const handleRowFavorite = async (rowData: any) => {
