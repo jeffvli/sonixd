@@ -72,7 +72,7 @@ const StarredView = () => {
     }
   };
 
-  const handleRowDoubleClick = (e: any) => {
+  const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
     dispatch(clearSelected());
@@ -81,17 +81,17 @@ const StarredView = () => {
       dispatch(
         setPlayQueueByRowClick({
           entries: data.song,
-          currentIndex: e.index,
-          currentSongId: e.id,
-          uniqueSongId: e.uniqueId,
+          currentIndex: rowData.index,
+          currentSongId: rowData.id,
+          uniqueSongId: rowData.uniqueId,
         })
       );
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
     } else if (favorite.active.tab === 'albums') {
-      history.push(`/library/album/${e.id}`);
+      history.push(`/library/album/${rowData.id}`);
     } else {
-      history.push(`/library/artist/${e.id}`);
+      history.push(`/library/artist/${rowData.id}`);
     }
   };
 

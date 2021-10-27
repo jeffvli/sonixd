@@ -81,7 +81,7 @@ const AlbumView = ({ ...rest }: any) => {
     }
   };
 
-  const handleRowDoubleClick = (e: any) => {
+  const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
 
@@ -89,9 +89,9 @@ const AlbumView = ({ ...rest }: any) => {
     dispatch(
       setPlayQueueByRowClick({
         entries: data.song,
-        currentIndex: e.index,
-        currentSongId: e.id,
-        uniqueSongId: e.uniqueId,
+        currentIndex: rowData.index,
+        currentSongId: rowData.id,
+        uniqueSongId: rowData.uniqueId,
       })
     );
     dispatch(setStatus('PLAYING'));

@@ -153,7 +153,7 @@ const PlaylistView = ({ ...rest }) => {
     }
   };
 
-  const handleRowDoubleClick = (e: any) => {
+  const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
 
@@ -161,9 +161,9 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(
       setPlayQueueByRowClick({
         entries: playlist[getCurrentEntryList(playlist)],
-        currentIndex: e.rowIndex,
-        currentSongId: e.id,
-        uniqueSongId: e.uniqueId,
+        currentIndex: rowData.rowIndex,
+        currentSongId: rowData.id,
+        uniqueSongId: rowData.uniqueId,
       })
     );
     dispatch(setStatus('PLAYING'));

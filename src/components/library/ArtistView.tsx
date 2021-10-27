@@ -83,11 +83,11 @@ const ArtistView = ({ ...rest }: any) => {
     }
   };
 
-  const handleRowDoubleClick = (e: any) => {
+  const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
     dispatch(clearSelected());
-    history.push(`/library/album/${e.id}`);
+    history.push(`/library/album/${rowData.id}`);
   };
 
   const handleFavorite = async () => {
