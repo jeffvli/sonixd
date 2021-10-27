@@ -191,7 +191,7 @@ const ListViewTable = ({
   const debouncedMouseEnterFn = _.debounce((rowData: any) => {
     dispatch(setRangeSelected(rowData));
     dispatch(toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data));
-  }, 100);
+  }, 200);
 
   const handleSelectMouseEnter = (rowData: any) => {
     if (multiSelect.isSelectDragging) {
