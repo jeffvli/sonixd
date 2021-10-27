@@ -43,11 +43,7 @@ const gaplessListenHandler = (
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
 
   if (playQueue.currentPlayer === currentPlayer) {
-    dispatch(
-      setCurrentSeek({
-        seek: currentSeek,
-      })
-    );
+    dispatch(setCurrentSeek(currentSeek));
   }
 
   // Add a bit of leeway for the second track to start since the
@@ -215,7 +211,7 @@ const listenHandler = (
     }
   }
   if (playQueue.currentPlayer === player) {
-    dispatch(setCurrentSeek({ seek: currentSeek }));
+    dispatch(setCurrentSeek(currentSeek));
   }
 
   // Conditions for scrobbling fading track

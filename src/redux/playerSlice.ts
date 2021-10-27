@@ -24,8 +24,8 @@ const playerSlice = createSlice({
       state.status = action.payload;
     },
 
-    setCurrentSeek: (state, action: PayloadAction<{ seek: number }>) => {
-      state.currentSeek = action.payload.seek;
+    setCurrentSeek: (state, action: PayloadAction<number>) => {
+      state.currentSeek = action.payload;
     },
 
     setScrobbled: (state, action: PayloadAction<boolean>) => {
