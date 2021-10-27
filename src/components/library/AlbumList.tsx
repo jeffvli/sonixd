@@ -162,7 +162,7 @@ const AlbumList = () => {
                 onChange={async (value: string) => {
                   await queryClient.cancelQueries(['albumList', album.active.filter, musicFolder]);
                   setSearchQuery('');
-                  dispatch(setActive({ filter: value }));
+                  dispatch(setActive({ ...album.active, filter: value }));
                 }}
               />
               <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />

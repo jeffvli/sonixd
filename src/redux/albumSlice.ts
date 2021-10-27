@@ -16,8 +16,8 @@ const albumSlice = createSlice({
   name: 'album',
   initialState,
   reducers: {
-    setActive: (state, action: PayloadAction<{ filter: string }>) => {
-      state.active.filter = action.payload.filter;
+    setActive: (state, action: PayloadAction<any>) => {
+      state.active = action.payload;
     },
   },
 });

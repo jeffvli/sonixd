@@ -21,6 +21,7 @@ const GenreList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const config = useAppSelector((state) => state.config);
+  const album = useAppSelector((state) => state.album);
   const { isLoading, isError, data: genres, error }: any = useQuery(['genreList'], async () => {
     const res = await getGenres();
     return _.orderBy(res, 'songCount', 'desc');
@@ -47,7 +48,7 @@ const GenreList = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    dispatch(setActive({ filter: rowData.value }));
+    dispatch(setActive({ ...album.active, filter: rowData.value }));
     dispatch(clearSelected());
 
     // Needs a small delay or the filter won't set properly when navigating to the album list
