@@ -229,6 +229,10 @@ if (isLinux) {
   });
 
   ipcMain.on('current-song', (event, arg) => {
+    if (mprisPlayer.playbackStatus !== 'Playing') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    }
+
     mprisPlayer.metadata = {
       'mpris:length': (arg.duration || 0) * 1000 * 1000,
       'mpris:artUrl': arg.image.match('placeholder') ? null : arg.image,
