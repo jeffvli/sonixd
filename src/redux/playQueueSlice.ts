@@ -168,7 +168,7 @@ const removeItem = (array: any, index: any) => {
 const entrySelect = (state: PlayQueue) =>
   state.sortedEntry.length > 0 ? 'sortedEntry' : state.shuffle ? 'shuffledEntry' : 'entry';
 
-const getNextPlayerIndex = (length: number, repeat: string, currentIndex: number) => {
+export const getNextPlayerIndex = (length: number, repeat: string, currentIndex: number) => {
   if (length >= 2 && repeat !== 'one') {
     if (currentIndex + 1 === length) {
       return 0;

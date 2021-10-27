@@ -22,6 +22,7 @@ import {
   setCurrentIndex,
   setFadeData,
   setPlayerSrc,
+  getNextPlayerIndex,
 } from '../../redux/playQueueSlice';
 import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
@@ -398,6 +399,17 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           dispatch(setIsFading(false));
         }
 
+        ipcRenderer.send(
+          'current-song',
+          playQueue[currentEntryList][
+            getNextPlayerIndex(
+              playQueue[currentEntryList].length,
+              playQueue.repeat,
+              playQueue.player1.index
+            )
+          ]
+        );
+
         dispatch(setAutoIncremented(false));
       }
     }
@@ -431,6 +443,18 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
           dispatch(setPlayerVolume({ player: 2, volume: 0 }));
           dispatch(setIsFading(false));
         }
+
+        ipcRenderer.send(
+          'current-song',
+          playQueue[currentEntryList][
+            getNextPlayerIndex(
+              playQueue[currentEntryList].length,
+              playQueue.repeat,
+              playQueue.player2.index
+            )
+          ]
+        );
+
         dispatch(setAutoIncremented(false));
       }
     }
