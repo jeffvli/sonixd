@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid/non-secure';
 import settings from 'electron-settings';
-import { TagPicker, ControlLabel, Panel } from 'rsuite';
-import { StyledInputNumber } from '../../shared/styled';
+import { TagPicker, ControlLabel } from 'rsuite';
+import { StyledInputNumber, StyledPanel } from '../../shared/styled';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import {
@@ -99,7 +99,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
   return (
     <div style={{ width: '100%' }}>
       <div>
-        <Panel bordered bodyFill>
+        <StyledPanel bordered bodyFill>
           <TagPicker
             data={columnPicker}
             defaultValue={defaultColumns}
@@ -161,7 +161,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
             config={{ option: columnListType, columnList }}
             virtualized
           />
-        </Panel>
+        </StyledPanel>
       </div>
 
       <br />

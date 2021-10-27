@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
-import { Panel } from 'rsuite';
 import { search3, star, unstar } from '../../api/api';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
@@ -19,7 +18,7 @@ import {
 import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import ListViewTable from '../viewtypes/ListViewTable';
-import { SectionTitle, SectionTitleWrapper } from '../shared/styled';
+import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled';
 
 const SearchView = () => {
   const dispatch = useAppDispatch();
@@ -202,7 +201,7 @@ const SearchView = () => {
           <SectionTitleWrapper>
             <SectionTitle>Songs</SectionTitle>
           </SectionTitleWrapper>
-          <Panel bodyFill bordered>
+          <StyledPanel bodyFill bordered>
             <ListViewTable
               height={500}
               data={data.song}
@@ -226,7 +225,7 @@ const SearchView = () => {
               virtualized
               handleFavorite={handleRowFavorite}
             />
-          </Panel>
+          </StyledPanel>
         </>
       )}
     </GenericPage>
