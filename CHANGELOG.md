@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2021-10-27
+
+### Added
+
+- Added links to the genre column on the list-view
+- Added page forward/back buttons to main layout
+
+### Changed
+
+- Increase delay when completing mouse drag select in list view from `100ms` -> `200ms`
+- Change casing for main application name `sonixd` -> `Sonixd`
+
+### Fixed
+
+- Fixed Linux media hotkey support (MPRIS)
+  - Added commands for additional events `play` and `pause` (used by KDE's media player overlay)
+  - Set status to `Playing` when initially starting a song
+  - Set current song metadata when track automatically changes instead of only when it manually changes
+- Fixed filtered link to Album List on the Album page
+- Fixed filtered link to Album List on the Dashboard page
+- Fixed font color for lists/tables in panels
+  - Affects the search view song list and column selector list
+
 ## [0.4.0] - 2021-10-26
 
 ### Added
@@ -33,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Look & Feel setting page now split up into multiple panels
   - Renamed context menu button `Remove from current` -> `Remove selected`
   - Page header titles width increased from `45%` -> `80%`
+  - Renamed `Scan library` -> `Scan`
+- All pages no longer refetch data when clicking back into the application
 
 ### Fixed
 
@@ -40,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed right-click context menu showing up behind all modals (#55)
 - Fixed mini player showing up behind tag picker elements
 - Fixed duration showing up as `NaN:NaN` when duration is null or invalid
+- Fixed albums showing as a folder in Navidrome instances
 
 ## [0.3.0] - 2021-10-16
 
