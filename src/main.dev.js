@@ -113,6 +113,24 @@ const stop = () => {
   }
 };
 
+const pause = () => {
+  const storeValues = store.getState();
+  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
+
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(setStatus('PAUSED'));
+  }
+};
+
+const play = () => {
+  const storeValues = store.getState();
+  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
+
+  if (storeValues.playQueue[currentEntryList].length > 0) {
+    store.dispatch(setStatus('PLAYING'));
+  }
+};
+
 const playPause = () => {
   const storeValues = store.getState();
   const currentEntryList = getCurrentEntryList(storeValues.playQueue);
@@ -166,6 +184,22 @@ if (isLinux) {
     stop();
 
     mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_STOPPED;
+  });
+
+  mprisPlayer.on('pause', () => {
+    pause();
+
+    if (mprisPlayer.playbackStatus === 'Playing') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
+    }
+  });
+
+  mprisPlayer.on('play', () => {
+    play();
+
+    if (mprisPlayer.playbackStatus !== 'Playing') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    }
   });
 
   mprisPlayer.on('playpause', () => {
