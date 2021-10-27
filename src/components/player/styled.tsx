@@ -106,5 +106,5 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   overflow: hidden auto;
   opacity: ${(props) => (props.display === 'true' ? 0.95 : 0)};
   color: ${(props) => `${props.theme.primary.text} !important`};
-  z-index: 1900;
+  z-index: 500;
 `;
