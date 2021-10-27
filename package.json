@@ -1,6 +1,6 @@
 {
   "name": "sonixd",
-  "productName": "sonixd",
+  "productName": "Sonixd",
   "description": "A full-featured Subsonic API compatible cross-platform desktop client",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -30,7 +30,7 @@
     ]
   },
   "build": {
-    "productName": "sonixd",
+    "productName": "Sonixd",
     "appId": "org.erb.sonixd",
     "files": [
       "dist/",
