@@ -41,6 +41,7 @@ import {
 import CustomTooltip from '../shared/CustomTooltip';
 import { sortPlaylist } from '../../redux/playlistSlice';
 import { setColumnList } from '../../redux/configSlice';
+import { setActive } from '../../redux/albumSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -99,6 +100,7 @@ const ListViewTable = ({
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
   const configState = useAppSelector((state) => state.config);
+  const album = useAppSelector((state) => state.album);
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
   const [sortedData, setSortedData] = useState(data);
@@ -757,7 +759,7 @@ const ListViewTable = ({
                       onClick={(e: any) => {
                         if (
                           !column.dataKey?.match(
-                            /starred|userRating|columnResizable|columnDefaultSort/
+                            /starred|userRating|genre|columnResizable|columnDefaultSort/
                           )
                         ) {
                           handleRowClick(
@@ -773,7 +775,7 @@ const ListViewTable = ({
                       onDoubleClick={() => {
                         if (
                           !column.dataKey?.match(
-                            /starred|userRating|columnResizable|columnDefaultSort/
+                            /starred|userRating|genre|columnResizable|columnDefaultSort/
                           )
                         ) {
                           handleRowDoubleClick({
@@ -798,13 +800,13 @@ const ListViewTable = ({
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           paddingRight: !column.dataKey?.match(
-                            /starred|songCount|duration|userRating|columnResizable|columnDefaultSort/
+                            /starred|userRating|columnResizable|columnDefaultSort/
                           )
                             ? '10px'
                             : undefined,
                         }}
                       >
-                        {column.dataKey.match(/album|artist/) ? (
+                        {column.dataKey.match(/album|artist|genre/) ? (
                           <CustomTooltip text={rowData[column.dataKey]}>
                             <RsuiteLinkButton
                               appearance="link"
@@ -831,6 +833,11 @@ const ListViewTable = ({
                                       })
                                     );
                                   }
+                                } else if (column.dataKey === 'genre') {
+                                  dispatch(setActive({ ...album.active, filter: rowData.genre }));
+                                  setTimeout(() => {
+                                    history.push(`/library/album?sortType=${rowData.genre}`);
+                                  }, 50);
                                 }
                               }}
                               playing={
