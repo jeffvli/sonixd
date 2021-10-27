@@ -8,7 +8,7 @@ import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/play
 import { isCached } from '../../shared/utils';
 
 import {
-  StyledPanel,
+  CardPanel,
   InfoPanel,
   InfoSpan,
   CardTitleButton,
@@ -112,7 +112,7 @@ const Card = ({
 
   return (
     <>
-      <StyledPanel bordered shaded cardsize={size} style={rest.style}>
+      <CardPanel bordered shaded cardsize={size} style={rest.style}>
         <Overlay cardsize={size}>
           {lazyLoad ? (
             <LazyCardImg
@@ -213,7 +213,7 @@ const Card = ({
             )}
           </InfoSpan>
         </InfoPanel>
-      </StyledPanel>
+      </CardPanel>
     </>
   );
 };

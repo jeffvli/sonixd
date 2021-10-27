@@ -18,7 +18,7 @@ interface Card {
     : props.theme.primary.cardSm;
 }; */
 
-export const StyledPanel = styled(Panel)<Card>`
+export const CardPanel = styled(Panel)<Card>`
   text-align: center;
   width: ${(props) => `${Number(props.cardsize) + 2}px`};
   height: ${(props) => `${Number(props.cardsize) + 55}px`};

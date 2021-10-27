@@ -12,6 +12,7 @@ import {
   Slider,
   InputPicker,
   Popover,
+  Panel,
 } from 'rsuite';
 import styled from 'styled-components';
 
@@ -216,4 +217,8 @@ export const SectionTitle = styled.a`
 export const StyledLink = styled.a`
   color: ${(props) => props.theme.primary.text};
   cursor: pointer;
+`;
+
+export const StyledPanel = styled(Panel)`
+  color: ${(props) => props.theme.primary.text};
 `;
