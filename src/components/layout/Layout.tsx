@@ -94,9 +94,15 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
         }}
       >
         <MainContainer id="container-main" expanded={misc.expandSidebar}>
-          <FlexboxGrid justify="space-between" style={{ padding: '10px 10px 0px 10px' }}>
+          <FlexboxGrid
+            justify="space-between"
+            style={{
+              padding: '0 10px 0 10px',
+              margin: '10px 5px 5px 5px',
+            }}
+          >
             <FlexboxGrid.Item>
-              <ButtonToolbar style={{ height: '20px' }}>
+              <ButtonToolbar>
                 <StyledIconButton
                   appearance="subtle"
                   size="sm"

@@ -149,7 +149,7 @@ export const PageContainer = styled(Container)<{ $backgroundSrc?: string }>`
 `;
 
 export const PageHeader = styled(Header)<{ padding?: string }>`
-  padding: ${(props) => (props.padding ? props.padding : '10px 20px 0px 20px')};
+  padding: ${(props) => (props.padding ? props.padding : '0px 20px 0px 20px')};
   z-index: 1;
 `;
 
