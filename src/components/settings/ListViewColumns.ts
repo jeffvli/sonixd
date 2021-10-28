@@ -851,7 +851,7 @@ export const playlistColumnListAuto = [
       id: 'Owner',
       dataKey: 'owner',
       alignment: 'left',
-      flexGrow: 2,
+      flexGrow: 1,
       label: 'Owner',
     },
   },
