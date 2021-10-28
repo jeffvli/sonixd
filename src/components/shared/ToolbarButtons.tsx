@@ -133,7 +133,7 @@ export const AutoPlaylistButton = ({ ...rest }) => {
   return (
     <StyledButton tabIndex={0} {...rest}>
       <Icon icon="plus-square" style={{ marginRight: '10px' }} />
-      Add random
+      Auto playlist
     </StyledButton>
   );
 };

@@ -48,16 +48,16 @@ import { notifyToast } from '../shared/toast';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
-  const addRandomTriggerRef = useRef<any>();
+  const autoPlaylistTriggerRef = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
-  const [randomPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
+  const [autoPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
     Number(settings.getSync('randomPlaylistTrackCount'))
   );
-  const [randomPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
-  const [randomPlaylistToYear, setRandomPlaylistToYear] = useState(0);
+  const [autoPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
+  const [autoPlaylistToYear, setRandomPlaylistToYear] = useState(0);
   const [randomPlaylistGenre, setRandomPlaylistGenre] = useState('');
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
 
@@ -166,14 +166,14 @@ const NowPlayingView = () => {
   const handlePlayRandom = async (action: 'play' | 'addNext' | 'addLater') => {
     setIsLoadingRandom(true);
     const res = await getRandomSongs({
-      size: randomPlaylistTrackCount,
-      fromYear: randomPlaylistFromYear !== 0 ? randomPlaylistFromYear : undefined,
-      toYear: randomPlaylistToYear !== 0 ? randomPlaylistToYear : undefined,
+      size: autoPlaylistTrackCount,
+      fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
+      toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
       genre: randomPlaylistGenre,
     });
 
     if (isFailedResponse(res)) {
-      addRandomTriggerRef.current.close();
+      autoPlaylistTriggerRef.current.close();
       return notifyToast('error', errorMessages(res)[0]);
     }
 
@@ -214,7 +214,7 @@ const NowPlayingView = () => {
     }
 
     setIsLoadingRandom(false);
-    return addRandomTriggerRef.current.close();
+    return autoPlaylistTriggerRef.current.close();
   };
 
   const handleRowFavorite = async (rowData: any) => {
@@ -262,7 +262,7 @@ const NowPlayingView = () => {
                   }}
                 />
                 <Whisper
-                  ref={addRandomTriggerRef}
+                  ref={autoPlaylistTriggerRef}
                   placement="autoVertical"
                   trigger="none"
                   speaker={
@@ -273,8 +273,8 @@ const NowPlayingView = () => {
                           min={1}
                           max={500}
                           step={10}
-                          defaultValue={randomPlaylistTrackCount}
-                          value={randomPlaylistTrackCount}
+                          defaultValue={autoPlaylistTrackCount}
+                          value={autoPlaylistTrackCount}
                           onChange={(e: number) => {
                             settings.setSync('randomPlaylistTrackCount', Number(e));
                             setRandomPlaylistTrackCount(Number(e));
@@ -294,8 +294,8 @@ const NowPlayingView = () => {
                                 min={0}
                                 max={3000}
                                 step={1}
-                                defaultValue={randomPlaylistFromYear}
-                                value={randomPlaylistFromYear}
+                                defaultValue={autoPlaylistFromYear}
+                                value={autoPlaylistFromYear}
                                 onChange={(e: number) => {
                                   setRandomPlaylistFromYear(Number(e));
                                 }}
@@ -312,8 +312,8 @@ const NowPlayingView = () => {
                                 min={0}
                                 max={3000}
                                 step={1}
-                                defaultValue={randomPlaylistToYear}
-                                value={randomPlaylistToYear}
+                                defaultValue={autoPlaylistToYear}
+                                value={autoPlaylistToYear}
                                 onChange={(e: number) => setRandomPlaylistToYear(Number(e))}
                               />
                             </StyledInputGroup>
@@ -335,14 +335,14 @@ const NowPlayingView = () => {
                         <StyledButton
                           onClick={() => handlePlayRandom('addNext')}
                           loading={isLoadingRandom}
-                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                          disabled={!(typeof autoPlaylistTrackCount === 'number')}
                         >
                           <Icon icon="plus-circle" style={{ marginRight: '10px' }} /> Add (next)
                         </StyledButton>
                         <StyledButton
                           onClick={() => handlePlayRandom('addLater')}
                           loading={isLoadingRandom}
-                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                          disabled={!(typeof autoPlaylistTrackCount === 'number')}
                         >
                           <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (later)
                         </StyledButton>
@@ -353,7 +353,7 @@ const NowPlayingView = () => {
                           appearance="primary"
                           onClick={() => handlePlayRandom('play')}
                           loading={isLoadingRandom}
-                          disabled={!(typeof randomPlaylistTrackCount === 'number')}
+                          disabled={!(typeof autoPlaylistTrackCount === 'number')}
                         >
                           <Icon icon="play" style={{ marginRight: '10px' }} />
                           Play
@@ -365,9 +365,9 @@ const NowPlayingView = () => {
                   <AutoPlaylistButton
                     size="sm"
                     onClick={() =>
-                      addRandomTriggerRef.current.state.isOverlayShown
-                        ? addRandomTriggerRef.current.close()
-                        : addRandomTriggerRef.current.open()
+                      autoPlaylistTriggerRef.current.state.isOverlayShown
+                        ? autoPlaylistTriggerRef.current.close()
+                        : autoPlaylistTriggerRef.current.open()
                     }
                   />
                 </Whisper>
