@@ -45,7 +45,7 @@ import { setActive } from '../../redux/albumSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
-    background: ${(props) => props.theme.primary.rowSelected};
+    background: ${(props) => props.theme.primary.rowSelected} !important;
     // Resolve bug from rsuite-table where certain scrollpoints show a horizontal border
     height: ${(props) => `${props.rowHeight + 1}px !important`};
   }
