@@ -26,16 +26,13 @@ const PlaylistList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
-  const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
   const playlistTriggerRef = useRef<any>();
   const [sortBy] = useState('name');
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
-  const { isLoading, isError, data: playlists, error }: any = useQuery(
-    ['playlists', sortBy],
-    () => getPlaylists(sortBy),
-    { refetchOnWindowFocus: multiSelect.selected.length < 1 }
+  const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists', sortBy], () =>
+    getPlaylists(sortBy)
   );
   const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(searchQuery, playlists, ['name', 'comment', 'owner']);
