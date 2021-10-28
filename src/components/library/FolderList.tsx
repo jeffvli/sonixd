@@ -56,11 +56,15 @@ const FolderList = () => {
   );
 
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(
-    searchQuery,
-    folderData?.id ? folderData?.child : indexData?.child,
-    ['title', 'artist', 'album', 'year', 'genre', 'path']
-  );
+  const filteredData = useSearchQuery(searchQuery, folderData?.id ? folderData?.child : indexData, [
+    'name',
+    'title',
+    'artist',
+    'album',
+    'year',
+    'genre',
+    'path',
+  ]);
 
   useEffect(() => {
     if (query.get('folderId') !== 'null') {
