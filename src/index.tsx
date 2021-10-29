@@ -1,4 +1,5 @@
 import React from 'react';
+import settings from 'electron-settings';
 import { render } from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -12,6 +13,11 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
+});
+
+settings.configure({
+  prettify: true,
+  numSpaces: 2,
 });
 
 render(
