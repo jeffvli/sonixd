@@ -41,7 +41,6 @@ const ScrollingMenu = ({
               tabIndex={0}
               onClick={onClickTitle}
               onKeyDown={(e: any) => {
-                console.log(e);
                 if (e.key === ' ' || e.key === 'Enter') {
                   onClickTitle();
                 }
@@ -51,24 +50,28 @@ const ScrollingMenu = ({
             </SectionTitle>
           </FlexboxGrid.Item>
           <FlexboxGrid.Item>
-            <ButtonToolbar>
-              <ButtonGroup>
-                <StyledIconButton
-                  icon={<Icon icon="arrow-left" />}
-                  onClick={() => {
-                    scrollContainerRef.current.scrollLeft -=
-                      config.lookAndFeel.gridView.cardSize * 5;
-                  }}
-                />
-                <StyledIconButton
-                  icon={<Icon icon="arrow-right" />}
-                  onClick={() => {
-                    scrollContainerRef.current.scrollLeft +=
-                      config.lookAndFeel.gridView.cardSize * 5;
-                  }}
-                />
-              </ButtonGroup>
-            </ButtonToolbar>
+            {data.length > 0 && (
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <StyledIconButton
+                    appearance="subtle"
+                    icon={<Icon icon="arrow-left" />}
+                    onClick={() => {
+                      scrollContainerRef.current.scrollLeft -=
+                        config.lookAndFeel.gridView.cardSize * 5;
+                    }}
+                  />
+                  <StyledIconButton
+                    appearance="subtle"
+                    icon={<Icon icon="arrow-right" />}
+                    onClick={() => {
+                      scrollContainerRef.current.scrollLeft +=
+                        config.lookAndFeel.gridView.cardSize * 5;
+                    }}
+                  />
+                </ButtonGroup>
+              </ButtonToolbar>
+            )}
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </SectionTitleWrapper>

@@ -3,9 +3,18 @@ import settings from 'electron-settings';
 import { shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
-import { InputGroup, Button, Tag, Message, Icon, ButtonToolbar, Whisper, Popover } from 'rsuite';
+import { Message, Icon, ButtonToolbar, Whisper } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledInput, StyledCheckbox, StyledInputGroup, StyledLink } from '../../shared/styled';
+import {
+  StyledInput,
+  StyledCheckbox,
+  StyledInputGroup,
+  StyledLink,
+  StyledPopover,
+  StyledTag,
+  StyledButton,
+  StyledInputGroupButton,
+} from '../../shared/styled';
 import { getSongCachePath, getImageCachePath, getRootCachePath } from '../../../shared/utils';
 import { notifyToast } from '../../shared/toast';
 import { setMiscSetting } from '../../../redux/miscSlice';
@@ -112,7 +121,7 @@ const CacheConfig = () => {
         <>
           <StyledInputGroup>
             <StyledInput value={newCachePath} onChange={(e: string) => setNewCachePath(e)} />
-            <InputGroup.Button
+            <StyledInputGroupButton
               onClick={() => {
                 const check = fs.existsSync(newCachePath);
                 if (check) {
@@ -131,16 +140,16 @@ const CacheConfig = () => {
               }}
             >
               <Icon icon="check" />
-            </InputGroup.Button>
-            <InputGroup.Button
+            </StyledInputGroupButton>
+            <StyledInputGroupButton
               onClick={() => {
                 setIsEditingCachePath(false);
                 setErrorMessage('');
               }}
             >
               <Icon icon="close" />
-            </InputGroup.Button>
-            <InputGroup.Button
+            </StyledInputGroupButton>
+            <StyledInputGroupButton
               onClick={() => {
                 const defaultPath = path.join(path.dirname(settings.file()));
                 settings.setSync('cachePath', defaultPath);
@@ -151,7 +160,7 @@ const CacheConfig = () => {
               }}
             >
               Reset to default
-            </InputGroup.Button>
+            </StyledInputGroupButton>
           </StyledInputGroup>
           <p style={{ fontSize: 'smaller' }}>
             *You will need to manually move any existing cached files to their new location.
@@ -163,7 +172,7 @@ const CacheConfig = () => {
           Location:{' '}
           <div style={{ overflow: 'auto' }}>
             <StyledLink onClick={() => shell.openPath(getRootCachePath())}>
-              {getRootCachePath()}
+              {getRootCachePath()} <Icon icon="external-link" />
             </StyledLink>
           </div>
         </>
@@ -177,9 +186,9 @@ const CacheConfig = () => {
           }}
         >
           Songs{' '}
-          <Tag>
+          <StyledTag>
             {songCacheSize} MB {imgCacheSize === 9999999 && '- Folder not found'}
-          </Tag>
+          </StyledTag>
         </StyledCheckbox>
         <StyledCheckbox
           defaultChecked={cacheImages}
@@ -189,41 +198,41 @@ const CacheConfig = () => {
           }}
         >
           Images{' '}
-          <Tag>
+          <StyledTag>
             {imgCacheSize} MB {imgCacheSize === 9999999 && '- Folder not found'}
-          </Tag>
+          </StyledTag>
         </StyledCheckbox>
       </div>
       <br />
       <ButtonToolbar>
-        <Button onClick={() => setIsEditingCachePath(true)}>Edit cache location</Button>
+        <StyledButton onClick={() => setIsEditingCachePath(true)}>Edit cache location</StyledButton>
         <Whisper
           trigger="click"
           placement="autoVertical"
           speaker={
-            <Popover>
+            <StyledPopover>
               Which cache would you like to clear?
               <ButtonToolbar>
-                <Button size="sm" onClick={handleClearSongCache}>
+                <StyledButton size="sm" onClick={handleClearSongCache}>
                   Songs
-                </Button>
-                <Button size="sm" onClick={() => handleClearImageCache('playlist')}>
+                </StyledButton>
+                <StyledButton size="sm" onClick={() => handleClearImageCache('playlist')}>
                   Playlist images
-                </Button>
-                <Button size="sm" onClick={() => handleClearImageCache('album')}>
+                </StyledButton>
+                <StyledButton size="sm" onClick={() => handleClearImageCache('album')}>
                   Album images
-                </Button>
-                <Button size="sm" onClick={() => handleClearImageCache('artist')}>
+                </StyledButton>
+                <StyledButton size="sm" onClick={() => handleClearImageCache('artist')}>
                   Artist images
-                </Button>
-                <Button size="sm" onClick={() => handleClearImageCache('folder')}>
+                </StyledButton>
+                <StyledButton size="sm" onClick={() => handleClearImageCache('folder')}>
                   Folder images
-                </Button>
+                </StyledButton>
               </ButtonToolbar>
-            </Popover>
+            </StyledPopover>
           }
         >
-          <Button>Clear cache</Button>
+          <StyledButton>Clear cache</StyledButton>
         </Whisper>
       </ButtonToolbar>
     </ConfigPanel>

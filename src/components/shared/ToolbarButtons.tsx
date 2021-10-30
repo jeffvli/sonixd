@@ -98,7 +98,9 @@ export const DownloadButton = ({ ...rest }) => {
 export const ShuffleButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Shuffle queue" placement="bottom">
-      <StyledIconButton icon={<Icon icon="random" />} tabIndex={0} {...rest} />
+      <StyledButton tabIndex={0} {...rest}>
+        <Icon icon="random" />
+      </StyledButton>
     </CustomTooltip>
   );
 };
@@ -106,7 +108,9 @@ export const ShuffleButton = ({ ...rest }) => {
 export const ClearQueueButton = ({ ...rest }) => {
   return (
     <CustomTooltip text="Clear queue" placement="bottom">
-      <StyledIconButton icon={<Icon icon="trash2" />} tabIndex={0} {...rest} />
+      <StyledButton tabIndex={0} {...rest}>
+        <Icon icon="trash2" />
+      </StyledButton>
     </CustomTooltip>
   );
 };
