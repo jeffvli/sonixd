@@ -337,10 +337,6 @@ export const StyledInputPicker = styled(InputPicker)<{ width?: number }>`
     border-radius: ${(props) => props.theme.other.input.borderRadius};
   }
 
-  .rs-picker-select-menu-item {
-    background: ${(props) => `${props.theme.colors.background.input} !important`};
-  }
-
   .rs-btn-default {
     background: ${(props) => `${props.theme.colors.input.background} !important`};
   }

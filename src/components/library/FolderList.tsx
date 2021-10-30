@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import settings from 'electron-settings';
 import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
@@ -23,7 +23,7 @@ import {
 } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import { StyledButton, StyledInputPicker } from '../shared/styled';
+import { StyledButton, StyledInputPicker, StyledInputPickerContainer } from '../shared/styled';
 import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -37,6 +37,7 @@ const FolderList = () => {
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
+  const folderPickerContainerRef = useRef(null);
 
   const { isLoading, isError, data: indexData, error }: any = useQuery(
     ['indexes', musicFolder],
@@ -163,33 +164,39 @@ const FolderList = () => {
               showTitleTooltip
               subtitle={
                 <>
-                  <ButtonToolbar>
-                    <StyledInputPicker
-                      data={musicFolders}
-                      defaultValue={musicFolder}
-                      valueKey="id"
-                      labelKey="name"
-                      onChange={(e: any) => {
-                        setMusicFolder(e);
-                      }}
-                      style={{ width: '250px' }}
-                    />
+                  <StyledInputPickerContainer ref={folderPickerContainerRef}>
+                    <ButtonToolbar>
+                      <StyledInputPicker
+                        container={() => folderPickerContainerRef.current}
+                        size="sm"
+                        width={180}
+                        data={musicFolders}
+                        defaultValue={musicFolder}
+                        valueKey="id"
+                        labelKey="name"
+                        onChange={(e: any) => {
+                          setMusicFolder(e);
+                        }}
+                      />
 
-                    <StyledButton
-                      size="sm"
-                      onClick={() => {
-                        history.push(
-                          `/library/folder?folderId=${folderData?.parent ? folderData.parent : ''}`
-                        );
-                        dispatch(
-                          setCurrentViewedFolder(folderData?.parent ? folderData.parent : '')
-                        );
-                      }}
-                    >
-                      <Icon icon="level-up" style={{ marginRight: '10px' }} />
-                      Go up
-                    </StyledButton>
-                  </ButtonToolbar>
+                      <StyledButton
+                        size="sm"
+                        onClick={() => {
+                          history.push(
+                            `/library/folder?folderId=${
+                              folderData?.parent ? folderData.parent : ''
+                            }`
+                          );
+                          dispatch(
+                            setCurrentViewedFolder(folderData?.parent ? folderData.parent : '')
+                          );
+                        }}
+                      >
+                        <Icon icon="level-up" style={{ marginRight: '10px' }} />
+                        Go up
+                      </StyledButton>
+                    </ButtonToolbar>
+                  </StyledInputPickerContainer>
                 </>
               }
             />

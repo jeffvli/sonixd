@@ -109,6 +109,7 @@ export const GlobalContextMenu = () => {
   const [shouldCreatePlaylist, setShouldCreatePlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [indexToMoveTo, setIndexToMoveTo] = useState(0);
+  const playlistPickerContainerRef = useRef(null);
 
   const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'));
 

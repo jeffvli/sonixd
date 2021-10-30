@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid/non-secure';
 import settings from 'electron-settings';
 import { ControlLabel } from 'rsuite';
-import { StyledInputNumber, StyledPanel, StyledTagPicker } from '../../shared/styled';
+import {
+  StyledInputNumber,
+  StyledInputPickerContainer,
+  StyledPanel,
+  StyledTagPicker,
+} from '../../shared/styled';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import {
@@ -53,6 +58,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
   const config = useAppSelector((state) => state.config);
   const [selectedColumns, setSelectedColumns] = useState([]);
   const columnListType = settingsConfig.columnList.split('List')[0];
+  const columnPickerContainerRef = useRef(null);
 
   useEffect(() => {
     const cols = config.lookAndFeel.listView[columnListType].columns.map((col: any) => {
@@ -100,46 +106,49 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
     <div style={{ width: '100%' }}>
       <div>
         <StyledPanel bordered bodyFill>
-          <StyledTagPicker
-            data={columnPicker}
-            defaultValue={defaultColumns}
-            value={selectedColumns}
-            style={{ width: '100%' }}
-            onChange={(e: any) => {
-              const columns: any[] = [];
-              if (e) {
-                e.forEach((selected: string) => {
-                  const alreadySelectedColumn = config.lookAndFeel.listView[
-                    columnListType
-                  ].columns.find((column: any) => column.label === selected);
+          <StyledInputPickerContainer ref={columnPickerContainerRef}>
+            <StyledTagPicker
+              container={() => columnPickerContainerRef.current}
+              data={columnPicker}
+              defaultValue={defaultColumns}
+              value={selectedColumns}
+              style={{ width: '100%' }}
+              onChange={(e: any) => {
+                const columns: any[] = [];
+                if (e) {
+                  e.forEach((selected: string) => {
+                    const alreadySelectedColumn = config.lookAndFeel.listView[
+                      columnListType
+                    ].columns.find((column: any) => column.label === selected);
 
-                  if (alreadySelectedColumn) {
-                    return columns.push(alreadySelectedColumn);
-                  }
+                    if (alreadySelectedColumn) {
+                      return columns.push(alreadySelectedColumn);
+                    }
 
-                  const selectedColumn = columnList.find(
-                    (column: any) => column.label === selected
-                  );
+                    const selectedColumn = columnList.find(
+                      (column: any) => column.label === selected
+                    );
 
-                  if (selectedColumn) {
-                    return columns.push({ ...selectedColumn.value, uniqueId: nanoid() });
-                  }
+                    if (selectedColumn) {
+                      return columns.push({ ...selectedColumn.value, uniqueId: nanoid() });
+                    }
 
-                  return null;
+                    return null;
+                  });
+                }
+
+                const cleanColumns = columns.map((col) => {
+                  const { uniqueId, ...rest } = col;
+                  return rest;
                 });
-              }
 
-              const cleanColumns = columns.map((col) => {
-                const { uniqueId, ...rest } = col;
-                return rest;
-              });
-
-              dispatch(setColumnList({ listType: columnListType, entries: columns }));
-              settings.setSync(settingsConfig.columnList, cleanColumns);
-            }}
-            labelKey="label"
-            valueKey="label"
-          />
+                dispatch(setColumnList({ listType: columnListType, entries: columns }));
+                settings.setSync(settingsConfig.columnList, cleanColumns);
+              }}
+              labelKey="label"
+              valueKey="label"
+            />
+          </StyledInputPickerContainer>
 
           <ListViewTable
             data={config.lookAndFeel.listView[columnListType].columns || []}
