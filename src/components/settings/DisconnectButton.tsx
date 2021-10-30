@@ -1,6 +1,6 @@
 import React from 'react';
 import settings from 'electron-settings';
-import { Button } from 'rsuite';
+import { StyledButton } from '../shared/styled';
 
 const DisconnectButton = () => {
   const handleDisconnect = () => {
@@ -17,9 +17,9 @@ const DisconnectButton = () => {
     window.location.reload();
   };
   return (
-    <Button onClick={handleDisconnect} size="sm">
+    <StyledButton onClick={handleDisconnect} size="sm">
       Disconnect
-    </Button>
+    </StyledButton>
   );
 };
 

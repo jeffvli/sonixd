@@ -9,14 +9,14 @@ import AlbumView from '../library/AlbumView';
 import PlaylistView from '../playlist/PlaylistView';
 
 const StyledModal = styled(Modal)`
-  color: ${(props) => `${props.theme.primary.text} !important`};
+  color: ${(props) => `${props.theme.colors.layout.page.color} !important`};
 
   .rs-modal-body {
     margin-top: 0px;
   }
 
   .rs-modal-content {
-    background: ${(props) => `${props.theme.primary.background} !important`};
+    background: ${(props) => `${props.theme.colors.layout.page.background} !important`};
   }
 
   .rs-container {

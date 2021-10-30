@@ -45,13 +45,13 @@ import { setActive } from '../../redux/albumSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
-    background: ${(props) => props.theme.primary.rowSelected} !important;
+    background: ${(props) => props.theme.colors.table.selectedRow} !important;
     // Resolve bug from rsuite-table where certain scrollpoints show a horizontal border
     height: ${(props) => `${props.rowHeight + 1}px !important`};
   }
 
   .rs-table-row.dragover {
-    box-shadow: ${(props) => `inset 0px 5px 0px -3px ${props.theme.primary.main}`};
+    box-shadow: ${(props) => `inset 0px 5px 0px -3px ${props.theme.colors.primary}`};
   }
 
   .rs-table-row,

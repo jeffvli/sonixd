@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useHistory } from 'react-router-dom';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { Icon, Input, InputGroup } from 'rsuite';
+import { Icon, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
-import { StyledIconButton, StyledInputGroup } from '../shared/styled';
+import {
+  StyledIconButton,
+  StyledInput,
+  StyledInputGroup,
+  StyledInputGroupButton,
+} from '../shared/styled';
 import { CoverArtWrapper, PageHeaderTitle } from './styled';
 import cacheImage from '../shared/cacheImage';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -98,7 +103,7 @@ const GenericPageHeader = ({
                     <InputGroup.Addon>
                       <Icon icon="search" />
                     </InputGroup.Addon>
-                    <Input
+                    <StyledInput
                       id="local-search-input"
                       value={searchQuery}
                       onChange={handleSearch}
@@ -115,7 +120,7 @@ const GenericPageHeader = ({
                       }}
                       style={{ width: '180px' }}
                     />
-                    <InputGroup.Button
+                    <StyledInputGroupButton
                       appearance="subtle"
                       onClick={() => {
                         clearSearchQuery();
@@ -123,7 +128,7 @@ const GenericPageHeader = ({
                       }}
                     >
                       <Icon icon="close" />
-                    </InputGroup.Button>
+                    </StyledInputGroupButton>
                   </StyledInputGroup>
                 ) : (
                   <StyledIconButton

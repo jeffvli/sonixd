@@ -37,9 +37,9 @@ import { AutoPlaylistButton, ClearQueueButton, ShuffleButton } from '../shared/T
 import {
   StyledButton,
   StyledCheckbox,
-  StyledInputGroup,
   StyledInputNumber,
   StyledInputPicker,
+  StyledInputPickerContainer,
   StyledPopover,
 } from '../shared/styled';
 import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
@@ -48,6 +48,7 @@ import { notifyToast } from '../shared/toast';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
+  const pickerContainerRef = useRef(null);
   const autoPlaylistTriggerRef = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -268,71 +269,66 @@ const NowPlayingView = () => {
                   speaker={
                     <StyledPopover>
                       <ControlLabel>How many tracks? (1-500)*</ControlLabel>
-                      <StyledInputGroup>
-                        <StyledInputNumber
-                          min={1}
-                          max={500}
-                          step={10}
-                          defaultValue={autoPlaylistTrackCount}
-                          value={autoPlaylistTrackCount}
-                          onChange={(e: number) => {
-                            settings.setSync('randomPlaylistTrackCount', Number(e));
-                            setRandomPlaylistTrackCount(Number(e));
-                          }}
-                        />
-                      </StyledInputGroup>
-
+                      <StyledInputNumber
+                        min={1}
+                        max={500}
+                        step={10}
+                        defaultValue={autoPlaylistTrackCount}
+                        value={autoPlaylistTrackCount}
+                        onChange={(e: number) => {
+                          settings.setSync('randomPlaylistTrackCount', Number(e));
+                          setRandomPlaylistTrackCount(Number(e));
+                        }}
+                      />
                       <br />
-
                       <FlexboxGrid justify="space-between">
                         <FlexboxGrid.Item>
                           <ControlLabel>From year</ControlLabel>
                           <div>
-                            <StyledInputGroup>
-                              <StyledInputNumber
-                                width={100}
-                                min={0}
-                                max={3000}
-                                step={1}
-                                defaultValue={autoPlaylistFromYear}
-                                value={autoPlaylistFromYear}
-                                onChange={(e: number) => {
-                                  setRandomPlaylistFromYear(Number(e));
-                                }}
-                              />
-                            </StyledInputGroup>
+                            <StyledInputNumber
+                              width={100}
+                              min={0}
+                              max={3000}
+                              step={1}
+                              defaultValue={autoPlaylistFromYear}
+                              value={autoPlaylistFromYear}
+                              onChange={(e: number) => {
+                                setRandomPlaylistFromYear(Number(e));
+                              }}
+                            />
                           </div>
                         </FlexboxGrid.Item>
                         <FlexboxGrid.Item>
                           <ControlLabel>To year</ControlLabel>
                           <div>
-                            <StyledInputGroup>
-                              <StyledInputNumber
-                                width={100}
-                                min={0}
-                                max={3000}
-                                step={1}
-                                defaultValue={autoPlaylistToYear}
-                                value={autoPlaylistToYear}
-                                onChange={(e: number) => setRandomPlaylistToYear(Number(e))}
-                              />
-                            </StyledInputGroup>
+                            <StyledInputNumber
+                              width={100}
+                              min={0}
+                              max={3000}
+                              step={1}
+                              defaultValue={autoPlaylistToYear}
+                              value={autoPlaylistToYear}
+                              onChange={(e: number) => setRandomPlaylistToYear(Number(e))}
+                            />
                           </div>
                         </FlexboxGrid.Item>
                       </FlexboxGrid>
                       <br />
                       <ControlLabel>Genre</ControlLabel>
-                      <div>
+                      <StyledInputPickerContainer ref={pickerContainerRef}>
                         <StyledInputPicker
+                          style={{ width: '100%' }}
+                          container={() => pickerContainerRef.current}
                           data={genres}
                           value={randomPlaylistGenre}
                           virtualized
                           onChange={(e: string) => setRandomPlaylistGenre(e)}
                         />
-                      </div>
+                      </StyledInputPickerContainer>
                       <br />
                       <ButtonToolbar>
                         <StyledButton
+                          appearance="subtle"
                           onClick={() => handlePlayRandom('addNext')}
                           loading={isLoadingRandom}
                           disabled={!(typeof autoPlaylistTrackCount === 'number')}
@@ -340,6 +336,7 @@ const NowPlayingView = () => {
                           <Icon icon="plus-circle" style={{ marginRight: '10px' }} /> Add (next)
                         </StyledButton>
                         <StyledButton
+                          appearance="subtle"
                           onClick={() => handlePlayRandom('addLater')}
                           loading={isLoadingRandom}
                           disabled={!(typeof autoPlaylistTrackCount === 'number')}

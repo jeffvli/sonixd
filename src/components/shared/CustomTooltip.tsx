@@ -3,10 +3,11 @@ import { Tooltip, Whisper } from 'rsuite';
 import styled from 'styled-components';
 
 const StyledTooltip = styled(Tooltip)`
-  border: 1px #3c3f43 solid;
   .rs-tooltip-inner {
-    background-color: ${(props) => props.theme.primary.background};
-    color: ${(props) => props.theme.primary.text};
+    background-color: ${(props) => props.theme.colors.tooltip.background};
+    color: ${(props) => props.theme.colors.tooltip.color};
+    border-radius: ${(props) => props.theme.other.tooltip.borderRadius};
+    border: ${(props) => props.theme.other.tooltip.border};
   }
 `;
 

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { shell } from 'electron';
-import { Button, Whisper, Popover, Nav, ButtonToolbar } from 'rsuite';
+import { Whisper, Nav, ButtonToolbar } from 'rsuite';
 import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import setDefaultSettings from '../shared/setDefaultSettings';
-import { StyledButton, StyledNavItem } from '../shared/styled';
+import { StyledButton, StyledNavItem, StyledPopover } from '../shared/styled';
 import PlaybackConfig from './ConfigPanels/PlaybackConfig';
 import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';
 import PlayerConfig from './ConfigPanels/PlayerConfig';
@@ -106,23 +106,23 @@ const Config = () => {
                 trigger="click"
                 placement="auto"
                 speaker={
-                  <Popover title="Confirm">
+                  <StyledPopover title="Confirm">
                     <div>Are you sure you want to reset your settings to default?</div>
+                    <strong>WARNING: This will reload the application</strong>
                     <div>
-                      <Button
+                      <StyledButton
                         id="reset-submit-button"
                         size="sm"
                         onClick={() => {
                           setDefaultSettings(true);
                           window.location.reload();
                         }}
-                        appearance="link"
+                        appearance="primary"
                       >
                         Yes
-                      </Button>
-                      <strong>WARNING: This will reload the application</strong>
+                      </StyledButton>
                     </div>
-                  </Popover>
+                  </StyledPopover>
                 }
               >
                 <StyledButton size="sm">Reset defaults</StyledButton>
@@ -133,7 +133,7 @@ const Config = () => {
                 enterable
                 preventOverflow
                 speaker={
-                  <Popover>
+                  <StyledPopover>
                     <>
                       Current version: {packageJson.version}
                       <br />
@@ -165,7 +165,7 @@ const Config = () => {
                         View CHANGELOG
                       </StyledButton>
                     </>
-                  </Popover>
+                  </StyledPopover>
                 }
               >
                 <StyledButton
