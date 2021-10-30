@@ -12,14 +12,16 @@ export const RsuiteLinkButton = styled(Button)<{
   overflow: hidden;
   color: ${(props) =>
     props.playing === 'true'
-      ? props.theme.primary.main
+      ? props.theme.colors.primary
       : props.subtitle === 'true'
-      ? props.theme.secondary.text
-      : props.theme.primary.text};
+      ? props.theme.colors.layout.page.colorSecondary
+      : props.theme.colors.layout.page.color};
 
-  &:hover {
+  &:hover,
+  &:active,
+  &:focus {
     text-decoration: underline;
-    color: ${(props) => props.theme.primary.text};
+    color: ${(props) => props.theme.colors.layout.page.color} !important;
     cursor: pointer;
   }
 `;
@@ -30,14 +32,14 @@ export const TableCellWrapper = styled.div<{
   dragover?: string;
   dragfield?: string;
 }>`
-  color: ${(props) => (props.playing === 'true' ? props.theme.primary.main : undefined)};
+  color: ${(props) => (props.playing === 'true' ? props.theme.colors.primary : undefined)};
   line-height: ${(props) => (props.height ? `${props.height}px` : undefined)};
   cursor: ${(props) =>
     props.dragover === 'true' ? 'grabbing' : props.dragfield === 'true' ? 'grab' : 'default'};
 `;
 
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`
-  color: ${(props) => (props.playing === 'true' ? props.theme.primary.main : undefined)};
+  color: ${(props) => (props.playing === 'true' ? props.theme.colors.primary : undefined)};
 `;
 
 export const StyledTableHeaderCell = styled(Table.HeaderCell)`
@@ -55,6 +57,6 @@ export const StyledTableHeaderCell = styled(Table.HeaderCell)`
 
   .rs-table-cell-header-icon-sort-desc::after,
   .rs-table-cell-header-icon-sort-asc::after {
-    color: ${(props) => `${props.theme.primary.main} !important`};
+    color: ${(props) => `${props.theme.colors.primary} !important`};
   }
 `;

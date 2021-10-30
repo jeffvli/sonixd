@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Container, Content, Footer, Header, Sidebar } from 'rsuite';
+import { Container, Content, Footer, Header, Nav, Sidebar } from 'rsuite';
 
 // Layout.tsx
 export const RootContainer = styled(Container)<{ font: string }>`
-  background: ${(props) => props.theme.primary.background};
+  background: ${(props) => props.theme.colors.layout.page.background};
   height: 100vh;
-  color: ${(props) => props.theme.primary.text};
-  font-size: ${(props) => props.theme.all.fonts.pageFontSize};
+  color: ${(props) => props.theme.colors.layout.page.color};
+  font-size: ${(props) => `${props.theme.fonts.size.page} !important`};
   font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
   font-weight: ${(props) =>
     props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
@@ -42,9 +42,9 @@ export const TitleHeader = styled.header<{ font: string }>`
   position: fixed;
   height: 32px;
   width: ${(props) => (props.className?.includes('maximized') ? '100%' : 'calc(100%)')};
-  background: ${(props) => props.theme.primary.titleBar};
+  background: ${(props) => props.theme.colors.layout.titleBar.background};
   padding: 4px;
-  color: ${(props) => props.theme.primary.titleText};
+  color: ${(props) => props.theme.colors.layout.titleBar.color};
   font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
   font-weight: ${(props) =>
     props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
@@ -161,7 +161,7 @@ export const PageContent = styled(Content)<{ padding?: string }>`
 // Sidebar.tsx
 // Add 1 to top if you add window border
 export const FixedSidebar = styled(Sidebar)<{ font: string }>`
-  background: ${(props) => props.theme.primary.sideBar} !important;
+  background: ${(props) => props.theme.colors.layout.sideBar.background} !important;
   position: fixed;
   top: 32px;
   z-index: 1;
@@ -177,14 +177,24 @@ export const FixedSidebar = styled(Sidebar)<{ font: string }>`
   }
 `;
 
+export const SidebarNavItem = styled(Nav.Item)`
+  a {
+    color: ${(props) => props.theme.colors.layout.sideBar.button.color} !important;
+
+    &:hover {
+      color: ${(props) => props.theme.colors.layout.sideBar.button.colorHover} !important;
+    }
+  }
+`;
+
 export const CoverArtWrapper = styled.div`
   display: inline-block;
-  filter: ${(props) => `drop-shadow(0px 5px 8px ${props.theme.primary.coverArtShadow})`};
+  filter: ${(props) => props.theme.other.coverArtFilter};
 `;
 
 export const PageHeaderTitle = styled.h1`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  font-size: ${(props) => props.theme.all.fonts.pageTitleFontSize};
+  font-size: ${(props) => props.theme.fonts.size.pageTitle};
 `;

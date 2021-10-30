@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
-import { Form, Input, Popover, Whisper } from 'rsuite';
+import { Form, Input, Whisper } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { createPlaylist, getPlaylists } from '../../api/api';
@@ -10,7 +10,7 @@ import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
-import { StyledButton, StyledInputGroup } from '../shared/styled';
+import { StyledButton, StyledInputGroup, StyledPopover } from '../shared/styled';
 import { errorMessages, isFailedResponse } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { AddPlaylistButton } from '../shared/ToolbarButtons';
@@ -99,7 +99,7 @@ const PlaylistList = () => {
               placement="auto"
               trigger="click"
               speaker={
-                <Popover>
+                <StyledPopover>
                   <Form>
                     <StyledInputGroup>
                       <Input
@@ -123,7 +123,7 @@ const PlaylistList = () => {
                       Create
                     </StyledButton>
                   </Form>
-                </Popover>
+                </StyledPopover>
               }
             >
               <AddPlaylistButton

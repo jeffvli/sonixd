@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
-import { FlexboxGrid, Grid, Row, Col, Whisper, Popover } from 'rsuite';
+import { FlexboxGrid, Grid, Row, Col, Whisper } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
@@ -34,6 +34,7 @@ import placeholderImg from '../../img/placeholder.jpg';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList, isCached } from '../../shared/utils';
+import { StyledPopover } from '../shared/styled';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -321,7 +322,7 @@ const PlayerBar = () => {
                         placement="topStart"
                         preventOverflow
                         speaker={
-                          <Popover>
+                          <StyledPopover>
                             <div style={{ height: '500px' }}>
                               <LazyLoadImage
                                 src={
@@ -341,7 +342,7 @@ const PlayerBar = () => {
                                 height={500}
                               />
                             </div>
-                          </Popover>
+                          </StyledPopover>
                         }
                       >
                         <LazyLoadImage

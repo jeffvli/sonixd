@@ -19,12 +19,12 @@ interface Card {
 }; */
 
 export const CardPanel = styled(Panel)<Card>`
+  border-radius: ${(props) => props.theme.other.card.borderRadius};
   text-align: center;
   width: ${(props) => `${Number(props.cardsize) + 2}px`};
   height: ${(props) => `${Number(props.cardsize) + 55}px`};
-  border-radius: 0px !important;
   &:hover {
-    border: 1px solid ${(props) => props.theme.primary.main};
+    border: 1px solid ${(props) => props.theme.colors.primary};
     img {
       filter: brightness(70%);
       -webkit-filter: brightness(70%);
@@ -41,7 +41,7 @@ export const InfoPanel = styled(Panel)<Card>`
 `;
 
 export const InfoSpan = styled.div`
-  color: ${(props) => props.theme.secondary.text};
+  color: ${(props) => props.theme.colors.layout.page.colorSecondary};
 `;
 
 export const CardButton = styled(Button)`
@@ -53,14 +53,26 @@ export const CardButton = styled(Button)`
 export const CardTitleButton = styled(CardButton)`
   padding-top: 5px;
   padding-bottom: 2px;
-  color: ${(props) => props.theme.primary.text};
+  color: ${(props) => props.theme.colors.layout.page.color};
   width: ${(props) => `${props.cardsize}px`};
+
+  &:hover {
+    text-decoration: none;
+    color: ${(props) =>
+      !props.onClick ? props.theme.colors.layout.page.color : props.theme.colors.primary};
+  }
 `;
 
 export const CardSubtitleButton = styled(CardButton)`
   padding-bottom: 5px;
-  color: ${(props) => props.theme.secondary.text};
+  color: ${(props) => props.theme.colors.layout.page.colorSecondary};
   width: ${(props) => `${props.cardsize}px`};
+
+  &:hover {
+    text-decoration: none;
+    color: ${(props) =>
+      !props.onClick ? props.theme.colors.layout.page.color : props.theme.colors.primary};
+  }
 `;
 
 export const CardSubtitle = styled.div<Card>`
@@ -83,7 +95,6 @@ export const LazyCardImg = styled(LazyLoadImage)<Card>`
 `;
 
 export const Overlay = styled.div<Card>`
-  background-color: #1a1d24;
   position: relative;
   height: ${(props) => `${props.cardsize}px`};
   width: ${(props) => `${props.cardsize}px`};
@@ -93,7 +104,7 @@ export const Overlay = styled.div<Card>`
 
   .corner-triangle {
     position: absolute;
-    background-color: ${(props) => props.theme.primary.main};
+    background-color: ${(props) => props.theme.colors.primary};
     box-shadow: 0 0 10px 8px rgba(0, 0, 0, 0.8);
     height: 80px;
     left: -50px;
@@ -108,16 +119,18 @@ export const Overlay = styled.div<Card>`
 const OverlayButton = styled(IconButton)`
   display: none;
   position: absolute !important;
-  opacity: 0.8;
+  opacity: ${(props) => props.theme.colors.card.overlayButton.opacity};
   width: 0px;
   height: 0px;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-  background: #000;
+  background: ${(props) => props.theme.colors.card.overlayButton.background};
+  color: ${(props) => props.theme.colors.card.overlayButton.color};
 
   &:hover {
     opacity: 1;
-    background: ${(props) => props.theme.primary.main};
+    background: ${(props) => props.theme.colors.card.overlayButton.backgroundHover};
+    color: ${(props) => props.theme.colors.card.overlayButton.colorHover};
   }
 `;
 

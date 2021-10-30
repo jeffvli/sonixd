@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sidenav, Nav, Icon } from 'rsuite';
-import { FixedSidebar } from './styled';
+import { FixedSidebar, SidebarNavItem } from './styled';
 
 const Sidebar = ({
   expand,
@@ -28,87 +28,87 @@ const Sidebar = ({
         <Sidenav.Header />
         <Sidenav.Body>
           <Nav>
-            <Nav.Item
+            <SidebarNavItem
               eventKey="discover"
               icon={<Icon icon="dashboard" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Dashboard
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="nowplaying"
               icon={<Icon icon="music" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Now Playing
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="playlists"
               icon={<Icon icon="list-ul" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Playlists
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="starred"
               icon={<Icon icon="heart" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Favorites
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="albums"
               icon={<Icon icon="book2" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Albums
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="artists"
               icon={<Icon icon="people-group" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Artists
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="genres"
               icon={<Icon icon="globe2" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Genres
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               eventKey="folders"
               icon={<Icon icon="folder-open" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Folders
-            </Nav.Item>
+            </SidebarNavItem>
           </Nav>
           <Nav>
-            <Nav.Item
+            <SidebarNavItem
               eventKey="config"
               icon={<Icon icon="gear-circle" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
             >
               Config
-            </Nav.Item>
-            <Nav.Item
+            </SidebarNavItem>
+            <SidebarNavItem
               icon={<Icon icon={expand ? 'arrow-left' : 'arrow-right'} />}
               onSelect={handleToggle}
               disabled={disableSidebar}
             >
               {expand ? 'Collapse' : 'Expand'}
-            </Nav.Item>
+            </SidebarNavItem>
           </Nav>
         </Sidenav.Body>
       </Sidenav>

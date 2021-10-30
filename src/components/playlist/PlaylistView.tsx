@@ -3,7 +3,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
-import { ButtonToolbar, Form, Input, Popover, Whisper } from 'rsuite';
+import { ButtonToolbar, Form, Input, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
@@ -58,7 +58,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
-import { StyledButton, StyledCheckbox, StyledInputGroup } from '../shared/styled';
+import { StyledButton, StyledCheckbox, StyledInputGroup, StyledPopover } from '../shared/styled';
 import {
   moveToIndex,
   removeFromPlaylist,
@@ -414,7 +414,7 @@ const PlaylistView = ({ ...rest }) => {
                     placement="auto"
                     trigger="click"
                     speaker={
-                      <Popover>
+                      <StyledPopover>
                         <Form>
                           <StyledInputGroup>
                             <Input
@@ -450,7 +450,7 @@ const PlaylistView = ({ ...rest }) => {
                             Edit
                           </StyledButton>
                         </Form>
-                      </Popover>
+                      </StyledPopover>
                     }
                   >
                     <EditButton size="md" disabled={misc.isProcessingPlaylist.includes(data?.id)} />
@@ -461,12 +461,12 @@ const PlaylistView = ({ ...rest }) => {
                     placement="auto"
                     trigger="click"
                     speaker={
-                      <Popover>
+                      <StyledPopover>
                         <p>Are you sure you want to delete this playlist?</p>
                         <StyledButton onClick={handleDelete} appearance="link">
                           Yes
                         </StyledButton>
-                      </Popover>
+                      </StyledPopover>
                     }
                   >
                     <DeleteButton

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { Col, FlexboxGrid, Form, Grid, Icon, Input, Row, Whisper } from 'rsuite';
+import { Col, FlexboxGrid, Form, Grid, Icon, Row, Whisper } from 'rsuite';
 import {
   getPlaylists,
   updatePlaylistSongsLg,
@@ -51,9 +51,10 @@ import {
   StyledInputPicker,
   StyledButton,
   StyledInputGroup,
-  StyledPopover,
   StyledInputNumber,
-  StyledIconButton,
+  StyledInputPickerContainer,
+  ContextMenuPopover,
+  StyledInput,
 } from './styled';
 import { notifyToast } from './toast';
 import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
@@ -555,8 +556,38 @@ export const GlobalContextMenu = () => {
             enterable
             placement="autoHorizontalStart"
             trigger="hover"
+            delayShow={300}
             speaker={
-              <StyledPopover>
+              <ContextMenuPopover style={{ width: '150px' }}>
+                <Grid fluid>
+                  <Row>
+                    <Col xs={12}>
+                      <StyledButton onClick={handleMoveToTop} block>
+                        <Icon icon="angle-double-up" />
+                      </StyledButton>
+                    </Col>
+                    <Col xs={12}>
+                      <StyledButton onClick={handleMoveUpOne} block>
+                        <Icon icon="angle-up" />
+                      </StyledButton>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12}>
+                      <StyledButton onClick={handleMoveToBottom} block>
+                        <Icon icon="angle-double-down" />
+                      </StyledButton>
+                    </Col>
+
+                    <Col xs={12}>
+                      <StyledButton onClick={handleMoveDownOne} block>
+                        <Icon icon="angle-down" />
+                      </StyledButton>
+                    </Col>
+                  </Row>
+                </Grid>
+                <br />
+
                 <Form>
                   <StyledInputGroup>
                     <StyledInputNumber
@@ -583,51 +614,7 @@ export const GlobalContextMenu = () => {
                     </StyledButton>
                   </StyledInputGroup>
                 </Form>
-
-                <Grid fluid>
-                  <Row>
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-double-up" />}
-                        onClick={handleMoveToTop}
-                        block
-                      >
-                        Top
-                      </StyledIconButton>
-                    </Col>
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-up" />}
-                        onClick={handleMoveUpOne}
-                        block
-                      >
-                        Up
-                      </StyledIconButton>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-double-down" />}
-                        onClick={handleMoveToBottom}
-                        block
-                      >
-                        Bottom
-                      </StyledIconButton>
-                    </Col>
-
-                    <Col xs={12}>
-                      <StyledIconButton
-                        icon={<Icon icon="angle-down" />}
-                        onClick={handleMoveDownOne}
-                        block
-                      >
-                        Down
-                      </StyledIconButton>
-                    </Col>
-                  </Row>
-                </Grid>
-              </StyledPopover>
+              </ContextMenuPopover>
             }
           >
             <ContextMenuButton
@@ -643,27 +630,31 @@ export const GlobalContextMenu = () => {
             placement="autoHorizontalStart"
             trigger="none"
             speaker={
-              <StyledPopover>
-                <StyledInputGroup>
-                  <StyledInputPicker
-                    data={playlists}
-                    placement="autoVerticalStart"
-                    virtualized
-                    labelKey="name"
-                    valueKey="id"
-                    width={200}
-                    onChange={(e: any) => setSelectedPlaylistId(e)}
-                  />
-                  <StyledButton
-                    disabled={
-                      !selectedPlaylistId || misc.isProcessingPlaylist.includes(selectedPlaylistId)
-                    }
-                    loading={misc.isProcessingPlaylist.includes(selectedPlaylistId)}
-                    onClick={handleAddToPlaylist}
-                  >
-                    Add
-                  </StyledButton>
-                </StyledInputGroup>
+              <ContextMenuPopover>
+                <StyledInputPickerContainer ref={playlistPickerContainerRef}>
+                  <StyledInputGroup>
+                    <StyledInputPicker
+                      container={() => playlistPickerContainerRef.current}
+                      data={playlists}
+                      placement="autoVerticalStart"
+                      virtualized
+                      labelKey="name"
+                      valueKey="id"
+                      width={200}
+                      onChange={(e: any) => setSelectedPlaylistId(e)}
+                    />
+                    <StyledButton
+                      disabled={
+                        !selectedPlaylistId ||
+                        misc.isProcessingPlaylist.includes(selectedPlaylistId)
+                      }
+                      loading={misc.isProcessingPlaylist.includes(selectedPlaylistId)}
+                      onClick={handleAddToPlaylist}
+                    >
+                      Add
+                    </StyledButton>
+                  </StyledInputGroup>
+                </StyledInputPickerContainer>
 
                 <div>
                   <StyledButton
@@ -676,14 +667,11 @@ export const GlobalContextMenu = () => {
 
                 {shouldCreatePlaylist && (
                   <Form>
-                    <StyledInputGroup>
-                      <Input
-                        placeholder="Enter name..."
-                        value={newPlaylistName}
-                        onChange={(e) => setNewPlaylistName(e)}
-                      />
-                    </StyledInputGroup>
-                    <br />
+                    <StyledInput
+                      placeholder="Enter name..."
+                      value={newPlaylistName}
+                      onChange={(e: string) => setNewPlaylistName(e)}
+                    />
                     <StyledButton
                       size="sm"
                       type="submit"
@@ -699,7 +687,7 @@ export const GlobalContextMenu = () => {
                     </StyledButton>
                   </Form>
                 )}
-              </StyledPopover>
+              </ContextMenuPopover>
             }
           >
             <ContextMenuButton
@@ -718,12 +706,12 @@ export const GlobalContextMenu = () => {
             placement="autoHorizontalStart"
             trigger="none"
             speaker={
-              <StyledPopover>
+              <ContextMenuPopover>
                 <p>Are you sure you want to delete {multiSelect.selected?.length} playlist(s)?</p>
                 <StyledButton onClick={handleDeletePlaylist} appearance="link">
                   Yes
                 </StyledButton>
-              </StyledPopover>
+              </ContextMenuPopover>
             }
           >
             <ContextMenuButton

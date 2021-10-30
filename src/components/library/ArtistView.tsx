@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import { shell } from 'electron';
 import settings from 'electron-settings';
-import { ButtonToolbar, Tag, Whisper, Button, Popover, TagGroup } from 'rsuite';
+import { ButtonToolbar, Whisper, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -32,7 +32,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
 import { isCached } from '../../shared/utils';
-import { StyledButton } from '../shared/styled';
+import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 
 interface ArtistParams {
@@ -213,12 +213,12 @@ const ArtistView = ({ ...rest }: any) => {
                     trigger="hover"
                     enterable
                     speaker={
-                      <Popover style={{ width: '400px' }}>
+                      <StyledPopover style={{ width: '400px' }}>
                         <div>
                           <h6>Related artists</h6>
                           <TagGroup>
                             {artistInfo.similarArtist?.map((artist: any) => (
-                              <Tag key={artist.id}>
+                              <StyledTag key={artist.id}>
                                 <TagLink
                                   onClick={() => {
                                     if (!rest.isModal) {
@@ -235,7 +235,7 @@ const ArtistView = ({ ...rest }: any) => {
                                 >
                                   {artist.name}
                                 </TagLink>
-                              </Tag>
+                              </StyledTag>
                             ))}
                           </TagGroup>
                         </div>
@@ -247,10 +247,10 @@ const ArtistView = ({ ...rest }: any) => {
                         >
                           View on Last.FM
                         </StyledButton>
-                      </Popover>
+                      </StyledPopover>
                     }
                   >
-                    <Button size="md">Info</Button>
+                    <StyledButton size="md">Info</StyledButton>
                   </Whisper>
                 </ButtonToolbar>
               </div>
