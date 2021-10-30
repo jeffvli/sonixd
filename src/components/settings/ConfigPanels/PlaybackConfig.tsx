@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import settings from 'electron-settings';
 import { ControlLabel, RadioGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledInputNumber, StyledInputPicker, StyledRadio } from '../../shared/styled';
+import {
+  StyledInputNumber,
+  StyledInputPicker,
+  StyledInputPickerContainer,
+  StyledRadio,
+} from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting, setPlayerVolume } from '../../../redux/playQueueSlice';
 
 const PlaybackConfig = () => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
+  const crossfadePickerContainerRef = useRef(null);
+
   return (
     <ConfigPanel header="Playback" bordered>
       <p>
@@ -77,10 +84,11 @@ const PlaybackConfig = () => {
           }}
         />
         <br />
-        <div>
+        <StyledInputPickerContainer ref={crossfadePickerContainerRef}>
           <ControlLabel>Crossfade type</ControlLabel>
           <br />
           <StyledInputPicker
+            container={() => crossfadePickerContainerRef.current}
             data={[
               {
                 label: 'Equal Power',
@@ -118,7 +126,7 @@ const PlaybackConfig = () => {
               dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
             }}
           />
-        </div>
+        </StyledInputPickerContainer>
 
         <br />
         <ControlLabel>Volume fade</ControlLabel>

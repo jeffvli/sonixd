@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { CheckboxGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledCheckbox, StyledInputPicker } from '../../shared/styled';
+import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { getMusicFolders } from '../../../api/api';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
@@ -12,21 +12,26 @@ const ServerConfig = () => {
   const dispatch = useAppDispatch();
   const folder = useAppSelector((state) => state.folder);
   const { isLoading, data: musicFolders } = useQuery(['musicFolders'], getMusicFolders);
+  const musicFolderPickerContainerRef = useRef(null);
 
   return (
     <ConfigPanel header="Server" bordered>
       <p>Select a music folder (leaving this blank will use all folders).</p>
       <br />
-      <StyledInputPicker
-        data={isLoading ? [] : musicFolders}
-        defaultValue={folder.musicFolder}
-        valueKey="id"
-        labelKey="name"
-        onChange={(e: any) => {
-          settings.setSync('musicFolder.id', e);
-          dispatch(setMusicFolder(e));
-        }}
-      />
+      <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
+        <StyledInputPicker
+          container={() => musicFolderPickerContainerRef.current}
+          data={isLoading ? [] : musicFolders}
+          defaultValue={folder.musicFolder}
+          valueKey="id"
+          labelKey="name"
+          onChange={(e: any) => {
+            settings.setSync('musicFolder.id', e);
+            dispatch(setMusicFolder(e));
+          }}
+        />
+      </StyledInputPickerContainer>
+
       <div>
         <br />
         <p>Select which pages to apply music folder filtering to:</p>

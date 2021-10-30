@@ -57,6 +57,12 @@ body {
 }
  */
 
+/* Fixes the picker menu position */
+.rs-picker-menu {
+  left: inherit !important;
+  top: inherit !important;
+}
+
 *::-webkit-scrollbar {
   width: 10px;
 }

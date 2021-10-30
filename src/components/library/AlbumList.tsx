@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
@@ -18,7 +18,7 @@ import {
   toggleRangeSelected,
   clearSelected,
 } from '../../redux/multiSelectSlice';
-import { StyledInputPicker } from '../shared/styled';
+import { StyledInputPicker, StyledInputPickerContainer } from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { setActive } from '../../redux/albumSlice';
 
@@ -42,6 +42,7 @@ const AlbumList = () => {
   const [sortTypes, setSortTypes] = useState<any[]>();
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
+  const albumFilterPickerContainerRef = useRef(null);
 
   useEffect(() => {
     if (folder.applied.albums) {
@@ -150,23 +151,36 @@ const AlbumList = () => {
         <GenericPageHeader
           title="Albums"
           subtitle={
-            <ButtonToolbar>
-              <StyledInputPicker
-                size="sm"
-                width={180}
-                defaultValue={album.active.filter}
-                groupBy="role"
-                data={sortTypes}
-                cleanable={false}
-                placeholder="Sort Type"
-                onChange={async (value: string) => {
-                  await queryClient.cancelQueries(['albumList', album.active.filter, musicFolder]);
-                  setSearchQuery('');
-                  dispatch(setActive({ ...album.active, filter: value }));
-                }}
-              />
-              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
-            </ButtonToolbar>
+            <StyledInputPickerContainer ref={albumFilterPickerContainerRef}>
+              <ButtonToolbar>
+                <StyledInputPicker
+                  container={() => albumFilterPickerContainerRef.current}
+                  size="sm"
+                  width={180}
+                  defaultValue={album.active.filter}
+                  groupBy="role"
+                  data={sortTypes}
+                  cleanable={false}
+                  placeholder="Sort Type"
+                  onChange={async (value: string) => {
+                    await queryClient.cancelQueries([
+                      'albumList',
+                      album.active.filter,
+                      musicFolder,
+                    ]);
+                    setSearchQuery('');
+                    dispatch(setActive({ ...album.active, filter: value }));
+                  }}
+                />
+
+                <RefreshButton
+                  onClick={handleRefresh}
+                  size="sm"
+                  loading={isRefreshing}
+                  width={100}
+                />
+              </ButtonToolbar>
+            </StyledInputPickerContainer>
           }
           subsidetitle={<></>}
           searchQuery={searchQuery}
