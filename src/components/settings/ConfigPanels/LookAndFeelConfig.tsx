@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import settings from 'electron-settings';
 import { RadioGroup, ControlLabel, Nav } from 'rsuite';
 import { ConfigPanel } from '../styled';
@@ -8,6 +8,7 @@ import {
   StyledNavItem,
   StyledInputNumber,
   StyledCheckbox,
+  StyledInputPickerContainer,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -36,6 +37,8 @@ const LookAndFeelConfig = () => {
   const [highlightOnRowHoverChk, setHighlightOnRowHoverChk] = useState(
     Boolean(settings.getSync('highlightOnRowHover'))
   );
+  const fontPickerContainerRef = useRef(null);
+  const titleBarPickerContainerRef = useRef(null);
 
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
@@ -67,10 +70,14 @@ const LookAndFeelConfig = () => {
             <StyledRadio value="defaultDark">Default Dark</StyledRadio>
             <StyledRadio value="defaultLight">Default Light</StyledRadio>
           </RadioGroup>
-          <br />
+        </div>
+        <br />
+
+        <StyledInputPickerContainer ref={fontPickerContainerRef}>
           <ControlLabel>Font</ControlLabel>
           <br />
           <StyledInputPicker
+            container={() => fontPickerContainerRef.current}
             data={Fonts}
             groupBy="role"
             cleanable={false}
@@ -80,12 +87,13 @@ const LookAndFeelConfig = () => {
               dispatch(setFont(e));
             }}
           />
-        </div>
+        </StyledInputPickerContainer>
         <br />
-        <div>
+        <StyledInputPickerContainer ref={titleBarPickerContainerRef}>
           <ControlLabel>Titlebar style (requires app restart)</ControlLabel>
           <br />
           <StyledInputPicker
+            container={() => titleBarPickerContainerRef.current}
             data={[
               {
                 label: 'macOS',
@@ -103,7 +111,7 @@ const LookAndFeelConfig = () => {
               dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
             }}
           />
-        </div>
+        </StyledInputPickerContainer>
         <br />
         <StyledCheckbox
           defaultChecked={dynamicBackgroundChk}
