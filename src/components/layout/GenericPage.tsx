@@ -32,7 +32,13 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
   return (
     <PageContainer
       id="page-container"
-      $backgroundSrc={misc.dynamicBackground ? backgroundImage : undefined}
+      $backgroundSrc={
+        misc.dynamicBackground
+          ? !backgroundImage.match('placeholder')
+            ? backgroundImage
+            : undefined
+          : undefined
+      }
     >
       <PageHeader
         id="page-header"
