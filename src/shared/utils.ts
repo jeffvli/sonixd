@@ -423,3 +423,7 @@ export const getCurrentEntryList = (playQueue: any) => {
 
   return 'entry';
 };
+
+export const getTheme = (themes: any[], value: string) => {
+  return themes.find((theme) => theme.value === value);
+};
