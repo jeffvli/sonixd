@@ -12,7 +12,7 @@ import PlaybackConfig from './ConfigPanels/PlaybackConfig';
 import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';
 import PlayerConfig from './ConfigPanels/PlayerConfig';
 import CacheConfig from './ConfigPanels/CacheConfig';
-import DebugConfig from './ConfigPanels/DebugConfig';
+import AdvancedConfig from './ConfigPanels/AdvancedConfig';
 import WindowConfig from './ConfigPanels/WindowConfig';
 import packageJson from '../../package.json';
 import ServerConfig from './ConfigPanels/ServerConfig';
@@ -194,7 +194,7 @@ const Config = () => {
           <ServerConfig />
           <CacheConfig />
           {!showWindowConfig && <WindowConfig />}
-          <DebugConfig />
+          <AdvancedConfig />
         </>
       )}
     </GenericPage>
