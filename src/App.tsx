@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import settings from 'electron-settings';
 import { ThemeProvider } from 'styled-components';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import './styles/App.global.css';
@@ -17,30 +18,26 @@ import AlbumList from './components/library/AlbumList';
 import ArtistList from './components/library/ArtistList';
 import GenreList from './components/library/GenreList';
 import { MockFooter } from './components/settings/styled';
-import { defaultDark, defaultLight } from './styles/styledTheme';
 import { useAppSelector } from './redux/hooks';
 import PageModal from './components/modal/PageModal';
 import NowPlayingMiniView from './components/player/NowPlayingMiniView';
 import { GlobalContextMenu } from './components/shared/ContextMenu';
 import SearchView from './components/search/SearchView';
 import FolderList from './components/library/FolderList';
+import { getTheme } from './shared/utils';
+import { defaultDark } from './styles/styledTheme';
+import { mockSettings } from './shared/mockSettings';
+
+const themes: any =
+  process.env.NODE_ENV === 'test' ? mockSettings.themes : settings.getSync('themes');
 
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
   const [font, setFont] = useState('Poppins');
   const misc = useAppSelector((state) => state.misc);
+
   useEffect(() => {
-    switch (misc.theme) {
-      case 'defaultDark':
-        setTheme(defaultDark);
-        break;
-      case 'defaultLight':
-        setTheme(defaultLight);
-        break;
-      default:
-        setTheme(defaultDark);
-        break;
-    }
+    setTheme(getTheme(themes, misc.theme) || defaultDark);
   }, [misc.theme]);
 
   useEffect(() => {

@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react';
+import { shell } from 'electron';
 import settings from 'electron-settings';
-import { RadioGroup, ControlLabel, Nav } from 'rsuite';
+import { ControlLabel, Nav, Icon } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import {
-  StyledRadio,
   StyledInputPicker,
   StyledNavItem,
   StyledInputNumber,
   StyledCheckbox,
   StyledInputPickerContainer,
+  StyledLink,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -37,9 +38,10 @@ const LookAndFeelConfig = () => {
   const [highlightOnRowHoverChk, setHighlightOnRowHoverChk] = useState(
     Boolean(settings.getSync('highlightOnRowHover'))
   );
+  const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
-
+  const themes: any = settings.getSync('themes');
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
   const playlistCols: any = settings.getSync('playlistListColumns');
@@ -56,23 +58,31 @@ const LookAndFeelConfig = () => {
   return (
     <>
       <ConfigPanel header="Look & Feel" bordered>
-        <div style={{ width: '300px' }}>
-          <p>Select the main application theme.</p>
-          <RadioGroup
-            name="themeRadioList"
-            appearance="default"
+        <p>
+          <StyledLink
+            onClick={() => shell.openExternal('https://github.com/jeffvli/sonixd/discussions/61')}
+          >
+            Check out the theming documentation! <Icon icon="external-link" />
+          </StyledLink>
+        </p>
+        <br />
+        <StyledInputPickerContainer ref={themePickerContainerRef}>
+          <ControlLabel>Application theme</ControlLabel>
+          <br />
+          <StyledInputPicker
+            container={() => themePickerContainerRef.current}
+            data={themes}
+            labelKey="label"
+            valueKey="value"
+            cleanable={false}
             defaultValue={String(settings.getSync('theme'))}
-            onChange={(e) => {
+            onChange={(e: string) => {
               settings.setSync('theme', e);
               dispatch(setTheme(e));
             }}
-          >
-            <StyledRadio value="defaultDark">Default Dark</StyledRadio>
-            <StyledRadio value="defaultLight">Default Light</StyledRadio>
-          </RadioGroup>
-        </div>
+          />
+        </StyledInputPickerContainer>
         <br />
-
         <StyledInputPickerContainer ref={fontPickerContainerRef}>
           <ControlLabel>Font</ControlLabel>
           <br />
