@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
+import { Icon } from 'rsuite';
+import { shell } from 'electron';
 import { ConfigPanel } from '../styled';
-import { StyledCheckbox } from '../../shared/styled';
+import { StyledButton, StyledCheckbox } from '../../shared/styled';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 
-const DebugConfig = () => {
+const AdvancedConfig = () => {
   const dispatch = useAppDispatch();
   const [showDebugWindow, setShowDebugWindow] = useState(
     Boolean(settings.getSync('showDebugWindow'))
   );
+
   return (
     <ConfigPanel header="Advanced" bordered>
       <StyledCheckbox
@@ -27,8 +30,12 @@ const DebugConfig = () => {
       >
         Show debug window
       </StyledCheckbox>
+      <br />
+      <StyledButton onClick={() => shell.openPath(settings.file())}>
+        Open settings JSON <Icon icon="external-link" />
+      </StyledButton>
     </ConfigPanel>
   );
 };
 
-export default DebugConfig;
+export default AdvancedConfig;
