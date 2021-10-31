@@ -31,6 +31,11 @@ import MenuBuilder from './menu';
 import { getCurrentEntryList } from './shared/utils';
 import setDefaultSettings from './components/shared/setDefaultSettings';
 
+settings.configure({
+  prettify: true,
+  numSpaces: 2,
+});
+
 const isWindows = process.platform === 'win32';
 const isMacOS = process.platform === 'darwin';
 const isLinux = process.platform === 'linux';
