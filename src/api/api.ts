@@ -828,6 +828,7 @@ export const getIndexes = async (options: {
     entry.artist.forEach((folder: any) => {
       folders.push({
         ...folder,
+        title: folder.name,
         isDir: true,
         image: getCoverArtUrl(folder),
         uniqueId: nanoid(),
