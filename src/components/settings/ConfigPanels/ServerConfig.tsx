@@ -16,7 +16,12 @@ const ServerConfig = () => {
 
   return (
     <ConfigPanel header="Server" bordered>
-      <p>Select a music folder (leaving this blank will use all folders).</p>
+      <p>
+        Select a music folder (leaving this blank will use all folders). If no songs are found in
+        the music folder, you may need to rescan your library. If you select a music folder and
+        switch servers, you will need to reset this setting or else an incorrect music folder filter
+        may be applied.
+      </p>
       <br />
       <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
         <StyledInputPicker

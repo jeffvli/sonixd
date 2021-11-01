@@ -41,7 +41,7 @@ import {
 } from '../shared/styled';
 import { MiniViewContainer } from './styled';
 import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
-import { getGenres, getRandomSongs, star, unstar } from '../../api/api';
+import { getGenres, getMusicFolders, getRandomSongs, star, unstar } from '../../api/api';
 import {
   AutoPlaylistButton,
   ClearQueueButton,
@@ -58,15 +58,18 @@ const NowPlayingMiniView = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
+  const folder = useAppSelector((state) => state.folder);
   const [autoPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
     Number(settings.getSync('randomPlaylistTrackCount'))
   );
-  const pickerContainerRef = useRef(null);
+  const genrePickerContainerRef = useRef(null);
+  const musicFolderPickerContainerRef = useRef(null);
   const autoPlaylistTriggerRef = useRef<any>();
   const [autoPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
   const [autoPlaylistToYear, setRandomPlaylistToYear] = useState(0);
   const [randomPlaylistGenre, setRandomPlaylistGenre] = useState('');
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
+  const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
   const { data: genres }: any = useQuery(['genreList'], async () => {
     const res = await getGenres();
@@ -79,6 +82,8 @@ const NowPlayingMiniView = () => {
       };
     });
   });
+
+  const { data: musicFolders } = useQuery(['musicFolders'], getMusicFolders);
 
   useHotkeys(
     'del',
@@ -174,6 +179,7 @@ const NowPlayingMiniView = () => {
       fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
       toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
       genre: randomPlaylistGenre,
+      musicFolderId: musicFolder,
     });
 
     if (isFailedResponse(res)) {
@@ -188,37 +194,45 @@ const NowPlayingMiniView = () => {
 
     const difference = res.song.length - cleanedSongs.length;
 
-    if (action === 'play') {
-      dispatch(setPlayQueue({ entries: cleanedSongs }));
-      dispatch(setStatus('PLAYING'));
-      notifyToast(
-        'info',
-        `Playing ${cleanedSongs.length} ${
-          difference !== 0 ? `(-${difference} invalid)` : ''
-        } song(s)`
-      );
-    } else if (action === 'addLater') {
-      dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'later' }));
-      if (playQueue.entry.length < 1) {
+    if (cleanedSongs.length > 0) {
+      if (action === 'play') {
+        dispatch(setPlayQueue({ entries: cleanedSongs }));
         dispatch(setStatus('PLAYING'));
+        notifyToast(
+          'info',
+          `Playing ${cleanedSongs.length} ${
+            difference !== 0 ? `(-${difference} invalid)` : ''
+          } song(s)`
+        );
+      } else if (action === 'addLater') {
+        dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'later' }));
+        if (playQueue.entry.length < 1) {
+          dispatch(setStatus('PLAYING'));
+        }
+        notifyToast(
+          'info',
+          `Added ${cleanedSongs.length} ${
+            difference !== 0 ? `(-${difference} invalid)` : ''
+          } song(s)`
+        );
+      } else {
+        dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'next' }));
+        if (playQueue.entry.length < 1) {
+          dispatch(setStatus('PLAYING'));
+        }
+        notifyToast(
+          'info',
+          `Added ${cleanedSongs.length} ${
+            difference !== 0 ? `(-${difference} invalid)` : ''
+          } song(s)`
+        );
       }
-      notifyToast(
-        'info',
-        `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
-      );
-    } else {
-      dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'next' }));
-      if (playQueue.entry.length < 1) {
-        dispatch(setStatus('PLAYING'));
-      }
-      notifyToast(
-        'info',
-        `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
-      );
+      dispatch(fixPlayer2Index());
+      setIsLoadingRandom(false);
+      return autoPlaylistTriggerRef.current.close();
     }
-    dispatch(fixPlayer2Index());
     setIsLoadingRandom(false);
-    return autoPlaylistTriggerRef.current.close();
+    return notifyToast('warning', `No songs found, adjust your filters`);
   };
 
   const handleRowFavorite = async (rowData: any) => {
@@ -319,14 +333,30 @@ const NowPlayingMiniView = () => {
                             </FlexboxGrid>
                             <br />
                             <ControlLabel>Genre</ControlLabel>
-                            <StyledInputPickerContainer ref={pickerContainerRef}>
+                            <StyledInputPickerContainer ref={genrePickerContainerRef}>
                               <StyledInputPicker
                                 style={{ width: '100%' }}
-                                container={() => pickerContainerRef.current}
+                                container={() => genrePickerContainerRef.current}
                                 data={genres}
                                 value={randomPlaylistGenre}
                                 virtualized
                                 onChange={(e: string) => setRandomPlaylistGenre(e)}
+                              />
+                            </StyledInputPickerContainer>
+                            <br />
+                            <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
+                              <ControlLabel>Music folder</ControlLabel>
+                              <br />
+                              <StyledInputPicker
+                                style={{ width: '100%' }}
+                                container={() => musicFolderPickerContainerRef.current}
+                                data={musicFolders}
+                                defaultValue={musicFolder}
+                                valueKey="id"
+                                labelKey="name"
+                                onChange={(e: any) => {
+                                  setMusicFolder(e);
+                                }}
                               />
                             </StyledInputPickerContainer>
                             <br />
