@@ -22,7 +22,7 @@ const GenreList = () => {
   const history = useHistory();
   const config = useAppSelector((state) => state.config);
   const album = useAppSelector((state) => state.album);
-  const { isLoading, isError, data: genres, error }: any = useQuery(['genreList'], async () => {
+  const { isLoading, isError, data: genres, error }: any = useQuery(['genrePageList'], async () => {
     const res = await getGenres();
     return _.orderBy(res, 'songCount', 'desc');
   });
