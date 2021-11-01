@@ -661,16 +661,18 @@ const ListViewTable = ({
                                   <RsuiteLinkButton
                                     subtitle="true"
                                     appearance="link"
-                                    onClick={() => {
-                                      if (rowData.artistId && !isModal) {
-                                        history.push(`/library/artist/${rowData.artistId}`);
-                                      } else if (rowData.artistId && isModal) {
-                                        dispatch(
-                                          addModalPage({
-                                            pageType: 'artist',
-                                            id: rowData.artistId,
-                                          })
-                                        );
+                                    onClick={(e: any) => {
+                                      if (!e.ctrlKey && !e.shiftKey) {
+                                        if (rowData.artistId && !isModal) {
+                                          history.push(`/library/artist/${rowData.artistId}`);
+                                        } else if (rowData.artistId && isModal) {
+                                          dispatch(
+                                            addModalPage({
+                                              pageType: 'artist',
+                                              id: rowData.artistId,
+                                            })
+                                          );
+                                        }
                                       }
                                     }}
                                     style={{
@@ -810,34 +812,36 @@ const ListViewTable = ({
                           <CustomTooltip text={rowData[column.dataKey]}>
                             <RsuiteLinkButton
                               appearance="link"
-                              onClick={() => {
-                                if (column.dataKey === 'album') {
-                                  if (rowData.albumId && !isModal) {
-                                    history.push(`/library/album/${rowData.albumId}`);
-                                  } else if (rowData.albumId && isModal) {
-                                    dispatch(
-                                      addModalPage({
-                                        pageType: 'album',
-                                        id: rowData.albumId,
-                                      })
-                                    );
+                              onClick={(e: any) => {
+                                if (!e.ctrlKey && !e.shiftKey) {
+                                  if (column.dataKey === 'album') {
+                                    if (rowData.albumId && !isModal) {
+                                      history.push(`/library/album/${rowData.albumId}`);
+                                    } else if (rowData.albumId && isModal) {
+                                      dispatch(
+                                        addModalPage({
+                                          pageType: 'album',
+                                          id: rowData.albumId,
+                                        })
+                                      );
+                                    }
+                                  } else if (column.dataKey === 'artist') {
+                                    if (rowData.artistId && !isModal) {
+                                      history.push(`/library/artist/${rowData.artistId}`);
+                                    } else if (rowData.artistId && isModal) {
+                                      dispatch(
+                                        addModalPage({
+                                          pageType: 'artist',
+                                          id: rowData.artistId,
+                                        })
+                                      );
+                                    }
+                                  } else if (column.dataKey === 'genre') {
+                                    dispatch(setActive({ ...album.active, filter: rowData.genre }));
+                                    setTimeout(() => {
+                                      history.push(`/library/album?sortType=${rowData.genre}`);
+                                    }, 50);
                                   }
-                                } else if (column.dataKey === 'artist') {
-                                  if (rowData.artistId && !isModal) {
-                                    history.push(`/library/artist/${rowData.artistId}`);
-                                  } else if (rowData.artistId && isModal) {
-                                    dispatch(
-                                      addModalPage({
-                                        pageType: 'artist',
-                                        id: rowData.artistId,
-                                      })
-                                    );
-                                  }
-                                } else if (column.dataKey === 'genre') {
-                                  dispatch(setActive({ ...album.active, filter: rowData.genre }));
-                                  setTimeout(() => {
-                                    history.push(`/library/album?sortType=${rowData.genre}`);
-                                  }, 50);
                                 }
                               }}
                               playing={
