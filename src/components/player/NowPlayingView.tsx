@@ -213,7 +213,7 @@ const NowPlayingView = () => {
         `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
       );
     }
-
+    dispatch(fixPlayer2Index());
     setIsLoadingRandom(false);
     return autoPlaylistTriggerRef.current.close();
   };
