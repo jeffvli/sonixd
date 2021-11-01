@@ -205,6 +205,7 @@ export const getStarred = async (options: { musicFolderId?: string | number }) =
     ...data.starred2,
     album: (data.starred2.album || []).map((entry: any, index: any) => ({
       ...entry,
+      title: entry.name,
       albumId: entry.id,
       image: getCoverArtUrl(entry),
       starred: entry.starred || undefined,
@@ -265,6 +266,7 @@ export const getAlbums = async (
     ...data.albumList2,
     album: (data.albumList2.album || []).map((entry: any, index: any) => ({
       ...entry,
+      title: entry.name,
       albumId: entry.id,
       image: getCoverArtUrl(entry, coverArtSize),
       starred: entry.starred || undefined,
@@ -304,6 +306,7 @@ export const getAlbumsDirect = async (
 
   const albums = (data.albumList2.album || []).map((entry: any, index: any) => ({
     ...entry,
+    title: entry.name,
     albumId: entry.id,
     image: getCoverArtUrl(entry, coverArtSize),
     starred: entry.starred || undefined,
@@ -360,6 +363,7 @@ export const getAllAlbums = (
         const flattened = _.flatten(data);
         return flattened.map((entry: any, index: any) => ({
           ...entry,
+          title: entry.name,
           albumId: entry.id,
           image: getCoverArtUrl(entry, coverArtSize),
           starred: entry.starred || undefined,
