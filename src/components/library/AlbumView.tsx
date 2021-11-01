@@ -162,8 +162,8 @@ const AlbumView = ({ ...rest }: any) => {
       header={
         <GenericPageHeader
           image={
-            isCached(`${misc.imageCachePath}album_${data.albumId}.jpg`)
-              ? `${misc.imageCachePath}album_${data.albumId}.jpg`
+            isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
+              ? `${misc.imageCachePath}album_${albumId}.jpg`
               : data.image
           }
           cacheImages={{
