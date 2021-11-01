@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
-import { ButtonToolbar, ControlLabel, FlexboxGrid, Icon, Whisper } from 'rsuite';
+import { ButtonToolbar, ButtonGroup, ControlLabel, FlexboxGrid, Icon, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -20,6 +20,8 @@ import {
   appendPlayQueue,
   setStar,
   setRate,
+  moveToTop,
+  moveToBottom,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -33,7 +35,14 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
-import { AutoPlaylistButton, ClearQueueButton, ShuffleButton } from '../shared/ToolbarButtons';
+import {
+  AutoPlaylistButton,
+  ClearQueueButton,
+  MoveBottomButton,
+  MoveTopButton,
+  RemoveSelectedButton,
+  ShuffleButton,
+} from '../shared/ToolbarButtons';
 import {
   StyledButton,
   StyledCheckbox,
@@ -368,6 +377,48 @@ const NowPlayingView = () => {
                     }
                   />
                 </Whisper>
+                <ButtonGroup>
+                  <MoveTopButton
+                    size="sm"
+                    appearance="subtle"
+                    onClick={() => {
+                      dispatch(moveToTop({ selectedEntries: multiSelect.selected }));
+
+                      if (playQueue.currentPlayer === 1) {
+                        dispatch(fixPlayer2Index());
+                      }
+                    }}
+                  />
+                  <MoveBottomButton
+                    size="sm"
+                    appearance="subtle"
+                    onClick={() => {
+                      dispatch(moveToBottom({ selectedEntries: multiSelect.selected }));
+
+                      if (playQueue.currentPlayer === 1) {
+                        dispatch(fixPlayer2Index());
+                      }
+                    }}
+                  />
+                  <RemoveSelectedButton
+                    size="sm"
+                    appearance="subtle"
+                    onClick={() => {
+                      if (multiSelect.selected.length === playQueue.entry.length) {
+                        // Clear the queue instead of removing individually
+                        dispatch(clearPlayQueue());
+                        dispatch(setStatus('PAUSED'));
+                        setTimeout(() => dispatch(resetPlayer()), 200);
+                      } else {
+                        dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+                        dispatch(clearSelected());
+                        if (playQueue.currentPlayer === 1) {
+                          dispatch(fixPlayer2Index());
+                        }
+                      }
+                    }}
+                  />
+                </ButtonGroup>
               </ButtonToolbar>
             </>
           }

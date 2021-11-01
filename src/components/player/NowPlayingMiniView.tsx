@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
-import { ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
+import { ButtonToolbar, FlexboxGrid, Icon, Whisper, ControlLabel } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useQuery } from 'react-query';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -23,15 +25,32 @@ import {
   setPlaybackSetting,
   removeFromPlayQueue,
   setStar,
+  setPlayQueue,
+  appendPlayQueue,
 } from '../../redux/playQueueSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import ListViewType from '../viewtypes/ListViewType';
 import GenericPage from '../layout/GenericPage';
-import { StyledCheckbox, StyledIconButton } from '../shared/styled';
+import {
+  StyledButton,
+  StyledCheckbox,
+  StyledInputNumber,
+  StyledInputPicker,
+  StyledInputPickerContainer,
+  StyledPopover,
+} from '../shared/styled';
 import { MiniViewContainer } from './styled';
-import { getCurrentEntryList } from '../../shared/utils';
-import { star, unstar } from '../../api/api';
-import CustomTooltip from '../shared/CustomTooltip';
+import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
+import { getGenres, getRandomSongs, star, unstar } from '../../api/api';
+import {
+  AutoPlaylistButton,
+  ClearQueueButton,
+  MoveBottomButton,
+  MoveTopButton,
+  RemoveSelectedButton,
+  ShuffleButton,
+} from '../shared/ToolbarButtons';
+import { notifyToast } from '../shared/toast';
 
 const NowPlayingMiniView = () => {
   const tableRef = useRef<any>();
@@ -39,6 +58,27 @@ const NowPlayingMiniView = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
+  const [autoPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
+    Number(settings.getSync('randomPlaylistTrackCount'))
+  );
+  const pickerContainerRef = useRef(null);
+  const autoPlaylistTriggerRef = useRef<any>();
+  const [autoPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
+  const [autoPlaylistToYear, setRandomPlaylistToYear] = useState(0);
+  const [randomPlaylistGenre, setRandomPlaylistGenre] = useState('');
+  const [isLoadingRandom, setIsLoadingRandom] = useState(false);
+
+  const { data: genres }: any = useQuery(['genreList'], async () => {
+    const res = await getGenres();
+    const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
+    return genresOrderedBySongCount.map((genre: any) => {
+      return {
+        label: `${genre.value} (${genre.songCount})`,
+        value: genre.value,
+        role: 'Genre',
+      };
+    });
+  });
 
   useHotkeys(
     'del',
@@ -127,6 +167,60 @@ const NowPlayingMiniView = () => {
     }
   };
 
+  const handlePlayRandom = async (action: 'play' | 'addNext' | 'addLater') => {
+    setIsLoadingRandom(true);
+    const res = await getRandomSongs({
+      size: autoPlaylistTrackCount,
+      fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
+      toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
+      genre: randomPlaylistGenre,
+    });
+
+    if (isFailedResponse(res)) {
+      autoPlaylistTriggerRef.current.close();
+      return notifyToast('error', errorMessages(res)[0]);
+    }
+
+    const cleanedSongs = res.song.filter((song: any) => {
+      // Remove invalid songs that may break the player
+      return song.bitRate && song.duration;
+    });
+
+    const difference = res.song.length - cleanedSongs.length;
+
+    if (action === 'play') {
+      dispatch(setPlayQueue({ entries: cleanedSongs }));
+      dispatch(setStatus('PLAYING'));
+      notifyToast(
+        'info',
+        `Playing ${cleanedSongs.length} ${
+          difference !== 0 ? `(-${difference} invalid)` : ''
+        } song(s)`
+      );
+    } else if (action === 'addLater') {
+      dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'later' }));
+      if (playQueue.entry.length < 1) {
+        dispatch(setStatus('PLAYING'));
+      }
+      notifyToast(
+        'info',
+        `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
+      );
+    } else {
+      dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'next' }));
+      if (playQueue.entry.length < 1) {
+        dispatch(setStatus('PLAYING'));
+      }
+      notifyToast(
+        'info',
+        `Added ${cleanedSongs.length} ${difference !== 0 ? `(-${difference} invalid)` : ''} song(s)`
+      );
+    }
+    dispatch(fixPlayer2Index());
+    setIsLoadingRandom(false);
+    return autoPlaylistTriggerRef.current.close();
+  };
+
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'music');
@@ -149,12 +243,11 @@ const NowPlayingMiniView = () => {
             padding="0px"
             header={
               <>
-                <FlexboxGrid justify="space-between" align="middle" style={{ height: '50px' }}>
+                <FlexboxGrid justify="space-between" align="middle">
                   <FlexboxGrid.Item>
                     <ButtonToolbar>
-                      <StyledIconButton
-                        size="sm"
-                        icon={<Icon icon="trash2" />}
+                      <ClearQueueButton
+                        size="xs"
                         onClick={() => {
                           dispatch(clearPlayQueue());
                           dispatch(setStatus('PAUSED'));
@@ -163,9 +256,8 @@ const NowPlayingMiniView = () => {
                           setTimeout(() => dispatch(resetPlayer()), 200);
                         }}
                       />
-                      <StyledIconButton
-                        size="sm"
-                        icon={<Icon icon="random" />}
+                      <ShuffleButton
+                        size="xs"
                         onClick={() => {
                           if (playQueue.shuffle) {
                             dispatch(shuffleInPlace());
@@ -174,60 +266,156 @@ const NowPlayingMiniView = () => {
                           }
                         }}
                       />
-                      {multiSelect.selected.length > 0 && (
-                        <>
-                          <CustomTooltip text="Move up">
-                            <StyledIconButton
-                              size="xs"
-                              icon={<Icon icon="arrow-up2" />}
-                              onClick={() => {
-                                dispatch(moveUp({ selectedEntries: multiSelect.selected }));
-
-                                if (playQueue.currentPlayer === 1) {
-                                  dispatch(fixPlayer2Index());
-                                }
+                      <Whisper
+                        ref={autoPlaylistTriggerRef}
+                        placement="autoVertical"
+                        trigger="none"
+                        speaker={
+                          <StyledPopover>
+                            <ControlLabel>How many tracks? (1-500)*</ControlLabel>
+                            <StyledInputNumber
+                              min={1}
+                              max={500}
+                              step={10}
+                              defaultValue={autoPlaylistTrackCount}
+                              value={autoPlaylistTrackCount}
+                              onChange={(e: number) => {
+                                settings.setSync('randomPlaylistTrackCount', Number(e));
+                                setRandomPlaylistTrackCount(Number(e));
                               }}
                             />
-                          </CustomTooltip>
-                          <CustomTooltip text="Move down">
-                            <StyledIconButton
-                              size="xs"
-                              icon={<Icon icon="arrow-down2" />}
-                              onClick={() => {
-                                dispatch(moveDown({ selectedEntries: multiSelect.selected }));
+                            <br />
+                            <FlexboxGrid justify="space-between">
+                              <FlexboxGrid.Item>
+                                <ControlLabel>From year</ControlLabel>
+                                <div>
+                                  <StyledInputNumber
+                                    width={100}
+                                    min={0}
+                                    max={3000}
+                                    step={1}
+                                    defaultValue={autoPlaylistFromYear}
+                                    value={autoPlaylistFromYear}
+                                    onChange={(e: number) => {
+                                      setRandomPlaylistFromYear(Number(e));
+                                    }}
+                                  />
+                                </div>
+                              </FlexboxGrid.Item>
+                              <FlexboxGrid.Item>
+                                <ControlLabel>To year</ControlLabel>
+                                <div>
+                                  <StyledInputNumber
+                                    width={100}
+                                    min={0}
+                                    max={3000}
+                                    step={1}
+                                    defaultValue={autoPlaylistToYear}
+                                    value={autoPlaylistToYear}
+                                    onChange={(e: number) => setRandomPlaylistToYear(Number(e))}
+                                  />
+                                </div>
+                              </FlexboxGrid.Item>
+                            </FlexboxGrid>
+                            <br />
+                            <ControlLabel>Genre</ControlLabel>
+                            <StyledInputPickerContainer ref={pickerContainerRef}>
+                              <StyledInputPicker
+                                style={{ width: '100%' }}
+                                container={() => pickerContainerRef.current}
+                                data={genres}
+                                value={randomPlaylistGenre}
+                                virtualized
+                                onChange={(e: string) => setRandomPlaylistGenre(e)}
+                              />
+                            </StyledInputPickerContainer>
+                            <br />
+                            <ButtonToolbar>
+                              <StyledButton
+                                appearance="subtle"
+                                onClick={() => handlePlayRandom('addNext')}
+                                loading={isLoadingRandom}
+                                disabled={!(typeof autoPlaylistTrackCount === 'number')}
+                              >
+                                <Icon icon="plus-circle" style={{ marginRight: '10px' }} /> Add
+                                (next)
+                              </StyledButton>
+                              <StyledButton
+                                appearance="subtle"
+                                onClick={() => handlePlayRandom('addLater')}
+                                loading={isLoadingRandom}
+                                disabled={!(typeof autoPlaylistTrackCount === 'number')}
+                              >
+                                <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (later)
+                              </StyledButton>
+                            </ButtonToolbar>
+                            <ButtonToolbar>
+                              <StyledButton
+                                block
+                                appearance="primary"
+                                onClick={() => handlePlayRandom('play')}
+                                loading={isLoadingRandom}
+                                disabled={!(typeof autoPlaylistTrackCount === 'number')}
+                              >
+                                <Icon icon="play" style={{ marginRight: '10px' }} />
+                                Play
+                              </StyledButton>
+                            </ButtonToolbar>
+                          </StyledPopover>
+                        }
+                      >
+                        <AutoPlaylistButton
+                          size="xs"
+                          noText
+                          onClick={() =>
+                            autoPlaylistTriggerRef.current.state.isOverlayShown
+                              ? autoPlaylistTriggerRef.current.close()
+                              : autoPlaylistTriggerRef.current.open()
+                          }
+                        />
+                      </Whisper>
+                      <MoveTopButton
+                        size="xs"
+                        appearance="subtle"
+                        onClick={() => {
+                          dispatch(moveUp({ selectedEntries: multiSelect.selected }));
 
-                                if (playQueue.currentPlayer === 1) {
-                                  dispatch(fixPlayer2Index());
-                                }
-                              }}
-                            />
-                          </CustomTooltip>
+                          if (playQueue.currentPlayer === 1) {
+                            dispatch(fixPlayer2Index());
+                          }
+                        }}
+                      />
+                      <MoveBottomButton
+                        size="xs"
+                        appearance="subtle"
+                        onClick={() => {
+                          dispatch(moveDown({ selectedEntries: multiSelect.selected }));
 
-                          <CustomTooltip text="Remove selected">
-                            <StyledIconButton
-                              size="xs"
-                              icon={<Icon icon="close" />}
-                              onClick={() => {
-                                if (multiSelect.selected.length === playQueue.entry.length) {
-                                  // Clear the queue instead of removing individually
-                                  dispatch(clearPlayQueue());
-                                  dispatch(setStatus('PAUSED'));
-                                  setTimeout(() => dispatch(resetPlayer()), 200);
-                                } else {
-                                  dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
-                                  dispatch(clearSelected());
-                                  if (playQueue.currentPlayer === 1) {
-                                    dispatch(fixPlayer2Index());
-                                  }
-                                }
-                              }}
-                            />
-                          </CustomTooltip>
-                        </>
-                      )}
+                          if (playQueue.currentPlayer === 1) {
+                            dispatch(fixPlayer2Index());
+                          }
+                        }}
+                      />
+                      <RemoveSelectedButton
+                        size="xs"
+                        appearance="subtle"
+                        onClick={() => {
+                          if (multiSelect.selected.length === playQueue.entry.length) {
+                            // Clear the queue instead of removing individually
+                            dispatch(clearPlayQueue());
+                            dispatch(setStatus('PAUSED'));
+                            setTimeout(() => dispatch(resetPlayer()), 200);
+                          } else {
+                            dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+                            dispatch(clearSelected());
+                            if (playQueue.currentPlayer === 1) {
+                              dispatch(fixPlayer2Index());
+                            }
+                          }
+                        }}
+                      />
                     </ButtonToolbar>
                   </FlexboxGrid.Item>
-
                   <FlexboxGrid.Item>
                     <StyledCheckbox
                       defaultChecked={playQueue.scrollWithCurrentSong}
