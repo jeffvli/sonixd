@@ -439,10 +439,17 @@ export const GlobalContextMenu = () => {
   const handleMoveSelectedToIndex = () => {
     if (misc.contextMenu.type === 'nowPlaying') {
       const currentEntryList = getCurrentEntryList(playQueue);
-      const uniqueIdOfIndexToMoveTo = playQueue[currentEntryList][indexToMoveTo].uniqueId;
-      dispatch(
-        moveToIndex({ entries: multiSelect.selected, moveBeforeId: uniqueIdOfIndexToMoveTo })
-      );
+
+      if (Number(indexToMoveTo) === playQueue[currentEntryList].length) {
+        dispatch(moveToBottom({ selectedEntries: multiSelect.selected }));
+      } else {
+        const uniqueIdOfIndexToMoveTo = playQueue[currentEntryList][indexToMoveTo].uniqueId;
+        dispatch(
+          moveToIndex({ entries: multiSelect.selected, moveBeforeId: uniqueIdOfIndexToMoveTo })
+        );
+      }
+    } else if (Number(indexToMoveTo) === playlist.entry.length) {
+      dispatch(plMoveToBottom({ selectedEntries: multiSelect.selected }));
     } else {
       const uniqueIdOfIndexToMoveTo = playlist.entry[indexToMoveTo].uniqueId;
       dispatch(
