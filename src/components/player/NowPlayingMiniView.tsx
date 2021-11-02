@@ -203,21 +203,51 @@ const NowPlayingMiniView = () => {
 
     if (cleanedSongs.entries.length > 0) {
       if (action === 'play') {
-        dispatch(setPlayQueue({ entries: cleanedSongs.entries }));
-        dispatch(setStatus('PLAYING'));
-        notifyToast('info', getPlayedSongsNotification({ ...cleanedSongs.count, type: 'play' }));
+        if (cleanedSongs.entries.length > 0) {
+          dispatch(setPlayQueue({ entries: cleanedSongs.entries }));
+          dispatch(setStatus('PLAYING'));
+          dispatch(fixPlayer2Index());
+        } else {
+          dispatch(clearPlayQueue());
+          dispatch(setStatus('PAUSED'));
+        }
+
+        notifyToast(
+          'info',
+          getPlayedSongsNotification({
+            original: res.song.length,
+            filtered: cleanedSongs.count.filtered,
+            type: 'play',
+          })
+        );
       } else if (action === 'addLater') {
-        dispatch(appendPlayQueue({ entries: cleanedSongs.entries, type: 'later' }));
-        if (playQueue.entry.length < 1) {
-          dispatch(setStatus('PLAYING'));
+        if (cleanedSongs.entries.length > 0) {
+          dispatch(appendPlayQueue({ entries: cleanedSongs.entries, type: 'later' }));
+          dispatch(fixPlayer2Index());
         }
-        notifyToast('info', getPlayedSongsNotification({ ...cleanedSongs.count, type: 'add' }));
+
+        notifyToast(
+          'info',
+          getPlayedSongsNotification({
+            original: res.song.length,
+            filtered: cleanedSongs.count.filtered,
+            type: 'add',
+          })
+        );
       } else {
-        dispatch(appendPlayQueue({ entries: cleanedSongs.entries, type: 'next' }));
-        if (playQueue.entry.length < 1) {
-          dispatch(setStatus('PLAYING'));
+        if (cleanedSongs.entries.length > 0) {
+          dispatch(appendPlayQueue({ entries: cleanedSongs.entries, type: 'next' }));
+          dispatch(fixPlayer2Index());
         }
-        notifyToast('info', getPlayedSongsNotification({ ...cleanedSongs.count, type: 'add' }));
+
+        notifyToast(
+          'info',
+          getPlayedSongsNotification({
+            original: res.song.length,
+            filtered: cleanedSongs.count.filtered,
+            type: 'add',
+          })
+        );
       }
       dispatch(fixPlayer2Index());
       setIsLoadingRandom(false);
