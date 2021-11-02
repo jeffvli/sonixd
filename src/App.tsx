@@ -28,15 +28,14 @@ import { getTheme } from './shared/utils';
 import { defaultDark } from './styles/styledTheme';
 import { mockSettings } from './shared/mockSettings';
 
-const themes: any =
-  process.env.NODE_ENV === 'test' ? mockSettings.themes : settings.getSync('themes');
-
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
   const [font, setFont] = useState('Poppins');
   const misc = useAppSelector((state) => state.misc);
 
   useEffect(() => {
+    const themes: any =
+      process.env.NODE_ENV === 'test' ? mockSettings.themes : settings.getSync('themes');
     setTheme(getTheme(themes, misc.theme) || defaultDark);
   }, [misc.theme]);
 
