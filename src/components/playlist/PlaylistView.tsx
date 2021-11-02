@@ -3,7 +3,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import settings from 'electron-settings';
-import { ButtonToolbar, Form, Input, Whisper } from 'rsuite';
+import { ButtonToolbar, ControlLabel, Form, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
@@ -61,7 +61,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
-import { StyledButton, StyledCheckbox, StyledInputGroup, StyledPopover } from '../shared/styled';
+import { StyledButton, StyledCheckbox, StyledInput, StyledPopover } from '../shared/styled';
 import {
   moveToIndex,
   removeFromPlaylist,
@@ -431,20 +431,18 @@ const PlaylistView = ({ ...rest }) => {
                     speaker={
                       <StyledPopover>
                         <Form>
-                          <StyledInputGroup>
-                            <Input
-                              placeholder="Name"
-                              value={editName}
-                              onChange={(e) => setEditName(e)}
-                            />
-                          </StyledInputGroup>
-                          <StyledInputGroup>
-                            <Input
-                              placeholder="Description"
-                              value={editDescription}
-                              onChange={(e) => setEditDescription(e)}
-                            />
-                          </StyledInputGroup>
+                          <ControlLabel>Name</ControlLabel>
+                          <StyledInput
+                            placeholder="Name"
+                            value={editName}
+                            onChange={(e: string) => setEditName(e)}
+                          />
+                          <ControlLabel>Description</ControlLabel>
+                          <StyledInput
+                            placeholder="Description"
+                            value={editDescription}
+                            onChange={(e: string) => setEditDescription(e)}
+                          />
                           <StyledCheckbox
                             defaultChecked={editPublic}
                             value={editPublic}
