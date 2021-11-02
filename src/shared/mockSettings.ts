@@ -3,6 +3,7 @@ export const mockSettings = {
   showDebugWindow: false,
   globalMediaHotkeys: true,
   cachePath: 'C:\\Users\\jli\\AppData\\Roaming\\Electron',
+  legacyAuth: false,
   volume: 0.93,
   seekForwardInterval: 5,
   seekBackwardInterval: 5,
