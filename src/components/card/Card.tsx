@@ -157,7 +157,7 @@ const Card = ({
 
   return (
     <>
-      <CardPanel bordered shaded cardsize={size} style={rest.style}>
+      <CardPanel cardsize={size} style={rest.style}>
         <Overlay cardsize={size}>
           {lazyLoad ? (
             <LazyCardImg
