@@ -166,6 +166,7 @@ const PlaylistView = ({ ...rest }) => {
         currentIndex: rowData.rowIndex,
         currentSongId: rowData.id,
         uniqueSongId: rowData.uniqueId,
+        filters: config.playback.filters,
       })
     );
     dispatch(setStatus('PLAYING'));
