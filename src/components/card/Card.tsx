@@ -4,7 +4,12 @@ import { useHistory } from 'react-router-dom';
 import cacheImage from '../shared/cacheImage';
 import { getAlbum, getPlaylist, getAllArtistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
+import {
+  appendPlayQueue,
+  clearPlayQueue,
+  fixPlayer2Index,
+  setPlayQueue,
+} from '../../redux/playQueueSlice';
 import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
 
 import {
@@ -43,7 +48,6 @@ const Card = ({
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const playQueue = useAppSelector((state) => state.playQueue);
   const config = useAppSelector((state) => state.config);
 
   const handleClick = () => {
@@ -58,55 +62,88 @@ const Card = ({
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
       const songs = filterPlayQueue(config.playback.filters, res.song);
-      dispatch(setPlayQueue({ entries: songs.entries }));
+
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
       const songs = filterPlayQueue(config.playback.filters, res.song);
-      dispatch(setPlayQueue({ entries: songs.entries }));
+
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
     if (playClick.type === 'artist') {
       const res = await getAllArtistSongs(playClick.id);
       const songs = filterPlayQueue(config.playback.filters, res);
-      dispatch(setPlayQueue({ entries: songs.entries }));
+
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
-
-    dispatch(setStatus('PLAYING'));
-    dispatch(fixPlayer2Index());
   };
 
   const handlePlayAppend = async (type: 'next' | 'later') => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
       const songs = filterPlayQueue(config.playback.filters, res.song);
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
       const songs = filterPlayQueue(config.playback.filters, res.song);
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
     if (playClick.type === 'artist') {
       const res = await getAllArtistSongs(playClick.id);
       const songs = filterPlayQueue(config.playback.filters, res);
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
-
-    if (playQueue.entry.length < 1) {
-      dispatch(setStatus('PLAYING'));
-    }
-
-    dispatch(fixPlayer2Index());
   };
 
   const handleOpenModal = () => {

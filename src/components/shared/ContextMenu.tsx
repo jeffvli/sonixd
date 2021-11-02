@@ -26,6 +26,7 @@ import {
 } from '../../redux/miscSlice';
 import {
   appendPlayQueue,
+  clearPlayQueue,
   fixPlayer2Index,
   moveDown,
   moveToBottom,
@@ -140,7 +141,15 @@ export const GlobalContextMenu = () => {
       res.push(_.orderBy(music, 'rowIndex', 'asc'));
       const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
 
-      dispatch(setPlayQueue({ entries: songs.entries }));
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -149,7 +158,16 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
-      dispatch(setPlayQueue({ entries: songs.entries }));
+
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -158,6 +176,16 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
+
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
       dispatch(setPlayQueue({ entries: songs.entries }));
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'artist') {
@@ -167,13 +195,17 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
-      dispatch(setPlayQueue({ entries: songs.entries }));
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-    }
 
-    if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
   };
 
@@ -196,7 +228,12 @@ export const GlobalContextMenu = () => {
       const res = await Promise.all(promises);
       res.push(_.orderBy(music, 'rowIndex', 'asc'));
       const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -205,7 +242,12 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -214,7 +256,12 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
@@ -223,13 +270,13 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-    }
 
-    if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
   };
 

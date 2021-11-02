@@ -35,6 +35,7 @@ import {
   appendPlayQueue,
   setStar,
   setRate,
+  clearPlayQueue,
 } from '../../redux/playQueueSlice';
 import {
   toggleSelected,
@@ -77,7 +78,6 @@ const PlaylistView = ({ ...rest }) => {
   const [isModified, setIsModified] = useState(false);
   const dispatch = useAppDispatch();
   const playlist = useAppSelector((state) => state.playlist);
-  const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
@@ -175,17 +175,27 @@ const PlaylistView = ({ ...rest }) => {
 
   const handlePlay = () => {
     const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);
-    dispatch(setPlayQueue({ entries: songs.entries }));
-    dispatch(setStatus('PLAYING'));
+
+    if (songs.entries.length > 0) {
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    } else {
+      dispatch(clearPlayQueue());
+      dispatch(setStatus('PAUSED'));
+    }
+
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
 
   const handlePlayAppend = (type: 'next' | 'later') => {
     const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);
-    dispatch(appendPlayQueue({ entries: songs.entries, type }));
-    if (playQueue.entry.length < 1) {
-      dispatch(setStatus('PLAYING'));
+
+    if (songs.entries.length > 0) {
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      dispatch(fixPlayer2Index());
     }
+
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
   };
 
