@@ -8,6 +8,6 @@ export const notifyToast = (
   Notification[type]({
     title: message,
     description,
-    duration: type === 'info' ? 1500 : type === 'success' ? 2500 : 3000,
+    duration: type === 'info' ? 2000 : type === 'success' ? 2500 : 3000,
   });
 };
