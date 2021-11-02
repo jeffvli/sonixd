@@ -27,7 +27,6 @@ import GridViewType from '../viewtypes/GridViewType';
 import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
-import { TagLink } from './styled';
 import { addModalPage } from '../../redux/miscSlice';
 import {
   appendPlayQueue,
@@ -234,23 +233,22 @@ const ArtistView = ({ ...rest }: any) => {
                           <h6>Related artists</h6>
                           <TagGroup>
                             {artistInfo.similarArtist?.map((artist: any) => (
-                              <StyledTag key={artist.id}>
-                                <TagLink
-                                  onClick={() => {
-                                    if (!rest.isModal) {
-                                      history.push(`/library/artist/${artist.id}`);
-                                    } else {
-                                      dispatch(
-                                        addModalPage({
-                                          pageType: 'artist',
-                                          id: artist.id,
-                                        })
-                                      );
-                                    }
-                                  }}
-                                >
-                                  {artist.name}
-                                </TagLink>
+                              <StyledTag
+                                key={artist.id}
+                                onClick={() => {
+                                  if (!rest.isModal) {
+                                    history.push(`/library/artist/${artist.id}`);
+                                  } else {
+                                    dispatch(
+                                      addModalPage({
+                                        pageType: 'artist',
+                                        id: artist.id,
+                                      })
+                                    );
+                                  }
+                                }}
+                              >
+                                {artist.name}
                               </StyledTag>
                             ))}
                           </TagGroup>
