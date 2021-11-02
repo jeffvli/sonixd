@@ -19,15 +19,30 @@ interface Card {
 }; */
 
 export const CardPanel = styled(Panel)<Card>`
-  border-radius: ${(props) => props.theme.other.card.borderRadius};
+  border-radius: 0px;
   text-align: center;
   width: ${(props) => `${Number(props.cardsize) + 2}px`};
   height: ${(props) => `${Number(props.cardsize) + 55}px`};
+  border: ${(props) => props.theme.other.card.border};
+
+  img {
+    border-top: ${(props) => props.theme.other.card.image.borderTop};
+    border-right: ${(props) => props.theme.other.card.image.borderRight};
+    border-bottom: ${(props) => props.theme.other.card.image.borderBottom};
+    border-left: ${(props) => props.theme.other.card.image.borderLeft};
+    border-radius: ${(props) => props.theme.other.card.image.borderRadius};
+  }
+
   &:hover {
-    border: 1px solid ${(props) => props.theme.colors.primary};
+    border-color: ${(props) => props.theme.colors.primary} !important;
+
     img {
       filter: brightness(70%);
       -webkit-filter: brightness(70%);
+    }
+
+    .rs-panel {
+      border-color: ${(props) => props.theme.colors.primary} !important;
     }
   }
 
@@ -37,7 +52,13 @@ export const CardPanel = styled(Panel)<Card>`
 `;
 
 export const InfoPanel = styled(Panel)<Card>`
+  border-radius: 0px;
   width: ${(props) => `${props.cardsize}px`};
+  border-radius: ${(props) => props.theme.other.card.info.borderRadius} !important;
+  border-top: ${(props) => props.theme.other.card.info.borderTop} !important;
+  border-right: ${(props) => props.theme.other.card.info.borderRight} !important;
+  border-bottom: ${(props) => props.theme.other.card.info.borderBottom} !important;
+  border-left: ${(props) => props.theme.other.card.info.borderLeft} !important;
 `;
 
 export const InfoSpan = styled.div`

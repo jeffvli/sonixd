@@ -554,7 +554,21 @@ const setDefaultSettings = (force: boolean) => {
           },
           coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
           card: {
-            borderRadius: '0px',
+            border: '1px #3c3f43 solid',
+            image: {
+              borderTop: 'none',
+              borderRight: 'none',
+              borderBottom: 'none',
+              borderLeft: 'none',
+              borderRadius: '0px',
+            },
+            info: {
+              borderTop: 'none',
+              borderRight: 'none',
+              borderBottom: 'none',
+              borderLeft: 'none',
+              borderRadius: '0px',
+            },
           },
           input: {
             borderRadius: '0px',
@@ -603,14 +617,14 @@ const setDefaultSettings = (force: boolean) => {
             playerBar: {
               color: '#FFFFFF',
               colorSecondary: '#888e94',
-              background: '#161B22',
+              background: '#212121',
               button: {
                 color: 'rgba(240, 240, 240, 0.8)',
                 colorHover: '#FFFFFF',
               },
             },
             sideBar: {
-              background: '#161B22',
+              background: '#212121',
               button: {
                 color: '#D8D8D8',
                 colorHover: '#FFFFFF',
@@ -618,7 +632,7 @@ const setDefaultSettings = (force: boolean) => {
             },
             titleBar: {
               color: '#FFFFFF',
-              background: '#161B22',
+              background: '#212121',
             },
           },
           button: {
@@ -697,7 +711,21 @@ const setDefaultSettings = (force: boolean) => {
           },
           coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
           card: {
-            borderRadius: '0px',
+            border: '1px #3c3f43 solid',
+            image: {
+              borderTop: 'none',
+              borderRight: 'none',
+              borderBottom: 'none',
+              borderLeft: 'none',
+              borderRadius: '0px',
+            },
+            info: {
+              borderTop: 'none',
+              borderRight: 'none',
+              borderBottom: 'none',
+              borderLeft: 'none',
+              borderRadius: '0px',
+            },
           },
           input: {
             borderRadius: '0px',
