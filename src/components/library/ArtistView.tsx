@@ -29,7 +29,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import CustomTooltip from '../shared/CustomTooltip';
 import { TagLink } from './styled';
 import { addModalPage } from '../../redux/miscSlice';
-import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
+import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
 import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
 import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
@@ -104,6 +104,7 @@ const ArtistView = ({ ...rest }: any) => {
     const res = await getAllArtistSongs(data.id);
     const songs = filterPlayQueue(config.playback.filters, res);
     dispatch(setPlayQueue({ entries: songs.entries }));
+    dispatch(fixPlayer2Index());
     dispatch(setStatus('PLAYING'));
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
@@ -112,6 +113,7 @@ const ArtistView = ({ ...rest }: any) => {
     const res = await getAllArtistSongs(data.id);
     const songs = filterPlayQueue(config.playback.filters, res);
     dispatch(appendPlayQueue({ entries: songs.entries, type }));
+    dispatch(fixPlayer2Index());
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
