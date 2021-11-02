@@ -146,6 +146,19 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('randomPlaylistTrackCount', 50);
   }
 
+  if (force || !settings.hasSync('playbackFilters')) {
+    settings.setSync('playbackFilters', [
+      {
+        filter: '(\\(|\\[|~|-|（)[Oo]ff [Vv]ocal(\\)|\\]|~|-|）)',
+        enabled: true,
+      },
+      {
+        filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',
+        enabled: true,
+      },
+    ]);
+  }
+
   if (force || !settings.hasSync('musicListColumns')) {
     settings.setSync('musicListColumns', [
       {

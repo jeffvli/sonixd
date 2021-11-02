@@ -1,17 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import settings from 'electron-settings';
-import { ControlLabel } from 'rsuite';
+import { ControlLabel, Form } from 'rsuite';
 import { ConfigPanel } from '../styled';
-import { StyledCheckbox, StyledInputNumber } from '../../shared/styled';
-import { useAppDispatch } from '../../../redux/hooks';
+import {
+  StyledButton,
+  StyledCheckbox,
+  StyledInput,
+  StyledInputGroup,
+  StyledInputNumber,
+  StyledPanel,
+} from '../../shared/styled';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
+import ListViewTable from '../../viewtypes/ListViewTable';
+import { appendPlaybackFilter } from '../../../redux/configSlice';
+
+const playbackFilterColumns = [
+  {
+    id: '#',
+    dataKey: 'index',
+    alignment: 'center',
+    resizable: false,
+    width: 50,
+    label: '#',
+  },
+  {
+    id: 'Filter',
+    dataKey: 'filter',
+    alignment: 'left',
+    resizable: false,
+    flexGrow: 2,
+    label: 'Filter',
+  },
+  {
+    id: 'Enabled',
+    dataKey: 'filterEnabled',
+    alignment: 'left',
+    resizable: false,
+    width: 100,
+    label: 'Enabled',
+  },
+  {
+    id: 'Delete',
+    dataKey: 'filterDelete',
+    alignment: 'left',
+    resizable: false,
+    width: 100,
+    label: 'Delete',
+  },
+];
 
 const PlayerConfig = () => {
   const dispatch = useAppDispatch();
+  const playQueue = useAppSelector((state) => state.playQueue);
+  const multiSelect = useAppSelector((state) => state.multiSelect);
+  const config = useAppSelector((state) => state.config);
+  const [newFilter, setNewFilter] = useState('');
   const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
     Boolean(settings.getSync('globalMediaHotkeys'))
   );
   const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
+
+  useEffect(() => {
+    settings.setSync('playbackFilters', config.playback.filters);
+  }, [config.playback.filters]);
+
   return (
     <ConfigPanel header="Player" bordered>
       <p>
@@ -62,6 +115,64 @@ const PlayerConfig = () => {
       >
         Enable scrobbling
       </StyledCheckbox>
+      <br />
+      <h6>Filters</h6>
+      <p>
+        Any song title that matches a filter will be automatically removed when being added to the
+        queue.
+      </p>
+      <p style={{ fontSize: 'smaller' }}>
+        * Adding to the queue by double-clicking a song will ignore filters for that one song
+      </p>
+      <br />
+      <StyledPanel bordered bodyFill>
+        <Form fluid>
+          <StyledInputGroup>
+            <StyledInput
+              value={newFilter}
+              onChange={(e: string) => setNewFilter(e)}
+              placeholder="Enter regex string"
+            />
+            <StyledButton
+              type="submit"
+              disabled={newFilter === ''}
+              onClick={() => {
+                dispatch(appendPlaybackFilter({ filter: newFilter, enabled: true }));
+                settings.setSync(
+                  'playbackFilters',
+                  config.playback.filters.concat({
+                    filter: newFilter,
+                    enabled: true,
+                  })
+                );
+                setNewFilter('');
+              }}
+            >
+              Add
+            </StyledButton>
+          </StyledInputGroup>
+        </Form>
+
+        <ListViewTable
+          data={config.playback.filters || []}
+          height={200}
+          columns={playbackFilterColumns}
+          rowHeight={35}
+          fontSize={12}
+          listType="column"
+          cacheImages={{ enabled: false }}
+          playQueue={playQueue}
+          multiSelect={multiSelect}
+          isModal={false}
+          miniView={false}
+          disableContextMenu
+          disableRowClick
+          handleRowClick={() => {}}
+          handleRowDoubleClick={() => {}}
+          config={[]}
+          virtualized
+        />
+      </StyledPanel>
     </ConfigPanel>
   );
 };
