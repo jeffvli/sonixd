@@ -57,7 +57,13 @@ import {
   StyledInput,
 } from './styled';
 import { notifyToast } from './toast';
-import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
+import {
+  errorMessages,
+  filterPlayQueue,
+  getCurrentEntryList,
+  getPlayedSongsNotification,
+  isFailedResponse,
+} from '../../shared/utils';
 import { setStatus } from '../../redux/playerSlice';
 
 export const ContextMenuButton = ({ text, hotkey, children, ...rest }: any) => {
@@ -103,6 +109,7 @@ export const GlobalContextMenu = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+  const config = useAppSelector((state) => state.config);
   const addToPlaylistTriggerRef = useRef<any>();
   const deletePlaylistTriggerRef = useRef<any>();
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('');
@@ -131,37 +138,37 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       res.push(_.orderBy(music, 'rowIndex', 'asc'));
-      const songs = _.flatten(res);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
 
-      dispatch(setPlayQueue({ entries: songs }));
-      notifyToast('info', `Playing ${songs.length} song(s)`);
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getPlaylist(multiSelect.selected[i].id));
       }
 
       const res = await Promise.all(promises);
-      const songs = _.flatten(_.map(res, 'song'));
-      dispatch(setPlayQueue({ entries: songs }));
-      notifyToast('info', `Playing ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getAlbum(multiSelect.selected[i].id));
       }
 
       const res = await Promise.all(promises);
-      const songs = _.flatten(_.map(res, 'song'));
-      dispatch(setPlayQueue({ entries: songs }));
-      notifyToast('info', `Playing ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getAllArtistSongs(multiSelect.selected[i].id));
       }
 
       const res = await Promise.all(promises);
-      const songs = _.flatten(res);
-      dispatch(setPlayQueue({ entries: songs }));
-      notifyToast('info', `Playing ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
     if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
@@ -188,37 +195,36 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       res.push(_.orderBy(music, 'rowIndex', 'asc'));
-      const songs = _.flatten(res);
-
-      dispatch(appendPlayQueue({ entries: songs, type }));
-      notifyToast('info', `Added ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getPlaylist(multiSelect.selected[i].id));
       }
 
       const res = await Promise.all(promises);
-      const songs = _.flatten(_.map(res, 'song'));
-      dispatch(appendPlayQueue({ entries: songs, type }));
-      notifyToast('info', `Added ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getAlbum(multiSelect.selected[i].id));
       }
 
       const res = await Promise.all(promises);
-      const songs = _.flatten(_.map(res, 'song'));
-      dispatch(appendPlayQueue({ entries: songs, type }));
-      notifyToast('info', `Added ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
         promises.push(getAllArtistSongs(multiSelect.selected[i].id));
       }
 
       const res = await Promise.all(promises);
-      const songs = _.flatten(res);
-      dispatch(appendPlayQueue({ entries: songs, type }));
-      notifyToast('info', `Added ${songs.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
     if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {

@@ -5,7 +5,7 @@ import cacheImage from '../shared/cacheImage';
 import { getAlbum, getPlaylist, getAllArtistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { appendPlayQueue, fixPlayer2Index, setPlayQueue } from '../../redux/playQueueSlice';
-import { isCached } from '../../shared/utils';
+import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
 
 import {
   CardPanel,
@@ -44,6 +44,7 @@ const Card = ({
   const history = useHistory();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
+  const config = useAppSelector((state) => state.config);
 
   const handleClick = () => {
     history.push(url);
@@ -56,20 +57,23 @@ const Card = ({
   const handlePlayClick = async () => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
-      dispatch(setPlayQueue({ entries: res.song }));
-      notifyToast('info', `Playing ${res.song.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, res.song);
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
-      dispatch(setPlayQueue({ entries: res.song }));
-      notifyToast('info', `Playing ${res.song.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, res.song);
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
     if (playClick.type === 'artist') {
-      const songs = await getAllArtistSongs(playClick.id);
-      dispatch(setPlayQueue({ entries: songs }));
-      notifyToast('info', `Playing ${songs.length} song(s)`);
+      const res = await getAllArtistSongs(playClick.id);
+      const songs = filterPlayQueue(config.playback.filters, res);
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
     dispatch(setStatus('PLAYING'));
@@ -79,20 +83,23 @@ const Card = ({
   const handlePlayAppend = async (type: 'next' | 'later') => {
     if (playClick.type === 'playlist') {
       const res = await getPlaylist(playClick.id);
-      dispatch(appendPlayQueue({ entries: res.song, type }));
-      notifyToast('info', `Added ${res.song.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, res.song);
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
     if (playClick.type === 'album') {
       const res = await getAlbum(playClick.id);
-      dispatch(appendPlayQueue({ entries: res.song, type }));
-      notifyToast('info', `Added ${res.song.length} song(s)`);
+      const songs = filterPlayQueue(config.playback.filters, res.song);
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
     if (playClick.type === 'artist') {
-      const songs = await getAllArtistSongs(playClick.id);
-      dispatch(appendPlayQueue({ entries: songs, type }));
-      notifyToast('info', `Added ${songs.length} song(s)`);
+      const res = await getAllArtistSongs(playClick.id);
+      const songs = filterPlayQueue(config.playback.filters, res);
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
     if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {

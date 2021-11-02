@@ -46,7 +46,9 @@ import {
 import {
   createRecoveryFile,
   errorMessages,
+  filterPlayQueue,
   getCurrentEntryList,
+  getPlayedSongsNotification,
   getRecoveryPath,
   isFailedResponse,
 } from '../../shared/utils';
@@ -171,17 +173,19 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handlePlay = () => {
-    dispatch(setPlayQueue({ entries: playlist[getCurrentEntryList(playlist)] }));
+    const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);
+    dispatch(setPlayQueue({ entries: songs.entries }));
     dispatch(setStatus('PLAYING'));
-    notifyToast('info', `Playing ${playlist.entry.length} song(s)`);
+    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
 
   const handlePlayAppend = (type: 'next' | 'later') => {
-    dispatch(appendPlayQueue({ entries: playlist[getCurrentEntryList(playlist)], type }));
+    const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);
+    dispatch(appendPlayQueue({ entries: songs.entries, type }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
-    notifyToast('info', `Added ${playlist.entry.length} song(s)`);
+    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
   };
 
   const handleSave = async (recovery: boolean) => {
