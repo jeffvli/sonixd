@@ -16,6 +16,12 @@ export const mockSettings = {
   fadeDuration: 9,
   fadeType: 'equalPower',
   scrobble: false,
+  playbackFilters: [
+    {
+      filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',
+      enabled: true,
+    },
+  ],
   musicFolder: {
     id: null,
     albums: true,
