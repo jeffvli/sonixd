@@ -25,7 +25,7 @@ import {
 import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fixPlayer2Index, setSort, sortPlayQueue } from '../../redux/playQueueSlice';
-import { StyledCheckbox, StyledIconToggle, StyledRate } from '../shared/styled';
+import { StyledCheckbox, StyledIconButton, StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
   clearSelected,
@@ -40,7 +40,7 @@ import {
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { sortPlaylist } from '../../redux/playlistSlice';
-import { setColumnList } from '../../redux/configSlice';
+import { removePlaybackFilter, setColumnList, setPlaybackFilter } from '../../redux/configSlice';
 import { setActive } from '../../redux/albumSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
@@ -902,6 +902,46 @@ const ListViewTable = ({
                           )
                         ) : column.dataKey === 'custom' ? (
                           <div>{column.custom}</div>
+                        ) : column.dataKey === 'filter' ? (
+                          <div style={{ userSelect: 'text' }}>{rowData.filter}</div>
+                        ) : column.dataKey === 'filterDelete' ? (
+                          <>
+                            <StyledIconButton
+                              appearance="subtle"
+                              icon={<Icon icon="trash2" />}
+                              onClick={() => {
+                                dispatch(removePlaybackFilter({ filterName: rowData.filter }));
+                              }}
+                            />
+                          </>
+                        ) : column.dataKey === 'filterEnabled' ? (
+                          <>
+                            <StyledCheckbox
+                              defaultChecked={
+                                configState.playback.filters.find(
+                                  (f: any) => f.filter === rowData.filter
+                                )?.enabled === true
+                              }
+                              checked={
+                                configState.playback.filters.find(
+                                  (f: any) => f.filter === rowData.filter
+                                )?.enabled === true
+                              }
+                              onChange={(_v: any, e: boolean) => {
+                                dispatch(
+                                  setPlaybackFilter({
+                                    filterName: rowData.filter,
+                                    newFilter: {
+                                      ...configState.playback.filters.find(
+                                        (f: any) => f.filter === rowData.filter
+                                      ),
+                                      enabled: e,
+                                    },
+                                  })
+                                );
+                              }}
+                            />
+                          </>
                         ) : column.dataKey === 'columnResizable' ? (
                           <div>
                             <StyledCheckbox

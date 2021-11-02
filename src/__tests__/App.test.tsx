@@ -110,6 +110,9 @@ const configState: ConfigPage = {
     tab: 'playback',
     columnSelectorTab: 'music',
   },
+  playback: {
+    filters: [],
+  },
   lookAndFeel: {
     listView: {
       music: {

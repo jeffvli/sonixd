@@ -11,6 +11,9 @@ export interface ConfigPage {
     tab: string;
     columnSelectorTab: string;
   };
+  playback: {
+    filters: PlaybackFilter[];
+  };
   lookAndFeel: {
     listView: {
       music: { columns: any; rowHeight: number; fontSize: number };
@@ -26,12 +29,20 @@ export interface ConfigPage {
   };
 }
 
+interface PlaybackFilter {
+  filter: string;
+  enabled: boolean;
+}
+
 export type ColumnList = 'music' | 'album' | 'playlist' | 'artist' | 'genre' | 'mini';
 
 const initialState: ConfigPage = {
   active: {
     tab: 'playback',
     columnSelectorTab: 'music',
+  },
+  playback: {
+    filters: parsedSettings.playbackFilters,
   },
   lookAndFeel: {
     listView: {
@@ -92,6 +103,33 @@ const configSlice = createSlice({
       state.active = action.payload;
     },
 
+    appendPlaybackFilter: (state, action: PayloadAction<PlaybackFilter>) => {
+      if (!state.playback.filters.find((f: PlaybackFilter) => f.filter === action.payload.filter)) {
+        state.playback.filters.push(action.payload);
+      }
+    },
+
+    setPlaybackFilter: (
+      state,
+      action: PayloadAction<{ filterName: string; newFilter: PlaybackFilter }>
+    ) => {
+      const selectedFilterIndex = state.playback.filters.findIndex(
+        (f: PlaybackFilter) => f.filter === action.payload.filterName
+      );
+
+      state.playback.filters[selectedFilterIndex] = action.payload.newFilter;
+    },
+
+    removePlaybackFilter: (state, action: PayloadAction<{ filterName: string }>) => {
+      state.playback.filters = state.playback.filters.filter(
+        (f: PlaybackFilter) => f.filter !== action.payload.filterName
+      );
+    },
+
+    setPlaybackFilters: (state, action: PayloadAction<any>) => {
+      state.playback.filters = action.payload;
+    },
+
     setColumnList: (state, action: PayloadAction<{ listType: ColumnList; entries: any }>) => {
       state.lookAndFeel.listView[action.payload.listType].columns = action.payload.entries;
     },
@@ -127,6 +165,10 @@ const configSlice = createSlice({
 
 export const {
   setActive,
+  appendPlaybackFilter,
+  removePlaybackFilter,
+  setPlaybackFilter,
+  setPlaybackFilters,
   setColumnList,
   setRowHeight,
   setFontSize,
