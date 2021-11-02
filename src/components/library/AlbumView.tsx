@@ -33,7 +33,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
-import { isCached } from '../../shared/utils';
+import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
 import { StyledLink } from '../shared/styled';
 import { setActive } from '../../redux/albumSlice';
 
@@ -46,6 +46,7 @@ const AlbumView = ({ ...rest }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const album = useAppSelector((state) => state.album);
+  const config = useAppSelector((state) => state.config);
   const history = useHistory();
   const queryClient = useQueryClient();
 
@@ -99,17 +100,19 @@ const AlbumView = ({ ...rest }: any) => {
   };
 
   const handlePlay = () => {
-    dispatch(setPlayQueue({ entries: data.song }));
+    const songs = filterPlayQueue(config.playback.filters, data.song);
+    dispatch(setPlayQueue({ entries: songs.entries }));
     dispatch(setStatus('PLAYING'));
-    notifyToast('info', `Playing ${data.song.length} song(s)`);
+    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
 
   const handlePlayAppend = (type: 'next' | 'later') => {
-    dispatch(appendPlayQueue({ entries: data.song, type }));
+    const songs = filterPlayQueue(config.playback.filters, data.song);
+    dispatch(appendPlayQueue({ entries: songs.entries, type }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
-    notifyToast('info', `Added ${data.song.length} song(s)`);
+    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
   };
 
   const handleFavorite = async () => {
