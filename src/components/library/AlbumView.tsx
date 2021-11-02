@@ -93,6 +93,7 @@ const AlbumView = ({ ...rest }: any) => {
         currentIndex: rowData.index,
         currentSongId: rowData.id,
         uniqueSongId: rowData.uniqueId,
+        filters: config.playback.filters,
       })
     );
     dispatch(setStatus('PLAYING'));
