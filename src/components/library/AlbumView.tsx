@@ -14,6 +14,7 @@ import { getAlbum, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   appendPlayQueue,
+  clearPlayQueue,
   fixPlayer2Index,
   setPlayQueue,
   setPlayQueueByRowClick,
@@ -43,7 +44,6 @@ interface AlbumParams {
 
 const AlbumView = ({ ...rest }: any) => {
   const dispatch = useAppDispatch();
-  const playQueue = useAppSelector((state) => state.playQueue);
   const misc = useAppSelector((state) => state.misc);
   const album = useAppSelector((state) => state.album);
   const config = useAppSelector((state) => state.config);
@@ -102,19 +102,29 @@ const AlbumView = ({ ...rest }: any) => {
 
   const handlePlay = () => {
     const songs = filterPlayQueue(config.playback.filters, data.song);
-    dispatch(setPlayQueue({ entries: songs.entries }));
-    dispatch(fixPlayer2Index());
-    dispatch(setStatus('PLAYING'));
+
+    if (songs.entries.length > 0) {
+      dispatch(setPlayQueue({ entries: songs.entries }));
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    } else {
+      dispatch(clearPlayQueue());
+      dispatch(setStatus('PAUSED'));
+    }
+
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
 
   const handlePlayAppend = (type: 'next' | 'later') => {
     const songs = filterPlayQueue(config.playback.filters, data.song);
-    dispatch(appendPlayQueue({ entries: songs.entries, type }));
-    dispatch(fixPlayer2Index());
-    if (playQueue.entry.length < 1) {
-      dispatch(setStatus('PLAYING'));
+
+    if (songs.entries.length > 0) {
+      dispatch(appendPlayQueue({ entries: songs.entries, type }));
+      dispatch(fixPlayer2Index());
+    } else {
+      dispatch(clearPlayQueue());
     }
+
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
   };
 

@@ -452,12 +452,12 @@ export const getPlayedSongsNotification = (options: {
       return `Playing ${options.original} songs`;
     }
 
-    return `Playing ${options.filtered} songs [-${options.original - options.filtered} filtered]`;
+    return `Playing ${options.filtered} songs [${options.original - options.filtered} filtered]`;
   }
 
   if (options.original === options.filtered) {
     return `Added ${options.original} songs`;
   }
 
-  return `Added ${options.filtered} songs [-${options.original - options.filtered} filtered]`;
+  return `Added ${options.filtered} songs [${options.original - options.filtered} filtered]`;
 };
