@@ -188,7 +188,7 @@ export const StyledIconButton = styled(IconButton)`
       ? `${props.theme.colors.primary}`
       : props.appearance === 'subtle' || props.appearance === 'link'
       ? undefined
-      : `${props.theme.colors.button.default.background}`};
+      : `${props.theme.colors.button.default.background}`} !important;
   color: ${(props) =>
     props.appearance === 'primary'
       ? `${props.theme.colors.button.primary.color}`
@@ -196,7 +196,7 @@ export const StyledIconButton = styled(IconButton)`
       ? `${props.theme.colors.button.subtle.color}`
       : props.appearance === 'link'
       ? undefined
-      : `${props.theme.colors.button.default.color}`};
+      : `${props.theme.colors.button.default.color}`} !important;
 
   filter: ${(props) => (props.disabled || props.loading ? 'brightness(0.7)' : 'none')};
   transition: 0.5s;
