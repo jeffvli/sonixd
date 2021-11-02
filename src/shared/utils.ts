@@ -427,3 +427,37 @@ export const getCurrentEntryList = (playQueue: any) => {
 export const getTheme = (themes: any[], value: string) => {
   return themes.find((theme) => theme.value === value);
 };
+
+export const filterPlayQueue = (filters: any[], entries: any) => {
+  const enabledFilters = filters.filter((f: any) => f.enabled === true);
+  const joinedFilterRegex = enabledFilters.map((f: any) => f.filter).join('|');
+  if (joinedFilterRegex) {
+    const filteredEntries = entries.filter((entry: any) => !entry.title.match(joinedFilterRegex));
+
+    return {
+      entries: filteredEntries,
+      count: { original: entries.length, filtered: filteredEntries.length },
+    };
+  }
+  return { entries, count: { original: entries.length, filtered: entries.length } };
+};
+
+export const getPlayedSongsNotification = (options: {
+  original: number;
+  filtered: number;
+  type: 'play' | 'add';
+}) => {
+  if (options.type === 'play') {
+    if (options.original === options.filtered) {
+      return `Playing ${options.original} songs`;
+    }
+
+    return `Playing ${options.filtered} songs [-${options.original - options.filtered} filtered]`;
+  }
+
+  if (options.original === options.filtered) {
+    return `Added ${options.original} songs`;
+  }
+
+  return `Added ${options.filtered} songs [-${options.original - options.filtered} filtered]`;
+};

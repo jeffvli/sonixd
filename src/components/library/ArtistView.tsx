@@ -31,7 +31,7 @@ import { TagLink } from './styled';
 import { addModalPage } from '../../redux/miscSlice';
 import { appendPlayQueue, setPlayQueue } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
-import { isCached } from '../../shared/utils';
+import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
 import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 
@@ -101,19 +101,21 @@ const ArtistView = ({ ...rest }: any) => {
   };
 
   const handlePlay = async () => {
-    const songs = await getAllArtistSongs(data.id);
-    dispatch(setPlayQueue({ entries: songs }));
+    const res = await getAllArtistSongs(data.id);
+    const songs = filterPlayQueue(config.playback.filters, res);
+    dispatch(setPlayQueue({ entries: songs.entries }));
     dispatch(setStatus('PLAYING'));
-    notifyToast('info', `Playing ${songs.length} song(s)`);
+    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
 
   const handlePlayAppend = async (type: 'next' | 'later') => {
-    const songs = await getAllArtistSongs(data.id);
-    dispatch(appendPlayQueue({ entries: songs, type }));
+    const res = await getAllArtistSongs(data.id);
+    const songs = filterPlayQueue(config.playback.filters, res);
+    dispatch(appendPlayQueue({ entries: songs.entries, type }));
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
-    notifyToast('info', `Added ${songs.length} song(s)`);
+    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
   };
 
   if (isLoading || isLoadingAI) {

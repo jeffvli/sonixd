@@ -40,7 +40,13 @@ import {
   StyledPopover,
 } from '../shared/styled';
 import { MiniViewContainer } from './styled';
-import { errorMessages, getCurrentEntryList, isFailedResponse } from '../../shared/utils';
+import {
+  errorMessages,
+  filterPlayQueue,
+  getCurrentEntryList,
+  getPlayedSongsNotification,
+  isFailedResponse,
+} from '../../shared/utils';
 import { getGenres, getMusicFolders, getRandomSongs, star, unstar } from '../../api/api';
 import {
   AutoPlaylistButton,
@@ -187,45 +193,31 @@ const NowPlayingMiniView = () => {
       return notifyToast('error', errorMessages(res)[0]);
     }
 
-    const cleanedSongs = res.song.filter((song: any) => {
-      // Remove invalid songs that may break the player
-      return song.bitRate && song.duration;
-    });
+    const cleanedSongs = filterPlayQueue(
+      config.playback.filters,
+      res.song.filter((song: any) => {
+        // Remove invalid songs that may break the player
+        return song.bitRate && song.duration;
+      })
+    );
 
-    const difference = res.song.length - cleanedSongs.length;
-
-    if (cleanedSongs.length > 0) {
+    if (cleanedSongs.entries.length > 0) {
       if (action === 'play') {
-        dispatch(setPlayQueue({ entries: cleanedSongs }));
+        dispatch(setPlayQueue({ entries: cleanedSongs.entries }));
         dispatch(setStatus('PLAYING'));
-        notifyToast(
-          'info',
-          `Playing ${cleanedSongs.length} ${
-            difference !== 0 ? `(-${difference} invalid)` : ''
-          } song(s)`
-        );
+        notifyToast('info', getPlayedSongsNotification({ ...cleanedSongs.count, type: 'play' }));
       } else if (action === 'addLater') {
-        dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'later' }));
+        dispatch(appendPlayQueue({ entries: cleanedSongs.entries, type: 'later' }));
         if (playQueue.entry.length < 1) {
           dispatch(setStatus('PLAYING'));
         }
-        notifyToast(
-          'info',
-          `Added ${cleanedSongs.length} ${
-            difference !== 0 ? `(-${difference} invalid)` : ''
-          } song(s)`
-        );
+        notifyToast('info', getPlayedSongsNotification({ ...cleanedSongs.count, type: 'add' }));
       } else {
-        dispatch(appendPlayQueue({ entries: cleanedSongs, type: 'next' }));
+        dispatch(appendPlayQueue({ entries: cleanedSongs.entries, type: 'next' }));
         if (playQueue.entry.length < 1) {
           dispatch(setStatus('PLAYING'));
         }
-        notifyToast(
-          'info',
-          `Added ${cleanedSongs.length} ${
-            difference !== 0 ? `(-${difference} invalid)` : ''
-          } song(s)`
-        );
+        notifyToast('info', getPlayedSongsNotification({ ...cleanedSongs.count, type: 'add' }));
       }
       dispatch(fixPlayer2Index());
       setIsLoadingRandom(false);
