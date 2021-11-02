@@ -810,7 +810,7 @@ const playQueueSlice = createSlice({
       state,
       action: PayloadAction<{ entries: Entry[]; type: 'next' | 'later' }>
     ) => {
-      const wasPlaying = state.entry.length > 0;
+      const isEmptyQueue = state.entry.length < 1;
       // We'll need to update the uniqueId otherwise selecting a song with duplicates
       // will select them all at once
       const refreshedEntries = action.payload.entries.map((entry: any) => {
@@ -833,6 +833,13 @@ const playQueueSlice = createSlice({
       if (state.shuffle) {
         // If shuffle is enabled, add all entries randomly
         const shuffledEntries = _.shuffle(refreshedEntries);
+
+        if (isEmptyQueue) {
+          state.current = { ...shuffledEntries[0] };
+          state.currentSongId = shuffledEntries[0].id;
+          state.currentSongUniqueId = shuffledEntries[0].uniqueId;
+        }
+
         if (action.payload.type === 'later') {
           shuffledEntries.map((entry: any) => state.shuffledEntry.push(entry));
         } else {
@@ -842,16 +849,11 @@ const playQueueSlice = createSlice({
             ...state.shuffledEntry.slice(state.currentIndex + 1),
           ];
         }
-        if (!wasPlaying) {
-          state.current = { ...shuffledEntries[0] };
-          state.currentSongId = shuffledEntries[0].id;
-          state.currentSongUniqueId = shuffledEntries[0].uniqueId;
-        }
-      } else if (!wasPlaying) {
+      } else if (isEmptyQueue) {
         // If shuffle is disabled, add all entries in order
-        state.current = { ...action.payload.entries[0] };
-        state.currentSongId = action.payload.entries[0].id;
-        state.currentSongUniqueId = action.payload.entries[0].uniqueId;
+        state.current = { ...refreshedEntries[0] };
+        state.currentSongId = refreshedEntries[0].id;
+        state.currentSongUniqueId = refreshedEntries[0].uniqueId;
       }
     },
 
