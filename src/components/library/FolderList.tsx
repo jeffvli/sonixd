@@ -36,6 +36,7 @@ const FolderList = () => {
   const query = useRouterQuery();
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
+  const config = useAppSelector((state) => state.config);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
   const folderPickerContainerRef = useRef(null);
 
@@ -105,6 +106,7 @@ const FolderList = () => {
           currentIndex: rowData.index,
           currentSongId: rowData.id,
           uniqueSongId: rowData.uniqueId,
+          filters: config.playback.filters,
         })
       );
       dispatch(setStatus('PLAYING'));

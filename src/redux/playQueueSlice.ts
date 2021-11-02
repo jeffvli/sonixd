@@ -3,6 +3,7 @@ import _ from 'lodash';
 import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
 import {
+  filterPlayQueue,
   moveSelectedDown,
   moveSelectedToBottom,
   moveSelectedToTop,
@@ -741,14 +742,33 @@ const playQueueSlice = createSlice({
         currentIndex: number;
         currentSongId: string;
         uniqueSongId: string;
+        filters: any;
       }>
     ) => {
-      /* Used with listview where you want to set the entry queue by double clicking on a row
-      Setting the entry queue by row will add all entries, but set the current index to
-      the row that was double clicked */
+      // Used with listview where you want to set the entry queue by double clicking on a row
+      // Setting the entry queue by row will add all entries, but set the current index to
+      // the row that was double clicked
       resetPlayerDefaults(state);
       handleGaplessPlayback(state);
-      action.payload.entries.map((entry: any) => state.entry.push(entry));
+
+      // Apply filters to all entries except the entry that was double clicked
+      const filteredFromStartToCurrent = filterPlayQueue(
+        action.payload.filters,
+        action.payload.entries.slice(0, action.payload.currentIndex)
+      ).entries;
+
+      const filteredFromCurrentToEnd = filterPlayQueue(
+        action.payload.filters,
+        action.payload.entries.slice(action.payload.currentIndex + 1)
+      ).entries;
+
+      const entries = _.concat(
+        filteredFromStartToCurrent,
+        action.payload.entries[action.payload.currentIndex],
+        filteredFromCurrentToEnd
+      );
+
+      state.entry = entries;
 
       if (state.shuffle) {
         // If shuffle is enabled, add the selected row to 0 and then shuffle the rest
@@ -757,7 +777,7 @@ const playQueueSlice = createSlice({
         );
 
         const shuffledEntries = insertItem(
-          shuffledEntriesWithoutCurrent,
+          filterPlayQueue(action.payload.filters, shuffledEntriesWithoutCurrent).entries,
           0,
           action.payload.entries[action.payload.currentIndex]
         );
@@ -774,15 +794,13 @@ const playQueueSlice = createSlice({
         state.currentSongId = action.payload.currentSongId;
         state.currentSongUniqueId = action.payload.uniqueSongId;
       } else {
-        // Add all songs in order and set the current index to the selected row
+        const currentIndex = entries.findIndex((entry) => {
+          return entry.uniqueId === action.payload.uniqueSongId;
+        });
 
-        const current = action.payload.entries.find(
-          (entry) => entry.uniqueId === action.payload.uniqueSongId
-        );
-
-        state.current = current;
-        state.currentIndex = action.payload.currentIndex;
-        state.player1.index = action.payload.currentIndex;
+        state.current = action.payload.entries[currentIndex];
+        state.currentIndex = currentIndex;
+        state.player1.index = currentIndex;
         state.currentSongId = action.payload.currentSongId;
         state.currentSongUniqueId = action.payload.uniqueSongId;
       }
