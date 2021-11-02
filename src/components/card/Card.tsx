@@ -102,10 +102,11 @@ const Card = ({
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
-    if (playQueue.entry.length < 1 || playQueue.currentPlayer === 1) {
+    if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
     }
+
+    dispatch(fixPlayer2Index());
   };
 
   const handleOpenModal = () => {

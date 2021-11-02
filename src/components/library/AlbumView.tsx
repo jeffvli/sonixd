@@ -103,6 +103,7 @@ const AlbumView = ({ ...rest }: any) => {
   const handlePlay = () => {
     const songs = filterPlayQueue(config.playback.filters, data.song);
     dispatch(setPlayQueue({ entries: songs.entries }));
+    dispatch(fixPlayer2Index());
     dispatch(setStatus('PLAYING'));
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
   };
@@ -110,6 +111,7 @@ const AlbumView = ({ ...rest }: any) => {
   const handlePlayAppend = (type: 'next' | 'later') => {
     const songs = filterPlayQueue(config.playback.filters, data.song);
     dispatch(appendPlayQueue({ entries: songs.entries, type }));
+    dispatch(fixPlayer2Index());
     if (playQueue.entry.length < 1) {
       dispatch(setStatus('PLAYING'));
     }
