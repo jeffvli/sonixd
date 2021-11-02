@@ -32,7 +32,9 @@ export const StyledButton = styled(Button)<{ width: number }>`
       ? undefined
       : `${props.theme.colors.button.default.background}`} !important;
   color: ${(props) =>
-    props.appearance === 'primary'
+    props.loading
+      ? 'transparent'
+      : props.appearance === 'primary'
       ? `${props.theme.colors.button.primary.color}`
       : props.appearance === 'subtle'
       ? `${props.theme.colors.button.subtle.color}`
@@ -190,7 +192,9 @@ export const StyledIconButton = styled(IconButton)`
       ? undefined
       : `${props.theme.colors.button.default.background}`} !important;
   color: ${(props) =>
-    props.appearance === 'primary'
+    props.loading
+      ? 'transparent'
+      : props.appearance === 'primary'
       ? `${props.theme.colors.button.primary.color}`
       : props.appearance === 'subtle'
       ? `${props.theme.colors.button.subtle.color}`
