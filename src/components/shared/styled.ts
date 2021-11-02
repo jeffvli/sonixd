@@ -40,6 +40,8 @@ export const StyledButton = styled(Button)<{ width: number }>`
       ? `${props.theme.colors.button.link.color}`
       : `${props.theme.colors.button.default.color}`} !important;
 
+  filter: ${(props) => (props.disabled || props.loading ? 'brightness(0.7)' : 'none')};
+  transition: 0.5s;
   width: ${(props) => `${props.width}px`};
 
   &:active,
@@ -132,7 +134,7 @@ export const StyledInputNumber = styled(InputNumber)<{ width: number }>`
 `;
 
 export const StyledInput = styled(Input)<{ width: number }>`
-  border: 1px #3c3f43 solid;
+  border: 1px #3c3f43 solid !important;
   border-radius: ${(props) => props.theme.other.input.borderRadius} !important;
 
   color: ${(props) => props.theme.colors.input.color} !important;
@@ -196,6 +198,8 @@ export const StyledIconButton = styled(IconButton)`
       ? undefined
       : `${props.theme.colors.button.default.color}`};
 
+  filter: ${(props) => (props.disabled || props.loading ? 'brightness(0.7)' : 'none')};
+  transition: 0.5s;
   width: ${(props) => `${props.width}px`};
 
   &:active,
@@ -476,7 +480,8 @@ export const StyledTagPicker = styled(TagPicker)`
 `;
 
 export const StyledTag = styled(Tag)`
-  color: ${(props) => props.theme.colors.tag.text};
+  color: ${(props) => props.theme.colors.tag.text} !important;
   background: ${(props) => props.theme.colors.tag.background};
   border-radius: ${(props) => props.theme.other.tag.borderRadius};
+  cursor: pointer;
 `;
