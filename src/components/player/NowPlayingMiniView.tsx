@@ -16,8 +16,6 @@ import {
   setPlayerVolume,
   setPlayerIndex,
   fixPlayer2Index,
-  moveUp,
-  moveDown,
   clearPlayQueue,
   shuffleInPlace,
   toggleShuffle,
@@ -27,6 +25,8 @@ import {
   setStar,
   setPlayQueue,
   appendPlayQueue,
+  moveToTop,
+  moveToBottom,
 } from '../../redux/playQueueSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import ListViewType from '../viewtypes/ListViewType';
@@ -153,14 +153,6 @@ const NowPlayingMiniView = () => {
     dispatch(setPlayerIndex(rowData));
     dispatch(fixPlayer2Index());
     dispatch(setStatus('PLAYING'));
-  };
-
-  const handleUpClick = () => {
-    dispatch(moveUp({ selectedEntries: multiSelect.selected }));
-  };
-
-  const handleDownClick = () => {
-    dispatch(moveDown({ selectedEntries: multiSelect.selected }));
   };
 
   const handleDragEnd = () => {
@@ -430,8 +422,7 @@ const NowPlayingMiniView = () => {
                         size="xs"
                         appearance="subtle"
                         onClick={() => {
-                          dispatch(moveUp({ selectedEntries: multiSelect.selected }));
-
+                          dispatch(moveToTop({ selectedEntries: multiSelect.selected }));
                           if (playQueue.currentPlayer === 1) {
                             dispatch(fixPlayer2Index());
                           }
@@ -441,8 +432,7 @@ const NowPlayingMiniView = () => {
                         size="xs"
                         appearance="subtle"
                         onClick={() => {
-                          dispatch(moveDown({ selectedEntries: multiSelect.selected }));
-
+                          dispatch(moveToBottom({ selectedEntries: multiSelect.selected }));
                           if (playQueue.currentPlayer === 1) {
                             dispatch(fixPlayer2Index());
                           }
@@ -494,8 +484,6 @@ const NowPlayingMiniView = () => {
               tableColumns={config.lookAndFeel.listView.mini.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
-              handleUpClick={handleUpClick}
-              handleDownClick={handleDownClick}
               handleDragEnd={handleDragEnd}
               virtualized
               rowHeight={config.lookAndFeel.listView.mini.rowHeight}
