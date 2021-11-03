@@ -101,7 +101,7 @@ const ScrollingMenu = ({
               lazyLoad
               cacheImages={cacheImages}
               cachePath={misc.imageCachePath}
-              style={{ margin: '0px 5px 0px 5px' }}
+              style={{ margin: '5px' }}
               handleFavorite={handleFavorite}
             />
           </span>
