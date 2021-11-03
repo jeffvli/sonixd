@@ -572,6 +572,11 @@ const setDefaultSettings = (force: boolean) => {
           coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
           card: {
             border: '1px #3c3f43 solid',
+            hover: {
+              transform: 'scale(1.03)',
+              transition: '0.07s ease-in-out',
+              filter: 'none',
+            },
             image: {
               borderTop: 'none',
               borderRight: 'none',
@@ -729,6 +734,11 @@ const setDefaultSettings = (force: boolean) => {
           coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
           card: {
             border: '1px #3c3f43 solid',
+            hover: {
+              transform: 'scale(1.03)',
+              transition: '0.07s ease-in-out',
+              filter: 'none',
+            },
             image: {
               borderTop: 'none',
               borderRight: 'none',
