@@ -25,6 +25,30 @@ export const CardPanel = styled(Panel)<Card>`
   height: ${(props) => `${Number(props.cardsize) + 55}px`};
   border: ${(props) => props.theme.other.card.border};
 
+  /* Hover effects inspired from https://codepen.io/SabAsan/pen/bGNrmzq */
+  /* &:after {
+    pointer-events: none;
+    display: block;
+    content: '';
+    z-index: -1;
+    width: 100%;
+    height: 120%;
+    background: linear-gradient(
+      226deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.4) 35%,
+      rgba(255, 255, 255, 0.2) 42%,
+      rgba(255, 255, 255, 0) 60%
+    );
+    transform: translatey(-170%);
+    will-change: transform;
+    transition: transform 0.65s cubic-bezier(0.18, 0.9, 0.58, 1);
+  }
+
+  &:hover:after {
+    transform: translatey(-100%);
+  } */
+
   img {
     border-top: ${(props) => props.theme.other.card.image.borderTop};
     border-right: ${(props) => props.theme.other.card.image.borderRight};
@@ -35,10 +59,12 @@ export const CardPanel = styled(Panel)<Card>`
 
   &:hover {
     border-color: ${(props) => props.theme.colors.primary} !important;
-
+    transform: ${(props) => props.theme.other.card.hover.transform};
+    filter: ${(props) => props.theme.other.card.hover.filter};
+    transition: ${(props) => props.theme.other.card.hover.transition};
     img {
-      filter: brightness(70%);
-      -webkit-filter: brightness(70%);
+      filter: brightness(90%);
+      -webkit-filter: brightness(90%);
     }
 
     .rs-panel {
@@ -128,6 +154,7 @@ export const Overlay = styled.div<Card>`
   position: relative;
   height: ${(props) => `${props.cardsize}px`};
   width: ${(props) => `${props.cardsize}px`};
+
   &:hover {
     cursor: pointer;
   }

@@ -42,6 +42,11 @@ export const TableCellWrapper = styled.div<{
 
 export const CombinedTitleTextWrapper = styled.span<{ playing: string }>`
   color: ${(props) => (props.playing === 'true' ? props.theme.colors.primary : undefined)};
+
+  &:focus-visible {
+    outline: none;
+    text-decoration: underline;
+  }
 `;
 
 export const StyledTableHeaderCell = styled(Table.HeaderCell)`
