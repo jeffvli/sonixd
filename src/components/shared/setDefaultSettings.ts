@@ -385,18 +385,31 @@ const setDefaultSettings = (force: boolean) => {
         label: '# (Drag/Drop)',
       },
       {
+        width: 220,
         id: 'Title',
         dataKey: 'combinedtitle',
         alignment: 'left',
-        flexGrow: 5,
         label: 'Title (Combined)',
+        rowIndex: 7,
+        resizable: true,
       },
       {
+        width: 60,
         id: 'Duration',
         dataKey: 'duration',
         alignment: 'center',
-        flexGrow: 2,
         label: 'Duration',
+        rowIndex: 3,
+        resizable: true,
+      },
+      {
+        width: 45,
+        id: 'Fav',
+        dataKey: 'starred',
+        alignment: 'center',
+        label: 'Favorite',
+        rowIndex: 6,
+        resizable: true,
       },
     ]);
   }
