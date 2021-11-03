@@ -554,7 +554,7 @@ const setDefaultSettings = (force: boolean) => {
             foreground: '#2196F3',
           },
           table: {
-            selectedRow: '#4D5156',
+            selectedRow: 'rgba(150, 150, 150, .3)',
           },
           tag: {
             background: '#3C3F43',
@@ -716,7 +716,7 @@ const setDefaultSettings = (force: boolean) => {
             foreground: '#285DA0',
           },
           table: {
-            selectedRow: '#CCCCCC',
+            selectedRow: 'rgba(150, 150, 150, .5)',
           },
           tag: {
             background: '#DFDFE2',
