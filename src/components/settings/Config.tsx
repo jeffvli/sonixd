@@ -83,9 +83,39 @@ const Config = () => {
                 activeKey={config.active.tab}
                 onSelect={(e) => dispatch(setActive({ ...config.active, tab: e }))}
               >
-                <StyledNavItem eventKey="playback">Playback</StyledNavItem>
-                <StyledNavItem eventKey="lookandfeel">Look & Feel</StyledNavItem>
-                <StyledNavItem eventKey="other">Other</StyledNavItem>
+                <StyledNavItem
+                  eventKey="playback"
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      dispatch(setActive({ ...config.active, tab: 'playback' }));
+                    }
+                  }}
+                >
+                  Playback
+                </StyledNavItem>
+                <StyledNavItem
+                  eventKey="lookandfeel"
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      dispatch(setActive({ ...config.active, tab: 'lookandfeel' }));
+                    }
+                  }}
+                >
+                  Look & Feel
+                </StyledNavItem>
+                <StyledNavItem
+                  eventKey="other"
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      dispatch(setActive({ ...config.active, tab: 'other' }));
+                    }
+                  }}
+                >
+                  Other
+                </StyledNavItem>
               </Nav>
             </>
           }

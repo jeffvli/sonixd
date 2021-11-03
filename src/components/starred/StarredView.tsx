@@ -130,9 +130,37 @@ const StarredView = () => {
           title="Favorites"
           subtitle={
             <Nav activeKey={favorite.active.tab} onSelect={(e) => dispatch(setActive({ tab: e }))}>
-              <StyledNavItem eventKey="tracks">Tracks</StyledNavItem>
-              <StyledNavItem eventKey="albums">Albums</StyledNavItem>
-              <StyledNavItem eventKey="artists">Artists</StyledNavItem>
+              <StyledNavItem
+                eventKey="tracks"
+                onKeyDown={(e: any) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    dispatch(setActive({ tab: 'tracks' }));
+                  }
+                }}
+                tabIndex={0}
+              >
+                Tracks
+              </StyledNavItem>
+              <StyledNavItem
+                eventKey="albums"
+                onKeyDown={(e: any) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    dispatch(setActive({ tab: 'albums' }));
+                  }
+                }}
+              >
+                Albums
+              </StyledNavItem>
+              <StyledNavItem
+                eventKey="artists"
+                onKeyDown={(e: any) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    dispatch(setActive({ tab: 'artists' }));
+                  }
+                }}
+              >
+                Artists
+              </StyledNavItem>
             </Nav>
           }
           searchQuery={searchQuery}

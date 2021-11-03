@@ -198,6 +198,7 @@ const AlbumView = ({ ...rest }: any) => {
               >
                 {data.artist && (
                   <StyledLink
+                    tabIndex={0}
                     onClick={() => {
                       if (!rest.isModal) {
                         history.push(`/library/artist/${data.artistId}`);
@@ -210,6 +211,21 @@ const AlbumView = ({ ...rest }: any) => {
                         );
                       }
                     }}
+                    onKeyDown={(e: any) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        if (!rest.isModal) {
+                          history.push(`/library/artist/${data.artistId}`);
+                        } else {
+                          dispatch(
+                            addModalPage({
+                              pageType: 'artist',
+                              id: data.artistId,
+                            })
+                          );
+                        }
+                      }
+                    }}
                   >
                     {data.artist}
                   </StyledLink>
@@ -218,6 +234,7 @@ const AlbumView = ({ ...rest }: any) => {
                   <>
                     {' • '}
                     <StyledLink
+                      tabIndex={0}
                       onClick={() => {
                         if (!rest.isModal) {
                           dispatch(setActive({ ...album.active, filter: data.genre }));
@@ -231,6 +248,24 @@ const AlbumView = ({ ...rest }: any) => {
                               id: data.artistId,
                             })
                           );
+                        }
+                      }}
+                      onKeyDown={(e: any) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                          e.preventDefault();
+                          if (!rest.isModal) {
+                            dispatch(setActive({ ...album.active, filter: data.genre }));
+                            setTimeout(() => {
+                              history.push(`/library/album?sortType=${data.genre}`);
+                            }, 50);
+                          } else {
+                            dispatch(
+                              addModalPage({
+                                pageType: 'artist',
+                                id: data.artistId,
+                              })
+                            );
+                          }
                         }
                       }}
                     >

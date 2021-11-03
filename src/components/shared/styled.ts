@@ -39,25 +39,22 @@ export const StyledButton = styled(Button)<{ width: number }>`
       : props.appearance === 'subtle'
       ? `${props.theme.colors.button.subtle.color}`
       : props.appearance === 'link'
-      ? `${props.theme.colors.button.link.color}`
+      ? undefined
       : `${props.theme.colors.button.default.color}`} !important;
 
-  filter: ${(props) => (props.disabled || props.loading ? 'brightness(0.7)' : 'none')};
+  filter: ${(props) => (props.disabled ? 'brightness(0.8)' : 'none')};
   transition: 0.5s;
   width: ${(props) => `${props.width}px`};
 
   &:active,
   &:focus,
   &:hover {
-    text-decoration: none;
     color: ${(props) =>
       props.appearance === 'primary'
         ? `${props.theme.colors.button.primary.colorHover}`
-        : props.appearance === 'subtle'
-        ? `${props.theme.colors.button.subtle.colorHover}`
-        : props.appearance === 'link'
-        ? `${props.theme.colors.button.link.colorHover}`
-        : `${props.theme.colors.button.default.colorHover}`} !important;
+        : props.appearance !== 'subtle'
+        ? `${props.theme.colors.button.default.colorHover}`
+        : `${props.theme.colors.button.subtle.colorHover}`};
 
     background: ${(props) =>
       props.appearance === 'primary'
@@ -67,6 +64,14 @@ export const StyledButton = styled(Button)<{ width: number }>`
         : props.appearance === 'link'
         ? undefined
         : `${props.theme.colors.button.default.backgroundHover}`} !important;
+  }
+
+  &:focus-visible {
+    filter: brightness(0.8);
+    outline: ${(props) =>
+      props.appearance === 'subtle'
+        ? `2px solid ${props.theme.colors.primary}`
+        : undefined} !important;
   }
 `;
 
@@ -202,7 +207,7 @@ export const StyledIconButton = styled(IconButton)`
       ? undefined
       : `${props.theme.colors.button.default.color}`} !important;
 
-  filter: ${(props) => (props.disabled || props.loading ? 'brightness(0.7)' : 'none')};
+  filter: ${(props) => (props.disabled ? 'brightness(0.8)' : 'none')};
   transition: 0.5s;
   width: ${(props) => `${props.width}px`};
 
@@ -223,16 +228,25 @@ export const StyledIconButton = styled(IconButton)`
         ? `${props.theme.colors.button.subtle.backgroundHover}`
         : props.appearance === 'link'
         ? undefined
-        : `${props.theme.colors.button.default.backgroundHover}`};
+        : `${props.theme.colors.button.default.backgroundHover}`} !important;
+  }
+
+  &:focus-visible {
+    filter: brightness(0.8);
+    background: ${(props) =>
+      props.appearance === 'subtle' ? 'rgba(0, 0, 0, .3)' : undefined} !important;
   }
 `;
 
 export const StyledNavItem = styled(Nav.Item)`
   a {
+    border-radius: ${(props) => props.theme.other.button.borderRadius} !important;
     color: ${(props) =>
-      props.active
-        ? `${props.theme.colors.primary} !important`
-        : `${props.theme.colors.nav.color} !important`};
+      props.active ? props.theme.colors.primary : props.theme.colors.nav.color} !important;
+
+    &:focus-visible {
+      background: rgba(0, 0, 0, 0.3) !important;
+    }
   }
 `;
 
@@ -240,6 +254,11 @@ export const StyledIconToggle = styled(Icon)<{ active: string }>`
   cursor: pointer;
   color: ${(props) =>
     props.active === 'true' ? props.theme.colors.primary : props.theme.colors.layout.page.color};
+
+  &:focus-visible {
+    outline: none;
+    filter: brightness(0.7);
+  }
 `;
 
 export const StyledRate = styled(Rate)`
@@ -449,9 +468,15 @@ export const SectionTitle = styled.a`
 export const StyledLink = styled.a`
   color: ${(props) => props.theme.colors.layout.page.color};
   cursor: pointer;
+
   &:hover {
     text-decoration: none;
     color: ${(props) => props.theme.colors.button.link.colorHover};
+  }
+
+  &:focus-visible {
+    color: ${(props) => props.theme.colors.button.link.colorHover};
+    text-decoration: none;
   }
 `;
 

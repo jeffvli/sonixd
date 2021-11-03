@@ -49,6 +49,10 @@ export const CardPanel = styled(Panel)<Card>`
   &:hover .rs-btn {
     display: block;
   }
+
+  &:focus-visible {
+    outline: 2px ${(props) => props.theme.colors.primary} solid;
+  }
 `;
 
 export const InfoPanel = styled(Panel)<Card>`
@@ -77,10 +81,14 @@ export const CardTitleButton = styled(CardButton)`
   color: ${(props) => props.theme.colors.layout.page.color};
   width: ${(props) => `${props.cardsize}px`};
 
-  &:hover {
+  &:hover,
+  &:focus {
     text-decoration: none;
     color: ${(props) =>
       !props.onClick ? props.theme.colors.layout.page.color : props.theme.colors.primary};
+  }
+
+  &:focus-visible {
   }
 `;
 
@@ -89,7 +97,8 @@ export const CardSubtitleButton = styled(CardButton)`
   color: ${(props) => props.theme.colors.layout.page.colorSecondary};
   width: ${(props) => `${props.cardsize}px`};
 
-  &:hover {
+  &:hover,
+  &:focus {
     text-decoration: none;
     color: ${(props) =>
       !props.onClick ? props.theme.colors.layout.page.color : props.theme.colors.primary};

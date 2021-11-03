@@ -5,6 +5,7 @@ export const RsuiteLinkButton = styled(Button)<{
   subtitle?: string;
   active?: boolean;
 }>`
+  background: transparent;
   max-width: 100%;
   padding: 0px;
   white-space: nowrap;
@@ -20,8 +21,9 @@ export const RsuiteLinkButton = styled(Button)<{
   &:hover,
   &:active,
   &:focus {
+    background: transparent !important;
     text-decoration: underline;
-    color: ${(props) => props.theme.colors.layout.page.color} !important;
+    color: ${(props) => props.theme.colors.layout.page.color};
     cursor: pointer;
   }
 `;

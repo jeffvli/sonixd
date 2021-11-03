@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Content, FlexboxGrid, Icon } from 'rsuite';
 import Sidebar from './Sidebar';
@@ -14,6 +15,15 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
+
+  useHotkeys(
+    'backspace',
+    (e: KeyboardEvent) => {
+      e.preventDefault();
+      history.goBack();
+    },
+    []
+  );
 
   const handleToggle = () => {
     dispatch(setExpandSidebar(!misc.expandSidebar));

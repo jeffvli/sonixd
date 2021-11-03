@@ -24,7 +24,13 @@ import {
 } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setSort, sortPlayQueue } from '../../redux/playQueueSlice';
+import {
+  fixPlayer2Index,
+  setPlayerIndex,
+  setPlayerVolume,
+  setSort,
+  sortPlayQueue,
+} from '../../redux/playQueueSlice';
 import { StyledCheckbox, StyledIconButton, StyledIconToggle, StyledRate } from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
@@ -42,6 +48,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import { sortPlaylist } from '../../redux/playlistSlice';
 import { removePlaybackFilter, setColumnList, setPlaybackFilter } from '../../redux/configSlice';
 import { setActive } from '../../redux/albumSlice';
+import { resetPlayer, setStatus } from '../../redux/playerSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -626,6 +633,24 @@ const ListViewTable = ({
                               }}
                             >
                               <CombinedTitleTextWrapper
+                                tabIndex={0}
+                                onKeyDown={(e: any) => {
+                                  if (e.key === ' ' || e.key === 'Enter') {
+                                    e.preventDefault();
+                                    if (nowPlaying) {
+                                      dispatch(
+                                        setPlayerVolume({ player: 1, volume: playQueue.volume })
+                                      );
+                                      dispatch(setPlayerVolume({ player: 2, volume: 0 }));
+
+                                      dispatch(clearSelected());
+                                      dispatch(resetPlayer());
+                                      dispatch(setPlayerIndex(rowData));
+                                      dispatch(fixPlayer2Index());
+                                      dispatch(setStatus('PLAYING'));
+                                    }
+                                  }
+                                }}
                                 playing={
                                   (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                                     nowPlaying) ||
