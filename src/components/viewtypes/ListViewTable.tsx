@@ -397,7 +397,9 @@ const ListViewTable = ({
                 settings.setSync(`miniListColumns[${resizedColumnIndex}].width`, newWidth);
               }
 
-              const newCols = configState.lookAndFeel.listView[listType].columns.map((c: any) => {
+              const newCols = configState.lookAndFeel.listView[
+                miniView ? 'mini' : listType
+              ].columns.map((c: any) => {
                 if (c.dataKey === column.dataKey) {
                   const { width, ...rest } = c;
                   return { width: newWidth, ...rest };
@@ -407,7 +409,7 @@ const ListViewTable = ({
               });
               dispatch(
                 setColumnList({
-                  listType,
+                  listType: miniView ? 'mini' : listType,
                   entries: newCols,
                 })
               );
