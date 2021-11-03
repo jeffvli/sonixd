@@ -281,7 +281,7 @@ const PlayerBar = () => {
         })
       );
     } else {
-      await unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'song');
+      await unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'music');
       dispatch(
         setStar({
           id: [playQueue[currentEntryList][playQueue.currentIndex].id],
