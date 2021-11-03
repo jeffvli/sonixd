@@ -823,10 +823,11 @@ const playQueueSlice = createSlice({
       if (action.payload.type === 'later') {
         refreshedEntries.map((entry: any) => state.entry.push(entry));
       } else {
+        const currentSongIndex = getCurrentEntryIndexByUID(state.entry, state.currentSongUniqueId);
         state.entry = [
-          ...state.entry.slice(0, state.currentIndex + 1),
+          ...state.entry.slice(0, currentSongIndex + 1),
           ...refreshedEntries,
-          ...state.entry.slice(state.currentIndex + 1),
+          ...state.entry.slice(currentSongIndex + 1),
         ];
       }
 
