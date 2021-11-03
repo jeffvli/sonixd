@@ -9,10 +9,10 @@ import {
   PlayerContainer,
   PlayerColumn,
   PlayerControlIcon,
-  LinkButton,
   CustomSlider,
   DurationSpan,
   VolumeIcon,
+  LinkButton,
 } from './styled';
 import {
   incrementCurrentIndex,
@@ -146,8 +146,9 @@ const PlayerBar = () => {
   };
 
   const handleVolumeKey = (e: any) => {
-    if (e.key === 'ArrowUp') {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
       const vol = Number((playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2));
+      setLocalVolume(vol);
       dispatch(setVolume(vol));
       dispatch(
         setPlayerVolume({
@@ -155,8 +156,9 @@ const PlayerBar = () => {
           volume: vol,
         })
       );
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
       const vol = Number((playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2));
+      setLocalVolume(vol);
       dispatch(setVolume(vol));
       dispatch(
         setPlayerVolume({
@@ -315,7 +317,16 @@ const PlayerBar = () => {
                   }}
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px' }}>
-                    <CoverArtWrapper>
+                    <CoverArtWrapper
+                      $link
+                      tabIndex={0}
+                      onClick={() => history.push(`/nowplaying`)}
+                      onKeyDown={(e: any) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                          history.push(`/nowplaying`);
+                        }
+                      }}
+                    >
                       <Whisper
                         trigger="hover"
                         delay={500}
@@ -346,7 +357,6 @@ const PlayerBar = () => {
                         }
                       >
                         <LazyLoadImage
-                          tabIndex={0}
                           src={
                             isCached(
                               `${misc.imageCachePath}album_${
@@ -363,13 +373,6 @@ const PlayerBar = () => {
                           effect="opacity"
                           width="65"
                           height="65"
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => history.push(`/nowplaying`)}
-                          onKeyDown={(e: any) => {
-                            if (e.key === ' ') {
-                              history.push(`/nowplaying`);
-                            }
-                          }}
                         />
                       </Whisper>
                     </CoverArtWrapper>
@@ -466,7 +469,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickBackward}
                   onKeyDown={(e: any) => {
-                    if (e.key === ' ') {
+                    if (e.key === ' ' || e.key === 'Enter') {
                       handleClickBackward();
                     }
                   }}
@@ -481,7 +484,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickPrevious}
                   onKeyDown={(e: any) => {
-                    if (e.key === ' ') {
+                    if (e.key === ' ' || e.key === 'Enter') {
                       handleClickPrevious();
                     }
                   }}
@@ -496,7 +499,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickPlayPause}
                   onKeyDown={(e: any) => {
-                    if (e.key === ' ') {
+                    if (e.key === ' ' || e.key === 'Enter') {
                       handleClickPlayPause();
                     }
                   }}
@@ -511,7 +514,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickNext}
                   onKeyDown={(e: any) => {
-                    if (e.key === ' ') {
+                    if (e.key === ' ' || e.key === 'Enter') {
                       handleClickNext();
                     }
                   }}
@@ -526,7 +529,7 @@ const PlayerBar = () => {
                   fixedWidth
                   onClick={handleClickForward}
                   onKeyDown={(e: any) => {
-                    if (e.key === ' ') {
+                    if (e.key === ' ' || e.key === 'Enter') {
                       handleClickForward();
                     }
                   }}
@@ -556,6 +559,7 @@ const PlayerBar = () => {
                 <FlexboxGrid.Item colspan={16}>
                   {/* Seek Slider */}
                   <CustomSlider
+                    tabIndex={0}
                     progress
                     defaultValue={0}
                     value={isDragging ? manualSeek : seek}
@@ -563,6 +567,13 @@ const PlayerBar = () => {
                     tooltip={false}
                     max={playQueue[currentEntryList][playQueue.currentIndex]?.duration || 0}
                     onChange={handleSeekSlider}
+                    onKeyDown={(e: any) => {
+                      if (e.key === 'ArrowLeft') {
+                        handleClickBackward();
+                      } else if (e.key === 'ArrowRight') {
+                        handleClickForward();
+                      }
+                    }}
                     style={{ width: '100%' }}
                   />
                 </FlexboxGrid.Item>
@@ -612,6 +623,11 @@ const PlayerBar = () => {
                             : 'false'
                         }
                         onClick={handleFavorite}
+                        onKeyDown={(e: any) => {
+                          if (e.key === ' ') {
+                            handleFavorite();
+                          }
+                        }}
                       />
                     </CustomTooltip>
 

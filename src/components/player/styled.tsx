@@ -1,4 +1,4 @@
-import { Icon, Slider } from 'rsuite';
+import { Button, Icon, Slider } from 'rsuite';
 import styled from 'styled-components';
 
 export const PlayerContainer = styled.div`
@@ -25,6 +25,7 @@ export const PlayerColumn = styled.div<{
 `;
 
 export const PlayerControlIcon = styled(Icon)`
+  cursor: pointer;
   font-size: medium;
   color: ${(props) =>
     props.active === 'true'
@@ -38,34 +39,39 @@ export const PlayerControlIcon = styled(Icon)`
         ? props.theme.colors.primary
         : props.theme.colors.layout.playerBar.button.colorHover};
   }
-  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+    filter: brightness(0.7);
+  }
 `;
 
-export const LinkButton = styled.a<{ subtitle?: string }>`
-  display: block;
-  white-space: nowrap;
+export const LinkButton = styled(Button)<{ subtitle?: string }>`
+  user-select: text;
+  border-radius: 0px;
+  background: transparent;
+  max-width: 100%;
   padding: 0px;
+  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   color: ${(props) =>
-    props.subtitle === 'true'
+    props.playing === 'true'
+      ? props.theme.colors.primary
+      : props.subtitle === 'true'
       ? props.theme.colors.layout.playerBar.colorSecondary
-      : props.theme.colors.layout.playerBar.color};
+      : props.theme.colors.layout.playerBar.color} !important;
 
-  &:hover {
-    text-decoration: underline;
-    color: ${(props) =>
-      props.subtitle === 'true'
-        ? props.theme.colors.layout.playerBar.colorSecondary
-        : props.theme.colors.layout.playerBar.color};
+  &:hover,
+  &:active,
+  &:focus {
+    background: transparent !important;
+    color: ${(props) => props.theme.colors.layout.playerBar.color};
     cursor: pointer;
   }
 
-  &:active {
-    color: ${(props) =>
-      props.subtitle === 'true'
-        ? props.theme.colors.layout.playerBar.colorSecondary
-        : props.theme.colors.layout.playerBar.color};
+  &:focus-visible {
+    text-decoration: underline;
   }
 `;
 
@@ -91,6 +97,13 @@ export const CustomSlider = styled(Slider)<{ isDragging?: boolean }>`
   .rs-slider-handle::before {
     display: none;
     border: ${(props) => `1px solid ${props.theme.colors.primary} !important`};
+  }
+
+  &:focus-visible {
+    outline: none;
+    .rs-slider-progress-bar {
+      background-color: ${(props) => props.theme.colors.primary};
+    }
   }
 `;
 

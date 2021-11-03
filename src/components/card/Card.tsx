@@ -157,7 +157,16 @@ const Card = ({
 
   return (
     <>
-      <CardPanel cardsize={size} style={rest.style}>
+      <CardPanel
+        tabIndex={0}
+        cardsize={size}
+        onKeyDown={(e: any) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            handleClick();
+          }
+        }}
+        style={rest.style}
+      >
         <Overlay cardsize={size}>
           {lazyLoad ? (
             <LazyCardImg
@@ -234,7 +243,13 @@ const Card = ({
         <InfoPanel cardsize={size}>
           <InfoSpan>
             <CustomTooltip text={rest.title}>
-              <CardTitleButton appearance="link" size="sm" onClick={handleClick} cardsize={size}>
+              <CardTitleButton
+                appearance="link"
+                tabIndex={-1}
+                size="sm"
+                onClick={handleClick}
+                cardsize={size}
+              >
                 {rest.title}
               </CardTitleButton>
             </CustomTooltip>
@@ -244,6 +259,7 @@ const Card = ({
               <CustomTooltip text={rest.subtitle}>
                 <CardSubtitleButton
                   appearance="link"
+                  tabIndex={-1}
                   size="xs"
                   onClick={handleSubClick}
                   cardsize={size}

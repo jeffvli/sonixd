@@ -121,10 +121,17 @@ const GenericPageHeader = ({
                       style={{ width: '180px' }}
                     />
                     <StyledInputGroupButton
+                      tabIndex={0}
                       appearance="subtle"
                       onClick={() => {
                         clearSearchQuery();
                         setOpenSearch(false);
+                      }}
+                      onKeyDown={(e: any) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                          clearSearchQuery();
+                          setOpenSearch(false);
+                        }
                       }}
                     >
                       <Icon icon="close" />

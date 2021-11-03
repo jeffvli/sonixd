@@ -77,7 +77,7 @@ const NowPlayingMiniView = () => {
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
-  const { data: genres }: any = useQuery(['genreList'], async () => {
+  const { isLoading: isLoadingGenres, data: genres }: any = useQuery(['genreList'], async () => {
     const res = await getGenres();
     const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
     return genresOrderedBySongCount.map((genre: any) => {
@@ -89,7 +89,10 @@ const NowPlayingMiniView = () => {
     });
   });
 
-  const { data: musicFolders } = useQuery(['musicFolders'], getMusicFolders);
+  const { isLoading: isLoadingMusicFolders, data: musicFolders } = useQuery(
+    ['musicFolders'],
+    getMusicFolders
+  );
 
   useHotkeys(
     'del',
@@ -351,7 +354,7 @@ const NowPlayingMiniView = () => {
                               <StyledInputPicker
                                 style={{ width: '100%' }}
                                 container={() => genrePickerContainerRef.current}
-                                data={genres}
+                                data={!isLoadingGenres ? genres : []}
                                 value={randomPlaylistGenre}
                                 virtualized
                                 onChange={(e: string) => setRandomPlaylistGenre(e)}
@@ -364,7 +367,7 @@ const NowPlayingMiniView = () => {
                               <StyledInputPicker
                                 style={{ width: '100%' }}
                                 container={() => musicFolderPickerContainerRef.current}
-                                data={musicFolders}
+                                data={!isLoadingMusicFolders ? musicFolders : []}
                                 defaultValue={musicFolder}
                                 valueKey="id"
                                 labelKey="name"

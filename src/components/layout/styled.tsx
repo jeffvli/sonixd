@@ -149,7 +149,7 @@ export const PageContainer = styled(Container)<{ $backgroundSrc?: string }>`
 `;
 
 export const PageHeader = styled(Header)<{ padding?: string }>`
-  padding: ${(props) => (props.padding ? props.padding : '0px 20px 0px 20px')};
+  padding: ${(props) => (props.padding ? props.padding : '10px 20px 0px 20px')};
   z-index: 1;
 `;
 
@@ -184,12 +184,21 @@ export const SidebarNavItem = styled(Nav.Item)`
     &:hover {
       color: ${(props) => props.theme.colors.layout.sideBar.button.colorHover} !important;
     }
+
+    &:focus-visible {
+      color: ${(props) => props.theme.colors.primary} !important;
+    }
   }
 `;
 
-export const CoverArtWrapper = styled.div`
+export const CoverArtWrapper = styled.div<{ $link?: boolean }>`
   display: inline-block;
   filter: ${(props) => props.theme.other.coverArtFilter};
+  cursor: ${(props) => (props.$link ? 'pointer' : 'default')};
+
+  &:focus-visible {
+    outline: 2px ${(props) => props.theme.colors.primary} solid;
+  }
 `;
 
 export const PageHeaderTitle = styled.h1`
