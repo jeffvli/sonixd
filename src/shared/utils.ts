@@ -118,6 +118,22 @@ export const formatSongDuration = (duration: number) => {
   return `${minutes}:${seconds}`;
 };
 
+export const formatDuration = (duration: number) => {
+  const hours = Math.floor(duration / 60 / 60);
+  const minutes = Math.floor((duration / 60) % 60);
+  const seconds = String(duration % 60).padStart(2, '0');
+
+  if (hours > 0) {
+    return `${hours} hr ${minutes} min ${seconds} sec`;
+  }
+
+  if (Number.isNaN(minutes)) {
+    return null;
+  }
+
+  return `${minutes} min ${seconds} sec`;
+};
+
 export const formatDate = (date: string) => {
   return moment(date).format('MMM D YYYY');
 };

@@ -10,7 +10,12 @@ import {
   StyledInputGroup,
   StyledInputGroupButton,
 } from '../shared/styled';
-import { CoverArtWrapper, PageHeaderTitle } from './styled';
+import {
+  CoverArtWrapper,
+  PageHeaderSubtitleWrapper,
+  PageHeaderTitle,
+  PageHeaderWrapper,
+} from './styled';
 import cacheImage from '../shared/cacheImage';
 import CustomTooltip from '../shared/CustomTooltip';
 
@@ -31,6 +36,7 @@ const GenericPageHeader = ({
   viewTypeSetting,
   cacheImages,
   showTitleTooltip,
+  isDark,
 }: any) => {
   const history = useHistory();
   const [openSearch, setOpenSearch] = useState(false);
@@ -47,8 +53,8 @@ const GenericPageHeader = ({
           <LazyLoadImage
             src={image}
             alt="header-img"
-            height={imageHeight || '145px'}
-            width={imageHeight || '145px'}
+            height={imageHeight || '195px'}
+            width={imageHeight || '195px'}
             visibleByDefault
             afterLoad={() => {
               if (cacheImages.enabled) {
@@ -62,13 +68,7 @@ const GenericPageHeader = ({
         </CoverArtWrapper>
       )}
 
-      <div
-        style={{
-          display: image ? 'inline-block' : 'undefined',
-          width: image ? 'calc(100% - 160px)' : '100%',
-          marginLeft: image ? '15px' : '0px',
-        }}
-      >
+      <PageHeaderWrapper isDark={isDark} hasImage={image} imageHeight={imageHeight || 195}>
         <div
           style={{
             display: 'flex',
@@ -104,6 +104,7 @@ const GenericPageHeader = ({
                       <Icon icon="search" />
                     </InputGroup.Addon>
                     <StyledInput
+                      opacity={0.6}
                       id="local-search-input"
                       value={searchQuery}
                       onChange={handleSearch}
@@ -160,18 +161,8 @@ const GenericPageHeader = ({
             height: '50%',
           }}
         >
-          <span
-            style={{
-              alignSelf: 'center',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              width: '60%',
-            }}
-          >
-            {subtitle}
-          </span>
-          <span style={{ alignSelf: 'center' }}>
+          <PageHeaderSubtitleWrapper>{subtitle}</PageHeaderSubtitleWrapper>
+          <span style={{ alignSelf: 'flex-end' }}>
             {subsidetitle && <span style={{ display: 'inline-block' }}>{subsidetitle}</span>}
             {showViewTypeButtons && (
               <span style={{ display: 'inline-block' }}>
@@ -184,7 +175,7 @@ const GenericPageHeader = ({
             )}
           </span>
         </div>
-      </div>
+      </PageHeaderWrapper>
     </>
   );
 };

@@ -17,6 +17,7 @@ import {
   Tag,
 } from 'rsuite';
 import styled from 'styled-components';
+import TagLink from './TagLink';
 
 export const HeaderButton = styled(Button)`
   margin-left: 5px;
@@ -140,7 +141,7 @@ export const StyledInputNumber = styled(InputNumber)<{ width: number }>`
   width: ${(props) => `${props.width}px`};
 `;
 
-export const StyledInput = styled(Input)<{ width: number }>`
+export const StyledInput = styled(Input)<{ width: number; opacity?: number }>`
   border: 1px #3c3f43 solid !important;
   border-radius: ${(props) => props.theme.other.input.borderRadius} !important;
 
@@ -148,6 +149,7 @@ export const StyledInput = styled(Input)<{ width: number }>`
   background: ${(props) => props.theme.colors.input.background} !important;
   width: ${(props) => `${props.width}px`};
   border-radius: ${(props) => props.theme.other.input.borderRadius};
+  opacity: ${(props) => props.opacity};
 `;
 
 export const StyledCheckbox = styled(Checkbox)`
@@ -512,5 +514,17 @@ export const StyledTag = styled(Tag)`
   color: ${(props) => props.theme.colors.tag.text} !important;
   background: ${(props) => props.theme.colors.tag.background};
   border-radius: ${(props) => props.theme.other.tag.borderRadius};
+
+  cursor: pointer;
+`;
+
+export const StyledTagLink = styled(TagLink)`
+  color: ${(props) => props.theme.colors.tag.text} !important;
+  background: ${(props) => props.theme.colors.tag.background};
+  border-radius: ${(props) => props.theme.other.tag.borderRadius};
+
+  max-width: 13rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
   cursor: pointer;
 `;
