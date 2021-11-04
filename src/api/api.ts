@@ -114,7 +114,15 @@ const authParams = {
 };
 
 const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size = 150) => {
-  if (!item.coverArt) {
+  if (!item.coverArt && !item.artistImageUrl) {
+    return 'img/placeholder.jpg';
+  }
+
+  if (!item.coverArt && !item.artistImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')) {
+    return item.artistImageUrl;
+  }
+
+  if (item.artistImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')) {
     return 'img/placeholder.jpg';
   }
 
