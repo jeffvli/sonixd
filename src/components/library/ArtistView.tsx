@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
+import FastAverageColor from 'fast-average-color';
 import { shell } from 'electron';
 import settings from 'electron-settings';
 import { ButtonToolbar, Whisper, TagGroup } from 'rsuite';
@@ -35,9 +36,17 @@ import {
   setPlayQueue,
 } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
-import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
+import {
+  filterPlayQueue,
+  formatDuration,
+  getPlayedSongsNotification,
+  isCached,
+} from '../../shared/utils';
 import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
+import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
+
+const fac = new FastAverageColor();
 
 interface ArtistParams {
   id: string;
@@ -50,6 +59,10 @@ const ArtistView = ({ ...rest }: any) => {
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
+  const [imageAverageColor, setImageAverageColor] = useState({ color: '', loaded: false });
+  const [artistDurationTotal, setArtistDurationTotal] = useState('');
+  const [artistSongTotal, setArtistSongTotal] = useState(0);
+
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
@@ -131,18 +144,6 @@ const ArtistView = ({ ...rest }: any) => {
     notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
   };
 
-  if (isLoading || isLoadingAI) {
-    return <PageLoader />;
-  }
-
-  if (isError || isErrorAI) {
-    return (
-      <span>
-        Error: {error?.message} {errorAI?.message}
-      </span>
-    );
-  }
-
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
       await star(rowData.id, 'album');
@@ -167,168 +168,248 @@ const ArtistView = ({ ...rest }: any) => {
     }
   };
 
+  useEffect(() => {
+    if (!isLoading) {
+      const img = isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
+        ? `${misc.imageCachePath}artist_${data?.id}.jpg`
+        : data?.image.includes('placeholder')
+        ? artistInfo?.largeImageUrl &&
+          !artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
+          ? artistInfo?.largeImageUrl
+          : data?.image
+        : data?.image;
+
+      const setAvgColor = (imgUrl: string) => {
+        if (
+          data?.image.match('placeholder') ||
+          (data?.image.match('placeholder') &&
+            artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f'))
+        ) {
+          setImageAverageColor({ color: 'rgba(0, 57, 90, .4)', loaded: true });
+        } else {
+          fac
+            .getColorAsync(imgUrl, {
+              ignoredColor: [
+                [255, 255, 255, 255], // White
+                [0, 0, 0, 255], // Black
+              ],
+              mode: 'precision',
+              algorithm: 'dominant',
+            })
+            .then((color) => {
+              return setImageAverageColor({
+                color: color.rgba.replace(',1)', ',0.4)'),
+                loaded: true,
+              });
+            })
+            .catch(() => setAvgColor(imgUrl));
+        }
+      };
+      setAvgColor(img);
+    }
+  }, [artistInfo?.largeImageUrl, data?.id, data?.image, isLoading, misc.imageCachePath]);
+
+  useEffect(() => {
+    const allAlbumDurations = _.sum(_.map(data?.album, 'duration'));
+    const allSongCount = _.sum(_.map(data?.album, 'songCount'));
+
+    setArtistDurationTotal(formatDuration(allAlbumDurations) || 'N/a');
+    setArtistSongTotal(allSongCount);
+  }, [data?.album]);
+
+  if (isLoading || isLoadingAI || imageAverageColor.loaded === false) {
+    return <PageLoader />;
+  }
+
+  if (isError || isErrorAI) {
+    return (
+      <span>
+        Error: {error?.message} {errorAI?.message}
+      </span>
+    );
+  }
+
   return (
-    <GenericPage
-      hideDivider
-      header={
-        <GenericPageHeader
-          image={
-            isCached(`${misc.imageCachePath}artist_${data.id}.jpg`)
-              ? `${misc.imageCachePath}artist_${data.id}.jpg`
-              : data.image.includes('placeholder')
-              ? artistInfo?.largeImageUrl &&
-                !artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
-                ? artistInfo.largeImageUrl
+    <>
+      <GradientBackground $expanded={misc.expandSidebar} $color={imageAverageColor.color} />
+      <GenericPage
+        contentZIndex={1}
+        hideDivider
+        header={
+          <GenericPageHeader
+            image={
+              isCached(`${misc.imageCachePath}artist_${data.id}.jpg`)
+                ? `${misc.imageCachePath}artist_${data.id}.jpg`
+                : data.image.includes('placeholder')
+                ? artistInfo?.largeImageUrl &&
+                  !artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
+                  ? artistInfo.largeImageUrl
+                  : data.image
                 : data.image
-              : data.image
-          }
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'artist',
-            id: data.id,
-          }}
-          imageHeight={145}
-          title={data.name}
-          showTitleTooltip
-          subtitle={
-            <>
-              <CustomTooltip
-                text={artistInfo?.biography
-                  ?.replace(/<[^>]*>/, '')
-                  .replace('Read more on Last.fm</a>', '')}
-                placement="bottomStart"
-              >
-                <span>
-                  {artistInfo?.biography
-                    ?.replace(/<[^>]*>/, '')
-                    .replace('Read more on Last.fm</a>', '')
-                    ?.trim()
-                    ? `${artistInfo?.biography
-                        ?.replace(/<[^>]*>/, '')
-                        .replace('Read more on Last.fm</a>', '')}`
-                    : 'No artist biography found'}
-                </span>
-              </CustomTooltip>
-              <div style={{ marginTop: '10px' }}>
-                <ButtonToolbar>
-                  <PlayButton appearance="primary" size="md" onClick={handlePlay} />
-                  <PlayAppendNextButton
-                    appearance="primary"
-                    size="md"
-                    onClick={() => handlePlayAppend('next')}
-                  />
-                  <PlayAppendButton
-                    appearance="primary"
-                    size="md"
-                    onClick={() => handlePlayAppend('later')}
-                  />
-                  <FavoriteButton size="md" isFavorite={data.starred} onClick={handleFavorite} />
-                  <Whisper
-                    placement="auto"
-                    trigger="hover"
-                    enterable
-                    speaker={
-                      <StyledPopover style={{ width: '400px' }}>
-                        <div>
-                          <h6>Related artists</h6>
-                          <TagGroup>
-                            {artistInfo.similarArtist?.map((artist: any) => (
-                              <StyledTag
-                                key={artist.id}
-                                onClick={() => {
-                                  if (!rest.isModal) {
-                                    history.push(`/library/artist/${artist.id}`);
-                                  } else {
-                                    dispatch(
-                                      addModalPage({
-                                        pageType: 'artist',
-                                        id: artist.id,
-                                      })
-                                    );
-                                  }
-                                }}
-                              >
-                                {artist.name}
-                              </StyledTag>
-                            ))}
-                          </TagGroup>
-                        </div>
-                        <br />
-                        <StyledButton
-                          appearance="primary"
-                          disabled={!artistInfo?.lastFmUrl}
-                          onClick={() => shell.openExternal(artistInfo?.lastFmUrl)}
-                        >
-                          View on Last.FM
-                        </StyledButton>
-                      </StyledPopover>
-                    }
-                  >
-                    <StyledButton size="md">Info</StyledButton>
-                  </Whisper>
-                </ButtonToolbar>
-              </div>
-            </>
-          }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-          showSearchBar
-          showViewTypeButtons
-          viewTypeSetting="album"
-          handleListClick={() => setViewType('list')}
-          handleGridClick={() => setViewType('grid')}
-        />
-      }
-    >
-      <>
-        {viewType === 'list' && (
-          <ListViewType
-            data={searchQuery !== '' ? filteredData : data.album}
-            tableColumns={config.lookAndFeel.listView.album.columns}
-            handleRowClick={handleRowClick}
-            handleRowDoubleClick={handleRowDoubleClick}
-            virtualized
-            rowHeight={config.lookAndFeel.listView.album.rowHeight}
-            fontSize={config.lookAndFeel.listView.album.fontSize}
+            }
             cacheImages={{
               enabled: settings.getSync('cacheImages'),
-              cacheType: 'album',
-              cacheIdProperty: 'albumId',
+              cacheType: 'artist',
+              id: data.id,
             }}
-            listType="album"
-            isModal={rest.isModal}
-            disabledContextMenuOptions={[
-              'removeSelected',
-              'moveSelectedTo',
-              'deletePlaylist',
-              'viewInFolder',
-            ]}
-            handleFavorite={handleRowFavorite}
-          />
-        )}
+            imageHeight={185}
+            title={data.name}
+            showTitleTooltip
+            subtitle={
+              <>
+                <PageHeaderSubtitleDataLine $top>
+                  <strong>ARTIST</strong> • {data.albumCount} albums • {artistSongTotal} songs •{' '}
+                  {artistDurationTotal}
+                </PageHeaderSubtitleDataLine>
+                <PageHeaderSubtitleDataLine
+                  style={{
+                    minHeight: '2.5rem',
+                    maxHeight: '2.5rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  <CustomTooltip
+                    text={artistInfo?.biography
+                      ?.replace(/<[^>]*>/, '')
+                      .replace('Read more on Last.fm</a>', '')}
+                    placement="bottomStart"
+                  >
+                    <span>
+                      {artistInfo?.biography
+                        ?.replace(/<[^>]*>/, '')
+                        .replace('Read more on Last.fm</a>', '')
+                        ?.trim()
+                        ? `${artistInfo?.biography
+                            ?.replace(/<[^>]*>/, '')
+                            .replace('Read more on Last.fm</a>', '')}`
+                        : 'No artist biography found'}
+                    </span>
+                  </CustomTooltip>
+                </PageHeaderSubtitleDataLine>
 
-        {viewType === 'grid' && (
-          <GridViewType
-            data={searchQuery === '' ? data.album : filteredData}
-            cardTitle={{
-              prefix: '/library/album',
-              property: 'name',
-              urlProperty: 'albumId',
-            }}
-            cardSubtitle={{
-              property: 'songCount',
-              unit: ' tracks',
-            }}
-            playClick={{ type: 'album', idProperty: 'id' }}
-            size={config.lookAndFeel.gridView.cardSize}
-            cacheType="album"
-            isModal={rest.isModal}
-            handleFavorite={handleRowFavorite}
+                <div style={{ marginTop: '10px' }}>
+                  <ButtonToolbar>
+                    <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
+                    <PlayAppendNextButton
+                      appearance="primary"
+                      size="lg"
+                      onClick={() => handlePlayAppend('next')}
+                    />
+                    <PlayAppendButton
+                      appearance="primary"
+                      size="lg"
+                      onClick={() => handlePlayAppend('later')}
+                    />
+                    <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
+                    <Whisper
+                      placement="auto"
+                      trigger="hover"
+                      enterable
+                      speaker={
+                        <StyledPopover style={{ width: '400px' }}>
+                          <div>
+                            <h6>Related artists</h6>
+                            <TagGroup>
+                              {artistInfo.similarArtist?.map((artist: any) => (
+                                <StyledTag
+                                  key={artist.id}
+                                  onClick={() => {
+                                    if (!rest.isModal) {
+                                      history.push(`/library/artist/${artist.id}`);
+                                    } else {
+                                      dispatch(
+                                        addModalPage({
+                                          pageType: 'artist',
+                                          id: artist.id,
+                                        })
+                                      );
+                                    }
+                                  }}
+                                >
+                                  {artist.name}
+                                </StyledTag>
+                              ))}
+                            </TagGroup>
+                          </div>
+                          <br />
+                          <StyledButton
+                            appearance="primary"
+                            disabled={!artistInfo?.lastFmUrl}
+                            onClick={() => shell.openExternal(artistInfo?.lastFmUrl)}
+                          >
+                            View on Last.FM
+                          </StyledButton>
+                        </StyledPopover>
+                      }
+                    >
+                      <StyledButton size="lg">Info</StyledButton>
+                    </Whisper>
+                  </ButtonToolbar>
+                </div>
+              </>
+            }
+            searchQuery={searchQuery}
+            handleSearch={(e: any) => setSearchQuery(e)}
+            clearSearchQuery={() => setSearchQuery('')}
+            showSearchBar
+            showViewTypeButtons
+            viewTypeSetting="album"
+            handleListClick={() => setViewType('list')}
+            handleGridClick={() => setViewType('grid')}
           />
-        )}
-      </>
-    </GenericPage>
+        }
+      >
+        <>
+          {viewType === 'list' && (
+            <ListViewType
+              data={searchQuery !== '' ? filteredData : data.album}
+              tableColumns={config.lookAndFeel.listView.album.columns}
+              handleRowClick={handleRowClick}
+              handleRowDoubleClick={handleRowDoubleClick}
+              virtualized
+              rowHeight={config.lookAndFeel.listView.album.rowHeight}
+              fontSize={config.lookAndFeel.listView.album.fontSize}
+              cacheImages={{
+                enabled: settings.getSync('cacheImages'),
+                cacheType: 'album',
+                cacheIdProperty: 'albumId',
+              }}
+              listType="album"
+              isModal={rest.isModal}
+              disabledContextMenuOptions={[
+                'removeSelected',
+                'moveSelectedTo',
+                'deletePlaylist',
+                'viewInFolder',
+              ]}
+              handleFavorite={handleRowFavorite}
+            />
+          )}
+
+          {viewType === 'grid' && (
+            <GridViewType
+              data={searchQuery === '' ? data.album : filteredData}
+              cardTitle={{
+                prefix: '/library/album',
+                property: 'name',
+                urlProperty: 'albumId',
+              }}
+              cardSubtitle={{
+                property: 'songCount',
+                unit: ' tracks',
+              }}
+              playClick={{ type: 'album', idProperty: 'id' }}
+              size={config.lookAndFeel.gridView.cardSize}
+              cacheType="album"
+              isModal={rest.isModal}
+              handleFavorite={handleRowFavorite}
+            />
+          )}
+        </>
+      </GenericPage>
+    </>
   );
 };
 
