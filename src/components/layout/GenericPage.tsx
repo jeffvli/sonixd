@@ -48,7 +48,7 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
         {header}
       </PageHeader>
       {!hideDivider && <Divider />}
-      <PageContent id="page-content" padding={rest.padding}>
+      <PageContent id="page-content" padding={rest.padding} $zIndex={rest.contentZIndex}>
         {children}
       </PageContent>
     </PageContainer>
