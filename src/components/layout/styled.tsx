@@ -156,6 +156,7 @@ export const PageHeader = styled(Header)<{ padding?: string }>`
 export const PageContent = styled(Content)<{ padding?: string }>`
   position: relative;
   padding: ${(props) => (props.padding ? props.padding : '10px')};
+  z-index: 1;
 `;
 
 // Sidebar.tsx
@@ -205,5 +206,82 @@ export const PageHeaderTitle = styled.h1`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  font-size: ${(props) => props.theme.fonts.size.pageTitle};
+  font-size: 4vw;
+
+  @media screen and (min-width: 1280px) {
+    font-size: 48px;
+  }
+`;
+
+export const PageHeaderWrapper = styled.div<{ $hasImage: boolean; $imageHeight: string }>`
+  display: ${(props) => (props.$hasImage ? 'inline-block' : 'undefined')};
+  width: ${(props) => (props.$hasImage ? `calc(100% - ${props.$imageHeight + 15}px)` : '100%')};
+  margin-left: ${(props) => (props.$hasImage ? '15px' : '0px')};
+  vertical-align: top;
+  color: ${(props) => (props.$hasImage ? '#D8D8D8' : props.theme.colors.layout.page.color)};
+`;
+
+export const PageHeaderSubtitleWrapper = styled.span`
+  align-self: center;
+  width: 70%;
+  font-size: 14px;
+`;
+
+export const PageHeaderSubtitleDataLine = styled.div<{ $top?: boolean }>`
+  margin-top: ${(props) => (props.$top ? '0px' : '10px')};
+`;
+
+export const FlatBackground = styled.div<{ $expanded: boolean; $color: string }>`
+  background: ${(props) => props.$color};
+  top: 32px;
+  left: ${(props) => (props.$expanded ? '165px' : '56px')};
+  height: 200px;
+  position: absolute;
+  width: ${(props) => (props.$expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+`;
+
+export const BlurredBackgroundWrapper = styled.div<{ $expanded: boolean }>`
+  clip: rect(0, auto, auto, 0);
+  -webkit-clip-path: inset(0 0);
+  clip-path: inset(0 0);
+  position: absolute;
+  left: ${(props) => (props.$expanded ? '165px' : '56px')};
+  width: ${(props) => (props.$expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
+  top: 32px;
+  z-index: 1;
+  display: block;
+  background: #0b0908;
+`;
+
+export const BlurredBackground = styled.img<{ $expanded: boolean; $image: string }>`
+  background-image: ${(props) => `url(${props.$image})`};
+  background-position: center 30%;
+  background-size: cover;
+  filter: blur(10px) brightness(0.4);
+
+  outline: none !important;
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  width: 100%;
+  height: 202px;
+  z-index: -1;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+`;
+
+export const GradientBackground = styled.div<{ $expanded: boolean; $color: string }>`
+  background: ${(props) => `linear-gradient(0deg, transparent 10%, ${props.$color} 100%)`};
+  top: 32px;
+  left: ${(props) => (props.$expanded ? '165px' : '56px')};
+  height: calc(100% - 130px);
+  position: absolute;
+  width: ${(props) => (props.$expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
 `;

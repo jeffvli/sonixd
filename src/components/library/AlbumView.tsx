@@ -34,9 +34,20 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
-import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
-import { StyledLink } from '../shared/styled';
+import {
+  filterPlayQueue,
+  formatDate,
+  formatDuration,
+  getPlayedSongsNotification,
+  isCached,
+} from '../../shared/utils';
+import { StyledTagLink } from '../shared/styled';
 import { setActive } from '../../redux/albumSlice';
+import {
+  BlurredBackground,
+  BlurredBackgroundWrapper,
+  PageHeaderSubtitleDataLine,
+} from '../layout/styled';
 
 interface AlbumParams {
   id: string;
@@ -171,76 +182,60 @@ const AlbumView = ({ ...rest }: any) => {
   }
 
   return (
-    <GenericPage
-      hideDivider
-      header={
-        <GenericPageHeader
-          image={
-            isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
-              ? `${misc.imageCachePath}album_${albumId}.jpg`
-              : data.image
-          }
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'album',
-            id: data.albumId,
-          }}
-          title={data.name}
-          showTitleTooltip
-          subtitle={
-            <div>
-              <div
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {data.artist && (
-                  <StyledLink
-                    tabIndex={0}
-                    onClick={() => {
-                      if (!rest.isModal) {
-                        history.push(`/library/artist/${data.artistId}`);
-                      } else {
-                        dispatch(
-                          addModalPage({
-                            pageType: 'artist',
-                            id: data.artistId,
-                          })
-                        );
-                      }
-                    }}
-                    onKeyDown={(e: any) => {
-                      if (e.key === ' ' || e.key === 'Enter') {
-                        e.preventDefault();
-                        if (!rest.isModal) {
-                          history.push(`/library/artist/${data.artistId}`);
-                        } else {
-                          dispatch(
-                            addModalPage({
-                              pageType: 'artist',
-                              id: data.artistId,
-                            })
-                          );
-                        }
-                      }
-                    }}
-                  >
-                    {data.artist}
-                  </StyledLink>
-                )}
-                {data.genre && (
-                  <>
-                    {' • '}
-                    <StyledLink
+    <>
+      {!rest.isModal && (
+        <BlurredBackgroundWrapper
+          image={!data?.image.match('placeholder') ? data.image : null}
+          expanded={misc.expandSidebar}
+        >
+          <BlurredBackground
+            image={!data?.image.match('placeholder') ? data.image : null}
+            expanded={misc.expandSidebar}
+          />
+        </BlurredBackgroundWrapper>
+      )}
+
+      <GenericPage
+        hideDivider
+        header={
+          <GenericPageHeader
+            isDark={!rest.isModal}
+            image={
+              isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
+                ? `${misc.imageCachePath}album_${albumId}.jpg`
+                : data.image
+            }
+            cacheImages={{
+              enabled: settings.getSync('cacheImages'),
+              cacheType: 'album',
+              id: data.albumId,
+            }}
+            imageHeight={200}
+            title={data.name}
+            showTitleTooltip
+            subtitle={
+              <div>
+                <PageHeaderSubtitleDataLine $top>
+                  <strong>ALBUM</strong> {' • '} {data.songCount} songs,{' '}
+                  {formatDuration(data.duration)}
+                  {data.year && (
+                    <>
+                      {' • '}
+                      {data.year}
+                    </>
+                  )}
+                </PageHeaderSubtitleDataLine>
+                <PageHeaderSubtitleDataLine>
+                  Added {formatDate(data.created)}
+                </PageHeaderSubtitleDataLine>
+                <PageHeaderSubtitleDataLine>
+                  {data.artist && (
+                    <StyledTagLink
                       tabIndex={0}
+                      tooltip={data.artist}
                       onClick={() => {
                         if (!rest.isModal) {
-                          dispatch(setActive({ ...album.active, filter: data.genre }));
-                          setTimeout(() => {
-                            history.push(`/library/album?sortType=${data.genre}`);
-                          }, 50);
+                          history.push(`/library/artist/${data.artistId}`);
                         } else {
                           dispatch(
                             addModalPage({
@@ -254,6 +249,28 @@ const AlbumView = ({ ...rest }: any) => {
                         if (e.key === ' ' || e.key === 'Enter') {
                           e.preventDefault();
                           if (!rest.isModal) {
+                            history.push(`/library/artist/${data.artistId}`);
+                          } else {
+                            dispatch(
+                              addModalPage({
+                                pageType: 'artist',
+                                id: data.artistId,
+                              })
+                            );
+                          }
+                        }
+                      }}
+                    >
+                      {data.artist}
+                    </StyledTagLink>
+                  )}
+                  {data.genre && (
+                    <>
+                      <StyledTagLink
+                        tabIndex={0}
+                        tooltip={data.genre}
+                        onClick={() => {
+                          if (!rest.isModal) {
                             dispatch(setActive({ ...album.active, filter: data.genre }));
                             setTimeout(() => {
                               history.push(`/library/album?sortType=${data.genre}`);
@@ -266,71 +283,82 @@ const AlbumView = ({ ...rest }: any) => {
                               })
                             );
                           }
-                        }
-                      }}
-                    >
-                      {data.genre}
-                    </StyledLink>
-                  </>
-                )}
-
-                {data.year && (
-                  <>
-                    {' • '}
-                    {data.year}
-                  </>
-                )}
+                        }}
+                        onKeyDown={(e: any) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                            e.preventDefault();
+                            if (!rest.isModal) {
+                              dispatch(setActive({ ...album.active, filter: data.genre }));
+                              setTimeout(() => {
+                                history.push(`/library/album?sortType=${data.genre}`);
+                              }, 50);
+                            } else {
+                              dispatch(
+                                addModalPage({
+                                  pageType: 'artist',
+                                  id: data.artistId,
+                                })
+                              );
+                            }
+                          }
+                        }}
+                      >
+                        {data.genre}
+                      </StyledTagLink>
+                    </>
+                  )}
+                </PageHeaderSubtitleDataLine>
+                <div style={{ marginTop: '10px' }}>
+                  <ButtonToolbar>
+                    <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
+                    <PlayAppendNextButton
+                      appearance="primary"
+                      size="lg"
+                      onClick={() => handlePlayAppend('next')}
+                    />
+                    <PlayAppendButton
+                      appearance="primary"
+                      size="lg"
+                      onClick={() => handlePlayAppend('later')}
+                    />
+                    <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
+                  </ButtonToolbar>
+                </div>
               </div>
-              <div style={{ marginTop: '10px' }}>
-                <ButtonToolbar>
-                  <PlayButton appearance="primary" size="md" onClick={handlePlay} />
-                  <PlayAppendNextButton
-                    appearance="primary"
-                    size="md"
-                    onClick={() => handlePlayAppend('next')}
-                  />
-                  <PlayAppendButton
-                    appearance="primary"
-                    size="md"
-                    onClick={() => handlePlayAppend('later')}
-                  />
-                  <FavoriteButton size="md" isFavorite={data.starred} onClick={handleFavorite} />
-                </ButtonToolbar>
-              </div>
-            </div>
-          }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-          showSearchBar
+            }
+            searchQuery={searchQuery}
+            handleSearch={(e: any) => setSearchQuery(e)}
+            clearSearchQuery={() => setSearchQuery('')}
+            showSearchBar
+          />
+        }
+      >
+        <ListViewType
+          data={searchQuery !== '' ? filteredData : data.song}
+          tableColumns={settings.getSync('musicListColumns')}
+          handleRowClick={handleRowClick}
+          handleRowDoubleClick={handleRowDoubleClick}
+          tableHeight={700}
+          virtualized
+          rowHeight={Number(settings.getSync('musicListRowHeight'))}
+          fontSize={Number(settings.getSync('musicListFontSize'))}
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'album',
+            cacheIdProperty: 'albumId',
+          }}
+          listType="music"
+          isModal={rest.isModal}
+          disabledContextMenuOptions={[
+            'removeSelected',
+            'moveSelectedTo',
+            'deletePlaylist',
+            'viewInModal',
+          ]}
+          handleFavorite={handleRowFavorite}
         />
-      }
-    >
-      <ListViewType
-        data={searchQuery !== '' ? filteredData : data.song}
-        tableColumns={settings.getSync('musicListColumns')}
-        handleRowClick={handleRowClick}
-        handleRowDoubleClick={handleRowDoubleClick}
-        tableHeight={700}
-        virtualized
-        rowHeight={Number(settings.getSync('musicListRowHeight'))}
-        fontSize={Number(settings.getSync('musicListFontSize'))}
-        cacheImages={{
-          enabled: settings.getSync('cacheImages'),
-          cacheType: 'album',
-          cacheIdProperty: 'albumId',
-        }}
-        listType="music"
-        isModal={rest.isModal}
-        disabledContextMenuOptions={[
-          'removeSelected',
-          'moveSelectedTo',
-          'deletePlaylist',
-          'viewInModal',
-        ]}
-        handleFavorite={handleRowFavorite}
-      />
-    </GenericPage>
+      </GenericPage>
+    </>
   );
 };
 

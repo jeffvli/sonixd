@@ -34,7 +34,7 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
       id="page-container"
       $backgroundSrc={
         misc.dynamicBackground
-          ? !backgroundImage.match('placeholder')
+          ? !backgroundImage?.match('placeholder')
             ? backgroundImage
             : undefined
           : undefined
@@ -43,7 +43,7 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
       <PageHeader
         id="page-header"
         padding={rest.padding}
-        style={{ paddingBottom: hideDivider && !rest.padding ? '20px' : '0px' }}
+        style={{ paddingBottom: hideDivider && !rest.padding ? '10px' : '0px' }}
       >
         {header}
       </PageHeader>

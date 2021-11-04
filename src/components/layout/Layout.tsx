@@ -107,6 +107,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
           <FlexboxGrid
             justify="space-between"
             style={{
+              zIndex: 2,
               padding: '0 10px 0 10px',
               margin: '10px 5px 5px 5px',
             }}
