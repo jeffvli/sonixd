@@ -193,7 +193,13 @@ const AlbumView = ({ ...rest }: any) => {
             // which causes the background-image to flicker
             expanded={misc.expandSidebar}
             style={{
-              backgroundImage: `url(${!data?.image.match('placeholder') ? data.image : 'null'})`,
+              backgroundImage: `url(${
+                !data?.image.match('placeholder')
+                  ? isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
+                    ? `${misc.imageCachePath}album_${albumId}.jpg`.replaceAll('\\', '/')
+                    : data.image
+                  : 'null'
+              })`,
             }}
           />
         </BlurredBackgroundWrapper>
