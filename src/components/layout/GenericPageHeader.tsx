@@ -12,6 +12,8 @@ import {
 } from '../shared/styled';
 import {
   CoverArtWrapper,
+  CustomImageGrid,
+  CustomImageGridWrapper,
   PageHeaderSubtitleWrapper,
   PageHeaderTitle,
   PageHeaderWrapper,
@@ -48,7 +50,7 @@ const GenericPageHeader = ({
 
   return (
     <>
-      {image && (
+      {image && !Array.isArray(image) && (
         <CoverArtWrapper>
           <LazyLoadImage
             src={image}
@@ -66,6 +68,62 @@ const GenericPageHeader = ({
             }}
           />
         </CoverArtWrapper>
+      )}
+
+      {image && Array.isArray(image) && (
+        <CoverArtWrapper>
+          <CustomImageGridWrapper>
+            <CustomImageGrid $gridArea="1 / 1 / 2 / 2">
+              <LazyLoadImage
+                src={image[0]}
+                alt="header-img"
+                height={imageHeight / 2}
+                width={imageHeight / 2}
+              />
+            </CustomImageGrid>
+            <CustomImageGrid $gridArea="1 / 2 / 2 / 3">
+              <LazyLoadImage
+                src={image[1]}
+                alt="header-img"
+                height={imageHeight / 2}
+                width={imageHeight / 2}
+              />
+            </CustomImageGrid>
+            <CustomImageGrid $gridArea="2 / 1 / 3 / 2">
+              <LazyLoadImage
+                src={image[2]}
+                alt="header-img"
+                height={imageHeight / 2}
+                width={imageHeight / 2}
+              />
+            </CustomImageGrid>
+            <CustomImageGrid $gridArea="2 / 2 / 3 / 3">
+              <LazyLoadImage
+                src={image[3]}
+                alt="header-img"
+                height={imageHeight / 2}
+                width={imageHeight / 2}
+              />
+            </CustomImageGrid>
+          </CustomImageGridWrapper>
+        </CoverArtWrapper>
+        /*         <CoverArtWrapper>
+          <LazyLoadImage
+            src={image[0]}
+            alt="header-img"
+            height={imageHeight || '195px'}
+            width={imageHeight || '195px'}
+            visibleByDefault
+            afterLoad={() => {
+              if (cacheImages.enabled) {
+                cacheImage(
+                  `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
+                  image[0].replace(/size=\d+/, 'size=500')
+                );
+              }
+            }}
+          />
+        </CoverArtWrapper> */
       )}
 
       <PageHeaderWrapper isDark={isDark} hasImage={image} imageHeight={imageHeight || 195}>

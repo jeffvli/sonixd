@@ -48,9 +48,12 @@ import {
   createRecoveryFile,
   errorMessages,
   filterPlayQueue,
+  formatDate,
+  formatDuration,
   getCurrentEntryList,
   getPlayedSongsNotification,
   getRecoveryPath,
+  getUniqueRandomNumberArr,
   isFailedResponse,
 } from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -69,6 +72,8 @@ import {
   setPlaylistRate,
   setPlaylistStar,
 } from '../../redux/playlistSlice';
+import { PageHeaderSubtitleDataLine } from '../layout/styled';
+import CustomTooltip from '../shared/CustomTooltip';
 
 interface PlaylistParams {
   id: string;
@@ -88,6 +93,9 @@ const PlaylistView = ({ ...rest }) => {
   const playlistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(['playlist', playlistId], () =>
     getPlaylist(playlistId)
+  );
+  const [customPlaylistImage, setCustomPlaylistImage] = useState<string | string[]>(
+    'img/placeholder.jpg'
   );
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -349,6 +357,24 @@ const PlaylistView = ({ ...rest }) => {
     dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
   };
 
+  useEffect(() => {
+    if (data?.image.match('placeholder')) {
+      const uniqueAlbums: any = _.uniqBy(data?.song, 'albumId');
+
+      if (uniqueAlbums.length === 0) {
+        setCustomPlaylistImage('img/placeholder.jpg');
+      } // If less than 4 images, we'll just set a single random image
+      else if (uniqueAlbums.length > 0 && uniqueAlbums.length < 4) {
+        setCustomPlaylistImage(uniqueAlbums[_.random(0, uniqueAlbums.length - 1)]?.image);
+      } else if (uniqueAlbums.length >= 4) {
+        const randomUniqueNumbers = getUniqueRandomNumberArr(4, uniqueAlbums.length);
+        const randomAlbumImages = randomUniqueNumbers.map((num) => uniqueAlbums[num].image);
+
+        setCustomPlaylistImage(randomAlbumImages);
+      }
+    }
+  }, [data?.image, data?.song]);
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -362,24 +388,37 @@ const PlaylistView = ({ ...rest }) => {
       hideDivider
       header={
         <GenericPageHeader
-          image={data.image}
+          image={data?.image.match('placeholder') ? customPlaylistImage : data.image}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'playlist',
             id: data.id,
           }}
+          imageHeight={184}
           title={data.name}
           subtitle={
             <div>
-              <div
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {data.comment ? data.comment : <span>&#8203;</span>}
-              </div>
+              <PageHeaderSubtitleDataLine $top>
+                <strong>PLAYLIST</strong> • {data.songCount} songs • {formatDuration(data.duration)}
+              </PageHeaderSubtitleDataLine>
+              <PageHeaderSubtitleDataLine>
+                by <strong>{data.owner}</strong> • created {formatDate(data.created)} • modified{' '}
+                {formatDate(data.changed)}
+              </PageHeaderSubtitleDataLine>
+              <CustomTooltip text={data.comment}>
+                <PageHeaderSubtitleDataLine
+                  style={{
+                    minHeight: '1.2rem',
+                    maxHeight: '1.2rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  <span>{data.comment ? data.comment : 'No description'}</span>
+                </PageHeaderSubtitleDataLine>
+              </CustomTooltip>
+
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
                   <PlayButton
