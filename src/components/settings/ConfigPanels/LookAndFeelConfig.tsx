@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import _ from 'lodash';
 import { shell } from 'electron';
 import settings from 'electron-settings';
 import { ControlLabel, Nav, Icon } from 'rsuite';
@@ -41,7 +42,7 @@ const LookAndFeelConfig = () => {
   const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
-  const themes: any = settings.getSync('themes');
+  const themes: any = _.concat(settings.getSync('themes'), settings.getSync('themesDefault'));
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
   const playlistCols: any = settings.getSync('playlistListColumns');

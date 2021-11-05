@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
 import settings from 'electron-settings';
 import { ThemeProvider } from 'styled-components';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
@@ -35,7 +36,9 @@ const App = () => {
 
   useEffect(() => {
     const themes: any =
-      process.env.NODE_ENV === 'test' ? mockSettings.themes : settings.getSync('themes');
+      process.env.NODE_ENV === 'test'
+        ? mockSettings.themesDefault
+        : _.concat(settings.getSync('themes'), settings.getSync('themesDefault'));
     setTheme(getTheme(themes, misc.theme) || defaultDark);
   }, [misc.theme]);
 
