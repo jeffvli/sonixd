@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import settings from 'electron-settings';
-import { ControlLabel, RadioGroup } from 'rsuite';
+import { ButtonToolbar, ControlLabel, RadioGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import {
+  StyledButton,
   StyledInputNumber,
   StyledInputPicker,
   StyledInputPickerContainer,
@@ -13,8 +14,45 @@ import { setPlaybackSetting, setPlayerVolume } from '../../../redux/playQueueSli
 
 const PlaybackConfig = () => {
   const dispatch = useAppDispatch();
+  const [crossfadeDuration, setCrossfadeDuration] = useState(
+    Number(settings.getSync('fadeDuration'))
+  );
+  const [pollingInterval, setPollingInterval] = useState(
+    Number(settings.getSync('pollingInterval'))
+  );
+  const [volumeFade, setVolumeFade] = useState(Boolean(settings.getSync('volumeFade')));
   const playQueue = useAppSelector((state) => state.playQueue);
   const crossfadePickerContainerRef = useRef(null);
+
+  const handleSetCrossfadeDuration = (e: number) => {
+    settings.setSync('fadeDuration', Number(e));
+    dispatch(
+      setPlaybackSetting({
+        setting: 'fadeDuration',
+        value: Number(e),
+      })
+    );
+
+    if (Number(e) === 0) {
+      dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
+      dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
+    }
+  };
+
+  const handleSetPollingInterval = (e: number) => {
+    settings.setSync('pollingInterval', Number(e));
+    dispatch(
+      setPlaybackSetting({
+        setting: 'pollingInterval',
+        value: Number(e),
+      })
+    );
+  };
+
+  const handleSetVolumeFade = (e: boolean) => {
+    settings.setSync('volumeFade', e);
+    dispatch(setPlaybackSetting({ setting: 'volumeFade', value: e }));
+  };
 
   return (
     <ConfigPanel header="Playback" bordered>
@@ -26,62 +64,44 @@ const PlaybackConfig = () => {
       </p>
 
       <p>
-        If volume fade is disabled, then the fading-in track will start at the specified crossfade
-        duration at full volume.
-      </p>
-
-      <p>
         Setting the crossfade duration to <code>0</code> will enable{' '}
         <strong>gapless playback</strong> mode. All other playback settings except the polling
         interval will be ignored. It is recommended that you use a polling interval between{' '}
         <code>10</code> and <code>20</code> for increased transition accuracy. Note that the gapless
         playback is not true gapless and may work better or worse on specific albums.
       </p>
+
+      <p>
+        If volume fade is disabled, then the fading-in track will start at the specified crossfade
+        duration at full volume.
+      </p>
+
       <p style={{ fontSize: 'smaller' }}>
         *Enable the debug window if you want to view the differences between each fade type
       </p>
 
-      <div style={{ width: '300px', paddingTop: '20px' }}>
+      <div style={{ paddingTop: '20px' }}>
         <ControlLabel>Crossfade duration (s)</ControlLabel>
         <StyledInputNumber
-          defaultValue={String(settings.getSync('fadeDuration')) || '0'}
+          defaultValue={crossfadeDuration}
+          value={crossfadeDuration}
           step={0.05}
           min={0}
           max={100}
           width={150}
-          onChange={(e: any) => {
-            settings.setSync('fadeDuration', Number(e));
-            dispatch(
-              setPlaybackSetting({
-                setting: 'fadeDuration',
-                value: Number(e),
-              })
-            );
-
-            if (Number(e) === 0) {
-              dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-              dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
-            }
-          }}
+          onChange={(e: number) => handleSetCrossfadeDuration(e)}
         />
 
         <br />
         <ControlLabel>Polling interval (ms)</ControlLabel>
         <StyledInputNumber
-          defaultValue={String(settings.getSync('pollingInterval'))}
+          defaultValue={pollingInterval}
+          value={pollingInterval}
           step={1}
           min={1}
           max={1000}
           width={150}
-          onChange={(e: any) => {
-            settings.setSync('pollingInterval', Number(e));
-            dispatch(
-              setPlaybackSetting({
-                setting: 'pollingInterval',
-                value: Number(e),
-              })
-            );
-          }}
+          onChange={(e: number) => handleSetPollingInterval(e)}
         />
         <br />
         <StyledInputPickerContainer ref={crossfadePickerContainerRef}>
@@ -133,15 +153,51 @@ const PlaybackConfig = () => {
         <RadioGroup
           name="volumeFadeRadioList"
           appearance="default"
-          defaultValue={Boolean(settings.getSync('volumeFade'))}
-          onChange={(e) => {
-            settings.setSync('volumeFade', e);
-            dispatch(setPlaybackSetting({ setting: 'volumeFade', value: e }));
-          }}
+          defaultValue={volumeFade}
+          value={volumeFade}
+          onChange={(e: boolean) => handleSetVolumeFade(e)}
         >
           <StyledRadio value>Enabled</StyledRadio>
           <StyledRadio value={false}>Disabled</StyledRadio>
         </RadioGroup>
+        <br />
+        <h6>Presets</h6>
+        <ButtonToolbar>
+          <StyledButton
+            onClick={() => {
+              setCrossfadeDuration(0);
+              setPollingInterval(15);
+              handleSetCrossfadeDuration(0);
+              handleSetPollingInterval(15);
+            }}
+          >
+            Gapless
+          </StyledButton>
+          <StyledButton
+            onClick={() => {
+              setCrossfadeDuration(7);
+              setPollingInterval(50);
+              setVolumeFade(true);
+              handleSetCrossfadeDuration(7);
+              handleSetPollingInterval(50);
+              handleSetVolumeFade(true);
+            }}
+          >
+            Fade
+          </StyledButton>
+          <StyledButton
+            onClick={() => {
+              setCrossfadeDuration(0);
+              setPollingInterval(200);
+              setVolumeFade(false);
+              handleSetCrossfadeDuration(0);
+              handleSetPollingInterval(200);
+              handleSetVolumeFade(false);
+            }}
+          >
+            Normal
+          </StyledButton>
+        </ButtonToolbar>
       </div>
     </ConfigPanel>
   );
