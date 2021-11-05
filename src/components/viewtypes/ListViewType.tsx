@@ -25,6 +25,7 @@ const ListViewType = (
     fontSize,
     cacheImages,
     children,
+    page,
     listType,
     isModal,
     handleDragEnd,
@@ -325,6 +326,7 @@ const ListViewType = (
             playQueue={playQueue}
             multiSelect={multiSelect}
             cacheImages={cacheImages}
+            page={page}
             listType={listType}
             nowPlaying={rest.nowPlaying}
             playlist={rest.playlist}

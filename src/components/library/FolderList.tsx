@@ -227,6 +227,7 @@ const FolderList = () => {
                 cacheType: 'folder',
                 cacheIdProperty: 'albumId',
               }}
+              page="folderListPage"
               listType="folder"
               virtualized
               disabledContextMenuOptions={[

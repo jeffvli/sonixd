@@ -161,6 +161,7 @@ const PlaylistList = () => {
             cacheType: 'playlist',
             cacheIdProperty: 'id',
           }}
+          page="playlistListPage"
           listType="playlist"
           virtualized
           disabledContextMenuOptions={[

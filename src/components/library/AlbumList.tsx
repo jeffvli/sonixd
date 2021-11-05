@@ -209,6 +209,7 @@ const AlbumList = () => {
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}
+          page="albumListPage"
           listType="album"
           virtualized
           disabledContextMenuOptions={[

@@ -46,7 +46,12 @@ import {
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { sortPlaylist } from '../../redux/playlistSlice';
-import { removePlaybackFilter, setColumnList, setPlaybackFilter } from '../../redux/configSlice';
+import {
+  removePlaybackFilter,
+  setColumnList,
+  setPageSort,
+  setPlaybackFilter,
+} from '../../redux/configSlice';
 import { setActive } from '../../redux/albumSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 
@@ -89,6 +94,7 @@ const ListViewTable = ({
   multiSelect,
   cacheImages,
   autoHeight,
+  page,
   listType,
   isModal,
   // onScroll,
@@ -139,6 +145,16 @@ const ListViewTable = ({
             sortType: type,
           })
         );
+      } else if (page) {
+        dispatch(
+          setPageSort({
+            page,
+            sort: {
+              sortColumn: column,
+              sortType: type,
+            },
+          })
+        );
       }
 
       if (column === (nowPlaying ? playQueue.sortColumn : sortColumn)) {
@@ -150,6 +166,16 @@ const ListViewTable = ({
               setSort({
                 sortColumn: undefined,
                 sortType: 'asc',
+              })
+            );
+          } else if (page) {
+            dispatch(
+              setPageSort({
+                page,
+                sort: {
+                  sortColumn: undefined,
+                  sortType: 'asc',
+                },
               })
             );
           }
@@ -211,6 +237,14 @@ const ListViewTable = ({
 
   useEffect(() => {
     if (!nowPlaying) {
+      if (page === 'favoritePage') {
+        setSortColumn(configState.sort[page.split('.')[0]][page.split('.')[1]]?.sortColumn);
+        setSortType(configState.sort[page.split('.')[0]][page.split('.')[1]]?.sortType);
+      } else if (page) {
+        setSortColumn(configState.sort[page]?.sortColumn);
+        setSortType(configState.sort[page]?.sortType);
+      }
+
       if (sortColumn && sortType) {
         // Since the column title(id) won't always match the actual column dataKey, we need to match it
         const normalizedSortColumn = columns.find((c: any) => c.id === sortColumn);
@@ -232,7 +266,7 @@ const ListViewTable = ({
         setSortedData(data);
       }
     }
-  }, [columns, data, nowPlaying, sortColumn, sortType]);
+  }, [columns, configState.sort, data, nowPlaying, page, sortColumn, sortType]);
 
   useEffect(() => {
     if (nowPlaying) {
