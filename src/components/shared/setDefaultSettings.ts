@@ -154,11 +154,11 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('playbackFilters', [
       {
         filter: '(\\(|\\[|~|-|（)[Oo]ff [Vv]ocal(\\)|\\]|~|-|）)',
-        enabled: true,
+        enabled: false,
       },
       {
         filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',
-        enabled: true,
+        enabled: false,
       },
     ]);
   }
