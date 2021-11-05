@@ -464,6 +464,7 @@ const setDefaultSettings = (force: boolean) => {
     {
       label: 'Default Dark',
       value: 'defaultDark',
+      type: 'dark',
       fonts: {
         size: {
           page: '14px',
@@ -498,6 +499,9 @@ const setDefaultSettings = (force: boolean) => {
           titleBar: {
             color: '#FFFFFF',
             background: '#101010',
+          },
+          miniPlayer: {
+            background: 'rgba(18,19,24,1)',
           },
         },
         button: {
@@ -624,6 +628,7 @@ const setDefaultSettings = (force: boolean) => {
     {
       label: 'Default Light',
       value: 'defaultLight',
+      type: 'light',
       fonts: {
         size: {
           page: '14px',
@@ -636,7 +641,7 @@ const setDefaultSettings = (force: boolean) => {
         layout: {
           page: {
             color: '#000000',
-            colorSecondary: '#888e94',
+            colorSecondary: '#4c4c4c',
             background: 'linear-gradient(0deg, rgba(255,255,255,1) 64%, rgba(181,181,178,1) 100%)',
           },
           playerBar: {
@@ -658,6 +663,9 @@ const setDefaultSettings = (force: boolean) => {
           titleBar: {
             color: '#FFFFFF',
             background: '#212121',
+          },
+          miniPlayer: {
+            background: 'rgba(255,255,255,1)',
           },
         },
         button: {
