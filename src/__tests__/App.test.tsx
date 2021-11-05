@@ -113,6 +113,7 @@ const configState: ConfigPage = {
   playback: {
     filters: [],
   },
+  sort: {},
   lookAndFeel: {
     listView: {
       music: {
