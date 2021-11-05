@@ -124,7 +124,7 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   padding: 8px;
   width: 400px;
   height: ${(props) => props.theme.other.miniPlayer.height};
-  background: ${(props) => props.theme.colors.layout.page.background};
+  background: ${(props) => props.theme.colors.layout.miniPlayer.background};
   border: 1px #000 solid;
   filter: drop-shadow(0px 1px 2px #121316);
   overflow: hidden auto;
