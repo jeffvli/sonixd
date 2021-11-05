@@ -49,6 +49,7 @@ import {
   errorMessages,
   filterPlayQueue,
   formatDate,
+  formatDateTime,
   formatDuration,
   getCurrentEntryList,
   getPlayedSongsNotification,
@@ -399,11 +400,12 @@ const PlaylistView = ({ ...rest }) => {
           subtitle={
             <div>
               <PageHeaderSubtitleDataLine $top>
-                <strong>PLAYLIST</strong> • {data.songCount} songs • {formatDuration(data.duration)}
+                <strong>PLAYLIST</strong> • {data.songCount} songs • {formatDuration(data.duration)}{' '}
+                • {data.public ? 'Public' : 'Private'}
               </PageHeaderSubtitleDataLine>
               <PageHeaderSubtitleDataLine>
-                by <strong>{data.owner}</strong> • created {formatDate(data.created)} • modified{' '}
-                {formatDate(data.changed)}
+                By {data.owner} • Created {formatDate(data.created)} • Modified{' '}
+                {formatDateTime(data.changed)}
               </PageHeaderSubtitleDataLine>
               <CustomTooltip text={data.comment}>
                 <PageHeaderSubtitleDataLine
