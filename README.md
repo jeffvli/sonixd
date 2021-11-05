@@ -33,10 +33,10 @@ Sonixd is a cross-platform desktop client built for Subsonic-API compatible musi
 
 ## Screenshots
 
-<a href="assets/screenshots/dashboard.png"><img src="assets/screenshots/dashboard.png" width="49.5%"/></a>
-<a href="assets/screenshots/playlist_list.png"><img src="assets/screenshots/playlist_list.png" width="49.5%"/></a>
-<a href="assets/screenshots/favorites.png"><img src="assets/screenshots/favorites.png" width="49.5%"/></a>
-<a href="assets/screenshots/contextmenu.png"><img src="assets/screenshots/contextmenu.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/album.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/album.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/artist.png"><img src="[assets/screenshots/favorites.png](https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/artist.png)" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/context_menu.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/context_menu.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/now_playing.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/now_playing.png" width="49.5%"/></a>
 
 ## Install
 

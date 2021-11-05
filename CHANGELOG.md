@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2021-11-05
+
+### Added
+
+- Added extensible theming (#60)
+- Added playback presets (gapless, fade, normal) to the config
+- Added persistence for column sort for all list-views (except playlist and search) (#47)
+- Added playback filters to the config to filter out songs based on regex (#53)
+- Added music folder selector in auto playlist (this may or may not work depending on your server)
+- Added improved playlist, artist, and album pages
+  - Added dynamic images on the Playlist page for servers that don't support playlist images (e.g. Navidrome)
+- Added link to open the local `settings.json` file
+- Added setting to use legacy authentication (#63)
+
+### Changed
+
+- Improved overall application keyboard accessibility
+- Playback no longer automatically starts if adding songs to the queue using `Add to queue`
+- Prevent accidental page navigation when using [Ctrl/Shift + Click] when multi-selecting rows in list-view
+- Standardized buttons between the Now Playing page and the mini player
+- "Add random" renamed to "Auto playlist"
+- Increased 'info' notification timeout from 1500ms -> 2000ms
+- Changed default mini player columns to better fit
+- Updated default themes to more modern standards (Default Dark, Default Light)
+
+### Fixed
+
+- Fixed title sort on the `Title (Combined)` column on the album list
+- Fixed 2nd song in queue being skipped when using the "Play" button multiple pages (album, artist, auto playlist)
+- Fixed `Title` column not showing the title on the Folder page (#69)
+- Fixed context menu windows showing underneath the mini player
+- Fixed `Add to queue (next)` adding songs to the wrong unshuffled index when shuffle is enabled
+- Fixed local search on the root Folder page
+- Fixed input picker dropdowns following the page on scroll
+- Fixed the current playing song not highlighted when using `Add to queue` on an empty play queue
+- Fixed artist list not using the `artistImageUrl` returned by Navidrome
+
 ## [0.4.1] - 2021-10-27
 
 ### Added
