@@ -287,7 +287,11 @@ export const BlurredBackground = styled.img<{ expanded: boolean; image: string }
 `;
 
 export const GradientBackground = styled.div<{ $expanded: boolean; $color: string }>`
-  background: ${(props) => `linear-gradient(0deg, transparent 10%, ${props.$color} 100%)`};
+  background: ${(props) =>
+    `linear-gradient(0deg, transparent 10%, ${props.$color.replace(
+      ',1)',
+      `${props.theme.type === 'dark' ? ',0.2' : ',0.5'})`
+    )} 100%)`};
   top: 32px;
   left: ${(props) => (props.$expanded ? '165px' : '56px')};
   height: calc(100% - 130px);

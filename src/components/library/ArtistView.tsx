@@ -198,7 +198,7 @@ const ArtistView = ({ ...rest }: any) => {
             })
             .then((color) => {
               return setImageAverageColor({
-                color: color.rgba.replace(',1)', ',0.4)'),
+                color: color.rgba,
                 loaded: true,
               });
             })
