@@ -508,7 +508,7 @@ const setDefaultSettings = (force: boolean) => {
           default: {
             color: '#D8D8D8',
             colorHover: '#FFFFFF',
-            background: '#292D33',
+            background: '#212227',
             backgroundHover: '#3C3F43',
           },
           primary: {
@@ -541,7 +541,7 @@ const setDefaultSettings = (force: boolean) => {
         },
         input: {
           color: '#D8D8D8',
-          background: '#25292E',
+          background: '#212227',
           backgroundHover: '#353A45',
           backgroundActive: 'rgba(240, 240, 240, .2)',
         },
@@ -707,7 +707,7 @@ const setDefaultSettings = (force: boolean) => {
         },
         input: {
           color: '#000000',
-          background: '#FFFFFF',
+          background: '#F7F7F7',
           backgroundHover: '#E5E5EA',
           backgroundActive: 'rgba(0, 0, 0, .2)',
         },
