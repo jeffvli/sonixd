@@ -56,6 +56,7 @@ import {
   StyledInputPickerContainer,
   ContextMenuPopover,
   StyledInput,
+  StyledInputGroupButton,
 } from './styled';
 import { notifyToast } from './toast';
 import {
@@ -662,7 +663,7 @@ export const GlobalContextMenu = () => {
                       value={indexToMoveTo}
                       onChange={(e: number) => setIndexToMoveTo(e)}
                     />
-                    <StyledButton
+                    <StyledInputGroupButton
                       type="submit"
                       onClick={handleMoveSelectedToIndex}
                       disabled={
@@ -672,7 +673,7 @@ export const GlobalContextMenu = () => {
                       }
                     >
                       Go
-                    </StyledButton>
+                    </StyledInputGroupButton>
                   </StyledInputGroup>
                 </Form>
               </ContextMenuPopover>
