@@ -191,6 +191,7 @@ const StarredView = () => {
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
+              page="favoriteTracksPage"
               listType="music"
               virtualized
               disabledContextMenuOptions={[
@@ -217,6 +218,7 @@ const StarredView = () => {
                     cacheType: 'album',
                     cacheIdProperty: 'albumId',
                   }}
+                  page="favoriteAlbumsPage"
                   listType="album"
                   virtualized
                   disabledContextMenuOptions={[
@@ -264,6 +266,7 @@ const StarredView = () => {
                     cacheType: 'artist',
                     cacheIdProperty: 'id',
                   }}
+                  page="favoriteArtistsPage"
                   listType="artist"
                   virtualized
                   disabledContextMenuOptions={[
