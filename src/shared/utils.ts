@@ -138,6 +138,10 @@ export const formatDate = (date: string) => {
   return moment(date).format('MMM D YYYY');
 };
 
+export const formatDateTime = (date: string) => {
+  return moment(date).format('MMM D YYYY H:mm');
+};
+
 export const convertByteToMegabyte = (kb: number) => {
   return (kb * 0.000001).toFixed(1);
 };
