@@ -20,7 +20,7 @@ export const defaultDark = {
       playerBar: {
         color: '#D8D8D8',
         colorSecondary: '#888e94',
-        background: '#101010',
+        background: 'linear-gradient(0deg, rgba(20,21,24,1) 32%, rgba(25,25,25,1) 100%)',
         button: {
           color: 'rgba(240, 240, 240, 0.8)',
           colorHover: '#FFFFFF',
@@ -36,6 +36,9 @@ export const defaultDark = {
       titleBar: {
         color: '#FFFFFF',
         background: '#101010',
+      },
+      miniPlayer: {
+        background: '#141518',
       },
     },
     button: {
@@ -70,7 +73,7 @@ export const defaultDark = {
     contextMenu: {
       color: '#D8D8D8',
       colorDisabled: '#6A6F76',
-      background: '#1E2125',
+      background: '#151619',
       backgroundHover: '#292D33',
     },
     input: {
@@ -84,7 +87,7 @@ export const defaultDark = {
     },
     popover: {
       color: '#D8D8D8',
-      background: '#1E2125',
+      background: '#151619',
     },
     slider: {
       background: '#3C3F43',
@@ -103,7 +106,7 @@ export const defaultDark = {
     },
     tooltip: {
       color: '#D8D8D8',
-      background: '#1E2125',
+      background: '#151619',
     },
   },
   other: {
@@ -144,6 +147,7 @@ export const defaultDark = {
 export const defaultLight = {
   label: 'Default Light',
   value: 'defaultLight',
+  type: 'light',
   fonts: {
     size: {
       page: '14px',
@@ -156,20 +160,20 @@ export const defaultLight = {
     layout: {
       page: {
         color: '#000000',
-        colorSecondary: '#888e94',
-        background: '#FFFFFF',
+        colorSecondary: '#4c4c4c',
+        background: 'linear-gradient(0deg, rgba(255,255,255,1) 64%, rgba(220,220,220,1) 100%)',
       },
       playerBar: {
         color: '#FFFFFF',
         colorSecondary: '#888e94',
-        background: '#161B22',
+        background: '#212121',
         button: {
           color: 'rgba(240, 240, 240, 0.8)',
           colorHover: '#FFFFFF',
         },
       },
       sideBar: {
-        background: '#161B22',
+        background: '#212121',
         button: {
           color: '#D8D8D8',
           colorHover: '#FFFFFF',
@@ -177,7 +181,10 @@ export const defaultLight = {
       },
       titleBar: {
         color: '#FFFFFF',
-        background: '#161B22',
+        background: '#212121',
+      },
+      miniPlayer: {
+        background: 'rgba(255,255,255,1)',
       },
     },
     button: {
@@ -239,7 +246,7 @@ export const defaultLight = {
       foreground: '#285DA0',
     },
     table: {
-      selectedRow: '#CCCCCC',
+      selectedRow: 'rgba(150, 150, 150, .5)',
     },
     tag: {
       background: '#DFDFE2',
@@ -256,7 +263,26 @@ export const defaultLight = {
     },
     coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
     card: {
-      borderRadius: '0px',
+      border: '1px #3c3f43 solid',
+      hover: {
+        transform: 'scale(1.03)',
+        transition: '0.07s ease-in-out',
+        filter: 'none',
+      },
+      image: {
+        borderTop: 'none',
+        borderRight: 'none',
+        borderBottom: 'none',
+        borderLeft: 'none',
+        borderRadius: '0px',
+      },
+      info: {
+        borderTop: 'none',
+        borderRight: 'none',
+        borderBottom: 'none',
+        borderLeft: 'none',
+        borderRadius: '0px',
+      },
     },
     input: {
       borderRadius: '0px',

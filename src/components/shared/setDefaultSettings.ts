@@ -478,7 +478,7 @@ const setDefaultSettings = (force: boolean) => {
           page: {
             color: '#D8D8D8',
             colorSecondary: '#888e94',
-            background: 'linear-gradient(0deg, rgba(18,19,24,1) 64%, rgba(46,46,44,0.913) 100%)',
+            background: 'linear-gradient(0deg, rgba(20,21,24,1) 32%, rgba(25,25,25,1) 100%)',
           },
           playerBar: {
             color: '#D8D8D8',
@@ -501,7 +501,7 @@ const setDefaultSettings = (force: boolean) => {
             background: '#101010',
           },
           miniPlayer: {
-            background: 'rgba(18,19,24,1)',
+            background: '#141518',
           },
         },
         button: {
@@ -536,7 +536,7 @@ const setDefaultSettings = (force: boolean) => {
         contextMenu: {
           color: '#D8D8D8',
           colorDisabled: '#6A6F76',
-          background: '#1E2125',
+          background: '#151619',
           backgroundHover: '#292D33',
         },
         input: {
@@ -550,7 +550,7 @@ const setDefaultSettings = (force: boolean) => {
         },
         popover: {
           color: '#D8D8D8',
-          background: '#1E2125',
+          background: '#151619',
         },
         slider: {
           background: '#3C3F43',
@@ -569,7 +569,7 @@ const setDefaultSettings = (force: boolean) => {
         },
         tooltip: {
           color: '#D8D8D8',
-          background: '#1E2125',
+          background: '#151619',
         },
       },
       other: {
@@ -642,7 +642,7 @@ const setDefaultSettings = (force: boolean) => {
           page: {
             color: '#000000',
             colorSecondary: '#4c4c4c',
-            background: 'linear-gradient(0deg, rgba(255,255,255,1) 64%, rgba(181,181,178,1) 100%)',
+            background: 'linear-gradient(0deg, rgba(255,255,255,1) 64%, rgba(220,220,220,1) 100%)',
           },
           playerBar: {
             color: '#FFFFFF',
