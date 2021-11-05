@@ -300,3 +300,15 @@ export const GradientBackground = styled.div<{ $expanded: boolean; $color: strin
   user-select: none;
   pointer-events: none;
 `;
+
+export const CustomImageGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 92px);
+  grid-template-rows: repeat(2, 92px);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+`;
+
+export const CustomImageGrid = styled.div<{ $gridArea: string }>`
+  grid-area: ${(props) => props.$gridArea};
+`;

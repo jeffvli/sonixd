@@ -477,3 +477,13 @@ export const getPlayedSongsNotification = (options: {
 
   return `Added ${options.filtered} songs [${options.original - options.filtered} filtered]`;
 };
+
+export const getUniqueRandomNumberArr = (count: number, maxRange: number) => {
+  const arr = [];
+  while (arr.length < count) {
+    const r = Math.floor(Math.random() * maxRange);
+    if (arr.indexOf(r) === -1) arr.push(r);
+  }
+
+  return arr;
+};
