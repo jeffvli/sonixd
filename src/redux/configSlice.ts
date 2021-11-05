@@ -14,6 +14,18 @@ export interface ConfigPage {
   playback: {
     filters: PlaybackFilter[];
   };
+  sort: {
+    albumListPage?: SortColumn;
+    albumPage?: SortColumn;
+    artistListPage?: SortColumn;
+    artistPage?: SortColumn;
+    favoriteAlbumsPage?: SortColumn;
+    favoriteArtistsPage?: SortColumn;
+    favoriteTracksPage?: SortColumn;
+    folderListPage?: SortColumn;
+    genreListPage?: SortColumn;
+    playlistListPage?: SortColumn;
+  };
   lookAndFeel: {
     listView: {
       music: { columns: any; rowHeight: number; fontSize: number };
@@ -27,6 +39,11 @@ export interface ConfigPage {
       cardSize: number;
     };
   };
+}
+
+interface SortColumn {
+  sortColumn?: string;
+  sortType: 'asc' | 'desc';
 }
 
 interface PlaybackFilter {
@@ -43,6 +60,18 @@ const initialState: ConfigPage = {
   },
   playback: {
     filters: parsedSettings.playbackFilters,
+  },
+  sort: {
+    albumListPage: undefined,
+    albumPage: undefined,
+    artistListPage: undefined,
+    artistPage: undefined,
+    favoriteAlbumsPage: undefined,
+    favoriteArtistsPage: undefined,
+    favoriteTracksPage: undefined,
+    folderListPage: undefined,
+    genreListPage: undefined,
+    playlistListPage: undefined,
   },
   lookAndFeel: {
     listView: {
@@ -101,6 +130,26 @@ const configSlice = createSlice({
   reducers: {
     setActive: (state, action: PayloadAction<any>) => {
       state.active = action.payload;
+    },
+
+    setPageSort: (
+      state,
+      action: PayloadAction<{
+        page:
+          | 'albumListPage'
+          | 'albumPage'
+          | 'artistListPage'
+          | 'artistPage'
+          | 'favoriteAlbumsPage'
+          | 'favoriteArtistsPage'
+          | 'favoriteTracksPage'
+          | 'folderListPage'
+          | 'genreListPage'
+          | 'playlistListPage';
+        sort: SortColumn;
+      }>
+    ) => {
+      state.sort[action.payload.page] = action.payload.sort;
     },
 
     appendPlaybackFilter: (state, action: PayloadAction<PlaybackFilter>) => {
@@ -165,6 +214,7 @@ const configSlice = createSlice({
 
 export const {
   setActive,
+  setPageSort,
   appendPlaybackFilter,
   removePlaybackFilter,
   setPlaybackFilter,
