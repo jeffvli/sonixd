@@ -254,10 +254,11 @@ const ListViewTable = ({
         const sortData = _.orderBy(
           data,
           [
-            (entry: any) =>
-              typeof entry[sortColumnDataKey] === 'string'
-                ? entry[sortColumnDataKey].toLowerCase()
-                : entry[sortColumnDataKey],
+            (entry: any) => {
+              return typeof entry[sortColumnDataKey] === 'string'
+                ? entry[sortColumnDataKey].toLowerCase() || ''
+                : entry[sortColumnDataKey] || '';
+            },
           ],
           sortType
         );
