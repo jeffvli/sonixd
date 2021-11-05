@@ -676,26 +676,28 @@ const playQueueSlice = createSlice({
     },
 
     fixPlayer2Index: (state) => {
-      /* Before decrementing:
-      Player1: 4 | Player2: 3
+      // Before decrementing:
+      // Player1: 4 | Player2: 3
 
-      After decrementing:
-      Player1: 2 | Player2: 3
+      // After decrementing:
+      // Player1: 2 | Player2: 3
 
-      When incrementing/decrementing, we will always revert back to Player1 instead of
-      using the current player. In this case you will notice that the Player2 index stays the same.
-      This will cause the react audio player component to not unload the song which makes it so that
-      Player2 will continue playing even after decrementing. This reducer resets the Player2 index and
-      then sets it to its proper index. */
+      // When incrementing/decrementing, we will always revert back to Player1 instead of
+      // using the current player. In this case you will notice that the Player2 index stays the same.
+      // This will cause the react audio player component to not unload the song which makes it so that
+      // Player2 will continue playing even after decrementing. This reducer resets the Player2 index and
+      // then sets it to its proper index.
 
-      state.player2.src = './components/player/dummy.mp3';
+      if (state.currentPlayer === 1) {
+        state.player2.src = './components/player/dummy.mp3';
 
-      state.player2.index = getNextPlayerIndex(
-        state.entry.length,
-        state.repeat,
-        state.currentIndex
-      );
-      handleGaplessPlayback(state);
+        state.player2.index = getNextPlayerIndex(
+          state.entry.length,
+          state.repeat,
+          state.currentIndex
+        );
+        handleGaplessPlayback(state);
+      }
     },
 
     setCurrentIndex: (state, action: PayloadAction<Entry>) => {
