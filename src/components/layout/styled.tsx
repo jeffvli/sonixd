@@ -271,7 +271,8 @@ export const BlurredBackgroundWrapper = styled.div<{ expanded: boolean; hasImage
 export const BlurredBackground = styled.img<{ expanded: boolean }>`
   background-position: center 30%;
   background-size: cover;
-  filter: blur(10px) brightness(0.3);
+  filter: ${(props) =>
+    props.theme.type === 'dark' ? `blur(10px) brightness(0.3)` : `blur(10px) brightness(0.6)`};
 
   outline: none !important;
   border: none !important;
