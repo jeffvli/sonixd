@@ -378,6 +378,7 @@ const ArtistView = ({ ...rest }: any) => {
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
+              page="artistPage"
               listType="album"
               isModal={rest.isModal}
               disabledContextMenuOptions={[

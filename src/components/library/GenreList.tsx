@@ -80,6 +80,7 @@ const GenreList = () => {
           fontSize={config.lookAndFeel.listView.genre.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
+          page="genreListPage"
           listType="genre"
           virtualized
           disabledContextMenuOptions={[

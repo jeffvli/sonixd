@@ -138,6 +138,7 @@ const ArtistList = () => {
             cacheType: 'artist',
             cacheIdProperty: 'id',
           }}
+          page="artistListPage"
           listType="artist"
           virtualized
           disabledContextMenuOptions={[
