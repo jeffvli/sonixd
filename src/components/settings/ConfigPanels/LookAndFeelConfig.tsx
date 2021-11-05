@@ -11,6 +11,8 @@ import {
   StyledCheckbox,
   StyledInputPickerContainer,
   StyledLink,
+  StyledInputGroup,
+  StyledInputGroupButton,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -39,10 +41,13 @@ const LookAndFeelConfig = () => {
   const [highlightOnRowHoverChk, setHighlightOnRowHoverChk] = useState(
     Boolean(settings.getSync('highlightOnRowHover'))
   );
+  const [selectedTheme, setSelectedTheme] = useState(String(settings.getSync('theme')));
   const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
-  const themes: any = _.concat(settings.getSync('themes'), settings.getSync('themesDefault'));
+  const [themeList, setThemeList] = useState(
+    _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
+  );
   const songCols: any = settings.getSync('musicListColumns');
   const albumCols: any = settings.getSync('albumListColumns');
   const playlistCols: any = settings.getSync('playlistListColumns');
@@ -68,20 +73,34 @@ const LookAndFeelConfig = () => {
         </p>
         <br />
         <StyledInputPickerContainer ref={themePickerContainerRef}>
-          <ControlLabel>Application theme</ControlLabel>
+          <ControlLabel>Theme</ControlLabel>
           <br />
-          <StyledInputPicker
-            container={() => themePickerContainerRef.current}
-            data={themes}
-            labelKey="label"
-            valueKey="value"
-            cleanable={false}
-            defaultValue={String(settings.getSync('theme'))}
-            onChange={(e: string) => {
-              settings.setSync('theme', e);
-              dispatch(setTheme(e));
-            }}
-          />
+          <StyledInputGroup>
+            <StyledInputPicker
+              container={() => themePickerContainerRef.current}
+              data={themeList}
+              labelKey="label"
+              valueKey="value"
+              cleanable={false}
+              defaultValue={selectedTheme}
+              onChange={(e: string) => {
+                settings.setSync('theme', e);
+                setSelectedTheme(e);
+                dispatch(setTheme(e));
+              }}
+            />
+            <StyledInputGroupButton
+              onClick={() => {
+                dispatch(setTheme('defaultDark'));
+                dispatch(setTheme(selectedTheme));
+                setThemeList(
+                  _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
+                );
+              }}
+            >
+              <Icon icon="refresh" />
+            </StyledInputGroupButton>
+          </StyledInputGroup>
         </StyledInputPickerContainer>
         <br />
         <StyledInputPickerContainer ref={fontPickerContainerRef}>
