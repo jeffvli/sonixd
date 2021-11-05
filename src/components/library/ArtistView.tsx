@@ -185,7 +185,7 @@ const ArtistView = ({ ...rest }: any) => {
           (data?.image.match('placeholder') &&
             artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f'))
         ) {
-          setImageAverageColor({ color: 'rgba(0, 57, 90, .4)', loaded: true });
+          setImageAverageColor({ color: 'rgba(50, 50, 50, .4)', loaded: true });
         } else {
           fac
             .getColorAsync(imgUrl, {
@@ -231,7 +231,9 @@ const ArtistView = ({ ...rest }: any) => {
 
   return (
     <>
-      <GradientBackground $expanded={misc.expandSidebar} $color={imageAverageColor.color} />
+      {!rest.isModal && (
+        <GradientBackground $expanded={misc.expandSidebar} $color={imageAverageColor.color} />
+      )}
       <GenericPage
         contentZIndex={1}
         hideDivider
