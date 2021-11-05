@@ -185,12 +185,16 @@ const AlbumView = ({ ...rest }: any) => {
     <>
       {!rest.isModal && (
         <BlurredBackgroundWrapper
-          image={!data?.image.match('placeholder') ? data.image : null}
+          hasImage={!data?.image.match('placeholder')}
           expanded={misc.expandSidebar}
         >
           <BlurredBackground
-            image={!data?.image.match('placeholder') ? data.image : null}
+            // We have to use an inline style here due to the context menu forcing a component rerender
+            // which causes the background-image to flicker
             expanded={misc.expandSidebar}
+            style={{
+              backgroundImage: `url(${!data?.image.match('placeholder') ? data.image : 'null'})`,
+            }}
           />
         </BlurredBackgroundWrapper>
       )}
@@ -216,8 +220,7 @@ const AlbumView = ({ ...rest }: any) => {
             subtitle={
               <div>
                 <PageHeaderSubtitleDataLine $top>
-                  <strong>ALBUM</strong> {' • '} {data.songCount} songs,{' '}
-                  {formatDuration(data.duration)}
+                  <strong>ALBUM</strong> • {data.songCount} songs • {formatDuration(data.duration)}
                   {data.year && (
                     <>
                       {' • '}

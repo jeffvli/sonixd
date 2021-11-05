@@ -254,7 +254,7 @@ export const FlatBackground = styled.div<{ $expanded: boolean; $color: string }>
   pointer-events: none;
 `;
 
-export const BlurredBackgroundWrapper = styled.div<{ expanded: boolean; image: string }>`
+export const BlurredBackgroundWrapper = styled.div<{ expanded: boolean; hasImage: boolean }>`
   clip: rect(0, auto, auto, 0);
   -webkit-clip-path: inset(0 0);
   clip-path: inset(0 0);
@@ -264,12 +264,11 @@ export const BlurredBackgroundWrapper = styled.div<{ expanded: boolean; image: s
   top: 32px;
   z-index: 1;
   display: block;
-  background: ${(props) => (props.image ? '#0b0908' : '#00395A')};
-  filter: ${(props) => (props.image ? 'none' : 'brightness(0.3)')};
+  background: ${(props) => (props.hasImage ? '#0b0908' : '#00395A')};
+  filter: ${(props) => (props.hasImage ? 'none' : 'brightness(0.3)')};
 `;
 
-export const BlurredBackground = styled.img<{ expanded: boolean; image: string }>`
-  background-image: ${(props) => (props.image ? `url(${props.image})` : 'none')};
+export const BlurredBackground = styled.img<{ expanded: boolean }>`
   background-position: center 30%;
   background-size: cover;
   filter: blur(10px) brightness(0.3);
