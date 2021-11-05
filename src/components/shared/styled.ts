@@ -25,7 +25,7 @@ export const HeaderButton = styled(Button)`
 `;
 
 export const StyledButton = styled(Button)<{ width: number }>`
-  border-radius: ${(props) => props.theme.other.button.borderRadius} !important;
+  border-radius: ${(props) => props.theme.other?.button?.borderRadius};
   background: ${(props) =>
     props.appearance === 'primary'
       ? `${props.theme.colors.primary}`
@@ -54,7 +54,7 @@ export const StyledButton = styled(Button)<{ width: number }>`
       props.appearance === 'primary'
         ? `${props.theme.colors.button.primary.colorHover}`
         : props.appearance !== 'subtle'
-        ? `${props.theme.colors.button.default.colorHover}`
+        ? `${props.theme.colors?.button?.default.colorHover}`
         : `${props.theme.colors.button.subtle.colorHover}`};
 
     background: ${(props) =>

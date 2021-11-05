@@ -311,7 +311,7 @@ export const mockSettings = {
   windowMaximize: false,
   highlightOnRowHover: false,
   titleBarStyle: 'windows',
-  themes: [
+  themesDefault: [
     {
       label: 'Default Dark',
       value: 'defaultDark',
@@ -635,4 +635,5 @@ export const mockSettings = {
       },
     },
   ],
+  themes: [],
 };
