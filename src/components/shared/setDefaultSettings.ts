@@ -126,6 +126,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('gridCardSize', 175);
   }
 
+  if (force || !settings.hasSync('gridAlignment')) {
+    settings.setSync('gridAlignment', 'flex-start');
+  }
+
   if (force || !settings.hasSync('playlistViewType')) {
     settings.setSync('playlistViewType', 'list');
   }

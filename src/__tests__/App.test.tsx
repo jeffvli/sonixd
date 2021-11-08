@@ -365,6 +365,7 @@ const configState: ConfigPage = {
     },
     gridView: {
       cardSize: 160,
+      alignment: 'flex-start',
     },
   },
 };
