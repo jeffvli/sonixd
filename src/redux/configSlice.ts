@@ -37,6 +37,7 @@ export interface ConfigPage {
     };
     gridView: {
       cardSize: number;
+      alignment: string | 'flex-start' | 'center';
     };
   };
 }
@@ -120,6 +121,7 @@ const initialState: ConfigPage = {
     },
     gridView: {
       cardSize: Number(parsedSettings.gridCardSize),
+      alignment: String(parsedSettings.gridAlignment),
     },
   },
 };
@@ -195,6 +197,13 @@ const configSlice = createSlice({
       state.lookAndFeel.gridView.cardSize = action.payload.size;
     },
 
+    setGridAlignment: (
+      state,
+      action: PayloadAction<{ alignment: string | 'flex-start' | 'center' }>
+    ) => {
+      state.lookAndFeel.gridView.alignment = action.payload.alignment;
+    },
+
     moveToIndex: (
       state,
       action: PayloadAction<{
@@ -223,6 +232,7 @@ export const {
   setRowHeight,
   setFontSize,
   setGridCardSize,
+  setGridAlignment,
   moveToIndex,
 } = configSlice.actions;
 export default configSlice.reducer;
