@@ -217,6 +217,8 @@ const GenericPageHeader = ({
             display: 'flex',
             justifyContent: 'space-between',
             height: '50%',
+            whiteSpace: 'nowrap',
+            overflow: 'visible',
           }}
         >
           <PageHeaderSubtitleWrapper>{subtitle}</PageHeaderSubtitleWrapper>
