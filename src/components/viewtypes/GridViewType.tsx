@@ -22,8 +22,6 @@ const GridCard = ({ data, index, style }: any) => {
           height: cardHeight,
           margin: `0 ${gapSize / 2}px`,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           // This allows immediate pointer events after scrolling to override the default delay
           // https://github.com/bvaughn/react-window/issues/128#issuecomment-460166682
           pointerEvents: 'auto',
@@ -65,7 +63,7 @@ const GridCard = ({ data, index, style }: any) => {
         ...style,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: data.alignment,
       }}
     >
       {cards}
@@ -79,6 +77,7 @@ function ListWrapper({
   cardSubtitle,
   playClick,
   size,
+  alignment,
   height,
   itemCount,
   width,
@@ -88,8 +87,8 @@ function ListWrapper({
   handleFavorite,
 }: any) {
   const gapSize = 5;
-  const cardHeight = size + 75; // 225
-  const cardWidth = size + 25; // 175
+  const cardHeight = size + 75;
+  const cardWidth = size + 25;
   // How many cards can we show per row, given the current width?
   const columnCount = Math.floor((width - gapSize) / (cardWidth + gapSize));
   const rowCount = Math.ceil(itemCount / columnCount);
@@ -101,6 +100,7 @@ function ListWrapper({
       cardSubtitle,
       playClick,
       size,
+      alignment,
       columnCount,
       itemCount,
       cacheType,
@@ -122,6 +122,7 @@ function ListWrapper({
       itemCount,
       playClick,
       size,
+      alignment,
       cacheImages,
       cachePath,
       handleFavorite,
@@ -153,6 +154,7 @@ const GridViewType = ({
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
 
   return (
     <AutoSizer>
@@ -166,6 +168,7 @@ const GridViewType = ({
           cardSubtitle={cardSubtitle}
           playClick={playClick}
           size={size}
+          alignment={config.lookAndFeel.gridView.alignment}
           cacheType={cacheType}
           cacheImages={cacheImages}
           cachePath={misc.imageCachePath}
