@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { shell } from 'electron';
 import settings from 'electron-settings';
-import { ControlLabel, Nav, Icon } from 'rsuite';
+import { ControlLabel, Nav, Icon, RadioGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import {
   StyledInputPicker,
@@ -13,6 +13,7 @@ import {
   StyledLink,
   StyledInputGroup,
   StyledInputGroupButton,
+  StyledRadio,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -30,7 +31,7 @@ import {
   genreColumnPicker,
   genreColumnListAuto,
 } from '../ListViewColumns';
-import { setActive, setGridCardSize } from '../../../redux/configSlice';
+import { setActive, setGridAlignment, setGridCardSize } from '../../../redux/configSlice';
 
 const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
@@ -282,6 +283,21 @@ const LookAndFeelConfig = () => {
             dispatch(setGridCardSize({ size: Number(e) }));
           }}
         />
+        <br />
+        <ControlLabel>Grid alignment</ControlLabel>
+        <RadioGroup
+          name="gridAlignemntRadioList"
+          appearance="default"
+          defaultValue={config.lookAndFeel.gridView.alignment}
+          value={config.lookAndFeel.gridView.alignment}
+          onChange={(e: string) => {
+            dispatch(setGridAlignment({ alignment: e }));
+            settings.setSync('gridAlignment', e);
+          }}
+        >
+          <StyledRadio value="flex-start">Left</StyledRadio>
+          <StyledRadio value="center">Center</StyledRadio>
+        </RadioGroup>
       </ConfigPanel>
     </>
   );
