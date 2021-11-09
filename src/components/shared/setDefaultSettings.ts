@@ -126,6 +126,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('gridCardSize', 175);
   }
 
+  if (force || !settings.hasSync('gridGapSize')) {
+    settings.setSync('gridGapSize', 20);
+  }
+
   if (force || !settings.hasSync('gridAlignment')) {
     settings.setSync('gridAlignment', 'flex-start');
   }
