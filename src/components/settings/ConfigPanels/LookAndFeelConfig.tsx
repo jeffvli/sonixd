@@ -31,7 +31,12 @@ import {
   genreColumnPicker,
   genreColumnListAuto,
 } from '../ListViewColumns';
-import { setActive, setGridAlignment, setGridCardSize } from '../../../redux/configSlice';
+import {
+  setActive,
+  setGridAlignment,
+  setGridCardSize,
+  setGridGapSize,
+} from '../../../redux/configSlice';
 
 const LookAndFeelConfig = () => {
   const dispatch = useAppDispatch();
@@ -271,7 +276,7 @@ const LookAndFeelConfig = () => {
         </StyledCheckbox>
       </ConfigPanel>
       <ConfigPanel header="Grid-View" bordered>
-        <ControlLabel>Card size</ControlLabel>
+        <ControlLabel>Card size (px)</ControlLabel>
         <StyledInputNumber
           defaultValue={config.lookAndFeel.gridView.cardSize}
           step={1}
@@ -281,6 +286,19 @@ const LookAndFeelConfig = () => {
           onChange={(e: any) => {
             settings.setSync('gridCardSize', Number(e));
             dispatch(setGridCardSize({ size: Number(e) }));
+          }}
+        />
+        <br />
+        <ControlLabel>Gap size (px)</ControlLabel>
+        <StyledInputNumber
+          defaultValue={config.lookAndFeel.gridView.gapSize}
+          step={1}
+          min={0}
+          max={100}
+          width={150}
+          onChange={(e: any) => {
+            settings.setSync('gridGapSize', Number(e));
+            dispatch(setGridGapSize({ size: Number(e) }));
           }}
         />
         <br />

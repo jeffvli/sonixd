@@ -77,6 +77,7 @@ function ListWrapper({
   cardSubtitle,
   playClick,
   size,
+  gapSize,
   alignment,
   height,
   itemCount,
@@ -86,11 +87,10 @@ function ListWrapper({
   cachePath,
   handleFavorite,
 }: any) {
-  const gapSize = 5;
-  const cardHeight = size + 75;
-  const cardWidth = size + 25;
+  const cardHeight = size + 55;
+  const cardWidth = size;
   // How many cards can we show per row, given the current width?
-  const columnCount = Math.floor((width - gapSize) / (cardWidth + gapSize));
+  const columnCount = Math.floor((width - gapSize + 3) / (cardWidth + gapSize + 2));
   const rowCount = Math.ceil(itemCount / columnCount);
 
   const itemData = useMemo(
@@ -122,6 +122,7 @@ function ListWrapper({
       itemCount,
       playClick,
       size,
+      gapSize,
       alignment,
       cacheImages,
       cachePath,
@@ -168,6 +169,7 @@ const GridViewType = ({
           cardSubtitle={cardSubtitle}
           playClick={playClick}
           size={size}
+          gapSize={config.lookAndFeel.gridView.gapSize}
           alignment={config.lookAndFeel.gridView.alignment}
           cacheType={cacheType}
           cacheImages={cacheImages}

@@ -32,6 +32,7 @@ export const mockSettings = {
     starred: false,
   },
   gridCardSize: 200,
+  gridGapSize: 20,
   gridAlignment: 'flex-start',
   playlistViewType: 'grid',
   albumViewType: 'grid',
