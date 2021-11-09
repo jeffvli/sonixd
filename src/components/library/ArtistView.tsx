@@ -263,20 +263,20 @@ const ArtistView = ({ ...rest }: any) => {
                   <strong>ARTIST</strong> • {data.albumCount} albums • {artistSongTotal} songs •{' '}
                   {artistDurationTotal}
                 </PageHeaderSubtitleDataLine>
-                <PageHeaderSubtitleDataLine
-                  style={{
-                    minHeight: '2.5rem',
-                    maxHeight: '2.5rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'pre-wrap',
-                  }}
+                <CustomTooltip
+                  text={artistInfo?.biography
+                    ?.replace(/<[^>]*>/, '')
+                    .replace('Read more on Last.fm</a>', '')}
+                  placement="bottomStart"
                 >
-                  <CustomTooltip
-                    text={artistInfo?.biography
-                      ?.replace(/<[^>]*>/, '')
-                      .replace('Read more on Last.fm</a>', '')}
-                    placement="bottomStart"
+                  <PageHeaderSubtitleDataLine
+                    style={{
+                      minHeight: '2.5rem',
+                      maxHeight: '2.5rem',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'pre-wrap',
+                    }}
                   >
                     <span>
                       {artistInfo?.biography
@@ -288,8 +288,8 @@ const ArtistView = ({ ...rest }: any) => {
                             .replace('Read more on Last.fm</a>', '')}`
                         : 'No artist biography found'}
                     </span>
-                  </CustomTooltip>
-                </PageHeaderSubtitleDataLine>
+                  </PageHeaderSubtitleDataLine>
+                </CustomTooltip>
 
                 <div style={{ marginTop: '10px' }}>
                   <ButtonToolbar>
