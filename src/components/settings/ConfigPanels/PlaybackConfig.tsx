@@ -25,6 +25,7 @@ const PlaybackConfig = () => {
   const crossfadePickerContainerRef = useRef(null);
 
   const handleSetCrossfadeDuration = (e: number) => {
+    setCrossfadeDuration(e);
     settings.setSync('fadeDuration', Number(e));
     dispatch(
       setPlaybackSetting({
@@ -40,6 +41,7 @@ const PlaybackConfig = () => {
   };
 
   const handleSetPollingInterval = (e: number) => {
+    setPollingInterval(e);
     settings.setSync('pollingInterval', Number(e));
     dispatch(
       setPlaybackSetting({
@@ -50,6 +52,7 @@ const PlaybackConfig = () => {
   };
 
   const handleSetVolumeFade = (e: boolean) => {
+    setVolumeFade(e);
     settings.setSync('volumeFade', e);
     dispatch(setPlaybackSetting({ setting: 'volumeFade', value: e }));
   };
