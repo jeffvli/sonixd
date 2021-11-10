@@ -476,7 +476,6 @@ const setDefaultSettings = (force: boolean) => {
       fonts: {
         size: {
           page: '14px',
-          pageTitle: '40px',
           panelTitle: '20px',
         },
       },
@@ -640,7 +639,6 @@ const setDefaultSettings = (force: boolean) => {
       fonts: {
         size: {
           page: '14px',
-          pageTitle: '30px',
           panelTitle: '20px',
         },
       },

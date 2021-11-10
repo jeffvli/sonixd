@@ -4,9 +4,7 @@ export const defaultDark = {
   fonts: {
     size: {
       page: '14px',
-      pageTitle: '40px',
       panelTitle: '20px',
-      button: '14px',
     },
   },
   colors: {
