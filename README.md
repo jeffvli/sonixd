@@ -6,14 +6,17 @@
     <img src="https://img.shields.io/github/v/release/jeffvli/sonixd?style=flat-square&color=blue"
     alt="Release">
   </a>
-
   <a href="https://github.com/jeffvli/sonixd/compare/dev">
     <img src="https://img.shields.io/github/commits-since/jeffvli/sonixd/latest/dev?style=flat-square&color=red"
     alt="Commits">
   </a>
   <a href="https://github.com/jeffvli/sonixd/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/jeffvli/sonixd?style=flat-square&color=green"
+    <img src="https://img.shields.io/github/license/jeffvli/sonixd?style=flat-square&color=brightgreen"
     alt="License">
+  </a>
+  <a href="https://github.com/jeffvli/sonixd/releases">
+    <img src="https://img.shields.io/github/downloads/jeffvli/sonixd/total?style=flat-square&color=orange"
+    alt="Downloads">
   </a>
 
 Sonixd is a cross-platform desktop client built for Subsonic-API compatible music servers. This project was inspired by the many existing clients, but aimed to address a few key issues including <strong>scalability</strong>, <strong>library management</strong>, and <strong>user experience</strong>.

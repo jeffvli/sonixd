@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2021-11-09
+
+### Added
+
+- Added additional grid-view customization options (#74)
+  - Gap size (spaces between cards)
+  - Alignment (left-align, center-align)
+
+### Changed
+
+- Changed default album/artist uncached image sizes from `150px` -> `350px`
+
+### Fixed
+
+- (Windows) Fixed default taskbar thumbnail on Windows10 when minimized to use window instead of album cover (#73)
+- Fixed playback settings unable to change via the UI
+  - Crossfade duration
+  - Polling interval
+  - Volume fade
+- Fixed header styling on the Config page breaking at smaller window widths (#72)
+- Fixed the position of the description tooltip on the Artist page
+- Fixed the `Add to playlist` popover showing underneath the modal in modal-view
+
+### Removed
+
+- Removed unused `fonts.size.pageTitle` theme property
+
 ## [0.5.0] - 2021-11-05
 
 ### Added
