@@ -107,23 +107,6 @@ const GenericPageHeader = ({
             </CustomImageGrid>
           </CustomImageGridWrapper>
         </CoverArtWrapper>
-        /*         <CoverArtWrapper>
-          <LazyLoadImage
-            src={image[0]}
-            alt="header-img"
-            height={imageHeight || '195px'}
-            width={imageHeight || '195px'}
-            visibleByDefault
-            afterLoad={() => {
-              if (cacheImages.enabled) {
-                cacheImage(
-                  `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
-                  image[0].replace(/size=\d+/, 'size=500')
-                );
-              }
-            }}
-          />
-        </CoverArtWrapper> */
       )}
 
       <PageHeaderWrapper isDark={isDark} hasImage={image} imageHeight={imageHeight || 195}>
