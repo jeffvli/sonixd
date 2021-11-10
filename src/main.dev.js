@@ -12,6 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Player from 'mpris-service';
 import path from 'path';
+import os from 'os';
 import settings from 'electron-settings';
 import { ipcMain, app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
@@ -37,6 +38,7 @@ settings.configure({
 });
 
 const isWindows = process.platform === 'win32';
+const isWindows10 = os.release().match(/^10\.*/g);
 const isMacOS = process.platform === 'darwin';
 const isLinux = process.platform === 'linux';
 
@@ -367,6 +369,21 @@ const createWindow = async () => {
     if (settings.getSync('minimizeToTray')) {
       event.preventDefault();
       mainWindow.hide();
+    }
+
+    if (isWindows && isWindows10) {
+      mainWindow.setThumbnailClip({
+        x: 0,
+        y: 0,
+        height: 0,
+        width: 0,
+      });
+    }
+  });
+
+  mainWindow.on('restore', () => {
+    if (isWindows && isWindows10) {
+      createWinThumbnailClip();
     }
   });
 
