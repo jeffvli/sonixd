@@ -433,7 +433,7 @@ export const ContextMenuPopover = styled(Popover)`
   color: ${(props) => props.theme.colors.contextMenu.color} !important;
   background: ${(props) => props.theme.colors.contextMenu.background};
   position: absolute;
-  z-index: 1000;
+  z-index: 2000;
 `;
 
 export const StyledPopover = styled(Popover)`
