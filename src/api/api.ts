@@ -113,7 +113,7 @@ const authParams = {
   f: 'json',
 };
 
-const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size = 150) => {
+const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
   if (!item.coverArt && !item.artistImageUrl) {
     return 'img/placeholder.jpg';
   }
@@ -127,14 +127,38 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size = 150) => {
   }
 
   if (useLegacyAuth) {
+    if (!size) {
+      return (
+        `${API_BASE_URL}/getCoverArt` +
+        `?id=${item.coverArt}` +
+        `&u=${auth.username}` +
+        `&s=${auth.salt}` +
+        `&t=${auth.hash}` +
+        `&v=1.15.0` +
+        `&c=sonixd`
+      );
+    }
     return (
       `${API_BASE_URL}/getCoverArt` +
       `?id=${item.coverArt}` +
       `&u=${auth.username}` +
-      `&p=${auth.password}` +
+      `&s=${auth.salt}` +
+      `&t=${auth.hash}` +
       `&v=1.15.0` +
       `&c=sonixd` +
       `&size=${size}`
+    );
+  }
+
+  if (!size) {
+    return (
+      `${API_BASE_URL}/getCoverArt` +
+      `?id=${item.coverArt}` +
+      `&u=${auth.username}` +
+      `&s=${auth.salt}` +
+      `&t=${auth.hash}` +
+      `&v=1.15.0` +
+      `&c=sonixd`
     );
   }
 
@@ -192,7 +216,8 @@ export const getPlaylists = async (sortBy: string) => {
   return (newData || []).map((playlist: any) => ({
     ...playlist,
     name: playlist.name,
-    image: playlist.songCount > 0 ? getCoverArtUrl(playlist, legacyAuth) : 'img/placeholder.jpg',
+    image:
+      playlist.songCount > 0 ? getCoverArtUrl(playlist, legacyAuth, 350) : 'img/placeholder.jpg',
     type: 'playlist',
     uniqueId: nanoid(),
   }));
@@ -206,14 +231,14 @@ export const getPlaylist = async (id: string) => {
     song: (data.playlist.entry || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id, legacyAuth),
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
       type: 'music',
       index,
       uniqueId: nanoid(),
     })),
     image:
       data.playlist.songCount > 0
-        ? getCoverArtUrl(data.playlist, legacyAuth)
+        ? getCoverArtUrl(data.playlist, legacyAuth, 350)
         : 'img/placeholder.jpg',
   };
 };
@@ -255,7 +280,7 @@ export const getStarred = async (options: { musicFolderId?: string | number }) =
       ...entry,
       title: entry.name,
       albumId: entry.id,
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 350),
       starred: entry.starred || undefined,
       type: 'album',
       isDir: false,
@@ -265,7 +290,7 @@ export const getStarred = async (options: { musicFolderId?: string | number }) =
     song: (data.starred2.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id, legacyAuth),
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
       starred: entry.starred || undefined,
       type: 'music',
       index,
@@ -275,7 +300,7 @@ export const getStarred = async (options: { musicFolderId?: string | number }) =
       ...entry,
       albumCount: entry.albumCount || undefined,
       coverArt: getCoverArtUrl(entry, legacyAuth),
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 350),
       starred: entry.starred || Date.now(), // Airsonic does not return the starred date
       type: 'artist',
       index,
@@ -284,28 +309,25 @@ export const getStarred = async (options: { musicFolderId?: string | number }) =
   };
 };
 
-export const getAlbums = async (
-  options: {
-    type:
-      | 'random'
-      | 'newest'
-      | 'highest'
-      | 'frequent'
-      | 'recent'
-      | 'alphabeticalByName'
-      | 'alphabeticalByArtist'
-      | 'starred'
-      | 'byYear'
-      | 'byGenre';
-    size?: number;
-    offset?: number;
-    fromYear?: number;
-    toYear?: number;
-    genre?: string;
-    musicFolderId?: string | number;
-  },
-  coverArtSize = 150
-) => {
+export const getAlbums = async (options: {
+  type:
+    | 'random'
+    | 'newest'
+    | 'highest'
+    | 'frequent'
+    | 'recent'
+    | 'alphabeticalByName'
+    | 'alphabeticalByArtist'
+    | 'starred'
+    | 'byYear'
+    | 'byGenre';
+  size?: number;
+  offset?: number;
+  fromYear?: number;
+  toYear?: number;
+  genre?: string;
+  musicFolderId?: string | number;
+}) => {
   const { data } = await api.get(`/getAlbumList2`, {
     params: options,
   });
@@ -316,7 +338,7 @@ export const getAlbums = async (
       ...entry,
       title: entry.name,
       albumId: entry.id,
-      image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+      image: getCoverArtUrl(entry, legacyAuth, 350),
       starred: entry.starred || undefined,
       type: 'album',
       isDir: false,
@@ -326,28 +348,25 @@ export const getAlbums = async (
   };
 };
 
-export const getAlbumsDirect = async (
-  options: {
-    type:
-      | 'random'
-      | 'newest'
-      | 'highest'
-      | 'frequent'
-      | 'recent'
-      | 'alphabeticalByName'
-      | 'alphabeticalByArtist'
-      | 'starred'
-      | 'byYear'
-      | 'byGenre';
-    size?: number;
-    offset?: number;
-    fromYear?: number;
-    toYear?: number;
-    genre?: string;
-    musicFolderId?: string | number;
-  },
-  coverArtSize = 150
-) => {
+export const getAlbumsDirect = async (options: {
+  type:
+    | 'random'
+    | 'newest'
+    | 'highest'
+    | 'frequent'
+    | 'recent'
+    | 'alphabeticalByName'
+    | 'alphabeticalByArtist'
+    | 'starred'
+    | 'byYear'
+    | 'byGenre';
+  size?: number;
+  offset?: number;
+  fromYear?: number;
+  toYear?: number;
+  genre?: string;
+  musicFolderId?: string | number;
+}) => {
   const { data } = await api.get(`/getAlbumList2`, {
     params: options,
   });
@@ -356,7 +375,7 @@ export const getAlbumsDirect = async (
     ...entry,
     title: entry.name,
     albumId: entry.id,
-    image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+    image: getCoverArtUrl(entry, legacyAuth, 350),
     starred: entry.starred || undefined,
     type: 'album',
     isDir: false,
@@ -388,8 +407,7 @@ export const getAllAlbums = (
     genre?: string;
     musicFolderId?: string | number;
   },
-  data: any[] = [],
-  coverArtSize = 150
+  data: any[] = []
 ) => {
   const albums: any = api
     .get(`/getAlbumList2`, {
@@ -413,7 +431,7 @@ export const getAllAlbums = (
           ...entry,
           title: entry.name,
           albumId: entry.id,
-          image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+          image: getCoverArtUrl(entry, legacyAuth, 350),
           starred: entry.starred || undefined,
           type: 'album',
           isDir: false,
@@ -439,7 +457,7 @@ export const getAllAlbums = (
   return albums;
 };
 
-export const getAlbum = async (id: string, coverArtSize = 150) => {
+export const getAlbum = async (id: string) => {
   const { data } = await api.get(`/getAlbum`, {
     params: {
       id,
@@ -448,13 +466,13 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
 
   return {
     ...data.album,
-    image: getCoverArtUrl(data.album, legacyAuth, coverArtSize),
+    image: getCoverArtUrl(data.album, legacyAuth, 350),
     type: 'album',
     isDir: false,
     song: (data.album.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id, legacyAuth),
-      image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
       type: 'music',
       starred: entry.starred || undefined,
       index,
@@ -463,16 +481,13 @@ export const getAlbum = async (id: string, coverArtSize = 150) => {
   };
 };
 
-export const getRandomSongs = async (
-  options: {
-    size?: number;
-    genre?: string;
-    fromYear?: number;
-    toYear?: number;
-    musicFolderId?: number;
-  },
-  coverArtSize = 150
-) => {
+export const getRandomSongs = async (options: {
+  size?: number;
+  genre?: string;
+  fromYear?: number;
+  toYear?: number;
+  musicFolderId?: number;
+}) => {
   const { data } = await api.get(`/getRandomSongs`, {
     params: options,
   });
@@ -482,7 +497,7 @@ export const getRandomSongs = async (
     song: (data.randomSongs.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id, legacyAuth),
-      image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
       starred: entry.starred || undefined,
       index,
       uniqueId: nanoid(),
@@ -501,7 +516,7 @@ export const getArtists = async (options: { musicFolderId?: string | number }) =
   artists.map((artist: any) =>
     artistList.push({
       ...artist,
-      image: getCoverArtUrl(artist, legacyAuth, 150),
+      image: getCoverArtUrl(artist, legacyAuth, 350),
       type: 'artist',
       uniqueId: nanoid(),
     })
@@ -510,7 +525,7 @@ export const getArtists = async (options: { musicFolderId?: string | number }) =
   return artistList;
 };
 
-export const getArtist = async (id: string, coverArtSize = 150) => {
+export const getArtist = async (id: string) => {
   const { data } = await api.get(`/getArtist`, {
     params: {
       id,
@@ -519,14 +534,14 @@ export const getArtist = async (id: string, coverArtSize = 150) => {
 
   return {
     ...data.artist,
-    image: getCoverArtUrl(data.artist, legacyAuth, coverArtSize),
+    image: getCoverArtUrl(data.artist, legacyAuth, 350),
     type: 'artist',
     album: (data.artist.album || []).map((entry: any, index: any) => ({
       ...entry,
       albumId: entry.id,
       type: 'album',
       isDir: false,
-      image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+      image: getCoverArtUrl(entry, legacyAuth, 350),
       starred: entry.starred || undefined,
       index,
       uniqueId: nanoid(),
@@ -686,7 +701,7 @@ export const setRating = async (id: string, rating: number) => {
   return data;
 };
 
-export const getSimilarSongs = async (id: string, count: number, coverArtSize = 150) => {
+export const getSimilarSongs = async (id: string, count: number) => {
   const { data } = await api.get(`/getSimilarSongs2`, {
     params: { id, count },
   });
@@ -694,7 +709,7 @@ export const getSimilarSongs = async (id: string, count: number, coverArtSize = 
   return {
     song: (data.similarSongs2.song || []).map((entry: any, index: any) => ({
       ...entry,
-      image: getCoverArtUrl(entry, legacyAuth, coverArtSize),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
       index,
       uniqueId: nanoid(),
     })),
@@ -827,7 +842,7 @@ export const search3 = async (options: {
   return {
     artist: (results.artist || []).map((entry: any, index: any) => ({
       ...entry,
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 350),
       starred: entry.starred || undefined,
       type: 'artist',
       index,
@@ -836,7 +851,7 @@ export const search3 = async (options: {
     album: (results.album || []).map((entry: any, index: any) => ({
       ...entry,
       albumId: entry.id,
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 350),
       starred: entry.starred || undefined,
       type: 'album',
       isDir: false,
@@ -846,7 +861,7 @@ export const search3 = async (options: {
     song: (results.song || []).map((entry: any, index: any) => ({
       ...entry,
       streamUrl: getStreamUrl(entry.id, legacyAuth),
-      image: getCoverArtUrl(entry, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
       type: 'music',
       starred: entry.starred || undefined,
       index,
@@ -878,7 +893,7 @@ export const getIndexes = async (options: {
         ...folder,
         title: folder.name,
         isDir: true,
-        image: getCoverArtUrl(folder, legacyAuth),
+        image: getCoverArtUrl(folder, legacyAuth, 150),
         uniqueId: nanoid(),
         type: 'folder',
       });
@@ -894,7 +909,7 @@ export const getIndexes = async (options: {
       index,
       type: 'music',
       streamUrl: getStreamUrl(song.id, legacyAuth),
-      image: getCoverArtUrl(song, legacyAuth),
+      image: getCoverArtUrl(song, legacyAuth, 150),
       uniqueId: nanoid(),
     })
   );
@@ -920,7 +935,7 @@ export const getMusicDirectory = async (options: { id: string }) => {
   (folders || []).forEach((folder: any) =>
     child.push({
       ...folder,
-      image: getCoverArtUrl(folder, legacyAuth),
+      image: getCoverArtUrl(folder, legacyAuth, 150),
       uniqueId: nanoid(),
       type: 'folder',
     })
@@ -932,7 +947,7 @@ export const getMusicDirectory = async (options: { id: string }) => {
       index,
       type: 'music',
       streamUrl: getStreamUrl(song.id, legacyAuth),
-      image: getCoverArtUrl(song, legacyAuth),
+      image: getCoverArtUrl(song, legacyAuth, 150),
       uniqueId: nanoid(),
     })
   );
@@ -955,7 +970,7 @@ export const getAllDirectorySongs = async (options: { id: string }, data: any[] 
             index,
             type: 'music',
             streamUrl: getStreamUrl(entry.id, legacyAuth),
-            image: getCoverArtUrl(entry, legacyAuth),
+            image: getCoverArtUrl(entry, legacyAuth, 150),
             uniqueId: nanoid(),
           });
         }
