@@ -208,8 +208,8 @@ export const PageHeaderTitle = styled.h1`
   overflow: hidden;
   font-size: 4vw;
 
-  @media screen and (min-width: 1280px) {
-    font-size: 48px;
+  @media screen and (min-width: 1000px) {
+    font-size: 40px;
   }
 `;
 
