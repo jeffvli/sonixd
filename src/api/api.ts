@@ -424,7 +424,7 @@ export const getAllAlbums = (
       },
     })
     .then((res) => {
-      if (!res.data.albumList2.album) {
+      if (!res.data.albumList2.album || res.data.albumList2.album.length === 0) {
         // Flatten the array and return once there are no more albums left
         const flattened = _.flatten(data);
         return flattened.map((entry: any, index: any) => ({
