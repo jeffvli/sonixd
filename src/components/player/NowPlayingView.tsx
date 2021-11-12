@@ -76,7 +76,7 @@ const NowPlayingView = () => {
   );
   const [autoPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
   const [autoPlaylistToYear, setRandomPlaylistToYear] = useState(0);
-  const [randomPlaylistGenre, setRandomPlaylistGenre] = useState('');
+  const [randomPlaylistGenre, setRandomPlaylistGenre] = useState<string | undefined>(undefined);
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
