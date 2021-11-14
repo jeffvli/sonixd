@@ -470,9 +470,9 @@ export const SectionTitle = styled.a`
 export const StyledLink = styled.a`
   color: ${(props) => props.theme.colors.layout.page.color};
   cursor: pointer;
+  text-decoration: underline;
 
   &:hover {
-    text-decoration: none;
     color: ${(props) => props.theme.colors.button.link.colorHover};
   }
 
