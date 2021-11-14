@@ -75,8 +75,7 @@ const ArtistView = ({ ...rest }: any) => {
     error: errorAI,
   }: any = useQuery(['artistInfo', artistId], () => getArtistInfo(artistId, 8));
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.album, [
+  const filteredData = useSearchQuery(misc.searchQuery, data?.album, [
     'name',
     'artist',
     'genre',
@@ -352,10 +351,6 @@ const ArtistView = ({ ...rest }: any) => {
                 </div>
               </>
             }
-            searchQuery={searchQuery}
-            handleSearch={(e: any) => setSearchQuery(e)}
-            clearSearchQuery={() => setSearchQuery('')}
-            showSearchBar
             showViewTypeButtons
             viewTypeSetting="album"
             handleListClick={() => setViewType('list')}
@@ -366,7 +361,7 @@ const ArtistView = ({ ...rest }: any) => {
         <>
           {viewType === 'list' && (
             <ListViewType
-              data={searchQuery !== '' ? filteredData : data.album}
+              data={misc.searchQuery !== '' ? filteredData : data.album}
               tableColumns={config.lookAndFeel.listView.album.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
@@ -393,7 +388,7 @@ const ArtistView = ({ ...rest }: any) => {
 
           {viewType === 'grid' && (
             <GridViewType
-              data={searchQuery === '' ? data.album : filteredData}
+              data={misc.searchQuery !== '' ? filteredData : data.album}
               cardTitle={{
                 prefix: '/library/album',
                 property: 'name',

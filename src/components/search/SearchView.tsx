@@ -31,7 +31,6 @@ const SearchView = () => {
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
   const urlQuery = query.get('query') || '';
-  const [searchQuery, setSearchQuery] = useState(query.get('query') || '');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
   useEffect(() => {
@@ -155,17 +154,7 @@ const SearchView = () => {
   };
 
   return (
-    <GenericPage
-      header={
-        <GenericPageHeader
-          title="Search"
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-          showSearchBar
-        />
-      }
-    >
+    <GenericPage header={<GenericPageHeader title={`Search: ${urlQuery}`} />}>
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && data && (

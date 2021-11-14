@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
@@ -67,8 +67,7 @@ const AlbumView = ({ ...rest }: any) => {
   const { isLoading, isError, data, error }: any = useQuery(['album', albumId], () =>
     getAlbum(albumId)
   );
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, data?.song, [
+  const filteredData = useSearchQuery(misc.searchQuery, data?.song, [
     'title',
     'artist',
     'album',
@@ -335,15 +334,11 @@ const AlbumView = ({ ...rest }: any) => {
                 </div>
               </div>
             }
-            searchQuery={searchQuery}
-            handleSearch={(e: any) => setSearchQuery(e)}
-            clearSearchQuery={() => setSearchQuery('')}
-            showSearchBar
           />
         }
       >
         <ListViewType
-          data={searchQuery !== '' ? filteredData : data.song}
+          data={misc.searchQuery !== '' ? filteredData : data.song}
           tableColumns={settings.getSync('musicListColumns')}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useHistory } from 'react-router-dom';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { Icon, InputGroup } from 'rsuite';
 import ViewTypeButtons from '../viewtypes/ViewTypeButtons';
 import {
@@ -42,11 +41,6 @@ const GenericPageHeader = ({
 }: any) => {
   const history = useHistory();
   const [openSearch, setOpenSearch] = useState(false);
-
-  useHotkeys('ctrl+f', () => {
-    setOpenSearch(true);
-    document.getElementById('local-search-input')?.focus();
-  });
 
   return (
     <>

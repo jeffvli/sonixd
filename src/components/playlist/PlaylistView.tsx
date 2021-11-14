@@ -102,10 +102,9 @@ const PlaylistView = ({ ...rest }) => {
   const [editDescription, setEditDescription] = useState('');
   const [editPublic, setEditPublic] = useState(false);
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [recoveryPath, setRecoveryPath] = useState('');
   const [needsRecovery, setNeedsRecovery] = useState(false);
-  const filteredData = useSearchQuery(searchQuery, playlist.entry, [
+  const filteredData = useSearchQuery(misc.searchQuery, playlist.entry, [
     'title',
     'artist',
     'album',
@@ -532,15 +531,11 @@ const PlaylistView = ({ ...rest }) => {
               </div>
             </div>
           }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-          showSearchBar
         />
       }
     >
       <ListViewType
-        data={searchQuery !== '' ? filteredData : playlist[getCurrentEntryList(playlist)]}
+        data={misc.searchQuery !== '' ? filteredData : playlist[getCurrentEntryList(playlist)]}
         tableColumns={config.lookAndFeel.listView.music.columns}
         handleRowClick={handleRowClick}
         handleRowDoubleClick={handleRowDoubleClick}

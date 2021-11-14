@@ -18,7 +18,6 @@ const Dashboard = () => {
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
   const album = useAppSelector((state) => state.album);
-  const [searchQuery, setSearchQuery] = useState('');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
   useEffect(() => {
@@ -130,18 +129,7 @@ const Dashboard = () => {
   }
 
   return (
-    <GenericPage
-      header={
-        <GenericPageHeader
-          title="Dashboard"
-          showSearchBar
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-        />
-      }
-      hideDivider
-    >
+    <GenericPage header={<GenericPageHeader title="Dashboard" />} hideDivider>
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu

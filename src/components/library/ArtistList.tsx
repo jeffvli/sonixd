@@ -26,6 +26,7 @@ const ArtistList = () => {
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
+  const misc = useAppSelector((state) => state.misc);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [viewType, setViewType] = useState(settings.getSync('artistViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
@@ -44,8 +45,7 @@ const ArtistList = () => {
       staleTime: Infinity, // Only allow manual refresh
     }
   );
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, artists, ['name']);
+  const filteredData = useSearchQuery(misc.searchQuery, artists, ['name']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -112,12 +112,8 @@ const ArtistList = () => {
               <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
             </ButtonToolbar>
           }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
           viewTypeSetting="artist"
-          showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}
         />
@@ -127,7 +123,7 @@ const ArtistList = () => {
       {isError && <div>Error: {error}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
-          data={searchQuery !== '' ? filteredData : artists}
+          data={misc.searchQuery !== '' ? filteredData : artists}
           tableColumns={config.lookAndFeel.listView.artist.columns}
           rowHeight={config.lookAndFeel.listView.artist.rowHeight}
           fontSize={config.lookAndFeel.listView.artist.fontSize}
@@ -152,7 +148,7 @@ const ArtistList = () => {
       )}
       {!isLoading && !isError && viewType === 'grid' && (
         <GridViewType
-          data={searchQuery !== '' ? filteredData : artists}
+          data={misc.searchQuery !== '' ? filteredData : artists}
           cardTitle={{
             prefix: '/library/artist',
             property: 'name',
