@@ -21,6 +21,9 @@
 
 Sonixd is a cross-platform desktop client built for Subsonic-API compatible music servers. This project was inspired by the many existing clients, but aimed to address a few key issues including <strong>scalability</strong>, <strong>library management</strong>, and <strong>user experience</strong>.
 
+- [**Usage documentation & FAQ**](https://github.com/jeffvli/sonixd/discussions/15)
+- [**Theming documentation**](https://github.com/jeffvli/sonixd/discussions/61)
+
 ## Features
 
 - HTML5 audio with crossfading and gapless\* playback
