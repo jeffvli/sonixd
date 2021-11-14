@@ -51,6 +51,7 @@ export interface General {
   imageCachePath: string;
   songCachePath: string;
   titleBar: 'windows' | 'mac' | string;
+  searchQuery: string;
 }
 
 const initialState: General = {
@@ -71,6 +72,7 @@ const initialState: General = {
   imageCachePath: getImageCachePath(),
   songCachePath: getSongCachePath(),
   titleBar: String(parsedSettings.titleBarStyle),
+  searchQuery: '',
 };
 
 const miscSlice = createSlice({
@@ -102,6 +104,10 @@ const miscSlice = createSlice({
         default:
           break;
       }
+    },
+
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
     },
 
     setContextMenu: (state, action: PayloadAction<ContextMenu>) => {
@@ -179,6 +185,7 @@ const miscSlice = createSlice({
 export const {
   setTheme,
   setFont,
+  setSearchQuery,
   hideModal,
   addModalPage,
   incrementModalPage,

@@ -29,6 +29,7 @@ const StarredView = () => {
   const folder = useAppSelector((state) => state.folder);
   const favorite = useAppSelector((state) => state.favorite);
   const config = useAppSelector((state) => state.config);
+  const misc = useAppSelector((state) => state.misc);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
@@ -41,9 +42,8 @@ const StarredView = () => {
   const { isLoading, isError, data, error }: any = useQuery(['starred', musicFolder], () =>
     getStarred({ musicFolderId: musicFolder })
   );
-  const [searchQuery, setSearchQuery] = useState('');
   const filteredData = useSearchQuery(
-    searchQuery,
+    misc.searchQuery,
     favorite.active.tab === 'tracks'
       ? data?.song
       : favorite.active.tab === 'albums'
@@ -163,12 +163,8 @@ const StarredView = () => {
               </StyledNavItem>
             </Nav>
           }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons={favorite.active.tab !== 'tracks'}
           viewTypeSetting="album"
-          showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}
         />
@@ -180,7 +176,7 @@ const StarredView = () => {
         <>
           {favorite.active.tab === 'tracks' && (
             <ListViewType
-              data={searchQuery !== '' ? filteredData : data.song}
+              data={misc.searchQuery !== '' ? filteredData : data.song}
               tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
@@ -207,7 +203,7 @@ const StarredView = () => {
             <>
               {viewType === 'list' && (
                 <ListViewType
-                  data={searchQuery !== '' ? filteredData : data.album}
+                  data={misc.searchQuery !== '' ? filteredData : data.album}
                   tableColumns={config.lookAndFeel.listView.album.columns}
                   rowHeight={config.lookAndFeel.listView.album.rowHeight}
                   fontSize={config.lookAndFeel.listView.album.fontSize}
@@ -231,7 +227,7 @@ const StarredView = () => {
               )}
               {viewType === 'grid' && (
                 <GridViewType
-                  data={searchQuery !== '' ? filteredData : data.album}
+                  data={misc.searchQuery !== '' ? filteredData : data.album}
                   cardTitle={{
                     prefix: '/library/album',
                     property: 'name',
@@ -255,7 +251,7 @@ const StarredView = () => {
             <>
               {viewType === 'list' && (
                 <ListViewType
-                  data={searchQuery !== '' ? filteredData : data.artist}
+                  data={misc.searchQuery !== '' ? filteredData : data.artist}
                   tableColumns={config.lookAndFeel.listView.artist.columns}
                   rowHeight={config.lookAndFeel.listView.artist.rowHeight}
                   fontSize={config.lookAndFeel.listView.artist.fontSize}
@@ -280,7 +276,7 @@ const StarredView = () => {
               )}
               {viewType === 'grid' && (
                 <GridViewType
-                  data={searchQuery !== '' ? filteredData : data.artist}
+                  data={misc.searchQuery !== '' ? filteredData : data.artist}
                   cardTitle={{
                     prefix: '/library/artist',
                     property: 'name',

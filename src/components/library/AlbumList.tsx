@@ -21,6 +21,7 @@ import {
 import { StyledInputPicker, StyledInputPickerContainer } from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { setActive } from '../../redux/albumSlice';
+import { setSearchQuery } from '../../redux/miscSlice';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
@@ -38,6 +39,7 @@ const AlbumList = () => {
   const folder = useAppSelector((state) => state.folder);
   const album = useAppSelector((state) => state.album);
   const config = useAppSelector((state) => state.config);
+  const misc = useAppSelector((state) => state.misc);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortTypes, setSortTypes] = useState<any[]>();
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
@@ -83,8 +85,12 @@ const AlbumList = () => {
       return null;
     });
   });
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, albums, ['name', 'artist', 'genre', 'year']);
+  const filteredData = useSearchQuery(misc.searchQuery, albums, [
+    'name',
+    'artist',
+    'genre',
+    'year',
+  ]);
 
   useEffect(() => {
     setSortTypes(_.compact(_.concat(ALBUM_SORT_TYPES, genres)));
@@ -168,7 +174,7 @@ const AlbumList = () => {
                       album.active.filter,
                       musicFolder,
                     ]);
-                    setSearchQuery('');
+                    dispatch(setSearchQuery(''));
                     dispatch(setActive({ ...album.active, filter: value }));
                   }}
                 />
@@ -183,12 +189,8 @@ const AlbumList = () => {
             </StyledInputPickerContainer>
           }
           subsidetitle={<></>}
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
           viewTypeSetting="album"
-          showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}
         />
@@ -198,7 +200,7 @@ const AlbumList = () => {
       {isError && <div>Error: {error}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
-          data={searchQuery !== '' ? filteredData : albums}
+          data={misc.searchQuery !== '' ? filteredData : albums}
           tableColumns={config.lookAndFeel.listView.album.columns}
           rowHeight={config.lookAndFeel.listView.album.rowHeight}
           fontSize={config.lookAndFeel.listView.album.fontSize}
@@ -223,7 +225,7 @@ const AlbumList = () => {
       )}
       {!isLoading && !isError && viewType === 'grid' && (
         <GridViewType
-          data={searchQuery !== '' ? filteredData : albums}
+          data={misc.searchQuery !== '' ? filteredData : albums}
           cardTitle={{
             prefix: '/library/album',
             property: 'name',

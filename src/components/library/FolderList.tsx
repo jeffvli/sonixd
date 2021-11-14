@@ -37,6 +37,7 @@ const FolderList = () => {
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
+  const misc = useAppSelector((state) => state.misc);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
   const folderPickerContainerRef = useRef(null);
 
@@ -57,16 +58,11 @@ const FolderList = () => {
     getMusicFolders
   );
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, folderData?.id ? folderData?.child : indexData, [
-    'name',
-    'title',
-    'artist',
-    'album',
-    'year',
-    'genre',
-    'path',
-  ]);
+  const filteredData = useSearchQuery(
+    misc.searchQuery,
+    folderData?.id ? folderData?.child : indexData,
+    ['name', 'title', 'artist', 'album', 'year', 'genre', 'path']
+  );
 
   useEffect(() => {
     if (query.get('folderId') !== 'null') {
@@ -159,10 +155,6 @@ const FolderList = () => {
                   ? 'Loading...'
                   : 'Select a folder'
               }`}
-              showSearchBar
-              searchQuery={searchQuery}
-              handleSearch={(e: any) => setSearchQuery(e)}
-              clearSearchQuery={() => setSearchQuery('')}
               showTitleTooltip
               subtitle={
                 <>
@@ -209,7 +201,7 @@ const FolderList = () => {
           ) : (
             <ListViewType
               data={
-                searchQuery !== ''
+                misc.searchQuery !== ''
                   ? filteredData
                   : folder.currentViewedFolder
                   ? folderData?.child

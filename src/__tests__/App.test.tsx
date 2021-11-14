@@ -86,6 +86,7 @@ const miscState: General = {
   imageCachePath: '',
   songCachePath: '',
   titleBar: 'windows',
+  searchQuery: '',
 };
 
 const playlistState: Playlist = {

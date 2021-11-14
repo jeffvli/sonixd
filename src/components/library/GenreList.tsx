@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router';
@@ -22,12 +22,12 @@ const GenreList = () => {
   const history = useHistory();
   const config = useAppSelector((state) => state.config);
   const album = useAppSelector((state) => state.album);
+  const misc = useAppSelector((state) => state.misc);
   const { isLoading, isError, data: genres, error }: any = useQuery(['genrePageList'], async () => {
     const res = await getGenres();
     return _.orderBy(res, 'songCount', 'desc');
   });
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, genres, ['value']);
+  const filteredData = useSearchQuery(misc.searchQuery, genres, ['value']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -58,23 +58,12 @@ const GenreList = () => {
   };
 
   return (
-    <GenericPage
-      hideDivider
-      header={
-        <GenericPageHeader
-          title="Genres"
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-          showSearchBar
-        />
-      }
-    >
+    <GenericPage hideDivider header={<GenericPageHeader title="Genres" />}>
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && genres && !isError && (
         <ListViewType
-          data={searchQuery !== '' ? filteredData : genres}
+          data={misc.searchQuery !== '' ? filteredData : genres}
           tableColumns={config.lookAndFeel.listView.genre.columns}
           rowHeight={config.lookAndFeel.listView.genre.rowHeight}
           fontSize={config.lookAndFeel.listView.genre.fontSize}

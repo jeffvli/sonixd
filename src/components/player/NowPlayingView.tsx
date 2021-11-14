@@ -71,6 +71,7 @@ const NowPlayingView = () => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
+  const misc = useAppSelector((state) => state.misc);
   const [autoPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
     Number(settings.getSync('randomPlaylistTrackCount'))
   );
@@ -82,8 +83,7 @@ const NowPlayingView = () => {
 
   const { data: musicFolders } = useQuery(['musicFolders'], getMusicFolders);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, playQueue.entry, [
+  const filteredData = useSearchQuery(misc.searchQuery, playQueue.entry, [
     'title',
     'artist',
     'album',
@@ -492,10 +492,6 @@ const NowPlayingView = () => {
               Auto scroll
             </StyledCheckbox>
           }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
-          showSearchBar
         />
       }
     >
@@ -504,7 +500,7 @@ const NowPlayingView = () => {
       ) : (
         <ListViewType
           ref={tableRef}
-          data={searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]}
+          data={misc.searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]}
           currentIndex={playQueue.currentIndex}
           tableColumns={config.lookAndFeel.listView.music.columns}
           handleRowClick={handleRowClick}

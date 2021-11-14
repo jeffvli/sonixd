@@ -27,6 +27,7 @@ const PlaylistList = () => {
   const history = useHistory();
   const queryClient = useQueryClient();
   const config = useAppSelector((state) => state.config);
+  const misc = useAppSelector((state) => state.misc);
   const playlistTriggerRef = useRef<any>();
   const [sortBy] = useState('name');
   const [newPlaylistName, setNewPlaylistName] = useState('');
@@ -34,8 +35,7 @@ const PlaylistList = () => {
   const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists', sortBy], () =>
     getPlaylists(sortBy)
   );
-  const [searchQuery, setSearchQuery] = useState('');
-  const filteredData = useSearchQuery(searchQuery, playlists, ['name', 'comment', 'owner']);
+  const filteredData = useSearchQuery(misc.searchQuery, playlists, ['name', 'comment', 'owner']);
 
   const handleCreatePlaylist = async (name: string) => {
     try {
@@ -137,12 +137,8 @@ const PlaylistList = () => {
               />
             </Whisper>
           }
-          searchQuery={searchQuery}
-          handleSearch={(e: any) => setSearchQuery(e)}
-          clearSearchQuery={() => setSearchQuery('')}
           showViewTypeButtons
           viewTypeSetting="playlist"
-          showSearchBar
           handleListClick={() => setViewType('list')}
           handleGridClick={() => setViewType('grid')}
         />
@@ -150,7 +146,7 @@ const PlaylistList = () => {
     >
       {viewType === 'list' && (
         <ListViewType
-          data={searchQuery === '' ? playlists : filteredData}
+          data={misc.searchQuery === '' ? playlists : filteredData}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           tableColumns={config.lookAndFeel.listView.playlist.columns}
@@ -175,7 +171,7 @@ const PlaylistList = () => {
       )}
       {viewType === 'grid' && (
         <GridViewType
-          data={searchQuery === '' ? playlists : filteredData}
+          data={misc.searchQuery === '' ? playlists : filteredData}
           cardTitle={{
             prefix: 'playlist',
             property: 'name',
