@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { shell } from 'electron';
 import settings from 'electron-settings';
-import { ControlLabel, Form } from 'rsuite';
+import { ControlLabel, Divider, Form } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import {
   StyledButton,
@@ -8,12 +9,14 @@ import {
   StyledInput,
   StyledInputGroup,
   StyledInputNumber,
+  StyledLink,
   StyledPanel,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter } from '../../../redux/configSlice';
+import { isMacOS } from '../../../main.dev';
 
 const playbackFilterColumns = [
   {
@@ -115,7 +118,25 @@ const PlayerConfig = () => {
       >
         Enable scrobbling
       </StyledCheckbox>
-      <br />
+
+      {isMacOS && (
+        <>
+          <br />
+          <p style={{ fontSize: 'smaller' }}>
+            *macOS requires you to set Sonixd as a{' '}
+            <StyledLink
+              onClick={() =>
+                shell.openExternal(
+                  'https://developer.apple.com/library/archive/documentation/Accessibility/Conceptual/AccessibilityMacOSX/OSXAXTestingApps.html'
+                )
+              }
+            >
+              trusted accessibility client.
+            </StyledLink>
+          </p>
+        </>
+      )}
+      <Divider />
       <h6>Filters</h6>
       <p>
         Any song title that matches a filter will be automatically removed when being added to the
