@@ -87,9 +87,9 @@ export const FavoriteButton = ({ isFavorite, ...rest }: any) => {
   );
 };
 
-export const DownloadButton = ({ ...rest }) => {
+export const DownloadButton = ({ downloadSize, ...rest }: any) => {
   return (
-    <CustomTooltip text="Toggle favorite">
+    <CustomTooltip text={downloadSize ? `Download (${downloadSize})` : 'Download'}>
       <StyledIconButton tabIndex={0} icon={<Icon icon="download" />} {...rest} />
     </CustomTooltip>
   );
