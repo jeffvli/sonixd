@@ -96,6 +96,19 @@ export const shuffle = (array: any[]) => {
   return array;
 };
 
+// https://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
+const formatBytes = (bytes: number, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+};
+
 export const formatSongDuration = (duration: number) => {
   const hours = Math.floor(duration / 60 / 60);
   const minutes = Math.floor((duration / 60) % 60);
@@ -490,4 +503,12 @@ export const getUniqueRandomNumberArr = (count: number, maxRange: number) => {
   }
 
   return arr;
+};
+
+export const getAlbumSize = (songs: any[]) => {
+  return formatBytes(
+    _.sumBy(songs, (o) => {
+      return o.size;
+    })
+  );
 };
