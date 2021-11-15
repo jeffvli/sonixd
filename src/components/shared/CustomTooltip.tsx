@@ -17,7 +17,7 @@ const CustomTooltip = ({ children, text, delay, placement, ...rest }: any) => {
   return (
     <Whisper
       trigger="hover"
-      delay={delay || 500}
+      delay={delay || 250}
       speaker={tooltip(text)}
       placement={placement || 'top'}
       {...rest}
