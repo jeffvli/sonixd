@@ -73,10 +73,10 @@ export const WindowControl = styled.div`
 
 export const MacControl = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 30px);
+  grid-template-columns: repeat(3, 20px);
   position: absolute;
   top: 0;
-  left: 0;
+  left: 4px;
   height: 100%;
 
   -webkit-app-region: no-drag;
@@ -94,6 +94,11 @@ export const MacControlButton = styled.div<{
   width: 100%;
   height: 100%;
   grid-column: ${(props) => (props.minButton ? 2 : props.maxButton || props.restoreButton ? 3 : 1)};
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
 `;
 
 export const WindowControlButton = styled.div<{
