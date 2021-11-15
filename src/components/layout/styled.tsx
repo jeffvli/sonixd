@@ -279,7 +279,7 @@ export const BlurredBackground = styled.img<{ expanded: boolean }>`
   margin: 0px !important;
   padding: 0px !important;
   width: 100%;
-  height: 202px;
+  height: 210px;
   z-index: -1;
   user-select: none;
   pointer-events: none;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
-import { ButtonToolbar, Content, FlexboxGrid, Icon, InputGroup } from 'rsuite';
+import { ButtonToolbar, Content, FlexboxGrid, Icon } from 'rsuite';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
@@ -144,60 +144,59 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
               </ButtonToolbar>
             </FlexboxGrid.Item>
             <FlexboxGrid.Item>
-              <span style={{ display: 'inline-block' }}>
-                {misc.searchQuery !== '' || openSearch ? (
-                  <StyledInputGroup inside>
-                    <InputGroup.Addon>
-                      <Icon icon="search" />
-                    </InputGroup.Addon>
-                    <StyledInput
-                      opacity={0.6}
-                      id="local-search-input"
-                      value={misc.searchQuery}
-                      onChange={handleSearch}
-                      onPressEnter={() => {
-                        if (misc.searchQuery.trim()) {
-                          history.push(`/search?query=${misc.searchQuery}`);
-                        }
-                      }}
-                      onKeyDown={(e: KeyboardEvent) => {
-                        if (e.key === 'Escape') {
+              <ButtonToolbar>
+                <span style={{ display: 'inline-block' }}>
+                  {misc.searchQuery !== '' || openSearch ? (
+                    <StyledInputGroup inside>
+                      <StyledInput
+                        opacity={0.6}
+                        id="local-search-input"
+                        value={misc.searchQuery}
+                        onChange={handleSearch}
+                        onPressEnter={() => {
+                          if (misc.searchQuery.trim()) {
+                            history.push(`/search?query=${misc.searchQuery}`);
+                          }
+                        }}
+                        onKeyDown={(e: KeyboardEvent) => {
+                          if (e.key === 'Escape') {
+                            dispatch(setSearchQuery(''));
+                            setOpenSearch(false);
+                          }
+                        }}
+                        style={{ width: '180px' }}
+                      />
+                      <StyledInputGroupButton
+                        appearance="subtle"
+                        tabIndex={0}
+                        onClick={() => {
                           dispatch(setSearchQuery(''));
                           setOpenSearch(false);
-                        }
-                      }}
-                      style={{ width: '180px' }}
-                    />
-                    <StyledInputGroupButton
-                      tabIndex={0}
-                      appearance="subtle"
+                        }}
+                        onKeyDown={(e: any) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                            dispatch(setSearchQuery(''));
+                            setOpenSearch(false);
+                          }
+                        }}
+                      >
+                        <Icon icon="close" />
+                      </StyledInputGroupButton>
+                    </StyledInputGroup>
+                  ) : (
+                    <StyledIconButton
                       onClick={() => {
-                        dispatch(setSearchQuery(''));
-                        setOpenSearch(false);
+                        setOpenSearch(true);
+                        setTimeout(() => {
+                          document.getElementById('local-search-input')?.focus();
+                        }, 50);
                       }}
-                      onKeyDown={(e: any) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                          dispatch(setSearchQuery(''));
-                          setOpenSearch(false);
-                        }
-                      }}
-                    >
-                      <Icon icon="close" />
-                    </StyledInputGroupButton>
-                  </StyledInputGroup>
-                ) : (
-                  <StyledIconButton
-                    onClick={() => {
-                      setOpenSearch(true);
-                      setTimeout(() => {
-                        document.getElementById('local-search-input')?.focus();
-                      }, 50);
-                    }}
-                    appearance="subtle"
-                    icon={<Icon icon="search" />}
-                  />
-                )}
-              </span>
+                      appearance="subtle"
+                      icon={<Icon icon="search" />}
+                    />
+                  )}
+                </span>
+              </ButtonToolbar>
             </FlexboxGrid.Item>
           </FlexboxGrid>
 
