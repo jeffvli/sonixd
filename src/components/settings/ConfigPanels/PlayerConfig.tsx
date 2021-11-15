@@ -16,7 +16,8 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter } from '../../../redux/configSlice';
-import { isMacOS } from '../../../main.dev';
+
+const isMacOS = process.platform === 'darwin';
 
 const playbackFilterColumns = [
   {
