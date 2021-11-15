@@ -37,10 +37,10 @@ settings.configure({
   numSpaces: 2,
 });
 
-export const isWindows = process.platform === 'win32';
-export const isWindows10 = os.release().match(/^10\.*/g);
-export const isMacOS = process.platform === 'darwin';
-export const isLinux = process.platform === 'linux';
+const isWindows = process.platform === 'win32';
+const isWindows10 = os.release().match(/^10\.*/g);
+const isMacOS = process.platform === 'darwin';
+const isLinux = process.platform === 'linux';
 
 setDefaultSettings(false);
 
