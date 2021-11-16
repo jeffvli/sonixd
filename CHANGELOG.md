@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2021-11-15
+
+### Added
+
+- Added download buttons on the Album and Artist pages (#29)
+  - Allows you to download (via browser) or copy download links to your clipboard (to use with a download manager)
+
+### Changed
+
+- Changed default tooltip delay from `500ms` -> `250ms`
+- Moved search bar from page header to the main layout action bar
+- Added notice for macOS media keys to require trusted accessibility in the client
+
+### Fixed
+
+- Fixed auto playlist and album fetch in Gonic servers
+- Fixed the macOS titlebar styling to better match the original (#83)
+- Fixed thumbnailclip error when resizing the application in macOS (#84)
+- Fixed playlist page not using cached image
+
 ## [0.6.0] - 2021-11-09
 
 ### Added
