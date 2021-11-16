@@ -2,18 +2,27 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import FastAverageColor from 'fast-average-color';
-import { shell } from 'electron';
+import { clipboard, shell } from 'electron';
 import settings from 'electron-settings';
 import { ButtonToolbar, Whisper, TagGroup } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
+  DownloadButton,
   FavoriteButton,
   PlayAppendButton,
   PlayAppendNextButton,
   PlayButton,
 } from '../shared/ToolbarButtons';
-import { getAllArtistSongs, getArtist, getArtistInfo, star, unstar } from '../../api/api';
+import {
+  getAlbum,
+  getAllArtistSongs,
+  getArtist,
+  getArtistInfo,
+  getDownloadUrl,
+  star,
+  unstar,
+} from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -167,6 +176,38 @@ const ArtistView = ({ ...rest }: any) => {
     }
   };
 
+  const handleDownload = async (type: 'copy' | 'download') => {
+    if (data.album[0]?.parent) {
+      if (type === 'download') {
+        shell.openExternal(getDownloadUrl(data.album[0].parent));
+      } else {
+        clipboard.writeText(getDownloadUrl(data.album[0].parent));
+        notifyToast('info', 'Download links copied!');
+      }
+    } else {
+      const downloadUrls: string[] = [];
+
+      for (let i = 0; i < data.album.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        const albumRes = await getAlbum(data.album[i].id);
+        if (albumRes.song[0]?.parent) {
+          downloadUrls.push(getDownloadUrl(albumRes.song[0].parent));
+        } else {
+          notifyToast('warning', `[${albumRes.name}] No parent album found`);
+        }
+      }
+
+      if (type === 'download') {
+        downloadUrls.forEach((link) => shell.openExternal(link));
+      }
+
+      if (type === 'copy') {
+        clipboard.writeText(downloadUrls.join('\n'));
+        notifyToast('info', 'Download links copied!');
+      }
+    }
+  };
+
   useEffect(() => {
     if (!isLoading) {
       const img = isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
@@ -303,11 +344,34 @@ const ArtistView = ({ ...rest }: any) => {
                       size="lg"
                       onClick={() => handlePlayAppend('later')}
                     />
+                    <Whisper
+                      trigger="hover"
+                      placement="bottom"
+                      delay={250}
+                      enterable
+                      preventOverflow
+                      speaker={
+                        <StyledPopover>
+                          <ButtonToolbar>
+                            <StyledButton onClick={() => handleDownload('download')}>
+                              Download
+                            </StyledButton>
+                            <StyledButton onClick={() => handleDownload('copy')}>
+                              Copy to clipboard
+                            </StyledButton>
+                          </ButtonToolbar>
+                        </StyledPopover>
+                      }
+                    >
+                      <DownloadButton size="lg" />
+                    </Whisper>
                     <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
                     <Whisper
-                      placement="auto"
                       trigger="hover"
+                      placement="bottom"
+                      delay={250}
                       enterable
+                      preventOverflow
                       speaker={
                         <StyledPopover style={{ width: '400px' }}>
                           <div>
