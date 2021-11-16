@@ -55,6 +55,7 @@ import {
   getPlayedSongsNotification,
   getRecoveryPath,
   getUniqueRandomNumberArr,
+  isCached,
   isFailedResponse,
 } from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -388,7 +389,13 @@ const PlaylistView = ({ ...rest }) => {
       hideDivider
       header={
         <GenericPageHeader
-          image={data?.image.match('placeholder') ? customPlaylistImage : data.image}
+          image={
+            data?.image.match('placeholder')
+              ? customPlaylistImage
+              : isCached(`${misc.imageCachePath}playlist_${playlistId}.jpg`)
+              ? `${misc.imageCachePath}playlist_${playlistId}.jpg`
+              : data.image
+          }
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'playlist',
