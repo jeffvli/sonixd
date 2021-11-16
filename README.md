@@ -24,6 +24,8 @@ Sonixd is a cross-platform desktop client built for Subsonic-API compatible musi
 - [**Usage documentation & FAQ**](https://github.com/jeffvli/sonixd/discussions/15)
 - [**Theming documentation**](https://github.com/jeffvli/sonixd/discussions/61)
 
+The application is successfully tested on the following servers: [Navidrome](https://github.com/navidrome/navidrome), [Airsonic](https://github.com/airsonic/airsonic), [Airsonic-Advanced](https://github.com/airsonic-advanced/airsonic-advanced), [Supysonic](https://github.com/spl0k/supysonic), [Gonic](https://github.com/sentriz/gonic), [Astiga](https://asti.ga/)
+
 ## Features
 
 - HTML5 audio with crossfading and gapless\* playback
@@ -52,7 +54,7 @@ You can install sonixd by downloading the [latest release](https://github.com/je
 - Linux: `.AppImage`
 - MacOS: `.dmg`
 
-Once installed, run the application and sign in to your music server with the following details. If you are using [airsonic-advanced](https://github.com/airsonic-advanced/), you will need to make sure that you create a `decodable` credential for your login user within the admin control panel.
+Once installed, run the application and sign in to your music server with the following details. If you are using [airsonic-advanced](https://github.com/airsonic-advanced/airsonic-advanced), you will need to make sure that you create a `decodable` credential for your login user within the admin control panel.
 
 - Server - `e.g. http://localhost:4040/`
 - User name - `e.g. admin`
