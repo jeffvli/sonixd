@@ -174,6 +174,29 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
   );
 };
 
+export const getDownloadUrl = (id: string, useLegacyAuth = legacyAuth) => {
+  if (useLegacyAuth) {
+    return (
+      `${API_BASE_URL}/download` +
+      `?id=${id}` +
+      `&u=${auth.username}` +
+      `&p=${auth.password}` +
+      `&v=1.15.0` +
+      `&c=sonixd`
+    );
+  }
+
+  return (
+    `${API_BASE_URL}/download` +
+    `?id=${id}` +
+    `&u=${auth.username}` +
+    `&s=${auth.salt}` +
+    `&t=${auth.hash}` +
+    `&v=1.15.0` +
+    `&c=sonixd`
+  );
+};
+
 const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
   if (useLegacyAuth) {
     return (
@@ -254,8 +277,14 @@ export const getStream = async (id: string) => {
   return data;
 };
 
-export const getDownload = async (id: string) => {
-  const { data } = await api.get(`/download?id=${id}`);
+export const getDownload = async (options: { id: string }) => {
+  const { data } = await api.get(`/download?id=${options.id}`, {
+    responseType: 'blob',
+    onDownloadProgress: (progressEvent) => {
+      const percentCompleted = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
+      console.log(`percentCompleted`, percentCompleted);
+    },
+  });
   return data;
 };
 
@@ -823,6 +852,51 @@ export const getGenres = async () => {
     index,
     uniqueId: nanoid(),
   }));
+};
+
+export const search2 = async (options: {
+  query: string;
+  artistCount?: number;
+  artistOffset?: 0;
+  albumCount?: number;
+  albumOffset?: 0;
+  songCount?: number;
+  songOffset?: 0;
+  musicFolderId?: string | number;
+}) => {
+  const { data } = await api.get(`/search2`, { params: options });
+
+  const results = data.searchResult3;
+
+  return {
+    artist: (results.artist || []).map((entry: any, index: any) => ({
+      ...entry,
+      image: getCoverArtUrl(entry, legacyAuth, 350),
+      starred: entry.starred || undefined,
+      type: 'artist',
+      index,
+      uniqueId: nanoid(),
+    })),
+    album: (results.album || []).map((entry: any, index: any) => ({
+      ...entry,
+      albumId: entry.id,
+      image: getCoverArtUrl(entry, legacyAuth, 350),
+      starred: entry.starred || undefined,
+      type: 'album',
+      isDir: false,
+      index,
+      uniqueId: nanoid(),
+    })),
+    song: (results.song || []).map((entry: any, index: any) => ({
+      ...entry,
+      streamUrl: getStreamUrl(entry.id, legacyAuth),
+      image: getCoverArtUrl(entry, legacyAuth, 150),
+      type: 'music',
+      starred: entry.starred || undefined,
+      index,
+      uniqueId: nanoid(),
+    })),
+  };
 };
 
 export const search3 = async (options: {

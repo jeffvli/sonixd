@@ -1,16 +1,18 @@
 import React from 'react';
 import _ from 'lodash';
+import { clipboard, shell } from 'electron';
 import settings from 'electron-settings';
-import { ButtonToolbar } from 'rsuite';
+import { ButtonToolbar, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import {
+  DownloadButton,
   FavoriteButton,
   PlayAppendButton,
   PlayAppendNextButton,
   PlayButton,
 } from '../shared/ToolbarButtons';
-import { getAlbum, star, unstar } from '../../api/api';
+import { getAlbum, getDownloadUrl, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   appendPlayQueue,
@@ -38,10 +40,11 @@ import {
   filterPlayQueue,
   formatDate,
   formatDuration,
+  getAlbumSize,
   getPlayedSongsNotification,
   isCached,
 } from '../../shared/utils';
-import { StyledTagLink } from '../shared/styled';
+import { StyledButton, StyledPopover, StyledTagLink } from '../shared/styled';
 import { setActive } from '../../redux/albumSlice';
 import {
   BlurredBackground,
@@ -169,6 +172,23 @@ const AlbumView = ({ ...rest }: any) => {
 
         return oldData;
       });
+    }
+  };
+
+  const handleDownload = (type: 'copy' | 'download') => {
+    // If not Navidrome (this assumes Airsonic), then we need to use a song's parent
+    // to download. This is because Airsonic does not support downloading via album ids
+    // that are provided by /getAlbum or /getAlbumList2
+
+    if (data.song[0]?.parent) {
+      if (type === 'download') {
+        shell.openExternal(getDownloadUrl(data.song[0].parent));
+      } else {
+        clipboard.writeText(getDownloadUrl(data.song[0].parent));
+        notifyToast('info', 'Download links copied!');
+      }
+    } else {
+      notifyToast('warning', 'No parent album found');
     }
   };
 
@@ -329,6 +349,27 @@ const AlbumView = ({ ...rest }: any) => {
                       size="lg"
                       onClick={() => handlePlayAppend('later')}
                     />
+                    <Whisper
+                      trigger="hover"
+                      placement="bottom"
+                      delay={250}
+                      enterable
+                      preventOverflow
+                      speaker={
+                        <StyledPopover>
+                          <ButtonToolbar>
+                            <StyledButton onClick={() => handleDownload('download')}>
+                              Download
+                            </StyledButton>
+                            <StyledButton onClick={() => handleDownload('copy')}>
+                              Copy to clipboard
+                            </StyledButton>
+                          </ButtonToolbar>
+                        </StyledPopover>
+                      }
+                    >
+                      <DownloadButton size="lg" downloadSize={getAlbumSize(data.song)} />
+                    </Whisper>
                     <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
                   </ButtonToolbar>
                 </div>
