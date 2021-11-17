@@ -14,8 +14,8 @@ import {
   getAlbum,
   getPlaylist,
   deletePlaylist,
-  getAllArtistSongs,
-  getAllDirectorySongs,
+  getArtistSongs,
+  getDirectorySongs,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -120,7 +120,7 @@ export const GlobalContextMenu = () => {
   const [indexToMoveTo, setIndexToMoveTo] = useState(0);
   const playlistPickerContainerRef = useRef(null);
 
-  const { data: playlists }: any = useQuery(['playlists', 'name'], () => getPlaylists('name'));
+  const { data: playlists }: any = useQuery(['playlists'], () => getPlaylists());
 
   const handlePlay = async () => {
     dispatch(setContextMenu({ show: false }));
@@ -135,7 +135,7 @@ export const GlobalContextMenu = () => {
         });
 
       for (let i = 0; i < folders.length; i += 1) {
-        promises.push(getAllDirectorySongs({ id: folders[i].id }));
+        promises.push(getDirectorySongs({ id: folders[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -172,7 +172,7 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getAlbum(multiSelect.selected[i].id));
+        promises.push(getAlbum({ id: multiSelect.selected[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -191,7 +191,7 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getAllArtistSongs(multiSelect.selected[i].id));
+        promises.push(getArtistSongs({ id: multiSelect.selected[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -223,7 +223,7 @@ export const GlobalContextMenu = () => {
         });
 
       for (let i = 0; i < folders.length; i += 1) {
-        promises.push(getAllDirectorySongs({ id: multiSelect.selected[i].id }));
+        promises.push(getDirectorySongs({ id: multiSelect.selected[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -252,7 +252,7 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getAlbum(multiSelect.selected[i].id));
+        promises.push(getAlbum({ id: multiSelect.selected[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -266,7 +266,7 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getAllArtistSongs(multiSelect.selected[i].id));
+        promises.push(getArtistSongs({ id: multiSelect.selected[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -298,7 +298,7 @@ export const GlobalContextMenu = () => {
     notifyToast(
       'success',
       `Added ${songCount} song(s) to playlist ${
-        playlists.find((pl: any) => pl.id === playlistId)?.name
+        playlists.find((pl: any) => pl.id === playlistId)?.title
       }`,
       <>
         <StyledButton
@@ -332,7 +332,7 @@ export const GlobalContextMenu = () => {
           });
 
         for (let i = 0; i < folders.length; i += 1) {
-          promises.push(getAllDirectorySongs({ id: multiSelect.selected[i].id }));
+          promises.push(getDirectorySongs({ id: multiSelect.selected[i].id }));
         }
 
         const folderSongs = await Promise.all(promises);
@@ -363,7 +363,7 @@ export const GlobalContextMenu = () => {
         }
       } else if (misc.contextMenu.type === 'album') {
         for (let i = 0; i < multiSelect.selected.length; i += 1) {
-          promises.push(getAlbum(multiSelect.selected[i].id));
+          promises.push(getAlbum({ id: multiSelect.selected[i].id }));
         }
 
         res = await Promise.all(promises);
@@ -700,7 +700,7 @@ export const GlobalContextMenu = () => {
                       data={playlists}
                       placement="autoVerticalStart"
                       virtualized
-                      labelKey="name"
+                      labelKey="title"
                       valueKey="id"
                       width={200}
                       onChange={(e: any) => setSelectedPlaylistId(e)}

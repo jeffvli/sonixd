@@ -220,7 +220,7 @@ const configState: ConfigPage = {
           },
           {
             id: 'Title',
-            dataKey: 'name',
+            dataKey: 'title',
             alignment: 'left',
             flexGrow: 5,
             label: 'Title',
@@ -276,11 +276,11 @@ const configState: ConfigPage = {
             label: 'CoverArt',
           },
           {
-            id: 'Name',
-            dataKey: 'name',
+            id: 'Title',
+            dataKey: 'title',
             alignment: 'left',
             flexGrow: 5,
-            label: 'Name',
+            label: 'Title',
           },
           {
             id: 'Albums',
@@ -311,11 +311,11 @@ const configState: ConfigPage = {
             label: '#',
           },
           {
-            id: 'Name',
-            dataKey: 'name',
+            id: 'Title',
+            dataKey: 'title',
             alignment: 'left',
             flexGrow: 5,
-            label: 'Name',
+            label: 'Tame',
           },
           {
             id: 'Albums',

@@ -476,7 +476,7 @@ export const albumColumnList = [
     label: 'Title',
     value: {
       id: 'Title',
-      dataKey: 'name',
+      dataKey: 'title',
       alignment: 'left',
       resizable: true,
       width: 300,
@@ -594,7 +594,7 @@ export const albumColumnListAuto = [
     label: 'Title',
     value: {
       id: 'Title',
-      dataKey: 'name',
+      dataKey: 'title',
       alignment: 'left',
       flexGrow: 5,
       label: 'Title',
@@ -752,7 +752,7 @@ export const playlistColumnList = [
     label: 'Title',
     value: {
       id: 'Title',
-      dataKey: 'name',
+      dataKey: 'title',
       alignment: 'left',
       resizable: true,
       width: 300,
@@ -879,7 +879,7 @@ export const playlistColumnListAuto = [
     label: 'Title',
     value: {
       id: 'Title',
-      dataKey: 'name',
+      dataKey: 'title',
       alignment: 'left',
       flexGrow: 5,
       label: 'Title',
@@ -956,14 +956,14 @@ export const artistColumnList = [
     },
   },
   {
-    label: 'Name',
+    label: 'Title',
     value: {
-      id: 'Name',
-      dataKey: 'name',
+      id: 'Title',
+      dataKey: 'title',
       alignment: 'left',
       resizable: true,
       width: 300,
-      label: 'Name',
+      label: 'Title',
     },
   },
 ];
@@ -1012,13 +1012,13 @@ export const artistColumnListAuto = [
     },
   },
   {
-    label: 'Name',
+    label: 'Title',
     value: {
-      id: 'Name',
-      dataKey: 'name',
+      id: 'Title',
+      dataKey: 'title',
       alignment: 'left',
       flexGrow: 5,
-      label: 'Name',
+      label: 'Title',
     },
   },
 ];
@@ -1028,13 +1028,13 @@ export const artistColumnPicker = [
   { label: 'Album Count' },
   { label: 'CoverArt' },
   { label: 'Favorite' },
-  { label: 'Name' },
+  { label: 'Title' },
 ];
 
 export const genreColumnPicker = [
   { label: '#' },
   { label: 'Album Count' },
-  { label: 'Name' },
+  { label: 'Title' },
   { label: 'Track Count' },
 ];
 
@@ -1062,14 +1062,14 @@ export const genreColumnList = [
     },
   },
   {
-    label: 'Name',
+    label: 'Title',
     value: {
-      id: 'Name',
-      dataKey: 'name',
+      id: 'Title',
+      dataKey: 'title',
       alignment: 'left',
       resizable: true,
       width: 300,
-      label: 'Name',
+      label: 'Title',
     },
   },
   {
@@ -1108,17 +1108,17 @@ export const genreColumnListAuto = [
     },
   },
   {
-    label: 'Name',
+    label: 'Title',
     value: {
-      id: 'Name',
-      dataKey: 'name',
+      id: 'Title',
+      dataKey: 'title',
       alignment: 'left',
       flexGrow: 5,
-      label: 'Name',
+      label: 'Title',
     },
   },
   {
-    label: 'Tracks',
+    label: 'Track Count',
     value: {
       id: 'Tracks',
       dataKey: 'songCount',

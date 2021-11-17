@@ -164,7 +164,7 @@ const SearchView = () => {
             data={data.artist}
             cardTitle={{
               prefix: '/library/artist',
-              property: 'name',
+              property: 'title',
               urlProperty: 'id',
             }}
             cardSubtitle={{
@@ -181,7 +181,7 @@ const SearchView = () => {
             data={data.album}
             cardTitle={{
               prefix: '/library/album',
-              property: 'name',
+              property: 'title',
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
