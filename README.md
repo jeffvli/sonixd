@@ -53,7 +53,21 @@ You can install sonixd by downloading the [latest release](https://github.com/je
 - Windows: `.exe`
 - Linux: `.AppImage`
 - MacOS: `.dmg`
+---
+### Arch Linux
 
+There is an AUR package of the latest AppImage release available [here](https://aur.archlinux.org/packages/sonixd-appimage).
+
+To install it you can use your favourite AUR package manager and install the package: `sonixd-appimage`
+
+For example using `yay`:
+```
+yay -S sonixd-appimage
+```
+
+If you encounter any problems please comment on the [AUR](https://aur.archlinux.org/packages/sonixd-appimage) or contact the [maintainer](mailto:robin@blckct.io) directly before you open an issue here.
+
+---
 Once installed, run the application and sign in to your music server with the following details. If you are using [airsonic-advanced](https://github.com/airsonic-advanced/airsonic-advanced), you will need to make sure that you create a `decodable` credential for your login user within the admin control panel.
 
 - Server - `e.g. http://localhost:4040/`
