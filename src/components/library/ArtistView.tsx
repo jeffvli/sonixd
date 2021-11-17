@@ -16,7 +16,7 @@ import {
 } from '../shared/ToolbarButtons';
 import {
   getAlbum,
-  getAllArtistSongs,
+  getArtistSongs,
   getArtist,
   getArtistInfo,
   getDownloadUrl,
@@ -75,17 +75,17 @@ const ArtistView = ({ ...rest }: any) => {
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
-    getArtist(artistId)
+    getArtist({ id: artistId })
   );
   const {
     isLoading: isLoadingAI,
     isError: isErrorAI,
     data: artistInfo,
     error: errorAI,
-  }: any = useQuery(['artistInfo', artistId], () => getArtistInfo(artistId, 8));
+  }: any = useQuery(['artistInfo', artistId], () => getArtistInfo({ id: artistId, count: 8 }));
 
   const filteredData = useSearchQuery(misc.searchQuery, data?.album, [
-    'name',
+    'title',
     'artist',
     'genre',
     'year',
@@ -125,7 +125,7 @@ const ArtistView = ({ ...rest }: any) => {
   };
 
   const handlePlay = async () => {
-    const res = await getAllArtistSongs(data.id);
+    const res = await getArtistSongs({ id: data.id });
     const songs = filterPlayQueue(config.playback.filters, res);
 
     if (songs.entries.length > 0) {
@@ -141,7 +141,7 @@ const ArtistView = ({ ...rest }: any) => {
   };
 
   const handlePlayAppend = async (type: 'next' | 'later') => {
-    const res = await getAllArtistSongs(data.id);
+    const res = await getArtistSongs({ id: data.id });
     const songs = filterPlayQueue(config.playback.filters, res);
 
     if (songs.entries.length > 0) {
@@ -189,11 +189,11 @@ const ArtistView = ({ ...rest }: any) => {
 
       for (let i = 0; i < data.album.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        const albumRes = await getAlbum(data.album[i].id);
+        const albumRes = await getAlbum({ id: data.album[i].id });
         if (albumRes.song[0]?.parent) {
           downloadUrls.push(getDownloadUrl(albumRes.song[0].parent));
         } else {
-          notifyToast('warning', `[${albumRes.name}] No parent album found`);
+          notifyToast('warning', `[${albumRes.title}] No parent album found`);
         }
       }
 
@@ -295,7 +295,7 @@ const ArtistView = ({ ...rest }: any) => {
               id: data.id,
             }}
             imageHeight={185}
-            title={data.name}
+            title={data.title}
             showTitleTooltip
             subtitle={
               <>
@@ -393,7 +393,7 @@ const ArtistView = ({ ...rest }: any) => {
                                     }
                                   }}
                                 >
-                                  {artist.name}
+                                  {artist.title}
                                 </StyledTag>
                               ))}
                             </TagGroup>
@@ -455,7 +455,7 @@ const ArtistView = ({ ...rest }: any) => {
               data={misc.searchQuery !== '' ? filteredData : data.album}
               cardTitle={{
                 prefix: '/library/album',
-                property: 'name',
+                property: 'title',
                 urlProperty: 'albumId',
               }}
               cardSubtitle={{

@@ -28,22 +28,22 @@ const Dashboard = () => {
 
   const { isLoading: isLoadingRecent, data: recentAlbums }: any = useQuery(
     ['recentAlbums', musicFolder],
-    () => getAlbums({ type: 'recent', size: 20, musicFolderId: musicFolder })
+    () => getAlbums({ type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder })
   );
 
   const { isLoading: isLoadingNewest, data: newestAlbums }: any = useQuery(
     ['newestAlbums', musicFolder],
-    () => getAlbums({ type: 'newest', size: 20, musicFolderId: musicFolder })
+    () => getAlbums({ type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder })
   );
 
   const { isLoading: isLoadingRandom, data: randomAlbums }: any = useQuery(
     ['randomAlbums', musicFolder],
-    () => getAlbums({ type: 'random', size: 20, musicFolderId: musicFolder })
+    () => getAlbums({ type: 'random', size: 20, offset: 0, musicFolderId: musicFolder })
   );
 
   const { isLoading: isLoadingFrequent, data: frequentAlbums }: any = useQuery(
     ['frequentAlbums', musicFolder],
-    () => getAlbums({ type: 'frequent', size: 20, musicFolderId: musicFolder })
+    () => getAlbums({ type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder })
   );
 
   const handleFavorite = async (rowData: any) => {
@@ -51,33 +51,33 @@ const Dashboard = () => {
       await star(rowData.id, 'album');
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = Date.now();
+          oldData[index].starred = Date.now();
         });
 
         return oldData;
       });
       queryClient.setQueryData(['newestAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = Date.now();
+          oldData[index].starred = Date.now();
         });
 
         return oldData;
       });
       queryClient.setQueryData(['randomAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = Date.now();
+          oldData[index].starred = Date.now();
         });
 
         return oldData;
       });
       queryClient.setQueryData(['frequentAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = Date.now();
+          oldData[index].starred = Date.now();
         });
 
         return oldData;
@@ -86,33 +86,33 @@ const Dashboard = () => {
       await unstar(rowData.id, 'album');
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = undefined;
+          oldData[index].starred = undefined;
         });
 
         return oldData;
       });
       queryClient.setQueryData(['newestAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = undefined;
+          oldData[index].starred = undefined;
         });
 
         return oldData;
       });
       queryClient.setQueryData(['randomAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = undefined;
+          oldData[index].starred = undefined;
         });
 
         return oldData;
       });
       queryClient.setQueryData(['frequentAlbums', musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData.album[index].starred = undefined;
+          oldData[index].starred = undefined;
         });
 
         return oldData;
@@ -134,10 +134,10 @@ const Dashboard = () => {
         <>
           <ScrollingMenu
             title="Recently Played"
-            data={recentAlbums.album}
+            data={recentAlbums}
             cardTitle={{
               prefix: '/library/album',
-              property: 'name',
+              property: 'title',
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
@@ -158,10 +158,10 @@ const Dashboard = () => {
 
           <ScrollingMenu
             title="Recently Added"
-            data={newestAlbums.album}
+            data={newestAlbums}
             cardTitle={{
               prefix: '/library/album',
-              property: 'name',
+              property: 'title',
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
@@ -182,10 +182,10 @@ const Dashboard = () => {
 
           <ScrollingMenu
             title="Random"
-            data={randomAlbums.album}
+            data={randomAlbums}
             cardTitle={{
               prefix: '/library/album',
-              property: 'name',
+              property: 'title',
               urlProperty: 'albumId',
             }}
             cardSubtitle={{
@@ -206,10 +206,10 @@ const Dashboard = () => {
 
           <ScrollingMenu
             title="Most Played"
-            data={frequentAlbums.album}
+            data={frequentAlbums}
             cardTitle={{
               prefix: '/library/album',
-              property: 'name',
+              property: 'title',
               urlProperty: 'albumId',
             }}
             cardSubtitle={{

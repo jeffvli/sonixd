@@ -29,13 +29,12 @@ const PlaylistList = () => {
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
   const playlistTriggerRef = useRef<any>();
-  const [sortBy] = useState('name');
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
-  const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists', sortBy], () =>
-    getPlaylists(sortBy)
+  const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists'], () =>
+    getPlaylists()
   );
-  const filteredData = useSearchQuery(misc.searchQuery, playlists, ['name', 'comment', 'owner']);
+  const filteredData = useSearchQuery(misc.searchQuery, playlists, ['title', 'comment', 'owner']);
 
   const handleCreatePlaylist = async (name: string) => {
     try {
@@ -174,7 +173,7 @@ const PlaylistList = () => {
           data={misc.searchQuery === '' ? playlists : filteredData}
           cardTitle={{
             prefix: 'playlist',
-            property: 'name',
+            property: 'title',
             urlProperty: 'id',
           }}
           cardSubtitle={{

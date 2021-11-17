@@ -9,7 +9,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
-import { getAlbumsDirect, getAllAlbums, getGenres, star, unstar } from '../../api/api';
+import { getAlbums, getGenres, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -56,16 +56,18 @@ const AlbumList = () => {
     ['albumList', album.active.filter, musicFolder],
     () =>
       album.active.filter === 'random'
-        ? getAlbumsDirect({
+        ? getAlbums({
             type: 'random',
             size: config.lookAndFeel.gridView.cardSize,
+            offset: 0,
             musicFolderId: musicFolder,
           })
-        : getAllAlbums({
+        : getAlbums({
             type: album.active.filter,
             size: 500,
             offset: 0,
             musicFolderId: musicFolder,
+            recursive: true,
           }),
     {
       cacheTime: 3600000, // Stay in cache for 1 hour
@@ -77,8 +79,8 @@ const AlbumList = () => {
     return res.map((genre: any) => {
       if (genre.albumCount !== 0) {
         return {
-          label: `${genre.value} (${genre.albumCount})`,
-          value: genre.value,
+          label: `${genre.title} (${genre.albumCount})`,
+          value: genre.title,
           role: 'Genre',
         };
       }
@@ -86,7 +88,7 @@ const AlbumList = () => {
     });
   });
   const filteredData = useSearchQuery(misc.searchQuery, albums, [
-    'name',
+    'title',
     'artist',
     'genre',
     'year',
@@ -228,7 +230,7 @@ const AlbumList = () => {
           data={misc.searchQuery !== '' ? filteredData : albums}
           cardTitle={{
             prefix: '/library/album',
-            property: 'name',
+            property: 'title',
             urlProperty: 'albumId',
           }}
           cardSubtitle={{

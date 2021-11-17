@@ -45,7 +45,7 @@ const ArtistList = () => {
       staleTime: Infinity, // Only allow manual refresh
     }
   );
-  const filteredData = useSearchQuery(misc.searchQuery, artists, ['name']);
+  const filteredData = useSearchQuery(misc.searchQuery, artists, ['title']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -151,7 +151,7 @@ const ArtistList = () => {
           data={misc.searchQuery !== '' ? filteredData : artists}
           cardTitle={{
             prefix: '/library/artist',
-            property: 'name',
+            property: 'title',
             urlProperty: 'id',
           }}
           cardSubtitle={{

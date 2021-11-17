@@ -82,8 +82,8 @@ const NowPlayingMiniView = () => {
     const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
     return genresOrderedBySongCount.map((genre: any) => {
       return {
-        label: `${genre.value} (${genre.songCount})`,
-        value: genre.value,
+        label: `${genre.title} (${genre.songCount})`,
+        title: genre.title,
         role: 'Genre',
       };
     });
@@ -190,7 +190,7 @@ const NowPlayingMiniView = () => {
 
     const cleanedSongs = filterPlayQueue(
       config.playback.filters,
-      res.song.filter((song: any) => {
+      res.filter((song: any) => {
         // Remove invalid songs that may break the player
         return song.bitRate && song.duration;
       })
@@ -210,7 +210,7 @@ const NowPlayingMiniView = () => {
         notifyToast(
           'info',
           getPlayedSongsNotification({
-            original: res.song.length,
+            original: res.length,
             filtered: cleanedSongs.count.filtered,
             type: 'play',
           })
@@ -224,7 +224,7 @@ const NowPlayingMiniView = () => {
         notifyToast(
           'info',
           getPlayedSongsNotification({
-            original: res.song.length,
+            original: res.length,
             filtered: cleanedSongs.count.filtered,
             type: 'add',
           })
@@ -238,7 +238,7 @@ const NowPlayingMiniView = () => {
         notifyToast(
           'info',
           getPlayedSongsNotification({
-            original: res.song.length,
+            original: res.length,
             filtered: cleanedSongs.count.filtered,
             type: 'add',
           })
@@ -300,7 +300,8 @@ const NowPlayingMiniView = () => {
                       <Whisper
                         ref={autoPlaylistTriggerRef}
                         placement="autoVertical"
-                        trigger="none"
+                        trigger="click"
+                        enterable
                         speaker={
                           <StyledPopover>
                             <ControlLabel>How many tracks? (1-500)*</ControlLabel>
@@ -356,6 +357,8 @@ const NowPlayingMiniView = () => {
                                 container={() => genrePickerContainerRef.current}
                                 data={!isLoadingGenres ? genres : []}
                                 value={randomPlaylistGenre}
+                                valueKey="title"
+                                labelKey="label"
                                 virtualized
                                 onChange={(e: string) => setRandomPlaylistGenre(e)}
                               />
@@ -370,7 +373,7 @@ const NowPlayingMiniView = () => {
                                 data={!isLoadingMusicFolders ? musicFolders : []}
                                 defaultValue={musicFolder}
                                 valueKey="id"
-                                labelKey="name"
+                                labelKey="title"
                                 onChange={(e: any) => {
                                   setMusicFolder(e);
                                 }}
@@ -411,15 +414,7 @@ const NowPlayingMiniView = () => {
                           </StyledPopover>
                         }
                       >
-                        <AutoPlaylistButton
-                          size="xs"
-                          noText
-                          onClick={() =>
-                            autoPlaylistTriggerRef.current.state.isOverlayShown
-                              ? autoPlaylistTriggerRef.current.close()
-                              : autoPlaylistTriggerRef.current.open()
-                          }
-                        />
+                        <AutoPlaylistButton size="xs" noText />
                       </Whisper>
                       <MoveTopButton
                         size="xs"

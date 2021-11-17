@@ -97,8 +97,8 @@ const NowPlayingView = () => {
     const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
     return genresOrderedBySongCount.map((genre: any) => {
       return {
-        label: `${genre.value} (${genre.songCount})`,
-        value: genre.value,
+        label: `${genre.title} (${genre.songCount})`,
+        title: genre.title,
         role: 'Genre',
       };
     });
@@ -201,7 +201,7 @@ const NowPlayingView = () => {
 
     const cleanedSongs = filterPlayQueue(
       config.playback.filters,
-      res.song.filter((song: any) => {
+      res.filter((song: any) => {
         // Remove invalid songs that may break the player
         return song.bitRate && song.duration;
       })
@@ -221,7 +221,7 @@ const NowPlayingView = () => {
         notifyToast(
           'info',
           getPlayedSongsNotification({
-            original: res.song.length,
+            original: res.length,
             filtered: cleanedSongs.count.filtered,
             type: 'play',
           })
@@ -235,7 +235,7 @@ const NowPlayingView = () => {
         notifyToast(
           'info',
           getPlayedSongsNotification({
-            original: res.song.length,
+            original: res.length,
             filtered: cleanedSongs.count.filtered,
             type: 'add',
           })
@@ -249,7 +249,7 @@ const NowPlayingView = () => {
         notifyToast(
           'info',
           getPlayedSongsNotification({
-            original: res.song.length,
+            original: res.length,
             filtered: cleanedSongs.count.filtered,
             type: 'add',
           })
@@ -310,7 +310,8 @@ const NowPlayingView = () => {
                 <Whisper
                   ref={autoPlaylistTriggerRef}
                   placement="autoVertical"
-                  trigger="none"
+                  trigger="click"
+                  enterable
                   speaker={
                     <StyledPopover>
                       <ControlLabel>How many tracks? (1-500)*</ControlLabel>
@@ -367,6 +368,8 @@ const NowPlayingView = () => {
                           container={() => genrePickerContainerRef.current}
                           data={genres}
                           value={randomPlaylistGenre}
+                          valueKey="title"
+                          labelKey="label"
                           virtualized
                           onChange={(e: string) => setRandomPlaylistGenre(e)}
                         />
@@ -381,7 +384,7 @@ const NowPlayingView = () => {
                           data={musicFolders}
                           defaultValue={musicFolder}
                           valueKey="id"
-                          labelKey="name"
+                          labelKey="title"
                           onChange={(e: any) => {
                             setMusicFolder(e);
                           }}
@@ -421,14 +424,7 @@ const NowPlayingView = () => {
                     </StyledPopover>
                   }
                 >
-                  <AutoPlaylistButton
-                    size="sm"
-                    onClick={() =>
-                      autoPlaylistTriggerRef.current.state.isOverlayShown
-                        ? autoPlaylistTriggerRef.current.close()
-                        : autoPlaylistTriggerRef.current.open()
-                    }
-                  />
+                  <AutoPlaylistButton size="sm" />
                 </Whisper>
                 <ButtonGroup>
                   <MoveTopButton
