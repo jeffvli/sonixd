@@ -135,7 +135,7 @@ const PlaylistView = ({ ...rest }) => {
   useEffect(() => {
     // Set the local playlist data on any changes
     dispatch(setPlaylistData(data?.song));
-    setEditName(data?.name);
+    setEditName(data?.title);
     setEditDescription(data?.comment);
     setEditPublic(data?.public);
   }, [data, dispatch]);
@@ -402,7 +402,7 @@ const PlaylistView = ({ ...rest }) => {
             id: data.id,
           }}
           imageHeight={184}
-          title={data.name}
+          title={data.title}
           subtitle={
             <div>
               <PageHeaderSubtitleDataLine $top>

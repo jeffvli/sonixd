@@ -50,10 +50,10 @@ const StarredView = () => {
       ? data?.album
       : data?.artist,
     favorite.active.tab === 'tracks'
-      ? ['title', 'artist', 'album', 'name', 'genre']
+      ? ['title', 'artist', 'album', 'genre']
       : favorite.active.tab === 'albums'
-      ? ['name', 'artist', 'genre', 'year']
-      : ['name']
+      ? ['title', 'artist', 'genre', 'year']
+      : ['title']
   );
 
   let timeout: any = null;
@@ -230,7 +230,7 @@ const StarredView = () => {
                   data={misc.searchQuery !== '' ? filteredData : data.album}
                   cardTitle={{
                     prefix: '/library/album',
-                    property: 'name',
+                    property: 'title',
                     urlProperty: 'albumId',
                   }}
                   cardSubtitle={{
@@ -279,7 +279,7 @@ const StarredView = () => {
                   data={misc.searchQuery !== '' ? filteredData : data.artist}
                   cardTitle={{
                     prefix: '/library/artist',
-                    property: 'name',
+                    property: 'title',
                     urlProperty: 'id',
                   }}
                   cardSubtitle={{

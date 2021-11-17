@@ -68,7 +68,7 @@ const AlbumView = ({ ...rest }: any) => {
   const albumId = rest.id ? rest.id : id;
 
   const { isLoading, isError, data, error }: any = useQuery(['album', albumId], () =>
-    getAlbum(albumId)
+    getAlbum({ id: albumId })
   );
   const filteredData = useSearchQuery(misc.searchQuery, data?.song, [
     'title',
@@ -240,7 +240,7 @@ const AlbumView = ({ ...rest }: any) => {
               id: data.albumId,
             }}
             imageHeight={200}
-            title={data.name}
+            title={data.title}
             showTitleTooltip
             subtitle={
               <div>

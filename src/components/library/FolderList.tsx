@@ -61,7 +61,7 @@ const FolderList = () => {
   const filteredData = useSearchQuery(
     misc.searchQuery,
     folderData?.id ? folderData?.child : indexData,
-    ['name', 'title', 'artist', 'album', 'year', 'genre', 'path']
+    ['title', 'artist', 'album', 'year', 'genre', 'path']
   );
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const FolderList = () => {
       const selected = folderData?.id ? folderData?.child : indexData?.child;
       dispatch(
         setPlayQueueByRowClick({
-          entries: selected.filter((entry: any) => entry.isDir === false),
+          entries: selected.filter((entry: any) => entry?.isDir === false),
           currentIndex: rowData.index,
           currentSongId: rowData.id,
           uniqueSongId: rowData.uniqueId,
@@ -149,8 +149,8 @@ const FolderList = () => {
           header={
             <GenericPageHeader
               title={`${
-                folderData?.name
-                  ? folderData.name
+                folderData?.title
+                  ? folderData.title
                   : isLoadingFolderData
                   ? 'Loading...'
                   : 'Select a folder'
@@ -167,7 +167,7 @@ const FolderList = () => {
                         data={musicFolders}
                         defaultValue={musicFolder}
                         valueKey="id"
-                        labelKey="name"
+                        labelKey="title"
                         onChange={(e: any) => {
                           setMusicFolder(e);
                         }}

@@ -27,7 +27,7 @@ const GenreList = () => {
     const res = await getGenres();
     return _.orderBy(res, 'songCount', 'desc');
   });
-  const filteredData = useSearchQuery(misc.searchQuery, genres, ['value']);
+  const filteredData = useSearchQuery(misc.searchQuery, genres, ['title']);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -48,12 +48,12 @@ const GenreList = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    dispatch(setActive({ ...album.active, filter: rowData.value }));
+    dispatch(setActive({ ...album.active, filter: rowData.title }));
     dispatch(clearSelected());
 
     // Needs a small delay or the filter won't set properly when navigating to the album list
     setTimeout(() => {
-      history.push(`/library/album?sortType=${rowData.value}`);
+      history.push(`/library/album?sortType=${rowData.title}`);
     }, 50);
   };
 
