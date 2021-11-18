@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
 import { moveSelectedToIndex } from '../shared/utils';
+import { Server } from '../api/types';
 
 const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
@@ -41,6 +42,7 @@ export interface ConfigPage {
       alignment: string | 'flex-start' | 'center';
     };
   };
+  serverType: Server;
 }
 
 interface SortColumn {
@@ -126,6 +128,7 @@ const initialState: ConfigPage = {
       alignment: String(parsedSettings.gridAlignment),
     },
   },
+  serverType: parsedSettings.serverType,
 };
 
 const configSlice = createSlice({
