@@ -13,7 +13,7 @@ import { FolderSelection } from '../redux/folderSlice';
 import { FavoritePage } from '../redux/favoriteSlice';
 import App from '../App';
 import { AlbumPage } from '../redux/albumSlice';
-import { Server } from '../api/types';
+import { Server } from '../types';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
