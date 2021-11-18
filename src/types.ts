@@ -13,7 +13,44 @@ export enum Item {
 }
 
 export type ServerType = Server.Subsonic | Server.Jellyfin;
-export type APIEndpoints = 'getPlaylist' | 'getPlaylists';
+
+export type APIEndpoints =
+  | 'getPlaylist'
+  | 'getPlaylists'
+  | 'getStarred'
+  | 'getAlbum'
+  | 'getAlbums'
+  | 'getRandomSongs'
+  | 'getArtist'
+  | 'getArtists'
+  | 'getArtistInfo'
+  | 'getArtistSongs'
+  | 'startScan'
+  | 'getScanStatus'
+  | 'star'
+  | 'unstar'
+  | 'batchStar'
+  | 'batchUnstar'
+  | 'setRating'
+  | 'getSimilarSongs'
+  | 'updatePlaylistSongs'
+  | 'updatePlaylistSongsLg'
+  | 'deletePlaylist'
+  | 'createPlaylist'
+  | 'updatePlaylist'
+  | 'updatePlaylistSongsLg'
+  | 'deletePlaylist'
+  | 'createPlaylist'
+  | 'updatePlaylist'
+  | 'clearPlaylist'
+  | 'getGenres'
+  | 'getSearch'
+  | 'scrobble'
+  | 'getIndexes'
+  | 'getMusicFolders'
+  | 'getMusicDirectory'
+  | 'getMusicDirectorySongs'
+  | 'getDownloadUrl';
 
 export interface Album {
   id: string;

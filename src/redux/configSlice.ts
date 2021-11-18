@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
 import { moveSelectedToIndex } from '../shared/utils';
-import { Server } from '../api/types';
+import { Server } from '../types';
 
 const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 

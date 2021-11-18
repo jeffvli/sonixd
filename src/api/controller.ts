@@ -11,6 +11,7 @@ import {
   getArtistInfo,
   getArtists,
   getArtistSongs,
+  getDownloadUrl,
   getGenres,
   getIndexes,
   getMusicDirectory,
@@ -23,6 +24,8 @@ import {
   getSearch,
   getSimilarSongs,
   getStarred,
+  scrobble,
+  setRating,
   star,
   startScan,
   unstar,
@@ -31,7 +34,7 @@ import {
   updatePlaylistSongsLg,
 } from './api';
 import { getPlaylist as jfGetPlaylist, getPlaylists as jfGetPlaylists } from './jellyfinApi';
-import { APIEndpoints, ServerType } from './types';
+import { APIEndpoints, ServerType } from '../types';
 
 // prettier-ignore
 const endpoints = [
@@ -51,6 +54,7 @@ const endpoints = [
   { id: 'unstar', endpoint: { subsonic: unstar, jellyfin: undefined } },
   { id: 'batchStar', endpoint: { subsonic: batchStar, jellyfin: undefined } },
   { id: 'batchUnstar', endpoint: { subsonic: batchUnstar, jellyfin: undefined } },
+  { id: 'setRating', endpoint: { subsonic: setRating, jellyfin: undefined } },
   { id: 'getSimilarSongs', endpoint: { subsonic: getSimilarSongs, jellyfin: undefined } },
   { id: 'updatePlaylistSongs', endpoint: { subsonic: updatePlaylistSongs, jellyfin: undefined } },
   { id: 'updatePlaylistSongsLg', endpoint: { subsonic: updatePlaylistSongsLg, jellyfin: undefined } },
@@ -60,10 +64,12 @@ const endpoints = [
   { id: 'clearPlaylist', endpoint: { subsonic: clearPlaylist, jellyfin: undefined } },
   { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: undefined } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: undefined } },
+  { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: undefined } },
   { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: undefined } },
   { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: undefined } },
   { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: undefined } },
   { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: undefined } },
+  { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: undefined } },
 ];
 
 export const apiController = async (options: {
@@ -71,14 +77,13 @@ export const apiController = async (options: {
   endpoint: APIEndpoints;
   args?: any;
 }) => {
-  const selectedEndpoint = endpoints.find((e) => e.id === options.endpoint)?.endpoint[
-    options.serverType
-  ];
+  const selectedEndpoint = endpoints.find((e) => e.id === options.endpoint);
+  const selectedEndpointFn = selectedEndpoint!.endpoint[options.serverType];
 
-  if (!selectedEndpoint) {
+  if (!selectedEndpointFn || !selectedEndpoint) {
     return notifyToast('warning', `[${options.endpoint}] not available`);
   }
 
-  const res = await selectedEndpoint(options.args);
+  const res = await selectedEndpointFn(options.args);
   return res;
 };

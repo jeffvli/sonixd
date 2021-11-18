@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
-import { Item } from './types';
+import { Item } from '../types';
 
 const getAuth = () => {
   return {
