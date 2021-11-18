@@ -116,10 +116,10 @@ const ArtistView = ({ ...rest }: any) => {
 
   const handleFavorite = async () => {
     if (!data.starred) {
-      await star(data.id, 'artist');
+      await star({ id: data.id, type: 'artist' });
       queryClient.setQueryData(['artist', artistId], { ...data, starred: Date.now() });
     } else {
-      await unstar(data.id, 'artist');
+      await unstar({ id: data.id, type: 'artist' });
       queryClient.setQueryData(['artist', artistId], { ...data, starred: undefined });
     }
   };
@@ -154,7 +154,7 @@ const ArtistView = ({ ...rest }: any) => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'album');
+      await star({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['artist', artistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -164,7 +164,7 @@ const ArtistView = ({ ...rest }: any) => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'album');
+      await unstar({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['artist', artistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
         starredIndices.forEach((index) => {

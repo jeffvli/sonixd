@@ -219,7 +219,7 @@ const PlaylistView = ({ ...rest }) => {
 
       // Smaller playlists can use the safe /createPlaylist method of saving
       if (playlistData.length <= 400 && !recovery) {
-        res = await updatePlaylistSongs(data.id, playlistData);
+        res = await updatePlaylistSongs({ id: data.id, entry: playlistData });
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
         } else {
@@ -238,7 +238,7 @@ const PlaylistView = ({ ...rest }) => {
           return dispatch(removeProcessingPlaylist(data.id));
         }
 
-        res = await updatePlaylistSongsLg(data.id, playlistData);
+        res = await updatePlaylistSongsLg({ id: data.id, entry: playlistData });
 
         if (isFailedResponse(res)) {
           res.forEach((response) => {
@@ -282,7 +282,12 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleEdit = async () => {
     setIsSubmittingEdit(true);
-    const res = await updatePlaylist(data.id, editName, editDescription, editPublic);
+    const res = await updatePlaylist({
+      id: data.id,
+      name: editName,
+      comment: editDescription,
+      isPublic: editPublic,
+    });
 
     if (isFailedResponse(res)) {
       notifyToast('error', errorMessages(res)[0]);
@@ -298,7 +303,7 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleDelete = async () => {
     try {
-      const res = await deletePlaylist(data.id);
+      const res = await deletePlaylist({ id: data.id });
 
       if (isFailedResponse(res)) {
         notifyToast('error', res.error.message);
@@ -324,7 +329,7 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'music');
+      await star({ id: rowData.id, type: 'music' });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       dispatch(setPlaylistStar({ id: [rowData.id], type: 'star' }));
 
@@ -337,7 +342,7 @@ const PlaylistView = ({ ...rest }) => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'music');
+      await unstar({ id: rowData.id, type: 'music' });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       dispatch(setPlaylistStar({ id: [rowData.id], type: 'unstar' }));
 
@@ -353,7 +358,7 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handleRowRating = (rowData: any, e: number) => {
-    setRating(rowData.id, e);
+    setRating({ id: rowData.id, rating: e });
     dispatch(setRate({ id: [rowData.id], rating: e }));
     dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
   };

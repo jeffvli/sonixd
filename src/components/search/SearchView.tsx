@@ -3,7 +3,7 @@ import _ from 'lodash';
 import settings from 'electron-settings';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
-import { search3, star, unstar } from '../../api/api';
+import { getSearch, star, unstar } from '../../api/api';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -40,7 +40,7 @@ const SearchView = () => {
   }, [folder]);
 
   const { isLoading, isError, data, error }: any = useQuery(['search', urlQuery, musicFolder], () =>
-    search3({ query: urlQuery, songCount: 100, musicFolderId: musicFolder })
+    getSearch({ query: urlQuery, songCount: 100, musicFolderId: musicFolder })
   );
 
   let timeout: any = null;
@@ -83,7 +83,7 @@ const SearchView = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'music');
+      await star({ id: rowData.id, type: 'music' });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -93,7 +93,7 @@ const SearchView = () => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'album');
+      await unstar({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -107,7 +107,7 @@ const SearchView = () => {
 
   const handleArtistFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'artist');
+      await star({ id: rowData.id, type: 'artist' });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -117,7 +117,7 @@ const SearchView = () => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'album');
+      await unstar({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -131,7 +131,7 @@ const SearchView = () => {
 
   const handleAlbumFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'artist');
+      await star({ id: rowData.id, type: 'artist' });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -141,7 +141,7 @@ const SearchView = () => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'album');
+      await unstar({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
         starredIndices.forEach((index) => {

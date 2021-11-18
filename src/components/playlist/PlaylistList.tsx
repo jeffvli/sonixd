@@ -38,7 +38,7 @@ const PlaylistList = () => {
 
   const handleCreatePlaylist = async (name: string) => {
     try {
-      const res = await createPlaylist(name);
+      const res = await createPlaylist({ name });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);

@@ -48,7 +48,7 @@ const Dashboard = () => {
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'album');
+      await star({ id: rowData.id, type: 'album' });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
@@ -83,7 +83,7 @@ const Dashboard = () => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'album');
+      await unstar({ id: rowData.id, type: 'album' });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
