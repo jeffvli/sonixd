@@ -112,7 +112,7 @@ const FolderList = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'album');
+      await star({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -122,7 +122,7 @@ const FolderList = () => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'album');
+      await unstar({ id: rowData.id, type: 'album' });
       queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -135,7 +135,7 @@ const FolderList = () => {
   };
 
   const handleRowRating = (rowData: any, e: number) => {
-    setRating(rowData.id, e);
+    setRating({ id: rowData.id, rating: e });
     dispatch(setRate({ id: [rowData.id], rating: e }));
   };
 

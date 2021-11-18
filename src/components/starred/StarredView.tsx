@@ -97,7 +97,7 @@ const StarredView = () => {
   };
 
   const handleRowFavorite = async (rowData: any) => {
-    await unstar(rowData.id, 'music');
+    await unstar({ id: rowData.id, type: 'music' });
     dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
@@ -105,14 +105,14 @@ const StarredView = () => {
   };
 
   const handleRowFavoriteAlbum = async (rowData: any) => {
-    await unstar(rowData.id, 'album');
+    await unstar({ id: rowData.id, type: 'album' });
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });
   };
 
   const handleRowFavoriteArtist = async (rowData: any) => {
-    await unstar(rowData.id, 'artist');
+    await unstar({ id: rowData.id, type: 'artist' });
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });

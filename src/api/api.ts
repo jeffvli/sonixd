@@ -424,35 +424,35 @@ export const getScanStatus = async () => {
   return scanStatus;
 };
 
-export const star = async (id: string, type: string) => {
+export const star = async (options: { id: string; type: string }) => {
   const { data } = await api.get(`/star`, {
     params: {
-      id: type === 'music' ? id : undefined,
-      albumId: type === 'album' ? id : undefined,
-      artistId: type === 'artist' ? id : undefined,
+      id: options.type === 'music' ? options.id : undefined,
+      albumId: options.type === 'album' ? options.id : undefined,
+      artistId: options.type === 'artist' ? options.id : undefined,
     },
   });
 
   return data;
 };
 
-export const unstar = async (id: string, type: string) => {
+export const unstar = async (options: { id: string; type: string }) => {
   const { data } = await api.get(`/unstar`, {
     params: {
-      id: type === 'music' ? id : undefined,
-      albumId: type === 'album' ? id : undefined,
-      artistId: type === 'artist' ? id : undefined,
+      id: options.type === 'music' ? options.id : undefined,
+      albumId: options.type === 'album' ? options.id : undefined,
+      artistId: options.type === 'artist' ? options.id : undefined,
     },
   });
 
   return data;
 };
 
-export const batchStar = async (ids: string[], type: string) => {
-  const idChunks = _.chunk(ids, 325);
+export const batchStar = async (options: { ids: string[]; type: string }) => {
+  const idChunks = _.chunk(options.ids, 325);
 
   let idParam: string;
-  switch (type) {
+  switch (options.type) {
     case 'music':
       idParam = 'id';
       break;
@@ -481,11 +481,11 @@ export const batchStar = async (ids: string[], type: string) => {
   return res;
 };
 
-export const batchUnstar = async (ids: string[], type: string) => {
-  const idChunks = _.chunk(ids, 325);
+export const batchUnstar = async (options: { ids: string[]; type: string }) => {
+  const idChunks = _.chunk(options.ids, 325);
 
   let idParam: string;
-  switch (type) {
+  switch (options.type) {
     case 'music':
       idParam = 'id';
       break;
@@ -514,21 +514,21 @@ export const batchUnstar = async (ids: string[], type: string) => {
   return res;
 };
 
-export const setRating = async (id: string, rating: number) => {
-  const { data } = await api.get(`/setRating`, { params: { id, rating } });
+export const setRating = async (options: { id: string; rating: number }) => {
+  const { data } = await api.get(`/setRating`, { params: options });
   return data;
 };
 
-export const getSimilarSongs = async (id: string, count: number) => {
-  const { data } = await api.get(`/getSimilarSongs2`, { params: { id, count } });
+export const getSimilarSongs = async (options: { id: string; count: number }) => {
+  const { data } = await api.get(`/getSimilarSongs2`, { params: options });
   return (data.similarSongs2.song || []).map((entry: any) => normalizeSong(entry));
 };
 
-export const updatePlaylistSongs = async (id: string, entry: any[]) => {
+export const updatePlaylistSongs = async (options: { id: string; entry: any[] }) => {
   const playlistParams = new URLSearchParams();
-  const songIds = _.map(entry, 'id');
+  const songIds = _.map(options.entry, 'id');
 
-  playlistParams.append('playlistId', id);
+  playlistParams.append('playlistId', options.id);
   songIds.map((songId: string) => playlistParams.append('songId', songId));
   _.mapValues(authParams, (value: string, key: string) => {
     playlistParams.append(key, value);
@@ -541,8 +541,8 @@ export const updatePlaylistSongs = async (id: string, entry: any[]) => {
   return data;
 };
 
-export const updatePlaylistSongsLg = async (playlistId: string, entry: any[]) => {
-  const entryIds = _.map(entry, 'id');
+export const updatePlaylistSongsLg = async (options: { id: string; entry: any[] }) => {
+  const entryIds = _.map(options.entry, 'id');
 
   // Set these in chunks so the api doesn't break
   // Testing on the airsonic api broke around ~350 entries
@@ -552,7 +552,7 @@ export const updatePlaylistSongsLg = async (playlistId: string, entry: any[]) =>
   for (let i = 0; i < entryIdChunks.length; i += 1) {
     const params = new URLSearchParams();
 
-    params.append('playlistId', playlistId);
+    params.append('playlistId', options.id);
     _.mapValues(authParams, (value: string, key: string) => {
       params.append(key, value);
     });
@@ -571,37 +571,40 @@ export const updatePlaylistSongsLg = async (playlistId: string, entry: any[]) =>
   return res;
 };
 
-export const deletePlaylist = async (id: string) => {
-  const { data } = await api.get(`/deletePlaylist`, { params: { id } });
+export const deletePlaylist = async (options: { id: string }) => {
+  const { data } = await api.get(`/deletePlaylist`, { params: { playlistId: options.id } });
   return data;
 };
 
-export const createPlaylist = async (name: string) => {
-  const { data } = await api.get(`/createPlaylist`, { params: { name } });
+export const createPlaylist = async (options: { name: string }) => {
+  const { data } = await api.get(`/createPlaylist`, { params: options });
   return data;
 };
 
-export const updatePlaylist = async (
-  playlistId: string,
-  name: string,
-  comment: string,
-  isPublic: boolean
-) => {
+export const updatePlaylist = async (options: {
+  id: string;
+  name: string;
+  comment: string;
+  isPublic: boolean;
+}) => {
   const { data } = await api.get(`/updatePlaylist`, {
     params: {
-      playlistId,
-      name,
-      comment,
-      public: isPublic,
+      playlistId: options.id,
+      name: options.name,
+      comment: options.comment,
+      public: options.isPublic,
     },
   });
 
   return data;
 };
 
-export const clearPlaylist = async (playlistId: string) => {
+export const clearPlaylist = async (options: { id: string }) => {
   // Specifying the playlistId without any songs will empty the existing playlist
-  const { data } = await api.get(`/createPlaylist`, { params: { playlistId, songId: '' } });
+  const { data } = await api.get(`/createPlaylist`, {
+    params: { playlistId: options.id, songId: '' },
+  });
+
   return data;
 };
 
@@ -610,7 +613,7 @@ export const getGenres = async () => {
   return (data.genres.genre || []).map((entry: any) => normalizeGenre(entry));
 };
 
-export const search3 = async (options: {
+export const getSearch = async (options: {
   query: string;
   artistCount?: number;
   artistOffset?: 0;
@@ -673,7 +676,7 @@ export const getMusicDirectory = async (options: { id: string }) => {
   };
 };
 
-export const getDirectorySongs = async (options: { id: string }, data: any[] = []) => {
+export const getMusicDirectorySongs = async (options: { id: string }, data: any[] = []) => {
   if (options.id === 'stop') {
     const songs: any[] = [];
 
@@ -693,17 +696,17 @@ export const getDirectorySongs = async (options: { id: string }, data: any[] = [
       if (res.child.filter((entry: any) => entry.isDir === true).length === 0) {
         // Add the last directory if there are no other directories
         data.push(res);
-        return getDirectorySongs({ id: 'stop' }, data);
+        return getMusicDirectorySongs({ id: 'stop' }, data);
       }
 
       data.push(res);
       const nestedFolders = res.child.filter((entry: any) => entry.isDir === true);
 
       for (let i = 0; i < nestedFolders.length; i += 1) {
-        await getDirectorySongs({ id: nestedFolders[i].id }, data);
+        await getMusicDirectorySongs({ id: nestedFolders[i].id }, data);
       }
 
-      return getDirectorySongs({ id: 'stop' }, data);
+      return getMusicDirectorySongs({ id: 'stop' }, data);
     })
     .catch((err) => console.log(err));
 
