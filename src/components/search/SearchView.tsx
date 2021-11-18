@@ -3,7 +3,6 @@ import _ from 'lodash';
 import settings from 'electron-settings';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
-import { getSearch, star, unstar } from '../../api/api';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -20,6 +19,8 @@ import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSl
 import { setStatus } from '../../redux/playerSlice';
 import ListViewTable from '../viewtypes/ListViewTable';
 import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const SearchView = () => {
   const dispatch = useAppDispatch();
@@ -40,7 +41,14 @@ const SearchView = () => {
   }, [folder]);
 
   const { isLoading, isError, data, error }: any = useQuery(['search', urlQuery, musicFolder], () =>
-    getSearch({ query: urlQuery, songCount: 100, musicFolderId: musicFolder })
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getSearch',
+      args:
+        config.serverType === Server.Subsonic
+          ? { query: urlQuery, songCount: 100, musicFolderId: musicFolder }
+          : null,
+    })
   );
 
   let timeout: any = null;
@@ -83,7 +91,11 @@ const SearchView = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -93,7 +105,11 @@ const SearchView = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -107,7 +123,11 @@ const SearchView = () => {
 
   const handleArtistFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'artist' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+      });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -117,7 +137,11 @@ const SearchView = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -131,7 +155,11 @@ const SearchView = () => {
 
   const handleAlbumFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'artist' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+      });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -141,7 +169,11 @@ const SearchView = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
         starredIndices.forEach((index) => {

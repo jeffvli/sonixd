@@ -2,7 +2,6 @@ import React from 'react';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import cacheImage from '../shared/cacheImage';
-import { getAlbum, getPlaylist, getArtistSongs } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   appendPlayQueue,
@@ -32,6 +31,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
 import CustomTooltip from '../shared/CustomTooltip';
+import { apiController } from '../../api/controller';
 
 const Card = ({
   onClick,
@@ -60,7 +60,12 @@ const Card = ({
 
   const handlePlayClick = async () => {
     if (playClick.type === 'playlist') {
-      const res = await getPlaylist(playClick.id);
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getPlaylist',
+        args: { id: playClick.id },
+      });
+
       const songs = filterPlayQueue(config.playback.filters, res.song);
 
       if (songs.entries.length > 0) {
@@ -76,7 +81,12 @@ const Card = ({
     }
 
     if (playClick.type === 'album') {
-      const res = await getAlbum({ id: playClick.id });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getAlbum',
+        args: { id: playClick.id },
+      });
+
       const songs = filterPlayQueue(config.playback.filters, res.song);
 
       if (songs.entries.length > 0) {
@@ -92,7 +102,12 @@ const Card = ({
     }
 
     if (playClick.type === 'artist') {
-      const res = await getArtistSongs({ id: playClick.id });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getArtistSongs',
+        args: { id: playClick.id },
+      });
+
       const songs = filterPlayQueue(config.playback.filters, res);
 
       if (songs.entries.length > 0) {
@@ -110,7 +125,12 @@ const Card = ({
 
   const handlePlayAppend = async (type: 'next' | 'later') => {
     if (playClick.type === 'playlist') {
-      const res = await getPlaylist(playClick.id);
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getPlaylist',
+        args: { id: playClick.id },
+      });
+
       const songs = filterPlayQueue(config.playback.filters, res.song);
 
       if (songs.entries.length > 0) {
@@ -122,7 +142,12 @@ const Card = ({
     }
 
     if (playClick.type === 'album') {
-      const res = await getAlbum({ id: playClick.id });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getAlbum',
+        args: { id: playClick.id },
+      });
+
       const songs = filterPlayQueue(config.playback.filters, res.song);
 
       if (songs.entries.length > 0) {
@@ -134,7 +159,12 @@ const Card = ({
     }
 
     if (playClick.type === 'artist') {
-      const res = await getArtistSongs({ id: playClick.id });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getArtistSongs',
+        args: { id: playClick.id },
+      });
+
       const songs = filterPlayQueue(config.playback.filters, res);
 
       if (songs.entries.length > 0) {

@@ -9,7 +9,6 @@ import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
-import { getAlbums, getGenres, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -22,6 +21,8 @@ import { StyledInputPicker, StyledInputPickerContainer } from '../shared/styled'
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { setActive } from '../../redux/albumSlice';
 import { setSearchQuery } from '../../redux/miscSlice';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
@@ -56,18 +57,32 @@ const AlbumList = () => {
     ['albumList', album.active.filter, musicFolder],
     () =>
       album.active.filter === 'random'
-        ? getAlbums({
-            type: 'random',
-            size: config.lookAndFeel.gridView.cardSize,
-            offset: 0,
-            musicFolderId: musicFolder,
+        ? apiController({
+            serverType: config.serverType,
+            endpoint: 'getAlbums',
+            args:
+              config.serverType === Server.Subsonic
+                ? {
+                    type: 'random',
+                    size: 100,
+                    offset: 0,
+                    musicFolderId: musicFolder,
+                  }
+                : null,
           })
-        : getAlbums({
-            type: album.active.filter,
-            size: 500,
-            offset: 0,
-            musicFolderId: musicFolder,
-            recursive: true,
+        : apiController({
+            serverType: config.serverType,
+            endpoint: 'getAlbums',
+            args:
+              config.serverType === Server.Subsonic
+                ? {
+                    type: album.active.filter,
+                    size: 500,
+                    offset: 0,
+                    musicFolderId: musicFolder,
+                    recursive: true,
+                  }
+                : null,
           }),
     {
       cacheTime: 3600000, // Stay in cache for 1 hour
@@ -75,7 +90,7 @@ const AlbumList = () => {
     }
   );
   const { data: genres }: any = useQuery(['genreList'], async () => {
-    const res = await getGenres();
+    const res = await apiController({ serverType: config.serverType, endpoint: 'getGenres' });
     return res.map((genre: any) => {
       if (genre.albumCount !== 0) {
         return {
@@ -130,7 +145,11 @@ const AlbumList = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['albumList', album.active.filter, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -140,7 +159,11 @@ const AlbumList = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['albumList', album.active.filter, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {

@@ -16,16 +16,6 @@ import {
   SaveButton,
   UndoButton,
 } from '../shared/ToolbarButtons';
-import {
-  clearPlaylist,
-  deletePlaylist,
-  updatePlaylistSongsLg,
-  updatePlaylistSongs,
-  updatePlaylist,
-  star,
-  unstar,
-  setRating,
-} from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
@@ -76,6 +66,7 @@ import {
 import { PageHeaderSubtitleDataLine } from '../layout/styled';
 import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 interface PlaylistParams {
   id: string;
@@ -224,7 +215,12 @@ const PlaylistView = ({ ...rest }) => {
 
       // Smaller playlists can use the safe /createPlaylist method of saving
       if (playlistData.length <= 400 && !recovery) {
-        res = await updatePlaylistSongs({ id: data.id, entry: playlistData });
+        res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylistSongs',
+          args: { id: data.id, entry: playlistData },
+        });
+
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
         } else {
@@ -236,17 +232,25 @@ const PlaylistView = ({ ...rest }) => {
       } else {
         // For larger playlists, we'll need to first clear out the playlist and then re-populate it
         // Tested on Airsonic instances, /createPlaylist fails with around ~350+ songId params
-        res = await clearPlaylist(data.id);
+        res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'clearPlaylist',
+          args: { id: data.id },
+        });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
           return dispatch(removeProcessingPlaylist(data.id));
         }
 
-        res = await updatePlaylistSongsLg({ id: data.id, entry: playlistData });
+        res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylistSongsLg',
+          args: { id: data.id, entry: playlistData },
+        });
 
         if (isFailedResponse(res)) {
-          res.forEach((response) => {
+          res.forEach((response: any) => {
             if (isFailedResponse(response)) {
               notifyToast('error', errorMessages(response)[0]);
             }
@@ -287,11 +291,18 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleEdit = async () => {
     setIsSubmittingEdit(true);
-    const res = await updatePlaylist({
-      id: data.id,
-      name: editName,
-      comment: editDescription,
-      isPublic: editPublic,
+    const res = await apiController({
+      serverType: config.serverType,
+      endpoint: 'updatePlaylist',
+      args:
+        config.serverType === Server.Subsonic
+          ? {
+              id: data.id,
+              name: editName,
+              comment: editDescription,
+              isPublic: editPublic,
+            }
+          : null,
     });
 
     if (isFailedResponse(res)) {
@@ -308,7 +319,11 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleDelete = async () => {
     try {
-      const res = await deletePlaylist({ id: data.id });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'deletePlaylist',
+        args: { id: data.id },
+      });
 
       if (isFailedResponse(res)) {
         notifyToast('error', res.error.message);
@@ -334,7 +349,11 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       dispatch(setPlaylistStar({ id: [rowData.id], type: 'star' }));
 
@@ -347,7 +366,11 @@ const PlaylistView = ({ ...rest }) => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       dispatch(setPlaylistStar({ id: [rowData.id], type: 'unstar' }));
 
@@ -363,7 +386,11 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const handleRowRating = (rowData: any, e: number) => {
-    setRating({ id: rowData.id, rating: e });
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { id: rowData.id, rating: e },
+    });
     dispatch(setRate({ id: [rowData.id], rating: e }));
     dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
   };

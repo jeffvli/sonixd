@@ -58,8 +58,9 @@ import {
   getPlayedSongsNotification,
   isFailedResponse,
 } from '../../shared/utils';
-import { getGenres, getMusicFolders, getRandomSongs, setRating, star, unstar } from '../../api/api';
 import { notifyToast } from '../shared/toast';
+import { apiController } from '../../api/controller';
+import { Server, Song } from '../../types';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -81,7 +82,9 @@ const NowPlayingView = () => {
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
-  const { data: musicFolders } = useQuery(['musicFolders'], getMusicFolders);
+  const { data: musicFolders } = useQuery(['musicFolders'], () =>
+    apiController({ serverType: config.serverType, endpoint: 'getMusicFolders' })
+  );
 
   const filteredData = useSearchQuery(misc.searchQuery, playQueue.entry, [
     'title',
@@ -93,7 +96,7 @@ const NowPlayingView = () => {
   ]);
 
   const { data: genres }: any = useQuery(['genreList'], async () => {
-    const res = await getGenres();
+    const res = await apiController({ serverType: config.serverType, endpoint: 'getGenres' });
     const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
     return genresOrderedBySongCount.map((genre: any) => {
       return {
@@ -186,12 +189,19 @@ const NowPlayingView = () => {
 
   const handlePlayRandom = async (action: 'play' | 'addNext' | 'addLater') => {
     setIsLoadingRandom(true);
-    const res = await getRandomSongs({
-      size: autoPlaylistTrackCount,
-      fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
-      toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
-      genre: randomPlaylistGenre,
-      musicFolderId: musicFolder,
+    const res: Song[] = await apiController({
+      serverType: config.serverType,
+      endpoint: 'getRandomSongs',
+      args:
+        config.serverType === Server.Subsonic
+          ? {
+              size: autoPlaylistTrackCount,
+              fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
+              toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
+              genre: randomPlaylistGenre,
+              musicFolderId: musicFolder,
+            }
+          : null,
     });
 
     if (isFailedResponse(res)) {
@@ -265,16 +275,28 @@ const NowPlayingView = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
     } else {
-      await unstar({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     }
   };
 
   const handleRowRating = (rowData: any, e: number) => {
-    setRating({ id: rowData.id, rating: e });
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { id: rowData.id, rating: e },
+    });
     dispatch(setRate({ id: [rowData.id], rating: e }));
   };
 

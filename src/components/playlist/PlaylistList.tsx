@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import { Form, Whisper } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
-import { createPlaylist } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
@@ -39,7 +38,11 @@ const PlaylistList = () => {
 
   const handleCreatePlaylist = async (name: string) => {
     try {
-      const res = await createPlaylist({ name });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'createPlaylist',
+        args: { name },
+      });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);

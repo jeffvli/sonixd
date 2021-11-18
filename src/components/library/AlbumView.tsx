@@ -12,7 +12,6 @@ import {
   PlayAppendNextButton,
   PlayButton,
 } from '../shared/ToolbarButtons';
-import { getAlbum, getDownloadUrl, star, unstar } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   appendPlayQueue,
@@ -51,6 +50,8 @@ import {
   BlurredBackgroundWrapper,
   PageHeaderSubtitleDataLine,
 } from '../layout/styled';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 interface AlbumParams {
   id: string;
@@ -68,7 +69,11 @@ const AlbumView = ({ ...rest }: any) => {
   const albumId = rest.id ? rest.id : id;
 
   const { isLoading, isError, data, error }: any = useQuery(['album', albumId], () =>
-    getAlbum({ id: albumId })
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getAlbum',
+      args: { id: albumId },
+    })
   );
   const filteredData = useSearchQuery(misc.searchQuery, data?.song, [
     'title',
@@ -141,17 +146,29 @@ const AlbumView = ({ ...rest }: any) => {
 
   const handleFavorite = async () => {
     if (!data.starred) {
-      await star({ id: data.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['album', id], { ...data, starred: Date.now() });
     } else {
-      await unstar({ id: data.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['album', id], { ...data, starred: undefined });
     }
   };
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['album', id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
@@ -162,7 +179,11 @@ const AlbumView = ({ ...rest }: any) => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['album', id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
@@ -175,16 +196,28 @@ const AlbumView = ({ ...rest }: any) => {
     }
   };
 
-  const handleDownload = (type: 'copy' | 'download') => {
+  const handleDownload = async (type: 'copy' | 'download') => {
     // If not Navidrome (this assumes Airsonic), then we need to use a song's parent
     // to download. This is because Airsonic does not support downloading via album ids
     // that are provided by /getAlbum or /getAlbumList2
 
     if (data.song[0]?.parent) {
       if (type === 'download') {
-        shell.openExternal(getDownloadUrl(data.song[0].parent));
+        shell.openExternal(
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'getDownloadUrl',
+            args: { id: data.song[0].parent },
+          })
+        );
       } else {
-        clipboard.writeText(getDownloadUrl(data.song[0].parent));
+        clipboard.writeText(
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'getDownloadUrl',
+            args: { id: data.song[0].parent },
+          })
+        );
         notifyToast('info', 'Download links copied!');
       }
     } else {

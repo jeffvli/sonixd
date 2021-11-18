@@ -5,13 +5,16 @@ import { CheckboxGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { getMusicFolders } from '../../../api/api';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
+import { apiController } from '../../../api/controller';
 
 const ServerConfig = () => {
   const dispatch = useAppDispatch();
   const folder = useAppSelector((state) => state.folder);
-  const { isLoading, data: musicFolders } = useQuery(['musicFolders'], getMusicFolders);
+  const config = useAppSelector((state) => state.config);
+  const { isLoading, data: musicFolders } = useQuery(['musicFolders'], () =>
+    apiController({ serverType: config.serverType, endpoint: 'getMusicFolders' })
+  );
   const musicFolderPickerContainerRef = useRef(null);
 
   return (

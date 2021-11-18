@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
-import { getAlbums, star, unstar } from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -10,6 +9,8 @@ import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
 import { setActive } from '../../redux/albumSlice';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const Dashboard = () => {
   const history = useHistory();
@@ -28,27 +29,63 @@ const Dashboard = () => {
 
   const { isLoading: isLoadingRecent, data: recentAlbums }: any = useQuery(
     ['recentAlbums', musicFolder],
-    () => getAlbums({ type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder })
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getAlbums',
+        args:
+          config.serverType === Server.Subsonic
+            ? { type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder }
+            : null,
+      })
   );
 
   const { isLoading: isLoadingNewest, data: newestAlbums }: any = useQuery(
     ['newestAlbums', musicFolder],
-    () => getAlbums({ type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder })
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getAlbums',
+        args:
+          config.serverType === Server.Subsonic
+            ? { type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder }
+            : null,
+      })
   );
 
   const { isLoading: isLoadingRandom, data: randomAlbums }: any = useQuery(
     ['randomAlbums', musicFolder],
-    () => getAlbums({ type: 'random', size: 20, offset: 0, musicFolderId: musicFolder })
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getAlbums',
+        args:
+          config.serverType === Server.Subsonic
+            ? { type: 'random', size: 20, offset: 0, musicFolderId: musicFolder }
+            : null,
+      })
   );
 
   const { isLoading: isLoadingFrequent, data: frequentAlbums }: any = useQuery(
     ['frequentAlbums', musicFolder],
-    () => getAlbums({ type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder })
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getAlbums',
+        args:
+          config.serverType === Server.Subsonic
+            ? { type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder }
+            : null,
+      })
   );
 
   const handleFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
@@ -83,7 +120,11 @@ const Dashboard = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));

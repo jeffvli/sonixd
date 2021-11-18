@@ -4,14 +4,6 @@ import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Icon } from 'rsuite';
-import {
-  getIndexes,
-  getMusicDirectory,
-  getMusicFolders,
-  setRating,
-  star,
-  unstar,
-} from '../../api/api';
 import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -29,6 +21,8 @@ import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { setCurrentViewedFolder } from '../../redux/folderSlice';
 import useRouterQuery from '../../hooks/useRouterQuery';
+import { Server } from '../../types';
+import { apiController } from '../../api/controller';
 
 const FolderList = () => {
   const dispatch = useAppDispatch();
@@ -43,19 +37,28 @@ const FolderList = () => {
 
   const { isLoading, isError, data: indexData, error }: any = useQuery(
     ['indexes', musicFolder],
-    () => getIndexes({ musicFolderId: musicFolder })
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getIndexes',
+        args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
+      })
   );
   const { isLoading: isLoadingFolderData, data: folderData }: any = useQuery(
     ['folder', folder.currentViewedFolder],
-    () => getMusicDirectory({ id: folder.currentViewedFolder }),
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getMusicDirectory',
+        args: { id: folder.currentViewedFolder },
+      }),
     {
       enabled: folder.currentViewedFolder !== '',
     }
   );
 
-  const { isLoading: isLoadingMusicFolders, data: musicFolders } = useQuery(
-    ['musicFolders'],
-    getMusicFolders
+  const { isLoading: isLoadingMusicFolders, data: musicFolders } = useQuery(['musicFolders'], () =>
+    apiController({ serverType: config.serverType, endpoint: 'getMusicFolders' })
   );
 
   const filteredData = useSearchQuery(
@@ -112,7 +115,11 @@ const FolderList = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -122,7 +129,11 @@ const FolderList = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -135,7 +146,11 @@ const FolderList = () => {
   };
 
   const handleRowRating = (rowData: any, e: number) => {
-    setRating({ id: rowData.id, rating: e });
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { id: rowData.id, rating: e },
+    });
     dispatch(setRate({ id: [rowData.id], rating: e }));
   };
 

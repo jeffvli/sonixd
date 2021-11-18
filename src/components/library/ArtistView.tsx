@@ -14,15 +14,6 @@ import {
   PlayAppendNextButton,
   PlayButton,
 } from '../shared/ToolbarButtons';
-import {
-  getAlbum,
-  getArtistSongs,
-  getArtist,
-  getArtistInfo,
-  getDownloadUrl,
-  star,
-  unstar,
-} from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -54,6 +45,8 @@ import {
 import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const fac = new FastAverageColor();
 
@@ -75,14 +68,20 @@ const ArtistView = ({ ...rest }: any) => {
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
-    getArtist({ id: artistId })
+    apiController({ serverType: config.serverType, endpoint: 'getArtist', args: { id: artistId } })
   );
   const {
     isLoading: isLoadingAI,
     isError: isErrorAI,
     data: artistInfo,
     error: errorAI,
-  }: any = useQuery(['artistInfo', artistId], () => getArtistInfo({ id: artistId, count: 8 }));
+  }: any = useQuery(['artistInfo', artistId], () =>
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getArtistInfo',
+      args: config.serverType === Server.Subsonic ? { id: artistId, count: 8 } : null,
+    })
+  );
 
   const filteredData = useSearchQuery(misc.searchQuery, data?.album, [
     'title',
@@ -116,16 +115,29 @@ const ArtistView = ({ ...rest }: any) => {
 
   const handleFavorite = async () => {
     if (!data.starred) {
-      await star({ id: data.id, type: 'artist' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'artist' } : null,
+      });
       queryClient.setQueryData(['artist', artistId], { ...data, starred: Date.now() });
     } else {
-      await unstar({ id: data.id, type: 'artist' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'artist' } : null,
+      });
       queryClient.setQueryData(['artist', artistId], { ...data, starred: undefined });
     }
   };
 
   const handlePlay = async () => {
-    const res = await getArtistSongs({ id: data.id });
+    const res = await apiController({
+      serverType: config.serverType,
+      endpoint: 'getArtistSongs',
+      args: { id: data.id },
+    });
+
     const songs = filterPlayQueue(config.playback.filters, res);
 
     if (songs.entries.length > 0) {
@@ -141,7 +153,12 @@ const ArtistView = ({ ...rest }: any) => {
   };
 
   const handlePlayAppend = async (type: 'next' | 'later') => {
-    const res = await getArtistSongs({ id: data.id });
+    const res = await await apiController({
+      serverType: config.serverType,
+      endpoint: 'getArtistSongs',
+      args: { id: data.id },
+    });
+
     const songs = filterPlayQueue(config.playback.filters, res);
 
     if (songs.entries.length > 0) {
@@ -154,7 +171,11 @@ const ArtistView = ({ ...rest }: any) => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['artist', artistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -164,7 +185,11 @@ const ArtistView = ({ ...rest }: any) => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'album' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      });
       queryClient.setQueryData(['artist', artistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -179,9 +204,21 @@ const ArtistView = ({ ...rest }: any) => {
   const handleDownload = async (type: 'copy' | 'download') => {
     if (data.album[0]?.parent) {
       if (type === 'download') {
-        shell.openExternal(getDownloadUrl(data.album[0].parent));
+        shell.openExternal(
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'getDownloadUrl',
+            args: { id: data.album[0].parent },
+          })
+        );
       } else {
-        clipboard.writeText(getDownloadUrl(data.album[0].parent));
+        clipboard.writeText(
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'getDownloadUrl',
+            args: { id: data.album[0].parent },
+          })
+        );
         notifyToast('info', 'Download links copied!');
       }
     } else {
@@ -189,9 +226,21 @@ const ArtistView = ({ ...rest }: any) => {
 
       for (let i = 0; i < data.album.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        const albumRes = await getAlbum({ id: data.album[i].id });
+        const albumRes = await apiController({
+          serverType: config.serverType,
+          endpoint: 'getAlbum',
+          args: { id: data.album[i].id },
+        });
+
         if (albumRes.song[0]?.parent) {
-          downloadUrls.push(getDownloadUrl(albumRes.song[0].parent));
+          downloadUrls.push(
+            // eslint-disable-next-line no-await-in-loop
+            await apiController({
+              serverType: config.serverType,
+              endpoint: 'getDownloadUrl',
+              args: { id: albumRes.song[0].parent },
+            })
+          );
         } else {
           notifyToast('warning', `[${albumRes.title}] No parent album found`);
         }
