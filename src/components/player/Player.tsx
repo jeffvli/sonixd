@@ -28,6 +28,8 @@ import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 import { isCached } from '../../shared/utils';
 import { scrobble } from '../../api/api';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const gaplessListenHandler = (
   currentPlayerRef: any,
@@ -38,7 +40,8 @@ const gaplessListenHandler = (
   pollingInterval: number,
   shouldScrobble: boolean,
   scrobbled: boolean,
-  setScrobbled: any
+  setScrobbled: any,
+  serverType: Server
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
@@ -67,7 +70,12 @@ const gaplessListenHandler = (
     currentSeek <= duration - 2
   ) {
     setScrobbled(true);
-    scrobble({ id: playQueue.currentSongId, submission: true });
+    apiController({
+      serverType,
+      endpoint: 'scrobble',
+      args:
+        serverType === Server.Subsonic ? { id: playQueue.currentSongId, submission: true } : null,
+    });
   }
 };
 
@@ -84,7 +92,8 @@ const listenHandler = (
   debug: boolean,
   shouldScrobble: boolean,
   scrobbled: boolean,
-  setScrobbled: any
+  setScrobbled: any,
+  serverType: Server
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
   const duration = currentPlayerRef.current?.audioEl.current?.duration;
@@ -227,7 +236,12 @@ const listenHandler = (
     currentSeek <= fadeAtTime
   ) {
     setScrobbled(true);
-    scrobble({ id: playQueue.currentSongId, submission: true });
+    apiController({
+      serverType,
+      endpoint: 'scrobble',
+      args:
+        serverType === Server.Subsonic ? { id: playQueue.currentSongId, submission: true } : null,
+    });
   }
 };
 
@@ -238,6 +252,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
   const cacheSongs = settings.getSync('cacheSongs');
   const [title] = useState('');
   const [scrobbled, setScrobbled] = useState(false);
@@ -348,9 +363,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.showDebugWindow,
       playQueue.scrobble,
       scrobbled,
-      setScrobbled
+      setScrobbled,
+      config.serverType
     );
-  }, [currentEntryList, dispatch, playQueue, scrobbled]);
+  }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
   const handleListenPlayer2 = useCallback(() => {
     listenHandler(
@@ -366,9 +382,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.showDebugWindow,
       playQueue.scrobble,
       scrobbled,
-      setScrobbled
+      setScrobbled,
+      config.serverType
     );
-  }, [currentEntryList, dispatch, playQueue, scrobbled]);
+  }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
   const handleOnEndedPlayer1 = useCallback(() => {
     player1Ref.current.audioEl.current.currentTime = 0;
@@ -470,9 +487,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.pollingInterval,
       playQueue.scrobble,
       scrobbled,
-      setScrobbled
+      setScrobbled,
+      config.serverType
     );
-  }, [dispatch, playQueue, scrobbled]);
+  }, [config.serverType, dispatch, playQueue, scrobbled]);
 
   const handleGaplessPlayer2 = useCallback(() => {
     gaplessListenHandler(
@@ -484,9 +502,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.pollingInterval,
       playQueue.scrobble,
       scrobbled,
-      setScrobbled
+      setScrobbled,
+      config.serverType
     );
-  }, [dispatch, playQueue, scrobbled]);
+  }, [config.serverType, dispatch, playQueue, scrobbled]);
 
   const handleOnPlay = useCallback(
     (playerNumber: 1 | 2) => {

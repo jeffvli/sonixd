@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { shell } from 'electron';
 import { Whisper, Nav, ButtonToolbar } from 'rsuite';
-import { startScan, getScanStatus } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -18,6 +17,7 @@ import packageJson from '../../package.json';
 import ServerConfig from './ConfigPanels/ServerConfig';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setActive } from '../../redux/configSlice';
+import { apiController } from '../../api/controller';
 
 const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
@@ -40,7 +40,7 @@ const Config = () => {
 
   useEffect(() => {
     // Check scan status on render
-    getScanStatus()
+    apiController({ serverType: config.serverType, endpoint: 'getScanStatus' })
       .then((status) => {
         if (status.scanning) {
           return setIsScanning(true);
@@ -49,13 +49,13 @@ const Config = () => {
         return setScanProgress(0);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [config.serverType]);
 
   useEffect(() => {
     // Reload scan status on interval during scan
     if (isScanning) {
       const interval = setInterval(() => {
-        getScanStatus()
+        apiController({ serverType: config.serverType, endpoint: 'getScanStatus' })
           .then((status) => {
             if (status.scanning) {
               return setScanProgress(status.count);
@@ -69,7 +69,7 @@ const Config = () => {
       return () => clearInterval(interval);
     }
     return () => clearInterval();
-  }, [isScanning]);
+  }, [config.serverType, isScanning]);
 
   return (
     <GenericPage
@@ -125,7 +125,7 @@ const Config = () => {
               <StyledButton
                 size="sm"
                 onClick={async () => {
-                  startScan();
+                  apiController({ serverType: config.serverType, endpoint: 'startScan' });
                   setIsScanning(true);
                 }}
                 disabled={isScanning}
