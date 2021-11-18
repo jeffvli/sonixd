@@ -79,7 +79,7 @@ const ArtistList = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star(rowData.id, 'artist');
+      await star({ id: rowData.id, type: 'artist' });
       queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -89,7 +89,7 @@ const ArtistList = () => {
         return oldData;
       });
     } else {
-      await unstar(rowData.id, 'artist');
+      await unstar({ id: rowData.id, type: 'artist' });
       queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {

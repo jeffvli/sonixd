@@ -273,7 +273,7 @@ const PlayerBar = () => {
 
   const handleFavorite = async () => {
     if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
-      await star(playQueue[currentEntryList][playQueue.currentIndex].id, 'music');
+      await star({ id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' });
       dispatch(
         setStar({
           id: [playQueue[currentEntryList][playQueue.currentIndex].id],
@@ -281,7 +281,7 @@ const PlayerBar = () => {
         })
       );
     } else {
-      await unstar(playQueue[currentEntryList][playQueue.currentIndex].id, 'music');
+      await unstar({ id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' });
       dispatch(
         setStar({
           id: [playQueue[currentEntryList][playQueue.currentIndex].id],

@@ -15,7 +15,7 @@ import {
   getPlaylist,
   deletePlaylist,
   getArtistSongs,
-  getDirectorySongs,
+  getMusicDirectorySongs,
 } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -135,7 +135,7 @@ export const GlobalContextMenu = () => {
         });
 
       for (let i = 0; i < folders.length; i += 1) {
-        promises.push(getDirectorySongs({ id: folders[i].id }));
+        promises.push(getMusicDirectorySongs({ id: folders[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -223,7 +223,7 @@ export const GlobalContextMenu = () => {
         });
 
       for (let i = 0; i < folders.length; i += 1) {
-        promises.push(getDirectorySongs({ id: multiSelect.selected[i].id }));
+        promises.push(getMusicDirectorySongs({ id: multiSelect.selected[i].id }));
       }
 
       const res = await Promise.all(promises);
@@ -332,7 +332,7 @@ export const GlobalContextMenu = () => {
           });
 
         for (let i = 0; i < folders.length; i += 1) {
-          promises.push(getDirectorySongs({ id: multiSelect.selected[i].id }));
+          promises.push(getMusicDirectorySongs({ id: multiSelect.selected[i].id }));
         }
 
         const folderSongs = await Promise.all(promises);
@@ -340,7 +340,7 @@ export const GlobalContextMenu = () => {
         folderSongs.push(_.orderBy(music, 'rowIndex', 'asc'));
         songs = _.flatten(folderSongs);
 
-        res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
+        res = await updatePlaylistSongsLg({ id: localSelectedPlaylistId, entry: songs });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
@@ -354,7 +354,7 @@ export const GlobalContextMenu = () => {
 
         res = await Promise.all(promises);
         songs = _.flatten(_.map(res, 'song'));
-        res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
+        res = await updatePlaylistSongsLg({ id: localSelectedPlaylistId, entry: songs });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
@@ -368,7 +368,7 @@ export const GlobalContextMenu = () => {
 
         res = await Promise.all(promises);
         songs = _.flatten(_.map(res, 'song'));
-        res = await updatePlaylistSongsLg(localSelectedPlaylistId, songs);
+        res = await updatePlaylistSongsLg({ id: localSelectedPlaylistId, entry: songs });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
@@ -394,7 +394,7 @@ export const GlobalContextMenu = () => {
     const res = [];
     for (let i = 0; i < multiSelect.selected.length; i += 1) {
       try {
-        res.push(await deletePlaylist(multiSelect.selected[i].id));
+        res.push(await deletePlaylist({ id: multiSelect.selected[i].id }));
       } catch (err) {
         notifyToast('error', err);
       }
@@ -413,7 +413,7 @@ export const GlobalContextMenu = () => {
 
   const handleCreatePlaylist = async () => {
     try {
-      const res = await createPlaylist(newPlaylistName);
+      const res = await createPlaylist({ name: newPlaylistName });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
@@ -453,7 +453,7 @@ export const GlobalContextMenu = () => {
     const ids = _.map(sortedEntries, 'id');
 
     try {
-      const res = await batchStar(ids, sortedEntries[0].type);
+      const res = await batchStar({ ids, type: sortedEntries[0].type });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
@@ -476,7 +476,7 @@ export const GlobalContextMenu = () => {
 
     try {
       // Infer the type from the first selected entry
-      const res = await batchUnstar(ids, multiSelect.selected[0].type);
+      const res = await batchUnstar({ ids, type: multiSelect.selected[0].type });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
