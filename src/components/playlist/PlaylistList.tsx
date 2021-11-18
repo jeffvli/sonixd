@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Form, Whisper } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
-import { createPlaylist, getPlaylists } from '../../api/api';
+import { createPlaylist } from '../../api/api';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
@@ -21,6 +21,7 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
+import { apiController } from '../../api/controller';
 
 const PlaylistList = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +33,7 @@ const PlaylistList = () => {
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
   const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists'], () =>
-    getPlaylists()
+    apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
   );
   const filteredData = useSearchQuery(misc.searchQuery, playlists, ['title', 'comment', 'owner']);
 
