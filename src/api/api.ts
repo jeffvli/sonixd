@@ -279,8 +279,8 @@ const normalizeFolder = (item: any) => {
   };
 };
 
-export const getPlaylist = async (id: string) => {
-  const { data } = await api.get(`/getPlaylist?id=${id}`);
+export const getPlaylist = async (options: { id: string }) => {
+  const { data } = await api.get(`/getPlaylist?id=${options.id}`);
   return normalizePlaylist(data.playlist);
 };
 

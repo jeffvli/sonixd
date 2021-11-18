@@ -73,12 +73,12 @@ export interface Playlist {
   id: string;
   title: string;
   comment?: string;
-  owner: string;
+  owner?: string;
   public?: boolean;
-  songCount: number;
+  songCount?: number;
   duration: number;
-  created: string;
-  changed: string;
+  created?: string;
+  changed?: string;
   image: string;
   type: Item.Playlist;
   uniqueId: string;

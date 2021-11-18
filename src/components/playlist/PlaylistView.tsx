@@ -19,7 +19,6 @@ import {
 import {
   clearPlaylist,
   deletePlaylist,
-  getPlaylist,
   updatePlaylistSongsLg,
   updatePlaylistSongs,
   updatePlaylist,
@@ -76,6 +75,7 @@ import {
 } from '../../redux/playlistSlice';
 import { PageHeaderSubtitleDataLine } from '../layout/styled';
 import CustomTooltip from '../shared/CustomTooltip';
+import { apiController } from '../../api/controller';
 
 interface PlaylistParams {
   id: string;
@@ -94,8 +94,13 @@ const PlaylistView = ({ ...rest }) => {
   const { id } = useParams<PlaylistParams>();
   const playlistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(['playlist', playlistId], () =>
-    getPlaylist(playlistId)
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getPlaylist',
+      args: { id: playlistId },
+    })
   );
+
   const [customPlaylistImage, setCustomPlaylistImage] = useState<string | string[]>(
     'img/placeholder.jpg'
   );

@@ -30,12 +30,12 @@ import {
   updatePlaylistSongs,
   updatePlaylistSongsLg,
 } from './api';
-import { getPlaylists as jfGetPlaylists } from './jellyfinApi';
+import { getPlaylist as jfGetPlaylist, getPlaylists as jfGetPlaylists } from './jellyfinApi';
 import { APIEndpoints, ServerType } from './types';
 
 // prettier-ignore
 const endpoints = [
-  { id: 'getPlaylist', endpoint: { subsonic: getPlaylist, jellyfin: undefined } },
+  { id: 'getPlaylist', endpoint: { subsonic: getPlaylist, jellyfin: jfGetPlaylist } },
   { id: 'getPlaylists', endpoint: { subsonic: getPlaylists, jellyfin: jfGetPlaylists } },
   { id: 'getStarred', endpoint: { subsonic: getStarred, jellyfin: undefined } },
   { id: 'getAlbum', endpoint: { subsonic: getAlbum, jellyfin: undefined } },
