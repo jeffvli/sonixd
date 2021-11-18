@@ -112,14 +112,8 @@ const formatBytes = (bytes: number, decimals = 2) => {
 export const formatSongDuration = (duration: number) => {
   const hours = Math.floor(duration / 60 / 60);
   const minutes = Math.floor((duration / 60) % 60);
-  const seconds = String(duration % 60).padStart(2, '0');
+  const seconds = String(Math.trunc(Number(duration % 60))).padStart(2, '0');
 
-  // if (minutes > 60) {
-  //   const hours = Math.floor(minutes / 60);
-  //   const newMinutes = Math.floor(minutes % 60);
-  //   const newSeconds = String(duration % 60).padStart(2, '0');
-  //   return `${hours}:${newMinutes}:${newSeconds}`;
-  // }
   if (hours > 0) {
     return `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`;
   }
@@ -134,7 +128,7 @@ export const formatSongDuration = (duration: number) => {
 export const formatDuration = (duration: number) => {
   const hours = Math.floor(duration / 60 / 60);
   const minutes = Math.floor((duration / 60) % 60);
-  const seconds = String(duration % 60).padStart(2, '0');
+  const seconds = String(Math.trunc(Number(duration % 60))).padStart(2, '0');
 
   if (hours > 0) {
     return `${hours} hr ${minutes} min ${seconds} sec`;

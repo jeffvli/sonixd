@@ -1,11 +1,13 @@
 import axios from 'axios';
 import _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
+import { Item } from './types';
 
 const getAuth = () => {
   return {
-    userId: localStorage.getItem('username') || '',
+    username: localStorage.getItem('username') || '',
     token: localStorage.getItem('token') || '',
     server: localStorage.getItem('server') || '',
     deviceId: localStorage.getItem('deviceId') || '',
@@ -47,16 +49,109 @@ jellyfinApi.interceptors.response.use(
   }
 );
 
-export const getPlaylists = async () => {
-  const params = {
-    SortBy: 'SortName',
-    SortOrder: 'Ascending',
-    IncludeItemTypes: 'Playlist',
-    Recursive: true,
+const getStreamUrl = (id: string) => {
+  return (
+    `${API_BASE_URL}/Audio` +
+    `/${id}` +
+    `/universal` +
+    `?UserId=${auth.username}` +
+    `&DeviceId=${auth.deviceId}` +
+    `&AudioCodec=aac` +
+    `&api_key=${auth.token}` +
+    `&PlaySessionId=${auth.deviceId}` +
+    `&Container=['opus','mp3','aac','m4a','m4b','flac','wav','ogg']`
+  );
+};
+
+const getCoverArtUrl = (item: any, size?: number) => {
+  if (!item.ImageTags?.Primary) {
+    return 'img/placeholder.jpg';
+  }
+
+  return (
+    `${API_BASE_URL}/Items` +
+    `/${item.Id}` +
+    `/Images/Primary` +
+    `?width=${size}` +
+    `&height=${size}`
+  );
+};
+
+const normalizeSong = (item: any) => {
+  return {
+    id: item.Id,
+    parent: undefined,
+    isDir: item.isFolder,
+    title: item.Name,
+    album: item.Album,
+    albumId: item.AlbumId,
+    artist: item?.ArtistItems[0]?.Name,
+    artistId: item?.ArtistItems[0]?.Id,
+    track: item.IndexNumber,
+    year: item.ProductionYear,
+    genre: item.GenreItems && item?.GenreItems[0]?.Name,
+    size: item.MediaSources?.Size,
+    contentType: undefined,
+    suffix: undefined,
+    duration: item.RunTimeTicks / 10000000,
+    bitRate: item.MediaSources?.MediaStreams?.BitRate,
+    path: item.Path,
+    playCount: item.UserData.PlayCount,
+    discNumber: undefined,
+    created: item.DateCreated,
+    streamUrl: getStreamUrl(item.Id),
+    image: getCoverArtUrl(item, 150),
+    starred: item.UserData.isFavorite ? 'true' : undefined,
+    type: Item.Music,
+    uniqueId: nanoid(),
   };
+};
 
-  const playlists: any = await jellyfinApi.get(`Users/${auth.userId}/Items`, { params });
-  console.log(`playlists`, playlists);
+const normalizePlaylist = (item: any) => {
+  return {
+    id: item.Id,
+    title: item.Name,
+    comment: undefined,
+    owner: undefined,
+    public: undefined,
+    songCount: item.SongCount,
+    duration: item.RunTimeTicks / 10000000,
+    created: item.DateCreated,
+    changed: item.DateLastMediaAdded,
+    image: getCoverArtUrl(item, 350),
+    type: Item.Playlist,
+    uniqueId: nanoid(),
+    song: [],
+  };
+};
 
-  return _.filter(playlists.Items, (item) => item.MediaType === 'Audio');
+export const getPlaylist = async (options: { id: string }) => {
+  const { data } = await jellyfinApi.get(`/Items`, {
+    params: { ids: options.id, UserId: auth.username },
+  });
+
+  const { data: songData } = await jellyfinApi.get(`/Playlists/${options.id}/Items`, {
+    params: { UserId: auth.username },
+  });
+
+  return {
+    ...normalizePlaylist(data.Items[0]),
+    songCount: songData.Items.length,
+    song: (songData.Items || []).map((entry: any) => normalizeSong(entry)),
+  };
+};
+
+export const getPlaylists = async () => {
+  const { data } = await jellyfinApi.get(`/Users/${auth.username}/Items`, {
+    params: {
+      SortBy: 'SortName',
+      SortOrder: 'Ascending',
+      IncludeItemTypes: 'Playlist',
+      Recursive: true,
+    },
+  });
+
+  return (_.filter(data.Items, (item) => item.MediaType === 'Audio') || []).map((entry) =>
+    normalizePlaylist(entry)
+  );
 };
