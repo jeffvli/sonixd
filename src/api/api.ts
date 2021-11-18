@@ -5,7 +5,7 @@ import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
 import axiosRetry from 'axios-retry';
 import { mockSettings } from '../shared/mockSettings';
-import { Item } from './types';
+import { Item } from '../types';
 
 const legacyAuth =
   process.env.NODE_ENV === 'test'
@@ -120,11 +120,11 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
   );
 };
 
-export const getDownloadUrl = (id: string, useLegacyAuth = legacyAuth) => {
+export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAuth) => {
   if (useLegacyAuth) {
     return (
       `${API_BASE_URL}/download` +
-      `?id=${id}` +
+      `?id=${options.id}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
       `&v=1.15.0` +
@@ -134,7 +134,7 @@ export const getDownloadUrl = (id: string, useLegacyAuth = legacyAuth) => {
 
   return (
     `${API_BASE_URL}/download` +
-    `?id=${id}` +
+    `?id=${options.id}` +
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
     `&t=${auth.hash}` +
