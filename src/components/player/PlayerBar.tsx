@@ -29,18 +29,20 @@ import { setStatus, resetPlayer } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
-import { star, unstar } from '../../api/api';
 import placeholderImg from '../../img/placeholder.jpg';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList, isCached } from '../../shared/utils';
 import { StyledPopover } from '../shared/styled';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -273,7 +275,14 @@ const PlayerBar = () => {
 
   const handleFavorite = async () => {
     if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
-      await star({ id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args:
+          config.serverType === Server.Subsonic
+            ? { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' }
+            : null,
+      });
       dispatch(
         setStar({
           id: [playQueue[currentEntryList][playQueue.currentIndex].id],
@@ -281,7 +290,14 @@ const PlayerBar = () => {
         })
       );
     } else {
-      await unstar({ id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args:
+          config.serverType === Server.Subsonic
+            ? { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' }
+            : null,
+      });
       dispatch(
         setStar({
           id: [playQueue[currentEntryList][playQueue.currentIndex].id],

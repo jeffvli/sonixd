@@ -12,7 +12,6 @@ import {
   toggleRangeSelected,
   setRangeSelected,
 } from '../../redux/multiSelectSlice';
-import { getStarred, unstar } from '../../api/api';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import PageLoader from '../loader/PageLoader';
@@ -21,6 +20,8 @@ import GridViewType from '../viewtypes/GridViewType';
 import { setStatus } from '../../redux/playerSlice';
 import { StyledNavItem } from '../shared/styled';
 import { setActive } from '../../redux/favoriteSlice';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const StarredView = () => {
   const history = useHistory();
@@ -40,8 +41,13 @@ const StarredView = () => {
   }, [folder]);
 
   const { isLoading, isError, data, error }: any = useQuery(['starred', musicFolder], () =>
-    getStarred({ musicFolderId: musicFolder })
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getStarred',
+      args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
+    })
   );
+
   const filteredData = useSearchQuery(
     misc.searchQuery,
     favorite.active.tab === 'tracks'
@@ -97,7 +103,11 @@ const StarredView = () => {
   };
 
   const handleRowFavorite = async (rowData: any) => {
-    await unstar({ id: rowData.id, type: 'music' });
+    await apiController({
+      serverType: config.serverType,
+      endpoint: 'unstar',
+      args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+    });
     dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
@@ -105,14 +115,22 @@ const StarredView = () => {
   };
 
   const handleRowFavoriteAlbum = async (rowData: any) => {
-    await unstar({ id: rowData.id, type: 'album' });
+    await apiController({
+      serverType: config.serverType,
+      endpoint: 'unstar',
+      args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+    });
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });
   };
 
   const handleRowFavoriteArtist = async (rowData: any) => {
-    await unstar({ id: rowData.id, type: 'artist' });
+    await apiController({
+      serverType: config.serverType,
+      endpoint: 'unstar',
+      args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+    });
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
     });
@@ -170,9 +188,8 @@ const StarredView = () => {
         />
       }
     >
-      {isLoading ? (
-        <PageLoader />
-      ) : (
+      {(isLoading || !data) && <PageLoader />}
+      {data && (
         <>
           {favorite.active.tab === 'tracks' && (
             <ListViewType

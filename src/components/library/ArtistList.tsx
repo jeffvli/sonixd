@@ -4,7 +4,6 @@ import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { ButtonToolbar } from 'rsuite';
-import { getArtists, star, unstar } from '../../api/api';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -19,6 +18,8 @@ import {
 } from '../../redux/multiSelectSlice';
 import GridViewType from '../viewtypes/GridViewType';
 import { RefreshButton } from '../shared/ToolbarButtons';
+import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const ArtistList = () => {
   const dispatch = useAppDispatch();
@@ -39,7 +40,12 @@ const ArtistList = () => {
 
   const { isLoading, isError, data: artists, error }: any = useQuery(
     ['artistList', musicFolder],
-    () => getArtists({ musicFolderId: musicFolder }),
+    () =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getArtists',
+        args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
+      }),
     {
       cacheTime: 3600000, // Stay in cache for 1 hour
       staleTime: Infinity, // Only allow manual refresh
@@ -79,7 +85,11 @@ const ArtistList = () => {
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
-      await star({ id: rowData.id, type: 'artist' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'star',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+      });
       queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
@@ -89,7 +99,11 @@ const ArtistList = () => {
         return oldData;
       });
     } else {
-      await unstar({ id: rowData.id, type: 'artist' });
+      await apiController({
+        serverType: config.serverType,
+        endpoint: 'unstar',
+        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+      });
       queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {

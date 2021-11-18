@@ -5,18 +5,6 @@ import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { Col, FlexboxGrid, Form, Grid, Icon, Row, Whisper } from 'rsuite';
-import {
-  getPlaylists,
-  updatePlaylistSongsLg,
-  createPlaylist,
-  batchStar,
-  batchUnstar,
-  getAlbum,
-  getPlaylist,
-  deletePlaylist,
-  getArtistSongs,
-  getMusicDirectorySongs,
-} from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addModalPage,
@@ -67,6 +55,7 @@ import {
   isFailedResponse,
 } from '../../shared/utils';
 import { setStatus } from '../../redux/playerSlice';
+import { apiController } from '../../api/controller';
 
 export const ContextMenuButton = ({ text, hotkey, children, ...rest }: any) => {
   return (
@@ -120,7 +109,9 @@ export const GlobalContextMenu = () => {
   const [indexToMoveTo, setIndexToMoveTo] = useState(0);
   const playlistPickerContainerRef = useRef(null);
 
-  const { data: playlists }: any = useQuery(['playlists'], () => getPlaylists());
+  const { data: playlists }: any = useQuery(['playlists'], () =>
+    apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
+  );
 
   const handlePlay = async () => {
     dispatch(setContextMenu({ show: false }));
@@ -135,7 +126,13 @@ export const GlobalContextMenu = () => {
         });
 
       for (let i = 0; i < folders.length; i += 1) {
-        promises.push(getMusicDirectorySongs({ id: folders[i].id }));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getMusicDirectorySongs',
+            args: { id: folders[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -154,7 +151,13 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getPlaylist(multiSelect.selected[i].id));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getPlaylist',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -172,7 +175,13 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getAlbum({ id: multiSelect.selected[i].id }));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getAlbum',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -191,7 +200,13 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getArtistSongs({ id: multiSelect.selected[i].id }));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getArtistSongs',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -223,7 +238,13 @@ export const GlobalContextMenu = () => {
         });
 
       for (let i = 0; i < folders.length; i += 1) {
-        promises.push(getMusicDirectorySongs({ id: multiSelect.selected[i].id }));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getMusicDirectorySongs',
+            args: { id: folders[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -238,7 +259,13 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'playlist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getPlaylist(multiSelect.selected[i].id));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getPlaylist',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -252,7 +279,13 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'album') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getAlbum({ id: multiSelect.selected[i].id }));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getAlbum',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -266,7 +299,13 @@ export const GlobalContextMenu = () => {
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
-        promises.push(getArtistSongs({ id: multiSelect.selected[i].id }));
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getArtistSongs',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       }
 
       const res = await Promise.all(promises);
@@ -332,7 +371,13 @@ export const GlobalContextMenu = () => {
           });
 
         for (let i = 0; i < folders.length; i += 1) {
-          promises.push(getMusicDirectorySongs({ id: multiSelect.selected[i].id }));
+          promises.push(
+            apiController({
+              serverType: config.serverType,
+              endpoint: 'getMusicDirectorySongs',
+              args: { id: folders[i].id },
+            })
+          );
         }
 
         const folderSongs = await Promise.all(promises);
@@ -340,7 +385,11 @@ export const GlobalContextMenu = () => {
         folderSongs.push(_.orderBy(music, 'rowIndex', 'asc'));
         songs = _.flatten(folderSongs);
 
-        res = await updatePlaylistSongsLg({ id: localSelectedPlaylistId, entry: songs });
+        res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylistSongsLg',
+          args: { id: localSelectedPlaylistId, entry: songs },
+        });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
@@ -349,12 +398,22 @@ export const GlobalContextMenu = () => {
         }
       } else if (misc.contextMenu.type === 'playlist') {
         for (let i = 0; i < multiSelect.selected.length; i += 1) {
-          promises.push(getPlaylist(multiSelect.selected[i].id));
+          promises.push(
+            apiController({
+              serverType: config.serverType,
+              endpoint: 'getPlaylist',
+              args: { id: multiSelect.selected[i].id },
+            })
+          );
         }
 
         res = await Promise.all(promises);
         songs = _.flatten(_.map(res, 'song'));
-        res = await updatePlaylistSongsLg({ id: localSelectedPlaylistId, entry: songs });
+        res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylistSongsLg',
+          args: { id: localSelectedPlaylistId, entry: songs },
+        });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
@@ -363,12 +422,22 @@ export const GlobalContextMenu = () => {
         }
       } else if (misc.contextMenu.type === 'album') {
         for (let i = 0; i < multiSelect.selected.length; i += 1) {
-          promises.push(getAlbum({ id: multiSelect.selected[i].id }));
+          promises.push(
+            apiController({
+              serverType: config.serverType,
+              endpoint: 'getAlbum',
+              args: { id: multiSelect.selected[i].id },
+            })
+          );
         }
 
         res = await Promise.all(promises);
         songs = _.flatten(_.map(res, 'song'));
-        res = await updatePlaylistSongsLg({ id: localSelectedPlaylistId, entry: songs });
+        res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylistSongsLg',
+          args: { id: localSelectedPlaylistId, entry: songs },
+        });
 
         if (isFailedResponse(res)) {
           notifyToast('error', errorMessages(res)[0]);
@@ -394,7 +463,13 @@ export const GlobalContextMenu = () => {
     const res = [];
     for (let i = 0; i < multiSelect.selected.length; i += 1) {
       try {
-        res.push(await deletePlaylist({ id: multiSelect.selected[i].id }));
+        res.push(
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'deletePlaylist',
+            args: { id: multiSelect.selected[i].id },
+          })
+        );
       } catch (err) {
         notifyToast('error', err);
       }
@@ -413,7 +488,11 @@ export const GlobalContextMenu = () => {
 
   const handleCreatePlaylist = async () => {
     try {
-      const res = await createPlaylist({ name: newPlaylistName });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'createPlaylist',
+        args: { name: newPlaylistName },
+      });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
@@ -453,7 +532,11 @@ export const GlobalContextMenu = () => {
     const ids = _.map(sortedEntries, 'id');
 
     try {
-      const res = await batchStar({ ids, type: sortedEntries[0].type });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'batchStar',
+        args: { ids, type: sortedEntries[0].type },
+      });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);
@@ -476,7 +559,11 @@ export const GlobalContextMenu = () => {
 
     try {
       // Infer the type from the first selected entry
-      const res = await batchUnstar({ ids, type: multiSelect.selected[0].type });
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'batchUnstar',
+        args: { ids, type: multiSelect.selected[0].type },
+      });
 
       if (isFailedResponse(res)) {
         notifyToast('error', errorMessages(res)[0]);

@@ -14,8 +14,8 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
-import { getGenres } from '../../api/api';
 import { setActive } from '../../redux/albumSlice';
+import { apiController } from '../../api/controller';
 
 const GenreList = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +24,7 @@ const GenreList = () => {
   const album = useAppSelector((state) => state.album);
   const misc = useAppSelector((state) => state.misc);
   const { isLoading, isError, data: genres, error }: any = useQuery(['genrePageList'], async () => {
-    const res = await getGenres();
+    const res = await apiController({ serverType: config.serverType, endpoint: 'getGenres' });
     return _.orderBy(res, 'songCount', 'desc');
   });
   const filteredData = useSearchQuery(misc.searchQuery, genres, ['title']);
