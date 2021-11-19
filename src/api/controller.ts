@@ -33,7 +33,12 @@ import {
   updatePlaylistSongs,
   updatePlaylistSongsLg,
 } from './api';
-import { getPlaylist as jfGetPlaylist, getPlaylists as jfGetPlaylists } from './jellyfinApi';
+import {
+  getAlbum as jfGetAlbum,
+  getAlbums as jfGetAlbums,
+  getPlaylist as jfGetPlaylist,
+  getPlaylists as jfGetPlaylists,
+} from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
 // prettier-ignore
@@ -41,8 +46,8 @@ const endpoints = [
   { id: 'getPlaylist', endpoint: { subsonic: getPlaylist, jellyfin: jfGetPlaylist } },
   { id: 'getPlaylists', endpoint: { subsonic: getPlaylists, jellyfin: jfGetPlaylists } },
   { id: 'getStarred', endpoint: { subsonic: getStarred, jellyfin: undefined } },
-  { id: 'getAlbum', endpoint: { subsonic: getAlbum, jellyfin: undefined } },
-  { id: 'getAlbums', endpoint: { subsonic: getAlbums, jellyfin: undefined } },
+  { id: 'getAlbum', endpoint: { subsonic: getAlbum, jellyfin: jfGetAlbum } },
+  { id: 'getAlbums', endpoint: { subsonic: getAlbums, jellyfin: jfGetAlbums } },
   { id: 'getRandomSongs', endpoint: { subsonic: getRandomSongs, jellyfin: undefined } },
   { id: 'getArtist', endpoint: { subsonic: getArtist, jellyfin: undefined } },
   { id: 'getArtists', endpoint: { subsonic: getArtists, jellyfin: undefined } },

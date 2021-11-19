@@ -68,7 +68,12 @@ const AlbumList = () => {
                     offset: 0,
                     musicFolderId: musicFolder,
                   }
-                : null,
+                : {
+                    type: 'random',
+                    size: 100,
+                    offset: 0,
+                    recursive: false,
+                  },
           })
         : apiController({
             serverType: config.serverType,
@@ -82,7 +87,10 @@ const AlbumList = () => {
                     musicFolderId: musicFolder,
                     recursive: true,
                   }
-                : null,
+                : {
+                    type: album.active.filter,
+                    recursive: true,
+                  },
           }),
     {
       cacheTime: 3600000, // Stay in cache for 1 hour
@@ -258,8 +266,8 @@ const AlbumList = () => {
           }}
           cardSubtitle={{
             prefix: 'artist',
-            property: 'artist',
-            urlProperty: 'artistId',
+            property: 'albumArtist',
+            urlProperty: 'albumArtistId',
             unit: '',
           }}
           playClick={{ type: 'album', idProperty: 'id' }}
