@@ -127,7 +127,7 @@ const normalizePlaylist = (item: any) => {
 
 export const getPlaylist = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/Items`, {
-    params: { ids: options.id, UserId: auth.username, fields: 'DateCreated' },
+    params: { ids: options.id, UserId: auth.username, fields: 'DateCreated, ChildCount' },
   });
 
   const { data: songData } = await jellyfinApi.get(`/Playlists/${options.id}/Items`, {
@@ -147,7 +147,7 @@ export const getPlaylists = async () => {
       sortBy: 'SortName',
       sortOrder: 'Ascending',
       includeItemTypes: 'Playlist',
-      fields: 'DateCreated',
+      fields: 'DateCreated, ChildCount',
       recursive: true,
     },
   });
