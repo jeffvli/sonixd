@@ -901,7 +901,7 @@ const ListViewTable = ({
                       >
                         {column.dataKey.match(/artist|genre/) ? (
                           <>
-                            {rowData[column.dataKey] && (
+                            {rowData[column.dataKey] ? (
                               <CustomTooltip text={rowData[column.dataKey][0]?.title}>
                                 <RsuiteLinkButton
                                   appearance="link"
@@ -953,6 +953,8 @@ const ListViewTable = ({
                                   {rowData[column.dataKey][0]?.title}
                                 </RsuiteLinkButton>
                               </CustomTooltip>
+                            ) : (
+                              <span>&#8203;</span>
                             )}
                           </>
                         ) : column.dataKey === 'album' ? (
