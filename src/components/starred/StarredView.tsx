@@ -252,8 +252,8 @@ const StarredView = () => {
                   }}
                   cardSubtitle={{
                     prefix: 'artist',
-                    property: 'artist',
-                    urlProperty: 'artistId',
+                    property: 'albumArtist',
+                    urlProperty: 'albumArtistId',
                     unit: '',
                   }}
                   playClick={{ type: 'album', idProperty: 'id' }}

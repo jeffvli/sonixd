@@ -439,7 +439,7 @@ const PlayerBar = () => {
                         enterable
                         placement="topStart"
                         text={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.artist ||
+                          playQueue[currentEntryList][playQueue.currentIndex]?.artist[0]?.title ||
                           'Unknown artist'
                         }
                       >
@@ -454,16 +454,19 @@ const PlayerBar = () => {
                             tabIndex={0}
                             subtitle="true"
                             onClick={() => {
-                              if (playQueue[currentEntryList][playQueue.currentIndex]?.artistId) {
+                              if (
+                                playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
+                              ) {
                                 history.push(
                                   `/library/artist/${
-                                    playQueue[currentEntryList][playQueue.currentIndex]?.artistId
+                                    playQueue[currentEntryList][playQueue.currentIndex]
+                                      ?.albumArtistId
                                   }`
                                 );
                               }
                             }}
                           >
-                            {playQueue[currentEntryList][playQueue.currentIndex]?.artist ||
+                            {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
                               'Unknown artist'}
                           </LinkButton>
                         </span>
