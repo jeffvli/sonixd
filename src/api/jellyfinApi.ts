@@ -24,11 +24,7 @@ export const jellyfinApi = axios.create({
 jellyfinApi.interceptors.request.use(
   (config) => {
     const { token } = auth;
-
     config.headers.common['X-MediaBrowser-Token'] = token;
-    // config.headers[
-    //   'X-Emby-Authorization'
-    // ] = `MediaBrowser Client="Sonixd", Device="PC", DeviceId="${deviceId}", Version="N/a"`;
 
     return config;
   },
@@ -116,6 +112,28 @@ const normalizeSong = (item: any) => {
   };
 };
 
+const normalizeAlbum = (item: any) => {
+  return {
+    id: item.Id,
+    title: item.Name,
+    albumId: item.Id,
+    artist: item.ArtistItems && item.ArtistItems.map((entry: any) => normalizeItem(entry)),
+    albumArtist: item.AlbumArtists && item.AlbumArtists[0]?.Name,
+    albumArtistId: item.AlbumArtists && item.AlbumArtists[0]?.Id,
+    songCount: item.ChildCount,
+    duration: item.RunTimeTicks / 10000000,
+    created: item.DateCreated,
+    year: item.ProductionYear,
+    genre: item.GenreItems && item.GenreItems.map((entry: any) => normalizeItem(entry)),
+    image: getCoverArtUrl(item, 350),
+    isDir: false,
+    starred: item.UserData.IsFavorite ? 'true' : undefined,
+    type: Item.Album,
+    uniqueId: nanoid(),
+    song: (item.song || []).map((entry: any) => normalizeSong(entry)),
+  };
+};
+
 const normalizePlaylist = (item: any) => {
   return {
     id: item.Id,
@@ -165,3 +183,69 @@ export const getPlaylists = async () => {
     normalizePlaylist(entry)
   );
 };
+
+export const getAlbum = async (options: { id: string }) => {
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`, {
+    params: {
+      fields: 'Genres, DateCreated, ChildCount',
+    },
+  });
+
+  const { data: songData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      parentId: options.id,
+      sortBy: 'SortName',
+      fields: 'Genres',
+    },
+  });
+
+  return normalizeAlbum({ ...data, song: songData.Items });
+};
+
+export const getAlbums = async (options: {
+  type: any;
+  size: number;
+  offset: number;
+  recursive: boolean;
+}) => {
+  const sortTypes = [
+    { original: 'alphabeticalByName', replacement: 'SortName', sortOrder: 'Ascending' },
+    { original: 'alphabeticalByArtist', replacement: 'Artist', sortOrder: 'Ascending' },
+    { original: 'frequent', replacement: 'PlayCount', sortOrder: 'Ascending' },
+    { original: 'random', replacement: 'Random', sortOrder: 'Ascending' },
+    { original: 'newest', replacement: 'DateCreated', sortOrder: 'Descending' },
+    { original: 'recent', replacement: 'DatePlayed', sortOrder: 'Descending' },
+  ];
+
+  const sortType = sortTypes.find((type) => type.original === options.type);
+
+  if (options.recursive) {
+    const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+      params: {
+        sortBy: sortType!.replacement,
+        sortOrder: sortType!.sortOrder,
+        includeItemTypes: 'MusicAlbum',
+        fields: 'Genres, DateCreated, ChildCount',
+        recursive: true,
+      },
+    });
+
+    return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
+  }
+
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      sortBy: sortType!.replacement,
+      sortOrder: sortType!.sortOrder,
+      includeItemTypes: 'MusicAlbum',
+      fields: 'Genres, DateCreated, ChildCount',
+      recursive: true,
+      limit: options.size,
+      offset: options.offset,
+    },
+  });
+
+  return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
+};
+
+// http://192.168.14.11:8096/Users/0e5716f27d7f4b48aadb4a3bd55a38e9/Items/70384e0059a925138783c7275f717859
