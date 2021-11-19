@@ -77,24 +77,33 @@ const getCoverArtUrl = (item: any, size?: number) => {
   );
 };
 
+const normalizeItem = (item: any) => {
+  return {
+    id: item.Id,
+    title: item.Name,
+  };
+};
+
 const normalizeSong = (item: any) => {
   return {
     id: item.Id,
     parent: undefined,
-    isDir: item.isFolder,
+    isDir: item.IsFolder,
     title: item.Name,
     album: item.Album,
     albumId: item.AlbumId,
-    artist: item?.ArtistItems[0]?.Name,
-    artistId: item?.ArtistItems[0]?.Id,
+    artist: item.ArtistItems && item.ArtistItems.map((entry: any) => normalizeItem(entry)),
+    albumArtist: item.AlbumArtists && item.AlbumArtists[0]?.Name,
+    albumArtistId: item.AlbumArtists && item.AlbumArtists[0]?.Id,
     track: item.IndexNumber,
     year: item.ProductionYear,
-    genre: item.GenreItems && item?.GenreItems[0]?.Name,
-    size: item.MediaSources?.Size,
+    genre: item.GenreItems && item.GenreItems.map((entry: any) => normalizeItem(entry)),
+    albumGenre: item.GenreItems && item.GenreItems[0]?.Name,
+    size: item.MediaSources && item.MediaSources.Size,
     contentType: undefined,
     suffix: undefined,
     duration: item.RunTimeTicks / 10000000,
-    bitRate: item.MediaSources?.MediaStreams?.BitRate,
+    bitRate: item.MediaSources && item.MediaSources.MediaStreams?.BitRate,
     path: item.Path,
     playCount: item.UserData.PlayCount,
     discNumber: undefined,
