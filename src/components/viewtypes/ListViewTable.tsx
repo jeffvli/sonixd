@@ -996,7 +996,13 @@ const ListViewTable = ({
                             formatSongDuration(rowData[column.dataKey])
                           )
                         ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
-                          formatDate(rowData[column.dataKey])
+                          <>
+                            {rowData[column.dataKey] ? (
+                              formatDate(rowData[column.dataKey])
+                            ) : (
+                              <span>&#8203;</span>
+                            )}
+                          </>
                         ) : column.dataKey === 'size' ? (
                           `${convertByteToMegabyte(rowData[column.dataKey])} MB`
                         ) : column.dataKey === 'starred' ? (
