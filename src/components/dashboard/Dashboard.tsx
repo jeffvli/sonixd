@@ -183,8 +183,8 @@ const Dashboard = () => {
             }}
             cardSubtitle={{
               prefix: '/library/artist',
-              property: 'artist',
-              urlProperty: 'artistId',
+              property: 'albumArtist',
+              urlProperty: 'albumArtistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
@@ -207,8 +207,8 @@ const Dashboard = () => {
             }}
             cardSubtitle={{
               prefix: '/library/artist',
-              property: 'artist',
-              urlProperty: 'artistId',
+              property: 'albumArtist',
+              urlProperty: 'albumArtistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
@@ -231,8 +231,8 @@ const Dashboard = () => {
             }}
             cardSubtitle={{
               prefix: '/library/artist',
-              property: 'artist',
-              urlProperty: 'artistId',
+              property: 'albumArtist',
+              urlProperty: 'albumArtistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
@@ -255,8 +255,8 @@ const Dashboard = () => {
             }}
             cardSubtitle={{
               prefix: '/library/artist',
-              property: 'artist',
-              urlProperty: 'artistId',
+              property: 'albumArtist',
+              urlProperty: 'albumArtistId',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {

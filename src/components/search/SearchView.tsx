@@ -218,8 +218,8 @@ const SearchView = () => {
             }}
             cardSubtitle={{
               prefix: '/library/artist',
-              property: 'artist',
-              urlProperty: 'artistId',
+              property: 'albumArtist',
+              urlProperty: 'albumArtistId',
               unit: '',
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}

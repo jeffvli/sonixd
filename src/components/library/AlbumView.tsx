@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 import { clipboard, shell } from 'electron';
 import settings from 'electron-settings';
 import { ButtonToolbar, Whisper } from 'rsuite';
@@ -51,7 +52,7 @@ import {
   PageHeaderSubtitleDataLine,
 } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Artist, Genre, Server } from '../../types';
 
 interface AlbumParams {
   id: string;
@@ -290,57 +291,20 @@ const AlbumView = ({ ...rest }: any) => {
                   Added {formatDate(data.created)}
                 </PageHeaderSubtitleDataLine>
                 <PageHeaderSubtitleDataLine>
-                  {data.artist && (
-                    <StyledTagLink
-                      tabIndex={0}
-                      tooltip={data.artist}
-                      onClick={() => {
-                        if (!rest.isModal) {
-                          history.push(`/library/artist/${data.artistId}`);
-                        } else {
-                          dispatch(
-                            addModalPage({
-                              pageType: 'artist',
-                              id: data.artistId,
-                            })
-                          );
-                        }
-                      }}
-                      onKeyDown={(e: any) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                          e.preventDefault();
-                          if (!rest.isModal) {
-                            history.push(`/library/artist/${data.artistId}`);
-                          } else {
-                            dispatch(
-                              addModalPage({
-                                pageType: 'artist',
-                                id: data.artistId,
-                              })
-                            );
-                          }
-                        }
-                      }}
-                    >
-                      {data.artist}
-                    </StyledTagLink>
-                  )}
-                  {data.genre && (
-                    <>
+                  {data.artist.map((d: Artist) => {
+                    return (
                       <StyledTagLink
+                        key={nanoid()}
                         tabIndex={0}
-                        tooltip={data.genre}
+                        tooltip={d.title}
                         onClick={() => {
                           if (!rest.isModal) {
-                            dispatch(setActive({ ...album.active, filter: data.genre }));
-                            setTimeout(() => {
-                              history.push(`/library/album?sortType=${data.genre}`);
-                            }, 50);
+                            history.push(`/library/artist/${d.id}`);
                           } else {
                             dispatch(
                               addModalPage({
                                 pageType: 'artist',
-                                id: data.artistId,
+                                id: d.id,
                               })
                             );
                           }
@@ -349,25 +313,52 @@ const AlbumView = ({ ...rest }: any) => {
                           if (e.key === ' ' || e.key === 'Enter') {
                             e.preventDefault();
                             if (!rest.isModal) {
-                              dispatch(setActive({ ...album.active, filter: data.genre }));
-                              setTimeout(() => {
-                                history.push(`/library/album?sortType=${data.genre}`);
-                              }, 50);
+                              history.push(`/library/artist/${d.id}`);
                             } else {
                               dispatch(
                                 addModalPage({
                                   pageType: 'artist',
-                                  id: data.artistId,
+                                  id: d.id,
                                 })
                               );
                             }
                           }
                         }}
                       >
-                        {data.genre}
+                        {d.title}
                       </StyledTagLink>
-                    </>
-                  )}
+                    );
+                  })}
+                  {data.genre.map((d: Genre) => {
+                    return (
+                      <StyledTagLink
+                        key={nanoid()}
+                        tabIndex={0}
+                        tooltip={d.title}
+                        onClick={() => {
+                          if (!rest.isModal) {
+                            dispatch(setActive({ ...album.active, filter: d.id }));
+                            setTimeout(() => {
+                              history.push(`/library/album?sortType=${d.id}`);
+                            }, 50);
+                          }
+                        }}
+                        onKeyDown={(e: any) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                            e.preventDefault();
+                            if (!rest.isModal) {
+                              dispatch(setActive({ ...album.active, filter: d.id }));
+                              setTimeout(() => {
+                                history.push(`/library/album?sortType=${d.id}`);
+                              }, 50);
+                            }
+                          }
+                        }}
+                      >
+                        {d.title}
+                      </StyledTagLink>
+                    );
+                  })}
                 </PageHeaderSubtitleDataLine>
                 <div style={{ marginTop: '10px' }}>
                   <ButtonToolbar>

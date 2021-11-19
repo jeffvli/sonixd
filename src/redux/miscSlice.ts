@@ -8,7 +8,7 @@ const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings
 
 export interface ModalPage {
   pageType: string;
-  id: number;
+  id: string;
 }
 
 export interface Modal {
