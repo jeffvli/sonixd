@@ -447,8 +447,9 @@ const PlaylistView = ({ ...rest }) => {
                 • {data.public ? 'Public' : 'Private'}
               </PageHeaderSubtitleDataLine>
               <PageHeaderSubtitleDataLine>
-                By {data.owner} • Created {formatDate(data.created)} • Modified{' '}
-                {formatDateTime(data.changed)}
+                {data.owner && `By ${data.owner} • `}
+                {data.created && `Created ${formatDate(data.created)}`}
+                {data.changed && ` • Modified ${formatDateTime(data.changed)}`}
               </PageHeaderSubtitleDataLine>
               <CustomTooltip text={data.comment}>
                 <PageHeaderSubtitleDataLine
