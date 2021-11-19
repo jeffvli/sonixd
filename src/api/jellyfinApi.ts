@@ -141,7 +141,7 @@ const normalizePlaylist = (item: any) => {
     comment: undefined,
     owner: undefined,
     public: undefined,
-    songCount: item.SongCount,
+    songCount: item.ChildCount,
     duration: item.RunTimeTicks / 10000000,
     created: item.DateCreated,
     changed: item.DateLastMediaAdded,
