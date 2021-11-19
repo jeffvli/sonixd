@@ -29,7 +29,7 @@ const Titlebar = ({ font }: any) => {
     const songTitle = playQueue[currentEntryList][playQueue.currentIndex]?.title
       ? `(${playQueue.currentIndex + 1} / ${playQueue[currentEntryList].length}) ~ ${
           playQueue[currentEntryList][playQueue.currentIndex]?.title
-        } ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.artist} `
+        } ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.artist[0]?.title} `
       : 'Sonixd';
 
     setTitle(`${playStatus} ${songTitle}`);

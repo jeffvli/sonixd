@@ -57,13 +57,15 @@ export interface Album {
   title: string;
   isDir?: boolean;
   albumId: string;
-  artist?: string;
-  artistId?: string;
+  albumArtist?: string;
+  albumArtistId: string;
+  artist?: Artist[];
   songCount: number;
   duration: number;
   created: string;
   year?: number;
-  genre?: string;
+  genre?: Genre[];
+  albumGenre?: string;
   image: string;
   starred?: string;
   type: Item.Album;
@@ -74,12 +76,12 @@ export interface Album {
 export interface Artist {
   id: string;
   title: string;
-  albumCount: number;
-  image: string;
+  albumCount?: number;
+  image?: string;
   starred?: string;
-  type: Item.Artist;
-  uniqueId: string;
-  album: Album[];
+  type?: Item.Artist;
+  uniqueId?: string;
+  album?: Album[];
 }
 
 export interface ArtistInfo {
@@ -102,8 +104,8 @@ export interface Genre {
   title: string;
   songCount?: number;
   albumCount?: number;
-  type: Item.Genre;
-  uniqueId: string;
+  type?: Item.Genre;
+  uniqueId?: string;
 }
 
 export interface Playlist {
@@ -129,11 +131,13 @@ export interface Song {
   isDir?: boolean;
   album: string;
   albumId?: string;
-  artist: string;
-  artistId?: string;
+  albumArtist: string;
+  albumArtistId: string;
+  artist: Artist[];
   track?: number;
   year?: number;
-  genre?: string;
+  genre?: Genre[];
+  albumGenre?: string;
   size: number;
   contentType?: string;
   suffix?: string;

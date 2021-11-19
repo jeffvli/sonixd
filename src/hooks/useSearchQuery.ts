@@ -11,6 +11,16 @@ const useSearchQuery = (searchQuery: string, data: any[], filterProperties: stri
         const matches: SetStateAction<any[]> = [];
         filterProps.map((prop: string) => {
           const filteredDataByProp = data.filter((entry: any) => {
+            if (prop.match('artist')) {
+              return String(entry.albumArtist)?.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+
+            if (prop.match('genre')) {
+              return String(entry.genre[0]?.title)
+                ?.toLowerCase()
+                .includes(searchQuery.toLowerCase());
+            }
+
             return String(entry[prop])?.toLowerCase().includes(searchQuery.toLowerCase());
           });
 
