@@ -173,7 +173,11 @@ const normalizePlaylist = (item: any) => {
 
 export const getPlaylist = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/Items`, {
-    params: { ids: options.id, UserId: auth.username, fields: 'DateCreated, ChildCount' },
+    params: {
+      ids: options.id,
+      UserId: auth.username,
+      fields: 'Genres, DateCreated, MediaSources, ChildCount',
+    },
   });
 
   const { data: songData } = await jellyfinApi.get(`/Playlists/${options.id}/Items`, {
@@ -214,7 +218,7 @@ export const getAlbum = async (options: { id: string }) => {
     params: {
       parentId: options.id,
       sortBy: 'SortName',
-      fields: 'Genres',
+      fields: 'Genres, DateCreated, MediaSources',
     },
   });
 
@@ -313,3 +317,18 @@ export const getArtistSongs = async (options: { id: string }) => {
 };
 
 // http://192.168.14.11:8096/Users/0e5716f27d7f4b48aadb4a3bd55a38e9/Items/70384e0059a925138783c7275f717859
+
+// Users/0e5716f27d7f4b48aadb4a3bd55a38e9/Items
+// ?SortOrder=Descending
+// &IncludeItemTypes=MusicAlbum
+// &Recursive=true&Fields=AudioInfo%2CParentId%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CAudioInfo%2CParentId%2CPrimaryImageAspectRatio%2CBasicSyncInfo&Limit=100&StartIndex=0&CollapseBoxSetItems=false&ArtistIds=70384e0059a925138783c7275f717859&SortBy=PremiereDate%2CProductionYear%2CSortname
+
+// http://192.168.14.11:8096
+// /Artists
+// ?SortBy=SortName
+// &SortOrder=Ascending
+// &Recursive=true
+// &Fields=PrimaryImageAspectRatio%2CSortName%2CBasicSyncInfo&StartIndex=100
+// &ImageTypeLimit=1
+// &EnableImageTypes=Primary%2CBackdrop%2CBanner%2CThumb
+// &Limit=100&ParentId=7e64e319657a9516ec78490da03edccb&userId=0e5716f27d7f4b48aadb4a3bd55a38e9
