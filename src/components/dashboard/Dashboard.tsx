@@ -84,7 +84,7 @@ const Dashboard = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
@@ -123,7 +123,7 @@ const Dashboard = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {

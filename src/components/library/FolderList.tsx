@@ -118,7 +118,7 @@ const FolderList = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
@@ -132,7 +132,7 @@ const FolderList = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));

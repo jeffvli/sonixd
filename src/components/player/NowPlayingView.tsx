@@ -60,7 +60,7 @@ import {
 } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
-import { Server, Song } from '../../types';
+import { Song } from '../../types';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -275,14 +275,14 @@ const NowPlayingView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
     } else {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     }

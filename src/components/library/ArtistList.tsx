@@ -88,7 +88,7 @@ const ArtistList = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+        args: { id: rowData.id, type: 'artist' },
       });
       queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
@@ -102,7 +102,7 @@ const ArtistList = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+        args: { id: rowData.id, type: 'artist' },
       });
       queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
