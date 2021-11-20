@@ -25,6 +25,7 @@ export const mockSettings = {
   ],
   musicFolder: {
     id: null,
+    name: null,
     albums: true,
     artists: true,
     dashboard: false,

@@ -99,13 +99,13 @@ const NowPlayingView = () => {
     const res = await apiController({
       serverType: config.serverType,
       endpoint: 'getGenres',
-      args: { musicFolderId: musicFolder },
+      args: { musicFolderId: folder.musicFolder },
     });
     const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
     return genresOrderedBySongCount.map((genre: any) => {
       return {
-        label: `${genre.title} (${genre.songCount})`,
-        title: genre.title,
+        title: `${genre.title} ${genre.albumCount ? `(${genre.albumCount})` : ''}`,
+        id: genre.title,
         role: 'Genre',
       };
     });
@@ -391,8 +391,8 @@ const NowPlayingView = () => {
                           container={() => genrePickerContainerRef.current}
                           data={genres}
                           value={randomPlaylistGenre}
-                          valueKey="title"
-                          labelKey="label"
+                          valueKey="id"
+                          labelKey="title"
                           virtualized
                           onChange={(e: string) => setRandomPlaylistGenre(e)}
                         />

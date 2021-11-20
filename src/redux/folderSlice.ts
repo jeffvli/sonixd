@@ -5,7 +5,8 @@ import { mockSettings } from '../shared/mockSettings';
 const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface FolderSelection {
-  musicFolder?: string | number;
+  musicFolder?: string;
+  musicFolderName?: string;
   applied: {
     albums: boolean;
     artists: boolean;
@@ -17,7 +18,8 @@ export interface FolderSelection {
 }
 
 const initialState: FolderSelection = {
-  musicFolder: Number(parsedSettings.musicFolder.id) || undefined,
+  musicFolder: String(parsedSettings.musicFolder.id) || undefined,
+  musicFolderName: String(parsedSettings.musicFolder.name) || undefined,
   applied: {
     albums: Boolean(parsedSettings.musicFolder.albums),
     artists: Boolean(parsedSettings.musicFolder.artists),
@@ -32,8 +34,9 @@ const folderSlice = createSlice({
   name: 'folder',
   initialState,
   reducers: {
-    setMusicFolder: (state, action: PayloadAction<string | number>) => {
-      state.musicFolder = action.payload;
+    setMusicFolder: (state, action: PayloadAction<{ id: string; name: string }>) => {
+      state.musicFolder = action.payload.id;
+      state.musicFolderName = action.payload.name;
     },
 
     setCurrentViewedFolder: (state, action: PayloadAction<string>) => {
