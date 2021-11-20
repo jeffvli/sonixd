@@ -94,7 +94,7 @@ const SearchView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
@@ -108,7 +108,7 @@ const SearchView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
@@ -126,7 +126,7 @@ const SearchView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+        args: { id: rowData.id, type: 'artist' },
       });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
@@ -140,7 +140,7 @@ const SearchView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
@@ -158,7 +158,7 @@ const SearchView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+        args: { id: rowData.id, type: 'artist' },
       });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
@@ -172,7 +172,7 @@ const SearchView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));

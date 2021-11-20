@@ -265,14 +265,14 @@ const NowPlayingMiniView = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
     } else {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     }

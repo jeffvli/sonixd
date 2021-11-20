@@ -46,7 +46,7 @@ import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Artist, GenericItem, Server } from '../../types';
+import { Artist, GenericItem } from '../../types';
 
 const fac = new FastAverageColor();
 
@@ -106,14 +106,14 @@ const ArtistView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'artist' } : null,
+        args: { id: data.id, type: 'artist' },
       });
       queryClient.setQueryData(['artist', artistId], { ...data, starred: Date.now() });
     } else {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'artist' } : null,
+        args: { id: data.id, type: 'artist' },
       });
       queryClient.setQueryData(['artist', artistId], { ...data, starred: undefined });
     }
@@ -162,7 +162,7 @@ const ArtistView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['artist', artistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
@@ -176,7 +176,7 @@ const ArtistView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+        args: { id: rowData.id, type: 'album' },
       });
       queryClient.setQueryData(['artist', artistId], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
