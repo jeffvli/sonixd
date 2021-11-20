@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import moment from 'moment';
 import { nanoid } from 'nanoid/non-secure';
 import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
@@ -316,19 +317,33 @@ export const getArtistSongs = async (options: { id: string }) => {
   return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
 
-// http://192.168.14.11:8096/Users/0e5716f27d7f4b48aadb4a3bd55a38e9/Items/70384e0059a925138783c7275f717859
+export const getRandomSongs = async (options: {
+  size?: number;
+  genre?: string;
+  fromYear?: number;
+  toYear?: number;
+}) => {
+  let { fromYear, toYear } = options;
 
-// Users/0e5716f27d7f4b48aadb4a3bd55a38e9/Items
-// ?SortOrder=Descending
-// &IncludeItemTypes=MusicAlbum
-// &Recursive=true&Fields=AudioInfo%2CParentId%2CPrimaryImageAspectRatio%2CBasicSyncInfo%2CAudioInfo%2CParentId%2CPrimaryImageAspectRatio%2CBasicSyncInfo&Limit=100&StartIndex=0&CollapseBoxSetItems=false&ArtistIds=70384e0059a925138783c7275f717859&SortBy=PremiereDate%2CProductionYear%2CSortname
+  if (!options.fromYear && options.toYear) {
+    fromYear = 1930;
+  }
 
-// http://192.168.14.11:8096
-// /Artists
-// ?SortBy=SortName
-// &SortOrder=Ascending
-// &Recursive=true
-// &Fields=PrimaryImageAspectRatio%2CSortName%2CBasicSyncInfo&StartIndex=100
-// &ImageTypeLimit=1
-// &EnableImageTypes=Primary%2CBackdrop%2CBanner%2CThumb
-// &Limit=100&ParentId=7e64e319657a9516ec78490da03edccb&userId=0e5716f27d7f4b48aadb4a3bd55a38e9
+  if (options.fromYear && !options.toYear) {
+    toYear = moment().year() + 1;
+  }
+
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      fields: 'Genres, DateCreated, MediaSources, UserData',
+      genreIds: options.genre,
+      includeItemTypes: 'Audio',
+      limit: options.size,
+      recursive: true,
+      sortBy: 'Random',
+      years: (fromYear || toYear) && _.range(fromYear!, toYear! + 1).join(','),
+    },
+  });
+
+  return (data.Items || []).map((entry: any) => normalizeSong(entry));
+};
