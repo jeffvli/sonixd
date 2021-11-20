@@ -105,7 +105,7 @@ const Card = ({
       const res = await apiController({
         serverType: config.serverType,
         endpoint: 'getArtistSongs',
-        args: { id: playClick.id },
+        args: { id: playClick.id, musicFolderId: rest.musicFolderId },
       });
 
       const songs = filterPlayQueue(config.playback.filters, res);
@@ -162,7 +162,7 @@ const Card = ({
       const res = await apiController({
         serverType: config.serverType,
         endpoint: 'getArtistSongs',
-        args: { id: playClick.id },
+        args: { id: playClick.id, musicFolderId: rest.musicFolderId },
       });
 
       const songs = filterPlayQueue(config.playback.filters, res);

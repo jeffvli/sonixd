@@ -21,7 +21,6 @@ import { setStatus } from '../../redux/playerSlice';
 import { StyledNavItem } from '../shared/styled';
 import { setActive } from '../../redux/favoriteSlice';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
 
 const StarredView = () => {
   const history = useHistory();
@@ -44,7 +43,7 @@ const StarredView = () => {
     apiController({
       serverType: config.serverType,
       endpoint: 'getStarred',
-      args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
+      args: { musicFolderId: musicFolder },
     })
   );
 

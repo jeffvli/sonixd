@@ -255,6 +255,7 @@ export const getAlbums = async (options: {
   size: number;
   offset: number;
   recursive: boolean;
+  musicFolderId?: string;
 }) => {
   const sortTypes = [
     { original: 'alphabeticalByName', replacement: 'SortName', sortOrder: 'Ascending' },
@@ -271,11 +272,12 @@ export const getAlbums = async (options: {
     const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
       params: {
         fields: 'Genres, DateCreated, ChildCount',
+        genres: !sortType ? options.type : undefined,
         includeItemTypes: 'MusicAlbum',
+        parentId: options.musicFolderId,
         recursive: true,
         sortBy: sortType ? sortType!.replacement : 'SortName',
         sortOrder: sortType ? sortType!.sortOrder : 'Ascending',
-        genres: !sortType ? options.type : undefined,
       },
     });
 
@@ -288,6 +290,7 @@ export const getAlbums = async (options: {
       includeItemTypes: 'MusicAlbum',
       limit: options.size,
       offset: options.offset,
+      parentId: options.musicFolderId,
       recursive: true,
       sortBy: sortType!.replacement,
       sortOrder: sortType!.sortOrder,
@@ -315,20 +318,21 @@ export const getArtist = async (options: { id: string }) => {
   });
 };
 
-export const getArtists = async () => {
+export const getArtists = async (options: { musicFolderId?: string }) => {
   const { data } = await jellyfinApi.get(`/artists/albumartists`, {
     params: {
       imageTypeLimit: 1,
       recursive: true,
       sortBy: 'SortName',
       sortOrder: 'Ascending',
+      parentId: options.musicFolderId,
     },
   });
 
   return (data.Items || []).map((entry: any) => normalizeArtist(entry));
 };
 
-export const getArtistSongs = async (options: { id: string }) => {
+export const getArtistSongs = async (options: { id: string; musicFolderId?: string }) => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       artistIds: options.id,
@@ -336,6 +340,7 @@ export const getArtistSongs = async (options: { id: string }) => {
       includeItemTypes: 'Audio',
       recursive: true,
       sortBy: 'Album',
+      parentId: options.musicFolderId,
     },
   });
 
@@ -361,7 +366,7 @@ export const getRandomSongs = async (options: {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       fields: 'Genres, DateCreated, MediaSources, UserData',
-      genreIds: options.genre,
+      genres: options.genre,
       includeItemTypes: 'Audio',
       limit: options.size,
       recursive: true,
@@ -373,13 +378,14 @@ export const getRandomSongs = async (options: {
   return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
 
-export const getStarred = async () => {
+export const getStarred = async (options: { musicFolderId?: string }) => {
   const { data: songAndAlbumData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       fields: 'Genres, DateCreated, MediaSources, ChildCount, UserData',
       includeItemTypes: 'MusicAlbum, Audio',
       isFavorite: true,
       recursive: true,
+      parentId: options.musicFolderId,
     },
   });
 
@@ -391,6 +397,7 @@ export const getStarred = async () => {
       sortOrder: 'Ascending',
       isFavorite: true,
       userId: auth.username,
+      parentId: options.musicFolderId,
     },
   });
 
@@ -437,7 +444,7 @@ export const batchUnstar = async (options: { ids: string[] }) => {
   return res;
 };
 
-export const getGenres = async (options: { musicFolderId: string }) => {
+export const getGenres = async (options: { musicFolderId?: string }) => {
   const { data } = await jellyfinApi.get(`/genres`, {
     params: { parentId: options.musicFolderId },
   });

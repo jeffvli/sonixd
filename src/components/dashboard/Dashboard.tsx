@@ -10,7 +10,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
 import { setActive } from '../../redux/albumSlice';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
 
 const Dashboard = () => {
   const history = useHistory();
@@ -33,10 +32,7 @@ const Dashboard = () => {
       apiController({
         serverType: config.serverType,
         endpoint: 'getAlbums',
-        args:
-          config.serverType === Server.Subsonic
-            ? { type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder }
-            : { type: 'recent', size: 20, offset: 0 },
+        args: { type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder },
       })
   );
 
@@ -46,10 +42,7 @@ const Dashboard = () => {
       apiController({
         serverType: config.serverType,
         endpoint: 'getAlbums',
-        args:
-          config.serverType === Server.Subsonic
-            ? { type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder }
-            : { type: 'newest', size: 20, offset: 0 },
+        args: { type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder },
       })
   );
 
@@ -59,10 +52,7 @@ const Dashboard = () => {
       apiController({
         serverType: config.serverType,
         endpoint: 'getAlbums',
-        args:
-          config.serverType === Server.Subsonic
-            ? { type: 'random', size: 20, offset: 0, musicFolderId: musicFolder }
-            : { type: 'random', size: 20, offset: 0 },
+        args: { type: 'random', size: 20, offset: 0, musicFolderId: musicFolder },
       })
   );
 
@@ -72,10 +62,7 @@ const Dashboard = () => {
       apiController({
         serverType: config.serverType,
         endpoint: 'getAlbums',
-        args:
-          config.serverType === Server.Subsonic
-            ? { type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder }
-            : { type: 'frequent', size: 20, offset: 0 },
+        args: { type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder },
       })
   );
 

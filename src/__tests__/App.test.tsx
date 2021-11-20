@@ -97,6 +97,7 @@ const playlistState: Playlist = {
 
 const folderState: FolderSelection = {
   musicFolder: undefined,
+  musicFolderName: undefined,
   applied: {
     albums: true,
     artists: true,

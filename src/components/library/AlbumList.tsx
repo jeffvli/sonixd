@@ -73,6 +73,7 @@ const AlbumList = () => {
                     size: 100,
                     offset: 0,
                     recursive: false,
+                    musicFolderId: musicFolder,
                   },
           })
         : apiController({
@@ -90,6 +91,7 @@ const AlbumList = () => {
                 : {
                     type: album.active.filter,
                     recursive: true,
+                    musicFolderId: musicFolder,
                   },
           }),
     {
@@ -101,7 +103,7 @@ const AlbumList = () => {
     const res = await apiController({
       serverType: config.serverType,
       endpoint: 'getGenres',
-      args: { musicFolderId: musicFolder },
+      args: { musicFolderId: folder.musicFolder },
     });
     return res.map((genre: any) => {
       if (genre.albumCount !== 0) {

@@ -7,6 +7,8 @@ import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '.
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
 import { apiController } from '../../../api/controller';
+import { Folder } from '../../../types';
+import PageLoader from '../../loader/PageLoader';
 
 const ServerConfig = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +18,10 @@ const ServerConfig = () => {
     apiController({ serverType: config.serverType, endpoint: 'getMusicFolders' })
   );
   const musicFolderPickerContainerRef = useRef(null);
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <ConfigPanel header="Server" bordered>
@@ -29,13 +35,15 @@ const ServerConfig = () => {
       <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
         <StyledInputPicker
           container={() => musicFolderPickerContainerRef.current}
-          data={isLoading ? [] : musicFolders}
+          data={musicFolders}
           defaultValue={folder.musicFolder}
           valueKey="id"
           labelKey="title"
-          onChange={(e: any) => {
+          onChange={(e: string) => {
+            const selectedFolder = musicFolders.find((f: Folder) => f.id === e);
             settings.setSync('musicFolder.id', e);
-            dispatch(setMusicFolder(e));
+            settings.setSync('musicFolder.name', selectedFolder?.title);
+            dispatch(setMusicFolder({ id: e, name: selectedFolder?.title }));
           }}
         />
       </StyledInputPickerContainer>
