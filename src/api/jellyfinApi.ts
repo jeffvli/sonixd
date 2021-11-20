@@ -74,6 +74,10 @@ const getCoverArtUrl = (item: any, size?: number) => {
   );
 };
 
+export const getDownloadUrl = (options: { id: string }) => {
+  return `${API_BASE_URL}/items/${options.id}/download?api_key=${auth.token}`;
+};
+
 const normalizeItem = (item: any) => {
   return {
     id: item.Id || item.Url,

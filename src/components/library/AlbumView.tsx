@@ -198,11 +198,30 @@ const AlbumView = ({ ...rest }: any) => {
   };
 
   const handleDownload = async (type: 'copy' | 'download') => {
-    // If not Navidrome (this assumes Airsonic), then we need to use a song's parent
-    // to download. This is because Airsonic does not support downloading via album ids
-    // that are provided by /getAlbum or /getAlbumList2
+    if (config.serverType === Server.Jellyfin) {
+      const downloadUrls = [];
+      for (let i = 0; i < data.song.length; i += 1) {
+        downloadUrls.push(
+          // eslint-disable-next-line no-await-in-loop
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'getDownloadUrl',
+            args: { id: data.song[i].id },
+          })
+        );
+      }
 
-    if (data.song[0]?.parent) {
+      if (type === 'download') {
+        downloadUrls.forEach((url) => shell.openExternal(url));
+      } else {
+        clipboard.writeText(downloadUrls.join('\n'));
+        notifyToast('info', 'Download links copied!');
+      }
+
+      // If not Navidrome (this assumes Airsonic), then we need to use a song's parent
+      // to download. This is because Airsonic does not support downloading via album ids
+      // that are provided by /getAlbum or /getAlbumList2
+    } else if (data.song[0]?.parent) {
       if (type === 'download') {
         shell.openExternal(
           await apiController({
@@ -216,7 +235,8 @@ const AlbumView = ({ ...rest }: any) => {
           await apiController({
             serverType: config.serverType,
             endpoint: 'getDownloadUrl',
-            args: { id: data.song[0].parent },
+            args:
+              config.serverType === Server.Subsonic ? { id: data.song[0].parent } : { id: data.id },
           })
         );
         notifyToast('info', 'Download links copied!');

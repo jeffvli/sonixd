@@ -46,7 +46,7 @@ import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Artist, GenericItem } from '../../types';
+import { Artist, GenericItem, Server } from '../../types';
 
 const fac = new FastAverageColor();
 
@@ -190,7 +190,35 @@ const ArtistView = ({ ...rest }: any) => {
   };
 
   const handleDownload = async (type: 'copy' | 'download') => {
-    if (data.album[0]?.parent) {
+    if (config.serverType === Server.Jellyfin) {
+      const downloadUrls: string[] = [];
+
+      const allArtistSongs = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getArtistSongs',
+        args: { id: data.id },
+      });
+
+      for (let i = 0; i < allArtistSongs.length; i += 1) {
+        downloadUrls.push(
+          // eslint-disable-next-line no-await-in-loop
+          await apiController({
+            serverType: config.serverType,
+            endpoint: 'getDownloadUrl',
+            args: { id: allArtistSongs[i].id },
+          })
+        );
+      }
+
+      if (type === 'download') {
+        downloadUrls.forEach((link) => shell.openExternal(link));
+      }
+
+      if (type === 'copy') {
+        clipboard.writeText(downloadUrls.join('\n'));
+        notifyToast('info', 'Download links copied!');
+      }
+    } else if (data.album[0]?.parent) {
       if (type === 'download') {
         shell.openExternal(
           await apiController({
@@ -211,7 +239,6 @@ const ArtistView = ({ ...rest }: any) => {
       }
     } else {
       const downloadUrls: string[] = [];
-
       for (let i = 0; i < data.album.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
         const albumRes = await apiController({
