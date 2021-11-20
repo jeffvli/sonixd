@@ -19,7 +19,6 @@ import {
 import GridViewType from '../viewtypes/GridViewType';
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
 
 const ArtistList = () => {
   const dispatch = useAppDispatch();
@@ -44,7 +43,7 @@ const ArtistList = () => {
       apiController({
         serverType: config.serverType,
         endpoint: 'getArtists',
-        args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
+        args: { musicFolderId: musicFolder },
       }),
     {
       cacheTime: 3600000, // Stay in cache for 1 hour

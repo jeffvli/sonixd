@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
@@ -101,6 +101,7 @@ export const GlobalContextMenu = () => {
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
+  const folder = useAppSelector((state) => state.folder);
   const addToPlaylistTriggerRef = useRef<any>();
   const deletePlaylistTriggerRef = useRef<any>();
   const [selectedPlaylistId, setSelectedPlaylistId] = useState('');
@@ -108,6 +109,13 @@ export const GlobalContextMenu = () => {
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [indexToMoveTo, setIndexToMoveTo] = useState(0);
   const playlistPickerContainerRef = useRef(null);
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.artists) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
 
   const { data: playlists }: any = useQuery(['playlists'], () =>
     apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
@@ -204,7 +212,7 @@ export const GlobalContextMenu = () => {
           apiController({
             serverType: config.serverType,
             endpoint: 'getArtistSongs',
-            args: { id: multiSelect.selected[i].id },
+            args: { id: multiSelect.selected[i].id, musicFolderId: musicFolder },
           })
         );
       }
@@ -303,7 +311,7 @@ export const GlobalContextMenu = () => {
           apiController({
             serverType: config.serverType,
             endpoint: 'getArtistSongs',
-            args: { id: multiSelect.selected[i].id },
+            args: { id: multiSelect.selected[i].id, musicFolderId: musicFolder },
           })
         );
       }

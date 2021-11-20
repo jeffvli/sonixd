@@ -60,10 +60,18 @@ const ArtistView = ({ ...rest }: any) => {
   const history = useHistory();
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
+  const folder = useAppSelector((state) => state.folder);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
   const [imageAverageColor, setImageAverageColor] = useState({ color: '', loaded: false });
   const [artistDurationTotal, setArtistDurationTotal] = useState('');
   const [artistSongTotal, setArtistSongTotal] = useState(0);
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.artists) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
 
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
@@ -123,7 +131,7 @@ const ArtistView = ({ ...rest }: any) => {
     const res = await apiController({
       serverType: config.serverType,
       endpoint: 'getArtistSongs',
-      args: { id: data.id },
+      args: { id: data.id, musicFolderId: musicFolder },
     });
 
     const songs = filterPlayQueue(config.playback.filters, res);
@@ -144,7 +152,7 @@ const ArtistView = ({ ...rest }: any) => {
     const res = await await apiController({
       serverType: config.serverType,
       endpoint: 'getArtistSongs',
-      args: { id: data.id },
+      args: { id: data.id, musicFolderId: musicFolder },
     });
 
     const songs = filterPlayQueue(config.playback.filters, res);
@@ -196,7 +204,7 @@ const ArtistView = ({ ...rest }: any) => {
       const allArtistSongs = await apiController({
         serverType: config.serverType,
         endpoint: 'getArtistSongs',
-        args: { id: data.id },
+        args: { id: data.id, musicFolderId: musicFolder },
       });
 
       for (let i = 0; i < allArtistSongs.length; i += 1) {

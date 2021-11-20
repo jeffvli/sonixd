@@ -1,5 +1,5 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -52,6 +52,7 @@ const GridCard = ({ data, index, style }: any) => {
           cacheImages={data.cacheImages}
           cachePath={data.cachePath}
           handleFavorite={data.handleFavorite}
+          musicFolderId={data.musicFolderId}
         />
       </div>
     );
@@ -86,6 +87,7 @@ function ListWrapper({
   cacheImages,
   cachePath,
   handleFavorite,
+  musicFolderId,
 }: any) {
   const cardHeight = size + 55;
   const cardWidth = size;
@@ -110,6 +112,7 @@ function ListWrapper({
       cacheImages,
       cachePath,
       handleFavorite,
+      musicFolderId,
     }),
     [
       cardHeight,
@@ -127,6 +130,7 @@ function ListWrapper({
       cacheImages,
       cachePath,
       handleFavorite,
+      musicFolderId,
     ]
   );
 
@@ -156,6 +160,14 @@ const GridViewType = ({
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
+  const folder = useAppSelector((state) => state.folder);
+  const [musicFolder, setMusicFolder] = useState(undefined);
+
+  useEffect(() => {
+    if (folder.applied.artists) {
+      setMusicFolder(folder.musicFolder);
+    }
+  }, [folder]);
 
   return (
     <AutoSizer>
@@ -175,6 +187,7 @@ const GridViewType = ({
           cacheImages={cacheImages}
           cachePath={misc.imageCachePath}
           handleFavorite={handleFavorite}
+          musicFolderId={musicFolder}
         />
       )}
     </AutoSizer>
