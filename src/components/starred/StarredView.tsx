@@ -106,7 +106,7 @@ const StarredView = () => {
     await apiController({
       serverType: config.serverType,
       endpoint: 'unstar',
-      args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+      args: { id: rowData.id, type: 'music' },
     });
     dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
     await queryClient.refetchQueries(['starred', musicFolder], {
@@ -118,7 +118,7 @@ const StarredView = () => {
     await apiController({
       serverType: config.serverType,
       endpoint: 'unstar',
-      args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'album' } : null,
+      args: { id: rowData.id, type: 'album' },
     });
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,
@@ -129,7 +129,7 @@ const StarredView = () => {
     await apiController({
       serverType: config.serverType,
       endpoint: 'unstar',
-      args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'artist' } : null,
+      args: { id: rowData.id, type: 'artist' },
     });
     await queryClient.refetchQueries(['starred', musicFolder], {
       active: true,

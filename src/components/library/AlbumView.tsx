@@ -150,7 +150,7 @@ const AlbumView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'album' } : null,
+        args: { id: data.id, type: 'album' },
       });
       queryClient.setQueryData(['album', id], { ...data, starred: Date.now() });
     } else {
@@ -168,7 +168,7 @@ const AlbumView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['album', id], (oldData: any) => {
@@ -183,7 +183,7 @@ const AlbumView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['album', id], (oldData: any) => {

@@ -352,7 +352,7 @@ const PlaylistView = ({ ...rest }) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       dispatch(setPlaylistStar({ id: [rowData.id], type: 'star' }));
@@ -369,7 +369,7 @@ const PlaylistView = ({ ...rest }) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: rowData.id, type: 'music' } : null,
+        args: { id: rowData.id, type: 'music' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       dispatch(setPlaylistStar({ id: [rowData.id], type: 'unstar' }));

@@ -35,7 +35,6 @@ import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList, isCached } from '../../shared/utils';
 import { StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -278,10 +277,7 @@ const PlayerBar = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'star',
-        args:
-          config.serverType === Server.Subsonic
-            ? { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' }
-            : null,
+        args: { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' },
       });
       dispatch(
         setStar({
@@ -293,10 +289,7 @@ const PlayerBar = () => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args:
-          config.serverType === Server.Subsonic
-            ? { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' }
-            : null,
+        args: { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' },
       });
       dispatch(
         setStar({

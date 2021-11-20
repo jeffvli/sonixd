@@ -107,7 +107,7 @@ const normalizeSong = (item: any) => {
     created: item.DateCreated,
     streamUrl: getStreamUrl(item.Id),
     image: getCoverArtUrl(item, 150),
-    starred: item.UserData.isFavorite ? 'true' : undefined,
+    starred: item.UserData && item.UserData.IsFavorite ? 'true' : undefined,
     type: Item.Music,
     uniqueId: nanoid(),
   };
@@ -376,4 +376,14 @@ export const getStarred = async () => {
     ).map((entry: any) => normalizeSong(entry)),
     artist: (artistData.Items || []).map((entry: any) => normalizeArtist(entry)),
   };
+};
+
+export const star = async (options: { id: string }) => {
+  const { data } = await jellyfinApi.post(`/users/${auth.username}/favoriteitems/${options.id}`);
+  return data;
+};
+
+export const unstar = async (options: { id: string }) => {
+  const { data } = await jellyfinApi.delete(`/users/${auth.username}/favoriteitems/${options.id}`);
+  return data;
 };
