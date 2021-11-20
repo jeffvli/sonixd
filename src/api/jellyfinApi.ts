@@ -75,7 +75,7 @@ const getCoverArtUrl = (item: any, size?: number) => {
 
 const normalizeItem = (item: any) => {
   return {
-    id: item.Id,
+    id: item.Id || item.Url,
     title: item.Name,
   };
 };
@@ -131,6 +131,25 @@ const normalizeAlbum = (item: any) => {
     type: Item.Album,
     uniqueId: nanoid(),
     song: (item.song || []).map((entry: any) => normalizeSong(entry)),
+  };
+};
+
+const normalizeArtist = (item: any) => {
+  return {
+    id: item.Id,
+    title: item.Name,
+    albumCount: item.AlbumCount,
+    image: getCoverArtUrl(item, 350),
+    starred: item.UserData && item.UserData?.IsFavorite ? 'true' : undefined,
+    info: {
+      biography: item.Overview,
+      externalUrl: (item.ExternalUrls || []).map((entry: any) => normalizeItem(entry)),
+      imageUrl: undefined,
+      similarArtist: (item.similarArtist || []).map((entry: any) => normalizeArtist(entry)),
+    },
+    type: Item.Artist,
+    uniqueId: nanoid(),
+    album: (item.album || []).map((entry: any) => normalizeAlbum(entry)),
   };
 };
 
@@ -246,6 +265,51 @@ export const getAlbums = async (options: {
   });
 
   return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
+};
+
+export const getArtist = async (options: { id: string }) => {
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`);
+  const { data: albumData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      artistIds: options.id,
+      sortBy: 'SortName',
+      includeItemTypes: 'MusicAlbum',
+      recursive: true,
+      fields: 'AudioInfo, ParentId, Genres, DateCreated, ChildCount',
+    },
+  });
+
+  return normalizeArtist({
+    ...data,
+    album: albumData.Items,
+  });
+};
+
+export const getArtists = async () => {
+  const { data } = await jellyfinApi.get(`/artists/albumartists`, {
+    params: {
+      sortBy: 'SortName',
+      sortOrder: 'Ascending',
+      recursive: true,
+      imageTypeLimit: 1,
+    },
+  });
+
+  return (data.Items || []).map((entry: any) => normalizeArtist(entry));
+};
+
+export const getArtistSongs = async (options: { id: string }) => {
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      artistIds: options.id,
+      sortBy: 'Album',
+      includeItemTypes: 'Audio',
+      recursive: true,
+      fields: 'Genres, DateCreated, MediaSources, UserData',
+    },
+  });
+
+  return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
 
 // http://192.168.14.11:8096/Users/0e5716f27d7f4b48aadb4a3bd55a38e9/Items/70384e0059a925138783c7275f717859

@@ -176,10 +176,10 @@ const normalizeSong = (item: any) => {
     albumId: item.albumId,
     albumArtist: item.artist,
     albumArtistId: item.artistId,
-    artist: [{ id: item.artistId, title: item.artist }],
+    artist: item.artist && [{ id: item.artistId, title: item.artist }],
     track: item.track,
     year: item.year,
-    genre: [{ id: item.genre, title: item.genre }],
+    genre: item.genre && [{ id: item.genre, title: item.genre }],
     albumGenre: item.genre,
     size: item.size,
     contentType: item.contentType,
@@ -228,18 +228,16 @@ const normalizeArtist = (item: any) => {
     albumCount: item.albumCount,
     image: getCoverArtUrl(item, legacyAuth, 350),
     starred: item.starred,
+    info: {
+      biography: item.biography,
+      externalUrl: item.lastFmUrl && [{ id: item.lastFmUrl, title: 'Last.FM' }],
+      imageUrl:
+        !item.externalImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f') && item.externalImageUrl,
+      similarArtist: (item.similarArtist || []).map((entry: any) => normalizeArtist(entry)),
+    },
     type: Item.Artist,
     uniqueId: nanoid(),
     album: (item.album || []).map((entry: any) => normalizeAlbum(entry)),
-  };
-};
-
-const normalizeArtistInfo = (item: any) => {
-  return {
-    biography: item.biography,
-    lastFmUrl: item.lastFmUrl,
-    imageUrl: item.largeImageUrl || item.mediumImageUrl || item.smallImageUrl,
-    similarArtist: (item.similarArtist || []).map((entry: any) => normalizeArtist(entry)),
   };
 };
 
@@ -390,7 +388,17 @@ export const getRandomSongs = async (options: {
 
 export const getArtist = async (options: { id: string }) => {
   const { data } = await api.get(`/getArtist`, { params: options });
-  return normalizeArtist(data.artist);
+  const { data: infoData } = await api.get(`/getArtistInfo2`, {
+    params: { id: options.id, count: 8 },
+  });
+
+  return normalizeArtist({
+    ...data.artist,
+    biography: infoData.artistInfo2.biography,
+    lastFmUrl: infoData.artistInfo2.lastFmUrl,
+    externalImageUrl: infoData.artistInfo2.largeImageUrl,
+    similarArtist: infoData.artistInfo2.similarArtist,
+  });
 };
 
 export const getArtists = async (options: { musicFolderId?: string | number }) => {
@@ -399,21 +407,21 @@ export const getArtists = async (options: { musicFolderId?: string | number }) =
   return (artists || []).map((entry: any) => normalizeArtist(entry));
 };
 
-export const getArtistInfo = async (options: { id: string; count: number }) => {
-  const { data } = await api.get(`/getArtistInfo2`, { params: options });
-  return normalizeArtistInfo(data.artistInfo2);
-};
-
 export const getArtistSongs = async (options: { id: string }) => {
   const promises = [];
-  const artist = await getArtist({ id: options.id });
+  const { data } = await api.get(`/getArtist`, { params: options });
 
-  for (let i = 0; i < artist.album.length; i += 1) {
-    promises.push(getAlbum({ id: artist.album[i].id }));
+  console.log(`artist`, data.artist);
+
+  for (let i = 0; i < data.artist.album.length; i += 1) {
+    promises.push(api.get(`/getAlbum`, { params: { id: data.artist.album[i].id } }));
   }
 
   const res = await Promise.all(promises);
-  return (_.flatten(_.map(res, 'song')) || []).map((entry: any) => normalizeSong(entry));
+
+  return _.flatten(res.map((entry: any) => entry.data.album.song) || []).map((entry: any) =>
+    normalizeSong(entry)
+  );
 };
 
 export const startScan = async () => {
