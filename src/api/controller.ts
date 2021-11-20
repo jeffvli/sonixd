@@ -33,6 +33,7 @@ import {
   updatePlaylistSongsLg,
 } from './api';
 import {
+  getDownloadUrl as jfGetDownloadUrl,
   getArtist as jfGetArtist,
   getArtists as jfGetArtists,
   getArtistSongs as jfGetArtistSongs,
@@ -81,7 +82,7 @@ const endpoints = [
   { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: undefined } },
   { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: undefined } },
   { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: undefined } },
-  { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: undefined } },
+  { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },
 ];
 
 export const apiController = async (options: {
