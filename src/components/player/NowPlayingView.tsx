@@ -192,16 +192,13 @@ const NowPlayingView = () => {
     const res: Song[] = await apiController({
       serverType: config.serverType,
       endpoint: 'getRandomSongs',
-      args:
-        config.serverType === Server.Subsonic
-          ? {
-              size: autoPlaylistTrackCount,
-              fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
-              toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
-              genre: randomPlaylistGenre,
-              musicFolderId: musicFolder,
-            }
-          : null,
+      args: {
+        size: autoPlaylistTrackCount,
+        fromYear: autoPlaylistFromYear !== 0 ? autoPlaylistFromYear : undefined,
+        toYear: autoPlaylistToYear !== 0 ? autoPlaylistToYear : undefined,
+        genre: randomPlaylistGenre,
+        musicFolderId: musicFolder,
+      },
     });
 
     if (isFailedResponse(res)) {

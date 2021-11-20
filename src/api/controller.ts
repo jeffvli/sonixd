@@ -40,6 +40,7 @@ import {
   getAlbums as jfGetAlbums,
   getPlaylist as jfGetPlaylist,
   getPlaylists as jfGetPlaylists,
+  getRandomSongs as jfGetRandomSongs,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -50,7 +51,7 @@ const endpoints = [
   { id: 'getStarred', endpoint: { subsonic: getStarred, jellyfin: undefined } },
   { id: 'getAlbum', endpoint: { subsonic: getAlbum, jellyfin: jfGetAlbum } },
   { id: 'getAlbums', endpoint: { subsonic: getAlbums, jellyfin: jfGetAlbums } },
-  { id: 'getRandomSongs', endpoint: { subsonic: getRandomSongs, jellyfin: undefined } },
+  { id: 'getRandomSongs', endpoint: { subsonic: getRandomSongs, jellyfin: jfGetRandomSongs } },
   { id: 'getArtist', endpoint: { subsonic: getArtist, jellyfin: jfGetArtist } },
   { id: 'getArtists', endpoint: { subsonic: getArtists, jellyfin: jfGetArtists } },
   { id: 'getArtistSongs', endpoint: { subsonic: getArtistSongs, jellyfin: jfGetArtistSongs } },
