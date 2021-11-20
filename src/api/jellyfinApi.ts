@@ -387,3 +387,25 @@ export const unstar = async (options: { id: string }) => {
   const { data } = await jellyfinApi.delete(`/users/${auth.username}/favoriteitems/${options.id}`);
   return data;
 };
+
+export const batchStar = async (options: { ids: string[] }) => {
+  const promises = [];
+  for (let i = 0; i < options.ids.length; i += 1) {
+    promises.push(star({ id: options.ids[i] }));
+  }
+
+  const res = await Promise.all(promises);
+
+  return res;
+};
+
+export const batchUnstar = async (options: { ids: string[] }) => {
+  const promises = [];
+  for (let i = 0; i < options.ids.length; i += 1) {
+    promises.push(unstar({ id: options.ids[i] }));
+  }
+
+  const res = await Promise.all(promises);
+
+  return res;
+};
