@@ -52,6 +52,11 @@ export type APIEndpoints =
   | 'getMusicDirectorySongs'
   | 'getDownloadUrl';
 
+export interface GenericItem {
+  id: string;
+  title: string;
+}
+
 export interface Album {
   id: string;
   title: string;
@@ -79,6 +84,7 @@ export interface Artist {
   albumCount?: number;
   image?: string;
   starred?: string;
+  info?: ArtistInfo;
   type?: Item.Artist;
   uniqueId?: string;
   album?: Album[];
@@ -86,10 +92,11 @@ export interface Artist {
 
 export interface ArtistInfo {
   biography?: string;
-  lastFmUrl?: string;
+  externalUrl: GenericItem[];
   imageUrl?: string;
   similarArtist?: Artist[];
 }
+
 export interface Folder {
   id: string;
   title: string;

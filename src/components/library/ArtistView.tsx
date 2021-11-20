@@ -46,7 +46,7 @@ import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Artist, GenericItem, Server } from '../../types';
 
 const fac = new FastAverageColor();
 
@@ -69,18 +69,6 @@ const ArtistView = ({ ...rest }: any) => {
   const artistId = rest.id ? rest.id : id;
   const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
     apiController({ serverType: config.serverType, endpoint: 'getArtist', args: { id: artistId } })
-  );
-  const {
-    isLoading: isLoadingAI,
-    isError: isErrorAI,
-    data: artistInfo,
-    error: errorAI,
-  }: any = useQuery(['artistInfo', artistId], () =>
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'getArtistInfo',
-      args: config.serverType === Server.Subsonic ? { id: artistId, count: 8 } : null,
-    })
   );
 
   const filteredData = useSearchQuery(misc.searchQuery, data?.album, [
@@ -261,18 +249,17 @@ const ArtistView = ({ ...rest }: any) => {
     if (!isLoading) {
       const img = isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
         ? `${misc.imageCachePath}artist_${data?.id}.jpg`
-        : data?.image.includes('placeholder')
-        ? artistInfo?.largeImageUrl &&
-          !artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
-          ? artistInfo?.largeImageUrl
+        : data?.image?.includes('placeholder')
+        ? data?.info?.imageUrl
+          ? data?.info?.imageUrl
           : data?.image
         : data?.image;
 
       const setAvgColor = (imgUrl: string) => {
         if (
-          data?.image.match('placeholder') ||
-          (data?.image.match('placeholder') &&
-            artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f'))
+          data?.image?.match('placeholder') ||
+          (data?.image?.match('placeholder') &&
+            data?.info?.imageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f'))
         ) {
           setImageAverageColor({ color: 'rgba(50, 50, 50, .4)', loaded: true });
         } else {
@@ -296,7 +283,7 @@ const ArtistView = ({ ...rest }: any) => {
       };
       setAvgColor(img);
     }
-  }, [artistInfo?.largeImageUrl, data?.id, data?.image, isLoading, misc.imageCachePath]);
+  }, [data?.id, data?.image, data?.info, isLoading, misc.imageCachePath]);
 
   useEffect(() => {
     const allAlbumDurations = _.sum(_.map(data?.album, 'duration'));
@@ -306,16 +293,12 @@ const ArtistView = ({ ...rest }: any) => {
     setArtistSongTotal(allSongCount);
   }, [data?.album]);
 
-  if (isLoading || isLoadingAI || imageAverageColor.loaded === false) {
+  if (isLoading || imageAverageColor.loaded === false) {
     return <PageLoader />;
   }
 
-  if (isError || isErrorAI) {
-    return (
-      <span>
-        Error: {error?.message} {errorAI?.message}
-      </span>
-    );
+  if (isError) {
+    return <span>Error: {error?.message}</span>;
   }
 
   return (
@@ -329,14 +312,13 @@ const ArtistView = ({ ...rest }: any) => {
         header={
           <GenericPageHeader
             image={
-              isCached(`${misc.imageCachePath}artist_${data.id}.jpg`)
-                ? `${misc.imageCachePath}artist_${data.id}.jpg`
-                : data.image.includes('placeholder')
-                ? artistInfo?.largeImageUrl &&
-                  !artistInfo?.largeImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
-                  ? artistInfo.largeImageUrl
-                  : data.image
-                : data.image
+              isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
+                ? `${misc.imageCachePath}artist_${data?.id}.jpg`
+                : data?.image?.includes('placeholder')
+                ? data?.info?.imageUrl
+                  ? data?.info?.imageUrl
+                  : data?.image
+                : data?.image
             }
             cacheImages={{
               enabled: settings.getSync('cacheImages'),
@@ -353,7 +335,7 @@ const ArtistView = ({ ...rest }: any) => {
                   {artistDurationTotal}
                 </PageHeaderSubtitleDataLine>
                 <CustomTooltip
-                  text={artistInfo?.biography
+                  text={data?.info.biography
                     ?.replace(/<[^>]*>/, '')
                     .replace('Read more on Last.fm</a>', '')}
                   placement="bottomStart"
@@ -368,11 +350,11 @@ const ArtistView = ({ ...rest }: any) => {
                     }}
                   >
                     <span>
-                      {artistInfo?.biography
+                      {data?.info.biography
                         ?.replace(/<[^>]*>/, '')
                         .replace('Read more on Last.fm</a>', '')
                         ?.trim()
-                        ? `${artistInfo?.biography
+                        ? `${data?.info.biography
                             ?.replace(/<[^>]*>/, '')
                             .replace('Read more on Last.fm</a>', '')}`
                         : 'No artist biography found'}
@@ -426,35 +408,39 @@ const ArtistView = ({ ...rest }: any) => {
                           <div>
                             <h6>Related artists</h6>
                             <TagGroup>
-                              {artistInfo.similarArtist?.map((artist: any) => (
-                                <StyledTag
-                                  key={artist.id}
-                                  onClick={() => {
-                                    if (!rest.isModal) {
-                                      history.push(`/library/artist/${artist.id}`);
-                                    } else {
-                                      dispatch(
-                                        addModalPage({
-                                          pageType: 'artist',
-                                          id: artist.id,
-                                        })
-                                      );
-                                    }
-                                  }}
-                                >
-                                  {artist.title}
-                                </StyledTag>
-                              ))}
+                              {data.info.similarArtist &&
+                                data?.info.similarArtist.map((artist: Artist) => (
+                                  <StyledTag
+                                    key={artist.id}
+                                    onClick={() => {
+                                      if (!rest.isModal) {
+                                        history.push(`/library/artist/${artist.id}`);
+                                      } else {
+                                        dispatch(
+                                          addModalPage({
+                                            pageType: 'artist',
+                                            id: artist.id,
+                                          })
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    {artist.title}
+                                  </StyledTag>
+                                ))}
                             </TagGroup>
                           </div>
                           <br />
-                          <StyledButton
-                            appearance="primary"
-                            disabled={!artistInfo?.lastFmUrl}
-                            onClick={() => shell.openExternal(artistInfo?.lastFmUrl)}
-                          >
-                            View on Last.FM
-                          </StyledButton>
+                          {data.info.externalUrl &&
+                            data.info.externalUrl.map((ext: GenericItem) => (
+                              <StyledButton
+                                key={ext.id}
+                                appearance="primary"
+                                onClick={() => shell.openExternal(ext.id)}
+                              >
+                                {ext.title}
+                              </StyledButton>
+                            ))}
                         </StyledPopover>
                       }
                     >
