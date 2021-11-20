@@ -23,8 +23,13 @@ const GenreList = () => {
   const config = useAppSelector((state) => state.config);
   const album = useAppSelector((state) => state.album);
   const misc = useAppSelector((state) => state.misc);
+  const folder = useAppSelector((state) => state.folder);
   const { isLoading, isError, data: genres, error }: any = useQuery(['genrePageList'], async () => {
-    const res = await apiController({ serverType: config.serverType, endpoint: 'getGenres' });
+    const res = await apiController({
+      serverType: config.serverType,
+      endpoint: 'getGenres',
+      args: { musicFolderId: folder.musicFolder },
+    });
     return _.orderBy(res, 'songCount', 'desc');
   });
   const filteredData = useSearchQuery(misc.searchQuery, genres, ['title']);

@@ -32,7 +32,7 @@ const ServerConfig = () => {
           data={isLoading ? [] : musicFolders}
           defaultValue={folder.musicFolder}
           valueKey="id"
-          labelKey="name"
+          labelKey="title"
           onChange={(e: any) => {
             settings.setSync('musicFolder.id', e);
             dispatch(setMusicFolder(e));

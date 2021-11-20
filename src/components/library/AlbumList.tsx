@@ -98,11 +98,15 @@ const AlbumList = () => {
     }
   );
   const { data: genres }: any = useQuery(['genreList'], async () => {
-    const res = await apiController({ serverType: config.serverType, endpoint: 'getGenres' });
+    const res = await apiController({
+      serverType: config.serverType,
+      endpoint: 'getGenres',
+      args: { musicFolderId: musicFolder },
+    });
     return res.map((genre: any) => {
       if (genre.albumCount !== 0) {
         return {
-          label: `${genre.title} (${genre.albumCount})`,
+          label: `${genre.title} ${genre.albumCount ? `(${genre.albumCount})` : ''}`,
           value: genre.title,
           role: 'Genre',
         };
