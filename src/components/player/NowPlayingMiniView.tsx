@@ -79,7 +79,11 @@ const NowPlayingMiniView = () => {
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
   const { isLoading: isLoadingGenres, data: genres }: any = useQuery(['genreList'], async () => {
-    const res = await apiController({ serverType: config.serverType, endpoint: 'getGenres' });
+    const res = await apiController({
+      serverType: config.serverType,
+      endpoint: 'getGenres',
+      args: { musicFolderId: musicFolder },
+    });
     const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
     return genresOrderedBySongCount.map((genre: any) => {
       return {
