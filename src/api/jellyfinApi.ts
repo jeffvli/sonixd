@@ -345,3 +345,35 @@ export const getRandomSongs = async (options: {
 
   return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
+
+export const getStarred = async () => {
+  const { data: songAndAlbumData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      fields: 'Genres, DateCreated, MediaSources, ChildCount, UserData',
+      includeItemTypes: 'MusicAlbum, Audio',
+      isFavorite: true,
+      recursive: true,
+    },
+  });
+
+  const { data: artistData } = await jellyfinApi.get(`/artists`, {
+    params: {
+      imageTypeLimit: 1,
+      recursive: true,
+      sortBy: 'SortName',
+      sortOrder: 'Ascending',
+      isFavorite: true,
+      userId: auth.username,
+    },
+  });
+
+  return {
+    album: (
+      songAndAlbumData.Items.filter((data: any) => data.Type === 'MusicAlbum') || []
+    ).map((entry: any) => normalizeAlbum(entry)),
+    song: (
+      songAndAlbumData.Items.filter((data: any) => data.Type === 'Audio') || []
+    ).map((entry: any) => normalizeSong(entry)),
+    artist: (artistData.Items || []).map((entry: any) => normalizeArtist(entry)),
+  };
+};
