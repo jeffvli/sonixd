@@ -47,6 +47,8 @@ import {
   unstar as jfUnstar,
   batchStar as jfBatchStar,
   batchUnstar as jfBatchUnstar,
+  getGenres as jfGetGenres,
+  getMusicFolders as jfGetMusicFolders,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -75,11 +77,11 @@ const endpoints = [
   { id: 'createPlaylist', endpoint: { subsonic: createPlaylist, jellyfin: undefined } },
   { id: 'updatePlaylist', endpoint: { subsonic: updatePlaylist, jellyfin: undefined } },
   { id: 'clearPlaylist', endpoint: { subsonic: clearPlaylist, jellyfin: undefined } },
-  { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: undefined } },
+  { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: undefined } },
   { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: undefined } },
   { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: undefined } },
-  { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: undefined } },
+  { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: jfGetMusicFolders } },
   { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: undefined } },
   { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: undefined } },
   { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },

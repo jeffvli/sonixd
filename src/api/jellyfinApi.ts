@@ -176,6 +176,28 @@ const normalizePlaylist = (item: any) => {
   };
 };
 
+const normalizeGenre = (item: any) => {
+  return {
+    id: item.Id,
+    title: item.Name,
+    songCount: undefined,
+    albumCount: undefined,
+    type: Item.Genre,
+    uniqueId: nanoid(),
+  };
+};
+
+const normalizeFolder = (item: any) => {
+  return {
+    id: item.Id,
+    title: item.Name,
+    isDir: true,
+    image: getCoverArtUrl(item, 350),
+    type: Item.Folder,
+    uniqueId: nanoid(),
+  };
+};
+
 export const getPlaylist = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/Items`, {
     params: {
@@ -251,8 +273,9 @@ export const getAlbums = async (options: {
         fields: 'Genres, DateCreated, ChildCount',
         includeItemTypes: 'MusicAlbum',
         recursive: true,
-        sortBy: sortType!.replacement,
-        sortOrder: sortType!.sortOrder,
+        sortBy: sortType ? sortType!.replacement : 'SortName',
+        sortOrder: sortType ? sortType!.sortOrder : 'Ascending',
+        genres: !sortType ? options.type : undefined,
       },
     });
 
@@ -412,4 +435,16 @@ export const batchUnstar = async (options: { ids: string[] }) => {
   const res = await Promise.all(promises);
 
   return res;
+};
+
+export const getGenres = async (options: { musicFolderId: string }) => {
+  const { data } = await jellyfinApi.get(`/genres`, {
+    params: { parentId: options.musicFolderId },
+  });
+  return (data.Items || []).map((entry: any) => normalizeGenre(entry));
+};
+
+export const getMusicFolders = async () => {
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`);
+  return (data.Items || []).map((entry: any) => normalizeFolder(entry));
 };
