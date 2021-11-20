@@ -411,8 +411,6 @@ export const getArtistSongs = async (options: { id: string }) => {
   const promises = [];
   const { data } = await api.get(`/getArtist`, { params: options });
 
-  console.log(`artist`, data.artist);
-
   for (let i = 0; i < data.artist.album.length; i += 1) {
     promises.push(api.get(`/getAlbum`, { params: { id: data.artist.album[i].id } }));
   }

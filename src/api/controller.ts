@@ -44,6 +44,8 @@ import {
   getStarred as jfGetStarred,
   star as jfStar,
   unstar as jfUnstar,
+  batchStar as jfBatchStar,
+  batchUnstar as jfBatchUnstar,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -62,8 +64,8 @@ const endpoints = [
   { id: 'getScanStatus', endpoint: { subsonic: getScanStatus, jellyfin: undefined } },
   { id: 'star', endpoint: { subsonic: star, jellyfin: jfStar } },
   { id: 'unstar', endpoint: { subsonic: unstar, jellyfin: jfUnstar } },
-  { id: 'batchStar', endpoint: { subsonic: batchStar, jellyfin: undefined } },
-  { id: 'batchUnstar', endpoint: { subsonic: batchUnstar, jellyfin: undefined } },
+  { id: 'batchStar', endpoint: { subsonic: batchStar, jellyfin: jfBatchStar } },
+  { id: 'batchUnstar', endpoint: { subsonic: batchUnstar, jellyfin: jfBatchUnstar } },
   { id: 'setRating', endpoint: { subsonic: setRating, jellyfin: undefined } },
   { id: 'getSimilarSongs', endpoint: { subsonic: getSimilarSongs, jellyfin: undefined } },
   { id: 'updatePlaylistSongs', endpoint: { subsonic: updatePlaylistSongs, jellyfin: undefined } },
