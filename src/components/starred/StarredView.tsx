@@ -87,7 +87,7 @@ const StarredView = () => {
       dispatch(
         setPlayQueueByRowClick({
           entries: data.song,
-          currentIndex: rowData.index,
+          currentIndex: rowData.rowIndex,
           currentSongId: rowData.id,
           uniqueSongId: rowData.uniqueId,
           filters: config.playback.filters,

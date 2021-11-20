@@ -102,7 +102,7 @@ const FolderList = () => {
       dispatch(
         setPlayQueueByRowClick({
           entries: selected.filter((entry: any) => entry?.isDir === false),
-          currentIndex: rowData.index,
+          currentIndex: rowData.rowIndex,
           currentSongId: rowData.id,
           uniqueSongId: rowData.uniqueId,
           filters: config.playback.filters,
