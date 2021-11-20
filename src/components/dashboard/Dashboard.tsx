@@ -36,7 +36,7 @@ const Dashboard = () => {
         args:
           config.serverType === Server.Subsonic
             ? { type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder }
-            : null,
+            : { type: 'recent', size: 20, offset: 0 },
       })
   );
 
@@ -49,7 +49,7 @@ const Dashboard = () => {
         args:
           config.serverType === Server.Subsonic
             ? { type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder }
-            : null,
+            : { type: 'newest', size: 20, offset: 0 },
       })
   );
 
@@ -62,7 +62,7 @@ const Dashboard = () => {
         args:
           config.serverType === Server.Subsonic
             ? { type: 'random', size: 20, offset: 0, musicFolderId: musicFolder }
-            : null,
+            : { type: 'random', size: 20, offset: 0 },
       })
   );
 
@@ -75,7 +75,7 @@ const Dashboard = () => {
         args:
           config.serverType === Server.Subsonic
             ? { type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder }
-            : null,
+            : { type: 'frequent', size: 20, offset: 0 },
       })
   );
 
