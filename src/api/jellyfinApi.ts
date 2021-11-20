@@ -175,14 +175,14 @@ const normalizePlaylist = (item: any) => {
 export const getPlaylist = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/Items`, {
     params: {
-      ids: options.id,
-      UserId: auth.username,
       fields: 'Genres, DateCreated, MediaSources, ChildCount',
+      ids: options.id,
+      userId: auth.username,
     },
   });
 
   const { data: songData } = await jellyfinApi.get(`/Playlists/${options.id}/Items`, {
-    params: { UserId: auth.username },
+    params: { userId: auth.username },
   });
 
   return {
@@ -195,11 +195,11 @@ export const getPlaylist = async (options: { id: string }) => {
 export const getPlaylists = async () => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
+      fields: 'DateCreated, ChildCount',
+      includeItemTypes: 'Playlist',
+      recursive: true,
       sortBy: 'SortName',
       sortOrder: 'Ascending',
-      includeItemTypes: 'Playlist',
-      fields: 'DateCreated, ChildCount',
-      recursive: true,
     },
   });
 
@@ -210,16 +210,14 @@ export const getPlaylists = async () => {
 
 export const getAlbum = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`, {
-    params: {
-      fields: 'Genres, DateCreated, ChildCount',
-    },
+    params: { fields: 'Genres, DateCreated, ChildCount' },
   });
 
   const { data: songData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
+      fields: 'Genres, DateCreated, MediaSources',
       parentId: options.id,
       sortBy: 'SortName',
-      fields: 'Genres, DateCreated, MediaSources',
     },
   });
 
@@ -246,11 +244,11 @@ export const getAlbums = async (options: {
   if (options.recursive) {
     const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
       params: {
+        fields: 'Genres, DateCreated, ChildCount',
+        includeItemTypes: 'MusicAlbum',
+        recursive: true,
         sortBy: sortType!.replacement,
         sortOrder: sortType!.sortOrder,
-        includeItemTypes: 'MusicAlbum',
-        fields: 'Genres, DateCreated, ChildCount',
-        recursive: true,
       },
     });
 
@@ -259,13 +257,13 @@ export const getAlbums = async (options: {
 
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
-      sortBy: sortType!.replacement,
-      sortOrder: sortType!.sortOrder,
-      includeItemTypes: 'MusicAlbum',
       fields: 'Genres, DateCreated, ChildCount',
-      recursive: true,
+      includeItemTypes: 'MusicAlbum',
       limit: options.size,
       offset: options.offset,
+      recursive: true,
+      sortBy: sortType!.replacement,
+      sortOrder: sortType!.sortOrder,
     },
   });
 
@@ -277,10 +275,10 @@ export const getArtist = async (options: { id: string }) => {
   const { data: albumData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       artistIds: options.id,
-      sortBy: 'SortName',
       includeItemTypes: 'MusicAlbum',
-      recursive: true,
       fields: 'AudioInfo, ParentId, Genres, DateCreated, ChildCount',
+      recursive: true,
+      sortBy: 'SortName',
     },
   });
 
@@ -293,10 +291,10 @@ export const getArtist = async (options: { id: string }) => {
 export const getArtists = async () => {
   const { data } = await jellyfinApi.get(`/artists/albumartists`, {
     params: {
+      imageTypeLimit: 1,
+      recursive: true,
       sortBy: 'SortName',
       sortOrder: 'Ascending',
-      recursive: true,
-      imageTypeLimit: 1,
     },
   });
 
@@ -307,10 +305,10 @@ export const getArtistSongs = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       artistIds: options.id,
-      sortBy: 'Album',
+      fields: 'Genres, DateCreated, MediaSources, UserData',
       includeItemTypes: 'Audio',
       recursive: true,
-      fields: 'Genres, DateCreated, MediaSources, UserData',
+      sortBy: 'Album',
     },
   });
 
