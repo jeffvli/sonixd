@@ -281,6 +281,13 @@ const normalizeFolder = (item: any) => {
   };
 };
 
+const normalizeScanStatus = (item: any) => {
+  return {
+    scanning: item.scanning,
+    count: item.count,
+  };
+};
+
 export const getPlaylist = async (options: { id: string }) => {
   const { data } = await api.get(`/getPlaylist?id=${options.id}`);
   return normalizePlaylist(data.playlist);
@@ -424,14 +431,12 @@ export const getArtistSongs = async (options: { id: string }) => {
 
 export const startScan = async () => {
   const { data } = await api.get(`/startScan`);
-  const scanStatus = data?.scanStatus;
-  return scanStatus;
+  return normalizeScanStatus(data.scanStatus);
 };
 
 export const getScanStatus = async () => {
   const { data } = await api.get(`/getScanStatus`);
-  const scanStatus = data?.scanStatus;
-  return scanStatus;
+  return normalizeScanStatus(data.scanStatus);
 };
 
 export const star = async (options: { id: string; type: string }) => {
