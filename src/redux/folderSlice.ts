@@ -18,7 +18,10 @@ export interface FolderSelection {
 }
 
 const initialState: FolderSelection = {
-  musicFolder: String(parsedSettings.musicFolder.id) || undefined,
+  musicFolder:
+    String(parsedSettings.musicFolder.id) === 'null'
+      ? undefined
+      : String(parsedSettings.musicFolder.id),
   musicFolderName: String(parsedSettings.musicFolder.name) || undefined,
   applied: {
     albums: Boolean(parsedSettings.musicFolder.albums),
