@@ -453,7 +453,7 @@ export const batchUnstar = async (options: { ids: string[] }) => {
 };
 
 export const getGenres = async (options: { musicFolderId?: string }) => {
-  const { data } = await jellyfinApi.get(`/genres`, {
+  const { data } = await jellyfinApi.get(`/musicgenres`, {
     params: { parentId: options.musicFolderId },
   });
   return (data.Items || []).map((entry: any) => normalizeGenre(entry));
