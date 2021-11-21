@@ -15,6 +15,7 @@ import { LoginPanel } from './styled';
 import GenericPage from '../layout/GenericPage';
 import logo from '../../../assets/icon.png';
 import { mockSettings } from '../../shared/mockSettings';
+import packageJson from '../../package.json';
 
 const Login = () => {
   const [serverType, setServerType] = useState('subsonic');
@@ -90,7 +91,7 @@ const Login = () => {
         },
         {
           headers: {
-            'X-Emby-Authorization': `MediaBrowser Client="Sonixd", Device="PC", DeviceId="${deviceId}", Version="0.1.0"`,
+            'X-Emby-Authorization': `MediaBrowser Client="Sonixd", Device="PC", DeviceId="${deviceId}", Version="${packageJson.version}"`,
           },
         }
       );
