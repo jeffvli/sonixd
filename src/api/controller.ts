@@ -51,6 +51,8 @@ import {
   getMusicFolders as jfGetMusicFolders,
   getSearch as jfGetSearch,
   scrobble as jfScrobble,
+  startScan as jfStartScan,
+  getScanStatus as jfGetScanStatus,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -65,8 +67,8 @@ const endpoints = [
   { id: 'getArtist', endpoint: { subsonic: getArtist, jellyfin: jfGetArtist } },
   { id: 'getArtists', endpoint: { subsonic: getArtists, jellyfin: jfGetArtists } },
   { id: 'getArtistSongs', endpoint: { subsonic: getArtistSongs, jellyfin: jfGetArtistSongs } },
-  { id: 'startScan', endpoint: { subsonic: startScan, jellyfin: undefined } },
-  { id: 'getScanStatus', endpoint: { subsonic: getScanStatus, jellyfin: undefined } },
+  { id: 'startScan', endpoint: { subsonic: startScan, jellyfin: jfStartScan } },
+  { id: 'getScanStatus', endpoint: { subsonic: getScanStatus, jellyfin: jfGetScanStatus } },
   { id: 'star', endpoint: { subsonic: star, jellyfin: jfStar } },
   { id: 'unstar', endpoint: { subsonic: unstar, jellyfin: jfUnstar } },
   { id: 'batchStar', endpoint: { subsonic: batchStar, jellyfin: jfBatchStar } },

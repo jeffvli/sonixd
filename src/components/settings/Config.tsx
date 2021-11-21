@@ -24,6 +24,7 @@ const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases
 const Config = () => {
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
+  const folder = useAppSelector((state) => state.folder);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [latestRelease, setLatestRelease] = useState(packageJson.version);
@@ -125,7 +126,11 @@ const Config = () => {
               <StyledButton
                 size="sm"
                 onClick={async () => {
-                  apiController({ serverType: config.serverType, endpoint: 'startScan' });
+                  apiController({
+                    serverType: config.serverType,
+                    endpoint: 'startScan',
+                    args: { musicFolderId: folder.musicFolder },
+                  });
                   setIsScanning(true);
                 }}
                 disabled={isScanning}
