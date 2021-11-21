@@ -322,6 +322,7 @@ export const getArtists = async (options: { musicFolderId?: string }) => {
   const { data } = await jellyfinApi.get(`/artists/albumartists`, {
     params: {
       imageTypeLimit: 1,
+      fields: 'Genres',
       recursive: true,
       sortBy: 'SortName',
       sortOrder: 'Ascending',
