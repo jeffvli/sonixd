@@ -160,3 +160,8 @@ export interface Song {
   type: Item.Music;
   uniqueId: string;
 }
+
+export interface ScanStatus {
+  scanning: boolean;
+  count: number | 'N/a';
+}

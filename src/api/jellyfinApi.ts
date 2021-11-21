@@ -198,6 +198,13 @@ const normalizeFolder = (item: any) => {
   };
 };
 
+const normalizeScanStatus = () => {
+  return {
+    scanning: false,
+    count: 'N/a',
+  };
+};
+
 export const getPlaylist = async (options: { id: string }) => {
   const { data } = await jellyfinApi.get(`/Items`, {
     params: {
@@ -511,4 +518,21 @@ export const scrobble = async (options: {
     ItemId: options.id,
     PositionTicks: options.position,
   });
+};
+
+export const startScan = async (options: { musicFolderId?: string }) => {
+  if (options.musicFolderId) {
+    return jellyfinApi.post(`/items/${options.musicFolderId}/refresh`, {
+      Recursive: true,
+      ImageRefreshMode: 'Default',
+      ReplaceAllImages: false,
+      ReplaceAllMetadata: false,
+    });
+  }
+
+  return jellyfinApi.post(`/library/refresh`);
+};
+
+export const getScanStatus = async () => {
+  return normalizeScanStatus();
 };
