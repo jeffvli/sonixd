@@ -486,3 +486,29 @@ export const getSearch = async (options: { query: string; musicFolderId?: string
     song: (songItems || []).map((entry: any) => normalizeSong(entry)),
   };
 };
+
+export const scrobble = async (options: {
+  id: string;
+  submission: boolean;
+  position: number;
+  event?: 'pause';
+}) => {
+  if (options.submission) {
+    if (options.event) {
+      return jellyfinApi.post(`/sessions/playing/progress`, {
+        ItemId: options.id,
+        EventName: options.event,
+        PositionTicks: options.position,
+      });
+    }
+
+    return jellyfinApi.post(`/sessions/playing/stopped`, {
+      ItemId: options.id,
+    });
+  }
+
+  return jellyfinApi.post(`/sessions/playing`, {
+    ItemId: options.id,
+    PositionTicks: options.position,
+  });
+};
