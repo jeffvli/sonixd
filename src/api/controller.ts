@@ -50,6 +50,7 @@ import {
   getGenres as jfGetGenres,
   getMusicFolders as jfGetMusicFolders,
   getSearch as jfGetSearch,
+  scrobble as jfScrobble,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -80,7 +81,9 @@ const endpoints = [
   { id: 'clearPlaylist', endpoint: { subsonic: clearPlaylist, jellyfin: undefined } },
   { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: jfGetSearch } },
-  { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: undefined } },
+  { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: jfScrobble } },
+  { id: 'scrobbleStart', endpoint: { subsonic: undefined, jellyfin: undefined } }, // Only used by Jellyfin on playback start
+  { id: 'scrobbleStop', endpoint: { subsonic: undefined, jellyfin: undefined } }, // Only used by Jellyfin on playback end
   { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: undefined } },
   { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: jfGetMusicFolders } },
   { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: undefined } },

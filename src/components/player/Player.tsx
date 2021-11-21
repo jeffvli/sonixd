@@ -27,7 +27,6 @@ import {
 import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 import { isCached } from '../../shared/utils';
-import { scrobble } from '../../api/api';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 
@@ -73,8 +72,7 @@ const gaplessListenHandler = (
     apiController({
       serverType,
       endpoint: 'scrobble',
-      args:
-        serverType === Server.Subsonic ? { id: playQueue.currentSongId, submission: true } : null,
+      args: { id: playQueue.currentSongId, submission: true },
     });
   }
 };
@@ -239,8 +237,7 @@ const listenHandler = (
     apiController({
       serverType,
       endpoint: 'scrobble',
-      args:
-        serverType === Server.Subsonic ? { id: playQueue.currentSongId, submission: true } : null,
+      args: { id: playQueue.currentSongId, submission: true },
     });
   }
 };
@@ -533,21 +530,42 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
             : !(currentSeek >= 240 || currentSeek >= duration * 0.9)
         ) {
           setScrobbled(false);
-          if (playerNumber === 1) {
-            scrobble({
-              id: playQueue[currentEntryList][playQueue.player1.index]?.id,
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id:
+                playerNumber === 1
+                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
               submission: false,
-            });
-          } else {
-            scrobble({
-              id: playQueue[currentEntryList][playQueue.player2.index]?.id,
-              submission: false,
-            });
-          }
+            },
+          });
         }
       }
     },
-    [currentEntryList, playQueue]
+    [config.serverType, currentEntryList, playQueue]
+  );
+
+  const handleOnPause = useCallback(
+    async (playerNumber: 1 | 2) => {
+      if (config.serverType === Server.Jellyfin && playQueue.scrobble && player.currentSeek > 3) {
+        apiController({
+          serverType: config.serverType,
+          endpoint: 'scrobble',
+          args: {
+            id:
+              playerNumber === 1
+                ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                : playQueue[currentEntryList][playQueue.player2.index]?.id,
+            submission: true,
+            position: player.currentSeek * 10000000,
+            event: 'pause',
+          },
+        });
+      }
+    },
+    [config.serverType, currentEntryList, playQueue, player.currentSeek]
   );
 
   return (
@@ -560,6 +578,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         ref={player1Ref}
         src={playQueue.player1.src}
         onPlay={() => handleOnPlay(1)}
+        onPause={() => handleOnPause(1)}
         listenInterval={playQueue.pollingInterval}
         preload="auto"
         onListen={playQueue.fadeDuration === 0 ? handleGaplessPlayer1 : handleListenPlayer1}
@@ -582,6 +601,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         ref={player2Ref}
         src={playQueue.player2.src}
         onPlay={() => handleOnPlay(2)}
+        onPause={() => handleOnPause(2)}
         listenInterval={playQueue.pollingInterval}
         preload="auto"
         onListen={playQueue.fadeDuration === 0 ? handleGaplessPlayer2 : handleListenPlayer2}
