@@ -455,3 +455,33 @@ export const getMusicFolders = async () => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`);
   return (data.Items || []).map((entry: any) => normalizeFolder(entry));
 };
+
+export const getSearch = async (options: { query: string; musicFolderId?: string | number }) => {
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      fields: 'Genres, DateCreated, MediaSources, ChildCount, UserData',
+      includeArtists: false,
+      includeGenres: false,
+      includeItemTypes: 'Audio, MusicArtist, MusicAlbum',
+      includeMedia: false,
+      includeStudios: false,
+      limit: 50,
+      parentId: options.musicFolderId,
+      recursive: true,
+      searchTerm: options.query,
+    },
+  });
+
+  const { data: artistData } = await jellyfinApi.get(`/artists`, {
+    params: { limit: 10, parentId: options.musicFolderId, searchTerm: options.query },
+  });
+
+  const albumItems = data.Items.filter((entry: any) => entry.Type === 'MusicAlbum');
+  const songItems = data.Items.filter((entry: any) => entry.Type === 'Audio');
+
+  return {
+    artist: (artistData.Items || []).map((entry: any) => normalizeArtist(entry)),
+    album: (albumItems || []).map((entry: any) => normalizeAlbum(entry)),
+    song: (songItems || []).map((entry: any) => normalizeSong(entry)),
+  };
+};

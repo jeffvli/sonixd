@@ -49,6 +49,7 @@ import {
   batchUnstar as jfBatchUnstar,
   getGenres as jfGetGenres,
   getMusicFolders as jfGetMusicFolders,
+  getSearch as jfGetSearch,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -78,7 +79,7 @@ const endpoints = [
   { id: 'updatePlaylist', endpoint: { subsonic: updatePlaylist, jellyfin: undefined } },
   { id: 'clearPlaylist', endpoint: { subsonic: clearPlaylist, jellyfin: undefined } },
   { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
-  { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: undefined } },
+  { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: jfGetSearch } },
   { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: undefined } },
   { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: undefined } },
   { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: jfGetMusicFolders } },

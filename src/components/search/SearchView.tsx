@@ -20,7 +20,6 @@ import { setStatus } from '../../redux/playerSlice';
 import ListViewTable from '../viewtypes/ListViewTable';
 import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
 
 const SearchView = () => {
   const dispatch = useAppDispatch();
@@ -44,10 +43,7 @@ const SearchView = () => {
     apiController({
       serverType: config.serverType,
       endpoint: 'getSearch',
-      args:
-        config.serverType === Server.Subsonic
-          ? { query: urlQuery, songCount: 100, musicFolderId: musicFolder }
-          : null,
+      args: { query: urlQuery, songCount: 100, musicFolderId: musicFolder },
     })
   );
 
