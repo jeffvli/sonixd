@@ -357,9 +357,9 @@ const AlbumView = ({ ...rest }: any) => {
                         tooltip={d.title}
                         onClick={() => {
                           if (!rest.isModal) {
-                            dispatch(setActive({ ...album.active, filter: d.id }));
+                            dispatch(setActive({ ...album.active, filter: d.title }));
                             setTimeout(() => {
-                              history.push(`/library/album?sortType=${d.id}`);
+                              history.push(`/library/album?sortType=${d.title}`);
                             }, 50);
                           }
                         }}
@@ -367,9 +367,9 @@ const AlbumView = ({ ...rest }: any) => {
                           if (e.key === ' ' || e.key === 'Enter') {
                             e.preventDefault();
                             if (!rest.isModal) {
-                              dispatch(setActive({ ...album.active, filter: d.id }));
+                              dispatch(setActive({ ...album.active, filter: d.title }));
                               setTimeout(() => {
-                                history.push(`/library/album?sortType=${d.id}`);
+                                history.push(`/library/album?sortType=${d.title}`);
                               }, 50);
                             }
                           }
