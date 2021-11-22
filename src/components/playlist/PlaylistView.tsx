@@ -207,85 +207,120 @@ const PlaylistView = ({ ...rest }) => {
   const handleSave = async (recovery: boolean) => {
     dispatch(clearSelected());
     dispatch(addProcessingPlaylist(data.id));
-    try {
-      let res;
-      const playlistData = recovery
-        ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
-        : playlist[getCurrentEntryList(playlist)];
+    if (config.serverType === Server.Subsonic) {
+      try {
+        let res;
+        const playlistData = recovery
+          ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
+          : playlist[getCurrentEntryList(playlist)];
 
-      // Smaller playlists can use the safe /createPlaylist method of saving
-      if (playlistData.length <= 400 && !recovery) {
-        res = await apiController({
-          serverType: config.serverType,
-          endpoint: 'updatePlaylistSongs',
-          args: { id: data.id, entry: playlistData },
-        });
+        // Smaller playlists can use the safe /createPlaylist method of saving
+        if (playlistData.length <= 400 && !recovery) {
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongs',
+            args: { id: data.id, entry: playlistData },
+          });
 
-        if (isFailedResponse(res)) {
-          notifyToast('error', errorMessages(res)[0]);
+          if (isFailedResponse(res)) {
+            notifyToast('error', errorMessages(res)[0]);
+          } else {
+            notifyToast('success', `Saved playlist`);
+            await queryClient.refetchQueries(['playlist'], {
+              active: true,
+            });
+          }
         } else {
-          notifyToast('success', `Saved playlist`);
+          // For larger playlists, we'll need to first clear out the playlist and then re-populate it
+          // Tested on Airsonic instances, /createPlaylist fails with around ~350+ songId params
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'clearPlaylist',
+            args: { id: data.id },
+          });
+
+          if (isFailedResponse(res)) {
+            notifyToast('error', errorMessages(res)[0]);
+            return dispatch(removeProcessingPlaylist(data.id));
+          }
+
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: data.id, entry: playlistData },
+          });
+
+          if (isFailedResponse(res)) {
+            res.forEach((response: any) => {
+              if (isFailedResponse(response)) {
+                notifyToast('error', errorMessages(response)[0]);
+              }
+            });
+
+            // If there are any failures (network, etc.), then we'll need a way to recover the playlist.
+            // Write the localPlaylistData to a file so we can re-run the save command.
+            createRecoveryFile(data.id, 'playlist', playlistData);
+            setNeedsRecovery(true);
+            return dispatch(removeProcessingPlaylist(data.id));
+          }
+
+          if (recovery) {
+            // If the recovery succeeds, we can remove the recovery file
+            fs.unlinkSync(recoveryPath);
+            setNeedsRecovery(false);
+            notifyToast('success', `Recovered playlist from backup`);
+          } else {
+            notifyToast('success', `Saved playlist`);
+          }
+
           await queryClient.refetchQueries(['playlist'], {
             active: true,
           });
         }
-      } else {
-        // For larger playlists, we'll need to first clear out the playlist and then re-populate it
-        // Tested on Airsonic instances, /createPlaylist fails with around ~350+ songId params
-        res = await apiController({
+      } catch (err) {
+        notifyToast('error', 'Errored while saving playlist');
+        const playlistData = recovery
+          ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
+          : playlist[getCurrentEntryList(playlist)];
+
+        createRecoveryFile(data.id, 'playlist', playlistData);
+        setNeedsRecovery(true);
+        dispatch(removeProcessingPlaylist(data.id));
+      }
+    }
+
+    if (config.serverType === Server.Jellyfin) {
+      const { id: newPlaylistId } = await apiController({
+        serverType: config.serverType,
+        endpoint: 'updatePlaylistSongs',
+        args: { name: data.title, entry: playlist.entry },
+      });
+
+      if (newPlaylistId) {
+        await apiController({
           serverType: config.serverType,
-          endpoint: 'clearPlaylist',
+          endpoint: 'deletePlaylist',
           args: { id: data.id },
         });
 
-        if (isFailedResponse(res)) {
-          notifyToast('error', errorMessages(res)[0]);
-          return dispatch(removeProcessingPlaylist(data.id));
-        }
-
-        res = await apiController({
+        await apiController({
           serverType: config.serverType,
-          endpoint: 'updatePlaylistSongsLg',
-          args: { id: data.id, entry: playlistData },
+          endpoint: 'updatePlaylist',
+          args: {
+            id: newPlaylistId,
+            name: data.title,
+            dateCreated: data.created,
+            genres: data.genres,
+          },
         });
 
-        if (isFailedResponse(res)) {
-          res.forEach((response: any) => {
-            if (isFailedResponse(response)) {
-              notifyToast('error', errorMessages(response)[0]);
-            }
-          });
-
-          // If there are any failures (network, etc.), then we'll need a way to recover the playlist.
-          // Write the localPlaylistData to a file so we can re-run the save command.
-          createRecoveryFile(data.id, 'playlist', playlistData);
-          setNeedsRecovery(true);
-          return dispatch(removeProcessingPlaylist(data.id));
-        }
-
-        if (recovery) {
-          // If the recovery succeeds, we can remove the recovery file
-          fs.unlinkSync(recoveryPath);
-          setNeedsRecovery(false);
-          notifyToast('success', `Recovered playlist from backup`);
-        } else {
-          notifyToast('success', `Saved playlist`);
-        }
-
-        await queryClient.refetchQueries(['playlist'], {
-          active: true,
-        });
+        history.replace(`/playlist/${data.id}`);
+        notifyToast('success', `Saved playlist`);
+      } else {
+        notifyToast('error', 'Error saving playlist');
       }
-    } catch (err) {
-      notifyToast('error', 'Errored while saving playlist');
-      const playlistData = recovery
-        ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
-        : playlist[getCurrentEntryList(playlist)];
-
-      createRecoveryFile(data.id, 'playlist', playlistData);
-      setNeedsRecovery(true);
-      dispatch(removeProcessingPlaylist(data.id));
     }
+
     return dispatch(removeProcessingPlaylist(data.id));
   };
 
@@ -334,6 +369,14 @@ const PlaylistView = ({ ...rest }) => {
       notifyToast('error', err);
     }
   };
+
+  // const handleSaveJf = async () => {
+  //   const { id: newPlaylistId } = await apiController({
+  //     serverType: config.serverType,
+  //     endpoint: 'createPlaylist',
+  //     args: { name: data.title },
+  //   });
+  // };
 
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {

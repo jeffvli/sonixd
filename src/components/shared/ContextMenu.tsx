@@ -56,6 +56,7 @@ import {
 } from '../../shared/utils';
 import { setStatus } from '../../redux/playerSlice';
 import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 export const ContextMenuButton = ({ text, hotkey, children, ...rest }: any) => {
   return (
@@ -344,7 +345,7 @@ export const GlobalContextMenu = () => {
   const playlistSuccessToast = (songCount: number, playlistId: string) => {
     notifyToast(
       'success',
-      `Added ${songCount} song(s) to playlist ${
+      `Added ${songCount} item(s) to playlist ${
         playlists.find((pl: any) => pl.id === playlistId)?.title
       }`,
       <>
@@ -371,97 +372,132 @@ export const GlobalContextMenu = () => {
 
     try {
       if (misc.contextMenu.type.match('music|nowPlaying|folder')) {
-        const folders = multiSelect.selected.filter((entry: any) => entry.type === 'folder');
-        const music = multiSelect.selected
-          .filter((entry: any) => entry.type === 'music')
-          .map((entry: any) => {
-            return { ...entry, uniqueId: nanoid() };
+        if (config.serverType === Server.Subsonic) {
+          const folders = multiSelect.selected.filter((entry: any) => entry.type === 'folder');
+          const music = multiSelect.selected
+            .filter((entry: any) => entry.type === 'music')
+            .map((entry: any) => {
+              return { ...entry, uniqueId: nanoid() };
+            });
+
+          for (let i = 0; i < folders.length; i += 1) {
+            promises.push(
+              apiController({
+                serverType: config.serverType,
+                endpoint: 'getMusicDirectorySongs',
+                args: { id: folders[i].id },
+              })
+            );
+          }
+
+          const folderSongs = await Promise.all(promises);
+
+          folderSongs.push(_.orderBy(music, 'rowIndex', 'asc'));
+          songs = _.flatten(folderSongs);
+
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: localSelectedPlaylistId, entry: songs },
           });
 
-        for (let i = 0; i < folders.length; i += 1) {
-          promises.push(
-            apiController({
-              serverType: config.serverType,
-              endpoint: 'getMusicDirectorySongs',
-              args: { id: folders[i].id },
-            })
-          );
+          if (isFailedResponse(res)) {
+            notifyToast('error', errorMessages(res)[0]);
+          } else {
+            playlistSuccessToast(songs.length, localSelectedPlaylistId);
+          }
         }
 
-        const folderSongs = await Promise.all(promises);
+        if (config.serverType === Server.Jellyfin) {
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: localSelectedPlaylistId, entry: multiSelect.selected },
+          });
 
-        folderSongs.push(_.orderBy(music, 'rowIndex', 'asc'));
-        songs = _.flatten(folderSongs);
-
-        res = await apiController({
-          serverType: config.serverType,
-          endpoint: 'updatePlaylistSongsLg',
-          args: { id: localSelectedPlaylistId, entry: songs },
-        });
-
-        if (isFailedResponse(res)) {
-          notifyToast('error', errorMessages(res)[0]);
-        } else {
-          playlistSuccessToast(songs.length, localSelectedPlaylistId);
+          playlistSuccessToast(multiSelect.selected.length, localSelectedPlaylistId);
         }
       } else if (misc.contextMenu.type === 'playlist') {
-        for (let i = 0; i < multiSelect.selected.length; i += 1) {
-          promises.push(
-            apiController({
-              serverType: config.serverType,
-              endpoint: 'getPlaylist',
-              args: { id: multiSelect.selected[i].id },
-            })
-          );
+        if (config.serverType === Server.Subsonic) {
+          for (let i = 0; i < multiSelect.selected.length; i += 1) {
+            promises.push(
+              apiController({
+                serverType: config.serverType,
+                endpoint: 'getPlaylist',
+                args: { id: multiSelect.selected[i].id },
+              })
+            );
+          }
+
+          res = await Promise.all(promises);
+          songs = _.flatten(_.map(res, 'song'));
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: localSelectedPlaylistId, entry: songs },
+          });
+
+          if (isFailedResponse(res)) {
+            notifyToast('error', errorMessages(res)[0]);
+          } else {
+            playlistSuccessToast(songs.length, localSelectedPlaylistId);
+          }
         }
 
-        res = await Promise.all(promises);
-        songs = _.flatten(_.map(res, 'song'));
-        res = await apiController({
-          serverType: config.serverType,
-          endpoint: 'updatePlaylistSongsLg',
-          args: { id: localSelectedPlaylistId, entry: songs },
-        });
+        if (config.serverType === Server.Jellyfin) {
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: localSelectedPlaylistId, entry: multiSelect.selected },
+          });
 
-        if (isFailedResponse(res)) {
-          notifyToast('error', errorMessages(res)[0]);
-        } else {
-          playlistSuccessToast(songs.length, localSelectedPlaylistId);
+          playlistSuccessToast(multiSelect.selected.length, localSelectedPlaylistId);
         }
       } else if (misc.contextMenu.type === 'album') {
-        for (let i = 0; i < multiSelect.selected.length; i += 1) {
-          promises.push(
-            apiController({
-              serverType: config.serverType,
-              endpoint: 'getAlbum',
-              args: { id: multiSelect.selected[i].id },
-            })
-          );
+        if (config.serverType === Server.Subsonic) {
+          for (let i = 0; i < multiSelect.selected.length; i += 1) {
+            promises.push(
+              apiController({
+                serverType: config.serverType,
+                endpoint: 'getAlbum',
+                args: { id: multiSelect.selected[i].id },
+              })
+            );
+          }
+
+          res = await Promise.all(promises);
+          songs = _.flatten(_.map(res, 'song'));
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: localSelectedPlaylistId, entry: songs },
+          });
+
+          if (isFailedResponse(res)) {
+            notifyToast('error', errorMessages(res)[0]);
+          } else {
+            playlistSuccessToast(songs.length, localSelectedPlaylistId);
+          }
         }
 
-        res = await Promise.all(promises);
-        songs = _.flatten(_.map(res, 'song'));
-        res = await apiController({
-          serverType: config.serverType,
-          endpoint: 'updatePlaylistSongsLg',
-          args: { id: localSelectedPlaylistId, entry: songs },
-        });
-
-        if (isFailedResponse(res)) {
-          notifyToast('error', errorMessages(res)[0]);
-        } else {
-          playlistSuccessToast(songs.length, localSelectedPlaylistId);
+        if (config.serverType === Server.Jellyfin) {
+          res = await apiController({
+            serverType: config.serverType,
+            endpoint: 'updatePlaylistSongsLg',
+            args: { id: localSelectedPlaylistId, entry: multiSelect.selected },
+          });
+          playlistSuccessToast(multiSelect.selected.length, localSelectedPlaylistId);
         }
       }
     } catch (err) {
-      notifyToast('error', err);
+      notifyToast('error', 'Error adding to playlist');
+    } finally {
+      dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
     }
 
     await queryClient.refetchQueries(['playlists'], {
       active: true,
     });
-
-    dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
   };
 
   const handleDeletePlaylist = async () => {
