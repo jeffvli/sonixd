@@ -130,10 +130,10 @@ const PlaylistView = ({ ...rest }) => {
 
   useEffect(() => {
     // Set the local playlist data on any changes
-    dispatch(setPlaylistData(data?.song));
-    setEditName(data?.title);
-    setEditDescription(data?.comment);
-    setEditPublic(data?.public);
+    dispatch(setPlaylistData(data?.song || []));
+    setEditName(data?.title || '');
+    setEditDescription(data?.comment || '');
+    setEditPublic(data?.public || false);
   }, [data, dispatch]);
 
   useEffect(() => {
@@ -310,6 +310,7 @@ const PlaylistView = ({ ...rest }) => {
             id: newPlaylistId,
             name: data.title,
             dateCreated: data.created,
+            comment: data.comment,
             genres: data.genres,
           },
         });
@@ -326,29 +327,63 @@ const PlaylistView = ({ ...rest }) => {
 
   const handleEdit = async () => {
     setIsSubmittingEdit(true);
-    const res = await apiController({
-      serverType: config.serverType,
-      endpoint: 'updatePlaylist',
-      args:
-        config.serverType === Server.Subsonic
-          ? {
-              id: data.id,
-              name: editName,
-              comment: editDescription,
-              isPublic: editPublic,
-            }
-          : null,
-    });
 
-    if (isFailedResponse(res)) {
-      notifyToast('error', errorMessages(res)[0]);
-    } else {
+    if (config.serverType === Server.Subsonic) {
+      try {
+        const res = await apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylist',
+          args:
+            config.serverType === Server.Subsonic
+              ? {
+                  id: data.id,
+                  name: editName,
+                  comment: editDescription,
+                  genres: data.genres,
+                  isPublic: editPublic,
+                }
+              : null,
+        });
+
+        if (isFailedResponse(res)) {
+          notifyToast('error', errorMessages(res)[0]);
+        } else {
+          queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
+            return { ...oldData, title: editName, comment: editDescription, public: editPublic };
+          });
+        }
+      } catch {
+        notifyToast('error', 'Error saving playlist');
+      } finally {
+        setIsSubmittingEdit(false);
+      }
+    }
+
+    if (config.serverType === Server.Jellyfin) {
+      try {
+        apiController({
+          serverType: config.serverType,
+          endpoint: 'updatePlaylist',
+          args: {
+            id: data.id,
+            name: editName,
+            comment: editDescription,
+            genres: data.genres,
+            isPublic: editPublic,
+          },
+        });
+      } catch {
+        notifyToast('error', 'Error saving playlist');
+      } finally {
+        setIsSubmittingEdit(false);
+      }
+
+      notifyToast('success', 'Saved playlist');
       queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
-        return { ...oldData, name: editName, comment: editDescription, public: editPublic };
+        return { ...oldData, title: editName, comment: editDescription, public: editPublic };
       });
     }
 
-    setIsSubmittingEdit(false);
     editTriggerRef.current.close();
   };
 
@@ -369,14 +404,6 @@ const PlaylistView = ({ ...rest }) => {
       notifyToast('error', err);
     }
   };
-
-  // const handleSaveJf = async () => {
-  //   const { id: newPlaylistId } = await apiController({
-  //     serverType: config.serverType,
-  //     endpoint: 'createPlaylist',
-  //     args: { name: data.title },
-  //   });
-  // };
 
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {
@@ -575,10 +602,10 @@ const PlaylistView = ({ ...rest }) => {
                             defaultChecked={editPublic}
                             value={editPublic}
                             onChange={(_v: any, e: boolean) => setEditPublic(e)}
+                            disabled={config.serverType === Server.Jellyfin}
                           >
                             Public
                           </StyledCheckbox>
-                          <br />
                           <StyledButton
                             size="md"
                             type="submit"
@@ -588,7 +615,7 @@ const PlaylistView = ({ ...rest }) => {
                             onClick={handleEdit}
                             appearance="primary"
                           >
-                            Edit
+                            Save
                           </StyledButton>
                         </Form>
                       </StyledPopover>
