@@ -40,10 +40,10 @@ const gaplessListenHandler = (
   shouldScrobble: boolean,
   scrobbled: boolean,
   setScrobbled: any,
-  serverType: Server
+  serverType: Server,
+  duration: number
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
-  const duration = currentPlayerRef.current?.audioEl.current?.duration;
 
   if (playQueue.currentPlayer === currentPlayer) {
     dispatch(setCurrentSeek(currentSeek));
@@ -91,10 +91,12 @@ const listenHandler = (
   shouldScrobble: boolean,
   scrobbled: boolean,
   setScrobbled: any,
-  serverType: Server
+  serverType: Server,
+  duration: number
 ) => {
+  // Jellyfin only returns the duration in the last ~2 seconds of the song so we need to pass the
+  // duration into the handler instead of fetching it here
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
-  const duration = currentPlayerRef.current?.audioEl.current?.duration;
   const fadeAtTime = duration - fadeDuration;
 
   // Fade only if repeat is 'all' or if not on the last track
@@ -361,7 +363,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.scrobble,
       scrobbled,
       setScrobbled,
-      config.serverType
+      config.serverType,
+      playQueue[currentEntryList][playQueue.player1.index].duration
     );
   }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
@@ -380,7 +383,8 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.scrobble,
       scrobbled,
       setScrobbled,
-      config.serverType
+      config.serverType,
+      playQueue[currentEntryList][playQueue.player2.index].duration
     );
   }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
@@ -485,9 +489,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.scrobble,
       scrobbled,
       setScrobbled,
-      config.serverType
+      config.serverType,
+      playQueue[currentEntryList][playQueue.player1.index].duration
     );
-  }, [config.serverType, dispatch, playQueue, scrobbled]);
+  }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
   const handleGaplessPlayer2 = useCallback(() => {
     gaplessListenHandler(
@@ -500,9 +505,10 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       playQueue.scrobble,
       scrobbled,
       setScrobbled,
-      config.serverType
+      config.serverType,
+      playQueue[currentEntryList][playQueue.player2.index].duration
     );
-  }, [config.serverType, dispatch, playQueue, scrobbled]);
+  }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
   const handleOnPlay = useCallback(
     (playerNumber: 1 | 2) => {
