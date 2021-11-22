@@ -125,6 +125,7 @@ export interface Playlist {
   duration: number;
   created?: string;
   changed?: string;
+  genre?: Genre[];
   image: string;
   type: Item.Playlist;
   uniqueId: string;
