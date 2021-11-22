@@ -169,6 +169,7 @@ const normalizePlaylist = (item: any) => {
     duration: item.RunTimeTicks / 10000000,
     created: item.DateCreated,
     changed: item.DateLastMediaAdded,
+    genre: item.GenreItems && item.GenreItems.map((entry: any) => normalizeItem(entry)),
     image: getCoverArtUrl(item, 350),
     type: Item.Playlist,
     uniqueId: nanoid(),
