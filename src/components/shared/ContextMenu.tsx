@@ -196,6 +196,8 @@ export const GlobalContextMenu = () => {
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
 
+      console.log(`songs`, songs);
+
       if (songs.entries.length > 0) {
         dispatch(setPlayQueue({ entries: songs.entries }));
         dispatch(setStatus('PLAYING'));
@@ -205,7 +207,6 @@ export const GlobalContextMenu = () => {
         dispatch(setStatus('PAUSED'));
       }
 
-      dispatch(setPlayQueue({ entries: songs.entries }));
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     } else if (misc.contextMenu.type === 'artist') {
       for (let i = 0; i < multiSelect.selected.length; i += 1) {
