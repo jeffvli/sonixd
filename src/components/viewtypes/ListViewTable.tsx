@@ -924,13 +924,13 @@ const ListViewTable = ({
                                         dispatch(
                                           setActive({
                                             ...album.active,
-                                            filter: rowData[column.dataKey][0]?.id,
+                                            filter: rowData[column.dataKey][0]?.title,
                                           })
                                         );
                                         setTimeout(() => {
                                           history.push(
                                             `/library/album?sortType=${
-                                              rowData[column.dataKey][0]?.id
+                                              rowData[column.dataKey][0]?.title
                                             }`
                                           );
                                         }, 50);
