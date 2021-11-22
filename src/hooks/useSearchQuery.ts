@@ -15,7 +15,7 @@ const useSearchQuery = (searchQuery: string, data: any[], filterProperties: stri
               return String(entry.albumArtist)?.toLowerCase().includes(searchQuery.toLowerCase());
             }
 
-            if (prop.match('genre')) {
+            if (prop.match('genre') && entry.genre) {
               return String(entry.genre[0]?.title)
                 ?.toLowerCase()
                 .includes(searchQuery.toLowerCase());
