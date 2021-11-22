@@ -1,10 +1,11 @@
+/* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
 import { nanoid } from 'nanoid/non-secure';
 import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
-import { Item } from '../types';
+import { GenericItem, Item, Song } from '../types';
 
 const getAuth = () => {
   return {
@@ -162,7 +163,7 @@ const normalizePlaylist = (item: any) => {
   return {
     id: item.Id,
     title: item.Name,
-    comment: undefined,
+    comment: item.Overview,
     owner: undefined,
     public: undefined,
     songCount: item.ChildCount,
@@ -216,7 +217,7 @@ export const getPlaylist = async (options: { id: string }) => {
   });
 
   const { data: songData } = await jellyfinApi.get(`/Playlists/${options.id}/Items`, {
-    params: { userId: auth.username },
+    params: { userId: auth.username, fields: 'Genres, DateCreated, MediaSources, UserData' },
   });
 
   return {
@@ -229,7 +230,7 @@ export const getPlaylist = async (options: { id: string }) => {
 export const getPlaylists = async () => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
-      fields: 'DateCreated, ChildCount',
+      fields: 'Genres, DateCreated', // Removed ChildCount until new Jellyfin releases includes optimization
       includeItemTypes: 'Playlist',
       recursive: true,
       sortBy: 'SortName',
@@ -240,6 +241,69 @@ export const getPlaylists = async () => {
   return (_.filter(data.Items, (item) => item.MediaType === 'Audio') || []).map((entry) =>
     normalizePlaylist(entry)
   );
+};
+
+export const createPlaylist = async (options: { name: string }) => {
+  const { data } = await jellyfinApi.post(`/playlists`, {
+    Name: options.name,
+    UserId: auth.username,
+    MediaType: 'Audio',
+  });
+
+  return data;
+};
+
+export const updatePlaylistSongs = async (options: { name: string; entry: Song[] }) => {
+  const entryIds = _.map(options.entry, 'id');
+
+  const { data } = await jellyfinApi.post(`/playlists`, {
+    Name: options.name,
+    Ids: entryIds,
+    UserId: auth.username,
+    MediaType: 'Audio',
+  });
+
+  return { id: data.Id };
+};
+
+export const updatePlaylistSongsLg = async (options: { id: string; entry: Song[] }) => {
+  const entryIds = _.map(options.entry, 'id');
+  const entryIdChunks = _.chunk(entryIds, 300);
+
+  const res: any[] = [];
+  for (let i = 0; i < entryIdChunks.length; i += 1) {
+    const ids = entryIdChunks[i].join(',');
+    const { data } = await jellyfinApi.post(`/playlists/${options.id}/items`, null, {
+      params: { Ids: ids },
+    });
+    res.push(data);
+  }
+
+  return res;
+};
+
+export const deletePlaylist = async (options: { id: string }) => {
+  return jellyfinApi.delete(`/items/${options.id}`);
+};
+
+export const updatePlaylist = async (options: {
+  id: string;
+  name?: string;
+  comment?: string;
+  dateCreated?: string;
+  genres: GenericItem[];
+}) => {
+  const genres = _.map(options.genres, 'title');
+
+  return jellyfinApi.post(`/items/${options.id}`, {
+    Name: options.name,
+    Overview: options.comment,
+    DateCreated: options.dateCreated,
+    Genres: genres, // Required
+    Tags: [], // Required
+    PremiereDate: null, // Required
+    ProviderIds: {}, // Required
+  });
 };
 
 export const getAlbum = async (options: { id: string }) => {
