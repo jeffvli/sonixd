@@ -53,6 +53,11 @@ import {
   scrobble as jfScrobble,
   startScan as jfStartScan,
   getScanStatus as jfGetScanStatus,
+  createPlaylist as jfCreatePlaylist,
+  deletePlaylist as jfDeletePlaylist,
+  updatePlaylistSongs as jfUpdatePlaylistSongs,
+  updatePlaylistSongsLg as jfUpdatePlaylingSongsLg,
+  updatePlaylist as jfUpdatePlaylist,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -75,12 +80,6 @@ const endpoints = [
   { id: 'batchUnstar', endpoint: { subsonic: batchUnstar, jellyfin: jfBatchUnstar } },
   { id: 'setRating', endpoint: { subsonic: setRating, jellyfin: undefined } },
   { id: 'getSimilarSongs', endpoint: { subsonic: getSimilarSongs, jellyfin: undefined } },
-  { id: 'updatePlaylistSongs', endpoint: { subsonic: updatePlaylistSongs, jellyfin: undefined } },
-  { id: 'updatePlaylistSongsLg', endpoint: { subsonic: updatePlaylistSongsLg, jellyfin: undefined } },
-  { id: 'deletePlaylist', endpoint: { subsonic: deletePlaylist, jellyfin: undefined } },
-  { id: 'createPlaylist', endpoint: { subsonic: createPlaylist, jellyfin: undefined } },
-  { id: 'updatePlaylist', endpoint: { subsonic: updatePlaylist, jellyfin: undefined } },
-  { id: 'clearPlaylist', endpoint: { subsonic: clearPlaylist, jellyfin: undefined } },
   { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: jfGetSearch } },
   { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: jfScrobble } },
@@ -89,6 +88,15 @@ const endpoints = [
   { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: undefined } },
   { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: undefined } },
   { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },
+
+  // Playlist handling logic is split up by server type due to differences in how each server handles them.
+  // You will need to add custom logic in the playlist/context menu component handlers.
+  { id: 'updatePlaylistSongs', endpoint: { subsonic: updatePlaylistSongs, jellyfin: jfUpdatePlaylistSongs } },
+  { id: 'updatePlaylistSongsLg', endpoint: { subsonic: updatePlaylistSongsLg, jellyfin: jfUpdatePlaylingSongsLg } },
+  { id: 'deletePlaylist', endpoint: { subsonic: deletePlaylist, jellyfin: jfDeletePlaylist } },
+  { id: 'createPlaylist', endpoint: { subsonic: createPlaylist, jellyfin: jfCreatePlaylist } },
+  { id: 'updatePlaylist', endpoint: { subsonic: updatePlaylist, jellyfin: jfUpdatePlaylist } },
+  { id: 'clearPlaylist', endpoint: { subsonic: clearPlaylist, jellyfin: undefined } },
 ];
 
 export const apiController = async (options: {
