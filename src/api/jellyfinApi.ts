@@ -208,7 +208,7 @@ const normalizeScanStatus = () => {
 };
 
 export const getPlaylist = async (options: { id: string }) => {
-  const { data } = await jellyfinApi.get(`/Items`, {
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`, {
     params: {
       fields: 'Genres, DateCreated, MediaSources, ChildCount',
       ids: options.id,
@@ -221,7 +221,7 @@ export const getPlaylist = async (options: { id: string }) => {
   });
 
   return {
-    ...normalizePlaylist(data.Items[0]),
+    ...normalizePlaylist(data),
     songCount: songData.Items.length,
     song: (songData.Items || []).map((entry: any) => normalizeSong(entry)),
   };
@@ -299,7 +299,7 @@ export const updatePlaylist = async (options: {
     Name: options.name,
     Overview: options.comment,
     DateCreated: options.dateCreated,
-    Genres: genres, // Required
+    Genres: genres || [], // Required
     Tags: [], // Required
     PremiereDate: null, // Required
     ProviderIds: {}, // Required
