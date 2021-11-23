@@ -73,6 +73,7 @@ export interface Album {
   albumGenre?: string;
   image: string;
   starred?: string;
+  userRating?: number;
   type: Item.Album;
   uniqueId: string;
   song?: Song[];
@@ -85,6 +86,7 @@ export interface Artist {
   duration?: number;
   image?: string;
   starred?: string;
+  userRating?: number;
   info?: ArtistInfo;
   type?: Item.Artist;
   uniqueId?: string;
@@ -160,6 +162,7 @@ export interface Song {
   streamUrl: string;
   image: string;
   starred?: string;
+  userRating?: number;
   type: Item.Music;
   uniqueId: string;
 }
