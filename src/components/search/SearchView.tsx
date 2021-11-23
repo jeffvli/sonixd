@@ -20,6 +20,7 @@ import { setStatus } from '../../redux/playerSlice';
 import ListViewTable from '../viewtypes/ListViewTable';
 import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled';
 import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const SearchView = () => {
   const dispatch = useAppDispatch();
@@ -195,10 +196,12 @@ const SearchView = () => {
               property: 'title',
               urlProperty: 'id',
             }}
-            cardSubtitle={{
-              property: 'albumCount',
-              unit: ' albums',
-            }}
+            cardSubtitle={
+              config.serverType === Server.Subsonic && {
+                property: 'albumCount',
+                unit: ' albums',
+              }
+            }
             cardSize={config.lookAndFeel.gridView.cardSize}
             type="artist"
             handleFavorite={handleArtistFavorite}
