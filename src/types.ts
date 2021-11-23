@@ -100,6 +100,7 @@ export interface ArtistInfo {
 export interface Folder {
   id: string;
   title: string;
+  created: string;
   isDir?: boolean;
   image: string;
   type: Item.Folder;
