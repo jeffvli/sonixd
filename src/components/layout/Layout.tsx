@@ -157,6 +157,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                           if (misc.searchQuery.trim()) {
                             history.push(`/search?query=${misc.searchQuery}`);
                           }
+                          dispatch(setSearchQuery(''));
+                          setOpenSearch(false);
                         }}
                         onKeyDown={(e: KeyboardEvent) => {
                           if (e.key === 'Escape') {
