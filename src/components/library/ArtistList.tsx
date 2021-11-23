@@ -19,6 +19,7 @@ import {
 import GridViewType from '../viewtypes/GridViewType';
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const ArtistList = () => {
   const dispatch = useAppDispatch();
@@ -167,10 +168,12 @@ const ArtistList = () => {
             property: 'title',
             urlProperty: 'id',
           }}
-          cardSubtitle={{
-            property: 'albumCount',
-            unit: ' albums',
-          }}
+          cardSubtitle={
+            config.serverType === Server.Subsonic && {
+              property: 'albumCount',
+              unit: ' albums',
+            }
+          }
           playClick={{ type: 'artist', idProperty: 'id' }}
           size={config.lookAndFeel.gridView.cardSize}
           cacheType="artist"
