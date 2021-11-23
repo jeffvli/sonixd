@@ -23,6 +23,7 @@ import { setCurrentViewedFolder } from '../../redux/folderSlice';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import { Server } from '../../types';
 import { apiController } from '../../api/controller';
+import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const FolderList = () => {
   const dispatch = useAppDispatch();
@@ -150,9 +151,19 @@ const FolderList = () => {
     apiController({
       serverType: config.serverType,
       endpoint: 'setRating',
-      args: { id: rowData.id, rating: e },
+      args: { ids: [rowData.id], rating: e },
     });
     dispatch(setRate({ id: [rowData.id], rating: e }));
+    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
+
+    queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
+      const ratedIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
+      ratedIndices.forEach((index) => {
+        oldData.child[index].userRating = e;
+      });
+
+      return oldData;
+    });
   };
 
   return (

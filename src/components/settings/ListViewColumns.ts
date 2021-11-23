@@ -307,7 +307,7 @@ export const songColumnListAuto = [
       id: 'Rate',
       dataKey: 'userRating',
       alignment: 'center',
-      flexGrow: 2,
+      flexGrow: 3,
       label: 'Rating',
     },
   },
@@ -462,6 +462,28 @@ export const albumColumnList = [
     },
   },
   {
+    label: 'Play Count',
+    value: {
+      id: 'Plays',
+      dataKey: 'playCount',
+      alignment: 'center',
+      resizable: true,
+      width: 60,
+      label: 'Play Count',
+    },
+  },
+  {
+    label: 'Rating',
+    value: {
+      id: 'Rate',
+      dataKey: 'userRating',
+      alignment: 'center',
+      resizable: true,
+      width: 150,
+      label: 'Rating',
+    },
+  },
+  {
     label: 'Track Count',
     value: {
       id: 'Tracks',
@@ -581,6 +603,27 @@ export const albumColumnListAuto = [
     },
   },
   {
+    label: 'Play Count',
+    value: {
+      id: 'Plays',
+      dataKey: 'playCount',
+      alignment: 'center',
+      resizable: true,
+      width: 60,
+      label: 'Play Count',
+    },
+  },
+  {
+    label: 'Rating',
+    value: {
+      id: 'Rate',
+      dataKey: 'userRating',
+      alignment: 'center',
+      flexGrow: 3,
+      label: 'Rating',
+    },
+  },
+  {
     label: 'Track Count',
     value: {
       id: 'Tracks',
@@ -631,6 +674,7 @@ export const albumColumnPicker = [
   { label: 'Favorite' },
   { label: 'Genre' },
   { label: 'Play Count' },
+  { label: 'Rating' },
   { label: 'Title' },
   { label: 'Title (Combined)' },
   { label: 'Track Count' },
@@ -966,6 +1010,18 @@ export const artistColumnList = [
     },
   },
   {
+    label: 'Rating',
+    value: {
+      id: 'Rate',
+      dataKey: 'userRating',
+      alignment: 'center',
+      resizable: true,
+      width: 150,
+      label: 'Rating',
+    },
+  },
+
+  {
     label: 'Title',
     value: {
       id: 'Title',
@@ -1032,6 +1088,16 @@ export const artistColumnListAuto = [
     },
   },
   {
+    label: 'Rating',
+    value: {
+      id: 'Rate',
+      dataKey: 'userRating',
+      alignment: 'center',
+      flexGrow: 3,
+      label: 'Rating',
+    },
+  },
+  {
     label: 'Title',
     value: {
       id: 'Title',
@@ -1049,6 +1115,7 @@ export const artistColumnPicker = [
   { label: 'CoverArt' },
   { label: 'Duration' },
   { label: 'Favorite' },
+  { label: 'Rating' },
   { label: 'Title' },
 ];
 

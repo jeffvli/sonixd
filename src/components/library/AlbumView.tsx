@@ -20,6 +20,7 @@ import {
   fixPlayer2Index,
   setPlayQueue,
   setPlayQueueByRowClick,
+  setRate,
   setStar,
 } from '../../redux/playQueueSlice';
 import {
@@ -53,6 +54,7 @@ import {
 } from '../layout/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Genre, Server } from '../../types';
+import { setPlaylistRate } from '../../redux/playlistSlice';
 
 interface AlbumParams {
   id: string;
@@ -246,6 +248,25 @@ const AlbumView = ({ ...rest }: any) => {
     }
   };
 
+  const handleRowRating = (rowData: any, e: number) => {
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids: [rowData.id], rating: e },
+    });
+    dispatch(setRate({ id: [rowData.id], rating: e }));
+    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
+
+    queryClient.setQueryData(['album', albumId], (oldData: any) => {
+      const ratedIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
+      ratedIndices.forEach((index) => {
+        oldData.song[index].userRating = e;
+      });
+
+      return oldData;
+    });
+  };
+
   if (isLoading) {
     return <PageLoader />;
   }
@@ -427,6 +448,7 @@ const AlbumView = ({ ...rest }: any) => {
           tableColumns={settings.getSync('musicListColumns')}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
+          handleRating={handleRowRating}
           tableHeight={700}
           virtualized
           rowHeight={Number(settings.getSync('musicListRowHeight'))}

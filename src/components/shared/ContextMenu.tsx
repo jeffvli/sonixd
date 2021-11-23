@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { Col, FlexboxGrid, Form, Grid, Icon, Row, Whisper } from 'rsuite';
+import { ButtonToolbar, Col, FlexboxGrid, Form, Grid, Icon, Row, Whisper } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addModalPage,
@@ -23,6 +23,7 @@ import {
   moveUp,
   removeFromPlayQueue,
   setPlayQueue,
+  setRate,
   setStar,
 } from '../../redux/playQueueSlice';
 import {
@@ -32,6 +33,7 @@ import {
   moveUp as plMoveUp,
   moveDown as plMoveDown,
   removeFromPlaylist,
+  setPlaylistRate,
 } from '../../redux/playlistSlice';
 import {
   ContextMenuDivider,
@@ -552,7 +554,7 @@ export const GlobalContextMenu = () => {
     }
   };
 
-  const refetchAfterFavorite = async () => {
+  const refetchActive = async () => {
     await queryClient.refetchQueries(['starred'], {
       active: true,
     });
@@ -563,6 +565,15 @@ export const GlobalContextMenu = () => {
       active: true,
     });
     await queryClient.refetchQueries(['playlist'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['artist'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['artistList'], {
+      active: true,
+    });
+    await queryClient.refetchQueries(['folder'], {
       active: true,
     });
   };
@@ -589,7 +600,7 @@ export const GlobalContextMenu = () => {
         dispatch(setStar({ id: ids, type: 'star' }));
       }
 
-      await refetchAfterFavorite();
+      await refetchActive();
     } catch (err) {
       notifyToast('error', err);
     }
@@ -616,7 +627,7 @@ export const GlobalContextMenu = () => {
         dispatch(setStar({ id: ids, type: 'unstar' }));
       }
 
-      await refetchAfterFavorite();
+      await refetchActive();
     } catch (err) {
       notifyToast('error', err);
     }
@@ -716,6 +727,19 @@ export const GlobalContextMenu = () => {
     }
   };
 
+  const handleRating = async (rating: number) => {
+    dispatch(setContextMenu({ show: false }));
+    const ids = _.map(multiSelect.selected, 'id');
+    await apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids, rating },
+    });
+    dispatch(setRate({ id: ids, rating }));
+    dispatch(setPlaylistRate({ id: ids, rating }));
+    await refetchActive();
+  };
+
   return (
     <>
       {misc.contextMenu.show && (
@@ -723,7 +747,7 @@ export const GlobalContextMenu = () => {
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
           width={190}
-          numOfButtons={11}
+          numOfButtons={12}
           numOfDividers={3}
         >
           <ContextMenuButton
@@ -748,7 +772,7 @@ export const GlobalContextMenu = () => {
           />
           <Whisper
             enterable
-            placement="autoHorizontalStart"
+            placement="autoHorizontal"
             trigger="hover"
             delayShow={300}
             speaker={
@@ -821,7 +845,7 @@ export const GlobalContextMenu = () => {
           <Whisper
             ref={addToPlaylistTriggerRef}
             enterable
-            placement="autoHorizontalStart"
+            placement="autoHorizontal"
             trigger="none"
             speaker={
               <ContextMenuPopover>
@@ -897,7 +921,7 @@ export const GlobalContextMenu = () => {
           <Whisper
             ref={deletePlaylistTriggerRef}
             enterable
-            placement="autoHorizontalStart"
+            placement="autoHorizontal"
             trigger="none"
             speaker={
               <ContextMenuPopover>
@@ -918,7 +942,6 @@ export const GlobalContextMenu = () => {
               disabled={misc.contextMenu.disabledOptions.includes('deletePlaylist')}
             />
           </Whisper>
-
           <ContextMenuDivider />
           <ContextMenuButton
             text="Add to favorites"
@@ -930,6 +953,30 @@ export const GlobalContextMenu = () => {
             onClick={handleUnfavorite}
             disabled={misc.contextMenu.disabledOptions.includes('removeFromFavorites')}
           />
+          <Whisper
+            enterable
+            placement="autoHorizontal"
+            trigger="hover"
+            delayShow={300}
+            speaker={
+              <ContextMenuPopover>
+                <ButtonToolbar>
+                  <StyledButton onClick={() => handleRating(0)}>0</StyledButton>
+                  <StyledButton onClick={() => handleRating(1)}>1</StyledButton>
+                  <StyledButton onClick={() => handleRating(2)}>2</StyledButton>
+                  <StyledButton onClick={() => handleRating(3)}>3</StyledButton>
+                  <StyledButton onClick={() => handleRating(4)}>4</StyledButton>
+                  <StyledButton onClick={() => handleRating(5)}>5</StyledButton>
+                </ButtonToolbar>
+              </ContextMenuPopover>
+            }
+          >
+            <ContextMenuButton
+              text="Set rating"
+              onClick={handleUnfavorite}
+              disabled={misc.contextMenu.disabledOptions.includes('setRating')}
+            />
+          </Whisper>
           <ContextMenuDivider />
           <ContextMenuButton
             text="View in modal"
