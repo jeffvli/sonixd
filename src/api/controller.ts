@@ -48,6 +48,9 @@ import {
   batchStar as jfBatchStar,
   batchUnstar as jfBatchUnstar,
   getGenres as jfGetGenres,
+  getIndexes as jfGetIndexes,
+  getMusicDirectory as jfGetMusicDirectory,
+  getMusicDirectorySongs as jfGetMusicDirectorySongs,
   getMusicFolders as jfGetMusicFolders,
   getSearch as jfGetSearch,
   scrobble as jfScrobble,
@@ -83,10 +86,10 @@ const endpoints = [
   { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: jfGetSearch } },
   { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: jfScrobble } },
-  { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: undefined } },
+  { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: jfGetIndexes } },
   { id: 'getMusicFolders', endpoint: { subsonic: getMusicFolders, jellyfin: jfGetMusicFolders } },
-  { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: undefined } },
-  { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: undefined } },
+  { id: 'getMusicDirectory', endpoint: { subsonic: getMusicDirectory, jellyfin: jfGetMusicDirectory } },
+  { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: jfGetMusicDirectorySongs } },
   { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },
 
   // Playlist handling logic is split up by server type due to differences in how each server handles them.
