@@ -521,7 +521,7 @@ const PlaylistView = ({ ...rest }) => {
                 {data.created && `Created ${formatDate(data.created)}`}
                 {data.changed && ` • Modified ${formatDateTime(data.changed)}`}
               </PageHeaderSubtitleDataLine>
-              <CustomTooltip text={data.comment}>
+              <CustomTooltip text={data.comment} placement="bottomStart" disabled={!data.comment}>
                 <PageHeaderSubtitleDataLine
                   style={{
                     minHeight: '1.2rem',
