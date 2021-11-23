@@ -193,6 +193,7 @@ const normalizeSong = (item: any) => {
     streamUrl: getStreamUrl(item.id, legacyAuth),
     image: getCoverArtUrl(item, legacyAuth, 150),
     starred: item.starred,
+    userRating: item.userRating,
     type: Item.Music,
     uniqueId: nanoid(),
   };
@@ -215,6 +216,7 @@ const normalizeAlbum = (item: any) => {
     image: getCoverArtUrl(item, legacyAuth, 350),
     isDir: false,
     starred: item.starred,
+    userRating: item.userRating,
     type: Item.Album,
     uniqueId: nanoid(),
     song: (item.song || []).map((entry: any) => normalizeSong(entry)),
@@ -228,6 +230,7 @@ const normalizeArtist = (item: any) => {
     albumCount: item.albumCount,
     image: getCoverArtUrl(item, legacyAuth, 350),
     starred: item.starred,
+    userRating: item.userRating,
     info: {
       biography: item.biography,
       externalUrl: item.lastFmUrl && [{ id: item.lastFmUrl, title: 'Last.FM' }],
@@ -532,9 +535,18 @@ export const batchUnstar = async (options: { ids: string[]; type: string }) => {
   return res;
 };
 
-export const setRating = async (options: { id: string; rating: number }) => {
-  const { data } = await api.get(`/setRating`, { params: options });
-  return data;
+export const setRating = async (options: { ids: string[]; rating: number }) => {
+  const promises = [];
+
+  for (let i = 0; i < options.ids.length; i += 1) {
+    promises.push(
+      api.get(`/setRating`, { params: { id: options.ids[i], rating: options.rating } })
+    );
+  }
+
+  const res = await Promise.all(promises);
+
+  return res;
 };
 
 export const getSimilarSongs = async (options: { id: string; count: number }) => {
