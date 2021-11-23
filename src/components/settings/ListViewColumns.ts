@@ -951,7 +951,7 @@ export const playlistColumnPicker = [
   { label: 'Owner' },
   { label: 'Title' },
   { label: 'Track Count' },
-  { label: 'Visiblity' },
+  { label: 'Visibility' },
 ];
 
 export const artistColumnList = [
