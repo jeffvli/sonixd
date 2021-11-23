@@ -239,10 +239,10 @@ export const PageHeaderSubtitleWrapper = styled.span`
 export const PageHeaderSubtitleDataLine = styled.div<{ $top?: boolean }>`
   margin-top: ${(props) => (props.$top ? '0px' : '7px')};
   white-space: nowrap;
-  overflow: visible;
+  overflow: auto;
 
   ::-webkit-scrollbar {
-    height: 0px;
+    height: 4px;
   }
 
   scroll-behavior: smooth;
@@ -284,7 +284,7 @@ export const BlurredBackground = styled.img<{ expanded: boolean }>`
   margin: 0px !important;
   padding: 0px !important;
   width: 100%;
-  height: 210px;
+  height: 212px;
   z-index: -1;
   user-select: none;
   pointer-events: none;

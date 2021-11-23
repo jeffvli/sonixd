@@ -389,8 +389,13 @@ export const getArtist = async (options: { id: string }) => {
     },
   });
 
+  const { data: similarData } = await jellyfinApi.get(`/artists/${options.id}/similar`, {
+    params: { limit: 8 },
+  });
+
   return normalizeArtist({
     ...data,
+    similarArtist: similarData.Items,
     album: albumData.Items,
   });
 };
