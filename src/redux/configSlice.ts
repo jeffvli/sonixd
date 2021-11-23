@@ -14,6 +14,7 @@ export interface ConfigPage {
   };
   playback: {
     filters: PlaybackFilter[];
+    audioDeviceId?: string;
   };
   sort: {
     albumListPage?: SortColumn;
@@ -64,6 +65,7 @@ const initialState: ConfigPage = {
   },
   playback: {
     filters: parsedSettings.playbackFilters,
+    audioDeviceId: parsedSettings.audioDeviceId || undefined,
   },
   sort: {
     albumListPage: undefined,
@@ -176,6 +178,10 @@ const configSlice = createSlice({
       state.playback.filters[selectedFilterIndex] = action.payload.newFilter;
     },
 
+    setAudioDeviceId: (state, action: PayloadAction<string>) => {
+      state.playback.audioDeviceId = action.payload;
+    },
+
     removePlaybackFilter: (state, action: PayloadAction<{ filterName: string }>) => {
       state.playback.filters = state.playback.filters.filter(
         (f: PlaybackFilter) => f.filter !== action.payload.filterName
@@ -237,6 +243,7 @@ export const {
   removePlaybackFilter,
   setPlaybackFilter,
   setPlaybackFilters,
+  setAudioDeviceId,
   setColumnList,
   setRowHeight,
   setFontSize,

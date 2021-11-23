@@ -590,6 +590,13 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     [config.serverType, currentEntryList, playQueue, player.currentSeek]
   );
 
+  useEffect(() => {
+    if (config.playback.audioDeviceId) {
+      player1Ref.current.audioEl.current.setSinkId(config.playback.audioDeviceId);
+      player2Ref.current.audioEl.current.setSinkId(config.playback.audioDeviceId);
+    }
+  }, [config.playback.audioDeviceId]);
+
   return (
     <>
       <Helmet>

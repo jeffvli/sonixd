@@ -5,6 +5,7 @@ export const mockSettings = {
   cachePath: 'C:\\Users\\jli\\AppData\\Roaming\\Electron',
   legacyAuth: false,
   volume: 0.93,
+  audioDeviceId: null,
   seekForwardInterval: 5,
   seekBackwardInterval: 5,
   volumeFade: true,
