@@ -37,8 +37,8 @@ const playlistSlice = createSlice({
           [
             (entry: any) =>
               typeof entry[action.payload.columnDataKey] === 'string'
-                ? entry[action.payload.columnDataKey].toLowerCase()
-                : entry[action.payload.columnDataKey],
+                ? entry[action.payload.columnDataKey].toLowerCase() || ''
+                : entry[action.payload.columnDataKey] || '',
           ],
           action.payload.sortType
         );
