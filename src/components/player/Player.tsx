@@ -594,6 +594,9 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     if (config.playback.audioDeviceId) {
       player1Ref.current.audioEl.current.setSinkId(config.playback.audioDeviceId);
       player2Ref.current.audioEl.current.setSinkId(config.playback.audioDeviceId);
+    } else {
+      player1Ref.current.audioEl.current.setSinkId('');
+      player2Ref.current.audioEl.current.setSinkId('');
     }
   }, [config.playback.audioDeviceId]);
 
