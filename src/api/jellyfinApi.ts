@@ -145,6 +145,7 @@ const normalizeArtist = (item: any) => {
     id: item.Id,
     title: item.Name,
     albumCount: item.AlbumCount,
+    duration: item.RunTimeTicks / 10000000,
     image: getCoverArtUrl(item, 350),
     starred: item.UserData && item.UserData?.IsFavorite ? 'true' : undefined,
     info: {

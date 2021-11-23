@@ -945,6 +945,16 @@ export const artistColumnList = [
     },
   },
   {
+    label: 'Duration',
+    value: {
+      id: 'Duration',
+      dataKey: 'duration',
+      alignment: 'center',
+      width: 80,
+      label: 'Duration',
+    },
+  },
+  {
     label: 'Favorite',
     value: {
       id: 'Fav',
@@ -1002,6 +1012,16 @@ export const artistColumnListAuto = [
     },
   },
   {
+    label: 'Duration',
+    value: {
+      id: 'Duration',
+      dataKey: 'duration',
+      alignment: 'center',
+      flexGrow: 2,
+      label: 'Duration',
+    },
+  },
+  {
     label: 'Favorite',
     value: {
       id: 'Fav',
@@ -1027,6 +1047,7 @@ export const artistColumnPicker = [
   { label: '#' },
   { label: 'Album Count' },
   { label: 'CoverArt' },
+  { label: 'Duration' },
   { label: 'Favorite' },
   { label: 'Title' },
 ];
