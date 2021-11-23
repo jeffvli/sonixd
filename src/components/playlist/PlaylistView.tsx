@@ -315,7 +315,7 @@ const PlaylistView = ({ ...rest }) => {
           },
         });
 
-        history.replace(`/playlist/${data.id}`);
+        history.replace(`/playlist/${newPlaylistId}`);
         notifyToast('success', `Saved playlist`);
       } else {
         notifyToast('error', 'Error saving playlist');
