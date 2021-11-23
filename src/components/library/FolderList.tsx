@@ -44,6 +44,7 @@ const FolderList = () => {
         args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
       })
   );
+
   const { isLoading: isLoadingFolderData, data: folderData }: any = useQuery(
     ['folder', folder.currentViewedFolder],
     () =>
@@ -186,6 +187,7 @@ const FolderList = () => {
                         onChange={(e: any) => {
                           setMusicFolder(e);
                         }}
+                        disabled={config.serverType === Server.Jellyfin}
                       />
 
                       <StyledButton
