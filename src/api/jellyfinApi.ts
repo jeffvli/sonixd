@@ -561,27 +561,36 @@ export const getSearch = async (options: { query: string; musicFolderId?: string
 
 export const scrobble = async (options: {
   id: string;
+  albumId?: string;
   submission: boolean;
-  position: number;
-  event?: 'pause';
+  position?: number;
+  event?: 'pause' | 'unpause';
 }) => {
   if (options.submission) {
-    if (options.event) {
-      return jellyfinApi.post(`/sessions/playing/progress`, {
-        ItemId: options.id,
-        EventName: options.event,
-        PositionTicks: options.position,
-      });
-    }
-
-    return jellyfinApi.post(`/sessions/playing/stopped`, {
+    jellyfinApi.post(`/sessions/playing/stopped`, {
       ItemId: options.id,
+      IsPaused: true,
+    });
+
+    return jellyfinApi.post(`/users/${auth.username}/playeditems/${options.id}`, null, {
+      params: {
+        datePlayed: moment().format(),
+      },
+    });
+  }
+
+  if (options.event) {
+    return jellyfinApi.post(`/sessions/playing/progress`, {
+      ItemId: options.id,
+      EventName: options.event,
+      IsPaused: options.event === 'pause',
+      PositionTicks: options.position && Math.round(options.position),
     });
   }
 
   return jellyfinApi.post(`/sessions/playing`, {
     ItemId: options.id,
-    PositionTicks: options.position,
+    PositionTicks: options.position && Math.round(options.position),
   });
 };
 

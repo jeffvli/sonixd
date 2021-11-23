@@ -72,7 +72,7 @@ const gaplessListenHandler = (
     apiController({
       serverType,
       endpoint: 'scrobble',
-      args: { id: playQueue.currentSongId, submission: true },
+      args: { id: playQueue.currentSongId, albumId: playQueue.current.albumId, submission: true },
     });
   }
 };
@@ -239,7 +239,7 @@ const listenHandler = (
     apiController({
       serverType,
       endpoint: 'scrobble',
-      args: { id: playQueue.currentSongId, submission: true },
+      args: { id: playQueue.currentSongId, albumId: playQueue.current.albumId, submission: true },
     });
   }
 };
@@ -514,40 +514,51 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     (playerNumber: 1 | 2) => {
       ipcRenderer.send('current-song', playQueue.current);
 
-      // Don't run this if resuming a song, so we'll use a 30 second check
       if (playQueue.scrobble) {
-        let fadeAtTime;
-        let duration;
-        let currentSeek;
-        if (playerNumber === 1) {
-          currentSeek = player1Ref.current.audioEl.current?.currentTime;
-          duration = player1Ref.current.audioEl.current?.duration;
-          fadeAtTime = duration - playQueue.fadeDuration;
-        } else {
-          currentSeek = player2Ref.current.audioEl.current?.currentTime;
-          duration = player2Ref.current.audioEl.current?.duration;
-          fadeAtTime = duration - playQueue.fadeDuration;
-        }
+        const currentSeek =
+          playerNumber === 1
+            ? player1Ref.current.audioEl.current?.currentTime
+            : player2Ref.current.audioEl.current?.currentTime;
+        const duration =
+          playerNumber === 1
+            ? player1Ref.current.audioEl.current?.duration
+            : player2Ref.current.audioEl.current?.duration;
+
+        const fadeAtTime = duration - playQueue.fadeDuration;
+
+        const scrobbleFadeCondition =
+          !(currentSeek >= 240 || currentSeek >= fadeAtTime - 15) && currentSeek <= fadeAtTime;
+        const scrobbleGaplessCondition = !(currentSeek >= 240 || currentSeek >= duration * 0.9);
 
         // Set the reset scrobble condition based on fade or gapless
-        if (
-          playQueue.fadeDuration > 0
-            ? !(currentSeek >= 240 || currentSeek >= fadeAtTime - 15) && currentSeek <= fadeAtTime
-            : !(currentSeek >= 240 || currentSeek >= duration * 0.9)
-        ) {
-          setScrobbled(false);
-          apiController({
-            serverType: config.serverType,
-            endpoint: 'scrobble',
-            args: {
-              id:
-                playerNumber === 1
-                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
-              submission: false,
-            },
-          });
-        }
+        setTimeout(() => {
+          if (playQueue.fadeDuration > 0 ? scrobbleFadeCondition : scrobbleGaplessCondition) {
+            setScrobbled(false);
+            apiController({
+              serverType: config.serverType,
+              endpoint: 'scrobble',
+              args: {
+                id:
+                  playerNumber === 1
+                    ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                    : playQueue[currentEntryList][playQueue.player2.index]?.id,
+                submission: false,
+                position:
+                  config.serverType === Server.Jellyfin ? currentSeek * 10000000 : undefined,
+                event:
+                  config.serverType === Server.Jellyfin
+                    ? playQueue.fadeDuration > 0
+                      ? currentSeek > playQueue.fadeDuration
+                        ? 'unpause'
+                        : undefined
+                      : currentSeek > 3
+                      ? 'unpause'
+                      : undefined
+                    : undefined,
+              },
+            });
+          }
+        }, 1000);
       }
     },
     [config.serverType, currentEntryList, playQueue]
@@ -555,7 +566,12 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
 
   const handleOnPause = useCallback(
     async (playerNumber: 1 | 2) => {
-      if (config.serverType === Server.Jellyfin && playQueue.scrobble && player.currentSeek > 3) {
+      if (
+        config.serverType === Server.Jellyfin &&
+        playQueue.scrobble &&
+        player.currentSeek > 3 &&
+        playQueue.fadeDuration === 0
+      ) {
         apiController({
           serverType: config.serverType,
           endpoint: 'scrobble',
@@ -564,7 +580,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
               playerNumber === 1
                 ? playQueue[currentEntryList][playQueue.player1.index]?.id
                 : playQueue[currentEntryList][playQueue.player2.index]?.id,
-            submission: true,
+            submission: false,
             position: player.currentSeek * 10000000,
             event: 'pause',
           },
