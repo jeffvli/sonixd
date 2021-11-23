@@ -274,6 +274,7 @@ const normalizeFolder = (item: any) => {
   return {
     id: item.id,
     title: item.name || item.title,
+    created: item.DateCreated,
     isDir: true,
     image: getCoverArtUrl(item, legacyAuth, 150),
     type: Item.Folder,
