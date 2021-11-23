@@ -59,7 +59,7 @@ const PlayerConfig = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
-  const [newFilter, setNewFilter] = useState('');
+  const [newFilter, setNewFilter] = useState({ string: '', valid: false });
   const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
     Boolean(settings.getSync('globalMediaHotkeys'))
   );
@@ -151,15 +151,25 @@ const PlayerConfig = () => {
         <Form fluid>
           <StyledInputGroup>
             <StyledInput
-              value={newFilter}
-              onChange={(e: string) => setNewFilter(e)}
+              value={newFilter.string}
+              onChange={(e: string) => {
+                let isValid = true;
+                try {
+                  // eslint-disable-next-line no-new
+                  new RegExp(e);
+                } catch (err) {
+                  isValid = false;
+                }
+
+                setNewFilter({ string: e, valid: isValid });
+              }}
               placeholder="Enter regex string"
             />
             <StyledButton
               type="submit"
-              disabled={newFilter === ''}
+              disabled={newFilter.string === '' || newFilter.valid === false}
               onClick={() => {
-                dispatch(appendPlaybackFilter({ filter: newFilter, enabled: true }));
+                dispatch(appendPlaybackFilter({ filter: newFilter.string, enabled: true }));
                 settings.setSync(
                   'playbackFilters',
                   config.playback.filters.concat({
@@ -167,7 +177,7 @@ const PlayerConfig = () => {
                     enabled: true,
                   })
                 );
-                setNewFilter('');
+                setNewFilter({ string: '', valid: false });
               }}
             >
               Add
