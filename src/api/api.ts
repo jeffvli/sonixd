@@ -405,7 +405,9 @@ export const getArtist = async (options: { id: string }) => {
     biography: infoData.artistInfo2.biography,
     lastFmUrl: infoData.artistInfo2.lastFmUrl,
     externalImageUrl: infoData.artistInfo2.largeImageUrl,
-    similarArtist: infoData.artistInfo2.similarArtist,
+    similarArtist: (infoData.artistInfo2.similarArtist || []).map((entry: any) =>
+      normalizeArtist(entry)
+    ),
   });
 };
 
