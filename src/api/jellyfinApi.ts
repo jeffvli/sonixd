@@ -235,7 +235,7 @@ export const getPlaylist = async (options: { id: string }) => {
 export const getPlaylists = async () => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
-      fields: 'Genres, DateCreated, ParentId', // Removed ChildCount until new Jellyfin releases includes optimization
+      fields: 'Genres, DateCreated, ParentId, Overview', // Removed ChildCount until new Jellyfin releases includes optimization
       includeItemTypes: 'Playlist',
       recursive: true,
       sortBy: 'SortName',
