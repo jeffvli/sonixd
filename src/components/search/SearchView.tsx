@@ -15,12 +15,13 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
-import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import ListViewTable from '../viewtypes/ListViewTable';
 import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
+import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const SearchView = () => {
   const dispatch = useAppDispatch();
@@ -182,6 +183,25 @@ const SearchView = () => {
     }
   };
 
+  const handleRowRating = async (rowData: any, e: number) => {
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids: [rowData.id], rating: e },
+    });
+    dispatch(setRate({ id: [rowData.id], rating: e }));
+    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
+
+    queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
+      const ratedIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
+      ratedIndices.forEach((index) => {
+        oldData.song[index].userRating = e;
+      });
+
+      return oldData;
+    });
+  };
+
   return (
     <GenericPage header={<GenericPageHeader title={`Search: ${urlQuery}`} />}>
       {isLoading && <PageLoader />}
@@ -237,6 +257,7 @@ const SearchView = () => {
               fontSize={settings.getSync('musicListFontSize')}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
+              handleRating={handleRowRating}
               listType="music"
               cacheImages={{
                 enabled: settings.getSync('cacheImages'),

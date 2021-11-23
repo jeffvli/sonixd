@@ -25,6 +25,7 @@ type ContextMenuOptions =
   | 'deletePlaylist'
   | 'addToFavorites'
   | 'removeFromFavorites'
+  | 'setRating'
   | 'viewInModal'
   | 'viewInFolder'
   | 'moveSelectedTo';

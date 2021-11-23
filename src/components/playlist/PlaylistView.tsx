@@ -459,7 +459,7 @@ const PlaylistView = ({ ...rest }) => {
     apiController({
       serverType: config.serverType,
       endpoint: 'setRating',
-      args: { id: rowData.id, rating: e },
+      args: { ids: [rowData.id], rating: e },
     });
     dispatch(setRate({ id: [rowData.id], rating: e }));
     dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));

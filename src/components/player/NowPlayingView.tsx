@@ -61,6 +61,7 @@ import {
 import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
 import { Song } from '../../types';
+import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const NowPlayingView = () => {
   const tableRef = useRef<any>();
@@ -296,9 +297,10 @@ const NowPlayingView = () => {
     apiController({
       serverType: config.serverType,
       endpoint: 'setRating',
-      args: { id: rowData.id, rating: e },
+      args: { ids: [rowData.id], rating: e },
     });
     dispatch(setRate({ id: [rowData.id], rating: e }));
+    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
   };
 
   return (

@@ -5,7 +5,12 @@ import { Nav } from 'rsuite';
 import settings from 'electron-settings';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/playQueueSlice';
+import {
+  fixPlayer2Index,
+  setPlayQueueByRowClick,
+  setRate,
+  setStar,
+} from '../../redux/playQueueSlice';
 import {
   clearSelected,
   toggleSelected,
@@ -21,6 +26,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { StyledNavItem } from '../shared/styled';
 import { setActive } from '../../redux/favoriteSlice';
 import { apiController } from '../../api/controller';
+import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const StarredView = () => {
   const history = useHistory();
@@ -135,6 +141,20 @@ const StarredView = () => {
     });
   };
 
+  const handleRowRating = async (rowData: any, e: number) => {
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids: [rowData.id], rating: e },
+    });
+    dispatch(setRate({ id: [rowData.id], rating: e }));
+    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
+
+    await queryClient.refetchQueries(['starred', musicFolder], {
+      active: true,
+    });
+  };
+
   if (isError) {
     return <span>Error: {error.message}</span>;
   }
@@ -196,6 +216,7 @@ const StarredView = () => {
               tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
+              handleRating={handleRowRating}
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
               cacheImages={{
@@ -225,6 +246,7 @@ const StarredView = () => {
                   fontSize={config.lookAndFeel.listView.album.fontSize}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
+                  handleRating={handleRowRating}
                   cacheImages={{
                     enabled: settings.getSync('cacheImages'),
                     cacheType: 'album',
@@ -273,6 +295,7 @@ const StarredView = () => {
                   fontSize={config.lookAndFeel.listView.artist.fontSize}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
+                  handleRating={handleRowRating}
                   cacheImages={{
                     enabled: false,
                     cacheType: 'artist',

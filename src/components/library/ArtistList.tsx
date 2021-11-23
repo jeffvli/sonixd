@@ -115,6 +115,23 @@ const ArtistList = () => {
     }
   };
 
+  const handleRowRating = (rowData: any, e: number) => {
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids: [rowData.id], rating: e },
+    });
+
+    queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
+      const ratedIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+      ratedIndices.forEach((index) => {
+        oldData[index].userRating = e;
+      });
+
+      return oldData;
+    });
+  };
+
   return (
     <GenericPage
       hideDivider
@@ -143,6 +160,7 @@ const ArtistList = () => {
           fontSize={config.lookAndFeel.listView.artist.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
+          handleRating={handleRowRating}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'artist',

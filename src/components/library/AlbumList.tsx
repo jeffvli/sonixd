@@ -190,6 +190,23 @@ const AlbumList = () => {
     }
   };
 
+  const handleRowRating = (rowData: any, e: number) => {
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids: [rowData.id], rating: e },
+    });
+
+    queryClient.setQueryData(['albumList', album.active.filter, musicFolder], (oldData: any) => {
+      const ratedIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+      ratedIndices.forEach((index) => {
+        oldData[index].userRating = e;
+      });
+
+      return oldData;
+    });
+  };
+
   return (
     <GenericPage
       hideDivider
@@ -246,6 +263,7 @@ const AlbumList = () => {
           fontSize={config.lookAndFeel.listView.album.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
+          handleRating={handleRowRating}
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',
