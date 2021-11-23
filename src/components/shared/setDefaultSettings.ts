@@ -78,6 +78,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('volume', 0.3);
   }
 
+  if (force || !settings.hasSync('audioDeviceId')) {
+    settings.setSync('audioDeviceId', null);
+  }
+
   if (force || !settings.hasSync('seekForwardInterval')) {
     settings.setSync('seekForwardInterval', 5);
   }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { shell } from 'electron';
 import settings from 'electron-settings';
 import { ControlLabel, Divider, Form } from 'rsuite';
@@ -9,15 +9,23 @@ import {
   StyledInput,
   StyledInputGroup,
   StyledInputNumber,
+  StyledInputPicker,
+  StyledInputPickerContainer,
   StyledLink,
   StyledPanel,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
-import { appendPlaybackFilter } from '../../../redux/configSlice';
+import { appendPlaybackFilter, setAudioDeviceId } from '../../../redux/configSlice';
+import { notifyToast } from '../../shared/toast';
 
 const isMacOS = process.platform === 'darwin';
+
+const getAudioDevice = async () => {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  return (devices || []).filter((dev: MediaDeviceInfo) => dev.kind === 'audiooutput');
+};
 
 const playbackFilterColumns = [
   {
@@ -64,17 +72,43 @@ const PlayerConfig = () => {
     Boolean(settings.getSync('globalMediaHotkeys'))
   );
   const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>();
+  const audioDevicePickerContainerRef = useRef(null);
 
   useEffect(() => {
     settings.setSync('playbackFilters', config.playback.filters);
   }, [config.playback.filters]);
 
+  useEffect(() => {
+    const getAudioDevices = () => {
+      getAudioDevice()
+        .then((dev) => setAudioDevices(dev))
+        .catch(() => notifyToast('error', 'Error fetching audio devices'));
+    };
+
+    getAudioDevices();
+  }, []);
+
   return (
     <ConfigPanel header="Player" bordered>
       <p>
-        Configure the number of seconds to skip forwards/backwards by when clicking the seek
-        forward/backward buttons.
+        Set your desired audio device. Leaving this blank will use the system default audio device.
       </p>
+      <br />
+      <StyledInputPickerContainer ref={audioDevicePickerContainerRef}>
+        <StyledInputPicker
+          container={() => audioDevicePickerContainerRef.current}
+          data={audioDevices}
+          defaultValue={config.playback.audioDeviceId}
+          value={config.playback.audioDeviceId}
+          labelKey="label"
+          valueKey="deviceId"
+          onChange={(e: string) => {
+            dispatch(setAudioDeviceId(e));
+            settings.setSync('audioDeviceId', e);
+          }}
+        />
+      </StyledInputPickerContainer>
       <br />
       <ControlLabel>Seek forward (s)</ControlLabel>
       <StyledInputNumber
