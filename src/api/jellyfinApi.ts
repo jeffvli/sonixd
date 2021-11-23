@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import _ from 'lodash';
 import moment from 'moment';
 import { nanoid } from 'nanoid/non-secure';
@@ -46,6 +47,13 @@ jellyfinApi.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+axiosRetry(jellyfinApi, {
+  retries: 3,
+  retryDelay: (retryCount) => {
+    return retryCount * 1000;
+  },
+});
 
 const getStreamUrl = (id: string) => {
   return (
