@@ -108,7 +108,7 @@ const AlbumList = () => {
     return res.map((genre: any) => {
       if (genre.albumCount !== 0) {
         return {
-          label: `${genre.title} ${genre.albumCount ? `(${genre.albumCount})` : ''}`,
+          label: `${genre.title}${genre.albumCount ? ` (${genre.albumCount})` : ''}`,
           value: genre.title,
           role: 'Genre',
         };
@@ -116,6 +116,7 @@ const AlbumList = () => {
       return null;
     });
   });
+
   const filteredData = useSearchQuery(misc.searchQuery, albums, [
     'title',
     'artist',
