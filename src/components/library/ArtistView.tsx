@@ -374,6 +374,7 @@ const ArtistView = ({ ...rest }: any) => {
                     ?.replace(/<[^>]*>/, '')
                     .replace('Read more on Last.fm</a>', '')}
                   placement="bottomStart"
+                  disabled={!data?.info.biography}
                 >
                   <PageHeaderSubtitleDataLine
                     style={{

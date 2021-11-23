@@ -13,10 +13,10 @@ const StyledTooltip = styled(Tooltip)`
 
 export const tooltip = (text: string) => <StyledTooltip>{text}</StyledTooltip>;
 
-const CustomTooltip = ({ children, text, delay, placement, ...rest }: any) => {
+const CustomTooltip = ({ children, text, delay, placement, disabled, ...rest }: any) => {
   return (
     <Whisper
-      trigger="hover"
+      trigger={disabled ? 'none' : 'hover'}
       delay={delay || 250}
       speaker={tooltip(text)}
       placement={placement || 'top'}
