@@ -55,7 +55,7 @@ const GenericPageHeader = ({
               if (cacheImages.enabled) {
                 cacheImage(
                   `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
-                  image.replace(/size=\d+/, 'size=500')
+                  image.replaceAll(/=150/gi, '=350')
                 );
               }
             }}
