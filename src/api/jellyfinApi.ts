@@ -282,7 +282,7 @@ export const updatePlaylistSongs = async (options: { name: string; entry: Song[]
 
 export const updatePlaylistSongsLg = async (options: { id: string; entry: Song[] }) => {
   const entryIds = _.map(options.entry, 'id');
-  const entryIdChunks = _.chunk(entryIds, 300);
+  const entryIdChunks = _.chunk(entryIds, 200);
 
   const res: any[] = [];
   for (let i = 0; i < entryIdChunks.length; i += 1) {
