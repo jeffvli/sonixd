@@ -215,7 +215,7 @@ const Card = ({
                   if (cacheImages) {
                     cacheImage(
                       `${rest.details.cacheType}_${rest.details.id}.jpg`,
-                      rest.coverArt.replace(/size=\d+/, 'size=500')
+                      rest.coverArt.replaceAll(/=150/gi, '=350')
                     );
                   }
                 }}
