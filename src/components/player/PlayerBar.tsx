@@ -326,24 +326,24 @@ const PlayerBar = () => {
                   }}
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px' }}>
-                    <CoverArtWrapper
-                      $link
-                      tabIndex={0}
-                      onClick={() => history.push(`/nowplaying`)}
-                      onKeyDown={(e: any) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                          history.push(`/nowplaying`);
-                        }
-                      }}
-                    >
-                      <Whisper
-                        trigger="hover"
-                        delay={500}
-                        placement="topStart"
-                        preventOverflow
-                        speaker={
-                          <StyledPopover>
-                            <div style={{ height: '500px' }}>
+                    <Whisper
+                      trigger="hover"
+                      delay={500}
+                      placement="topStart"
+                      preventOverflow
+                      speaker={
+                        <StyledPopover>
+                          <div style={{ height: '500px' }}>
+                            <CoverArtWrapper
+                              tabIndex={0}
+                              onClick={() => history.push(`/nowplaying`)}
+                              onKeyDown={(e: any) => {
+                                if (e.key === ' ' || e.key === 'Enter') {
+                                  history.push(`/nowplaying`);
+                                }
+                              }}
+                              size={500}
+                            >
                               <LazyLoadImage
                                 src={
                                   isCached(
@@ -356,35 +356,38 @@ const PlayerBar = () => {
                                       }.jpg`
                                     : playQueue[currentEntryList][
                                         playQueue.currentIndex
-                                      ]?.image.replace(/size=\d+/, 'size=500') || placeholderImg
+                                      ]?.image.replace(
+                                        /&size=\d+|width=\d+&height=\d+&quality=\d+/,
+                                        ''
+                                      ) || placeholderImg
                                 }
-                                width={500}
                                 height={500}
                               />
-                            </div>
-                          </StyledPopover>
-                        }
-                      >
-                        <LazyLoadImage
-                          src={
-                            isCached(
-                              `${misc.imageCachePath}album_${
+                            </CoverArtWrapper>
+                          </div>
+                        </StyledPopover>
+                      }
+                    >
+                      <LazyLoadImage
+                        src={
+                          isCached(
+                            `${misc.imageCachePath}album_${
+                              playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                            }.jpg`
+                          )
+                            ? `${misc.imageCachePath}album_${
                                 playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                               }.jpg`
-                            )
-                              ? `${misc.imageCachePath}album_${
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                }.jpg`
-                              : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
-                                placeholderImg
-                          }
-                          alt="trackImg"
-                          effect="opacity"
-                          width="65"
-                          height="65"
-                        />
-                      </Whisper>
-                    </CoverArtWrapper>
+                            : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                              placeholderImg
+                        }
+                        alt="trackImg"
+                        effect="opacity"
+                        width="65"
+                        height="65"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </Whisper>
                   </Col>
                   <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>
                     <Row
