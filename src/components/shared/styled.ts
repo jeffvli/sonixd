@@ -80,7 +80,8 @@ export const StyledInputGroup = styled(InputGroup)`
   border-radius: ${(props) => props.theme.other.input.borderRadius};
 `;
 
-export const StyledInputGroupButton = styled(InputGroup.Button)`
+export const StyledInputGroupButton = styled(InputGroup.Button)<{ height?: number }>`
+  height: ${(props) => `${props.height}px`} !important;
   background: ${(props) =>
     props.appearance === 'primary'
       ? `${props.theme.colors.primary}`
@@ -440,6 +441,7 @@ export const ContextMenuPopover = styled(Popover)`
 export const StyledPopover = styled(Popover)`
   color: ${(props) => props.theme.colors.popover.color};
   background: ${(props) => props.theme.colors.popover.background};
+  border: 1px #3c4043 solid;
   position: absolute;
   z-index: 1000;
 `;
