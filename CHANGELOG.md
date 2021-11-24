@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2021-11-24
+
+### Added
+
+- Added Jellyfin server support (#87)
+  - Supports full Sonixd feature-set (except ratings)
+- Added a mini config popover to change list/grid view options on the top action bar
+- Added system audio device selector (#96)
+- Added context menu option `Set rating` to bulk set ratings for songs (and albums/artists on Navidrome) (#95)
+
+### Changed
+
+- Reduced cached image from 500px -> 350px (to match max grid size)
+- Grid/header images now respect image aspect ratio returned by the server
+- Playback filter input now uses a regex validation before allowing you to add
+- Renamed all `Name` columns to `Title`
+- Search bar now clears after pressing enter to globally search
+- Added borders to popovers
+
+### Fixed
+
+- Fixed application performance issues when player is crossfading to the next track
+- Fixed null entries showing at the beginning of descending sort on playlist/now playing lists
+- Tooltips no longer pop up on the artist/playlist description when null
+
 ## [0.7.0] - 2021-11-15
 
 ### Added
