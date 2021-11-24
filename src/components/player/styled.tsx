@@ -67,6 +67,7 @@ export const LinkButton = styled(Button)<{ subtitle?: string }>`
   &:focus {
     background: transparent !important;
     color: ${(props) => props.theme.colors.layout.playerBar.color};
+    text-decoration: underline;
     cursor: pointer;
   }
 
