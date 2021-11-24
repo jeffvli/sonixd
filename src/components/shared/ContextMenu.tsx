@@ -198,8 +198,6 @@ export const GlobalContextMenu = () => {
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'song')));
 
-      console.log(`songs`, songs);
-
       if (songs.entries.length > 0) {
         dispatch(setPlayQueue({ entries: songs.entries }));
         dispatch(setStatus('PLAYING'));

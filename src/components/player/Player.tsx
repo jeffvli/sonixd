@@ -594,11 +594,9 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
   useEffect(() => {
     if (!playQueue.isFading || !(playQueue.fadeDuration === 0)) {
       if (playQueue.currentPlayer === 1) {
-        console.log(`set volume 1`);
         player1Ref.current.audioEl.current.volume = playQueue.volume;
         player2Ref.current.audioEl.current.volume = 0;
       } else {
-        console.log(`set volume 2`);
         player2Ref.current.audioEl.current.volume = playQueue.volume;
         player1Ref.current.audioEl.current.volume = 0;
       }
