@@ -504,22 +504,19 @@ export const GlobalContextMenu = () => {
 
   const handleDeletePlaylist = async () => {
     dispatch(setContextMenu({ show: false }));
+    const promises = [];
 
-    // Navidrome throws internal server error when using Promise.all() so we do it sequentially
-    const res = [];
     for (let i = 0; i < multiSelect.selected.length; i += 1) {
-      try {
-        res.push(
-          await apiController({
-            serverType: config.serverType,
-            endpoint: 'deletePlaylist',
-            args: { id: multiSelect.selected[i].id },
-          })
-        );
-      } catch (err) {
-        notifyToast('error', err);
-      }
+      promises.push(
+        apiController({
+          serverType: config.serverType,
+          endpoint: 'deletePlaylist',
+          args: { id: multiSelect.selected[i].id },
+        })
+      );
     }
+
+    const res = await Promise.all(promises);
 
     if (isFailedResponse(res)) {
       notifyToast('error', errorMessages(res)[0]);
