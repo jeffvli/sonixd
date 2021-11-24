@@ -293,7 +293,7 @@ const PlaylistView = ({ ...rest }) => {
       const { id: newPlaylistId } = await apiController({
         serverType: config.serverType,
         endpoint: 'updatePlaylistSongs',
-        args: { name: data.title, entry: playlist.entry },
+        args: { name: data.title, entry: playlist[getCurrentEntryList(playlist)] },
       });
 
       if (newPlaylistId) {
