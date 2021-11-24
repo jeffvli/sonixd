@@ -166,6 +166,7 @@ export const Overlay = styled.div<Card>`
     left: -50px;
     top: -50px;
     width: 80px;
+    pointer-events: none;
 
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
