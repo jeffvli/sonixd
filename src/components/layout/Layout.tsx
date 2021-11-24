@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
-import { ButtonToolbar, Content, FlexboxGrid, Icon } from 'rsuite';
+import { ButtonToolbar, Content, FlexboxGrid, Icon, Nav, Whisper } from 'rsuite';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
@@ -13,7 +13,14 @@ import {
   StyledInput,
   StyledInputGroup,
   StyledInputGroupButton,
+  StyledNavItem,
+  StyledPopover,
 } from '../shared/styled';
+
+import {
+  GridViewConfigPanel,
+  ListViewConfigPanel,
+} from '../settings/ConfigPanels/LookAndFeelConfig';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const history = useHistory();
@@ -21,6 +28,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [openSearch, setOpenSearch] = useState(false);
+  const [activeConfigNav, setActiveConfigNav] = useState('listView');
 
   useHotkeys(
     'backspace',
@@ -150,6 +158,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                     <StyledInputGroup inside>
                       <StyledInput
                         opacity={0.6}
+                        size="sm"
                         id="local-search-input"
                         value={misc.searchQuery}
                         onChange={handleSearch}
@@ -169,6 +178,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                         style={{ width: '180px' }}
                       />
                       <StyledInputGroupButton
+                        height={30}
                         appearance="subtle"
                         tabIndex={0}
                         onClick={() => {
@@ -198,6 +208,27 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                     />
                   )}
                 </span>
+                <Whisper
+                  speaker={
+                    <StyledPopover>
+                      <Nav
+                        activeKey={activeConfigNav}
+                        onSelect={(e) => setActiveConfigNav(e)}
+                        appearance="subtle"
+                      >
+                        <StyledNavItem eventKey="listView">List-View</StyledNavItem>
+                        <StyledNavItem eventKey="gridView">Grid-View</StyledNavItem>
+                      </Nav>
+                      {activeConfigNav === 'listView' && <ListViewConfigPanel />}
+                      {activeConfigNav === 'gridView' && <GridViewConfigPanel />}
+                    </StyledPopover>
+                  }
+                  trigger="click"
+                  placement="autoVerticalEnd"
+                  preventOverflow
+                >
+                  <StyledIconButton appearance="subtle" icon={<Icon icon="cog" />} />
+                </Whisper>
               </ButtonToolbar>
             </FlexboxGrid.Item>
           </FlexboxGrid>
