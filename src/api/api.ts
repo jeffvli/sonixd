@@ -601,7 +601,7 @@ export const updatePlaylistSongsLg = async (options: { id: string; entry: any[] 
 };
 
 export const deletePlaylist = async (options: { id: string }) => {
-  const { data } = await api.get(`/deletePlaylist`, { params: { playlistId: options.id } });
+  const { data } = await api.get(`/deletePlaylist`, { params: { id: options.id } });
   return data;
 };
 
