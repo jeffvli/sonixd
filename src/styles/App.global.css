@@ -63,6 +63,11 @@ body {
   top: inherit !important;
 }
 
+.rs-tooltip {
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
 *::-webkit-scrollbar {
   width: 10px;
 }
