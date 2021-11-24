@@ -22,7 +22,6 @@ const playQueueState: PlayQueue = {
   player1: {
     src: './components/player/dummy.mp3',
     index: 0,
-    volume: 0.5,
     fadeData: {
       volumeData: [],
       timeData: [],
@@ -31,7 +30,6 @@ const playQueueState: PlayQueue = {
   player2: {
     src: './components/player/dummy.mp3',
     index: 1,
-    volume: 0,
     fadeData: {
       volumeData: [],
       timeData: [],

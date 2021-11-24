@@ -27,7 +27,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
   setPlayerIndex,
-  setPlayerVolume,
   setSort,
   sortPlayQueue,
 } from '../../redux/playQueueSlice';
@@ -691,11 +690,6 @@ const ListViewTable = ({
                                   if (e.key === ' ' || e.key === 'Enter') {
                                     e.preventDefault();
                                     if (nowPlaying) {
-                                      dispatch(
-                                        setPlayerVolume({ player: 1, volume: playQueue.volume })
-                                      );
-                                      dispatch(setPlayerVolume({ player: 2, volume: 0 }));
-
                                       dispatch(clearSelected());
                                       dispatch(resetPlayer());
                                       dispatch(setPlayerIndex(rowData));
