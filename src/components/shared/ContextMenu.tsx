@@ -496,6 +496,7 @@ export const GlobalContextMenu = () => {
       notifyToast('error', 'Error adding to playlist');
     } finally {
       dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
+      queryClient.removeQueries(['playlist', localSelectedPlaylistId]);
     }
 
     await queryClient.refetchQueries(['playlists'], {
