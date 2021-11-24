@@ -25,7 +25,7 @@ export const HeaderButton = styled(Button)`
 `;
 
 export const StyledButton = styled(Button)<{ width: number }>`
-  border-radius: ${(props) => props.theme.other?.button?.borderRadius};
+  border-radius: ${(props) => props.theme.other?.button?.borderRadius} !important;
   background: ${(props) =>
     props.appearance === 'primary'
       ? `${props.theme.colors.primary}`
