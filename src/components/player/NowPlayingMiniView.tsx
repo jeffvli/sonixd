@@ -13,7 +13,6 @@ import {
   setIsDragging,
 } from '../../redux/multiSelectSlice';
 import {
-  setPlayerVolume,
   setPlayerIndex,
   fixPlayer2Index,
   clearPlayQueue,
@@ -150,10 +149,6 @@ const NowPlayingMiniView = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-
-    // Reset volumes when changing to a new track
-    dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-    dispatch(setPlayerVolume({ player: 2, volume: 0 }));
 
     dispatch(clearSelected());
     dispatch(resetPlayer());

@@ -15,7 +15,6 @@ import {
   incrementCurrentIndex,
   incrementPlayerIndex,
   setCurrentPlayer,
-  setPlayerVolume,
   setIsFading,
   setAutoIncremented,
   fixPlayer2Index,
@@ -53,6 +52,7 @@ const gaplessListenHandler = (
   // seek value doesn't always reach the duration
   const durationPadding = pollingInterval <= 10 ? 0.12 : pollingInterval <= 20 ? 0.13 : 0.15;
   if (currentSeek + durationPadding >= duration) {
+    nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
     nextPlayerRef.current.audioEl.current.play();
   }
 
@@ -106,10 +106,10 @@ const listenHandler = (
   ) {
     // Detect to start fading when seek is greater than the fade time
     if (currentSeek >= fadeAtTime) {
-      if (volumeFade) {
-        nextPlayerRef.current.audioEl.current.play();
-        dispatch(setIsFading(true));
+      nextPlayerRef.current.audioEl.current.play();
+      dispatch(setIsFading(true));
 
+      if (volumeFade) {
         const timeLeft = duration - currentSeek;
         let currentPlayerVolumeCalculation;
         let nextPlayerVolumeCalculation;
@@ -171,8 +171,8 @@ const listenHandler = (
             : playQueue.volume;
 
         if (player === 1) {
-          dispatch(setPlayerVolume({ player: 1, volume: currentPlayerVolume }));
-          dispatch(setPlayerVolume({ player: 2, volume: nextPlayerVolume }));
+          currentPlayerRef.current.audioEl.current.volume = currentPlayerVolume;
+          nextPlayerRef.current.audioEl.current.volume = nextPlayerVolume;
           if (debug) {
             dispatch(
               setFadeData({
@@ -190,8 +190,8 @@ const listenHandler = (
             );
           }
         } else {
-          dispatch(setPlayerVolume({ player: 2, volume: currentPlayerVolume }));
-          dispatch(setPlayerVolume({ player: 1, volume: nextPlayerVolume }));
+          currentPlayerRef.current.audioEl.current.volume = currentPlayerVolume;
+          nextPlayerRef.current.audioEl.current.volume = nextPlayerVolume;
           if (debug) {
             dispatch(
               setFadeData({
@@ -210,13 +210,7 @@ const listenHandler = (
           }
         }
       } else {
-        if (player === 1) {
-          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
-        } else {
-          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-        }
-        nextPlayerRef.current.audioEl.current.play();
-        dispatch(setIsFading(true));
+        nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
       }
     }
   }
@@ -412,8 +406,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         dispatch(setCurrentPlayer(2));
         dispatch(incrementPlayerIndex(1));
         if (playQueue.fadeDuration !== 0) {
-          dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
           dispatch(setIsFading(false));
         }
 
@@ -457,8 +449,6 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         dispatch(setCurrentPlayer(1));
         dispatch(incrementPlayerIndex(2));
         if (playQueue.fadeDuration !== 0) {
-          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-          dispatch(setPlayerVolume({ player: 2, volume: 0 }));
           dispatch(setIsFading(false));
         }
 
@@ -600,6 +590,21 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
     }
   }, [config.playback.audioDeviceId]);
 
+  // Reset the player volumes when the track changes
+  useEffect(() => {
+    if (!playQueue.isFading || !(playQueue.fadeDuration === 0)) {
+      if (playQueue.currentPlayer === 1) {
+        console.log(`set volume 1`);
+        player1Ref.current.audioEl.current.volume = playQueue.volume;
+        player2Ref.current.audioEl.current.volume = 0;
+      } else {
+        console.log(`set volume 2`);
+        player2Ref.current.audioEl.current.volume = playQueue.volume;
+        player1Ref.current.audioEl.current.volume = 0;
+      }
+    }
+  }, [playQueue.currentPlayer, playQueue.fadeDuration, playQueue.isFading, playQueue.volume]);
+
   return (
     <>
       <Helmet>
@@ -615,7 +620,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         preload="auto"
         onListen={playQueue.fadeDuration === 0 ? handleGaplessPlayer1 : handleListenPlayer1}
         onEnded={handleOnEndedPlayer1}
-        volume={playQueue.player1.volume}
+        volume={player1Ref.current?.audioEl?.current?.volume || 0}
         autoPlay={
           playQueue.player1.index === playQueue.currentIndex &&
           playQueue.currentPlayer === 1 &&
@@ -638,7 +643,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
         preload="auto"
         onListen={playQueue.fadeDuration === 0 ? handleGaplessPlayer2 : handleListenPlayer2}
         onEnded={handleOnEndedPlayer2}
-        volume={playQueue.player2.volume}
+        volume={player2Ref.current?.audioEl?.current?.volume || 0}
         autoPlay={
           playQueue.player2.index === playQueue.currentIndex &&
           playQueue.currentPlayer === 2 &&

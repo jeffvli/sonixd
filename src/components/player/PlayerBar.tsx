@@ -18,7 +18,6 @@ import {
   incrementCurrentIndex,
   decrementCurrentIndex,
   setVolume,
-  setPlayerVolume,
   fixPlayer2Index,
   toggleRepeat,
   toggleDisplayQueue,
@@ -61,20 +60,12 @@ const PlayerBar = () => {
     const debounce = setTimeout(() => {
       if (isDraggingVolume) {
         dispatch(setVolume(localVolume));
-        dispatch(
-          setPlayerVolume({
-            player: playQueue.currentPlayer,
-            volume: localVolume,
-          })
-        );
-        if (playQueue.fadeDuration === 0) {
-          dispatch(
-            setPlayerVolume({
-              player: playQueue.currentPlayer === 1 ? 2 : 1,
-              volume: localVolume,
-            })
-          );
+        if (playQueue.currentPlayer === 1) {
+          playersRef.current.player1.audioEl.current.volume = localVolume;
+        } else {
+          playersRef.current.player2.audioEl.current.volume = localVolume;
         }
+
         settings.setSync('volume', localVolume);
       }
       setIsDraggingVolume(false);
@@ -151,22 +142,10 @@ const PlayerBar = () => {
       const vol = Number((playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2));
       setLocalVolume(vol);
       dispatch(setVolume(vol));
-      dispatch(
-        setPlayerVolume({
-          player: playQueue.currentPlayer,
-          volume: vol,
-        })
-      );
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
       const vol = Number((playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2));
       setLocalVolume(vol);
       dispatch(setVolume(vol));
-      dispatch(
-        setPlayerVolume({
-          player: playQueue.currentPlayer,
-          volume: vol,
-        })
-      );
     }
   };
 
@@ -179,13 +158,9 @@ const PlayerBar = () => {
         if (playQueue.currentPlayer === 1) {
           playersRef.current.player2.audioEl.current.pause();
           playersRef.current.player2.audioEl.current.currentTime = 0;
-          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-          dispatch(setPlayerVolume({ player: 2, volume: 0 }));
         } else {
           playersRef.current.player1.audioEl.current.pause();
           playersRef.current.player1.audioEl.current.currentTime = 0;
-          dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
         }
       }
 
@@ -212,13 +187,9 @@ const PlayerBar = () => {
         if (playQueue.currentPlayer === 1) {
           playersRef.current.player2.audioEl.current.pause();
           playersRef.current.player2.audioEl.current.currentTime = 0;
-          dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-          dispatch(setPlayerVolume({ player: 2, volume: 0 }));
         } else {
           playersRef.current.player1.audioEl.current.pause();
           playersRef.current.player1.audioEl.current.currentTime = 0;
-          dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-          dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
         }
       }
 
@@ -243,13 +214,9 @@ const PlayerBar = () => {
       if (playQueue.currentPlayer === 1) {
         playersRef.current.player2.audioEl.current.pause();
         playersRef.current.player2.audioEl.current.currentTime = 0;
-        dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-        dispatch(setPlayerVolume({ player: 2, volume: 0 }));
       } else {
         playersRef.current.player1.audioEl.current.pause();
         playersRef.current.player1.audioEl.current.currentTime = 0;
-        dispatch(setPlayerVolume({ player: 1, volume: 0 }));
-        dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
       }
     }
 

@@ -9,8 +9,8 @@ import {
   StyledInputPickerContainer,
   StyledRadio,
 } from '../../shared/styled';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setPlaybackSetting, setPlayerVolume } from '../../../redux/playQueueSlice';
+import { useAppDispatch } from '../../../redux/hooks';
+import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 
 const PlaybackConfig = () => {
   const dispatch = useAppDispatch();
@@ -21,7 +21,6 @@ const PlaybackConfig = () => {
     Number(settings.getSync('pollingInterval'))
   );
   const [volumeFade, setVolumeFade] = useState(Boolean(settings.getSync('volumeFade')));
-  const playQueue = useAppSelector((state) => state.playQueue);
   const crossfadePickerContainerRef = useRef(null);
 
   const handleSetCrossfadeDuration = (e: number) => {
@@ -33,11 +32,6 @@ const PlaybackConfig = () => {
         value: Number(e),
       })
     );
-
-    if (Number(e) === 0) {
-      dispatch(setPlayerVolume({ player: 1, volume: playQueue.volume }));
-      dispatch(setPlayerVolume({ player: 2, volume: playQueue.volume }));
-    }
   };
 
   const handleSetPollingInterval = (e: number) => {

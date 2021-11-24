@@ -47,7 +47,6 @@ export interface PlayQueue {
   player1: {
     src: string;
     index: number;
-    volume: number;
     fadeData: {
       volumeData: number[];
       timeData: string[];
@@ -56,7 +55,6 @@ export interface PlayQueue {
   player2: {
     src: string;
     index: number;
-    volume: number;
     fadeData: {
       volumeData: number[];
       timeData: string[];
@@ -93,7 +91,6 @@ const initialState: PlayQueue = {
   player1: {
     src: './components/player/dummy.mp3',
     index: 0,
-    volume: 0.5,
     fadeData: {
       volumeData: [],
       timeData: [],
@@ -102,7 +99,6 @@ const initialState: PlayQueue = {
   player2: {
     src: './components/player/dummy.mp3',
     index: 1,
-    volume: 0,
     fadeData: {
       volumeData: [],
       timeData: [],
@@ -142,9 +138,7 @@ const resetPlayerDefaults = (state: PlayQueue) => {
   state.player1.src = './components/player/dummy.mp3';
   state.player2.src = './components/player/dummy.mp3';
   state.player1.index = 0;
-  state.player1.volume = state.volume;
   state.player2.index = 0;
-  state.player2.volume = 0;
   state.entry = [];
   state.shuffledEntry = [];
   state.sortedEntry = [];
@@ -153,9 +147,7 @@ const resetPlayerDefaults = (state: PlayQueue) => {
 const resetToPlayer1 = (state: PlayQueue) => {
   state.currentPlayer = 1;
   state.isFading = false;
-  state.player1.volume = state.volume;
   state.player1.index = state.currentIndex;
-  state.player2.volume = 0;
 };
 
 const insertItem = (array: any, index: any, item: any) => {
@@ -188,12 +180,6 @@ export const getCurrentEntryIndex = (entries: any[], currentSongId: string) => {
 
 export const getCurrentEntryIndexByUID = (entries: any[], currentSongId: string) => {
   return entries.findIndex((entry: any) => entry.uniqueId === currentSongId);
-};
-
-const handleGaplessPlayback = (state: PlayQueue) => {
-  if (state.fadeDuration === 0) {
-    state.player2.volume = state.volume;
-  }
 };
 
 const playQueueSlice = createSlice({
@@ -279,7 +265,6 @@ const playQueueSlice = createSlice({
       const currentEntry = entrySelect(state);
 
       resetPlayerDefaults(state);
-      handleGaplessPlayback(state);
       state.current = { ...state[currentEntry][0] };
       state.currentSongId = state[currentEntry][0].id;
       state.currentSongUniqueId = state[currentEntry][0].uniqueId;
@@ -567,7 +552,6 @@ const playQueueSlice = createSlice({
         }
       }
 
-      handleGaplessPlayback(state);
       state.current = { ...state[currentEntry][state.currentIndex] };
       state.currentSongId = state[currentEntry][state.currentIndex].id;
       state.currentSongUniqueId = state[currentEntry][state.currentIndex].uniqueId;
@@ -584,7 +568,6 @@ const playQueueSlice = createSlice({
           if (state.player1.index + 1 === state[currentEntry].length && state.repeat === 'none') {
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
-            handleGaplessPlayback(state);
           } else if (state.player1.index + 2 >= state[currentEntry].length) {
             /* If incrementing would be greater than the total number of entries,
             reset it back to 0. Also check if player1 is already set to 0. */
@@ -601,7 +584,6 @@ const playQueueSlice = createSlice({
           if (state.player2.index + 1 === state[currentEntry].length && state.repeat === 'none') {
             // Reset the player on the end of the playlist if no repeat
             resetPlayerDefaults(state);
-            handleGaplessPlayback(state);
           } else if (state.player2.index + 2 >= state[currentEntry].length) {
             /* If incrementing would be greater than the total number of entries,
             reset it back to 0. Also check if player1 is already set to 0. */
@@ -625,25 +607,15 @@ const playQueueSlice = createSlice({
 
       state.isFading = false;
       state.player1.index = findIndex;
-      state.player1.volume = state.volume;
 
       // Use in conjunction with fixPlayer2Index reducer - see note
       state.player2.index = 0;
-      state.player2.volume = 0;
 
       state.currentPlayer = 1;
       state.currentIndex = findIndex;
       state.current = { ...action.payload };
       state.currentSongId = action.payload.id;
       state.currentSongUniqueId = action.payload.uniqueId;
-    },
-
-    setPlayerVolume: (state, action: PayloadAction<{ player: number; volume: number }>) => {
-      if (action.payload.player === 1) {
-        state.player1.volume = action.payload.volume;
-      } else {
-        state.player2.volume = action.payload.volume;
-      }
     },
 
     decrementCurrentIndex: (state, action: PayloadAction<string>) => {
@@ -662,13 +634,11 @@ const playQueueSlice = createSlice({
 
           // Use in conjunction with fixPlayer2Index reducer - see note
           state.player2.index = 0;
-          state.player2.volume = 0;
 
           // Use this in conjunction with useEffect to set the audioplayer currentTime back to 0
           state.playerUpdated += 1;
         }
 
-        handleGaplessPlayback(state);
         state.current = { ...state[currentEntry][state.currentIndex] };
         state.currentSongId = state[currentEntry][state.currentIndex].id;
         state.currentSongUniqueId = state[currentEntry][state.currentIndex].uniqueId;
@@ -696,7 +666,6 @@ const playQueueSlice = createSlice({
           state.repeat,
           state.currentIndex
         );
-        handleGaplessPlayback(state);
       }
     },
 
@@ -719,7 +688,6 @@ const playQueueSlice = createSlice({
     ) => {
       // Used with gridview where you just want to set the entry queue directly
       resetPlayerDefaults(state);
-      handleGaplessPlayback(state);
 
       action.payload.entries.map((entry: any) => state.entry.push(entry));
       if (state.shuffle) {
@@ -751,7 +719,6 @@ const playQueueSlice = createSlice({
       // Setting the entry queue by row will add all entries, but set the current index to
       // the row that was double clicked
       resetPlayerDefaults(state);
-      handleGaplessPlayback(state);
 
       // Apply filters to all entries except the entry that was double clicked
       const filteredFromStartToCurrent = filterPlayQueue(
@@ -1115,7 +1082,6 @@ export const {
   moveDown,
   moveToIndex,
   setCurrentPlayer,
-  setPlayerVolume,
   setVolume,
   setIsFading,
   setAutoIncremented,
