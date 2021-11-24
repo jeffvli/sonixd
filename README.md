@@ -104,6 +104,8 @@ To package apps for the local platform:
 yarn package
 ```
 
+If you receive errors while packaging the application, try upgrading/downgrading your Node version (tested on v14.16.1).
+
 If you are unable to run via debug in VS Code, check troubleshooting steps [here](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/2757#issuecomment-784200527).
 
 If your devtools extensions are failing to run/install, check troubleshooting steps [here](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/2788).
