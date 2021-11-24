@@ -45,7 +45,6 @@ const ListViewType = (
   const [height, setHeight] = useState(0);
   const [show, setShow] = useState(false);
   // const [scrollY, setScrollY] = useState(0);
-  const [columns] = useState(tableColumns);
   const { getHeight } = DOMHelper;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const multiSelect = useAppSelector((state: any) => state.multiSelect);
@@ -320,7 +319,7 @@ const ListViewType = (
             virtualized
             rowHeight={rowHeight}
             fontSize={fontSize}
-            columns={columns}
+            columns={tableColumns}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
             playQueue={playQueue}
