@@ -45,12 +45,11 @@ const GenericPageHeader = ({
   return (
     <>
       {image && !Array.isArray(image) && (
-        <CoverArtWrapper>
+        <CoverArtWrapper size={imageHeight || '195px'}>
           <LazyLoadImage
             src={image}
             alt="header-img"
             height={imageHeight || '195px'}
-            width={imageHeight || '195px'}
             visibleByDefault
             afterLoad={() => {
               if (cacheImages.enabled) {
@@ -65,7 +64,7 @@ const GenericPageHeader = ({
       )}
 
       {image && Array.isArray(image) && (
-        <CoverArtWrapper>
+        <CoverArtWrapper size={imageHeight || '195px'}>
           <CustomImageGridWrapper>
             <CustomImageGrid $gridArea="1 / 1 / 2 / 2">
               <LazyLoadImage

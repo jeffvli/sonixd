@@ -26,6 +26,7 @@ import {
   AppendOverlayButton,
   ModalViewOverlayButton,
   AppendNextOverlayButton,
+  CardImgWrapper,
 } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
@@ -198,30 +199,31 @@ const Card = ({
         style={rest.style}
       >
         <Overlay cardsize={size}>
-          {lazyLoad ? (
-            <LazyCardImg
-              src={
-                isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
-                  ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
-                  : rest.coverArt
-              }
-              alt="img"
-              effect="opacity"
-              onClick={handleClick}
-              cardsize={size}
-              visibleByDefault={cacheImages}
-              afterLoad={() => {
-                if (cacheImages) {
-                  cacheImage(
-                    `${rest.details.cacheType}_${rest.details.id}.jpg`,
-                    rest.coverArt.replace(/size=\d+/, 'size=500')
-                  );
+          <CardImgWrapper size={size} onClick={handleClick}>
+            {lazyLoad ? (
+              <LazyCardImg
+                src={
+                  isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
+                    ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
+                    : rest.coverArt
                 }
-              }}
-            />
-          ) : (
-            <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
-          )}
+                alt="img"
+                effect="opacity"
+                cardsize={size}
+                visibleByDefault={cacheImages}
+                afterLoad={() => {
+                  if (cacheImages) {
+                    cacheImage(
+                      `${rest.details.cacheType}_${rest.details.id}.jpg`,
+                      rest.coverArt.replace(/size=\d+/, 'size=500')
+                    );
+                  }
+                }}
+              />
+            ) : (
+              <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
+            )}
+          </CardImgWrapper>
 
           {hasHoverButtons && (
             <>

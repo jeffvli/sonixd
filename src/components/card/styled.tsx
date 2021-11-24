@@ -147,7 +147,6 @@ export const CardImg = styled.img<Card>`
 
 export const LazyCardImg = styled(LazyLoadImage)<Card>`
   height: ${(props) => `${props.cardsize}px`};
-  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const Overlay = styled.div<Card>`
@@ -214,4 +213,9 @@ export const FavoriteOverlayButton = styled(OverlayButton)`
 export const ModalViewOverlayButton = styled(OverlayButton)`
   top: 10%;
   left: 90%;
+`;
+
+export const CardImgWrapper = styled.div<{ size: number }>`
+  clip-path: inset(0 0);
+  height: ${(props) => props.size}px;
 `;

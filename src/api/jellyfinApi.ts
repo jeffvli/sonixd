@@ -75,11 +75,12 @@ const getCoverArtUrl = (item: any, size?: number) => {
   }
 
   return (
+    // eslint-disable-next-line prefer-template
     `${API_BASE_URL}/Items` +
     `/${item.Id}` +
     `/Images/Primary` +
-    `?width=${size}` +
-    `&height=${size}`
+    (size ? `?width=${size}&height=${size}` : '?height=350') +
+    `&quality=90`
   );
 };
 
@@ -139,7 +140,7 @@ const normalizeAlbum = (item: any) => {
     created: item.DateCreated,
     year: item.ProductionYear,
     genre: item.GenreItems && item.GenreItems.map((entry: any) => normalizeItem(entry)),
-    image: getCoverArtUrl(item, 350),
+    image: getCoverArtUrl(item),
     isDir: false,
     starred: item.UserData && item.UserData.IsFavorite ? 'true' : undefined,
     type: Item.Album,
@@ -154,7 +155,7 @@ const normalizeArtist = (item: any) => {
     title: item.Name,
     albumCount: item.AlbumCount,
     duration: item.RunTimeTicks / 10000000,
-    image: getCoverArtUrl(item, 350),
+    image: getCoverArtUrl(item),
     starred: item.UserData && item.UserData?.IsFavorite ? 'true' : undefined,
     info: {
       biography: item.Overview,
@@ -204,7 +205,7 @@ const normalizeFolder = (item: any) => {
     title: item.Name,
     created: item.DateCreated,
     isDir: true,
-    image: getCoverArtUrl(item, 350),
+    image: getCoverArtUrl(item, 150),
     type: Item.Folder,
     uniqueId: nanoid(),
   };

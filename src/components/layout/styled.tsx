@@ -197,10 +197,16 @@ export const SidebarNavItem = styled(Nav.Item)`
   }
 `;
 
-export const CoverArtWrapper = styled.div<{ $link?: boolean }>`
+export const CoverArtWrapper = styled.div<{ $link?: boolean; size: number }>`
   display: inline-block;
   filter: ${(props) => props.theme.other.coverArtFilter};
   cursor: ${(props) => (props.$link ? 'pointer' : 'default')};
+  text-align: center;
+  height: ${(props) => props.size}px;
+  width: ${(props) => props.size}px;
+  overflow: hidden;
+
+  background: ${(props) => props.theme.colors.layout.page.background};
 
   &:focus-visible {
     outline: 2px ${(props) => props.theme.colors.primary} solid;
