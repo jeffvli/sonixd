@@ -2,6 +2,10 @@ import settings from 'electron-settings';
 import path from 'path';
 
 const setDefaultSettings = (force: boolean) => {
+  if (force || !settings.hasSync('serverType')) {
+    settings.setSync('serverType', 'subsonic');
+  }
+
   if (force || !settings.hasSync('legacyAuth')) {
     settings.setSync('legacyAuth', false);
   }
