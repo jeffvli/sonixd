@@ -322,6 +322,7 @@ const PlaylistView = ({ ...rest }) => {
       }
     }
 
+    dispatch(setPlaylistData(playlist[getCurrentEntryList(playlist)]));
     return dispatch(removeProcessingPlaylist(data.id));
   };
 
