@@ -116,23 +116,28 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
               onChange={(e: any) => {
                 const columns: any[] = [];
                 if (e) {
+                  const availableCols = columnPicker.map((col: any) => col.label);
+
                   e.forEach((selected: string) => {
-                    const alreadySelectedColumn = config.lookAndFeel.listView[
-                      columnListType
-                    ].columns.find((column: any) => column.label === selected);
+                    if (availableCols.includes(selected)) {
+                      const alreadySelectedColumn = config.lookAndFeel.listView[
+                        columnListType
+                      ].columns.find((column: any) => column.label === selected);
 
-                    if (alreadySelectedColumn) {
-                      return columns.push(alreadySelectedColumn);
+                      if (alreadySelectedColumn) {
+                        return columns.push(alreadySelectedColumn);
+                      }
+
+                      const selectedColumn = columnList.find(
+                        (column: any) => column.label === selected
+                      );
+
+                      if (selectedColumn) {
+                        return columns.push({ ...selectedColumn.value, uniqueId: nanoid() });
+                      }
+
+                      return null;
                     }
-
-                    const selectedColumn = columnList.find(
-                      (column: any) => column.label === selected
-                    );
-
-                    if (selectedColumn) {
-                      return columns.push({ ...selectedColumn.value, uniqueId: nanoid() });
-                    }
-
                     return null;
                   });
                 }
