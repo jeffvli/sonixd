@@ -300,7 +300,7 @@ const setDefaultSettings = (force: boolean) => {
       },
       {
         id: 'Title',
-        dataKey: 'name',
+        dataKey: 'title',
         alignment: 'left',
         flexGrow: 5,
         label: 'Title',
@@ -363,11 +363,11 @@ const setDefaultSettings = (force: boolean) => {
         label: 'CoverArt',
       },
       {
-        id: 'Name',
-        dataKey: 'name',
+        id: 'Title',
+        dataKey: 'title',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Name',
+        label: 'Title',
       },
       {
         id: 'Albums',
@@ -453,11 +453,11 @@ const setDefaultSettings = (force: boolean) => {
         label: '#',
       },
       {
-        id: 'Name',
-        dataKey: 'name',
+        id: 'Title',
+        dataKey: 'title',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Name',
+        label: 'Title',
       },
       {
         id: 'Albums',
