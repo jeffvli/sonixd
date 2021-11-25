@@ -1,7 +1,7 @@
 {
   "name": "sonixd",
   "productName": "Sonixd",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "A full-featured Subsonic API compatible cross-platform desktop client",
   "main": "./main.prod.js",
   "author": {
