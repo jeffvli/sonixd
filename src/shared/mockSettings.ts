@@ -1,5 +1,6 @@
 export const mockSettings = {
   serverType: 'subsonic',
+  autoUpdate: true,
   theme: 'defaultDark',
   showDebugWindow: false,
   globalMediaHotkeys: true,
