@@ -712,7 +712,7 @@ export const getMusicDirectorySongs = async (options: { id: string }, data: any[
     (data || []).forEach((song: any) => {
       (song?.child || []).forEach((entry: any) => {
         if (entry.isDir === false) {
-          songs.push(normalizeSong(entry));
+          songs.push(entry);
         }
       });
     });
