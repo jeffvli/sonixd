@@ -712,7 +712,7 @@ export const getMusicDirectorySongs = async (options: { id: string }, data: any[
     (data || []).forEach((song: any) => {
       (song?.child || []).forEach((entry: any) => {
         if (entry.isDir === false) {
-          songs.push(normalizeSong(entry));
+          songs.push(entry);
         }
       });
     });
@@ -727,6 +727,8 @@ export const getMusicDirectorySongs = async (options: { id: string }, data: any[
         data.push(res);
         return getMusicDirectorySongs({ id: 'stop' }, data);
       }
+
+      console.log(`res`, res);
 
       data.push(res);
       const nestedFolders = res.child.filter((entry: any) => entry.isDir === true);
