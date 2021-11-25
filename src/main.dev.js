@@ -213,9 +213,9 @@ if (isLinux) {
     playPause();
 
     if (mprisPlayer.playbackStatus !== 'Playing') {
-      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
-    } else {
       mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    } else {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
     }
   });
 
@@ -241,12 +241,12 @@ if (isLinux) {
     }
 
     mprisPlayer.metadata = {
-      'mpris:length': (arg.duration || 0) * 1000 * 1000,
-      'mpris:artUrl': arg.image.match('placeholder') ? null : arg.image,
+      'mpris:length': arg.duration ? Math.round((arg.duration || 0) * 1000 * 1000) : null,
+      'mpris:artUrl': arg.image.includes('placeholder') ? null : arg.image,
       'xesam:title': arg.title || null,
       'xesam:album': arg.album || null,
-      'xesam:artist': [arg.artist || null],
-      'xesam:genre': arg.genre || null,
+      'xesam:artist': arg.artist?.length !== 0 ? arg.artist?.map((artist) => artist.title) : null,
+      'xesam:genre': arg.genre[0]?.title || null,
     };
   });
 }

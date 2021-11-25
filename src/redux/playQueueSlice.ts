@@ -69,7 +69,7 @@ export interface PlayQueue {
   currentSongId: string;
   currentSongUniqueId: string;
   currentPlayer: number;
-  current?: Entry;
+  current?: any;
   isFading: boolean;
   playerUpdated: number;
   autoIncremented: boolean;
