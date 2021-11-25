@@ -89,6 +89,7 @@ const GenreList = () => {
             'removeFromFavorites',
             'viewInModal',
             'viewInFolder',
+            'setRating',
           ]}
         />
       )}
