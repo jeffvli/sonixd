@@ -301,16 +301,7 @@ const PlayerBar = () => {
                       speaker={
                         <StyledPopover>
                           <div style={{ height: '500px' }}>
-                            <CoverArtWrapper
-                              tabIndex={0}
-                              onClick={() => history.push(`/nowplaying`)}
-                              onKeyDown={(e: any) => {
-                                if (e.key === ' ' || e.key === 'Enter') {
-                                  history.push(`/nowplaying`);
-                                }
-                              }}
-                              size={500}
-                            >
+                            <CoverArtWrapper size={500}>
                               <LazyLoadImage
                                 src={
                                   isCached(
@@ -348,6 +339,13 @@ const PlayerBar = () => {
                             : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
                               placeholderImg
                         }
+                        tabIndex={0}
+                        onClick={() => history.push(`/nowplaying`)}
+                        onKeyDown={(e: any) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                            history.push(`/nowplaying`);
+                          }
+                        }}
                         alt="trackImg"
                         effect="opacity"
                         width="65"
