@@ -12,9 +12,20 @@ const AdvancedConfig = () => {
   const [showDebugWindow, setShowDebugWindow] = useState(
     Boolean(settings.getSync('showDebugWindow'))
   );
+  const [autoUpdate, setAutoUpdate] = useState(Boolean(settings.getSync('autoUpdate')));
 
   return (
     <ConfigPanel header="Advanced" bordered>
+      <StyledCheckbox
+        defaultChecked={autoUpdate}
+        checked={autoUpdate}
+        onChange={(_v: any, e: boolean) => {
+          settings.setSync('autoUpdate', e);
+          setAutoUpdate(e);
+        }}
+      >
+        Auto update
+      </StyledCheckbox>
       <StyledCheckbox
         defaultChecked={showDebugWindow}
         onChange={(_v: any, e: boolean) => {
