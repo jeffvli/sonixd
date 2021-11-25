@@ -480,7 +480,9 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       scrobbled,
       setScrobbled,
       config.serverType,
-      playQueue[currentEntryList][playQueue.player1.index]?.duration
+      config.serverType === Server.Subsonic
+        ? player1Ref.current?.audioEl.current.duration
+        : playQueue[currentEntryList][playQueue.player1.index]?.duration
     );
   }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
@@ -496,7 +498,9 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
       scrobbled,
       setScrobbled,
       config.serverType,
-      playQueue[currentEntryList][playQueue.player2.index]?.duration
+      config.serverType === Server.Subsonic
+        ? player2Ref.current?.audioEl.current.duration
+        : playQueue[currentEntryList][playQueue.player2.index]?.duration
     );
   }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
