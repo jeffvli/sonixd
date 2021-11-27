@@ -55,6 +55,16 @@ You can install sonixd by downloading the [latest release](https://github.com/je
 - MacOS: `.dmg`
 
 ---
+### Windows
+
+If you prefer not to download the release binary, you can install using `winget`.
+
+Using your favorite terminal (cmd/pwsh):
+
+```
+winget install sonixd
+```
+---
 
 ### Arch Linux
 
