@@ -635,6 +635,7 @@ export const scrobble = async (options: {
     jellyfinApi.post(`/sessions/playing/stopped`, {
       ItemId: options.id,
       IsPaused: true,
+      PositionTicks: options.position && Math.round(options.position),
     });
 
     return jellyfinApi.post(`/users/${auth.username}/playeditems/${options.id}`, null, {
