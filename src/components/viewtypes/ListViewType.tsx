@@ -3,7 +3,6 @@
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { DOMHelper } from 'rsuite';
-import { useAppSelector } from '../../redux/hooks';
 import PageLoader from '../loader/PageLoader';
 import ListViewTable from './ListViewTable';
 
@@ -47,8 +46,6 @@ const ListViewType = (
   // const [scrollY, setScrollY] = useState(0);
   const { getHeight } = DOMHelper;
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const multiSelect = useAppSelector((state: any) => state.multiSelect);
-  const playQueue = useAppSelector((state: any) => state.playQueue);
 
   const tableRef = useRef<any>();
   useImperativeHandle(ref, () => ({
@@ -322,8 +319,6 @@ const ListViewType = (
             columns={tableColumns}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
-            playQueue={playQueue}
-            multiSelect={multiSelect}
             cacheImages={cacheImages}
             page={page}
             listType={listType}

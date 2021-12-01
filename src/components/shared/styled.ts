@@ -531,3 +531,16 @@ export const StyledTagLink = styled(TagLink)`
   overflow: hidden;
   cursor: pointer;
 `;
+
+export const SecondaryTextWrapper = styled.span<{
+  subtitle?: string;
+  active?: boolean;
+  playing?: string;
+}>`
+  color: ${(props) =>
+    props.playing === 'true'
+      ? props.theme.colors.primary
+      : props.subtitle === 'true'
+      ? props.theme.colors.layout.page.colorSecondary
+      : props.theme.colors.layout.page.color};
+`;

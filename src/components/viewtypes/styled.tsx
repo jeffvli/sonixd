@@ -23,7 +23,12 @@ export const RsuiteLinkButton = styled(Button)<{
   &:focus {
     background: transparent !important;
     text-decoration: underline;
-    color: ${(props) => props.theme.colors.layout.page.color};
+    color: ${(props) =>
+      props.playing === 'true'
+        ? props.theme.colors.primary
+        : props.subtitle === 'true'
+        ? props.theme.colors.layout.page.colorSecondary
+        : props.theme.colors.layout.page.color} !important;
     cursor: pointer;
   }
 `;
