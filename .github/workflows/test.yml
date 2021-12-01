@@ -1,6 +1,15 @@
 name: Test
 
-on: [push, pull_request]
+# Test only if js/ts files are changed
+on:
+  push:
+    paths:
+      - '**.js*'
+      - '**.ts*'
+  pull_request:
+    paths:
+      - '**.js*'
+      - '**.ts*'
 
 jobs:
   release:
