@@ -150,6 +150,23 @@ const PlayerBar = () => {
     }
   };
 
+  const handleVolumeWheel = (e: any) => {
+    if (e.deltaY > 0) {
+      if (!isDraggingVolume) {
+        setIsDraggingVolume(true);
+      }
+      let vol = Number((playQueue.volume - 0.01).toFixed(2));
+      vol = vol < 0 ? 0 : vol;
+      setLocalVolume(vol);
+      dispatch(setVolume(vol));
+    } else {
+      let vol = Number((playQueue.volume + 0.01).toFixed(2));
+      vol = vol > 1 ? 1 : vol;
+      setLocalVolume(vol);
+      dispatch(setVolume(vol));
+    }
+  };
+
   const handleClickForward = () => {
     if (playQueue[currentEntryList].length > 0) {
       const seekForwardInterval = Number(settings.getSync('seekForwardInterval'));
@@ -691,18 +708,30 @@ const PlayerBar = () => {
                     }
                     onClick={() => setMuted(!muted)}
                     size="lg"
-                    style={{ cursor: 'pointer', marginRight: '15px', padding: '0' }}
                   />
-                  <CustomSlider
-                    tabIndex={0}
-                    progress
-                    value={Math.floor(localVolume * 100)}
-                    $isDragging={isDraggingVolume}
-                    tooltip={false}
-                    style={{ width: '100px', marginRight: '10px' }}
-                    onChange={handleVolumeSlider}
-                    onKeyDown={handleVolumeKey}
-                  />
+                  <Whisper
+                    trigger="hover"
+                    placement="top"
+                    delay={200}
+                    preventOverflow
+                    speaker={
+                      <StyledPopover>
+                        {muted ? 'Muted' : Math.floor(localVolume * 100)}
+                      </StyledPopover>
+                    }
+                  >
+                    <CustomSlider
+                      tabIndex={0}
+                      progress
+                      value={Math.floor(localVolume * 100)}
+                      $isDragging={isDraggingVolume}
+                      tooltip={false}
+                      style={{ width: '100px', marginRight: '10px' }}
+                      onChange={handleVolumeSlider}
+                      onKeyDown={handleVolumeKey}
+                      onWheel={handleVolumeWheel}
+                    />
+                  </Whisper>
                 </Row>
               </Grid>
             </PlayerColumn>
