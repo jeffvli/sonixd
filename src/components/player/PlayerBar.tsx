@@ -48,6 +48,7 @@ const PlayerBar = () => {
   const [manualSeek, setManualSeek] = useState(0);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
+  const [muted, setMuted] = useState(false);
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -278,7 +279,7 @@ const PlayerBar = () => {
   };
 
   return (
-    <Player ref={playersRef} currentEntryList={currentEntryList}>
+    <Player ref={playersRef} currentEntryList={currentEntryList} muted={muted}>
       {playQueue.showDebugWindow && <DebugWindow currentEntryList={currentEntryList} />}
       <PlayerContainer>
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
@@ -686,14 +687,11 @@ const PlayerBar = () => {
                   {/* Volume Slider */}
                   <VolumeIcon
                     icon={
-                      playQueue.volume > 0.7
-                        ? 'volume-up'
-                        : playQueue.volume === 0
-                        ? 'volume-off'
-                        : 'volume-down'
+                      muted ? 'volume-off' : playQueue.volume > 0.7 ? 'volume-up' : 'volume-down'
                     }
+                    onClick={() => setMuted(!muted)}
                     size="lg"
-                    style={{ marginRight: '15px', padding: '0' }}
+                    style={{ cursor: 'pointer', marginRight: '15px', padding: '0' }}
                   />
                   <CustomSlider
                     tabIndex={0}
