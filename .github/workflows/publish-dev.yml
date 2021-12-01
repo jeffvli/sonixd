@@ -1,0 +1,61 @@
+name: Publish (dev)
+
+on: workflow_dispatch
+
+jobs:
+  publish-dev:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest]
+
+    steps:
+      - name: Checkout git repo
+        uses: actions/checkout@v1
+
+      - name: Install Node, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: |
+          yarn install --prefer-offline
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Package release
+        run: |
+          yarn package --win --mac --linux
+
+      - name: Set up Backblaze B2 CLI
+        uses: wilsonzlin/setup-b2@v3
+
+      - name: Authorize to B2
+        env:
+          B2_APP_ID: ${{ secrets.B2_WRITE_ID }}
+          B2_APP_TOKEN: ${{ secrets.B2_WRITE_TOKEN }}
+        run: |
+          b2 authorize-account B2_APP_ID B2_APP_TOKEN
+
+      - name: Authorize to B2
+        shell: pwsh
+        env:
+          COMMIT_SHA: ${{ GITHUB_SHA }}
+        run: |
+          gci "./release" | ? { $_.Extension -match 'exe|dmg|AppImage'} | % { b2 upload-file sonixd $_.FullName "$(Get-Date -Format o)_Sonixd(dev)_$($env:COMMIT_SHA)_$($_.Extension)" }
