@@ -114,6 +114,9 @@ export const DurationSpan = styled.span`
 
 export const VolumeIcon = styled(Icon)`
   color: ${(props) => props.theme.colors.layout.playerBar.color};
+  cursor: pointer;
+  margin-right: 15px;
+  padding: 0;
 `;
 
 export const MiniViewContainer = styled.div<{ display: string }>`
