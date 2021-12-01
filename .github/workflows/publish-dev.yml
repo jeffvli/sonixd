@@ -56,6 +56,6 @@ jobs:
       - name: Authorize to B2
         shell: pwsh
         env:
-          COMMIT_SHA: ${{ GITHUB_SHA }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           gci "./release" | ? { $_.Extension -match 'exe|dmg|AppImage'} | % { b2 upload-file sonixd $_.FullName "$(Get-Date -Format o)_Sonixd(dev)_$($env:COMMIT_SHA)_$($_.Extension)" }
