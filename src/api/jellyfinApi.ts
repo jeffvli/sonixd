@@ -345,7 +345,7 @@ export const getAlbums = async (options: {
 }) => {
   const sortTypes = [
     { original: 'alphabeticalByName', replacement: 'SortName', sortOrder: 'Ascending' },
-    { original: 'alphabeticalByArtist', replacement: 'Artist', sortOrder: 'Ascending' },
+    { original: 'alphabeticalByArtist', replacement: 'AlbumArtist', sortOrder: 'Ascending' },
     { original: 'frequent', replacement: 'PlayCount', sortOrder: 'Ascending' },
     { original: 'random', replacement: 'Random', sortOrder: 'Ascending' },
     { original: 'newest', replacement: 'DateCreated', sortOrder: 'Descending' },
