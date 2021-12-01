@@ -1,9 +1,7 @@
 name: Publish
 
-on:
-  push:
-    branches:
-      - main
+# Only allow manual run
+on: workflow_dispatch
 
 jobs:
   publish:
