@@ -30,7 +30,14 @@ import {
   setSort,
   sortPlayQueue,
 } from '../../redux/playQueueSlice';
-import { StyledCheckbox, StyledIconButton, StyledIconToggle, StyledRate } from '../shared/styled';
+import {
+  LinkWrapper,
+  SecondaryTextWrapper,
+  StyledCheckbox,
+  StyledIconButton,
+  StyledIconToggle,
+  StyledRate,
+} from '../shared/styled';
 import { addModalPage, setContextMenu } from '../../redux/miscSlice';
 import {
   clearSelected,
@@ -53,6 +60,7 @@ import {
 } from '../../redux/configSlice';
 import { setActive } from '../../redux/albumSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
+import { GenericItem } from '../../types';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -89,8 +97,6 @@ const ListViewTable = ({
   columns,
   handleRowClick,
   handleRowDoubleClick,
-  playQueue,
-  multiSelect,
   cacheImages,
   autoHeight,
   page,
@@ -113,6 +119,8 @@ const ListViewTable = ({
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
   const configState = useAppSelector((state) => state.config);
+  const playQueue = useAppSelector((state) => state.playQueue);
+  const multiSelect = useAppSelector((state) => state.multiSelect);
   const album = useAppSelector((state) => state.album);
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
@@ -738,40 +746,60 @@ const ListViewTable = ({
                                   width: '100%',
                                 }}
                               >
-                                <CustomTooltip text={rowData.albumArtist}>
-                                  <RsuiteLinkButton
-                                    subtitle="true"
-                                    appearance="link"
-                                    onClick={(e: any) => {
-                                      if (!e.ctrlKey && !e.shiftKey) {
-                                        if (rowData.albumArtistId && !isModal) {
-                                          history.push(`/library/artist/${rowData.albumArtistId}`);
-                                        } else if (rowData.albumArtistId && isModal) {
-                                          dispatch(
-                                            addModalPage({
-                                              pageType: 'artist',
-                                              id: rowData.albumArtistId,
-                                            })
-                                          );
-                                        }
+                                {rowData.artist.map((artist: GenericItem, i: number) => (
+                                  <>
+                                    <SecondaryTextWrapper
+                                      playing={
+                                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
+                                          nowPlaying) ||
+                                        (!nowPlaying &&
+                                          rowData.id === playQueue?.currentSongId &&
+                                          playQueue?.currentSongId)
+                                          ? 'true'
+                                          : 'false'
                                       }
-                                    }}
-                                    style={{
-                                      fontSize: `${fontSize}px`,
-                                    }}
-                                    playing={
-                                      (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                        nowPlaying) ||
-                                      (!nowPlaying &&
-                                        rowData.id === playQueue?.currentSongId &&
-                                        playQueue?.currentSongId)
-                                        ? 'true'
-                                        : 'false'
-                                    }
-                                  >
-                                    {rowData.albumArtist}
-                                  </RsuiteLinkButton>
-                                </CustomTooltip>
+                                      subtitle="true"
+                                    >
+                                      {i > 0 && ', '}
+                                    </SecondaryTextWrapper>
+                                    <CustomTooltip key={artist.id} text={artist.title}>
+                                      <LinkWrapper maxWidth="20vw">
+                                        <RsuiteLinkButton
+                                          subtitle="true"
+                                          appearance="link"
+                                          onClick={(e: any) => {
+                                            if (!e.ctrlKey && !e.shiftKey) {
+                                              if (artist.id && !isModal) {
+                                                history.push(`/library/artist/${artist.id}`);
+                                              } else if (artist.id && isModal) {
+                                                dispatch(
+                                                  addModalPage({
+                                                    pageType: 'artist',
+                                                    id: artist.id,
+                                                  })
+                                                );
+                                              }
+                                            }
+                                          }}
+                                          style={{
+                                            fontSize: `${fontSize}px`,
+                                          }}
+                                          playing={
+                                            (rowData.uniqueId === playQueue?.currentSongUniqueId &&
+                                              nowPlaying) ||
+                                            (!nowPlaying &&
+                                              rowData.id === playQueue?.currentSongId &&
+                                              playQueue?.currentSongId)
+                                              ? 'true'
+                                              : 'false'
+                                          }
+                                        >
+                                          {artist.title}
+                                        </RsuiteLinkButton>
+                                      </LinkWrapper>
+                                    </CustomTooltip>
+                                  </>
+                                ))}
                               </span>
                             </Row>
                           </Col>
