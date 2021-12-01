@@ -238,7 +238,7 @@ const listenHandler = (
   }
 };
 
-const Player = ({ currentEntryList, children }: any, ref: any) => {
+const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   const dispatch = useAppDispatch();
   const player1Ref = useRef<any>();
   const player2Ref = useRef<any>();
@@ -634,6 +634,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
             player1Ref.current.audioEl.current.src = getSrc1();
           }
         }}
+        muted={muted}
         crossOrigin="anonymous"
       />
       <ReactAudioPlayer
@@ -657,6 +658,7 @@ const Player = ({ currentEntryList, children }: any, ref: any) => {
             player2Ref.current.audioEl.current.src = getSrc2();
           }
         }}
+        muted={muted}
         crossOrigin="anonymous"
       />
       {children}
