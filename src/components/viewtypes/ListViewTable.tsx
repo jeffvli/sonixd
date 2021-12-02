@@ -749,6 +749,7 @@ const ListViewTable = ({
                                 {rowData.artist.map((artist: GenericItem, i: number) => (
                                   <>
                                     <SecondaryTextWrapper
+                                      key={`delim-${artist.id}`}
                                       playing={
                                         (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                                           nowPlaying) ||
