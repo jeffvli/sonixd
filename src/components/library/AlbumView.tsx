@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { clipboard, shell } from 'electron';
@@ -45,7 +45,13 @@ import {
   getPlayedSongsNotification,
   isCached,
 } from '../../shared/utils';
-import { StyledButton, StyledPopover, StyledTagLink } from '../shared/styled';
+import {
+  LinkWrapper,
+  StyledButton,
+  StyledLink,
+  StyledPopover,
+  StyledTagLink,
+} from '../shared/styled';
 import { setActive } from '../../redux/albumSlice';
 import {
   BlurredBackground,
@@ -67,6 +73,8 @@ const AlbumView = ({ ...rest }: any) => {
   const config = useAppSelector((state) => state.config);
   const history = useHistory();
   const queryClient = useQueryClient();
+  const artistLineRef = useRef<any>();
+  const genreLineRef = useRef<any>();
 
   const { id } = useParams<AlbumParams>();
   const albumId = rest.id ? rest.id : id;
@@ -319,8 +327,21 @@ const AlbumView = ({ ...rest }: any) => {
             showTitleTooltip
             subtitle={
               <div>
-                <PageHeaderSubtitleDataLine $top>
-                  <strong>ALBUM</strong> • {data.songCount} songs • {formatDuration(data.duration)}
+                <PageHeaderSubtitleDataLine $top $overflow>
+                  <StyledLink onClick={() => history.push('/library/album')}>ALBUM</StyledLink>{' '}
+                  {data.albumArtist && (
+                    <>
+                      by{' '}
+                      <LinkWrapper maxWidth="20vw">
+                        <StyledLink
+                          onClick={() => history.push(`/library/artist/${data.albumArtistId}`)}
+                        >
+                          <strong>{data.albumArtist}</strong>
+                        </StyledLink>
+                      </LinkWrapper>
+                    </>
+                  )}{' '}
+                  • {data.songCount} songs, {formatDuration(data.duration)}
                   {data.year && (
                     <>
                       {' • '}
@@ -328,31 +349,79 @@ const AlbumView = ({ ...rest }: any) => {
                     </>
                   )}
                 </PageHeaderSubtitleDataLine>
-                <PageHeaderSubtitleDataLine>
+                <PageHeaderSubtitleDataLine
+                  ref={genreLineRef}
+                  onWheel={(e: any) => {
+                    if (!e.shiftKey) {
+                      if (e.deltaY === 0) return;
+                      const position = genreLineRef.current.scrollLeft;
+                      genreLineRef.current.scrollTo({
+                        top: 0,
+                        left: position + e.deltaY,
+                        behavior: 'smooth',
+                      });
+                    }
+                  }}
+                >
                   Added {formatDate(data.created)}
-                </PageHeaderSubtitleDataLine>
-                <PageHeaderSubtitleDataLine>
-                  {data.artist.map((d: Artist) => {
+                  {data.genre.map((d: Genre, i: number) => {
                     return (
-                      <StyledTagLink
-                        key={nanoid()}
-                        tabIndex={0}
-                        tooltip={d.title}
-                        onClick={() => {
-                          if (!rest.isModal) {
-                            history.push(`/library/artist/${d.id}`);
-                          } else {
-                            dispatch(
-                              addModalPage({
-                                pageType: 'artist',
-                                id: d.id,
-                              })
-                            );
-                          }
-                        }}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ' || e.key === 'Enter') {
-                            e.preventDefault();
+                      <>
+                        {i === 0 && ' • '}
+                        {i > 0 && ', '}
+                        <LinkWrapper maxWidth="13vw">
+                          <StyledLink
+                            key={nanoid()}
+                            tabIndex={0}
+                            onClick={() => {
+                              if (!rest.isModal) {
+                                dispatch(setActive({ ...album.active, filter: d.title }));
+                                setTimeout(() => {
+                                  history.push(`/library/album?sortType=${d.title}`);
+                                }, 50);
+                              }
+                            }}
+                            onKeyDown={(e: any) => {
+                              if (e.key === ' ' || e.key === 'Enter') {
+                                e.preventDefault();
+                                if (!rest.isModal) {
+                                  dispatch(setActive({ ...album.active, filter: d.title }));
+                                  setTimeout(() => {
+                                    history.push(`/library/album?sortType=${d.title}`);
+                                  }, 50);
+                                }
+                              }
+                            }}
+                          >
+                            {d.title}
+                          </StyledLink>
+                        </LinkWrapper>
+                      </>
+                    );
+                  })}
+                </PageHeaderSubtitleDataLine>
+                <PageHeaderSubtitleDataLine
+                  ref={artistLineRef}
+                  onWheel={(e: any) => {
+                    if (!e.shiftKey) {
+                      if (e.deltaY === 0) return;
+                      const position = artistLineRef.current.scrollLeft;
+                      artistLineRef.current.scrollTo({
+                        top: 0,
+                        left: position + e.deltaY,
+                        behavior: 'smooth',
+                      });
+                    }
+                  }}
+                >
+                  {data.artist ? (
+                    data.artist.map((d: Artist) => {
+                      return (
+                        <StyledTagLink
+                          key={nanoid()}
+                          tabIndex={0}
+                          tooltip={d.title}
+                          onClick={() => {
                             if (!rest.isModal) {
                               history.push(`/library/artist/${d.id}`);
                             } else {
@@ -363,43 +432,30 @@ const AlbumView = ({ ...rest }: any) => {
                                 })
                               );
                             }
-                          }
-                        }}
-                      >
-                        {d.title}
-                      </StyledTagLink>
-                    );
-                  })}
-                  {data.genre.map((d: Genre) => {
-                    return (
-                      <StyledTagLink
-                        key={nanoid()}
-                        tabIndex={0}
-                        tooltip={d.title}
-                        onClick={() => {
-                          if (!rest.isModal) {
-                            dispatch(setActive({ ...album.active, filter: d.title }));
-                            setTimeout(() => {
-                              history.push(`/library/album?sortType=${d.title}`);
-                            }, 50);
-                          }
-                        }}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ' || e.key === 'Enter') {
-                            e.preventDefault();
-                            if (!rest.isModal) {
-                              dispatch(setActive({ ...album.active, filter: d.title }));
-                              setTimeout(() => {
-                                history.push(`/library/album?sortType=${d.title}`);
-                              }, 50);
+                          }}
+                          onKeyDown={(e: any) => {
+                            if (e.key === ' ' || e.key === 'Enter') {
+                              e.preventDefault();
+                              if (!rest.isModal) {
+                                history.push(`/library/artist/${d.id}`);
+                              } else {
+                                dispatch(
+                                  addModalPage({
+                                    pageType: 'artist',
+                                    id: d.id,
+                                  })
+                                );
+                              }
                             }
-                          }
-                        }}
-                      >
-                        {d.title}
-                      </StyledTagLink>
-                    );
-                  })}
+                          }}
+                        >
+                          {d.title}
+                        </StyledTagLink>
+                      );
+                    })
+                  ) : (
+                    <span>&#8203;</span>
+                  )}
                 </PageHeaderSubtitleDataLine>
                 <div style={{ marginTop: '10px' }}>
                   <ButtonToolbar>
@@ -445,7 +501,7 @@ const AlbumView = ({ ...rest }: any) => {
       >
         <ListViewType
           data={misc.searchQuery !== '' ? filteredData : data.song}
-          tableColumns={settings.getSync('musicListColumns')}
+          tableColumns={config.lookAndFeel.listView.music.columns}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleRating={handleRowRating}

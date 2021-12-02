@@ -470,13 +470,23 @@ export const SectionTitle = styled.a`
   }
 `;
 
-export const StyledLink = styled.a`
+export const LinkWrapper = styled.span<{ maxWidth: string }>`
+  display: inline-block;
+  max-width: ${(props) => props.maxWidth};
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+`;
+
+export const StyledLink = styled.a<{ underline?: boolean }>`
   color: ${(props) => props.theme.colors.layout.page.color};
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: ${(props) => (props.underline ? 'underline' : undefined)};
+  font-weight: bold;
 
   &:hover {
-    color: ${(props) => props.theme.colors.button.link.colorHover};
+    color: ${(props) => props.theme.colors.layout.page.color};
   }
 
   &:focus-visible {
