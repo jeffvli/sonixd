@@ -55,7 +55,13 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
-import { StyledButton, StyledCheckbox, StyledInput, StyledPopover } from '../shared/styled';
+import {
+  StyledButton,
+  StyledCheckbox,
+  StyledInput,
+  StyledLink,
+  StyledPopover,
+} from '../shared/styled';
 import {
   moveToIndex,
   removeFromPlaylist,
@@ -514,8 +520,11 @@ const PlaylistView = ({ ...rest }) => {
           subtitle={
             <div>
               <PageHeaderSubtitleDataLine $top>
-                <strong>PLAYLIST</strong> • {data.songCount} songs • {formatDuration(data.duration)}{' '}
-                • {data.public ? 'Public' : 'Private'}
+                <StyledLink onClick={() => history.push('/playlist')}>
+                  <strong>PLAYLIST</strong>
+                </StyledLink>{' '}
+                • {data.songCount} songs, {formatDuration(data.duration)} •{' '}
+                {data.public ? 'Public' : 'Private'}
               </PageHeaderSubtitleDataLine>
               <PageHeaderSubtitleDataLine>
                 {data.owner && `By ${data.owner} • `}

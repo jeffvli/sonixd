@@ -42,7 +42,7 @@ import {
   getPlayedSongsNotification,
   isCached,
 } from '../../shared/utils';
-import { StyledButton, StyledPopover, StyledTag } from '../shared/styled';
+import { StyledButton, StyledLink, StyledPopover, StyledTag } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
@@ -365,9 +365,11 @@ const ArtistView = ({ ...rest }: any) => {
             showTitleTooltip
             subtitle={
               <>
-                <PageHeaderSubtitleDataLine $top>
-                  <strong>ARTIST</strong> • {data.albumCount} albums • {artistSongTotal} songs •{' '}
-                  {artistDurationTotal}
+                <PageHeaderSubtitleDataLine $top $overflow>
+                  <StyledLink onClick={() => history.push(`/library/artist`)}>
+                    <strong>ARTIST</strong>
+                  </StyledLink>{' '}
+                  • {data.albumCount} albums • {artistSongTotal} songs, {artistDurationTotal}
                 </PageHeaderSubtitleDataLine>
                 <CustomTooltip
                   text={data?.info.biography
