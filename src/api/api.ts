@@ -234,7 +234,7 @@ const normalizeArtist = (item: any) => {
     userRating: item.userRating,
     info: {
       biography: item.biography,
-      externalUrl: item.lastFmUrl && [{ id: item.lastFmUrl, title: 'Last.FM' }],
+      externalUrl: item.lastFmUrl && [{ id: item.lastFmUrl, title: 'Last.fm' }],
       imageUrl:
         !item.externalImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f') && item.externalImageUrl,
       similarArtist: (item.similarArtist || []).map((entry: any) => normalizeArtist(entry)),
