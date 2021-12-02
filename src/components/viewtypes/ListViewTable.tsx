@@ -746,7 +746,7 @@ const ListViewTable = ({
                                   width: '100%',
                                 }}
                               >
-                                {rowData.artist.map((artist: GenericItem, i: number) => (
+                                {(rowData.artist || []).map((artist: GenericItem, i: number) => (
                                   <>
                                     <SecondaryTextWrapper
                                       key={`delim-${artist.id}`}
