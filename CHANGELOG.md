@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2021-12-06
+
+### Added
+
+- Added 2 new default themes
+  - Plex-like
+  - Spotify-like
+- Added volume control improvements
+  - Volume value tooltip while hovering the slider
+  - Mouse scroll wheel controls volume while hovering the slider
+  - Clicking the volume icon will mute/unmute
+
+### Changed
+
+- Overhauled all default themes
+  - Rounded buttons, inputs, etc.
+  - Changed grid card hover effects
+    - Removed hover scale
+    - Removed default background on overlay buttons
+    - Moved border to only the image instead of full card
+- Album page
+  - Genre(s) are now listed on a line separate from the artists
+  - Album artist is now distinct from track artists
+  - Increased length of the genre/artist line from 70% -> 80%
+  - The genre/artist line is now scrollable using the mouse wheel
+- (Jellyfin) List view
+  - `Artist` column now uses the album artist property
+  - `Title (Combined)` column now displays all track artists, comma-delimited instead of the album artist
+  - `Genre` column now displays all genres, comma-delimited, left-aligned
+
+### Fixed
+
+- (Jellyfin) Fixed the player not sending the "finish" condition when the song meets the scrobble condition
+- (Jellyfin) Fixed album lists not sorting by the `genre` column
+- (Jellyfin)(API) Fixed the A-Z(Artist) not sorting by Album Artist on the album list
+- (Jellyfin)(API) Fixed auto playlist not respecting the selected music folder
+- (Jellyfin)(API) Fixed the artist page not respecting the selected music folder
+
 ## [0.8.5] - 2021-11-25
 
 ### Fixed
