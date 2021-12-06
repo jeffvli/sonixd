@@ -99,7 +99,7 @@ const PlaylistView = ({ ...rest }) => {
   );
 
   const [customPlaylistImage, setCustomPlaylistImage] = useState<string | string[]>(
-    'img/placeholder.jpg'
+    'img/placeholder.png'
   );
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -477,7 +477,7 @@ const PlaylistView = ({ ...rest }) => {
       const uniqueAlbums: any = _.uniqBy(data?.song, 'albumId');
 
       if (uniqueAlbums.length === 0) {
-        setCustomPlaylistImage('img/placeholder.jpg');
+        setCustomPlaylistImage('img/placeholder.png');
       } // If less than 4 images, we'll just set a single random image
       else if (uniqueAlbums.length > 0 && uniqueAlbums.length < 4) {
         setCustomPlaylistImage(uniqueAlbums[_.random(0, uniqueAlbums.length - 1)]?.image);

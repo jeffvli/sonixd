@@ -85,7 +85,7 @@ axiosRetry(api, {
 
 const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
   if (!item.coverArt && !item.artistImageUrl) {
-    return 'img/placeholder.jpg';
+    return 'img/placeholder.png';
   }
 
   if (!item.coverArt && !item.artistImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')) {
@@ -93,7 +93,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
   }
 
   if (item.artistImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')) {
-    return 'img/placeholder.jpg';
+    return 'img/placeholder.png';
   }
 
   if (useLegacyAuth) {
@@ -256,7 +256,7 @@ const normalizePlaylist = (item: any) => {
     duration: item.duration,
     created: item.created,
     changed: item.changed,
-    image: item.songCount > 0 ? getCoverArtUrl(item, legacyAuth, 350) : 'img/placeholder.jpg',
+    image: item.songCount > 0 ? getCoverArtUrl(item, legacyAuth, 350) : 'img/placeholder.png',
     type: Item.Playlist,
     uniqueId: nanoid(),
     song: (item.entry || []).map((entry: any) => normalizeSong(entry)),

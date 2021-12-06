@@ -71,7 +71,7 @@ const getStreamUrl = (id: string) => {
 
 const getCoverArtUrl = (item: any, size?: number) => {
   if (!item.ImageTags?.Primary) {
-    return 'img/placeholder.jpg';
+    return 'img/placeholder.png';
   }
 
   return (

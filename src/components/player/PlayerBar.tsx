@@ -28,7 +28,7 @@ import { setStatus, resetPlayer } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
-import placeholderImg from '../../img/placeholder.jpg';
+import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList, isCached } from '../../shared/utils';
