@@ -27,6 +27,7 @@ import {
   ModalViewOverlayButton,
   AppendNextOverlayButton,
   CardImgWrapper,
+  ImgPanel,
 } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
@@ -199,79 +200,82 @@ const Card = ({
         style={rest.style}
       >
         <Overlay cardsize={size}>
-          <CardImgWrapper size={size} onClick={handleClick}>
-            {lazyLoad ? (
-              <LazyCardImg
-                src={
-                  isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
-                    ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
-                    : rest.coverArt
-                }
-                alt="img"
-                effect="opacity"
-                cardsize={size}
-                visibleByDefault={cacheImages}
-                afterLoad={() => {
-                  if (cacheImages) {
-                    cacheImage(
-                      `${rest.details.cacheType}_${rest.details.id}.jpg`,
-                      rest.coverArt.replaceAll(/=150/gi, '=350')
-                    );
+          <ImgPanel>
+            <CardImgWrapper size={size} onClick={handleClick}>
+              {lazyLoad ? (
+                <LazyCardImg
+                  src={
+                    isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
+                      ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
+                      : rest.coverArt
                   }
-                }}
-              />
-            ) : (
-              <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
+                  alt="img"
+                  effect="opacity"
+                  cardsize={size}
+                  visibleByDefault={cacheImages}
+                  afterLoad={() => {
+                    if (cacheImages) {
+                      cacheImage(
+                        `${rest.details.cacheType}_${rest.details.id}.jpg`,
+                        rest.coverArt.replaceAll(/=150/gi, '=350')
+                      );
+                    }
+                  }}
+                />
+              ) : (
+                <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
+              )}
+            </CardImgWrapper>
+
+            {hasHoverButtons && (
+              <>
+                {rest.details.starred && <div className="corner-triangle" />}
+                <PlayOverlayButton
+                  size="lg"
+                  circle
+                  icon={<Icon icon="play" />}
+                  onClick={handlePlayClick}
+                />
+
+                <CustomTooltip text="Add to queue (later)">
+                  <AppendOverlayButton
+                    onClick={() => handlePlayAppend('later')}
+                    size={size <= 160 ? 'xs' : 'sm'}
+                    icon={<Icon icon="plus" />}
+                  />
+                </CustomTooltip>
+
+                <CustomTooltip text="Add to queue (next)">
+                  <AppendNextOverlayButton
+                    onClick={() => handlePlayAppend('next')}
+                    size={size <= 160 ? 'xs' : 'sm'}
+                    icon={<Icon icon="plus-circle" />}
+                  />
+                </CustomTooltip>
+
+                {playClick.type !== 'playlist' && (
+                  <CustomTooltip text="Toggle favorite">
+                    <FavoriteOverlayButton
+                      onClick={() => handleFavorite(rest.details)}
+                      size={size <= 160 ? 'xs' : 'sm'}
+                      icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
+                    />
+                  </CustomTooltip>
+                )}
+                {!rest.isModal && (
+                  <CustomTooltip text="View in modal">
+                    <ModalViewOverlayButton
+                      size={size <= 160 ? 'xs' : 'sm'}
+                      icon={<Icon icon="external-link" />}
+                      onClick={handleOpenModal}
+                    />
+                  </CustomTooltip>
+                )}
+              </>
             )}
-          </CardImgWrapper>
-
-          {hasHoverButtons && (
-            <>
-              {rest.details.starred && <div className="corner-triangle" />}
-              <PlayOverlayButton
-                size="lg"
-                circle
-                icon={<Icon icon="play" />}
-                onClick={handlePlayClick}
-              />
-
-              <CustomTooltip text="Add to queue (later)">
-                <AppendOverlayButton
-                  onClick={() => handlePlayAppend('later')}
-                  size={size <= 160 ? 'xs' : 'sm'}
-                  icon={<Icon icon="plus" />}
-                />
-              </CustomTooltip>
-
-              <CustomTooltip text="Add to queue (next)">
-                <AppendNextOverlayButton
-                  onClick={() => handlePlayAppend('next')}
-                  size={size <= 160 ? 'xs' : 'sm'}
-                  icon={<Icon icon="plus-circle" />}
-                />
-              </CustomTooltip>
-
-              {playClick.type !== 'playlist' && (
-                <CustomTooltip text="Toggle favorite">
-                  <FavoriteOverlayButton
-                    onClick={() => handleFavorite(rest.details)}
-                    size={size <= 160 ? 'xs' : 'sm'}
-                    icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
-                  />
-                </CustomTooltip>
-              )}
-              {!rest.isModal && (
-                <CustomTooltip text="View in modal">
-                  <ModalViewOverlayButton
-                    size={size <= 160 ? 'xs' : 'sm'}
-                    icon={<Icon icon="external-link" />}
-                    onClick={handleOpenModal}
-                  />
-                </CustomTooltip>
-              )}
-            </>
-          )}
+          </ImgPanel>
         </Overlay>
+
         <InfoPanel cardsize={size}>
           <InfoSpan>
             <CustomTooltip text={rest.title}>

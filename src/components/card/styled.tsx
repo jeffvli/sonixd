@@ -19,7 +19,11 @@ interface Card {
 }; */
 
 export const CardPanel = styled(Panel)<Card>`
-  border-radius: 0px;
+  border-top-left-radius: ${(props) => props.theme.other.card.image.borderRadius} !important;
+  border-top-right-radius: ${(props) => props.theme.other.card.image.borderRadius} !important;
+  border-bottom-left-radius: ${(props) => props.theme.other.card.info.borderRadius} !important;
+  border-bottom-right-radius: ${(props) => props.theme.other.card.info.borderRadius} !important;
+
   text-align: center;
   width: ${(props) => `${Number(props.cardsize) + 2}px`};
   height: ${(props) => `${Number(props.cardsize) + 55}px`};
@@ -48,14 +52,6 @@ export const CardPanel = styled(Panel)<Card>`
   &:hover:after {
     transform: translatey(-100%);
   } */
-
-  img {
-    border-top: ${(props) => props.theme.other.card.image.borderTop};
-    border-right: ${(props) => props.theme.other.card.image.borderRight};
-    border-bottom: ${(props) => props.theme.other.card.image.borderBottom};
-    border-left: ${(props) => props.theme.other.card.image.borderLeft};
-    border-radius: ${(props) => props.theme.other.card.image.borderRadius};
-  }
 
   &:hover {
     border-color: ${(props) => props.theme.colors.primary} !important;
@@ -89,6 +85,14 @@ export const InfoPanel = styled(Panel)<Card>`
   border-right: ${(props) => props.theme.other.card.info.borderRight} !important;
   border-bottom: ${(props) => props.theme.other.card.info.borderBottom} !important;
   border-left: ${(props) => props.theme.other.card.info.borderLeft} !important;
+`;
+
+export const ImgPanel = styled(Panel)<Card>`
+  border-top: ${(props) => props.theme.other.card.image.borderTop} !important;
+  border-right: ${(props) => props.theme.other.card.image.borderRight} !important;
+  border-bottom: ${(props) => props.theme.other.card.image.borderBottom} !important;
+  border-left: ${(props) => props.theme.other.card.image.borderLeft} !important;
+  border-radius: ${(props) => props.theme.other.card.image.borderRadius} !important;
 `;
 
 export const InfoSpan = styled.div`
