@@ -92,7 +92,7 @@ export const songColumnList = [
     value: {
       id: 'Genre',
       dataKey: 'genre',
-      alignment: 'center',
+      alignment: 'left',
       resizable: true,
       width: 150,
       label: 'Genre',
@@ -276,7 +276,7 @@ export const songColumnListAuto = [
     value: {
       id: 'Genre',
       dataKey: 'genre',
-      alignment: 'center',
+      alignment: 'left',
       flexGrow: 2,
       label: 'Genre',
     },
