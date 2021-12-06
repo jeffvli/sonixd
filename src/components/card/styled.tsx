@@ -183,6 +183,7 @@ const OverlayButton = styled(IconButton)`
   -ms-transform: translate(-50%, -50%);
   background: ${(props) => props.theme.colors.card.overlayButton.background};
   color: ${(props) => props.theme.colors.card.overlayButton.color};
+  border-radius: ${(props) => props.theme.other.button.borderRadius};
 
   &:hover {
     opacity: 1;
