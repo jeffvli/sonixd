@@ -31,7 +31,6 @@ import {
   sortPlayQueue,
 } from '../../redux/playQueueSlice';
 import {
-  LinkWrapper,
   SecondaryTextWrapper,
   StyledCheckbox,
   StyledIconButton,
@@ -764,40 +763,38 @@ const ListViewTable = ({
                                       {i > 0 && ', '}
                                     </SecondaryTextWrapper>
                                     <CustomTooltip key={artist.id} text={artist.title}>
-                                      <LinkWrapper maxWidth="20vw">
-                                        <RsuiteLinkButton
-                                          subtitle="true"
-                                          appearance="link"
-                                          onClick={(e: any) => {
-                                            if (!e.ctrlKey && !e.shiftKey) {
-                                              if (artist.id && !isModal) {
-                                                history.push(`/library/artist/${artist.id}`);
-                                              } else if (artist.id && isModal) {
-                                                dispatch(
-                                                  addModalPage({
-                                                    pageType: 'artist',
-                                                    id: artist.id,
-                                                  })
-                                                );
-                                              }
+                                      <RsuiteLinkButton
+                                        subtitle="true"
+                                        appearance="link"
+                                        onClick={(e: any) => {
+                                          if (!e.ctrlKey && !e.shiftKey) {
+                                            if (artist.id && !isModal) {
+                                              history.push(`/library/artist/${artist.id}`);
+                                            } else if (artist.id && isModal) {
+                                              dispatch(
+                                                addModalPage({
+                                                  pageType: 'artist',
+                                                  id: artist.id,
+                                                })
+                                              );
                                             }
-                                          }}
-                                          style={{
-                                            fontSize: `${fontSize}px`,
-                                          }}
-                                          playing={
-                                            (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                              nowPlaying) ||
-                                            (!nowPlaying &&
-                                              rowData.id === playQueue?.currentSongId &&
-                                              playQueue?.currentSongId)
-                                              ? 'true'
-                                              : 'false'
                                           }
-                                        >
-                                          {artist.title}
-                                        </RsuiteLinkButton>
-                                      </LinkWrapper>
+                                        }}
+                                        style={{
+                                          fontSize: `${fontSize}px`,
+                                        }}
+                                        playing={
+                                          (rowData.uniqueId === playQueue?.currentSongUniqueId &&
+                                            nowPlaying) ||
+                                          (!nowPlaying &&
+                                            rowData.id === playQueue?.currentSongId &&
+                                            playQueue?.currentSongId)
+                                            ? 'true'
+                                            : 'false'
+                                        }
+                                      >
+                                        {artist.title}
+                                      </RsuiteLinkButton>
                                     </CustomTooltip>
                                   </>
                                 ))}
