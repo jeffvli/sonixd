@@ -386,7 +386,7 @@ export const getAlbums = async (options: {
   return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
 };
 
-export const getArtist = async (options: { id: string }) => {
+export const getArtist = async (options: { id: string; musicFolderId?: string }) => {
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`);
   const { data: albumData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
@@ -395,6 +395,7 @@ export const getArtist = async (options: { id: string }) => {
       fields: 'AudioInfo, ParentId, Genres, DateCreated, ChildCount, ParentId',
       recursive: true,
       sortBy: 'SortName',
+      parentId: options.musicFolderId,
     },
   });
 
@@ -444,6 +445,7 @@ export const getRandomSongs = async (options: {
   genre?: string;
   fromYear?: number;
   toYear?: number;
+  musicFolderId?: string;
 }) => {
   let { fromYear, toYear } = options;
 
@@ -464,6 +466,7 @@ export const getRandomSongs = async (options: {
       recursive: true,
       sortBy: 'Random',
       years: (fromYear || toYear) && _.range(fromYear!, toYear! + 1).join(','),
+      parentId: options.musicFolderId,
     },
   });
 

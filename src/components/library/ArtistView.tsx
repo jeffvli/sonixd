@@ -75,8 +75,12 @@ const ArtistView = ({ ...rest }: any) => {
 
   const { id } = useParams<ArtistParams>();
   const artistId = rest.id ? rest.id : id;
-  const { isLoading, isError, data, error }: any = useQuery(['artist', artistId], () =>
-    apiController({ serverType: config.serverType, endpoint: 'getArtist', args: { id: artistId } })
+  const { isLoading, isError, data, error }: any = useQuery(['artist', artistId, musicFolder], () =>
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getArtist',
+      args: { id: artistId, musicFolderId: musicFolder },
+    })
   );
 
   const filteredData = useSearchQuery(misc.searchQuery, data?.album, [
