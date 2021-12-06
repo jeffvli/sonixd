@@ -548,7 +548,7 @@ const setDefaultSettings = (force: boolean) => {
         card: {
           overlayButton: {
             color: '#FFFFFF',
-            background: '#000000',
+            background: 'transparent',
             opacity: 0.8,
           },
         },
@@ -599,8 +599,8 @@ const setDefaultSettings = (force: boolean) => {
         card: {
           border: '1px #3c3f43 solid',
           hover: {
-            transform: 'scale(1.03)',
-            transition: '0.07s ease-in-out',
+            transform: 'none',
+            transition: 'none',
             filter: 'none',
           },
           image: {
@@ -712,7 +712,7 @@ const setDefaultSettings = (force: boolean) => {
           overlayButton: {
             color: '#FFFFFF',
             colorHover: '#FFFFFF',
-            background: '#000000',
+            background: 'transparent',
             backgroundHover: '#285DA0',
             opacity: 0.8,
           },
@@ -764,8 +764,8 @@ const setDefaultSettings = (force: boolean) => {
         card: {
           border: '1px #3c3f43 solid',
           hover: {
-            transform: 'scale(1.03)',
-            transition: '0.07s ease-in-out',
+            transform: 'none',
+            transition: 'none',
             filter: 'none',
           },
           image: {
