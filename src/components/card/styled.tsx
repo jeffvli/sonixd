@@ -63,8 +63,8 @@ export const CardPanel = styled(Panel)<Card>`
     filter: ${(props) => props.theme.other.card.hover.filter};
     transition: ${(props) => props.theme.other.card.hover.transition};
     img {
-      filter: brightness(90%);
-      -webkit-filter: brightness(90%);
+      filter: brightness(40%);
+      -webkit-filter: brightness(40%);
     }
 
     .rs-panel {
