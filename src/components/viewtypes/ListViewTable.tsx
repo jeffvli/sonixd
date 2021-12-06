@@ -746,7 +746,7 @@ const ListViewTable = ({
                                 }}
                               >
                                 {(rowData.artist || []).map((artist: GenericItem, i: number) => (
-                                  <>
+                                  <span key={`${rowData.uniqueId}-${artist.id}`}>
                                     <SecondaryTextWrapper
                                       key={nanoid()}
                                       playing={
@@ -762,7 +762,10 @@ const ListViewTable = ({
                                     >
                                       {i > 0 && ', '}
                                     </SecondaryTextWrapper>
-                                    <CustomTooltip key={artist.id} text={artist.title}>
+                                    <CustomTooltip
+                                      key={`artist-${rowData.uniqueId}-${artist.id}`}
+                                      text={artist.title}
+                                    >
                                       <RsuiteLinkButton
                                         subtitle="true"
                                         appearance="link"
@@ -796,7 +799,7 @@ const ListViewTable = ({
                                         {artist.title}
                                       </RsuiteLinkButton>
                                     </CustomTooltip>
-                                  </>
+                                  </span>
                                 ))}
                               </span>
                             </Row>
@@ -923,13 +926,9 @@ const ListViewTable = ({
                           <>
                             {rowData.genre ? (
                               rowData.genre.map((genre: GenericItem, i: number) => (
-                                <>
-                                  {i > 0 && <span key={nanoid()}>, </span>}
-
-                                  <CustomTooltip
-                                    key={genre.id}
-                                    text={rowData[column.dataKey][i]?.title}
-                                  >
+                                <span key={`${rowData.uniqueId}-${genre.id}`}>
+                                  {i > 0 && ', '}
+                                  <CustomTooltip text={genre.title}>
                                     <RsuiteLinkButton
                                       appearance="link"
                                       onClick={(e: any) => {
@@ -937,15 +936,11 @@ const ListViewTable = ({
                                           dispatch(
                                             setActive({
                                               ...album.active,
-                                              filter: rowData[column.dataKey][i]?.title,
+                                              filter: genre.title,
                                             })
                                           );
                                           setTimeout(() => {
-                                            history.push(
-                                              `/library/album?sortType=${
-                                                rowData[column.dataKey][i]?.title
-                                              }`
-                                            );
+                                            history.push(`/library/album?sortType=${genre.title}`);
                                           }, 50);
                                         }
                                       }}
@@ -962,10 +957,10 @@ const ListViewTable = ({
                                         fontSize: `${fontSize}px`,
                                       }}
                                     >
-                                      {rowData[column.dataKey][i]?.title}
+                                      {genre.title}
                                     </RsuiteLinkButton>
                                   </CustomTooltip>
-                                </>
+                                </span>
                               ))
                             ) : (
                               <span>&#8203;</span>

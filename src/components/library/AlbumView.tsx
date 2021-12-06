@@ -366,12 +366,11 @@ const AlbumView = ({ ...rest }: any) => {
                   Added {formatDate(data.created)}
                   {data.genre.map((d: Genre, i: number) => {
                     return (
-                      <>
+                      <span key={nanoid()}>
                         {i === 0 && ' • '}
                         {i > 0 && ', '}
                         <LinkWrapper maxWidth="13vw">
                           <StyledLink
-                            key={nanoid()}
                             tabIndex={0}
                             onClick={() => {
                               if (!rest.isModal) {
@@ -396,7 +395,7 @@ const AlbumView = ({ ...rest }: any) => {
                             {d.title}
                           </StyledLink>
                         </LinkWrapper>
-                      </>
+                      </span>
                     );
                   })}
                 </PageHeaderSubtitleDataLine>
