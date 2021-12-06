@@ -418,8 +418,8 @@ const PlayerBar = () => {
                         enterable
                         placement="topStart"
                         text={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.artist
-                            ? playQueue[currentEntryList][playQueue.currentIndex]?.artist[0]?.title
+                          playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
+                            ? playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
                             : 'Unknown artist'
                         }
                       >
