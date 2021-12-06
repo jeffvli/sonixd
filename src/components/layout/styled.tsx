@@ -238,7 +238,7 @@ export const PageHeaderWrapper = styled.div<{
 
 export const PageHeaderSubtitleWrapper = styled.span`
   align-self: center;
-  width: 70%;
+  width: 80%;
   font-size: 14px;
 `;
 
