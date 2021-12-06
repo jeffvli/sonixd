@@ -116,7 +116,7 @@ export const StyledInputGroupButton = styled(InputGroup.Button)<{ height?: numbe
         ? `${props.theme.colors.button.default.colorHover}`
         : `${props.theme.colors.button.subtle.colorHover} !important`};
   }
-  border-radius: ${(props) => props.theme.other.input.borderRadius};
+  border-radius: ${(props) => props.theme.other.input.borderRadius} !important;
   border-bottom-right-radius: ${(props) => props.theme.other.input.borderRadius} !important;
   border-top-right-radius: ${(props) => props.theme.other.input.borderRadius} !important;
 `;
