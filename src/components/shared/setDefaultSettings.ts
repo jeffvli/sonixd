@@ -593,12 +593,12 @@ const setDefaultSettings = (force: boolean) => {
       },
       other: {
         button: {
-          borderRadius: '0px',
+          borderRadius: '15px',
         },
         coverArtBorderRadius: '5px',
         coverArtFilter: 'none',
         card: {
-          border: '1px #3c3f43 solid',
+          border: 'none',
           hover: {
             transform: 'none',
             transition: 'none',
@@ -609,7 +609,7 @@ const setDefaultSettings = (force: boolean) => {
             borderRight: 'none',
             borderBottom: 'none',
             borderLeft: 'none',
-            borderRadius: '0px',
+            borderRadius: '15px',
           },
           info: {
             borderTop: 'none',
@@ -620,14 +620,14 @@ const setDefaultSettings = (force: boolean) => {
           },
         },
         input: {
-          borderRadius: '0px',
+          borderRadius: '15px',
         },
         miniPlayer: {
           height: '450px',
           opacity: 0.95,
         },
         panel: {
-          borderRadius: '0px',
+          borderRadius: '10px',
         },
         playerBar: {
           borderTop: '1px solid rgba(240, 240, 240, .15)',
@@ -637,11 +637,11 @@ const setDefaultSettings = (force: boolean) => {
           filter: 'none',
         },
         tag: {
-          borderRadius: '0px',
+          borderRadius: '15px',
         },
         tooltip: {
           border: '1px #3c3f43 solid',
-          borderRadius: '0px',
+          borderRadius: '5px',
         },
       },
     },
@@ -759,12 +759,12 @@ const setDefaultSettings = (force: boolean) => {
       },
       other: {
         button: {
-          borderRadius: '0px',
+          borderRadius: '15px',
         },
         coverArtBorderRadius: '5px',
         coverArtFilter: 'none',
         card: {
-          border: '1px #3c3f43 solid',
+          border: 'none',
           hover: {
             transform: 'none',
             transition: 'none',
@@ -775,7 +775,7 @@ const setDefaultSettings = (force: boolean) => {
             borderRight: 'none',
             borderBottom: 'none',
             borderLeft: 'none',
-            borderRadius: '0px',
+            borderRadius: '15px',
           },
           info: {
             borderTop: 'none',
@@ -786,14 +786,14 @@ const setDefaultSettings = (force: boolean) => {
           },
         },
         input: {
-          borderRadius: '0px',
+          borderRadius: '15px',
         },
         miniPlayer: {
           height: '450px',
           opacity: 0.95,
         },
         panel: {
-          borderRadius: '0px',
+          borderRadius: '10px',
         },
         playerBar: {
           borderTop: '1px solid rgba(240, 240, 240, .15)',
@@ -803,11 +803,11 @@ const setDefaultSettings = (force: boolean) => {
           filter: 'none',
         },
         tag: {
-          borderRadius: '0px',
+          borderRadius: '15px',
         },
         tooltip: {
           border: '1px #3c3f43 solid',
-          borderRadius: '0px',
+          borderRadius: '5px',
         },
       },
     },
