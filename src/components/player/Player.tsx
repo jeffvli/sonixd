@@ -72,7 +72,12 @@ const gaplessListenHandler = (
     apiController({
       serverType,
       endpoint: 'scrobble',
-      args: { id: playQueue.currentSongId, albumId: playQueue.current.albumId, submission: true },
+      args: {
+        id: playQueue.currentSongId,
+        albumId: playQueue.current.albumId,
+        submission: true,
+        position: serverType === Server.Jellyfin ? currentSeek * 10000000 : undefined,
+      },
     });
   }
 };
@@ -233,7 +238,12 @@ const listenHandler = (
     apiController({
       serverType,
       endpoint: 'scrobble',
-      args: { id: playQueue.currentSongId, albumId: playQueue.current.albumId, submission: true },
+      args: {
+        id: playQueue.currentSongId,
+        albumId: playQueue.current.albumId,
+        submission: true,
+        position: serverType === Server.Jellyfin ? currentSeek * 10000000 : undefined,
+      },
     });
   }
 };
