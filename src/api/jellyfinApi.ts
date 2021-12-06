@@ -140,6 +140,7 @@ const normalizeAlbum = (item: any) => {
     created: item.DateCreated,
     year: item.ProductionYear,
     genre: item.GenreItems && item.GenreItems.map((entry: any) => normalizeItem(entry)),
+    albumGenre: item.GenreItems && item.GenreItems[0]?.Name,
     image: getCoverArtUrl(item),
     isDir: false,
     starred: item.UserData && item.UserData.IsFavorite ? 'true' : undefined,
