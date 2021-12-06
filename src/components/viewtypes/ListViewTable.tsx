@@ -749,7 +749,7 @@ const ListViewTable = ({
                                 {(rowData.artist || []).map((artist: GenericItem, i: number) => (
                                   <>
                                     <SecondaryTextWrapper
-                                      key={`delim-${artist.id}`}
+                                      key={nanoid()}
                                       playing={
                                         (rowData.uniqueId === playQueue?.currentSongUniqueId &&
                                           nowPlaying) ||
@@ -922,41 +922,75 @@ const ListViewTable = ({
                             : undefined,
                         }}
                       >
-                        {column.dataKey.match(/artist|genre/) ? (
+                        {column.dataKey === 'genre' ? (
+                          <>
+                            {rowData.genre ? (
+                              rowData.genre.map((genre: GenericItem, i: number) => (
+                                <>
+                                  {i > 0 && <span key={nanoid()}>, </span>}
+
+                                  <CustomTooltip
+                                    key={genre.id}
+                                    text={rowData[column.dataKey][i]?.title}
+                                  >
+                                    <RsuiteLinkButton
+                                      appearance="link"
+                                      onClick={(e: any) => {
+                                        if (!e.ctrlKey && !e.shiftKey) {
+                                          dispatch(
+                                            setActive({
+                                              ...album.active,
+                                              filter: rowData[column.dataKey][i]?.title,
+                                            })
+                                          );
+                                          setTimeout(() => {
+                                            history.push(
+                                              `/library/album?sortType=${
+                                                rowData[column.dataKey][i]?.title
+                                              }`
+                                            );
+                                          }, 50);
+                                        }
+                                      }}
+                                      playing={
+                                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
+                                          nowPlaying) ||
+                                        (!nowPlaying &&
+                                          rowData.id === playQueue?.currentSongId &&
+                                          playQueue?.currentSongId)
+                                          ? 'true'
+                                          : 'false'
+                                      }
+                                      style={{
+                                        fontSize: `${fontSize}px`,
+                                      }}
+                                    >
+                                      {rowData[column.dataKey][i]?.title}
+                                    </RsuiteLinkButton>
+                                  </CustomTooltip>
+                                </>
+                              ))
+                            ) : (
+                              <span>&#8203;</span>
+                            )}
+                          </>
+                        ) : column.dataKey === 'artist' ? (
                           <>
                             {rowData[column.dataKey] ? (
-                              <CustomTooltip text={rowData[column.dataKey][0]?.title}>
+                              <CustomTooltip text={rowData.albumArtist}>
                                 <RsuiteLinkButton
                                   appearance="link"
                                   onClick={(e: any) => {
                                     if (!e.ctrlKey && !e.shiftKey) {
-                                      if (column.dataKey === 'artist') {
-                                        if (rowData[column.dataKey][0]?.id && !isModal) {
-                                          history.push(
-                                            `/library/artist/${rowData[column.dataKey][0]?.id}`
-                                          );
-                                        } else if (rowData[0]?.id && isModal) {
-                                          dispatch(
-                                            addModalPage({
-                                              pageType: 'artist',
-                                              id: rowData[0]?.id,
-                                            })
-                                          );
-                                        }
-                                      } else if (column.dataKey === 'genre') {
+                                      if (rowData.albumArtistId && !isModal) {
+                                        history.push(`/library/artist/${rowData.albumArtistId}`);
+                                      } else if (rowData[0]?.id && isModal) {
                                         dispatch(
-                                          setActive({
-                                            ...album.active,
-                                            filter: rowData[column.dataKey][0]?.title,
+                                          addModalPage({
+                                            pageType: 'artist',
+                                            id: rowData[0]?.id,
                                           })
                                         );
-                                        setTimeout(() => {
-                                          history.push(
-                                            `/library/album?sortType=${
-                                              rowData[column.dataKey][0]?.title
-                                            }`
-                                          );
-                                        }, 50);
                                       }
                                     }
                                   }}
@@ -973,7 +1007,7 @@ const ListViewTable = ({
                                     fontSize: `${fontSize}px`,
                                   }}
                                 >
-                                  {rowData[column.dataKey][0]?.title}
+                                  {rowData.albumArtist}
                                 </RsuiteLinkButton>
                               </CustomTooltip>
                             ) : (
