@@ -595,7 +595,8 @@ const setDefaultSettings = (force: boolean) => {
         button: {
           borderRadius: '0px',
         },
-        coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
+        coverArtBorderRadius: '5px',
+        coverArtFilter: 'none',
         card: {
           border: '1px #3c3f43 solid',
           hover: {
@@ -760,7 +761,8 @@ const setDefaultSettings = (force: boolean) => {
         button: {
           borderRadius: '0px',
         },
-        coverArtFilter: 'drop-shadow(0px 3px 5px #000000)',
+        coverArtBorderRadius: '5px',
+        coverArtFilter: 'none',
         card: {
           border: '1px #3c3f43 solid',
           hover: {

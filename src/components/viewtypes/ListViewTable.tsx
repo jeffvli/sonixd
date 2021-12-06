@@ -60,6 +60,7 @@ import {
 import { setActive } from '../../redux/albumSlice';
 import { resetPlayer, setStatus } from '../../redux/playerSlice';
 import { GenericItem } from '../../types';
+import { CoverArtWrapper } from '../layout/styled';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -647,34 +648,36 @@ const ListViewTable = ({
                               width: `${rowHeight}px`,
                             }}
                           >
-                            <LazyLoadImage
-                              src={
-                                isCached(
-                                  `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                    rowData[cacheImages.cacheIdProperty]
-                                  }.jpg`
-                                )
-                                  ? `${misc.imageCachePath}${cacheImages.cacheType}_${
+                            <CoverArtWrapper size={rowHeight - 10}>
+                              <LazyLoadImage
+                                src={
+                                  isCached(
+                                    `${misc.imageCachePath}${cacheImages.cacheType}_${
                                       rowData[cacheImages.cacheIdProperty]
                                     }.jpg`
-                                  : rowData.image
-                              }
-                              alt="track-img"
-                              effect="opacity"
-                              width={rowHeight - 10}
-                              height={rowHeight - 10}
-                              visibleByDefault={cacheImages.enabled}
-                              afterLoad={() => {
-                                if (cacheImages.enabled) {
-                                  cacheImage(
-                                    `${cacheImages.cacheType}_${
-                                      rowData[cacheImages.cacheIdProperty]
-                                    }.jpg`,
-                                    rowData.image.replaceAll(/=150/gi, '=350')
-                                  );
+                                  )
+                                    ? `${misc.imageCachePath}${cacheImages.cacheType}_${
+                                        rowData[cacheImages.cacheIdProperty]
+                                      }.jpg`
+                                    : rowData.image
                                 }
-                              }}
-                            />
+                                alt="track-img"
+                                effect="opacity"
+                                width={rowHeight - 10}
+                                height={rowHeight - 10}
+                                visibleByDefault={cacheImages.enabled}
+                                afterLoad={() => {
+                                  if (cacheImages.enabled) {
+                                    cacheImage(
+                                      `${cacheImages.cacheType}_${
+                                        rowData[cacheImages.cacheIdProperty]
+                                      }.jpg`,
+                                      rowData.image.replaceAll(/=150/gi, '=350')
+                                    );
+                                  }
+                                }}
+                              />
+                            </CoverArtWrapper>
                           </Col>
                           <Col
                             style={{
@@ -826,34 +829,36 @@ const ListViewTable = ({
                           : 'false'
                       }
                     >
-                      <LazyLoadImage
-                        src={
-                          isCached(
-                            `${misc.imageCachePath}${cacheImages.cacheType}_${
-                              rowData[cacheImages.cacheIdProperty]
-                            }.jpg`
-                          )
-                            ? `${misc.imageCachePath}${cacheImages.cacheType}_${
+                      <CoverArtWrapper size={rowHeight - 10}>
+                        <LazyLoadImage
+                          src={
+                            isCached(
+                              `${misc.imageCachePath}${cacheImages.cacheType}_${
                                 rowData[cacheImages.cacheIdProperty]
                               }.jpg`
-                            : rowData.image
-                        }
-                        alt="track-img"
-                        effect="opacity"
-                        width={rowHeight - 10}
-                        height={rowHeight - 10}
-                        visibleByDefault={cacheImages.enabled}
-                        afterLoad={() => {
-                          if (cacheImages.enabled) {
-                            cacheImage(
-                              `${cacheImages.cacheType}_${
-                                rowData[cacheImages.cacheIdProperty]
-                              }.jpg`,
-                              rowData.image.replaceAll(/=150/gi, '=350')
-                            );
+                            )
+                              ? `${misc.imageCachePath}${cacheImages.cacheType}_${
+                                  rowData[cacheImages.cacheIdProperty]
+                                }.jpg`
+                              : rowData.image
                           }
-                        }}
-                      />
+                          alt="track-img"
+                          effect="opacity"
+                          width={rowHeight - 10}
+                          height={rowHeight - 10}
+                          visibleByDefault={cacheImages.enabled}
+                          afterLoad={() => {
+                            if (cacheImages.enabled) {
+                              cacheImage(
+                                `${cacheImages.cacheType}_${
+                                  rowData[cacheImages.cacheIdProperty]
+                                }.jpg`,
+                                rowData.image.replaceAll(/=150/gi, '=350')
+                              );
+                            }
+                          }}
+                        />
+                      </CoverArtWrapper>
                     </TableCellWrapper>
                   );
                 }}

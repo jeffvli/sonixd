@@ -205,11 +205,16 @@ export const CoverArtWrapper = styled.div<{ $link?: boolean; size: number }>`
   height: ${(props) => props.size}px;
   width: ${(props) => props.size}px;
   overflow: hidden;
-
+  border-radius: ${(props) => props.theme.other.coverArtBorderRadius};
   background: ${(props) => props.theme.colors.layout.page.background};
+  vertical-align: middle;
 
   &:focus-visible {
     outline: 2px ${(props) => props.theme.colors.primary} solid;
+  }
+
+  img {
+    vertical-align: unset !important;
   }
 `;
 

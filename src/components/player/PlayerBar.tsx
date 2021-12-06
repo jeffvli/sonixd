@@ -344,32 +344,34 @@ const PlayerBar = () => {
                         </StyledPopover>
                       }
                     >
-                      <LazyLoadImage
-                        src={
-                          isCached(
-                            `${misc.imageCachePath}album_${
-                              playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                            }.jpg`
-                          )
-                            ? `${misc.imageCachePath}album_${
+                      <CoverArtWrapper size={65}>
+                        <LazyLoadImage
+                          src={
+                            isCached(
+                              `${misc.imageCachePath}album_${
                                 playQueue[currentEntryList][playQueue.currentIndex]?.albumId
                               }.jpg`
-                            : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
-                              placeholderImg
-                        }
-                        tabIndex={0}
-                        onClick={() => history.push(`/nowplaying`)}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ' || e.key === 'Enter') {
-                            history.push(`/nowplaying`);
+                            )
+                              ? `${misc.imageCachePath}album_${
+                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                }.jpg`
+                              : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                                placeholderImg
                           }
-                        }}
-                        alt="trackImg"
-                        effect="opacity"
-                        width="65"
-                        height="65"
-                        style={{ cursor: 'pointer' }}
-                      />
+                          tabIndex={0}
+                          onClick={() => history.push(`/nowplaying`)}
+                          onKeyDown={(e: any) => {
+                            if (e.key === ' ' || e.key === 'Enter') {
+                              history.push(`/nowplaying`);
+                            }
+                          }}
+                          alt="trackImg"
+                          effect="opacity"
+                          width="65"
+                          height="65"
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </CoverArtWrapper>
                     </Whisper>
                   </Col>
                   <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>
