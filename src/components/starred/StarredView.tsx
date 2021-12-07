@@ -281,6 +281,10 @@ const StarredView = () => {
                   size={config.lookAndFeel.gridView.cardSize}
                   cacheType="album"
                   handleFavorite={handleRowFavoriteAlbum}
+                  initialScrollOffset={Number(localStorage.getItem('scroll_grid_starredAlbumList'))}
+                  onScroll={(scrollIndex: number) => {
+                    localStorage.setItem('scroll_grid_starredAlbumList', String(scrollIndex));
+                  }}
                 />
               )}
             </>
@@ -329,6 +333,12 @@ const StarredView = () => {
                   size={config.lookAndFeel.gridView.cardSize}
                   cacheType="artist"
                   handleFavorite={handleRowFavoriteArtist}
+                  initialScrollOffset={Number(
+                    localStorage.getItem('scroll_grid_starredArtistList')
+                  )}
+                  onScroll={(scrollIndex: number) => {
+                    localStorage.setItem('scroll_grid_starredArtistList', String(scrollIndex));
+                  }}
                 />
               )}
             </>

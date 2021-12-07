@@ -194,8 +194,13 @@ const ArtistList = () => {
           }
           playClick={{ type: 'artist', idProperty: 'id' }}
           size={config.lookAndFeel.gridView.cardSize}
+          s
           cacheType="artist"
           handleFavorite={handleRowFavorite}
+          initialScrollOffset={Number(localStorage.getItem('scroll_grid_artistList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_grid_artistList', String(scrollIndex));
+          }}
         />
       )}
     </GenericPage>

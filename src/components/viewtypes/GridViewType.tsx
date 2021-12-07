@@ -1,5 +1,5 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useState } from 'react';
 import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -91,12 +91,16 @@ function ListWrapper({
   cachePath,
   handleFavorite,
   musicFolderId,
+  initialScrollOffset,
+  onItemsRendered,
+  refresh,
 }: any) {
   const cardHeight = size + 55;
   const cardWidth = size;
   // How many cards can we show per row, given the current width?
   const columnCount = Math.floor((width - gapSize + 3) / (cardWidth + gapSize + 2));
   const rowCount = Math.ceil(itemCount / columnCount);
+  const gridRef = createRef<any>();
 
   const itemData = useMemo(
     () => ({
@@ -137,14 +141,25 @@ function ListWrapper({
     ]
   );
 
+  useEffect(() => {
+    if (refresh) {
+      gridRef.current.scrollTo(0);
+    }
+  }, [gridRef, refresh]);
+
   return (
     <List
+      ref={gridRef}
       className="List"
       height={height}
       itemCount={rowCount}
       itemSize={cardHeight + gapSize}
       width={width}
       itemData={itemData}
+      initialScrollOffset={initialScrollOffset && initialScrollOffset * (cardHeight + gapSize + 2)}
+      onItemsRendered={({ visibleStartIndex }) => {
+        onItemsRendered(visibleStartIndex);
+      }}
     >
       {GridCard}
     </List>
@@ -159,6 +174,9 @@ const GridViewType = ({
   size,
   cacheType,
   handleFavorite,
+  initialScrollOffset,
+  onScroll,
+  refresh,
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
@@ -191,6 +209,9 @@ const GridViewType = ({
           cachePath={misc.imageCachePath}
           handleFavorite={handleFavorite}
           musicFolderId={musicFolder}
+          initialScrollOffset={initialScrollOffset}
+          onItemsRendered={onScroll || (() => {})}
+          refresh={refresh}
         />
       )}
     </AutoSizer>

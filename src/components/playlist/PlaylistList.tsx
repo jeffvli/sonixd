@@ -188,6 +188,10 @@ const PlaylistList = () => {
           playClick={{ type: 'playlist', idProperty: 'id' }}
           size={config.lookAndFeel.gridView.cardSize}
           cacheType="playlist"
+          initialScrollOffset={Number(localStorage.getItem('scroll_grid_playlistList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_grid_playlistList', String(scrollIndex));
+          }}
         />
       )}
     </GenericPage>

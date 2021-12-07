@@ -46,6 +46,7 @@ const AlbumList = () => {
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
   const albumFilterPickerContainerRef = useRef(null);
+  const [isRefresh, setIsRefresh] = useState(false);
 
   useEffect(() => {
     if (folder.applied.albums) {
@@ -226,6 +227,7 @@ const AlbumList = () => {
                   cleanable={false}
                   placeholder="Sort Type"
                   onChange={async (value: string) => {
+                    setIsRefresh(true);
                     await queryClient.cancelQueries([
                       'albumList',
                       album.active.filter,
@@ -233,6 +235,8 @@ const AlbumList = () => {
                     ]);
                     dispatch(setSearchQuery(''));
                     dispatch(setActive({ ...album.active, filter: value }));
+                    localStorage.setItem('scroll_grid_albumList', '0');
+                    setIsRefresh(false);
                   }}
                 />
 
@@ -299,6 +303,11 @@ const AlbumList = () => {
           size={config.lookAndFeel.gridView.cardSize}
           cacheType="album"
           handleFavorite={handleRowFavorite}
+          initialScrollOffset={Number(localStorage.getItem('scroll_grid_albumList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_grid_albumList', String(scrollIndex));
+          }}
+          refresh={isRefresh}
         />
       )}
     </GenericPage>
