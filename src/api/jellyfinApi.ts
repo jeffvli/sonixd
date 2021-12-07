@@ -55,17 +55,16 @@ axiosRetry(jellyfinApi, {
   },
 });
 
-const getStreamUrl = (id: string) => {
+const getStreamUrl = (id: string, container: string, mediaSourceId: string, eTag: string) => {
   return (
     `${API_BASE_URL}/Audio` +
     `/${id}` +
-    `/universal` +
-    `?UserId=${auth.username}` +
-    `&DeviceId=${auth.deviceId}` +
-    `&AudioCodec=aac` +
-    `&api_key=${auth.token}` +
-    `&PlaySessionId=${auth.deviceId}` +
-    `&Container=['opus','mp3','aac','m4a','m4b','flac','wav','ogg']`
+    `/stream${container ? `.${container}` : ''}` +
+    `?static=true` +
+    `&deviceId=${auth.deviceId}` +
+    `&mediaSourceId=${mediaSourceId}` +
+    `&tag=${eTag}` +
+    `&api_key=${auth.token}`
   );
 };
 
@@ -119,7 +118,12 @@ const normalizeSong = (item: any) => {
     playCount: item.UserData && item.UserData.PlayCount,
     discNumber: undefined,
     created: item.DateCreated,
-    streamUrl: getStreamUrl(item.Id),
+    streamUrl: getStreamUrl(
+      item.MediaSources[0]?.Id,
+      item.MediaSources[0]?.Container,
+      item.MediaSources[0]?.Id,
+      item.MediaSources[0]?.ETag
+    ),
     image: getCoverArtUrl(item, 150),
     starred: item.UserData && item.UserData.IsFavorite ? 'true' : undefined,
     type: Item.Music,
