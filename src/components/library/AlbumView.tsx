@@ -375,6 +375,8 @@ const AlbumView = ({ ...rest }: any) => {
                             onClick={() => {
                               if (!rest.isModal) {
                                 dispatch(setActive({ ...album.active, filter: d.title }));
+                                localStorage.setItem('scroll_list_albumList', '0');
+                                localStorage.setItem('scroll_grid_albumList', '0');
                                 setTimeout(() => {
                                   history.push(`/library/album?sortType=${d.title}`);
                                 }, 50);
@@ -385,6 +387,8 @@ const AlbumView = ({ ...rest }: any) => {
                                 e.preventDefault();
                                 if (!rest.isModal) {
                                   dispatch(setActive({ ...album.active, filter: d.title }));
+                                  localStorage.setItem('scroll_list_albumList', '0');
+                                  localStorage.setItem('scroll_grid_albumList', '0');
                                   setTimeout(() => {
                                     history.push(`/library/album?sortType=${d.title}`);
                                   }, 50);

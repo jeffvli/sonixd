@@ -222,6 +222,7 @@ const AlbumList = () => {
                   size="sm"
                   width={180}
                   defaultValue={album.active.filter}
+                  value={album.active.filter}
                   groupBy="role"
                   data={sortTypes}
                   cleanable={false}

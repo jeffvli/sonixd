@@ -949,6 +949,8 @@ const ListViewTable = ({
                                               filter: genre.title,
                                             })
                                           );
+                                          localStorage.setItem('scroll_list_albumList', '0');
+                                          localStorage.setItem('scroll_grid_albumList', '0');
                                           setTimeout(() => {
                                             history.push(`/library/album?sortType=${genre.title}`);
                                           }, 50);

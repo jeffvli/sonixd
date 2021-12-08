@@ -54,6 +54,8 @@ const GenreList = () => {
     window.clearTimeout(timeout);
     timeout = null;
     dispatch(setActive({ ...album.active, filter: rowData.title }));
+    localStorage.setItem('scroll_list_albumList', '0');
+    localStorage.setItem('scroll_grid_albumList', '0');
     dispatch(clearSelected());
 
     // Needs a small delay or the filter won't set properly when navigating to the album list
