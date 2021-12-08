@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2021-12-07
+
+### Changed
+
+- List-view scroll position is now persistent for the following:
+  - Now Playing
+  - Playlist list
+  - Favorites (all)
+  - Album list
+  - Artist list
+  - Genre list
+- Grid-view scroll position is now persistent for the following:
+  - Playlist list
+  - Favorites (album/artist)
+  - Album list
+  - Artist list
+- (Jellyfin) Changed audio stream URL to force transcoding off (#108)
+
+### Fixed
+
+- (Jellyfin) Fixed the player not sending the "finish" condition when the song meets the scrobble condition (unresolved from 0.9.0) (#111)
+
 ## [0.9.0] - 2021-12-06
 
 ### Added

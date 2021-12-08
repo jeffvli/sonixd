@@ -6,10 +6,6 @@
     <img src="https://img.shields.io/github/v/release/jeffvli/sonixd?style=flat-square&color=blue"
     alt="Release">
   </a>
-  <a href="https://github.com/jeffvli/sonixd/compare/dev">
-    <img src="https://img.shields.io/github/commits-since/jeffvli/sonixd/latest/dev?style=flat-square&color=red"
-    alt="Commits">
-  </a>
   <a href="https://github.com/jeffvli/sonixd/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/jeffvli/sonixd?style=flat-square&color=brightgreen"
     alt="License">
@@ -55,6 +51,7 @@ You can install sonixd by downloading the [latest release](https://github.com/je
 - MacOS: `.dmg`
 
 ---
+
 ### Windows
 
 If you prefer not to download the release binary, you can install using `winget`.
@@ -64,6 +61,7 @@ Using your favorite terminal (cmd/pwsh):
 ```
 winget install sonixd
 ```
+
 ---
 
 ### Arch Linux
