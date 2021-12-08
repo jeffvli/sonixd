@@ -176,6 +176,10 @@ const ArtistList = () => {
             'viewInFolder',
           ]}
           handleFavorite={handleRowFavorite}
+          initialScrollOffset={Number(localStorage.getItem('scroll_list_artistList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_list_artistList', String(Math.abs(scrollIndex)));
+          }}
         />
       )}
       {!isLoading && !isError && viewType === 'grid' && (

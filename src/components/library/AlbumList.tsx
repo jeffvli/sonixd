@@ -236,6 +236,7 @@ const AlbumList = () => {
                     dispatch(setSearchQuery(''));
                     dispatch(setActive({ ...album.active, filter: value }));
                     localStorage.setItem('scroll_grid_albumList', '0');
+                    localStorage.setItem('scroll_list_albumList', '0');
                     setIsRefresh(false);
                   }}
                 />
@@ -283,6 +284,10 @@ const AlbumList = () => {
             'viewInFolder',
           ]}
           handleFavorite={handleRowFavorite}
+          initialScrollOffset={Number(localStorage.getItem('scroll_list_albumList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_list_albumList', String(Math.abs(scrollIndex)));
+          }}
         />
       )}
       {!isLoading && !isError && viewType === 'grid' && (

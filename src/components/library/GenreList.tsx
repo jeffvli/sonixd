@@ -91,6 +91,10 @@ const GenreList = () => {
             'viewInFolder',
             'setRating',
           ]}
+          initialScrollOffset={Number(localStorage.getItem('scroll_list_genreList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_list_genreList', String(Math.abs(scrollIndex)));
+          }}
         />
       )}
     </GenericPage>

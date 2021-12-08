@@ -102,7 +102,6 @@ const ListViewTable = ({
   page,
   listType,
   isModal,
-  // onScroll,
   nowPlaying,
   playlist,
   config,
@@ -114,6 +113,7 @@ const ListViewTable = ({
   disabledContextMenuOptions,
   handleFavorite,
   handleRating,
+  onScroll,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -386,6 +386,11 @@ const ListViewTable = ({
         sortColumn={nowPlaying ? playQueue.sortColumn : sortColumn}
         sortType={nowPlaying ? playQueue.sortType : sortType}
         onSortColumn={handleSortColumn}
+        onScroll={(_e: any, offset: number) => {
+          if (onScroll) {
+            onScroll(offset);
+          }
+        }}
         onRowContextMenu={(rowData: any, e: any) => {
           e.preventDefault();
 

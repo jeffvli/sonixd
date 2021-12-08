@@ -234,6 +234,10 @@ const StarredView = () => {
                 'viewInModal',
               ]}
               handleFavorite={handleRowFavorite}
+              initialScrollOffset={Number(localStorage.getItem('scroll_list_starredMusicList'))}
+              onScroll={(scrollIndex: number) => {
+                localStorage.setItem('scroll_list_starredMusicList', String(Math.abs(scrollIndex)));
+              }}
             />
           )}
           {favorite.active.tab === 'albums' && (
@@ -261,6 +265,13 @@ const StarredView = () => {
                     'deletePlaylist',
                   ]}
                   handleFavorite={handleRowFavoriteAlbum}
+                  initialScrollOffset={Number(localStorage.getItem('scroll_list_starredAlbumList'))}
+                  onScroll={(scrollIndex: number) => {
+                    localStorage.setItem(
+                      'scroll_list_starredAlbumList',
+                      String(Math.abs(scrollIndex))
+                    );
+                  }}
                 />
               )}
               {viewType === 'grid' && (
@@ -315,6 +326,15 @@ const StarredView = () => {
                     'deletePlaylist',
                   ]}
                   handleFavorite={handleRowFavoriteArtist}
+                  initialScrollOffset={Number(
+                    localStorage.getItem('scroll_list_starredArtistList')
+                  )}
+                  onScroll={(scrollIndex: number) => {
+                    localStorage.setItem(
+                      'scroll_list_starredArtistList',
+                      String(Math.abs(scrollIndex))
+                    );
+                  }}
                 />
               )}
               {viewType === 'grid' && (

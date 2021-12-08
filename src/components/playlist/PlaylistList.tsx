@@ -170,6 +170,10 @@ const PlaylistList = () => {
             'removeSelected',
             'viewInFolder',
           ]}
+          initialScrollOffset={Number(localStorage.getItem('scroll_list_playlistList'))}
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_list_playlistList', String(Math.abs(scrollIndex)));
+          }}
         />
       )}
       {viewType === 'grid' && (

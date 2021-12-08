@@ -34,6 +34,8 @@ const ListViewType = (
     disabledContextMenuOptions,
     handleFavorite,
     handleRating,
+    initialScrollOffset,
+    onScroll,
     ...rest
   }: any,
   ref: any
@@ -117,6 +119,7 @@ const ListViewType = (
         const currentScrollY = Math.abs(tableRef?.current.scrollY);
         const currentScrollX = Math.abs(tableRef?.current.scrollX);
         if (dragDirection.match(/down|up/)) {
+          console.log(`currentScrollY + scrollDistance`, currentScrollY + scrollDistance);
           tableRef.current.scrollTop(
             dragDirection === 'down'
               ? currentScrollY + scrollDistance
@@ -143,6 +146,12 @@ const ListViewType = (
     }
     return () => clearInterval();
   }, [dragDirection, dragSpeed, isDragging]);
+
+  useEffect(() => {
+    tableRef.current?.scrollTop(initialScrollOffset);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialScrollOffset, tableRef.current]);
 
   return (
     <>
@@ -332,7 +341,7 @@ const ListViewType = (
             disabledContextMenuOptions={disabledContextMenuOptions}
             handleFavorite={handleFavorite}
             handleRating={handleRating}
-            // onScroll={(e) => setScrollY(tableRef.current.scrollY)}
+            onScroll={onScroll || (() => {})}
           />
         )}
       </div>

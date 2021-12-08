@@ -536,6 +536,14 @@ const NowPlayingView = () => {
           disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
           handleFavorite={handleRowFavorite}
           handleRating={handleRowRating}
+          initialScrollOffset={
+            playQueue.scrollWithCurrentSong
+              ? 0
+              : Number(localStorage.getItem('scroll_list_nowPlaying'))
+          }
+          onScroll={(scrollIndex: number) => {
+            localStorage.setItem('scroll_list_nowPlaying', String(Math.abs(scrollIndex)));
+          }}
         />
       )}
     </GenericPage>
