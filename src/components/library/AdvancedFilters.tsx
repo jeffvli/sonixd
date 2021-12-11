@@ -22,29 +22,36 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
   const genreFilterPickerContainerRef = useRef<any>();
 
   useEffect(() => {
-    setAvailableGenres(
-      _.orderBy(
-        _.uniqBy(
-          _.flatten(
-            _.map(
-              filter.properties.starred || filter.properties.genre.type === 'and'
-                ? filteredData
-                : originalData,
-              'genre'
-            )
-          ),
-          'title'
-        ),
-        [
-          (entry: any) => {
-            return typeof entry.title === 'string'
-              ? entry.title.toLowerCase() || ''
-              : +entry.title || '';
-          },
-        ]
+    const allGenres = _.flatten(
+      _.map(
+        filter.properties.starred || filter.properties.genre.type === 'and'
+          ? filteredData
+          : originalData,
+        'genre'
       )
     );
+
+    const counts = _.countBy(allGenres, 'title');
+    const uniqueGenres = _.orderBy(_.uniqBy(allGenres, 'title'), [
+      (entry: any) => {
+        return typeof entry.title === 'string'
+          ? entry.title.toLowerCase() || ''
+          : +entry.title || '';
+      },
+    ]);
+
+    setAvailableGenres(
+      uniqueGenres.map((genre) => {
+        return {
+          id: genre.id,
+          title: genre.title,
+          count: counts[genre.title],
+        };
+      })
+    );
   }, [filter.properties.genre.type, filter.properties.starred, filteredData, originalData]);
+
+  console.log(`availableGenres`, availableGenres);
 
   return (
     <div>
@@ -105,6 +112,14 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           value={filter.properties.genre.list}
           labelKey="title"
           valueKey="title"
+          virtualized
+          renderMenuItem={(label: string, item: any) => {
+            return (
+              <div>
+                {label} ({item.count || 0})
+              </div>
+            );
+          }}
           sticky
           style={{ width: '250px' }}
           onChange={(e: string[]) => {
