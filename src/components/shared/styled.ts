@@ -15,6 +15,7 @@ import {
   Panel,
   TagPicker,
   Tag,
+  CheckPicker,
 } from 'rsuite';
 import styled from 'styled-components';
 import TagLink from './TagLink';
@@ -163,7 +164,9 @@ export const StyledCheckbox = styled(Checkbox)`
         span {
           &:before {
             background-color: ${(props) =>
-              props.defaultChecked ? `${props.theme.colors.primary} !important` : undefined};
+              props.checked || props.defaultChecked
+                ? `${props.theme.colors.primary} !important`
+                : undefined};
           }
           &:after {
             border: transparent !important;
@@ -438,12 +441,13 @@ export const ContextMenuPopover = styled(Popover)`
   z-index: 2000;
 `;
 
-export const StyledPopover = styled(Popover)`
+export const StyledPopover = styled(Popover)<{ width?: string }>`
   color: ${(props) => props.theme.colors.popover.color};
   background: ${(props) => props.theme.colors.popover.background};
   border: 1px #3c4043 solid;
   position: absolute;
   z-index: 1000;
+  width: ${(props) => props.width};
 `;
 
 export const SectionTitleWrapper = styled.div`
@@ -522,6 +526,8 @@ export const StyledTagPicker = styled(TagPicker)`
     border-radius: ${(props) => props.theme.other.tag.borderRadius};
   }
 `;
+
+export const StyledCheckPicker = styled(CheckPicker)``;
 
 export const StyledTag = styled(Tag)`
   color: ${(props) => props.theme.colors.tag.text} !important;
