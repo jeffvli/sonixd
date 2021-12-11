@@ -34,6 +34,7 @@ import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList, isCached } from '../../shared/utils';
 import { StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -89,19 +90,33 @@ const PlayerBar = () => {
   }, [player.currentSeek]);
 
   useEffect(() => {
-    if (isDragging) {
-      if (playQueue.currentPlayer === 1) {
-        playersRef.current.player1.audioEl.current.currentTime = manualSeek;
-      } else {
-        playersRef.current.player2.audioEl.current.currentTime = manualSeek;
-      }
+    const debounce = setTimeout(() => {
+      if (isDragging) {
+        if (playQueue.currentPlayer === 1) {
+          if (config.serverType === Server.Jellyfin) {
+            playersRef.current.player1.audioEl.current.pause();
+            playersRef.current.player1.audioEl.current.currentTime = manualSeek;
+            playersRef.current.player1.audioEl.current.play();
+          } else {
+            playersRef.current.player1.audioEl.current.currentTime = manualSeek;
+          }
+        } else if (config.serverType === Server.Jellyfin) {
+          playersRef.current.player2.audioEl.current.pause();
+          playersRef.current.player2.audioEl.current.currentTime = manualSeek;
+          playersRef.current.player2.audioEl.current.play();
+        } else {
+          playersRef.current.player2.audioEl.current.currentTime = manualSeek;
+        }
 
-      // Wait for the seek to catch up, otherwise the bar will bounce back and forth
-      setTimeout(() => {
-        setIsDragging(false);
-      }, 300);
-    }
-  }, [isDragging, manualSeek, playQueue.currentPlayer]);
+        // Wait for the seek to catch up, otherwise the bar will bounce back and forth
+        setTimeout(() => {
+          setIsDragging(false);
+        }, 300);
+      }
+    }, 100);
+
+    return () => clearTimeout(debounce);
+  }, [config.serverType, isDragging, manualSeek, playQueue.currentPlayer]);
 
   const handleClickNext = () => {
     if (playQueue[currentEntryList].length > 0) {

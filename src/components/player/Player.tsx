@@ -112,7 +112,9 @@ const listenHandler = (
     // Detect to start fading when seek is greater than the fade time
     if (currentSeek >= fadeAtTime) {
       nextPlayerRef.current.audioEl.current.play();
-      dispatch(setIsFading(true));
+      if (!playQueue.isFading) {
+        dispatch(setIsFading(true));
+      }
 
       if (volumeFade) {
         const timeLeft = duration - currentSeek;
@@ -217,6 +219,8 @@ const listenHandler = (
       } else {
         nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
       }
+    } else if (playQueue.isFading && currentSeek > playQueue.fadeDuration) {
+      dispatch(setIsFading(false));
     }
   }
   if (playQueue.currentPlayer === player) {
@@ -535,9 +539,12 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         const scrobbleGaplessCondition = !(currentSeek >= 240 || currentSeek >= duration * 0.9);
 
         // Set the reset scrobble condition based on fade or gapless
-        setTimeout(() => {
-          if (playQueue.fadeDuration > 0 ? scrobbleFadeCondition : scrobbleGaplessCondition) {
-            setScrobbled(false);
+        if (playQueue.fadeDuration > 0 ? scrobbleFadeCondition : scrobbleGaplessCondition) {
+          setScrobbled(false);
+
+          // Since the gapless player overlaps as well, we need to set this timeout after the "pause"
+          // event that happens after the previous track ends
+          setTimeout(() => {
             apiController({
               serverType: config.serverType,
               endpoint: 'scrobble',
@@ -561,8 +568,8 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
                     : undefined,
               },
             });
-          }
-        }, 1000);
+          }, 1000);
+        }
       }
     },
     [config.serverType, currentEntryList, playQueue]
@@ -570,25 +577,39 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
 
   const handleOnPause = useCallback(
     async (playerNumber: 1 | 2) => {
-      if (
-        config.serverType === Server.Jellyfin &&
-        playQueue.scrobble &&
-        player.currentSeek > 3 &&
-        playQueue.fadeDuration === 0
-      ) {
-        apiController({
-          serverType: config.serverType,
-          endpoint: 'scrobble',
-          args: {
-            id:
-              playerNumber === 1
-                ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                : playQueue[currentEntryList][playQueue.player2.index]?.id,
-            submission: false,
-            position: player.currentSeek * 10000000,
-            event: 'pause',
-          },
-        });
+      if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
+        // Handle gapless pause
+        if (player.currentSeek > 3 && playQueue.fadeDuration === 0) {
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id:
+                playerNumber === 1
+                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
+              submission: false,
+              position: player.currentSeek * 10000000,
+              event: 'pause',
+            },
+          });
+
+          // Handle crossfade pause
+        } else if (playQueue.fadeDuration !== 0 && !playQueue.isFading) {
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id:
+                playerNumber === 1
+                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
+              submission: false,
+              position: player.currentSeek * 10000000,
+              event: 'pause',
+            },
+          });
+        }
       }
     },
     [config.serverType, currentEntryList, playQueue, player.currentSeek]
