@@ -92,7 +92,7 @@ function ListWrapper({
   handleFavorite,
   musicFolderId,
   initialScrollOffset,
-  onItemsRendered,
+  onScroll,
   refresh,
 }: any) {
   const cardHeight = size + 55;
@@ -156,9 +156,9 @@ function ListWrapper({
       itemSize={cardHeight + gapSize}
       width={width}
       itemData={itemData}
-      initialScrollOffset={initialScrollOffset && initialScrollOffset * (cardHeight + gapSize + 2)}
-      onItemsRendered={({ visibleStartIndex }) => {
-        onItemsRendered(visibleStartIndex);
+      initialScrollOffset={initialScrollOffset || 0}
+      onScroll={({ scrollOffset }) => {
+        onScroll(scrollOffset);
       }}
     >
       {GridCard}
@@ -210,7 +210,7 @@ const GridViewType = ({
           handleFavorite={handleFavorite}
           musicFolderId={musicFolder}
           initialScrollOffset={initialScrollOffset}
-          onItemsRendered={onScroll || (() => {})}
+          onScroll={onScroll || (() => {})}
           refresh={refresh}
         />
       )}
