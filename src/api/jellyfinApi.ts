@@ -634,18 +634,19 @@ export const getSearch = async (options: { query: string; musicFolderId?: string
 
 export const scrobble = async (options: {
   id: string;
-  albumId?: string;
   submission: boolean;
   position?: number;
-  event?: 'pause' | 'unpause';
+  event?: 'pause' | 'unpause' | 'timeupdate';
 }) => {
   if (options.submission) {
+    // Checked by jellyfin-plugin-lastfm for whether or not to send the "finished" scrobble (uses PositionTicks)
     jellyfinApi.post(`/sessions/playing/stopped`, {
       ItemId: options.id,
       IsPaused: true,
       PositionTicks: options.position && Math.round(options.position),
     });
 
+    // Marks the item as played on Jellyfin and adds +1 to the play count for the item (songs only)
     return jellyfinApi.post(`/users/${auth.username}/playeditems/${options.id}`, null, {
       params: {
         datePlayed: moment().format(),
@@ -662,7 +663,7 @@ export const scrobble = async (options: {
     });
   }
 
-  return jellyfinApi.post(`/sessions/playing`, {
+  return jellyfinApi.post(`/sessions/playing/progress`, {
     ItemId: options.id,
     PositionTicks: options.position && Math.round(options.position),
   });
