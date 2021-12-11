@@ -69,14 +69,26 @@ const getStreamUrl = (id: string, container: string, mediaSourceId: string, eTag
 };
 
 const getCoverArtUrl = (item: any, size?: number) => {
-  if (!item.ImageTags?.Primary) {
+  if (!item.ImageTags?.Primary && !item.AlbumPrimaryImageTag) {
     return 'img/placeholder.png';
   }
 
+  if (item.ImageTags.Primary) {
+    return (
+      // eslint-disable-next-line prefer-template
+      `${API_BASE_URL}/Items` +
+      `/${item.Id}` +
+      `/Images/Primary` +
+      (size ? `?width=${size}&height=${size}` : '?height=350') +
+      `&quality=90`
+    );
+  }
+
+  // Fall back to album art if no image embedded
   return (
     // eslint-disable-next-line prefer-template
     `${API_BASE_URL}/Items` +
-    `/${item.Id}` +
+    `/${item.AlbumId}` +
     `/Images/Primary` +
     (size ? `?width=${size}&height=${size}` : '?height=350') +
     `&quality=90`
