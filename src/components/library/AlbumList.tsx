@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
-import { ButtonToolbar } from 'rsuite';
+import { ButtonToolbar, Icon, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import GridViewType from '../viewtypes/GridViewType';
@@ -17,12 +17,19 @@ import {
   toggleRangeSelected,
   clearSelected,
 } from '../../redux/multiSelectSlice';
-import { StyledInputPicker, StyledInputPickerContainer } from '../shared/styled';
+import {
+  StyledIconButton,
+  StyledInputPicker,
+  StyledInputPickerContainer,
+  StyledPopover,
+} from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
-import { setActive } from '../../redux/albumSlice';
+import { setActive, setAdvancedFilters } from '../../redux/albumSlice';
 import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
+import AdvancedFilters from './AdvancedFilters';
+import useAdvancedFilter from '../../hooks/useAdvancedFilter';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
@@ -118,12 +125,14 @@ const AlbumList = () => {
     });
   });
 
-  const filteredData = useSearchQuery(misc.searchQuery, albums, [
+  const searchedData = useSearchQuery(misc.searchQuery, albums, [
     'title',
     'artist',
     'genre',
     'year',
   ]);
+
+  const filteredData = useAdvancedFilter(albums, album.advancedFilters);
 
   useEffect(() => {
     setSortTypes(_.compact(_.concat(ALBUM_SORT_TYPES, genres)));
@@ -241,13 +250,30 @@ const AlbumList = () => {
                     setIsRefresh(false);
                   }}
                 />
-
+                <Whisper
+                  trigger="click"
+                  enterable
+                  placement="bottom"
+                  speaker={
+                    <StyledPopover width="400px">
+                      <AdvancedFilters
+                        filteredData={filteredData}
+                        originalData={albums}
+                        filter={album.advancedFilters}
+                        setAdvancedFilters={setAdvancedFilters}
+                      />
+                    </StyledPopover>
+                  }
+                >
+                  <StyledIconButton size="sm" icon={<Icon icon="filter" />} />
+                </Whisper>
                 <RefreshButton
                   onClick={handleRefresh}
                   size="sm"
                   loading={isRefreshing}
                   width={100}
-                />
+                />{' '}
+                {filteredData?.length}
               </ButtonToolbar>
             </StyledInputPickerContainer>
           }
@@ -263,7 +289,7 @@ const AlbumList = () => {
       {isError && <div>Error: {error}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
-          data={misc.searchQuery !== '' ? filteredData : albums}
+          data={misc.searchQuery !== '' ? searchedData : filteredData}
           tableColumns={config.lookAndFeel.listView.album.columns}
           rowHeight={config.lookAndFeel.listView.album.rowHeight}
           fontSize={config.lookAndFeel.listView.album.fontSize}
@@ -293,7 +319,7 @@ const AlbumList = () => {
       )}
       {!isLoading && !isError && viewType === 'grid' && (
         <GridViewType
-          data={misc.searchQuery !== '' ? filteredData : albums}
+          data={misc.searchQuery !== '' ? searchedData : filteredData}
           cardTitle={{
             prefix: '/library/album',
             property: 'title',
