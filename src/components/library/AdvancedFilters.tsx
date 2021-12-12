@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { ButtonToolbar, Icon, RadioGroup } from 'rsuite';
@@ -174,7 +173,18 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         <ButtonToolbar>
           <StyledCheckPicker
             container={() => genreFilterPickerContainerRef.current}
-            data={availableGenres}
+            data={_.concat(
+              availableGenres,
+              _.compact(
+                filter.properties.genre.list.map((genre: any) => {
+                  if (!_.includes(_.map(availableGenres, 'title'), genre)) {
+                    return { title: genre };
+                  }
+
+                  return undefined;
+                })
+              )
+            )}
             value={filter.properties.genre.list}
             labelKey="title"
             valueKey="title"
@@ -235,7 +245,18 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         <ButtonToolbar>
           <StyledCheckPicker
             container={() => artistFilterPickerContainerRef.current}
-            data={availableArtists}
+            data={_.concat(
+              availableArtists,
+              _.compact(
+                filter.properties.artist.list.map((artistId: any) => {
+                  if (!_.includes(_.map(availableArtists, 'id'), artistId)) {
+                    return { title: artistId, id: artistId };
+                  }
+
+                  return undefined;
+                })
+              )
+            )}
             value={filter.properties.artist.list}
             labelKey="title"
             valueKey="id"
