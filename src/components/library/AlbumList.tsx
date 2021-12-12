@@ -138,6 +138,7 @@ const AlbumList = () => {
     byArtistBaseData,
     byGenreData,
     byStarredData,
+    byYearData,
   } = useAdvancedFilter(albums, album.advancedFilters);
 
   useEffect(() => {
@@ -261,7 +262,7 @@ const AlbumList = () => {
                   enterable
                   placement="bottom"
                   speaker={
-                    <StyledPopover width="300px">
+                    <StyledPopover width="275px" opacity={0.97}>
                       <AdvancedFilters
                         filteredData={{
                           filteredData,
@@ -269,6 +270,7 @@ const AlbumList = () => {
                           byArtistBaseData,
                           byGenreData,
                           byStarredData,
+                          byYearData,
                         }}
                         originalData={albums}
                         filter={album.advancedFilters}
