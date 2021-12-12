@@ -8,6 +8,7 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
   const [byGenreData, setByGenreData] = useState<any[]>([]);
   const [byArtistData, setByArtistData] = useState<any[]>([]);
   const [byArtistBaseData, setByArtistBaseData] = useState<any[]>([]);
+  const [byYearData, setByYearData] = useState<any[]>([]);
 
   const [filterProps, setFilterProps] = useState(filters);
 
@@ -86,17 +87,41 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
             })
           : filteredByStarred;
 
+      const filteredByYear = !(
+        filterProps.properties.year.from === 0 && filterProps.properties.year.to === 0
+      )
+        ? (filteredByArtists || []).filter((entry) => {
+            if (filterProps.properties.year.from !== 0 && filterProps.properties.year.to === 0) {
+              return entry.year && entry.year >= filterProps.properties.year.from;
+            }
+
+            if (filterProps.properties.year.from === 0 && filterProps.properties.year.to !== 0) {
+              return entry.year && entry.year <= filterProps.properties.year.to;
+            }
+
+            if (filterProps.properties.year.from !== 0 && filterProps.properties.year.to !== 0) {
+              return (
+                entry.year &&
+                entry.year >= filterProps.properties.year.from &&
+                entry.year <= filterProps.properties.year.to
+              );
+            }
+            return undefined;
+          })
+        : filteredByArtists;
+
       setByStarredData(_.compact(_.uniqBy(filteredByStarred, 'uniqueId')));
       setByGenreData(_.compact(_.uniqBy(filteredByGenres, 'uniqueId')));
       setByArtistData(_.compact(_.uniqBy(filteredByArtists, 'uniqueId')));
       setByArtistBaseData(_.compact(_.uniqBy(filteredByArtistsBase, 'uniqueId')));
-      setFilteredData(_.compact(_.uniqBy(filteredByArtists, 'uniqueId')));
+      setByYearData(_.compact(_.uniqBy(filteredByYear, 'uniqueId')));
+      setFilteredData(_.compact(_.uniqBy(filteredByYear, 'uniqueId')));
     } else {
       setFilteredData(data);
     }
   }, [data, filterProps, filters]);
 
-  return { filteredData, byStarredData, byGenreData, byArtistData, byArtistBaseData };
+  return { filteredData, byStarredData, byGenreData, byArtistData, byArtistBaseData, byYearData };
 };
 
 export default useAdvancedFilter;

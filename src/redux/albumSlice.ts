@@ -19,6 +19,10 @@ export interface AdvancedFilters {
       list: any[];
       type: 'and' | 'or';
     };
+    year: {
+      from: number;
+      to: number;
+    };
   };
 }
 
@@ -38,6 +42,10 @@ const initialState: AlbumPage = {
         list: [],
         type: 'and',
       },
+      year: {
+        from: 0,
+        to: 0,
+      },
     },
   },
 };
@@ -52,7 +60,10 @@ const albumSlice = createSlice({
 
     setAdvancedFilters: (
       state,
-      action: PayloadAction<{ filter: 'enabled' | 'starred' | 'genre' | 'artist'; value: any }>
+      action: PayloadAction<{
+        filter: 'enabled' | 'starred' | 'genre' | 'artist' | 'year';
+        value: any;
+      }>
     ) => {
       if (action.payload.filter === 'enabled') {
         state.advancedFilters.enabled = action.payload.value;
@@ -68,6 +79,10 @@ const albumSlice = createSlice({
 
       if (action.payload.filter === 'artist') {
         state.advancedFilters.properties.artist = action.payload.value;
+      }
+
+      if (action.payload.filter === 'year') {
+        state.advancedFilters.properties.year = action.payload.value;
       }
     },
   },

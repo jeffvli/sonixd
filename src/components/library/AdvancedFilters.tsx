@@ -1,17 +1,20 @@
 import _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
-import { ButtonToolbar, RadioGroup } from 'rsuite';
+import { ButtonToolbar, ControlLabel, Divider, FlexboxGrid, RadioGroup } from 'rsuite';
 import styled from 'styled-components';
 import { useAppDispatch } from '../../redux/hooks';
 import {
+  StyledButton,
   StyledCheckbox,
   StyledCheckPicker,
+  StyledInputNumber,
   StyledInputPickerContainer,
   StyledRadio,
 } from '../shared/styled';
 
-const FilterHeader = styled.h1`
+const FilterHeader = styled.div`
   font-size: 16px;
+  font-weight: bold;
   line-height: unset;
 `;
 
@@ -28,7 +31,8 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
   // 1. byStarredData
   // 2. byGenreData
   // 3. byArtistData
-  // 4. filteredData
+  // 4. byYearData
+  // 5. filteredData <- Same as previous (byYearData)
 
   useEffect(() => {
     if (filter.properties.artist.type === 'and') {
@@ -265,6 +269,67 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           />
         </ButtonToolbar>
       </StyledInputPickerContainer>
+      <FilterHeader>
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item>Years</FlexboxGrid.Item>
+          <FlexboxGrid.Item>
+            <StyledButton
+              size="xs"
+              appearance="primary"
+              onClick={() => {
+                dispatch(
+                  setAdvancedFilters({
+                    filter: 'year',
+                    value: { from: 0, to: 0 },
+                  })
+                );
+              }}
+            >
+              Reset
+            </StyledButton>
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </FilterHeader>
+      <FlexboxGrid justify="space-between">
+        <FlexboxGrid.Item>
+          <ControlLabel>From</ControlLabel>
+          <StyledInputNumber
+            width={100}
+            min={0}
+            max={3000}
+            step={1}
+            defaultValue={filter.properties.year.from}
+            value={filter.properties.year.from}
+            onChange={(e: number) => {
+              dispatch(
+                setAdvancedFilters({
+                  filter: 'year',
+                  value: { ...filter.properties.year, from: Number(e) },
+                })
+              );
+            }}
+          />
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item>
+          <ControlLabel>To</ControlLabel>
+          <StyledInputNumber
+            width={100}
+            min={0}
+            max={3000}
+            step={1}
+            defaultValue={filter.properties.year.to}
+            value={filter.properties.year.to}
+            onChange={(e: number) => {
+              dispatch(
+                setAdvancedFilters({
+                  filter: 'year',
+                  value: { ...filter.properties.year, to: Number(e) },
+                })
+              );
+            }}
+          />
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
     </div>
   );
 };
