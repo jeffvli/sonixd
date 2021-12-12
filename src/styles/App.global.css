@@ -43,6 +43,10 @@ body {
   padding: 0px;
 }
 
+.rs-popover.in {
+  opacity: 0.97 !important;
+}
+
 .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
   display: none;
 }
