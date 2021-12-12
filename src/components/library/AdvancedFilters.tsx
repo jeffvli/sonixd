@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
-import { ButtonToolbar, Icon, RadioGroup } from 'rsuite';
+import { ButtonToolbar, RadioGroup } from 'rsuite';
 import styled from 'styled-components';
 import { useAppDispatch } from '../../redux/hooks';
 import {
   StyledCheckbox,
   StyledCheckPicker,
-  StyledIconButton,
   StyledInputPickerContainer,
   StyledRadio,
 } from '../shared/styled';
@@ -189,7 +188,6 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             labelKey="title"
             valueKey="title"
             virtualized
-            cleanable={false}
             renderMenuItem={(label: string, item: any) => {
               return (
                 <div>
@@ -204,20 +202,6 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
                 setAdvancedFilters({
                   filter: 'genre',
                   value: { ...filter.properties.genre, list: e },
-                })
-              );
-            }}
-          />
-          <StyledIconButton
-            appearance={filter.properties.genre.list.length > 0 ? 'primary' : 'subtle'}
-            disabled={filter.properties.genre.list.length === 0}
-            size="xs"
-            icon={<Icon icon="close" />}
-            onClick={() => {
-              dispatch(
-                setAdvancedFilters({
-                  filter: 'genre',
-                  value: { ...filter.properties.genre, list: [] },
                 })
               );
             }}
@@ -261,7 +245,6 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             labelKey="title"
             valueKey="id"
             virtualized
-            cleanable={false}
             renderMenuItem={(label: string, item: any) => {
               return (
                 <div>
@@ -276,20 +259,6 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
                 setAdvancedFilters({
                   filter: 'artist',
                   value: { ...filter.properties.artist, list: e },
-                })
-              );
-            }}
-          />
-          <StyledIconButton
-            appearance={filter.properties.artist.list.length > 0 ? 'primary' : 'subtle'}
-            disabled={filter.properties.artist.list.length === 0}
-            size="xs"
-            icon={<Icon icon="close" />}
-            onClick={() => {
-              dispatch(
-                setAdvancedFilters({
-                  filter: 'artist',
-                  value: { ...filter.properties.artist, list: [] },
                 })
               );
             }}
