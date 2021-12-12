@@ -42,8 +42,21 @@ const albumSlice = createSlice({
       state.active = action.payload;
     },
 
-    setAdvancedFilters: (state, action: PayloadAction<any>) => {
-      state.advancedFilters = action.payload;
+    setAdvancedFilters: (
+      state,
+      action: PayloadAction<{ filter: 'enabled' | 'starred' | 'genre' | 'artist'; value: any }>
+    ) => {
+      if (action.payload.filter === 'enabled') {
+        state.advancedFilters.enabled = action.payload.value;
+      }
+
+      if (action.payload.filter === 'starred') {
+        state.advancedFilters.properties.starred = action.payload.value;
+      }
+
+      if (action.payload.filter === 'genre') {
+        state.advancedFilters.properties.genre = action.payload.value;
+      }
     },
   },
 });

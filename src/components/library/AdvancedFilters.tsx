@@ -60,7 +60,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         defaultChecked={filter.enabled}
         checked={filter.enabled}
         onChange={(_v: any, e: boolean) => {
-          dispatch(setAdvancedFilters({ ...filter, enabled: e }));
+          dispatch(setAdvancedFilters({ filter: 'enabled', value: e }));
         }}
       >
         Enabled
@@ -71,11 +71,8 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         onChange={(_v: any, e: boolean) => {
           dispatch(
             setAdvancedFilters({
-              ...filter,
-              properties: {
-                ...filter.properties,
-                starred: e,
-              },
+              filter: 'starred',
+              value: e,
             })
           );
         }}
@@ -89,16 +86,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         defaultValue={filter.properties.genre.type}
         onChange={(e: string) => {
           dispatch(
-            setAdvancedFilters({
-              ...filter,
-              properties: {
-                ...filter.properties,
-                genre: {
-                  ...filter.properties.genre,
-                  type: e,
-                },
-              },
-            })
+            setAdvancedFilters({ filter: 'genre', value: { ...filter.properties.genre, type: e } })
           );
         }}
       >
@@ -125,14 +113,8 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           onChange={(e: string[]) => {
             dispatch(
               setAdvancedFilters({
-                ...filter,
-                properties: {
-                  ...filter.properties,
-                  genre: {
-                    ...filter.properties.genre,
-                    list: e,
-                  },
-                },
+                filter: 'genre',
+                value: { ...filter.properties.genre, list: e },
               })
             );
           }}
