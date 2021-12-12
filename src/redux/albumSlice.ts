@@ -15,6 +15,10 @@ export interface AdvancedFilters {
       list: any[];
       type: 'and' | 'or';
     };
+    artist: {
+      list: any[];
+      type: 'and' | 'or';
+    };
   };
 }
 
@@ -27,6 +31,10 @@ const initialState: AlbumPage = {
     properties: {
       starred: false,
       genre: {
+        list: [],
+        type: 'and',
+      },
+      artist: {
         list: [],
         type: 'and',
       },
@@ -56,6 +64,10 @@ const albumSlice = createSlice({
 
       if (action.payload.filter === 'genre') {
         state.advancedFilters.properties.genre = action.payload.value;
+      }
+
+      if (action.payload.filter === 'artist') {
+        state.advancedFilters.properties.artist = action.payload.value;
       }
     },
   },

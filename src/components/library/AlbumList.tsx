@@ -132,7 +132,10 @@ const AlbumList = () => {
     'year',
   ]);
 
-  const filteredData = useAdvancedFilter(albums, album.advancedFilters);
+  const { filteredData, byArtistData, byGenreData, byStarredData } = useAdvancedFilter(
+    albums,
+    album.advancedFilters
+  );
 
   useEffect(() => {
     setSortTypes(_.compact(_.concat(ALBUM_SORT_TYPES, genres)));
@@ -257,7 +260,7 @@ const AlbumList = () => {
                   speaker={
                     <StyledPopover width="400px">
                       <AdvancedFilters
-                        filteredData={filteredData}
+                        filteredData={{ filteredData, byArtistData, byGenreData, byStarredData }}
                         originalData={albums}
                         filter={album.advancedFilters}
                         setAdvancedFilters={setAdvancedFilters}
