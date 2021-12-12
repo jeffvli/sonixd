@@ -10,6 +10,7 @@ import {
   StyledInputNumber,
   StyledInputPickerContainer,
   StyledRadio,
+  StyledToggle,
 } from '../shared/styled';
 
 const FilterHeader = styled.div`
@@ -134,16 +135,23 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
 
   return (
     <div>
-      <FilterHeader>Filters</FilterHeader>
-      <StyledCheckbox
-        defaultChecked={filter.enabled}
-        checked={filter.enabled}
-        onChange={(_v: any, e: boolean) => {
-          dispatch(setAdvancedFilters({ filter: 'enabled', value: e }));
-        }}
-      >
-        Enabled
-      </StyledCheckbox>
+      <FilterHeader>
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item>Filters</FlexboxGrid.Item>
+          <FlexboxGrid.Item>
+            <StyledToggle
+              size="md"
+              checkedChildren="On"
+              unCheckedChildren="Off"
+              defaultChecked={filter.enabled}
+              checked={filter.enabled}
+              onChange={(e: boolean) => {
+                dispatch(setAdvancedFilters({ filter: 'enabled', value: e }));
+              }}
+            />
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </FilterHeader>
       <StyledCheckbox
         defaultChecked={filter.properties.starred}
         checked={filter.properties.starred}
@@ -158,7 +166,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
       >
         Is favorite
       </StyledCheckbox>
-      <br />
+      <Divider />
       <FilterHeader>Genres</FilterHeader>
       <RadioGroup
         inline
@@ -212,7 +220,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           />
         </ButtonToolbar>
       </StyledInputPickerContainer>
-      <br />
+      <Divider />
       <FilterHeader>Artists</FilterHeader>
       <RadioGroup
         inline
@@ -269,6 +277,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           />
         </ButtonToolbar>
       </StyledInputPickerContainer>
+      <Divider />
       <FilterHeader>
         <FlexboxGrid justify="space-between">
           <FlexboxGrid.Item>Years</FlexboxGrid.Item>
