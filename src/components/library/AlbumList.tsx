@@ -261,7 +261,7 @@ const AlbumList = () => {
                   enterable
                   placement="bottom"
                   speaker={
-                    <StyledPopover width="400px">
+                    <StyledPopover width="300px">
                       <AdvancedFilters
                         filteredData={{
                           filteredData,
