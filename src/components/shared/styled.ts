@@ -16,6 +16,7 @@ import {
   TagPicker,
   Tag,
   CheckPicker,
+  Toggle,
 } from 'rsuite';
 import styled from 'styled-components';
 import TagLink from './TagLink';
@@ -174,6 +175,14 @@ export const StyledCheckbox = styled(Checkbox)`
         }
       }
     }
+  }
+`;
+
+export const StyledToggle = styled(Toggle)`
+  background-color: ${(props) => (props.checked ? props.theme.colors.primary : '')} !important;
+
+  .rs-btn-toggle-inner {
+    color: ${(props) => (props.checked ? props.theme.colors.button.primary.color : '')} !important;
   }
 `;
 
