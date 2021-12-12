@@ -7,6 +7,7 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
   const [byStarredData, setByStarredData] = useState<any[]>([]);
   const [byGenreData, setByGenreData] = useState<any[]>([]);
   const [byArtistData, setByArtistData] = useState<any[]>([]);
+  const [byArtistBaseData, setByArtistBaseData] = useState<any[]>([]);
 
   const [filterProps, setFilterProps] = useState(filters);
 
@@ -64,16 +65,38 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
             })
           : filteredByGenres;
 
+      // Instead of filtering from the previous (genre), start from the starred filter
+      const filteredByArtistsBase =
+        filterProps.properties.artist.list.length > 0
+          ? (filteredByStarred || []).filter((entry) => {
+              const entryArtistIds = _.map(entry.artist, 'id');
+
+              if (filterProps.properties.artist.type === 'or') {
+                return entryArtistIds.some((artistId) => artistId.match(artistRegex));
+              }
+
+              const matches = [];
+              for (let i = 0; i < filterProps.properties.artist.list.length; i += 1) {
+                if (entryArtistIds.includes(filterProps.properties.artist.list[i])) {
+                  matches.push(entry);
+                }
+              }
+
+              return matches.length === filterProps.properties.artist.list.length;
+            })
+          : filteredByStarred;
+
       setByStarredData(_.compact(_.uniqBy(filteredByStarred, 'uniqueId')));
       setByGenreData(_.compact(_.uniqBy(filteredByGenres, 'uniqueId')));
       setByArtistData(_.compact(_.uniqBy(filteredByArtists, 'uniqueId')));
+      setByArtistBaseData(_.compact(_.uniqBy(filteredByArtistsBase, 'uniqueId')));
       setFilteredData(_.compact(_.uniqBy(filteredByArtists, 'uniqueId')));
     } else {
       setFilteredData(data);
     }
   }, [data, filterProps, filters]);
 
-  return { filteredData, byStarredData, byGenreData, byArtistData };
+  return { filteredData, byStarredData, byGenreData, byArtistData, byArtistBaseData };
 };
 
 export default useAdvancedFilter;

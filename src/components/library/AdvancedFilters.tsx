@@ -21,31 +21,64 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
   const dispatch = useAppDispatch();
   const [availableGenres, setAvailableGenres] = useState<any[]>([]);
   const [availableArtists, setAvailableArtists] = useState<any[]>([]);
-  const [data, setData] = useState<any[]>([]);
+  const [genreListData, setGenreListData] = useState<any[]>([]);
+  const [artistListData, setArtistListData] = useState<any[]>([]);
   const genreFilterPickerContainerRef = useRef<any>();
   const artistFilterPickerContainerRef = useRef<any>();
 
+  // Filter flow from TOP to BOTTOM (see useAdvancedFilter hook)
+  // 1. byStarredData
+  // 2. byGenreData
+  // 3. byArtistData
+  // 4. filteredData
+
   useEffect(() => {
-    if (
-      filter.properties.artist.type === 'or' &&
-      filter.properties.artist.list.length > 0 &&
-      filter.properties.genre.list.length > 0
-    ) {
-      return setData(filteredData.byGenreData);
+    if (filter.properties.artist.type === 'and') {
+      return setArtistListData(filteredData.byArtistData);
     }
 
-    if (filter.properties.artist.type === 'or' && filter.properties.artist.list.length > 0) {
-      return setData(filteredData.byStarredData);
+    if (filter.properties.starred) {
+      return setArtistListData(filteredData.byGenreData);
     }
 
-    if (filter.properties.genre.list.length > 0) {
-      return setData(filteredData.filteredData);
+    if (filter.properties.artist.type === 'or') {
+      return setArtistListData(filteredData.byGenreData);
     }
 
-    return setData(originalData);
+    return setArtistListData(originalData);
   }, [
     filter.properties.artist.list.length,
     filter.properties.artist.type,
+    filter.properties.starred,
+    filteredData.byArtistData,
+    filteredData.byGenreData,
+    originalData,
+  ]);
+
+  useEffect(() => {
+    if (filter.properties.starred) {
+      if (filter.properties.genre.type === 'and') {
+        return setGenreListData(filteredData.filteredData);
+      }
+      return setGenreListData(filteredData.byArtistData);
+    }
+
+    if (filter.properties.artist.list.length > 0) {
+      if (filter.properties.genre.type === 'and') {
+        return setGenreListData(filteredData.filteredData);
+      }
+      return setGenreListData(filteredData.byArtistBaseData);
+    }
+
+    if (filter.properties.genre.list.length > 0) {
+      if (filter.properties.genre.type === 'and') {
+        return setGenreListData(filteredData.byGenreData);
+      }
+    }
+
+    return setGenreListData(originalData);
+  }, [
+    filter.properties.artist.list.length,
     filter.properties.genre.list.length,
     filter.properties.genre.type,
     filter.properties.starred,
@@ -54,7 +87,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
   ]);
 
   useEffect(() => {
-    const allGenres = _.flatten(_.map(data, 'genre'));
+    const allGenres = _.flatten(_.map(genreListData, 'genre'));
     const counts = _.countBy(allGenres, 'title');
     const uniqueGenres = _.orderBy(_.uniqBy(allGenres, 'title'), [
       (entry: any) => {
@@ -73,10 +106,10 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         };
       })
     );
-  }, [data, filter.properties.genre.type, filter.properties.starred, filteredData, originalData]);
+  }, [genreListData]);
 
   useEffect(() => {
-    const allArtists = _.flatten(_.map(data, 'artist'));
+    const allArtists = _.flatten(_.map(artistListData, 'artist'));
     const counts = _.countBy(allArtists, 'id');
     const uniqueArtists = _.orderBy(_.uniqBy(allArtists, 'id'), [
       (entry: any) => {
@@ -95,7 +128,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         };
       })
     );
-  }, [data, filter.properties.artist.type, filter.properties.starred, filteredData, originalData]);
+  }, [artistListData]);
 
   return (
     <div>
@@ -166,7 +199,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             }}
           />
           <StyledIconButton
-            appearance={filter.properties.genre.list.length > 0 ? 'primary' : ''}
+            appearance={filter.properties.genre.list.length > 0 ? 'primary' : 'subtle'}
             disabled={filter.properties.genre.list.length === 0}
             size="xs"
             icon={<Icon icon="close" />}
@@ -227,7 +260,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             }}
           />
           <StyledIconButton
-            appearance={filter.properties.artist.list.length > 0 ? 'primary' : ''}
+            appearance={filter.properties.artist.list.length > 0 ? 'primary' : 'subtle'}
             disabled={filter.properties.artist.list.length === 0}
             size="xs"
             icon={<Icon icon="close" />}
