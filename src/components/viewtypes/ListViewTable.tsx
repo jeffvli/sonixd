@@ -1058,6 +1058,12 @@ const ListViewTable = ({
                           ) : (
                             formatSongDuration(rowData[column.dataKey])
                           )
+                        ) : column.dataKey === 'public' ? (
+                          rowData[column.dataKey] ? (
+                            'Public'
+                          ) : (
+                            'Private'
+                          )
                         ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
                           <>
                             {rowData[column.dataKey] ? (
