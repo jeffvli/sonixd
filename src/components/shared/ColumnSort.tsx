@@ -10,6 +10,7 @@ const ColumnSort = ({
   setSortType,
   setSortColumn,
   clearSortType,
+  disabledItemValues,
 }: any) => {
   const sortFilterPickerContainerRef = useRef<any>();
 
@@ -42,6 +43,7 @@ const ColumnSort = ({
           value={sortColumn}
           labelKey="label"
           valueKey="dataKey"
+          disabledItemValues={disabledItemValues}
           virtualized
           cleanable={false}
           style={{ width: '250px' }}

@@ -257,6 +257,9 @@ const AlbumList = () => {
                   value={album.active.filter}
                   groupBy="role"
                   data={sortTypes}
+                  disabledItemValues={
+                    config.serverType === Server.Jellyfin ? ['frequent', 'recent'] : []
+                  }
                   cleanable={false}
                   placeholder="Sort Type"
                   onChange={async (value: string) => {
@@ -317,6 +320,9 @@ const AlbumList = () => {
                         sortColumns={sortColumns}
                         sortColumn={album.advancedFilters.properties.sort.column}
                         sortType={album.advancedFilters.properties.sort.type}
+                        disabledItemValues={
+                          config.serverType === Server.Jellyfin ? ['playCount', 'userRating'] : []
+                        }
                         clearSortType={() =>
                           dispatch(
                             setAdvancedFilters({
