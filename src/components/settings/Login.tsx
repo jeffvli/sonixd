@@ -34,11 +34,19 @@ const Login = () => {
 
     try {
       const testConnection = legacyAuth
+        ? serverType === 'subsonic'
+          ? await axios.get(
+              `${cleanServerName}/rest/getScanStatus?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
+            )
+          : await axios.get(
+              `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
+            )
+        : serverType === 'subsonic'
         ? await axios.get(
-            `${cleanServerName}/rest/getScanStatus?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
+            `${cleanServerName}/rest/getScanStatus?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
           )
         : await axios.get(
-            `${cleanServerName}/rest/getScanStatus?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
+            `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
           );
 
       // Since a valid request will return a 200 response, we need to check that there
@@ -58,7 +66,7 @@ const Login = () => {
 
     localStorage.setItem('server', cleanServerName);
     localStorage.setItem('serverBase64', btoa(cleanServerName));
-    localStorage.setItem('serverType', 'subsonic');
+    localStorage.setItem('serverType', serverType);
     localStorage.setItem('username', userName);
     localStorage.setItem('password', password);
     localStorage.setItem('salt', salt);
@@ -66,7 +74,7 @@ const Login = () => {
 
     settings.setSync('server', cleanServerName);
     settings.setSync('serverBase64', btoa(cleanServerName));
-    settings.setSync('serverType', 'subsonic');
+    settings.setSync('serverType', serverType);
     settings.setSync('username', userName);
     settings.setSync('password', password);
     settings.setSync('salt', salt);
@@ -141,11 +149,12 @@ const Login = () => {
               data={[
                 { label: 'Subsonic', value: 'subsonic' },
                 { label: 'Jellyfin', value: 'jellyfin' },
+                { label: 'Funkwhale', value: 'funkwhale' },
               ]}
               defaultValue="subsonic"
               valueKey="value"
               labelKey="label"
-              onChange={(e: 'subsonic' | 'jellyfin') => setServerType(e)}
+              onChange={(e: 'subsonic' | 'jellyfin' | 'funkwhale') => setServerType(e)}
             />
           </StyledInputPickerContainer>
           <br />
@@ -174,7 +183,7 @@ const Login = () => {
             onChange={(e: string) => setPassword(e)}
           />
           <br />
-          {serverType === 'subsonic' && (
+          {serverType !== 'jellyfin' && (
             <>
               <StyledCheckbox
                 defaultChecked={
@@ -199,7 +208,7 @@ const Login = () => {
             type="submit"
             color="green"
             block
-            onClick={serverType === 'subsonic' ? handleConnect : handleConnectJellyfin}
+            onClick={serverType !== 'jellyfin' ? handleConnect : handleConnectJellyfin}
           >
             Connect
           </Button>
