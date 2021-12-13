@@ -7,14 +7,37 @@ import {
   moveSelectedToTop,
   moveSelectedUp,
 } from '../shared/utils';
+import { Sort } from '../types';
 import { Entry } from './playQueueSlice';
 
 export interface Playlist {
+  active: {
+    list: {
+      sort: Sort;
+    };
+    page: {
+      sort: Sort;
+    };
+  };
   entry: Entry[];
   sortedEntry: Entry[];
 }
 
 const initialState: Playlist = {
+  active: {
+    list: {
+      sort: {
+        column: undefined,
+        type: 'asc',
+      },
+    },
+    page: {
+      sort: {
+        column: undefined,
+        type: 'asc',
+      },
+    },
+  },
   entry: [],
   sortedEntry: [],
 };
@@ -23,6 +46,16 @@ const playlistSlice = createSlice({
   name: 'playlist',
   initialState,
   reducers: {
+    setSort: (state, action: PayloadAction<{ type: 'list' | 'page'; value: Sort }>) => {
+      if (action.payload.type === 'list') {
+        state.active.list.sort = action.payload.value;
+      }
+
+      if (action.payload.type === 'page') {
+        state.active.page.sort = action.payload.value;
+      }
+    },
+
     setPlaylistData: (state, action: PayloadAction<Entry[]>) => {
       state.entry = action.payload;
     },
@@ -129,5 +162,6 @@ export const {
   moveToTop,
   setPlaylistStar,
   setPlaylistRate,
+  setSort,
 } = playlistSlice.actions;
 export default playlistSlice.reducer;

@@ -9,10 +9,16 @@ import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
-import { StyledButton, StyledInput, StyledInputGroup, StyledPopover } from '../shared/styled';
+import {
+  StyledButton,
+  StyledInput,
+  StyledInputGroup,
+  StyledPopover,
+  StyledTag,
+} from '../shared/styled';
 import { errorMessages, isFailedResponse } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
-import { AddPlaylistButton } from '../shared/ToolbarButtons';
+import { AddPlaylistButton, FilterButton } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   clearSelected,
@@ -21,6 +27,10 @@ import {
   toggleSelected,
 } from '../../redux/multiSelectSlice';
 import { apiController } from '../../api/controller';
+import useColumnSort from '../../hooks/useColumnSort';
+import { Item } from '../../types';
+import { setSort } from '../../redux/playlistSlice';
+import ColumnSortPopover from '../shared/ColumnSortPopover';
 
 const PlaylistList = () => {
   const dispatch = useAppDispatch();
@@ -28,6 +38,7 @@ const PlaylistList = () => {
   const queryClient = useQueryClient();
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
+  const playlist = useAppSelector((state) => state.playlist);
   const playlistTriggerRef = useRef<any>();
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
@@ -35,6 +46,11 @@ const PlaylistList = () => {
     apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
   );
   const filteredData = useSearchQuery(misc.searchQuery, playlists, ['title', 'comment', 'owner']);
+  const { sortedData, sortColumns } = useColumnSort(
+    playlists,
+    Item.Playlist,
+    playlist.active.list.sort
+  );
 
   const handleCreatePlaylist = async (name: string) => {
     try {
@@ -94,7 +110,61 @@ const PlaylistList = () => {
       hideDivider
       header={
         <GenericPageHeader
-          title="Playlists"
+          title={
+            <>
+              Playlists{' '}
+              <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                {sortedData?.length || '...'}
+              </StyledTag>
+            </>
+          }
+          sidetitle={
+            <>
+              <ColumnSortPopover
+                sortColumns={sortColumns}
+                sortColumn={playlist.active.list.sort.column}
+                sortType={playlist.active.list.sort.type}
+                clearSortType={() =>
+                  dispatch(
+                    setSort({
+                      type: 'list',
+                      value: {
+                        ...playlist.active.list.sort,
+                        column: undefined,
+                      },
+                    })
+                  )
+                }
+                setSortType={(e: string) =>
+                  dispatch(
+                    setSort({
+                      type: 'list',
+                      value: {
+                        ...playlist.active.list.sort,
+                        type: e,
+                      },
+                    })
+                  )
+                }
+                setSortColumn={(e: string) =>
+                  dispatch(
+                    setSort({
+                      type: 'list',
+                      value: {
+                        ...playlist.active.list.sort,
+                        column: e,
+                      },
+                    })
+                  )
+                }
+              >
+                <FilterButton
+                  size="sm"
+                  appearance={playlist.active.list.sort.column ? 'primary' : 'subtle'}
+                />
+              </ColumnSortPopover>
+            </>
+          }
           subtitle={
             <Whisper
               ref={playlistTriggerRef}
@@ -149,7 +219,7 @@ const PlaylistList = () => {
     >
       {viewType === 'list' && (
         <ListViewType
-          data={misc.searchQuery === '' ? playlists : filteredData}
+          data={misc.searchQuery === '' ? sortedData : filteredData}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           tableColumns={config.lookAndFeel.listView.playlist.columns}
@@ -178,7 +248,7 @@ const PlaylistList = () => {
       )}
       {viewType === 'grid' && (
         <GridViewType
-          data={misc.searchQuery === '' ? playlists : filteredData}
+          data={misc.searchQuery === '' ? sortedData : filteredData}
           cardTitle={{
             prefix: 'playlist',
             property: 'title',
