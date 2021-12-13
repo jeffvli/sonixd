@@ -359,6 +359,11 @@ export const StyledInputPickerContainer = styled.div`
       }
     }
   }
+
+  .rs-picker-search-bar-input {
+    background-color: ${(props) => props.theme.colors.input.background} !important;
+    border-color: #383838 !important;
+  }
 `;
 
 export const StyledInputPicker = styled(InputPicker)<{ width?: number }>`
@@ -536,7 +541,47 @@ export const StyledTagPicker = styled(TagPicker)`
   }
 `;
 
-export const StyledCheckPicker = styled(CheckPicker)``;
+export const StyledCheckPicker = styled(CheckPicker)`
+  border: 1px #3c3f43 solid !important;
+  border-radius: ${(props) => props.theme.other.input.borderRadius} !important;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: ${(props) => props.theme.colors.primary} !important;
+  }
+
+  a {
+    background: ${(props) => props.theme.colors.input.background} !important;
+
+    :hover {
+      background: ${(props) => props.theme.colors.input.backgroundHover} !important;
+    }
+
+    :active {
+      background: ${(props) => props.theme.colors.input.backgroundActive} !important;
+    }
+  }
+
+  .rs-picker-toggle {
+    border-radius: ${(props) => props.theme.other.input.borderRadius};
+  }
+
+  .hover {
+    border: ${(props) => `1px solid ${props.theme.colors.primary} !important`};
+  }
+
+  a {
+    span {
+      color: ${(props) => props.theme.colors.layout.page.color} !important;
+    }
+  }
+
+  .rs-picker-value-count {
+    background: ${(props) => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.button.primary.color} !important;
+  }
+`;
 
 export const StyledTag = styled(Tag)`
   color: ${(props) => props.theme.colors.tag.text} !important;
