@@ -13,7 +13,7 @@ import {
   StyledToggle,
 } from '../shared/styled';
 
-const FilterHeader = styled.div`
+export const FilterHeader = styled.div`
   font-size: 16px;
   font-weight: bold;
   line-height: unset;
