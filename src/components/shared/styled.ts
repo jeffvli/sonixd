@@ -255,7 +255,8 @@ export const StyledIconButton = styled(IconButton)`
 
 export const StyledNavItem = styled(Nav.Item)`
   a {
-    border-radius: ${(props) => props.theme.other.button.borderRadius} !important;
+    text-align: center;
+    border-radius: 0px !important;
     color: ${(props) =>
       props.active ? props.theme.colors.primary : props.theme.colors.nav.color} !important;
 
