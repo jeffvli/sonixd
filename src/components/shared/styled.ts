@@ -303,6 +303,10 @@ export const StyledInputPickerContainer = styled.div`
     }
   }
 
+  .rs-picker-select-menu-item-disabled {
+    opacity: 0.5 !important;
+  }
+
   .rs-picker-select-menu-item-focus {
     color: ${(props) => props.theme.colors.input.color};
     background: ${(props) => props.theme.colors.input.backgroundHover};
