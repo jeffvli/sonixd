@@ -39,14 +39,14 @@ const MUSIC_COLUMNS = [
 ];
 
 const PLAYLIST_COLUMNS = [
-  { label: 'Comment', dataKey: 'comment' },
   { label: 'Created', dataKey: 'created' },
+  { label: 'Description', dataKey: 'comment' },
   { label: 'Duration', dataKey: 'duration' },
-  { label: 'Modified', dataKey: 'modified' },
+  { label: 'Modified', dataKey: 'changed' },
   { label: 'Owner', dataKey: 'owner' },
-  { label: 'Public', dataKey: 'public' },
   { label: 'Song Count', dataKey: 'songCount' },
   { label: 'Title', dataKey: 'title' },
+  { label: 'Visibility', dataKey: 'public' },
 ];
 
 const GENRE_COLUMNS = [
