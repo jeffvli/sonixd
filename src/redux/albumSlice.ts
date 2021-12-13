@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Sort } from '../types';
 
 export interface AlbumPage {
   active: {
@@ -9,6 +10,7 @@ export interface AlbumPage {
 
 export interface AdvancedFilters {
   enabled: boolean;
+  nav: 'filters' | 'sort';
   properties: {
     starred: boolean;
     genre: {
@@ -23,6 +25,7 @@ export interface AdvancedFilters {
       from: number;
       to: number;
     };
+    sort: Sort;
   };
 }
 
@@ -32,6 +35,7 @@ const initialState: AlbumPage = {
   },
   advancedFilters: {
     enabled: false,
+    nav: 'filters',
     properties: {
       starred: false,
       genre: {
@@ -45,6 +49,10 @@ const initialState: AlbumPage = {
       year: {
         from: 0,
         to: 0,
+      },
+      sort: {
+        column: undefined,
+        type: 'asc',
       },
     },
   },
@@ -61,7 +69,7 @@ const albumSlice = createSlice({
     setAdvancedFilters: (
       state,
       action: PayloadAction<{
-        filter: 'enabled' | 'starred' | 'genre' | 'artist' | 'year';
+        filter: 'enabled' | 'starred' | 'genre' | 'artist' | 'year' | 'sort' | 'nav';
         value: any;
       }>
     ) => {
@@ -83,6 +91,14 @@ const albumSlice = createSlice({
 
       if (action.payload.filter === 'year') {
         state.advancedFilters.properties.year = action.payload.value;
+      }
+
+      if (action.payload.filter === 'sort') {
+        state.advancedFilters.properties.sort = action.payload.value;
+      }
+
+      if (action.payload.filter === 'nav') {
+        state.advancedFilters.nav = action.payload.value;
       }
     },
   },
