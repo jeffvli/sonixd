@@ -23,10 +23,14 @@ import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 import { setStatus } from '../../redux/playerSlice';
-import { StyledNavItem } from '../shared/styled';
-import { setActive } from '../../redux/favoriteSlice';
+import { StyledNavItem, StyledTag } from '../shared/styled';
+import { setActive, setSort } from '../../redux/favoriteSlice';
 import { apiController } from '../../api/controller';
 import { setPlaylistRate } from '../../redux/playlistSlice';
+import useColumnSort from '../../hooks/useColumnSort';
+import { Item } from '../../types';
+import { FilterButton } from '../shared/ToolbarButtons';
+import ColumnSortPopover from '../shared/ColumnSortPopover';
 
 const StarredView = () => {
   const history = useHistory();
@@ -65,6 +69,12 @@ const StarredView = () => {
       : favorite.active.tab === 'albums'
       ? ['title', 'artist', 'genre', 'year']
       : ['title']
+  );
+
+  const { sortedData, sortColumns } = useColumnSort(
+    favorite.active.tab === 'albums' ? data?.album : data?.artist,
+    favorite.active.tab === 'albums' ? Item.Album : Item.Artist,
+    favorite.active.tab === 'albums' ? favorite.active.album.sort : favorite.active.artist.sort
   );
 
   let timeout: any = null;
@@ -164,7 +174,99 @@ const StarredView = () => {
       hideDivider
       header={
         <GenericPageHeader
-          title="Favorites"
+          title={
+            <>
+              Favorites{' '}
+              <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                {favorite.active.tab === 'tracks' && (data?.song?.length || '...')}
+                {favorite.active.tab === 'albums' && (data?.album?.length || '...')}
+                {favorite.active.tab === 'artists' && (data?.artist?.length || '...')}
+              </StyledTag>
+            </>
+          }
+          sidetitle={
+            <>
+              {(favorite.active.tab === 'albums' || favorite.active.tab === 'artists') && (
+                <ColumnSortPopover
+                  sortColumns={sortColumns}
+                  sortColumn={
+                    favorite.active.tab === 'albums'
+                      ? favorite.active.album.sort.column
+                      : favorite.active.artist.sort.column
+                  }
+                  sortType={
+                    favorite.active.tab === 'albums'
+                      ? favorite.active.album.sort.type
+                      : favorite.active.artist.sort.type
+                  }
+                  clearSortType={() =>
+                    dispatch(
+                      setSort({
+                        type: favorite.active.tab === 'albums' ? 'album' : 'artist',
+                        value:
+                          favorite.active.tab === 'albums'
+                            ? {
+                                ...favorite.active.album.sort,
+                                column: undefined,
+                              }
+                            : {
+                                ...favorite.active.artist.sort,
+                                column: undefined,
+                              },
+                      })
+                    )
+                  }
+                  setSortType={(e: string) =>
+                    dispatch(
+                      setSort({
+                        type: favorite.active.tab === 'albums' ? 'album' : 'artist',
+                        value:
+                          favorite.active.tab === 'albums'
+                            ? {
+                                ...favorite.active.album.sort,
+                                type: e,
+                              }
+                            : {
+                                ...favorite.active.artist.sort,
+                                type: e,
+                              },
+                      })
+                    )
+                  }
+                  setSortColumn={(e: string) =>
+                    dispatch(
+                      setSort({
+                        type: favorite.active.tab === 'albums' ? 'album' : 'artist',
+                        value:
+                          favorite.active.tab === 'albums'
+                            ? {
+                                ...favorite.active.album.sort,
+                                column: e,
+                              }
+                            : {
+                                ...favorite.active.artist.sort,
+                                column: e,
+                              },
+                      })
+                    )
+                  }
+                >
+                  <FilterButton
+                    size="sm"
+                    appearance={
+                      (
+                        favorite.active.tab === 'albums'
+                          ? favorite.active.album.sort.column
+                          : favorite.active.artist.sort.column
+                      )
+                        ? 'primary'
+                        : 'subtle'
+                    }
+                  />
+                </ColumnSortPopover>
+              )}
+            </>
+          }
           subtitle={
             <Nav activeKey={favorite.active.tab} onSelect={(e) => dispatch(setActive({ tab: e }))}>
               <StyledNavItem
@@ -244,7 +346,7 @@ const StarredView = () => {
             <>
               {viewType === 'list' && (
                 <ListViewType
-                  data={misc.searchQuery !== '' ? filteredData : data.album}
+                  data={misc.searchQuery !== '' ? filteredData : sortedData}
                   tableColumns={config.lookAndFeel.listView.album.columns}
                   rowHeight={config.lookAndFeel.listView.album.rowHeight}
                   fontSize={config.lookAndFeel.listView.album.fontSize}
@@ -276,7 +378,7 @@ const StarredView = () => {
               )}
               {viewType === 'grid' && (
                 <GridViewType
-                  data={misc.searchQuery !== '' ? filteredData : data.album}
+                  data={misc.searchQuery !== '' ? filteredData : sortedData}
                   cardTitle={{
                     prefix: '/library/album',
                     property: 'title',
@@ -304,7 +406,7 @@ const StarredView = () => {
             <>
               {viewType === 'list' && (
                 <ListViewType
-                  data={misc.searchQuery !== '' ? filteredData : data.artist}
+                  data={misc.searchQuery !== '' ? filteredData : sortedData}
                   tableColumns={config.lookAndFeel.listView.artist.columns}
                   rowHeight={config.lookAndFeel.listView.artist.rowHeight}
                   fontSize={config.lookAndFeel.listView.artist.fontSize}
@@ -339,7 +441,7 @@ const StarredView = () => {
               )}
               {viewType === 'grid' && (
                 <GridViewType
-                  data={misc.searchQuery !== '' ? filteredData : data.artist}
+                  data={misc.searchQuery !== '' ? filteredData : sortedData}
                   cardTitle={{
                     prefix: '/library/artist',
                     property: 'title',
