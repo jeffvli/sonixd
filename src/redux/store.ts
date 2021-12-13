@@ -9,6 +9,7 @@ import folderReducer from './folderSlice';
 import configReducer from './configSlice';
 import favoriteReducer from './favoriteSlice';
 import albumReducer from './albumSlice';
+import artistReducer from './artistSlice';
 
 export const store = configureStore<PlayQueue | any>({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore<PlayQueue | any>({
     config: configReducer,
     favorite: favoriteReducer,
     album: albumReducer,
+    artist: artistReducer,
   },
   middleware: [forwardToMain],
 });
