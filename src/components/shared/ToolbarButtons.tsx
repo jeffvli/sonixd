@@ -133,6 +133,15 @@ export const RefreshButton = ({ ...rest }) => {
   );
 };
 
+export const FilterButton = ({ ...rest }) => {
+  return (
+    <StyledButton tabIndex={0} {...rest}>
+      <Icon icon="filter" style={{ marginRight: '10px' }} />
+      Filter
+    </StyledButton>
+  );
+};
+
 export const AutoPlaylistButton = ({ noText, ...rest }: any) => {
   return (
     <CustomTooltip text="Auto playlist">

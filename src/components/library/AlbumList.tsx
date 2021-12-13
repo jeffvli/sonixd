@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
-import { ButtonToolbar, Icon, Whisper } from 'rsuite';
+import { ButtonToolbar, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import GridViewType from '../viewtypes/GridViewType';
@@ -18,12 +18,12 @@ import {
   clearSelected,
 } from '../../redux/multiSelectSlice';
 import {
-  StyledIconButton,
   StyledInputPicker,
   StyledInputPickerContainer,
   StyledPopover,
+  StyledTag,
 } from '../shared/styled';
-import { RefreshButton } from '../shared/ToolbarButtons';
+import { FilterButton, RefreshButton } from '../shared/ToolbarButtons';
 import { setActive, setAdvancedFilters } from '../../redux/albumSlice';
 import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
@@ -229,7 +229,14 @@ const AlbumList = () => {
       hideDivider
       header={
         <GenericPageHeader
-          title="Albums"
+          title={
+            <>
+              Albums{' '}
+              <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                {filteredData?.length || '...'}
+              </StyledTag>
+            </>
+          }
           subtitle={
             <StyledInputPickerContainer ref={albumFilterPickerContainerRef}>
               <ButtonToolbar>
@@ -257,41 +264,43 @@ const AlbumList = () => {
                     setIsRefresh(false);
                   }}
                 />
-                <Whisper
-                  trigger="click"
-                  enterable
-                  placement="bottom"
-                  speaker={
-                    <StyledPopover width="275px" opacity={0.97}>
-                      <AdvancedFilters
-                        filteredData={{
-                          filteredData,
-                          byArtistData,
-                          byArtistBaseData,
-                          byGenreData,
-                          byStarredData,
-                          byYearData,
-                        }}
-                        originalData={albums}
-                        filter={album.advancedFilters}
-                        setAdvancedFilters={setAdvancedFilters}
-                      />
-                    </StyledPopover>
-                  }
-                >
-                  <StyledIconButton size="sm" icon={<Icon icon="filter" />} />
-                </Whisper>
-                <RefreshButton
-                  onClick={handleRefresh}
-                  size="sm"
-                  loading={isRefreshing}
-                  width={100}
-                />{' '}
-                {filteredData?.length}
+                <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} />
               </ButtonToolbar>
             </StyledInputPickerContainer>
           }
           subsidetitle={<></>}
+          sidetitle={
+            <>
+              <Whisper
+                trigger="click"
+                enterable
+                placement="bottomEnd"
+                preventOverflow
+                speaker={
+                  <StyledPopover width="275px" opacity={0.97}>
+                    <AdvancedFilters
+                      filteredData={{
+                        filteredData,
+                        byArtistData,
+                        byArtistBaseData,
+                        byGenreData,
+                        byStarredData,
+                        byYearData,
+                      }}
+                      originalData={albums}
+                      filter={album.advancedFilters}
+                      setAdvancedFilters={setAdvancedFilters}
+                    />
+                  </StyledPopover>
+                }
+              >
+                <FilterButton
+                  size="sm"
+                  appearance={album.advancedFilters.enabled ? 'primary' : 'subtle'}
+                />
+              </Whisper>
+            </>
+          }
           showViewTypeButtons
           viewTypeSetting="album"
           handleListClick={() => setViewType('list')}

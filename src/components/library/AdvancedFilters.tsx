@@ -167,7 +167,28 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         Is favorite
       </StyledCheckbox>
       <Divider />
-      <FilterHeader>Genres</FilterHeader>
+      <FilterHeader>
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item>Genres</FlexboxGrid.Item>
+          <FlexboxGrid.Item>
+            <StyledButton
+              size="xs"
+              appearance={filter.properties.genre.list.length > 0 ? 'primary' : 'subtle'}
+              disabled={filter.properties.genre.list.length === 0}
+              onClick={() => {
+                dispatch(
+                  setAdvancedFilters({
+                    filter: 'genre',
+                    value: { ...filter.properties.genre, list: [] },
+                  })
+                );
+              }}
+            >
+              Reset
+            </StyledButton>
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </FilterHeader>
       <RadioGroup
         inline
         defaultValue={filter.properties.genre.type}
@@ -200,6 +221,10 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             labelKey="title"
             valueKey="title"
             virtualized
+            cleanable={false}
+            onEntered={() => {
+              (document.querySelectorAll('.rs-picker-search-bar-input')[0] as HTMLElement).focus();
+            }}
             renderMenuItem={(label: string, item: any) => {
               return (
                 <div>
@@ -221,7 +246,28 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         </ButtonToolbar>
       </StyledInputPickerContainer>
       <Divider />
-      <FilterHeader>Artists</FilterHeader>
+      <FilterHeader>
+        <FlexboxGrid justify="space-between">
+          <FlexboxGrid.Item>Artists</FlexboxGrid.Item>
+          <FlexboxGrid.Item>
+            <StyledButton
+              size="xs"
+              appearance={filter.properties.artist.list.length > 0 ? 'primary' : 'subtle'}
+              disabled={filter.properties.artist.list.length === 0}
+              onClick={() => {
+                dispatch(
+                  setAdvancedFilters({
+                    filter: 'artist',
+                    value: { ...filter.properties.artist, list: [] },
+                  })
+                );
+              }}
+            >
+              Reset
+            </StyledButton>
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </FilterHeader>
       <RadioGroup
         inline
         defaultValue={filter.properties.artist.type}
@@ -257,6 +303,10 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             labelKey="title"
             valueKey="id"
             virtualized
+            cleanable={false}
+            onEntered={() => {
+              (document.querySelectorAll('.rs-picker-search-bar-input')[0] as HTMLElement).focus();
+            }}
             renderMenuItem={(label: string, item: any) => {
               return (
                 <div>
@@ -284,7 +334,12 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           <FlexboxGrid.Item>
             <StyledButton
               size="xs"
-              appearance="primary"
+              appearance={
+                filter.properties.year.from === 0 && filter.properties.year.to === 0
+                  ? 'subtle'
+                  : 'primary'
+              }
+              disabled={filter.properties.year.from === 0 && filter.properties.year.to === 0}
               onClick={() => {
                 dispatch(
                   setAdvancedFilters({
