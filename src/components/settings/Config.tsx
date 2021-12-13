@@ -40,6 +40,9 @@ const Config = () => {
   }, []);
 
   useEffect(() => {
+    // skip scan status if server type is funkwhale
+    if (config.serverType === 'funkwhale') return setScanProgress(0);
+
     // Check scan status on render
     apiController({ serverType: config.serverType, endpoint: 'getScanStatus' })
       .then((status) => {
@@ -53,6 +56,9 @@ const Config = () => {
   }, [config.serverType]);
 
   useEffect(() => {
+    // skip scan status if server type is funkwhale
+    if (config.serverType === 'funkwhale') return setScanProgress(0);
+
     // Reload scan status on interval during scan
     if (isScanning) {
       const interval = setInterval(() => {
@@ -125,20 +131,24 @@ const Config = () => {
           sidetitle={<DisconnectButton />}
           subsidetitle={
             <ButtonToolbar>
-              <StyledButton
-                size="sm"
-                onClick={async () => {
-                  apiController({
-                    serverType: config.serverType,
-                    endpoint: 'startScan',
-                    args: { musicFolderId: folder.musicFolder },
-                  });
-                  setIsScanning(true);
-                }}
-                disabled={isScanning}
-              >
-                {isScanning ? `${scanProgress}` : 'Scan'}
-              </StyledButton>
+              {useAppSelector((state) => state.config).serverType !== 'funkwhale' && (
+                <>
+                  <StyledButton
+                    size="sm"
+                    onClick={async () => {
+                      apiController({
+                        serverType: config.serverType,
+                        endpoint: 'startScan',
+                        args: { musicFolderId: folder.musicFolder },
+                      });
+                      setIsScanning(true);
+                    }}
+                    disabled={isScanning}
+                  >
+                    {isScanning ? `${scanProgress}` : 'Scan'}
+                  </StyledButton>
+                </>
+              )}
               <Whisper
                 trigger="click"
                 placement="auto"

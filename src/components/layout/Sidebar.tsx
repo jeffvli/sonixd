@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sidenav, Nav, Icon } from 'rsuite';
+import { useAppSelector } from '../../redux/hooks';
 import { FixedSidebar, SidebarNavItem } from './styled';
 
 const Sidebar = ({
@@ -129,20 +130,24 @@ const Sidebar = ({
             >
               Genres
             </SidebarNavItem>
-            <SidebarNavItem
-              tabIndex={0}
-              eventKey="folders"
-              icon={<Icon icon="folder-open" />}
-              onSelect={handleSidebarSelect}
-              disabled={disableSidebar}
-              onKeyDown={(e: any) => {
-                if (e.key === ' ' || e.key === 'Enter') {
-                  history.push('/library/folder');
-                }
-              }}
-            >
-              Folders
-            </SidebarNavItem>
+            {useAppSelector((state) => state.config).serverType !== 'funkwhale' && (
+              <>
+                <SidebarNavItem
+                  tabIndex={0}
+                  eventKey="folders"
+                  icon={<Icon icon="folder-open" />}
+                  onSelect={handleSidebarSelect}
+                  disabled={disableSidebar}
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      history.push('/library/folder');
+                    }
+                  }}
+                >
+                  Folders
+                </SidebarNavItem>
+              </>
+            )}
           </Nav>
           <Nav>
             <SidebarNavItem
