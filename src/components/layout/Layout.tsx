@@ -214,7 +214,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                       <Nav
                         activeKey={activeConfigNav}
                         onSelect={(e) => setActiveConfigNav(e)}
-                        appearance="subtle"
+                        appearance="tabs"
                       >
                         <StyledNavItem eventKey="listView">List-View</StyledNavItem>
                         <StyledNavItem eventKey="gridView">Grid-View</StyledNavItem>
@@ -224,7 +224,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                     </StyledPopover>
                   }
                   trigger="click"
-                  placement="autoVerticalEnd"
+                  placement="bottomEnd"
                   preventOverflow
                 >
                   <StyledIconButton appearance="subtle" icon={<Icon icon="cog" />} />

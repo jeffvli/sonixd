@@ -164,7 +164,7 @@ const Config = () => {
               </Whisper>
               <Whisper
                 trigger="hover"
-                placement="auto"
+                placement="bottomEnd"
                 enterable
                 preventOverflow
                 speaker={
