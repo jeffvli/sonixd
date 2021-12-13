@@ -28,7 +28,7 @@ import { setActive, setSort } from '../../redux/favoriteSlice';
 import { apiController } from '../../api/controller';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import useColumnSort from '../../hooks/useColumnSort';
-import { Item } from '../../types';
+import { Item, Server } from '../../types';
 import { FilterButton } from '../shared/ToolbarButtons';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 
@@ -198,6 +198,15 @@ const StarredView = () => {
                     favorite.active.tab === 'albums'
                       ? favorite.active.album.sort.type
                       : favorite.active.artist.sort.type
+                  }
+                  disabledItemValues={
+                    config.serverType === Server.Jellyfin
+                      ? favorite.active.tab === 'albums'
+                        ? ['playCount', 'userRating']
+                        : ['albumCount', 'userRating']
+                      : favorite.active.tab === 'albums'
+                      ? []
+                      : ['duration']
                   }
                   clearSortType={() =>
                     dispatch(

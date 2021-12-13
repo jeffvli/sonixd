@@ -28,7 +28,7 @@ import {
 } from '../../redux/multiSelectSlice';
 import { apiController } from '../../api/controller';
 import useColumnSort from '../../hooks/useColumnSort';
-import { Item } from '../../types';
+import { Item, Server } from '../../types';
 import { setSort } from '../../redux/playlistSlice';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 
@@ -124,6 +124,9 @@ const PlaylistList = () => {
                 sortColumns={sortColumns}
                 sortColumn={playlist.active.list.sort.column}
                 sortType={playlist.active.list.sort.type}
+                disabledItemValues={
+                  config.serverType === Server.Jellyfin ? ['changed', 'owner', 'public'] : []
+                }
                 clearSortType={() =>
                   dispatch(
                     setSort({

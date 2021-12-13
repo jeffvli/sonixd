@@ -37,6 +37,7 @@ import {
   setGridCardSize,
   setGridGapSize,
 } from '../../../redux/configSlice';
+import { Server } from '../../../types';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
@@ -84,6 +85,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'musicListRowHeight',
             fontSize: 'musicListFontSize',
           }}
+          disabledItemValues={config.serverType === Server.Jellyfin ? ['Path'] : []}
         />
       )}
 
@@ -98,6 +100,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'albumListRowHeight',
             fontSize: 'albumListFontSize',
           }}
+          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating'] : []}
         />
       )}
 
@@ -112,6 +115,11 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'playlistListRowHeight',
             fontSize: 'playlistListFontSize',
           }}
+          disabledItemValues={
+            config.serverType === Server.Jellyfin
+              ? ['Modified', 'Owner', 'Track Count', 'Visibility']
+              : []
+          }
         />
       )}
 
@@ -126,6 +134,9 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'artistListRowHeight',
             fontSize: 'artistListFontSize',
           }}
+          disabledItemValues={
+            config.serverType === Server.Jellyfin ? ['Album Count', 'Rating'] : ['Duration']
+          }
         />
       )}
 
@@ -140,6 +151,9 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'genreListRowHeight',
             fontSize: 'genreListFontSize',
           }}
+          disabledItemValues={
+            config.serverType === Server.Jellyfin ? ['Album Count', 'Track Count'] : []
+          }
         />
       )}
 
@@ -154,6 +168,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'miniListRowHeight',
             fontSize: 'miniListFontSize',
           }}
+          disabledItemValues={config.serverType === Server.Jellyfin ? ['Path'] : []}
         />
       )}
 

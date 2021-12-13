@@ -51,7 +51,13 @@ const columnSelectorColumns = [
   },
 ];
 
-const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConfig }: any) => {
+const ListViewConfig = ({
+  defaultColumns,
+  columnPicker,
+  columnList,
+  settingsConfig,
+  disabledItemValues,
+}: any) => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -112,6 +118,7 @@ const ListViewConfig = ({ defaultColumns, columnPicker, columnList, settingsConf
               data={columnPicker}
               defaultValue={defaultColumns}
               value={selectedColumns}
+              disabledItemValues={disabledItemValues}
               style={{ width: '100%' }}
               onChange={(e: any) => {
                 const columns: any[] = [];

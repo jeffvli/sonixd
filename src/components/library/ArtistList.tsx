@@ -161,6 +161,9 @@ const ArtistList = () => {
               sortColumns={sortColumns}
               sortColumn={artist.active.list.sort.column}
               sortType={artist.active.list.sort.type}
+              disabledItemValues={
+                config.serverType === Server.Jellyfin ? ['albumCount', 'userRating'] : ['duration']
+              }
               clearSortType={() =>
                 dispatch(
                   setSort({
