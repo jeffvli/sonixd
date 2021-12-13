@@ -16,6 +16,7 @@ import {
 } from '../../redux/multiSelectSlice';
 import { setActive } from '../../redux/albumSlice';
 import { apiController } from '../../api/controller';
+import { StyledTag } from '../shared/styled';
 
 const GenreList = () => {
   const dispatch = useAppDispatch();
@@ -65,7 +66,21 @@ const GenreList = () => {
   };
 
   return (
-    <GenericPage hideDivider header={<GenericPageHeader title="Genres" />}>
+    <GenericPage
+      hideDivider
+      header={
+        <GenericPageHeader
+          title={
+            <>
+              Genres{' '}
+              <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                {genres?.length || '...'}
+              </StyledTag>
+            </>
+          }
+        />
+      }
+    >
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && genres && !isError && (

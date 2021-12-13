@@ -37,6 +37,7 @@ import {
   StyledInputPicker,
   StyledInputPickerContainer,
   StyledPopover,
+  StyledTag,
 } from '../shared/styled';
 import { MiniViewContainer } from './styled';
 import {
@@ -466,6 +467,9 @@ const NowPlayingMiniView = () => {
                           }
                         }}
                       />
+                      <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                        {playQueue.entry?.length || '...'}
+                      </StyledTag>
                     </ButtonToolbar>
                   </FlexboxGrid.Item>
                   <FlexboxGrid.Item>
