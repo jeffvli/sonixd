@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
-import { ButtonToolbar, Whisper } from 'rsuite';
+import { ButtonToolbar, Nav, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import GridViewType from '../viewtypes/GridViewType';
@@ -20,6 +20,7 @@ import {
 import {
   StyledInputPicker,
   StyledInputPickerContainer,
+  StyledNavItem,
   StyledPopover,
   StyledTag,
 } from '../shared/styled';
@@ -27,9 +28,11 @@ import { FilterButton, RefreshButton } from '../shared/ToolbarButtons';
 import { setActive, setAdvancedFilters } from '../../redux/albumSlice';
 import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Item, Server } from '../../types';
 import AdvancedFilters from './AdvancedFilters';
 import useAdvancedFilter from '../../hooks/useAdvancedFilter';
+import ColumnSort from '../shared/ColumnSort';
+import useColumnSort from '../../hooks/useColumnSort';
 
 const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
@@ -140,6 +143,12 @@ const AlbumList = () => {
     byStarredData,
     byYearData,
   } = useAdvancedFilter(albums, album.advancedFilters);
+
+  const { sortColumns, sortedData } = useColumnSort(
+    filteredData,
+    Item.Album,
+    album.advancedFilters.properties.sort
+  );
 
   useEffect(() => {
     setSortTypes(_.compact(_.concat(ALBUM_SORT_TYPES, genres)));
@@ -268,7 +277,6 @@ const AlbumList = () => {
               </ButtonToolbar>
             </StyledInputPickerContainer>
           }
-          subsidetitle={<></>}
           sidetitle={
             <>
               <Whisper
@@ -278,25 +286,76 @@ const AlbumList = () => {
                 preventOverflow
                 speaker={
                   <StyledPopover width="275px" opacity={0.97}>
-                    <AdvancedFilters
-                      filteredData={{
-                        filteredData,
-                        byArtistData,
-                        byArtistBaseData,
-                        byGenreData,
-                        byStarredData,
-                        byYearData,
-                      }}
-                      originalData={albums}
-                      filter={album.advancedFilters}
-                      setAdvancedFilters={setAdvancedFilters}
-                    />
+                    <Nav
+                      activeKey={album.advancedFilters.nav}
+                      onSelect={(e) => dispatch(setAdvancedFilters({ filter: 'nav', value: e }))}
+                      justified
+                      appearance="tabs"
+                    >
+                      <StyledNavItem eventKey="filters">Filters</StyledNavItem>
+                      <StyledNavItem eventKey="sort">Sort</StyledNavItem>
+                    </Nav>
+                    <br />
+                    {album.advancedFilters.nav === 'filters' && (
+                      <AdvancedFilters
+                        filteredData={{
+                          filteredData,
+                          byArtistData,
+                          byArtistBaseData,
+                          byGenreData,
+                          byStarredData,
+                          byYearData,
+                        }}
+                        originalData={albums}
+                        filter={album.advancedFilters}
+                        setAdvancedFilters={setAdvancedFilters}
+                      />
+                    )}
+
+                    {album.advancedFilters.nav === 'sort' && (
+                      <ColumnSort
+                        sortColumns={sortColumns}
+                        sortColumn={album.advancedFilters.properties.sort.column}
+                        sortType={album.advancedFilters.properties.sort.type}
+                        clearSortType={() =>
+                          dispatch(
+                            setAdvancedFilters({
+                              filter: 'sort',
+                              value: {
+                                ...album.advancedFilters.properties.sort,
+                                column: undefined,
+                              },
+                            })
+                          )
+                        }
+                        setSortType={(e: string) =>
+                          dispatch(
+                            setAdvancedFilters({
+                              filter: 'sort',
+                              value: { ...album.advancedFilters.properties.sort, type: e },
+                            })
+                          )
+                        }
+                        setSortColumn={(e: string) =>
+                          dispatch(
+                            setAdvancedFilters({
+                              filter: 'sort',
+                              value: { ...album.advancedFilters.properties.sort, column: e },
+                            })
+                          )
+                        }
+                      />
+                    )}
                   </StyledPopover>
                 }
               >
                 <FilterButton
                   size="sm"
-                  appearance={album.advancedFilters.enabled ? 'primary' : 'subtle'}
+                  appearance={
+                    album.advancedFilters.enabled || album.advancedFilters.properties.sort.column
+                      ? 'primary'
+                      : 'subtle'
+                  }
                 />
               </Whisper>
             </>
@@ -310,9 +369,9 @@ const AlbumList = () => {
     >
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
-      {!isLoading && !isError && viewType === 'list' && (
+      {!isLoading && !isError && sortedData?.length > 0 && viewType === 'list' && (
         <ListViewType
-          data={misc.searchQuery !== '' ? searchedData : filteredData}
+          data={misc.searchQuery !== '' ? searchedData : sortedData}
           tableColumns={config.lookAndFeel.listView.album.columns}
           rowHeight={config.lookAndFeel.listView.album.rowHeight}
           fontSize={config.lookAndFeel.listView.album.fontSize}
@@ -340,9 +399,9 @@ const AlbumList = () => {
           }}
         />
       )}
-      {!isLoading && !isError && viewType === 'grid' && (
+      {!isLoading && !isError && sortedData?.length > 0 && viewType === 'grid' && (
         <GridViewType
-          data={misc.searchQuery !== '' ? searchedData : filteredData}
+          data={misc.searchQuery !== '' ? searchedData : sortedData}
           cardTitle={{
             prefix: '/library/album',
             property: 'title',

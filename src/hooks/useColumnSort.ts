@@ -99,7 +99,7 @@ const useColumnSort = (data: any[], type: Item, sort: { column: string; type: 'a
         )
       : data;
 
-    setSortedData(_.compact(_.uniqBy(sortedByColumn, 'uniqueId')));
+    setSortedData(sortedByColumn);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, sort.column, sort.type, sortProps.column, sortProps.type]);
 
