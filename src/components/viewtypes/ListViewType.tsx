@@ -119,7 +119,7 @@ const ListViewType = (
         const currentScrollY = Math.abs(tableRef?.current.scrollY);
         const currentScrollX = Math.abs(tableRef?.current.scrollX);
         if (dragDirection.match(/down|up/)) {
-          console.log(`currentScrollY + scrollDistance`, currentScrollY + scrollDistance);
+          // console.log(`currentScrollY + scrollDistance`, currentScrollY + scrollDistance);
           tableRef.current.scrollTop(
             dragDirection === 'down'
               ? currentScrollY + scrollDistance
