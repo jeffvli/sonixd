@@ -49,6 +49,7 @@ import {
   StyledInputPicker,
   StyledInputPickerContainer,
   StyledPopover,
+  StyledTag,
 } from '../shared/styled';
 import {
   errorMessages,
@@ -303,7 +304,14 @@ const NowPlayingView = () => {
       hideDivider
       header={
         <GenericPageHeader
-          title="Now Playing"
+          title={
+            <>
+              Now Playing{' '}
+              <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                {playQueue.entry?.length || '...'}
+              </StyledTag>
+            </>
+          }
           subtitle={
             <>
               <ButtonToolbar>
