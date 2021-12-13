@@ -14,6 +14,7 @@ import { FavoritePage } from '../redux/favoriteSlice';
 import App from '../App';
 import { AlbumPage } from '../redux/albumSlice';
 import { Server } from '../types';
+import { ArtistPage } from '../redux/artistSlice';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
@@ -89,6 +90,18 @@ const miscState: General = {
 };
 
 const playlistState: Playlist = {
+  active: {
+    list: {
+      sort: {
+        type: 'asc',
+      },
+    },
+    page: {
+      sort: {
+        type: 'asc',
+      },
+    },
+  },
   entry: [],
   sortedEntry: [],
 };
@@ -376,12 +389,59 @@ const configState: ConfigPage = {
 const favoriteState: FavoritePage = {
   active: {
     tab: 'tracks',
+    album: {
+      sort: {
+        type: 'asc',
+      },
+    },
+    artist: {
+      sort: {
+        type: 'asc',
+      },
+    },
   },
 };
 
 const albumState: AlbumPage = {
   active: {
     filter: 'random',
+  },
+  advancedFilters: {
+    enabled: false,
+    nav: 'filters',
+    properties: {
+      starred: false,
+      genre: {
+        list: [],
+        type: 'and',
+      },
+      artist: {
+        list: [],
+        type: 'and',
+      },
+      year: {
+        from: 0,
+        to: 0,
+      },
+      sort: {
+        type: 'asc',
+      },
+    },
+  },
+};
+
+const artistState: ArtistPage = {
+  active: {
+    list: {
+      sort: {
+        type: 'asc',
+      },
+    },
+    page: {
+      sort: {
+        type: 'asc',
+      },
+    },
   },
 };
 
@@ -394,6 +454,7 @@ const mockInitialState = {
   config: configState,
   favorite: favoriteState,
   album: albumState,
+  artist: artistState,
 };
 
 describe('App', () => {
