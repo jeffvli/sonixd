@@ -17,14 +17,19 @@ import {
   toggleSelected,
 } from '../../redux/multiSelectSlice';
 import GridViewType from '../viewtypes/GridViewType';
-import { RefreshButton } from '../shared/ToolbarButtons';
+import { FilterButton, RefreshButton } from '../shared/ToolbarButtons';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Item, Server } from '../../types';
+import ColumnSortPopover from '../shared/ColumnSortPopover';
+import useColumnSort from '../../hooks/useColumnSort';
+import { setSort } from '../../redux/artistSlice';
+import { StyledTag } from '../shared/styled';
 
 const ArtistList = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
+  const artist = useAppSelector((state) => state.artist);
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
@@ -52,6 +57,7 @@ const ArtistList = () => {
     }
   );
   const filteredData = useSearchQuery(misc.searchQuery, artists, ['title']);
+  const { sortedData, sortColumns } = useColumnSort(artists, Item.Artist, artist.active.list.sort);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -137,11 +143,63 @@ const ArtistList = () => {
       hideDivider
       header={
         <GenericPageHeader
-          title="Artists"
+          title={
+            <>
+              Artists{' '}
+              <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
+                {sortedData?.length || '...'}
+              </StyledTag>
+            </>
+          }
           subtitle={
             <ButtonToolbar>
               <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
             </ButtonToolbar>
+          }
+          sidetitle={
+            <ColumnSortPopover
+              sortColumns={sortColumns}
+              sortColumn={artist.active.list.sort.column}
+              sortType={artist.active.list.sort.type}
+              clearSortType={() =>
+                dispatch(
+                  setSort({
+                    type: 'list',
+                    value: {
+                      ...artist.active.list.sort,
+                      column: undefined,
+                    },
+                  })
+                )
+              }
+              setSortType={(e: string) =>
+                dispatch(
+                  setSort({
+                    type: 'list',
+                    value: {
+                      ...artist.active.list.sort,
+                      type: e,
+                    },
+                  })
+                )
+              }
+              setSortColumn={(e: string) =>
+                dispatch(
+                  setSort({
+                    type: 'list',
+                    value: {
+                      ...artist.active.list.sort,
+                      column: e,
+                    },
+                  })
+                )
+              }
+            >
+              <FilterButton
+                size="sm"
+                appearance={artist.active.list.sort.column ? 'primary' : 'subtle'}
+              />
+            </ColumnSortPopover>
           }
           showViewTypeButtons
           viewTypeSetting="artist"
@@ -154,7 +212,7 @@ const ArtistList = () => {
       {isError && <div>Error: {error}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
-          data={misc.searchQuery !== '' ? filteredData : artists}
+          data={misc.searchQuery !== '' ? filteredData : sortedData}
           tableColumns={config.lookAndFeel.listView.artist.columns}
           rowHeight={config.lookAndFeel.listView.artist.rowHeight}
           fontSize={config.lookAndFeel.listView.artist.fontSize}
@@ -184,7 +242,7 @@ const ArtistList = () => {
       )}
       {!isLoading && !isError && viewType === 'grid' && (
         <GridViewType
-          data={misc.searchQuery !== '' ? filteredData : artists}
+          data={misc.searchQuery !== '' ? filteredData : sortedData}
           cardTitle={{
             prefix: '/library/artist',
             property: 'title',

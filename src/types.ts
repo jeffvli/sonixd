@@ -171,3 +171,8 @@ export interface ScanStatus {
   scanning: boolean;
   count: number | 'N/a';
 }
+
+export interface Sort {
+  column?: string;
+  type: 'asc' | 'desc';
+}
