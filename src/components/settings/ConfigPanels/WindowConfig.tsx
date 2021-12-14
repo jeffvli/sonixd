@@ -1,35 +1,47 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
-import { ConfigPanel } from '../styled';
-import { StyledCheckbox } from '../../shared/styled';
+import { ConfigOptionDescription, ConfigPanel } from '../styled';
+import { StyledToggle } from '../../shared/styled';
+import ConfigOption from '../ConfigOption';
 
 const WindowConfig = () => {
   const [minimizeToTray, setMinimizeToTray] = useState(Boolean(settings.getSync('minimizeToTray')));
   const [exitToTray, setExitToTray] = useState(Boolean(settings.getSync('exitToTray')));
   return (
-    <ConfigPanel header="Window" bordered>
-      <p>Note: These settings may not function correctly depending on your desktop environment.</p>
-      <StyledCheckbox
-        defaultChecked={minimizeToTray}
-        checked={minimizeToTray}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('minimizeToTray', e);
-          setMinimizeToTray(e);
-        }}
-      >
-        Minimize to tray
-      </StyledCheckbox>
+    <ConfigPanel header="Window">
+      <ConfigOptionDescription>
+        Note: These settings may not function correctly depending on your desktop environment.
+      </ConfigOptionDescription>
 
-      <StyledCheckbox
-        defaultChecked={exitToTray}
-        checked={exitToTray}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('exitToTray', e);
-          setExitToTray(e);
-        }}
-      >
-        Exit to tray
-      </StyledCheckbox>
+      <ConfigOption
+        name="Minimize to Tray"
+        description="Minimizes to the system tray."
+        option={
+          <StyledToggle
+            defaultChecked={minimizeToTray}
+            checked={minimizeToTray}
+            onChange={(e: boolean) => {
+              settings.setSync('minimizeToTray', e);
+              setMinimizeToTray(e);
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name="Exit to Tray"
+        description="Exits to the system tray."
+        option={
+          <StyledToggle
+            defaultChecked={exitToTray}
+            checked={exitToTray}
+            onChange={(e: boolean) => {
+              settings.setSync('exitToTray', e);
+              setExitToTray(e);
+            }}
+          />
+        }
+      />
     </ConfigPanel>
   );
 };

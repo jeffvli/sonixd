@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { shell } from 'electron';
 import settings from 'electron-settings';
-import { ControlLabel, Divider, Form } from 'rsuite';
-import { ConfigPanel } from '../styled';
+import { Form } from 'rsuite';
+import { ConfigOptionDescription, ConfigOptionName, ConfigPanel } from '../styled';
 import {
   StyledButton,
-  StyledCheckbox,
   StyledInput,
   StyledInputGroup,
   StyledInputNumber,
@@ -13,14 +12,14 @@ import {
   StyledInputPickerContainer,
   StyledLink,
   StyledPanel,
+  StyledToggle,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter, setAudioDeviceId } from '../../../redux/configSlice';
 import { notifyToast } from '../../shared/toast';
-
-const isMacOS = process.platform === 'darwin';
+import ConfigOption from '../ConfigOption';
 
 const getAudioDevice = async () => {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -90,75 +89,66 @@ const PlayerConfig = () => {
   }, []);
 
   return (
-    <ConfigPanel header="Player" bordered>
-      <p>
-        Set your desired audio device. Leaving this blank will use the system default audio device.
-      </p>
-      <br />
-      <StyledInputPickerContainer ref={audioDevicePickerContainerRef}>
-        <StyledInputPicker
-          container={() => audioDevicePickerContainerRef.current}
-          data={audioDevices}
-          defaultValue={config.playback.audioDeviceId}
-          value={config.playback.audioDeviceId}
-          labelKey="label"
-          valueKey="deviceId"
-          onChange={(e: string) => {
-            dispatch(setAudioDeviceId(e));
-            settings.setSync('audioDeviceId', e);
-          }}
-        />
-      </StyledInputPickerContainer>
-      <br />
-      <ControlLabel>Seek forward (s)</ControlLabel>
-      <StyledInputNumber
-        defaultValue={String(settings.getSync('seekForwardInterval')) || '0'}
-        step={0.5}
-        min={0}
-        max={100}
-        width={150}
-        onChange={(e: any) => {
-          settings.setSync('seekForwardInterval', Number(e));
-        }}
+    <ConfigPanel header="Player">
+      <ConfigOption
+        name="Audio Device"
+        description="The audio device for Sonixd. Leaving this blank will use the system default."
+        option={
+          <StyledInputPickerContainer ref={audioDevicePickerContainerRef}>
+            <StyledInputPicker
+              container={() => audioDevicePickerContainerRef.current}
+              data={audioDevices}
+              defaultValue={config.playback.audioDeviceId}
+              value={config.playback.audioDeviceId}
+              labelKey="label"
+              valueKey="deviceId"
+              placement="bottomStart"
+              onChange={(e: string) => {
+                dispatch(setAudioDeviceId(e));
+                settings.setSync('audioDeviceId', e);
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
       />
-      <br />
-      <ControlLabel>Seek backward (s)</ControlLabel>
-      <StyledInputNumber
-        defaultValue={String(settings.getSync('seekBackwardInterval')) || '0'}
-        step={0.5}
-        min={0}
-        max={100}
-        width={150}
-        onChange={(e: any) => {
-          settings.setSync('seekBackwardInterval', Number(e));
-        }}
+      <ConfigOption
+        name="Seek Forward"
+        description="The number in seconds the player will skip forwards when clicking the seek forward button."
+        option={
+          <StyledInputNumber
+            defaultValue={String(settings.getSync('seekForwardInterval')) || '0'}
+            step={0.5}
+            min={0}
+            max={100}
+            width={125}
+            onChange={(e: any) => {
+              settings.setSync('seekForwardInterval', Number(e));
+            }}
+          />
+        }
       />
-      <br />
-      <StyledCheckbox
-        defaultChecked={globalMediaHotkeys}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('globalMediaHotkeys', e);
-          setGlobalMediaHotkeys(e);
-        }}
-      >
-        Enable global media hotkeys (requires app restart)
-      </StyledCheckbox>
-      <StyledCheckbox
-        defaultChecked={scrobble}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('scrobble', e);
-          dispatch(setPlaybackSetting({ setting: 'scrobble', value: e }));
-          setScrobble(e);
-        }}
-      >
-        Enable scrobbling
-      </StyledCheckbox>
-
-      {isMacOS && (
-        <>
-          <br />
-          <p style={{ fontSize: 'smaller' }}>
-            *macOS requires you to set Sonixd as a{' '}
+      <ConfigOption
+        name="Seek Backward"
+        description="The number in seconds the player will skip backwards when clicking the seek backward button."
+        option={
+          <StyledInputNumber
+            defaultValue={String(settings.getSync('seekBackwardInterval')) || '0'}
+            step={0.5}
+            min={0}
+            max={100}
+            width={125}
+            onChange={(e: any) => {
+              settings.setSync('seekBackwardInterval', Number(e));
+            }}
+          />
+        }
+      />
+      <ConfigOption
+        name="Global Media Hotkeys"
+        description={
+          <>
+            Enable or disable global media hotkeys (play/pause, next, previous, stop, etc). For
+            macOS, you will need to add Sonixd as a{' '}
             <StyledLink
               onClick={() =>
                 shell.openExternal(
@@ -168,20 +158,41 @@ const PlayerConfig = () => {
             >
               trusted accessibility client.
             </StyledLink>
-          </p>
-        </>
-      )}
-      <Divider />
-      <h6>Filters</h6>
-      <p>
-        Any song title that matches a filter will be automatically removed when being added to the
-        queue.
-      </p>
-      <p style={{ fontSize: 'smaller' }}>
-        * Adding to the queue by double-clicking a song will ignore filters for that one song
-      </p>
+          </>
+        }
+        option={
+          <StyledToggle
+            defaultChecked={globalMediaHotkeys}
+            checked={globalMediaHotkeys}
+            onChange={(e: boolean) => {
+              settings.setSync('globalMediaHotkeys', e);
+              setGlobalMediaHotkeys(e);
+            }}
+          />
+        }
+      />
+      <ConfigOption
+        name="Scrobble"
+        description="Send player updates to your server. This is required by servers such as Jellyfin and Navidrome to track play counts and use external services such as Last.fm."
+        option={
+          <StyledToggle
+            defaultChecked={scrobble}
+            checked={scrobble}
+            onChange={(e: boolean) => {
+              settings.setSync('scrobble', e);
+              dispatch(setPlaybackSetting({ setting: 'scrobble', value: e }));
+              setScrobble(e);
+            }}
+          />
+        }
+      />
+      <ConfigOptionName>Track Filters</ConfigOptionName>
+      <ConfigOptionDescription>
+        Filter out tracks based on regex string(s) by their title when adding to the queue. queue.
+        Adding by double-clicking will ignore all filters for that one track.
+      </ConfigOptionDescription>
       <br />
-      <StyledPanel bordered bodyFill>
+      <StyledPanel bodyFill>
         <Form fluid>
           <StyledInputGroup>
             <StyledInput
@@ -221,7 +232,7 @@ const PlayerConfig = () => {
 
         <ListViewTable
           data={config.playback.filters || []}
-          height={200}
+          autoHeight
           columns={playbackFilterColumns}
           rowHeight={35}
           fontSize={12}
@@ -236,7 +247,6 @@ const PlayerConfig = () => {
           handleRowClick={() => {}}
           handleRowDoubleClick={() => {}}
           config={[]}
-          virtualized
         />
       </StyledPanel>
     </ConfigPanel>

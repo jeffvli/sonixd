@@ -3,9 +3,10 @@ import settings from 'electron-settings';
 import { Icon } from 'rsuite';
 import { shell } from 'electron';
 import { ConfigPanel } from '../styled';
-import { StyledButton, StyledCheckbox } from '../../shared/styled';
+import { StyledButton, StyledToggle } from '../../shared/styled';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
+import ConfigOption from '../ConfigOption';
 
 const AdvancedConfig = () => {
   const dispatch = useAppDispatch();
@@ -15,34 +16,45 @@ const AdvancedConfig = () => {
   const [autoUpdate, setAutoUpdate] = useState(Boolean(settings.getSync('autoUpdate')));
 
   return (
-    <ConfigPanel header="Advanced" bordered>
-      <StyledCheckbox
-        defaultChecked={autoUpdate}
-        checked={autoUpdate}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('autoUpdate', e);
-          setAutoUpdate(e);
-        }}
-      >
-        Auto update
-      </StyledCheckbox>
-      <StyledCheckbox
-        defaultChecked={showDebugWindow}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('showDebugWindow', e);
-          dispatch(
-            setPlaybackSetting({
-              setting: 'showDebugWindow',
-              value: e,
-            })
-          );
-          setShowDebugWindow(e);
-        }}
-      >
-        Show debug window
-      </StyledCheckbox>
+    <ConfigPanel header="Advanced">
+      <ConfigOption
+        name="Automatic Updates"
+        description="Enables or disables automatic updates. When a new version is detected, it will automatically be downloaded and installed."
+        option={
+          <StyledToggle
+            defaultChecked={autoUpdate}
+            checked={autoUpdate}
+            onChange={(e: boolean) => {
+              settings.setSync('autoUpdate', e);
+              setAutoUpdate(e);
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name="Show Debug Window"
+        description="Displays the debug window."
+        option={
+          <StyledToggle
+            defaultChecked={showDebugWindow}
+            checked={showDebugWindow}
+            onChange={(e: boolean) => {
+              settings.setSync('showDebugWindow', e);
+              dispatch(
+                setPlaybackSetting({
+                  setting: 'showDebugWindow',
+                  value: e,
+                })
+              );
+              setShowDebugWindow(e);
+            }}
+          />
+        }
+      />
+
       <br />
-      <StyledButton onClick={() => shell.openPath(settings.file())}>
+      <StyledButton appearance="primary" onClick={() => shell.openPath(settings.file())}>
         Open settings JSON <Icon icon="external-link" />
       </StyledButton>
     </ConfigPanel>

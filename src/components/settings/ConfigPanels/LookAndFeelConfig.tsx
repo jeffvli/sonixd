@@ -2,18 +2,18 @@ import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { shell } from 'electron';
 import settings from 'electron-settings';
-import { ControlLabel, Nav, Icon, RadioGroup } from 'rsuite';
+import { Nav, Icon, RadioGroup } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import {
   StyledInputPicker,
   StyledNavItem,
   StyledInputNumber,
-  StyledCheckbox,
   StyledInputPickerContainer,
   StyledLink,
   StyledInputGroup,
-  StyledInputGroupButton,
   StyledRadio,
+  StyledIconButton,
+  StyledToggle,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -38,6 +38,7 @@ import {
   setGridGapSize,
 } from '../../../redux/configSlice';
 import { Server } from '../../../types';
+import ConfigOption from '../ConfigOption';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
@@ -62,7 +63,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
   const currentGenreColumns = genreCols?.map((column: any) => column.label) || [];
 
   return (
-    <ConfigPanel header="List-View" bordered={bordered}>
+    <ConfigPanel header="List View" bordered={bordered}>
       <Nav
         activeKey={config.active.columnSelectorTab}
         onSelect={(e) => dispatch(setActive({ ...config.active, columnSelectorTab: e }))}
@@ -76,7 +77,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
       </Nav>
       {config.active.columnSelectorTab === 'music' && (
         <ListViewConfig
-          title="Song List"
+          type="Songs"
           defaultColumns={currentSongColumns}
           columnPicker={songColumnPicker}
           columnList={songColumnListAuto}
@@ -91,7 +92,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 
       {config.active.columnSelectorTab === 'album' && (
         <ListViewConfig
-          title="Album List"
+          type="Albums"
           defaultColumns={currentAlbumColumns}
           columnPicker={albumColumnPicker}
           columnList={albumColumnListAuto}
@@ -106,7 +107,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 
       {config.active.columnSelectorTab === 'playlist' && (
         <ListViewConfig
-          title="Playlist List"
+          type="Playlists"
           defaultColumns={currentPlaylistColumns}
           columnPicker={playlistColumnPicker}
           columnList={playlistColumnListAuto}
@@ -125,7 +126,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 
       {config.active.columnSelectorTab === 'artist' && (
         <ListViewConfig
-          title="Artist List"
+          type="Artists"
           defaultColumns={currentArtistColumns}
           columnPicker={artistColumnPicker}
           columnList={artistColumnListAuto}
@@ -142,7 +143,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 
       {config.active.columnSelectorTab === 'genre' && (
         <ListViewConfig
-          title="Genre List"
+          type="Genres"
           defaultColumns={currentGenreColumns}
           columnPicker={genreColumnPicker}
           columnList={genreColumnListAuto}
@@ -159,7 +160,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 
       {config.active.columnSelectorTab === 'mini' && (
         <ListViewConfig
-          title="Miniplayer List"
+          type="Mini-player"
           defaultColumns={currentMiniColumns}
           columnPicker={songColumnPicker}
           columnList={songColumnListAuto}
@@ -172,23 +173,26 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
         />
       )}
 
-      <br />
-      <StyledCheckbox
-        defaultChecked={highlightOnRowHoverChk}
-        checked={highlightOnRowHoverChk}
-        onChange={(_v: any, e: boolean) => {
-          settings.setSync('highlightOnRowHover', e);
-          dispatch(
-            setMiscSetting({
-              setting: 'highlightOnRowHover',
-              value: e,
-            })
-          );
-          setHighlightOnRowHoverChk(e);
-        }}
-      >
-        Show highlight on row hover
-      </StyledCheckbox>
+      <ConfigOption
+        name="Highlight On Hover"
+        description="Highlights the list view row when hovering it with the mouse."
+        option={
+          <StyledToggle
+            defaultChecked={highlightOnRowHoverChk}
+            checked={highlightOnRowHoverChk}
+            onChange={(e: boolean) => {
+              settings.setSync('highlightOnRowHover', e);
+              dispatch(
+                setMiscSetting({
+                  setting: 'highlightOnRowHover',
+                  value: e,
+                })
+              );
+              setHighlightOnRowHoverChk(e);
+            }}
+          />
+        }
+      />
     </ConfigPanel>
   );
 };
@@ -199,51 +203,66 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
 
   return (
     <ConfigPanel header="Grid-View" bordered={bordered}>
-      <ControlLabel>Card size (px)</ControlLabel>
-      <StyledInputNumber
-        defaultValue={config.lookAndFeel.gridView.cardSize}
-        step={1}
-        min={100}
-        max={350}
-        width={150}
-        onChange={(e: any) => {
-          settings.setSync('gridCardSize', Number(e));
-          dispatch(setGridCardSize({ size: Number(e) }));
-        }}
+      <ConfigOption
+        name="Card Size"
+        description="The width and height in pixels (px) of each grid view card."
+        option={
+          <StyledInputNumber
+            defaultValue={config.lookAndFeel.gridView.cardSize}
+            step={1}
+            min={100}
+            max={350}
+            width={125}
+            onChange={(e: any) => {
+              settings.setSync('gridCardSize', Number(e));
+              dispatch(setGridCardSize({ size: Number(e) }));
+            }}
+          />
+        }
       />
-      <br />
-      <ControlLabel>Gap size (px)</ControlLabel>
-      <StyledInputNumber
-        defaultValue={config.lookAndFeel.gridView.gapSize}
-        step={1}
-        min={0}
-        max={100}
-        width={150}
-        onChange={(e: any) => {
-          settings.setSync('gridGapSize', Number(e));
-          dispatch(setGridGapSize({ size: Number(e) }));
-        }}
+
+      <ConfigOption
+        name="Gap Size"
+        description="The gap in pixels (px) of the grid view layout."
+        option={
+          <StyledInputNumber
+            defaultValue={config.lookAndFeel.gridView.gapSize}
+            step={1}
+            min={0}
+            max={100}
+            width={125}
+            onChange={(e: any) => {
+              settings.setSync('gridGapSize', Number(e));
+              dispatch(setGridGapSize({ size: Number(e) }));
+            }}
+          />
+        }
       />
-      <br />
-      <ControlLabel>Grid alignment</ControlLabel>
-      <RadioGroup
-        name="gridAlignemntRadioList"
-        appearance="default"
-        defaultValue={config.lookAndFeel.gridView.alignment}
-        value={config.lookAndFeel.gridView.alignment}
-        onChange={(e: string) => {
-          dispatch(setGridAlignment({ alignment: e }));
-          settings.setSync('gridAlignment', e);
-        }}
-      >
-        <StyledRadio value="flex-start">Left</StyledRadio>
-        <StyledRadio value="center">Center</StyledRadio>
-      </RadioGroup>
+
+      <ConfigOption
+        name="Grid Alignment"
+        description="The alignment of cards in the grid view layout."
+        option={
+          <RadioGroup
+            name="gridAlignemntRadioList"
+            inline
+            defaultValue={config.lookAndFeel.gridView.alignment}
+            value={config.lookAndFeel.gridView.alignment}
+            onChange={(e: string) => {
+              dispatch(setGridAlignment({ alignment: e }));
+              settings.setSync('gridAlignment', e);
+            }}
+          >
+            <StyledRadio value="flex-start">Left</StyledRadio>
+            <StyledRadio value="center">Center</StyledRadio>
+          </RadioGroup>
+        }
+      />
     </ConfigPanel>
   );
 };
 
-const LookAndFeelConfig = () => {
+export const ThemeConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
     Boolean(settings.getSync('dynamicBackground'))
@@ -258,34 +277,14 @@ const LookAndFeelConfig = () => {
   );
 
   return (
-    <>
-      <ConfigPanel header="Look & Feel" bordered>
-        <p>
-          <StyledLink
-            onClick={() => shell.openExternal('https://github.com/jeffvli/sonixd/discussions/61')}
-          >
-            Check out the theming documentation! <Icon icon="external-link" />
-          </StyledLink>
-        </p>
-        <br />
-        <StyledInputPickerContainer ref={themePickerContainerRef}>
-          <ControlLabel>Theme</ControlLabel>
-          <br />
-          <StyledInputGroup>
-            <StyledInputPicker
-              container={() => themePickerContainerRef.current}
-              data={themeList}
-              labelKey="label"
-              valueKey="value"
-              cleanable={false}
-              defaultValue={selectedTheme}
-              onChange={(e: string) => {
-                settings.setSync('theme', e);
-                setSelectedTheme(e);
-                dispatch(setTheme(e));
-              }}
-            />
-            <StyledInputGroupButton
+    <ConfigPanel header="Look & Feel" bordered={bordered}>
+      <ConfigOption
+        name={
+          <>
+            Theme{' '}
+            <StyledIconButton
+              size="xs"
+              icon={<Icon icon="refresh" />}
               onClick={() => {
                 dispatch(setTheme('defaultDark'));
                 dispatch(setTheme(selectedTheme));
@@ -293,67 +292,117 @@ const LookAndFeelConfig = () => {
                   _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
                 );
               }}
+            />
+          </>
+        }
+        description={
+          <>
+            The application theme. Want to create your own themes? Check out the documentation{' '}
+            <StyledLink
+              onClick={() => shell.openExternal('https://github.com/jeffvli/sonixd/discussions/61')}
             >
-              <Icon icon="refresh" />
-            </StyledInputGroupButton>
-          </StyledInputGroup>
-        </StyledInputPickerContainer>
-        <br />
-        <StyledInputPickerContainer ref={fontPickerContainerRef}>
-          <ControlLabel>Font</ControlLabel>
-          <br />
-          <StyledInputPicker
-            container={() => fontPickerContainerRef.current}
-            data={Fonts}
-            groupBy="role"
-            cleanable={false}
-            defaultValue={String(settings.getSync('font'))}
-            onChange={(e: string) => {
-              settings.setSync('font', e);
-              dispatch(setFont(e));
-            }}
-          />
-        </StyledInputPickerContainer>
-        <br />
-        <StyledInputPickerContainer ref={titleBarPickerContainerRef}>
-          <ControlLabel>Titlebar style (requires app restart)</ControlLabel>
-          <br />
-          <StyledInputPicker
-            container={() => titleBarPickerContainerRef.current}
-            data={[
-              {
-                label: 'macOS',
-                value: 'mac',
-              },
-              {
-                label: 'Windows',
-                value: 'windows',
-              },
-            ]}
-            cleanable={false}
-            defaultValue={String(settings.getSync('titleBarStyle'))}
-            onChange={(e: string) => {
-              settings.setSync('titleBarStyle', e);
-              dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
-            }}
-          />
-        </StyledInputPickerContainer>
-        <br />
-        <StyledCheckbox
-          defaultChecked={dynamicBackgroundChk}
-          checked={dynamicBackgroundChk}
-          onChange={(_v: any, e: boolean) => {
-            settings.setSync('dynamicBackground', e);
-            dispatch(setDynamicBackground(e));
-            setDynamicBackgroundChk(e);
-          }}
-        >
-          Enable dynamic background
-        </StyledCheckbox>
-      </ConfigPanel>
+              here
+            </StyledLink>
+            .
+          </>
+        }
+        option={
+          <StyledInputPickerContainer ref={themePickerContainerRef}>
+            <StyledInputGroup>
+              <StyledInputPicker
+                container={() => themePickerContainerRef.current}
+                data={themeList}
+                labelKey="label"
+                valueKey="value"
+                cleanable={false}
+                width={200}
+                defaultValue={selectedTheme}
+                onChange={(e: string) => {
+                  settings.setSync('theme', e);
+                  setSelectedTheme(e);
+                  dispatch(setTheme(e));
+                }}
+              />
+            </StyledInputGroup>
+          </StyledInputPickerContainer>
+        }
+      />
 
-      <ListViewConfigPanel bordered />
-      <GridViewConfigPanel bordered />
+      <ConfigOption
+        name="Font"
+        description="The application font."
+        option={
+          <StyledInputPickerContainer ref={fontPickerContainerRef}>
+            <StyledInputPicker
+              container={() => fontPickerContainerRef.current}
+              data={Fonts}
+              groupBy="role"
+              width={200}
+              cleanable={false}
+              defaultValue={String(settings.getSync('font'))}
+              onChange={(e: string) => {
+                settings.setSync('font', e);
+                dispatch(setFont(e));
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
+
+      <ConfigOption
+        name="Titlebar Style"
+        description="The titlebar style (requires app restart). "
+        option={
+          <StyledInputPickerContainer ref={titleBarPickerContainerRef}>
+            <StyledInputPicker
+              container={() => titleBarPickerContainerRef.current}
+              data={[
+                {
+                  label: 'macOS',
+                  value: 'mac',
+                },
+                {
+                  label: 'Windows',
+                  value: 'windows',
+                },
+              ]}
+              cleanable={false}
+              defaultValue={String(settings.getSync('titleBarStyle'))}
+              width={200}
+              onChange={(e: string) => {
+                settings.setSync('titleBarStyle', e);
+                dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
+
+      <ConfigOption
+        name="Dynamic Background"
+        description="Sets a dynamic background based on the currently playing song."
+        option={
+          <StyledToggle
+            defaultChecked={dynamicBackgroundChk}
+            checked={dynamicBackgroundChk}
+            onChange={(e: boolean) => {
+              settings.setSync('dynamicBackground', e);
+              dispatch(setDynamicBackground(e));
+              setDynamicBackgroundChk(e);
+            }}
+          />
+        }
+      />
+    </ConfigPanel>
+  );
+};
+
+const LookAndFeelConfig = () => {
+  return (
+    <>
+      <ThemeConfigPanel />
+      <ListViewConfigPanel />
+      <GridViewConfigPanel />
     </>
   );
 };

@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid/non-secure';
 import settings from 'electron-settings';
-import { ControlLabel } from 'rsuite';
 import {
+  StyledCheckPicker,
   StyledInputNumber,
   StyledInputPickerContainer,
   StyledPanel,
-  StyledTagPicker,
 } from '../../shared/styled';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -23,6 +22,7 @@ import {
   setFontSize,
   setRowHeight,
 } from '../../../redux/configSlice';
+import ConfigOption from '../ConfigOption';
 
 const columnSelectorColumns = [
   {
@@ -52,6 +52,7 @@ const columnSelectorColumns = [
 ];
 
 const ListViewConfig = ({
+  type,
   defaultColumns,
   columnPicker,
   columnList,
@@ -62,7 +63,7 @@ const ListViewConfig = ({
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
-  const [selectedColumns, setSelectedColumns] = useState([]);
+  const [selectedColumns, setSelectedColumns] = useState<any[]>([]);
   const columnListType = settingsConfig.columnList.split('List')[0];
   const columnPickerContainerRef = useRef(null);
 
@@ -111,15 +112,20 @@ const ListViewConfig = ({
   return (
     <div style={{ width: '100%' }}>
       <div>
-        <StyledPanel bordered bodyFill>
+        <StyledPanel>
           <StyledInputPickerContainer ref={columnPickerContainerRef}>
-            <StyledTagPicker
+            <StyledCheckPicker
               container={() => columnPickerContainerRef.current}
               data={columnPicker}
               defaultValue={defaultColumns}
               value={selectedColumns}
-              disabledItemValues={disabledItemValues}
+              disabledItemValues={disabledItemValues.filter((col: string) => {
+                return !selectedColumns.includes(col);
+              })}
+              sticky
+              searchable={false}
               style={{ width: '100%' }}
+              maxHeight={250}
               onChange={(e: any) => {
                 const columns: any[] = [];
                 if (e) {
@@ -161,10 +167,9 @@ const ListViewConfig = ({
               valueKey="label"
             />
           </StyledInputPickerContainer>
-
           <ListViewTable
             data={config.lookAndFeel.listView[columnListType].columns || []}
-            height={300}
+            height={200}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={() => {}}
             handleDragEnd={() => handleDragEnd(columnListType)}
@@ -182,39 +187,45 @@ const ListViewConfig = ({
             config={{ option: columnListType, columnList }}
             virtualized
           />
+          <p style={{ fontSize: 'smaller' }}>* Drag & drop rows to re-order</p>
         </StyledPanel>
       </div>
 
-      <br />
-      <div>
-        <ControlLabel>Row height</ControlLabel>
-        <StyledInputNumber
-          defaultValue={config.lookAndFeel.listView[columnListType]?.rowHeight || 40}
-          step={1}
-          min={15}
-          max={250}
-          width={150}
-          onChange={(e: number) => {
-            settings.setSync(settingsConfig.rowHeight, Number(e));
-            dispatch(setRowHeight({ listType: columnListType, height: Number(e) }));
-          }}
-        />
-      </div>
-      <br />
-      <div>
-        <ControlLabel>Font size</ControlLabel>
-        <StyledInputNumber
-          defaultValue={config.lookAndFeel.listView[columnListType]?.fontSize || 12}
-          step={0.5}
-          min={1}
-          max={100}
-          width={150}
-          onChange={(e: number) => {
-            settings.setSync(settingsConfig.fontSize, Number(e));
-            dispatch(setFontSize({ listType: columnListType, size: Number(e) }));
-          }}
-        />
-      </div>
+      <ConfigOption
+        name={`Row Height (${type})`}
+        description="The height in pixels (px) of each row in the list view."
+        option={
+          <StyledInputNumber
+            defaultValue={config.lookAndFeel.listView[columnListType]?.rowHeight || 40}
+            step={1}
+            min={15}
+            max={250}
+            width={125}
+            onChange={(e: number) => {
+              settings.setSync(settingsConfig.rowHeight, Number(e));
+              dispatch(setRowHeight({ listType: columnListType, height: Number(e) }));
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={`Font Size (${type})`}
+        description="The height in pixels (px) of each row in the list view."
+        option={
+          <StyledInputNumber
+            defaultValue={config.lookAndFeel.listView[columnListType]?.fontSize || 12}
+            step={0.5}
+            min={1}
+            max={100}
+            width={125}
+            onChange={(e: number) => {
+              settings.setSync(settingsConfig.fontSize, Number(e));
+              dispatch(setFontSize({ listType: columnListType, size: Number(e) }));
+            }}
+          />
+        }
+      />
     </div>
   );
 };
