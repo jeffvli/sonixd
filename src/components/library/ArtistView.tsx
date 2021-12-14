@@ -120,14 +120,14 @@ const ArtistView = ({ ...rest }: any) => {
         endpoint: 'star',
         args: { id: data.id, type: 'artist' },
       });
-      queryClient.setQueryData(['artist', artistId], { ...data, starred: Date.now() });
+      queryClient.setQueryData(['artist', artistId, musicFolder], { ...data, starred: Date.now() });
     } else {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
         args: { id: data.id, type: 'artist' },
       });
-      queryClient.setQueryData(['artist', artistId], { ...data, starred: undefined });
+      queryClient.setQueryData(['artist', artistId, musicFolder], { ...data, starred: undefined });
     }
   };
 
