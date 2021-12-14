@@ -338,6 +338,43 @@ const createWindow = async () => {
     });
   }
 
+  ipcMain.on('enableGlobalHotkeys', () => {
+    globalShortcut.register('MediaStop', () => {
+      stop();
+    });
+
+    globalShortcut.register('MediaPlayPause', () => {
+      playPause();
+    });
+
+    globalShortcut.register('MediaNextTrack', () => {
+      nextTrack();
+    });
+
+    globalShortcut.register('MediaPreviousTrack', () => {
+      previousTrack();
+    });
+  });
+
+  ipcMain.on('disableGlobalHotkeys', () => {
+    globalShortcut.unregisterAll();
+    electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
+      stop();
+    });
+
+    electronLocalshortcut.register(mainWindow, 'MediaPlayPause', () => {
+      playPause();
+    });
+
+    electronLocalshortcut.register(mainWindow, 'MediaNextTrack', () => {
+      nextTrack();
+    });
+
+    electronLocalshortcut.register(mainWindow, 'MediaPreviousTrack', () => {
+      previousTrack();
+    });
+  });
+
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event

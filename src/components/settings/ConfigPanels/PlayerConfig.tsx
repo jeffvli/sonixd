@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { shell } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
 import { Form } from 'rsuite';
 import { ConfigOptionDescription, ConfigOptionName, ConfigPanel } from '../styled';
@@ -167,6 +167,11 @@ const PlayerConfig = () => {
             onChange={(e: boolean) => {
               settings.setSync('globalMediaHotkeys', e);
               setGlobalMediaHotkeys(e);
+              if (e) {
+                ipcRenderer.send('enableGlobalHotkeys');
+              } else {
+                ipcRenderer.send('disableGlobalHotkeys');
+              }
             }}
           />
         }
