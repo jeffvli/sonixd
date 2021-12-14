@@ -36,20 +36,23 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
   // 5. filteredData <- Same as previous (byYearData)
 
   useEffect(() => {
-    if (filter.properties.artist.type === 'and') {
-      return setArtistListData(filteredData.byArtistData);
-    }
+    if (filter.enabled) {
+      if (filter.properties.artist.type === 'and') {
+        return setArtistListData(filteredData.byArtistData);
+      }
 
-    if (filter.properties.starred) {
-      return setArtistListData(filteredData.byGenreData);
-    }
+      if (filter.properties.starred) {
+        return setArtistListData(filteredData.byGenreData);
+      }
 
-    if (filter.properties.artist.type === 'or') {
-      return setArtistListData(filteredData.byGenreData);
+      if (filter.properties.artist.type === 'or') {
+        return setArtistListData(filteredData.byGenreData);
+      }
     }
 
     return setArtistListData(originalData);
   }, [
+    filter.enabled,
     filter.properties.artist.list.length,
     filter.properties.artist.type,
     filter.properties.starred,
@@ -59,28 +62,31 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
   ]);
 
   useEffect(() => {
-    if (filter.properties.starred) {
-      if (filter.properties.genre.type === 'and') {
-        return setGenreListData(filteredData.filteredData);
+    if (filter.enabled) {
+      if (filter.properties.starred) {
+        if (filter.properties.genre.type === 'and') {
+          return setGenreListData(filteredData.filteredData);
+        }
+        return setGenreListData(filteredData.byArtistData);
       }
-      return setGenreListData(filteredData.byArtistData);
-    }
 
-    if (filter.properties.artist.list.length > 0) {
-      if (filter.properties.genre.type === 'and') {
-        return setGenreListData(filteredData.filteredData);
+      if (filter.properties.artist.list.length > 0) {
+        if (filter.properties.genre.type === 'and') {
+          return setGenreListData(filteredData.filteredData);
+        }
+        return setGenreListData(filteredData.byArtistBaseData);
       }
-      return setGenreListData(filteredData.byArtistBaseData);
-    }
 
-    if (filter.properties.genre.list.length > 0) {
-      if (filter.properties.genre.type === 'and') {
-        return setGenreListData(filteredData.byGenreData);
+      if (filter.properties.genre.list.length > 0) {
+        if (filter.properties.genre.type === 'and') {
+          return setGenreListData(filteredData.byGenreData);
+        }
       }
     }
 
     return setGenreListData(originalData);
   }, [
+    filter.enabled,
     filter.properties.artist.list.length,
     filter.properties.genre.list.length,
     filter.properties.genre.type,
