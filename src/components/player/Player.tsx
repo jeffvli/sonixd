@@ -656,9 +656,11 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           player.status === 'PLAYING'
         }
         onError={() => {
-          if (playQueue[currentEntryList].length > 0) {
-            player1Ref.current.audioEl.current.src = './components/player/dummy.mp3';
-            player1Ref.current.audioEl.current.src = getSrc1();
+          if (config.serverType !== Server.Jellyfin) {
+            if (playQueue[currentEntryList].length > 0) {
+              player1Ref.current.audioEl.current.src = './components/player/dummy.mp3';
+              player1Ref.current.audioEl.current.src = getSrc1();
+            }
           }
         }}
         muted={muted}
@@ -680,9 +682,11 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           player.status === 'PLAYING'
         }
         onError={() => {
-          if (playQueue[currentEntryList].length > 0) {
-            player2Ref.current.audioEl.current.src = './components/player/dummy.mp3';
-            player2Ref.current.audioEl.current.src = getSrc2();
+          if (config.serverType !== Server.Jellyfin) {
+            if (playQueue[currentEntryList].length > 0) {
+              player2Ref.current.audioEl.current.src = './components/player/dummy.mp3';
+              player2Ref.current.audioEl.current.src = getSrc2();
+            }
           }
         }}
         muted={muted}
