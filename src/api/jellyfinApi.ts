@@ -392,7 +392,7 @@ export const getAlbums = async (options: {
       fields: 'Genres, DateCreated, ChildCount, ParentId',
       includeItemTypes: 'MusicAlbum',
       limit: options.size,
-      offset: options.offset,
+      startIndex: options.offset,
       parentId: options.musicFolderId,
       recursive: true,
       sortBy: sortType!.replacement,
@@ -401,6 +401,65 @@ export const getAlbums = async (options: {
   });
 
   return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
+};
+
+export const getSongs = async (options: {
+  type: any;
+  size: number;
+  offset: number;
+  recursive: boolean;
+  order: 'asc' | 'desc';
+  musicFolderId?: string;
+}) => {
+  const sortTypes = [
+    { original: 'alphabeticalByName', replacement: 'SortName' },
+    { original: 'alphabeticalByArtist', replacement: 'AlbumArtist' },
+    { original: 'alphabeticalByTrackArtist', replacement: 'Artist' },
+    { original: 'frequent', replacement: 'PlayCount' },
+    { original: 'random', replacement: 'Random' },
+    { original: 'newest', replacement: 'DateCreated' },
+    { original: 'recent', replacement: 'DatePlayed' },
+    { original: 'playCount', replacement: 'PlayCount' },
+    { original: 'year', replacement: 'PremiereDate' },
+    { original: 'duration', replacement: 'Runtime' },
+  ];
+
+  const sortType = sortTypes.find((type) => type.original === options.type);
+
+  if (options.recursive) {
+    const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+      params: {
+        fields: 'Genres, DateCreated, MediaSources, ParentId',
+        genres: !sortType ? options.type : undefined,
+        includeItemTypes: 'Audio',
+        parentId: options.musicFolderId,
+        recursive: true,
+        sortBy: sortType ? sortType!.replacement : 'SortName',
+        sortOrder: options.order === 'asc' ? 'Ascending' : 'Descending',
+        imageTypeLimit: 1,
+        enableImageTypes: 'Primary',
+      },
+    });
+
+    return (data.Items || []).map((entry: any) => normalizeSong(entry));
+  }
+
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      fields: 'Genres, DateCreated, MediaSources, ParentId',
+      includeItemTypes: 'Audio',
+      limit: options.size,
+      startIndex: options.offset,
+      parentId: options.musicFolderId,
+      recursive: true,
+      sortBy: sortType!.replacement,
+      sortOrder: options.order === 'asc' ? 'Ascending' : 'Descending',
+      imageTypeLimit: 1,
+      enableImageTypes: 'Primary',
+    },
+  });
+
+  return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
 
 export const getArtist = async (options: { id: string; musicFolderId?: string }) => {

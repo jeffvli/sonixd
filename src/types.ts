@@ -50,7 +50,8 @@ export type APIEndpoints =
   | 'getMusicFolders'
   | 'getMusicDirectory'
   | 'getMusicDirectorySongs'
-  | 'getDownloadUrl';
+  | 'getDownloadUrl'
+  | 'getSongs';
 
 export interface GenericItem {
   id: string;
