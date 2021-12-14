@@ -100,7 +100,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'albumListRowHeight',
             fontSize: 'albumListFontSize',
           }}
-          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating'] : []}
+          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating', 'Play Count'] : []}
         />
       )}
 
