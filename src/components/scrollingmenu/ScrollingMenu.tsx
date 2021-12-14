@@ -88,13 +88,17 @@ const ScrollingMenu = ({
                   : item[cardSubtitle.property]
               }
               coverArt={item.image}
-              url={cardTitle.urlProperty ? `${cardTitle.prefix}/${item.id}` : undefined}
+              url={
+                cardTitle.urlProperty
+                  ? `${cardTitle.prefix}/${type === 'music' ? item.albumId : item.id}`
+                  : undefined
+              }
               subUrl={
                 cardSubtitle.urlProperty
                   ? `${cardSubtitle.prefix}/${item[cardSubtitle.urlProperty]}`
                   : undefined
               }
-              playClick={{ type, id: item.id }}
+              playClick={{ type, id: type === 'music' ? item.albumId : item.id }}
               details={{ cacheType: type, ...item }}
               hasHoverButtons
               size={config.lookAndFeel.gridView.cardSize}

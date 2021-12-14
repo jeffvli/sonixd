@@ -82,7 +82,7 @@ const Card = ({
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
 
-    if (playClick.type === 'album') {
+    if (playClick.type === 'album' || playClick.type === 'music') {
       const res = await apiController({
         serverType: config.serverType,
         endpoint: 'getAlbum',
@@ -143,7 +143,7 @@ const Card = ({
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
     }
 
-    if (playClick.type === 'album') {
+    if (playClick.type === 'album' || playClick.type === 'music') {
       const res = await apiController({
         serverType: config.serverType,
         endpoint: 'getAlbum',
