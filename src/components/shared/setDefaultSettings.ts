@@ -549,6 +549,7 @@ const setDefaultSettings = (force: boolean) => {
           overlayButton: {
             color: '#FFFFFF',
             background: 'transparent',
+            backgroundHover: '#3B89EC',
             opacity: 0.8,
           },
         },
@@ -879,6 +880,7 @@ const setDefaultSettings = (force: boolean) => {
           overlayButton: {
             color: '#FFFFFF',
             background: 'transparent',
+            backgroundHover: '#F3B52F',
             opacity: 0.8,
           },
         },
@@ -1043,6 +1045,7 @@ const setDefaultSettings = (force: boolean) => {
           overlayButton: {
             color: '#FFFFFF',
             background: 'transparent',
+            backgroundHover: '#1DB954',
             opacity: 0.8,
           },
         },
