@@ -20,7 +20,14 @@ import {
 import {
   GridViewConfigPanel,
   ListViewConfigPanel,
+  ThemeConfigPanel,
 } from '../settings/ConfigPanels/LookAndFeelConfig';
+import PlaybackConfig from '../settings/ConfigPanels/PlaybackConfig';
+import PlayerConfig from '../settings/ConfigPanels/PlayerConfig';
+import ServerConfig from '../settings/ConfigPanels/ServerConfig';
+import CacheConfig from '../settings/ConfigPanels/CacheConfig';
+import WindowConfig from '../settings/ConfigPanels/WindowConfig';
+import AdvancedConfig from '../settings/ConfigPanels/AdvancedConfig';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const history = useHistory();
@@ -211,17 +218,41 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                 </span>
                 <Whisper
                   speaker={
-                    <StyledPopover>
+                    <StyledPopover
+                      style={{
+                        maxWidth: '500px',
+                        maxHeight: '500px',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        padding: '0px',
+                      }}
+                    >
                       <Nav
                         activeKey={activeConfigNav}
                         onSelect={(e) => setActiveConfigNav(e)}
                         appearance="tabs"
                       >
-                        <StyledNavItem eventKey="listView">List-View</StyledNavItem>
-                        <StyledNavItem eventKey="gridView">Grid-View</StyledNavItem>
+                        <StyledNavItem eventKey="listView">List View</StyledNavItem>
+                        <StyledNavItem eventKey="gridView">Grid View</StyledNavItem>
+                        <StyledNavItem eventKey="playback">Playback</StyledNavItem>
+                        <StyledNavItem eventKey="player">Player</StyledNavItem>
+                        <StyledNavItem eventKey="theme">Theme</StyledNavItem>
+                        <StyledNavItem eventKey="server">Server</StyledNavItem>
+                        <StyledNavItem eventKey="other">Other</StyledNavItem>
                       </Nav>
                       {activeConfigNav === 'listView' && <ListViewConfigPanel />}
                       {activeConfigNav === 'gridView' && <GridViewConfigPanel />}
+                      {activeConfigNav === 'playback' && <PlaybackConfig />}
+                      {activeConfigNav === 'player' && <PlayerConfig />}
+                      {activeConfigNav === 'theme' && <ThemeConfigPanel />}
+                      {activeConfigNav === 'server' && <ServerConfig />}
+                      {activeConfigNav === 'other' && (
+                        <>
+                          <CacheConfig />
+                          <WindowConfig />
+                          <AdvancedConfig />
+                        </>
+                      )}
                     </StyledPopover>
                   }
                   trigger="click"

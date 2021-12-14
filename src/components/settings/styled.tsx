@@ -1,16 +1,26 @@
 import styled from 'styled-components';
 import { Panel } from 'rsuite';
 
+export const ConfigPanelTitle = styled.div`
+  font-size: ${(props) => props.theme.fonts.size.panelTitle};
+  min-width: 500px;
+  max-width: 1200px;
+  margin: 15px auto 15px auto;
+`;
+
 export const ConfigPanel = styled(Panel)`
   color: ${(props) => props.theme.colors.layout.page.color};
-  padding: 20px;
   min-width: 500px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 15px auto 15px auto;
-  border-radius: ${(props) => props.theme.other.panel.borderRadius};
+  padding: 15px;
+
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
 
   .rs-panel-heading {
     font-size: ${(props) => props.theme.fonts.size.panelTitle};
+    font-weight: bold;
   }
 `;
 
@@ -27,4 +37,21 @@ export const LoginPanel = styled(Panel)`
   min-width: 300px;
   max-width: 300px;
   margin: 5px auto 5px auto;
+`;
+
+export const ConfigOptionName = styled.div`
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+export const ConfigOptionDescription = styled.div`
+  font-size: 13px;
+`;
+
+export const ConfigOptionSection = styled.div`
+  padding: 15px 0 15px 0;
+`;
+
+export const ConfigOptionInput = styled.div`
+  align-items: center;
 `;

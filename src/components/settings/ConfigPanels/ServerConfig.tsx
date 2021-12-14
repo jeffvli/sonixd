@@ -2,13 +2,14 @@ import React, { useRef } from 'react';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { CheckboxGroup } from 'rsuite';
-import { ConfigPanel } from '../styled';
+import { ConfigOptionDescription, ConfigOptionInput, ConfigPanel } from '../styled';
 import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
 import { apiController } from '../../../api/controller';
 import { Folder } from '../../../types';
 import PageLoader from '../../loader/PageLoader';
+import ConfigOption from '../ConfigOption';
 
 const ServerConfig = () => {
   const dispatch = useAppDispatch();
@@ -24,31 +25,34 @@ const ServerConfig = () => {
   }
 
   return (
-    <ConfigPanel header="Server" bordered>
-      <p>
-        Select a music folder (leaving this blank will use all folders). If no songs are found in
-        the music folder, you may need to rescan your library.
-      </p>
-      <br />
-      <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
-        <StyledInputPicker
-          container={() => musicFolderPickerContainerRef.current}
-          data={musicFolders}
-          defaultValue={folder.musicFolder}
-          valueKey="id"
-          labelKey="title"
-          onChange={(e: string) => {
-            const selectedFolder = musicFolders.find((f: Folder) => f.id === e);
-            settings.setSync('musicFolder.id', e);
-            settings.setSync('musicFolder.name', selectedFolder?.title);
-            dispatch(setMusicFolder({ id: e, name: selectedFolder?.title }));
-          }}
-        />
-      </StyledInputPickerContainer>
+    <ConfigPanel header="Server">
+      <ConfigOption
+        name="Media Folder"
+        description="Sets the parent media folder your audio files are located in. Leaving this blank will use all media folders."
+        option={
+          <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
+            <StyledInputPicker
+              container={() => musicFolderPickerContainerRef.current}
+              data={musicFolders}
+              defaultValue={folder.musicFolder}
+              valueKey="id"
+              labelKey="title"
+              width={200}
+              onChange={(e: string) => {
+                const selectedFolder = musicFolders.find((f: Folder) => f.id === e);
+                settings.setSync('musicFolder.id', e);
+                settings.setSync('musicFolder.name', selectedFolder?.title);
+                dispatch(setMusicFolder({ id: e, name: selectedFolder?.title }));
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
 
-      <div>
-        <br />
-        <p>Select which pages to apply music folder filtering to:</p>
+      <ConfigOptionDescription>
+        Select which pages to apply media folder filtering to:
+      </ConfigOptionDescription>
+      <ConfigOptionInput>
         <CheckboxGroup>
           <StyledCheckbox
             defaultChecked={folder.applied.albums}
@@ -96,7 +100,7 @@ const ServerConfig = () => {
             Search
           </StyledCheckbox>
         </CheckboxGroup>
-      </div>
+      </ConfigOptionInput>
     </ConfigPanel>
   );
 };

@@ -1,16 +1,17 @@
 import React, { useRef, useState } from 'react';
 import settings from 'electron-settings';
-import { ButtonToolbar, ControlLabel, RadioGroup } from 'rsuite';
+import { ButtonToolbar } from 'rsuite';
 import { ConfigPanel } from '../styled';
 import {
   StyledButton,
   StyledInputNumber,
   StyledInputPicker,
   StyledInputPickerContainer,
-  StyledRadio,
+  StyledToggle,
 } from '../../shared/styled';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
+import ConfigOption from '../ConfigOption';
 
 const PlaybackConfig = () => {
   const dispatch = useAppDispatch();
@@ -52,151 +53,136 @@ const PlaybackConfig = () => {
   };
 
   return (
-    <ConfigPanel header="Playback" bordered>
-      <p>
-        Fading works by polling the audio player on an interval to determine when to start fading to
-        the next track. Due to this, you may notice the fade timing may not be 100% perfect.
-        Lowering the player polling interval may increase the accuracy of the fade, but also
-        increases the application&apos;s CPU usage.
-      </p>
-
-      <p>
-        Setting the crossfade duration to <code>0</code> will enable{' '}
-        <strong>gapless playback</strong> mode. All other playback settings except the polling
-        interval will be ignored. It is recommended that you use a polling interval between{' '}
-        <code>10</code> and <code>20</code> for increased transition accuracy. Note that the gapless
-        playback is not true gapless and may work better or worse on specific albums.
-      </p>
-
-      <p>
-        If volume fade is disabled, then the fading-in track will start at the specified crossfade
-        duration at full volume.
-      </p>
-
-      <p style={{ fontSize: 'smaller' }}>
-        *Enable the debug window if you want to view the differences between each fade type
-      </p>
-
-      <div style={{ paddingTop: '20px' }}>
-        <ControlLabel>Crossfade duration (s)</ControlLabel>
-        <StyledInputNumber
-          defaultValue={crossfadeDuration}
-          value={crossfadeDuration}
-          step={0.05}
-          min={0}
-          max={100}
-          width={150}
-          onChange={(e: number) => handleSetCrossfadeDuration(e)}
+    <>
+      <ConfigPanel header="Playback">
+        <ConfigOption
+          name="Crossfade Duration (s)"
+          description="The number in seconds before starting the crossfade to the next track. Setting this to 0 will enable gapless playback."
+          option={
+            <StyledInputNumber
+              defaultValue={crossfadeDuration}
+              value={crossfadeDuration}
+              step={0.05}
+              min={0}
+              max={100}
+              width={125}
+              onChange={(e: number) => handleSetCrossfadeDuration(e)}
+            />
+          }
         />
 
-        <br />
-        <ControlLabel>Polling interval (ms)</ControlLabel>
-        <StyledInputNumber
-          defaultValue={pollingInterval}
-          value={pollingInterval}
-          step={1}
-          min={1}
-          max={1000}
-          width={150}
-          onChange={(e: number) => handleSetPollingInterval(e)}
+        <ConfigOption
+          name="Polling Interval"
+          description="The number in milliseconds between each poll when music is playing. This is used in the calculation for crossfading and gapless playback. Recommended value for gapless playback is between 10 and 20."
+          option={
+            <StyledInputNumber
+              defaultValue={pollingInterval}
+              value={pollingInterval}
+              step={1}
+              min={1}
+              max={1000}
+              width={125}
+              onChange={(e: number) => handleSetPollingInterval(e)}
+            />
+          }
         />
-        <br />
-        <StyledInputPickerContainer ref={crossfadePickerContainerRef}>
-          <ControlLabel>Crossfade type</ControlLabel>
-          <br />
-          <StyledInputPicker
-            container={() => crossfadePickerContainerRef.current}
-            data={[
-              {
-                label: 'Equal Power',
-                value: 'equalPower',
-              },
-              {
-                label: 'Linear',
-                value: 'linear',
-              },
-              {
-                label: 'Dipped',
-                value: 'dipped',
-              },
-              {
-                label: 'Constant Power',
-                value: 'constantPower',
-              },
-              {
-                label: 'Constant Power (slow fade)',
-                value: 'constantPowerSlowFade',
-              },
-              {
-                label: 'Constant Power (slow cut)',
-                value: 'constantPowerSlowCut',
-              },
-              {
-                label: 'Constant Power (fast cut)',
-                value: 'constantPowerFastCut',
-              },
-            ]}
-            cleanable={false}
-            defaultValue={String(settings.getSync('fadeType'))}
-            onChange={(e: string) => {
-              settings.setSync('fadeType', e);
-              dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
-            }}
-          />
-        </StyledInputPickerContainer>
 
-        <br />
-        <ControlLabel>Volume fade</ControlLabel>
-        <RadioGroup
-          name="volumeFadeRadioList"
-          appearance="default"
-          defaultValue={volumeFade}
-          value={volumeFade}
-          onChange={(e: boolean) => handleSetVolumeFade(e)}
-        >
-          <StyledRadio value>Enabled</StyledRadio>
-          <StyledRadio value={false}>Disabled</StyledRadio>
-        </RadioGroup>
-        <br />
-        <h6>Presets</h6>
-        <ButtonToolbar>
-          <StyledButton
-            onClick={() => {
-              setCrossfadeDuration(0);
-              setPollingInterval(15);
-              handleSetCrossfadeDuration(0);
-              handleSetPollingInterval(15);
-            }}
-          >
-            Gapless
-          </StyledButton>
-          <StyledButton
-            onClick={() => {
-              setCrossfadeDuration(7);
-              setPollingInterval(50);
-              setVolumeFade(true);
-              handleSetCrossfadeDuration(7);
-              handleSetPollingInterval(50);
-              handleSetVolumeFade(true);
-            }}
-          >
-            Fade
-          </StyledButton>
-          <StyledButton
-            onClick={() => {
-              setCrossfadeDuration(0);
-              setPollingInterval(200);
-              setVolumeFade(false);
-              handleSetCrossfadeDuration(0);
-              handleSetPollingInterval(200);
-              handleSetVolumeFade(false);
-            }}
-          >
-            Normal
-          </StyledButton>
-        </ButtonToolbar>
-      </div>
-    </ConfigPanel>
+        <ConfigOption
+          name="Crossfade Type"
+          description="The fade calculation to use when crossfading between two tracks. Enable the debug window to view the differences between each fade type."
+          option={
+            <StyledInputPickerContainer ref={crossfadePickerContainerRef}>
+              <StyledInputPicker
+                container={() => crossfadePickerContainerRef.current}
+                data={[
+                  {
+                    label: 'Equal Power',
+                    value: 'equalPower',
+                  },
+                  {
+                    label: 'Linear',
+                    value: 'linear',
+                  },
+                  {
+                    label: 'Dipped',
+                    value: 'dipped',
+                  },
+                  {
+                    label: 'Constant Power',
+                    value: 'constantPower',
+                  },
+                  {
+                    label: 'Constant Power (slow fade)',
+                    value: 'constantPowerSlowFade',
+                  },
+                  {
+                    label: 'Constant Power (slow cut)',
+                    value: 'constantPowerSlowCut',
+                  },
+                  {
+                    label: 'Constant Power (fast cut)',
+                    value: 'constantPowerFastCut',
+                  },
+                ]}
+                cleanable={false}
+                defaultValue={String(settings.getSync('fadeType'))}
+                onChange={(e: string) => {
+                  settings.setSync('fadeType', e);
+                  dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
+                }}
+                width={200}
+              />
+            </StyledInputPickerContainer>
+          }
+        />
+
+        <ConfigOption
+          name="Volume Fade"
+          description="Enable or disable the volume fade used by the crossfading players. If disabled, the fading in track will start at full volume."
+          option={
+            <StyledToggle
+              size="md"
+              defaultChecked={volumeFade}
+              checked={volumeFade}
+              onChange={(e: boolean) => handleSetVolumeFade(e)}
+            />
+          }
+        />
+
+        <ConfigOption
+          name="Playback Presets"
+          description="Don't know where to start? Apply a preset and tweak from there."
+          option={
+            <ButtonToolbar>
+              <StyledButton
+                width={100}
+                onClick={() => {
+                  setCrossfadeDuration(0);
+                  setPollingInterval(15);
+                  handleSetCrossfadeDuration(0);
+                  handleSetPollingInterval(15);
+                }}
+              >
+                Gapless
+              </StyledButton>
+              <StyledButton
+                width={100}
+                onClick={() => {
+                  setCrossfadeDuration(7);
+                  setPollingInterval(50);
+                  setVolumeFade(true);
+                  handleSetCrossfadeDuration(7);
+                  handleSetPollingInterval(50);
+                  handleSetVolumeFade(true);
+                }}
+              >
+                Fade
+              </StyledButton>
+            </ButtonToolbar>
+          }
+        />
+      </ConfigPanel>
+    </>
   );
 };
 

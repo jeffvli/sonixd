@@ -74,6 +74,8 @@ const Config = () => {
 
   return (
     <GenericPage
+      padding="20px"
+      hideDivider
       id="settings"
       header={
         <GenericPageHeader

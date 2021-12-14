@@ -4,7 +4,7 @@ import { shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { Message, Icon, ButtonToolbar, Whisper } from 'rsuite';
-import { ConfigPanel } from '../styled';
+import { ConfigOptionDescription, ConfigPanel } from '../styled';
 import {
   StyledInput,
   StyledCheckbox,
@@ -104,18 +104,18 @@ const CacheConfig = () => {
   };
 
   return (
-    <ConfigPanel header="Cache" bordered>
+    <ConfigPanel header="Cache">
       {errorMessage !== '' && (
         <>
           <Message showIcon type="error" description={errorMessage} />
           <br />
         </>
       )}
-      <p>
+      <ConfigOptionDescription>
         Songs are cached only when playback for the track fully completes and ends. Skipping to the
         next or previous track after only partially completing the track will not begin the caching
         process.
-      </p>
+      </ConfigOptionDescription>
       <br />
       {isEditingCachePath && (
         <>
