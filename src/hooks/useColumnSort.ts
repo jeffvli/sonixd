@@ -10,6 +10,7 @@ const ALBUM_COLUMNS = [
   { label: 'Duration', dataKey: 'duration' },
   { label: 'Favorite', dataKey: 'starred' },
   { label: 'Genre', dataKey: 'albumGenre' },
+  { label: 'Play Count', dataKey: 'playCount' },
   { label: 'Rating', dataKey: 'userRating' },
   { label: 'Song Count', dataKey: 'songCount' },
   { label: 'Title', dataKey: 'title' },

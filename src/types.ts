@@ -66,6 +66,7 @@ export interface Album {
   albumArtistId: string;
   artist?: Artist[];
   songCount: number;
+  playCount?: number;
   duration: number;
   created: string;
   year?: number;
