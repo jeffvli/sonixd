@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Content, FlexboxGrid, Icon, Nav, Whisper } from 'rsuite';
@@ -28,6 +28,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const misc = useAppSelector((state) => state.misc);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [openSearch, setOpenSearch] = useState(false);
+  const [localSearchQuery, setLocalSearchQuery] = useState('');
   const [activeConfigNav, setActiveConfigNav] = useState('listView');
 
   useHotkeys(
@@ -87,9 +88,9 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
     history.push(route);
   };
 
-  const handleSearch = (e: string) => {
-    dispatch(setSearchQuery(e));
-  };
+  useEffect(() => {
+    dispatch(setSearchQuery(localSearchQuery));
+  }, [dispatch, localSearchQuery]);
 
   return (
     <>
@@ -160,8 +161,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                         opacity={0.6}
                         size="sm"
                         id="local-search-input"
-                        value={misc.searchQuery}
-                        onChange={handleSearch}
+                        value={localSearchQuery}
+                        onChange={(e: string) => setLocalSearchQuery(e)}
                         onPressEnter={() => {
                           if (misc.searchQuery.trim()) {
                             history.push(`/search?query=${misc.searchQuery}`);
