@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
 import { setActive } from '../../redux/albumSlice';
 import { apiController } from '../../api/controller';
+import { Server } from '../../types';
 
 const Dashboard = () => {
   const history = useHistory();
@@ -31,9 +32,13 @@ const Dashboard = () => {
     () =>
       apiController({
         serverType: config.serverType,
-        endpoint: 'getAlbums',
-        args: { type: 'recent', size: 20, offset: 0, musicFolderId: musicFolder },
-      })
+        endpoint: config.serverType === Server.Jellyfin ? 'getSongs' : 'getAlbums',
+        args: { type: 'recent', size: 20, offset: 0, order: 'desc', musicFolderId: musicFolder },
+      }),
+    {
+      refetchOnWindowFocus: true,
+      refetchInterval: 30000,
+    }
   );
 
   const { isLoading: isLoadingNewest, data: newestAlbums }: any = useQuery(
@@ -61,9 +66,12 @@ const Dashboard = () => {
     () =>
       apiController({
         serverType: config.serverType,
-        endpoint: 'getAlbums',
-        args: { type: 'frequent', size: 20, offset: 0, musicFolderId: musicFolder },
-      })
+        endpoint: config.serverType === Server.Jellyfin ? 'getSongs' : 'getAlbums',
+        args: { type: 'frequent', size: 20, offset: 0, order: 'desc', musicFolderId: musicFolder },
+      }),
+    {
+      refetchOnWindowFocus: true,
+    }
   );
 
   const handleFavorite = async (rowData: any) => {
@@ -180,7 +188,7 @@ const Dashboard = () => {
                 history.push(`/library/album?sortType=recent`);
               }, 50);
             }}
-            type="album"
+            type="music"
             handleFavorite={handleFavorite}
           />
 
@@ -252,7 +260,7 @@ const Dashboard = () => {
                 history.push(`/library/album?sortType=frequent`);
               }, 50);
             }}
-            type="album"
+            type="music"
             handleFavorite={handleFavorite}
           />
         </>
