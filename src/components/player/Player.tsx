@@ -112,9 +112,7 @@ const listenHandler = (
     // Detect to start fading when seek is greater than the fade time
     if (currentSeek >= fadeAtTime) {
       nextPlayerRef.current.audioEl.current.play();
-      if (!playQueue.isFading) {
-        dispatch(setIsFading(true));
-      }
+      dispatch(setIsFading(true));
 
       if (volumeFade) {
         const timeLeft = duration - currentSeek;
@@ -219,8 +217,6 @@ const listenHandler = (
       } else {
         nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
       }
-    } else if (playQueue.isFading && currentSeek > playQueue.fadeDuration) {
-      dispatch(setIsFading(false));
     }
   }
   if (playQueue.currentPlayer === player) {
