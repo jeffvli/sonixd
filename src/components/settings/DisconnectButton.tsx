@@ -19,6 +19,10 @@ export const handleDisconnect = () => {
   settings.setSync('salt', '');
   settings.setSync('hash', '');
   settings.setSync('token', '');
+
+  // Remove the selected musicFolder on disconnect since it will cause conflicts with other servers
+  settings.setSync('musicFolder.id', null);
+  settings.setSync('musicFolder.name', null);
   window.location.reload();
 };
 
