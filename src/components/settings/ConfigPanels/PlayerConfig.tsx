@@ -193,8 +193,8 @@ const PlayerConfig = () => {
       />
       <ConfigOptionName>Track Filters</ConfigOptionName>
       <ConfigOptionDescription>
-        Filter out tracks based on regex string(s) by their title when adding to the queue. queue.
-        Adding by double-clicking will ignore all filters for that one track.
+        Filter out tracks based on regex string(s) by their title when adding to the queue. Adding
+        by double-clicking a track will ignore all filters for that one track.
       </ConfigOptionDescription>
       <br />
       <StyledPanel bodyFill>
