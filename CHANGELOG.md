@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### Added
+
+- Added 2 new default themes
+  - City Lights
+  - One Dark
+- Added additional album filters (#66)
+  - Genres (AND/OR)
+  - Artists (AND/OR)
+  - Years (FROM/TO)
+- Added external column sort filters for multiple pages (#66)
+- Added item counter to page titles
+- `Play Count` column has been added to albums (only works for Navidrome)
+
+### Changed
+
+- Config page has been fully refreshed to a new look
+  - Config popover on the action bar now includes all config tabs
+- Tooltips
+  - Increased default tooltip delay from 250ms -> 500ms
+  - Increased tooltip delay on card overlay buttons to 1000ms
+- Grid view
+  - Placeholder images for playlists, albums, and artists have been updated (inspired from Jellyfin Web UI)
+  - Card title/subtitle width decreased from 100% to default length
+  - Separate card info section from image/overlay buttons on hover
+- Popovers (config, auto playlist, etc)
+  - Now have decreased opacity
+- Enabling/disabling global media keys no longer requires app restart
+
+### Fixed
+
+- (Jellyfin) Fixed `Recently Played` and `Most Played` filters on the Dashboard page (#114)
+- (Jellyfin) Fixed server scrobble (#126)
+  - No longer sends the `/playing` request on song start (prevents song being marked as played when it starts)
+  - Fixed song play count increasing multiple times per play
+- (Jellyfin) Fixed tracks without embedded art displaying placeholder (#128)
+- (Jellyfin) Fixed song `Path` property not displaying data
+- (Subsonic) Fixed login check for Funkwhale servers (#135)
+- Fixed persistent grid-view scroll position
+- Fixed list-view columns
+  - `Visibility` column now properly displays data
+- Selected media folder is now cleared from settings on disconnect (prevents errors when signing into a new server)
+- Fixed adding/removing artist as favorite on the Artist page not updating
+- Fixed search bar not properly handling Asian keyboard inputs
+
 ## [0.9.1] - 2021-12-07
 
 ### Changed
