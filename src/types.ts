@@ -1,7 +1,6 @@
 export enum Server {
   Subsonic = 'subsonic',
   Jellyfin = 'jellyfin',
-  Funkwhale = 'funkwhale',
 }
 
 export enum Item {
@@ -13,7 +12,7 @@ export enum Item {
   Playlist = 'playlist',
 }
 
-export type ServerType = Server.Subsonic | Server.Jellyfin | Server.Funkwhale;
+export type ServerType = Server.Subsonic | Server.Jellyfin;
 
 export type APIEndpoints =
   | 'getPlaylist'
