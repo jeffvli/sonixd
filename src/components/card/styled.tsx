@@ -58,18 +58,6 @@ export const CardPanel = styled(Panel)<Card>`
     transform: ${(props) => props.theme.other.card.hover.transform};
     filter: ${(props) => props.theme.other.card.hover.filter};
     transition: ${(props) => props.theme.other.card.hover.transition};
-    img {
-      filter: brightness(40%);
-      -webkit-filter: brightness(40%);
-    }
-
-    .rs-panel {
-      border-color: ${(props) => props.theme.colors.primary} !important;
-    }
-  }
-
-  &:hover .rs-btn {
-    display: block;
   }
 
   &:focus-visible {
@@ -93,6 +81,24 @@ export const ImgPanel = styled(Panel)<Card>`
   border-bottom: ${(props) => props.theme.other.card.image.borderBottom} !important;
   border-left: ${(props) => props.theme.other.card.image.borderLeft} !important;
   border-radius: ${(props) => props.theme.other.card.image.borderRadius} !important;
+
+  &:hover {
+    border-color: ${(props) => props.theme.colors.primary} !important;
+
+    .rs-btn {
+      display: block;
+    }
+
+    img {
+      filter: brightness(50%);
+      -webkit-filter: brightness(50%);
+    }
+
+    #placeholder-wrapper {
+      filter: brightness(50%);
+      -webkit-filter: brightness(50%);
+    }
+  }
 `;
 
 export const InfoSpan = styled.div`
@@ -105,11 +111,16 @@ export const CardButton = styled(Button)`
   text-overflow: ellipsis;
 `;
 
+export const CardTitleWrapper = styled.span`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+`;
+
 export const CardTitleButton = styled(CardButton)`
   padding-top: 5px;
   padding-bottom: 2px;
   color: ${(props) => props.theme.colors.layout.page.color};
-  width: ${(props) => `${props.cardsize}px`};
 
   &:hover,
   &:focus {
@@ -125,7 +136,6 @@ export const CardTitleButton = styled(CardButton)`
 export const CardSubtitleButton = styled(CardButton)`
   padding-bottom: 5px;
   color: ${(props) => props.theme.colors.layout.page.colorSecondary};
-  width: ${(props) => `${props.cardsize}px`};
 
   &:hover,
   &:focus {
@@ -221,7 +231,12 @@ export const ModalViewOverlayButton = styled(OverlayButton)`
   left: 90%;
 `;
 
-export const CardImgWrapper = styled.div<{ size: number }>`
+export const CardImgWrapper = styled.div<{ size: number; opacity?: number }>`
   clip-path: inset(0 0);
   height: ${(props) => props.size}px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${(props) => (props.opacity ? props.theme.colors.primary : 'unset')};
+  opacity: ${(props) => props.opacity};
 `;

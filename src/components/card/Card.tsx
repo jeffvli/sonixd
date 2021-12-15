@@ -28,6 +28,7 @@ import {
   AppendNextOverlayButton,
   CardImgWrapper,
   ImgPanel,
+  CardTitleWrapper,
 } from './styled';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
@@ -201,31 +202,53 @@ const Card = ({
       >
         <Overlay cardsize={size}>
           <ImgPanel>
-            <CardImgWrapper size={size} onClick={handleClick}>
-              {lazyLoad ? (
-                <LazyCardImg
-                  src={
-                    isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
-                      ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
-                      : rest.coverArt
+            {rest.coverArt.match('placeholder') ? (
+              <CardImgWrapper
+                id="placeholder-wrapper"
+                size={size}
+                opacity={0.4}
+                onClick={handleClick}
+              >
+                <Icon
+                  icon={
+                    playClick.type === 'album'
+                      ? 'book2'
+                      : playClick.type === 'artist'
+                      ? 'user'
+                      : playClick.type === 'playlist'
+                      ? 'list-ul'
+                      : 'music'
                   }
-                  alt="img"
-                  effect="opacity"
-                  cardsize={size}
-                  visibleByDefault={cacheImages}
-                  afterLoad={() => {
-                    if (cacheImages) {
-                      cacheImage(
-                        `${rest.details.cacheType}_${rest.details.id}.jpg`,
-                        rest.coverArt.replaceAll(/=150/gi, '=350')
-                      );
-                    }
-                  }}
+                  size="4x"
                 />
-              ) : (
-                <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
-              )}
-            </CardImgWrapper>
+              </CardImgWrapper>
+            ) : (
+              <CardImgWrapper size={size} onClick={handleClick}>
+                {lazyLoad ? (
+                  <LazyCardImg
+                    src={
+                      isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
+                        ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
+                        : rest.coverArt
+                    }
+                    alt="img"
+                    effect="opacity"
+                    cardsize={size}
+                    visibleByDefault={cacheImages}
+                    afterLoad={() => {
+                      if (cacheImages) {
+                        cacheImage(
+                          `${rest.details.cacheType}_${rest.details.id}.jpg`,
+                          rest.coverArt.replaceAll(/=150/gi, '=350')
+                        );
+                      }
+                    }}
+                  />
+                ) : (
+                  <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />
+                )}
+              </CardImgWrapper>
+            )}
 
             {hasHoverButtons && (
               <>
@@ -278,31 +301,35 @@ const Card = ({
 
         <InfoPanel cardsize={size}>
           <InfoSpan>
-            <CustomTooltip text={rest.title}>
-              <CardTitleButton
-                appearance="link"
-                tabIndex={-1}
-                size="sm"
-                onClick={handleClick}
-                cardsize={size}
-              >
-                {rest.title}
-              </CardTitleButton>
-            </CustomTooltip>
+            <CardTitleWrapper>
+              <CustomTooltip text={rest.title}>
+                <CardTitleButton
+                  appearance="link"
+                  tabIndex={-1}
+                  size="sm"
+                  onClick={handleClick}
+                  cardsize={size}
+                >
+                  {rest.title}
+                </CardTitleButton>
+              </CustomTooltip>
+            </CardTitleWrapper>
           </InfoSpan>
           <InfoSpan>
             {subUrl ? (
-              <CustomTooltip text={rest.subtitle}>
-                <CardSubtitleButton
-                  appearance="link"
-                  tabIndex={-1}
-                  size="xs"
-                  onClick={handleSubClick}
-                  cardsize={size}
-                >
-                  {rest.subtitle}
-                </CardSubtitleButton>
-              </CustomTooltip>
+              <CardTitleWrapper>
+                <CustomTooltip text={rest.subtitle}>
+                  <CardSubtitleButton
+                    appearance="link"
+                    tabIndex={-1}
+                    size="xs"
+                    onClick={handleSubClick}
+                    cardsize={size}
+                  >
+                    {rest.subtitle}
+                  </CardSubtitleButton>
+                </CustomTooltip>
+              </CardTitleWrapper>
             ) : (
               <CardSubtitle cardsize={size}>
                 {rest.subtitle !== 'undefined' ? rest.subtitle : <span>&#8203;</span>}
