@@ -126,7 +126,7 @@ const normalizeSong = (item: any) => {
     suffix: item.MediaSources && item.MediaSources[0]?.Container,
     duration: item.RunTimeTicks / 10000000,
     bitRate: item.MediaSources && String(Math.trunc(item.MediaSources[0]?.Bitrate / 1000)),
-    path: item.Path,
+    path: item.MediaSources && item.MediaSources[0]?.Path,
     playCount: item.UserData && item.UserData.PlayCount,
     discNumber: undefined,
     created: item.DateCreated,

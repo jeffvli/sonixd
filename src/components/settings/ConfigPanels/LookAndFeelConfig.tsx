@@ -86,7 +86,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'musicListRowHeight',
             fontSize: 'musicListFontSize',
           }}
-          disabledItemValues={config.serverType === Server.Jellyfin ? ['Path'] : []}
+          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating'] : []}
         />
       )}
 
@@ -169,7 +169,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'miniListRowHeight',
             fontSize: 'miniListFontSize',
           }}
-          disabledItemValues={config.serverType === Server.Jellyfin ? ['Path'] : []}
+          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating'] : []}
         />
       )}
 
