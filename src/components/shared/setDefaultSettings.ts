@@ -540,10 +540,6 @@ const setDefaultSettings = (force: boolean) => {
             colorHover: '#D8D8D8',
             backgroundHover: 'transparent',
           },
-          link: {
-            color: '#2196F3',
-            colorHover: '#3B89EC',
-          },
         },
         card: {
           overlayButton: {
@@ -704,10 +700,6 @@ const setDefaultSettings = (force: boolean) => {
             color: '#575757',
             colorHover: '#575757',
             backgroundHover: 'transparent',
-          },
-          link: {
-            color: '#575757',
-            colorHover: '#575757',
           },
         },
         card: {
@@ -871,10 +863,6 @@ const setDefaultSettings = (force: boolean) => {
             colorHover: '#D8D8D8',
             backgroundHover: 'transparent',
           },
-          link: {
-            color: '#2196F3',
-            colorHover: '#3B89EC',
-          },
         },
         card: {
           overlayButton: {
@@ -1035,10 +1023,6 @@ const setDefaultSettings = (force: boolean) => {
             color: '#D8D8D8',
             colorHover: '#D8D8D8',
             backgroundHover: 'transparent',
-          },
-          link: {
-            color: '#2196F3',
-            colorHover: '#3B89EC',
           },
         },
         card: {

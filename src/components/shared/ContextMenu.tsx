@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { ButtonToolbar, Col, FlexboxGrid, Form, Grid, Icon, Row, Whisper } from 'rsuite';
+import { ButtonToolbar, Col, FlexboxGrid, Grid, Form, Icon, Row, Whisper } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addModalPage,
@@ -869,36 +869,38 @@ export const GlobalContextMenu = () => {
                     </StyledButton>
                   </StyledInputGroup>
                 </StyledInputPickerContainer>
-
                 <div>
                   <StyledButton
-                    appearance="link"
+                    size="sm"
+                    appearance="subtle"
                     onClick={() => setShouldCreatePlaylist(!shouldCreatePlaylist)}
                   >
                     Create new playlist
                   </StyledButton>
                 </div>
-
                 {shouldCreatePlaylist && (
                   <Form>
-                    <StyledInput
-                      placeholder="Enter name..."
-                      value={newPlaylistName}
-                      onChange={(e: string) => setNewPlaylistName(e)}
-                    />
-                    <StyledButton
-                      size="sm"
-                      type="submit"
-                      block
-                      loading={false}
-                      appearance="primary"
-                      onClick={() => {
-                        handleCreatePlaylist();
-                        setShouldCreatePlaylist(false);
-                      }}
-                    >
-                      Create playlist
-                    </StyledButton>
+                    <br />
+                    <StyledInputGroup>
+                      <StyledInput
+                        placeholder="Enter name..."
+                        value={newPlaylistName}
+                        onChange={(e: string) => setNewPlaylistName(e)}
+                      />
+                      <StyledButton
+                        size="sm"
+                        type="submit"
+                        loading={false}
+                        disabled={!newPlaylistName}
+                        appearance="primary"
+                        onClick={() => {
+                          handleCreatePlaylist();
+                          setShouldCreatePlaylist(false);
+                        }}
+                      >
+                        Ok
+                      </StyledButton>
+                    </StyledInputGroup>
                   </Form>
                 )}
               </ContextMenuPopover>
@@ -970,7 +972,10 @@ export const GlobalContextMenu = () => {
             <ContextMenuButton
               text="Set rating"
               onClick={handleUnfavorite}
-              disabled={misc.contextMenu.disabledOptions.includes('setRating')}
+              disabled={
+                misc.contextMenu.disabledOptions.includes('setRating') ||
+                config.serverType === Server.Jellyfin
+              }
             />
           </Whisper>
           <ContextMenuDivider />

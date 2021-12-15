@@ -513,7 +513,6 @@ export const StyledLink = styled.a<{ underline?: boolean }>`
   }
 
   &:focus-visible {
-    color: ${(props) => props.theme.colors.button.link.colorHover};
     text-decoration: none;
   }
 `;
