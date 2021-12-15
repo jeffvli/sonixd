@@ -2,20 +2,22 @@ import React, { useRef, useState } from 'react';
 import md5 from 'md5';
 import randomstring from 'randomstring';
 import settings from 'electron-settings';
-import { Button, Form, ControlLabel, Message } from 'rsuite';
+import { Form, ControlLabel, Message, RadioGroup } from 'rsuite';
 import axios from 'axios';
 import setDefaultSettings from '../shared/setDefaultSettings';
 import {
+  StyledButton,
   StyledCheckbox,
   StyledInput,
-  StyledInputPicker,
   StyledInputPickerContainer,
+  StyledRadio,
 } from '../shared/styled';
 import { LoginPanel } from './styled';
 import GenericPage from '../layout/GenericPage';
 import logo from '../../../assets/icon.png';
 import { mockSettings } from '../../shared/mockSettings';
 import packageJson from '../../package.json';
+import { Server } from '../../types';
 
 const Login = () => {
   const [serverType, setServerType] = useState('subsonic');
@@ -34,16 +36,8 @@ const Login = () => {
 
     try {
       const testConnection = legacyAuth
-        ? serverType === 'subsonic'
-          ? await axios.get(
-              `${cleanServerName}/rest/getScanStatus?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
-            )
-          : await axios.get(
-              `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
-            )
-        : serverType === 'subsonic'
         ? await axios.get(
-            `${cleanServerName}/rest/getScanStatus?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
+            `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
           )
         : await axios.get(
             `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
@@ -66,7 +60,7 @@ const Login = () => {
 
     localStorage.setItem('server', cleanServerName);
     localStorage.setItem('serverBase64', btoa(cleanServerName));
-    localStorage.setItem('serverType', serverType);
+    localStorage.setItem('serverType', 'subsonic');
     localStorage.setItem('username', userName);
     localStorage.setItem('password', password);
     localStorage.setItem('salt', salt);
@@ -74,7 +68,7 @@ const Login = () => {
 
     settings.setSync('server', cleanServerName);
     settings.setSync('serverBase64', btoa(cleanServerName));
-    settings.setSync('serverType', serverType);
+    settings.setSync('serverType', 'subsonic');
     settings.setSync('username', userName);
     settings.setSync('password', password);
     settings.setSync('salt', salt);
@@ -143,19 +137,15 @@ const Login = () => {
         <Form id="login-form" fluid style={{ paddingTop: '20px' }}>
           <StyledInputPickerContainer ref={serverTypePickerRef}>
             <ControlLabel>Server type</ControlLabel>
-            <StyledInputPicker
-              container={() => serverTypePickerRef.current}
-              cleanable={false}
-              data={[
-                { label: 'Subsonic', value: 'subsonic' },
-                { label: 'Jellyfin', value: 'jellyfin' },
-                { label: 'Funkwhale', value: 'funkwhale' },
-              ]}
+            <RadioGroup
+              inline
               defaultValue="subsonic"
-              valueKey="value"
-              labelKey="label"
-              onChange={(e: 'subsonic' | 'jellyfin' | 'funkwhale') => setServerType(e)}
-            />
+              value={serverType}
+              onChange={(e: Server) => setServerType(e)}
+            >
+              <StyledRadio value="subsonic">Subsonic</StyledRadio>
+              <StyledRadio value="jellyfin">Jellyfin</StyledRadio>
+            </RadioGroup>
           </StyledInputPickerContainer>
           <br />
           <ControlLabel>Server</ControlLabel>
@@ -164,6 +154,7 @@ const Login = () => {
             name="servername"
             value={serverName}
             onChange={(e: string) => setServerName(e)}
+            placeholder="Requires http(s)://"
           />
           <br />
           <ControlLabel>Username</ControlLabel>
@@ -172,6 +163,7 @@ const Login = () => {
             name="name"
             value={userName}
             onChange={(e: string) => setUserName(e)}
+            placeholder="Enter username"
           />
           <br />
           <ControlLabel>Password</ControlLabel>
@@ -181,6 +173,7 @@ const Login = () => {
             type="password"
             value={password}
             onChange={(e: string) => setPassword(e)}
+            placeholder="Enter password"
           />
           <br />
           {serverType !== 'jellyfin' && (
@@ -202,16 +195,15 @@ const Login = () => {
               <br />
             </>
           )}
-          <Button
+          <StyledButton
             id="login-button"
             appearance="primary"
             type="submit"
-            color="green"
             block
             onClick={serverType !== 'jellyfin' ? handleConnect : handleConnectJellyfin}
           >
             Connect
-          </Button>
+          </StyledButton>
         </Form>
       </LoginPanel>
     </GenericPage>

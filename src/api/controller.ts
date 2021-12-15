@@ -62,7 +62,7 @@ import {
   updatePlaylistSongsLg as jfUpdatePlaylingSongsLg,
   updatePlaylist as jfUpdatePlaylist,
 } from './jellyfinApi';
-import { APIEndpoints, Server, ServerType } from '../types';
+import { APIEndpoints, ServerType } from '../types';
 
 // prettier-ignore
 const endpoints = [
@@ -108,11 +108,7 @@ export const apiController = async (options: {
   args?: any;
 }) => {
   const selectedEndpoint = endpoints.find((e) => e.id === options.endpoint);
-  // If the serverType is funkwhale call the subsonic endpoint
-  const selectedEndpointFn =
-    options.serverType === Server.Funkwhale
-      ? selectedEndpoint!.endpoint[Server.Subsonic]
-      : selectedEndpoint!.endpoint[options.serverType];
+  const selectedEndpointFn = selectedEndpoint!.endpoint[options.serverType];
 
   if (!selectedEndpointFn || !selectedEndpoint) {
     return notifyToast('warning', `[${options.endpoint}] not available`);
