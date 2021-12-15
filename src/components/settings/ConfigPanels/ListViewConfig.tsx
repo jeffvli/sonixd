@@ -187,7 +187,7 @@ const ListViewConfig = ({
             config={{ option: columnListType, columnList }}
             virtualized
           />
-          <p style={{ fontSize: 'smaller' }}>* Drag & drop rows to re-order</p>
+          <p style={{ fontSize: 'smaller' }}>* Drag & drop rows from the # column to re-order</p>
         </StyledPanel>
       </div>
 

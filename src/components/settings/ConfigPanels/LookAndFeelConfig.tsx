@@ -202,7 +202,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
   const config = useAppSelector((state) => state.config);
 
   return (
-    <ConfigPanel header="Grid-View" bordered={bordered}>
+    <ConfigPanel header="Grid View" bordered={bordered}>
       <ConfigOption
         name="Card Size"
         description="The width and height in pixels (px) of each grid view card."

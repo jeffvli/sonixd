@@ -52,7 +52,7 @@ const AlbumList = () => {
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [sortTypes, setSortTypes] = useState<any[]>();
+  const [sortTypes, setSortTypes] = useState<any[]>([]);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
   const albumFilterPickerContainerRef = useRef(null);
@@ -256,7 +256,7 @@ const AlbumList = () => {
                   defaultValue={album.active.filter}
                   value={album.active.filter}
                   groupBy="role"
-                  data={sortTypes}
+                  data={sortTypes || ALBUM_SORT_TYPES}
                   disabledItemValues={
                     config.serverType === Server.Jellyfin ? ['frequent', 'recent'] : []
                   }
