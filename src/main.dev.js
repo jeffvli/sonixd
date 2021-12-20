@@ -581,3 +581,8 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+ipcMain.on('reload', () => {
+  app.quit();
+  createWindow();
+});
