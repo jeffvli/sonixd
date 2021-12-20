@@ -508,7 +508,7 @@ const createTray = () => {
     return;
   }
 
-  tray = new Tray(getAssetPath('icon.ico'));
+  tray = isLinux ? new Tray(getAssetPath('icon.png')) : new Tray(getAssetPath('icon.ico'));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Open main window',
