@@ -24,7 +24,7 @@ import {
   setStar,
   toggleShuffle,
 } from '../../redux/playQueueSlice';
-import { setStatus, resetPlayer } from '../../redux/playerSlice';
+import { setStatus } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -52,6 +52,21 @@ const PlayerBar = () => {
   const [muted, setMuted] = useState(false);
   const playersRef = useRef<any>();
   const history = useHistory();
+
+  useEffect(() => {
+    if (player.status === 'PLAYING') {
+      const interval = setInterval(() => {
+        if (playQueue.currentPlayer === 1) {
+          setSeek(playersRef.current?.player1.audioEl.current.currentTime || 0);
+        } else {
+          setSeek(playersRef.current?.player2.audioEl.current.currentTime || 0);
+        }
+      }, 500);
+
+      return () => clearInterval(interval);
+    }
+    return () => clearInterval();
+  }, [playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
     setCurrentEntryList(getCurrentEntryList(playQueue));
@@ -86,10 +101,6 @@ const PlayerBar = () => {
   }, [playQueue.playerUpdated]);
 
   useEffect(() => {
-    setSeek(player.currentSeek);
-  }, [player.currentSeek]);
-
-  useEffect(() => {
     const debounce = setTimeout(() => {
       if (isDragging) {
         if (playQueue.currentPlayer === 1) {
@@ -120,7 +131,6 @@ const PlayerBar = () => {
 
   const handleClickNext = () => {
     if (playQueue[currentEntryList].length > 0) {
-      dispatch(resetPlayer());
       dispatch(incrementCurrentIndex('usingHotkey'));
       dispatch(setStatus('PLAYING'));
     }
@@ -128,7 +138,6 @@ const PlayerBar = () => {
 
   const handleClickPrevious = () => {
     if (playQueue[currentEntryList].length > 0) {
-      dispatch(resetPlayer());
       dispatch(decrementCurrentIndex('usingHotkey'));
       dispatch(fixPlayer2Index());
       dispatch(setStatus('PLAYING'));

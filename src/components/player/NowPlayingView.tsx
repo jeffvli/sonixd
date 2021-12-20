@@ -33,7 +33,7 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
-import { resetPlayer, setStatus } from '../../redux/playerSlice';
+import { setStatus } from '../../redux/playerSlice';
 import {
   AutoPlaylistButton,
   ClearQueueButton,
@@ -121,7 +121,6 @@ const NowPlayingView = () => {
         dispatch(clearPlayQueue());
         dispatch(clearSelected());
         dispatch(setStatus('PAUSED'));
-        setTimeout(() => dispatch(resetPlayer()), 200);
       } else {
         dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
         dispatch(clearSelected());
@@ -167,7 +166,6 @@ const NowPlayingView = () => {
     timeout = null;
 
     dispatch(clearSelected());
-    dispatch(resetPlayer());
     dispatch(setPlayerIndex(rowData));
     dispatch(fixPlayer2Index());
     dispatch(setStatus('PLAYING'));
@@ -322,7 +320,6 @@ const NowPlayingView = () => {
                     dispatch(setStatus('PAUSED'));
                     // Needs a timeout otherwise the seek may still update after the pause due to
                     // the delay timeout
-                    setTimeout(() => dispatch(resetPlayer()), 200);
                   }}
                 />
                 <ShuffleButton
@@ -485,7 +482,6 @@ const NowPlayingView = () => {
                         // Clear the queue instead of removing individually
                         dispatch(clearPlayQueue());
                         dispatch(setStatus('PAUSED'));
-                        setTimeout(() => dispatch(resetPlayer()), 200);
                       } else {
                         dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
                         dispatch(clearSelected());

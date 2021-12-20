@@ -58,7 +58,7 @@ import {
   setPlaybackFilter,
 } from '../../redux/configSlice';
 import { setActive } from '../../redux/albumSlice';
-import { resetPlayer, setStatus } from '../../redux/playerSlice';
+import { setStatus } from '../../redux/playerSlice';
 import { GenericItem } from '../../types';
 import { CoverArtWrapper } from '../layout/styled';
 
@@ -706,7 +706,6 @@ const ListViewTable = ({
                                     e.preventDefault();
                                     if (nowPlaying) {
                                       dispatch(clearSelected());
-                                      dispatch(resetPlayer());
                                       dispatch(setPlayerIndex(rowData));
                                       dispatch(fixPlayer2Index());
                                       dispatch(setStatus('PLAYING'));

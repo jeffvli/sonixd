@@ -20,7 +20,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
 import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
-import playerReducer, { resetPlayer, setStatus } from './redux/playerSlice';
+import playerReducer, { setStatus } from './redux/playerSlice';
 import playQueueReducer, {
   decrementCurrentIndex,
   incrementCurrentIndex,
@@ -116,7 +116,6 @@ const stop = () => {
   if (storeValues.playQueue[currentEntryList].length > 0) {
     store.dispatch(clearPlayQueue());
     store.dispatch(setStatus('PAUSED'));
-    setTimeout(() => store.dispatch(resetPlayer()), 200);
   }
 };
 
@@ -156,7 +155,6 @@ const nextTrack = () => {
   const currentEntryList = getCurrentEntryList(storeValues.playQueue);
 
   if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(resetPlayer());
     store.dispatch(incrementCurrentIndex('usingHotkey'));
     store.dispatch(setStatus('PLAYING'));
   }
@@ -167,7 +165,6 @@ const previousTrack = () => {
   const currentEntryList = getCurrentEntryList(storeValues.playQueue);
 
   if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(resetPlayer());
     store.dispatch(decrementCurrentIndex('usingHotkey'));
     store.dispatch(fixPlayer2Index());
     store.dispatch(setStatus('PLAYING'));
