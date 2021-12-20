@@ -35,6 +35,11 @@ const Titlebar = ({ font }: any) => {
     setTitle(`${playStatus} ${songTitle}`);
   }, [playQueue, player.status]);
 
+  // if the titlebar is native return no custom titlebar
+  if (misc.titleBar === 'native') {
+    return null;
+  }
+
   return (
     <TitleHeader id="titlebar" font={font}>
       <DragRegion id="drag-region">
