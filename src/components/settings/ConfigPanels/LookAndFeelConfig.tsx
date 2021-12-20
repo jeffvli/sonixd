@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import _ from 'lodash';
-import { shell } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
-import { Nav, Icon, RadioGroup } from 'rsuite';
+import { Nav, Icon, RadioGroup, Whisper } from 'rsuite';
+import { WhisperInstance } from 'rsuite/lib/Whisper';
 import { ConfigPanel } from '../styled';
 import {
   StyledInputPicker,
@@ -14,6 +15,8 @@ import {
   StyledRadio,
   StyledIconButton,
   StyledToggle,
+  StyledButton,
+  StyledPopover,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -272,6 +275,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
+  const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
   );
@@ -354,30 +358,55 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
         description="The titlebar style (requires app restart). "
         option={
           <StyledInputPickerContainer ref={titleBarPickerContainerRef}>
-            <StyledInputPicker
-              container={() => titleBarPickerContainerRef.current}
-              data={[
-                {
-                  label: 'macOS',
-                  value: 'mac',
-                },
-                {
-                  label: 'Windows',
-                  value: 'windows',
-                },
-                {
-                  label: 'Native',
-                  value: 'native',
-                },
-              ]}
-              cleanable={false}
-              defaultValue={String(settings.getSync('titleBarStyle'))}
-              width={200}
-              onChange={(e: string) => {
-                settings.setSync('titleBarStyle', e);
-                dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
-              }}
-            />
+            <Whisper
+              ref={titleBarRestartWhisper}
+              trigger="none"
+              placement="auto"
+              speaker={
+                <StyledPopover title="Restart?">
+                  <div>Do you want to restart the application now?</div>
+                  <strong>This is highly recommended!</strong>
+                  <div>
+                    <StyledButton
+                      id="titlebar-restart-button"
+                      size="sm"
+                      onClick={() => {
+                        ipcRenderer.send('reload');
+                      }}
+                      appearance="primary"
+                    >
+                      Yes
+                    </StyledButton>
+                  </div>
+                </StyledPopover>
+              }
+            >
+              <StyledInputPicker
+                container={() => titleBarPickerContainerRef.current}
+                data={[
+                  {
+                    label: 'macOS',
+                    value: 'mac',
+                  },
+                  {
+                    label: 'Windows',
+                    value: 'windows',
+                  },
+                  {
+                    label: 'Native',
+                    value: 'native',
+                  },
+                ]}
+                cleanable={false}
+                defaultValue={String(settings.getSync('titleBarStyle'))}
+                width={200}
+                onChange={(e: string) => {
+                  settings.setSync('titleBarStyle', e);
+                  dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
+                  titleBarRestartWhisper.current?.open();
+                }}
+              />
+            </Whisper>
           </StyledInputPickerContainer>
         }
       />
