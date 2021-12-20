@@ -36,7 +36,7 @@ const authParams = legacyAuth
   ? {
       u: auth.username,
       p: auth.password,
-      v: '1.15.0',
+      v: '1.13.0',
       c: 'sonixd',
       f: 'json',
     }
@@ -44,7 +44,7 @@ const authParams = legacyAuth
       u: auth.username,
       s: auth.salt,
       t: auth.hash,
-      v: '1.15.0',
+      v: '1.13.0',
       c: 'sonixd',
       f: 'json',
     };
@@ -59,7 +59,7 @@ api.interceptors.request.use((config) => {
   config.params.s = legacyAuth ? null : auth.salt;
   config.params.t = legacyAuth ? null : auth.hash;
   config.params.p = legacyAuth ? auth.password : null;
-  config.params.v = '1.15.0';
+  config.params.v = '1.13.0';
   config.params.c = 'sonixd';
   config.params.f = 'json';
   return config;
@@ -102,7 +102,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
       `?id=${item.coverArt}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
-      `&v=1.15.0` +
+      `&v=1.13.0` +
       `&c=sonixd` +
       `${size ? `&size=${size}` : ''}`
     );
@@ -114,7 +114,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
     `&t=${auth.hash}` +
-    `&v=1.15.0` +
+    `&v=1.13.0` +
     `&c=sonixd` +
     `${size ? `&size=${size}` : ''}`
   );
@@ -127,7 +127,7 @@ export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAu
       `?id=${options.id}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
-      `&v=1.15.0` +
+      `&v=1.13.0` +
       `&c=sonixd`
     );
   }
@@ -138,7 +138,7 @@ export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAu
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
     `&t=${auth.hash}` +
-    `&v=1.15.0` +
+    `&v=1.13.0` +
     `&c=sonixd`
   );
 };
@@ -150,7 +150,7 @@ const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
       `?id=${id}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
-      `&v=1.15.0` +
+      `&v=1.13.0` +
       `&c=sonixd`
     );
   }
@@ -161,7 +161,7 @@ const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
     `&t=${auth.hash}` +
-    `&v=1.15.0` +
+    `&v=1.13.0` +
     `&c=sonixd`
   );
 };
