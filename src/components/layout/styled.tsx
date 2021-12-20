@@ -166,10 +166,10 @@ export const PageContent = styled(Content)<{ padding?: string; $zIndex?: number 
 
 // Sidebar.tsx
 // Add 1 to top if you add window border
-export const FixedSidebar = styled(Sidebar)<{ font: string }>`
+export const FixedSidebar = styled(Sidebar)<{ font: string; $titleBar: string }>`
   background: ${(props) => props.theme.colors.layout.sideBar.background} !important;
   position: fixed;
-  top: 32px;
+  top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   z-index: 1;
   height: calc(100% - 130px);
   font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};

@@ -108,6 +108,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
         handleSidebarSelect={handleSidebarSelect}
         disableSidebar={disableSidebar}
         font={font}
+        titleBar={misc.titleBar}
         onClick={() => {
           if (misc.contextMenu.show === true) {
             dispatch(
