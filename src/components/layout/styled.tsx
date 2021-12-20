@@ -23,10 +23,10 @@ const StyledContainer = ({ id, expanded, children, ...props }: ContainerProps) =
   <Container {...props}>{children}</Container>
 );
 
-export const MainContainer = styled(StyledContainer)`
+export const MainContainer = styled(StyledContainer)<{ $titleBar: string }>`
   padding-left: ${(props) => (props.expanded ? '165px' : '56px')};
   height: calc(100% - 32px);
-  margin-top: 32px;
+  margin-top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   overflow-y: auto;
 `;
 
