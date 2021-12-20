@@ -37,10 +37,10 @@ const Login = () => {
     try {
       const testConnection = legacyAuth
         ? await axios.get(
-            `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&p=${password}`
+            `${cleanServerName}/rest/ping?v=1.13.0&c=sonixd&f=json&u=${userName}&p=${password}`
           )
         : await axios.get(
-            `${cleanServerName}/rest/ping?v=1.15.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
+            `${cleanServerName}/rest/ping?v=1.13.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
           );
 
       // Since a valid request will return a 200 response, we need to check that there
