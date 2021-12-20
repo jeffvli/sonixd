@@ -301,7 +301,7 @@ const createWindow = async () => {
     autoHideMenuBar: true,
     minWidth: 768,
     minHeight: 600,
-    frame: false,
+    frame: settings.getSync('titleBarStyle') === 'native',
   });
 
   if (settings.getSync('globalMediaHotkeys')) {
