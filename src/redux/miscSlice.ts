@@ -51,7 +51,7 @@ export interface General {
   highlightOnRowHover: boolean;
   imageCachePath: string;
   songCachePath: string;
-  titleBar: 'windows' | 'mac' | string;
+  titleBar: 'windows' | 'mac' | 'native' | string;
   searchQuery: string;
 }
 
