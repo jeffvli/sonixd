@@ -10,6 +10,7 @@ const Sidebar = ({
   handleSidebarSelect,
   disableSidebar,
   font,
+  titleBar,
   ...rest
 }: any) => {
   const history = useHistory();
@@ -20,6 +21,7 @@ const Sidebar = ({
       width={expand ? 165 : 56}
       collapsible
       font={font}
+      $titleBar={titleBar} // transient prop to determine position
       onClick={rest.onClick}
     >
       <Sidenav
