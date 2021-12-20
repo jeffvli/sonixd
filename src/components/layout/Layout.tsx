@@ -134,7 +134,11 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
           }
         }}
       >
-        <MainContainer id="container-main" expanded={misc.expandSidebar}>
+        <MainContainer
+          id="container-main"
+          expanded={misc.expandSidebar}
+          $titleBar={misc.titleBar} // transient prop to determine margin
+        >
           <FlexboxGrid
             justify="space-between"
             style={{
