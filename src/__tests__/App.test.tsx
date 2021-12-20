@@ -64,7 +64,6 @@ const playQueueState: PlayQueue = {
 
 const playerState: Player = {
   status: 'PAUSED',
-  currentSeek: 0,
   scrobbled: false,
 };
 

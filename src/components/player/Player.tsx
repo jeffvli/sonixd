@@ -23,7 +23,6 @@ import {
   setPlayerSrc,
   getNextPlayerIndex,
 } from '../../redux/playQueueSlice';
-import { setCurrentSeek } from '../../redux/playerSlice';
 import cacheSong from '../shared/cacheSong';
 import { isCached } from '../../shared/utils';
 import { apiController } from '../../api/controller';
@@ -33,8 +32,6 @@ const gaplessListenHandler = (
   currentPlayerRef: any,
   nextPlayerRef: any,
   playQueue: any,
-  currentPlayer: number,
-  dispatch: any,
   pollingInterval: number,
   shouldScrobble: boolean,
   scrobbled: boolean,
@@ -43,10 +40,6 @@ const gaplessListenHandler = (
   duration: number
 ) => {
   const currentSeek = currentPlayerRef.current?.audioEl.current?.currentTime || 0;
-
-  if (playQueue.currentPlayer === currentPlayer) {
-    dispatch(setCurrentSeek(currentSeek));
-  }
 
   // Add a bit of leeway for the second track to start since the
   // seek value doesn't always reach the duration
@@ -218,9 +211,6 @@ const listenHandler = (
         nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
       }
     }
-  }
-  if (playQueue.currentPlayer === player) {
-    dispatch(setCurrentSeek(currentSeek));
   }
 
   // Conditions for scrobbling fading track
@@ -483,8 +473,6 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       player1Ref,
       player2Ref,
       playQueue,
-      1,
-      dispatch,
       playQueue.pollingInterval,
       playQueue.scrobble,
       scrobbled,
@@ -494,15 +482,13 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         ? player1Ref.current?.audioEl.current.duration
         : playQueue[currentEntryList][playQueue.player1.index]?.duration
     );
-  }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
+  }, [config.serverType, currentEntryList, playQueue, scrobbled]);
 
   const handleGaplessPlayer2 = useCallback(() => {
     gaplessListenHandler(
       player2Ref,
       player1Ref,
       playQueue,
-      2,
-      dispatch,
       playQueue.pollingInterval,
       playQueue.scrobble,
       scrobbled,
@@ -512,7 +498,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         ? player2Ref.current?.audioEl.current.duration
         : playQueue[currentEntryList][playQueue.player2.index]?.duration
     );
-  }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
+  }, [config.serverType, currentEntryList, playQueue, scrobbled]);
 
   const handleOnPlay = useCallback(
     (playerNumber: 1 | 2) => {
