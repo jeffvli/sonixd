@@ -365,6 +365,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                   label: 'Windows',
                   value: 'windows',
                 },
+                {
+                  label: 'Native',
+                  value: 'native',
+                },
               ]}
               cleanable={false}
               defaultValue={String(settings.getSync('titleBarStyle'))}
