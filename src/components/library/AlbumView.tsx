@@ -289,6 +289,7 @@ const AlbumView = ({ ...rest }: any) => {
         <BlurredBackgroundWrapper
           hasImage={!data?.image.match('placeholder')}
           expanded={misc.expandSidebar}
+          $titleBar={misc.titleBar} // transient prop to determine margin
         >
           <BlurredBackground
             // We have to use an inline style here due to the context menu forcing a component rerender
