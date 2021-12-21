@@ -271,14 +271,18 @@ export const FlatBackground = styled.div<{ $expanded: boolean; $color: string }>
   pointer-events: none;
 `;
 
-export const BlurredBackgroundWrapper = styled.div<{ expanded: boolean; hasImage: boolean }>`
+export const BlurredBackgroundWrapper = styled.div<{
+  expanded: boolean;
+  hasImage: boolean;
+  $titleBar: string;
+}>`
   clip: rect(0, auto, auto, 0);
   -webkit-clip-path: inset(0 0);
   clip-path: inset(0 0);
   position: absolute;
   left: ${(props) => (props.expanded ? '165px' : '56px')};
   width: ${(props) => (props.expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
-  top: 32px;
+  top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   z-index: 1;
   display: block;
   background: ${(props) => (props.hasImage ? '#0b0908' : '#00395A')};
