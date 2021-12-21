@@ -171,7 +171,8 @@ export const FixedSidebar = styled(Sidebar)<{ font: string; $titleBar: string }>
   position: fixed;
   top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   z-index: 1;
-  height: calc(100% - 130px);
+  height: ${(props) =>
+    props.$titleBar === 'native' ? 'calc(100% - 98px);' : 'calc(100% - 130px);'};
   font-family: ${(props) => `${props.font?.split(/Light|Medium/)[0]}`};
   font-weight: ${(props) =>
     props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
