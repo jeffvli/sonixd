@@ -129,7 +129,6 @@ const DebugWindow = ({ ...rest }) => {
               {player.status}
             </span>
           </li>
-          <li>currentSeek: {player.currentSeek.toFixed(2)}</li>
           <li>volume (global): {playQueue.volume.toFixed(2)}</li>
           <li>volumeFade: {playQueue.volumeFade ? 'true' : 'false'}</li>
           <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
