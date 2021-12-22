@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
 import { FlexboxGrid, Grid, Row, Col, Whisper } from 'rsuite';
@@ -32,10 +34,16 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import { getCurrentEntryList, isCached, writeOBSFiles } from '../../shared/utils';
+import {
+  decodeBase64Image,
+  getCurrentEntryList,
+  isCached,
+  writeOBSFiles,
+} from '../../shared/utils';
 import { StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
+import logo from '../../../assets/icon.png';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -122,6 +130,19 @@ const PlayerBar = () => {
             status: player.status === 'PLAYING' ? 'playing' : 'stopped',
             title: playQueue.current?.title,
           });
+
+          if (playQueue.current?.image.match('placeholder')) {
+            const imgBuffer = decodeBase64Image(logo);
+            fs.writeFile(
+              path.join(config.external.obs.path, 'cover.jpg'),
+              imgBuffer.data,
+              (err) => {
+                if (err) {
+                  console.log(err);
+                }
+              }
+            );
+          }
         }
       }, config.external.obs.pollingInterval);
 
