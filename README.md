@@ -18,6 +18,12 @@
     <img src="https://img.shields.io/discord/922656312888811530?color=red&label=discord&logo=discord&logoColor=white"
     alt="Discord">
   </a>
+  <a href="https://matrix.to/#/#sonixd:matrix.org">
+    <img src="https://img.shields.io/matrix/sonixd:matrix.org?color=red&label=matrix&logo=matrix&logoColor=white"
+    alt="Matrix">
+  </a>
+  
+  https://img.shields.io/matrix/sonixd:matrix.org?color=red&label=matrix&logo=matrix&logoColor=white
 
 Sonixd is a cross-platform desktop client built for Subsonic-API (and Jellyfin in 0.8.0+) compatible music servers. This project was inspired by the many existing clients, but aimed to address a few key issues including <strong>scalability</strong>, <strong>library management</strong>, and <strong>user experience</strong>.
 
