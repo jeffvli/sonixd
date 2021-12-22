@@ -18,6 +18,7 @@ import ServerConfig from './ConfigPanels/ServerConfig';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setActive } from '../../redux/configSlice';
 import { apiController } from '../../api/controller';
+import ExternalConfig from './ConfigPanels/ExternalConfig';
 
 const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
@@ -233,6 +234,7 @@ const Config = () => {
           <ServerConfig />
           <CacheConfig />
           {!showWindowConfig && <WindowConfig />}
+          <ExternalConfig />
           <AdvancedConfig />
         </>
       )}

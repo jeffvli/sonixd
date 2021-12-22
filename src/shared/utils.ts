@@ -5,6 +5,9 @@ import moment from 'moment';
 import arrayMove from 'array-move';
 import settings from 'electron-settings';
 import { mockSettings } from './mockSettings';
+import logo from '../../assets/icon.png';
+
+const download = require('image-downloader');
 
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
@@ -505,4 +508,80 @@ export const getAlbumSize = (songs: any[]) => {
       return o.size;
     })
   );
+};
+
+export const base64Encode = (file: any) => {
+  return fs.readFileSync(file, { encoding: 'base64' });
+};
+
+export const decodeBase64Image = (dataString: any) => {
+  const matches = dataString.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+  const response: any = {};
+
+  if (matches.length !== 3) {
+    return new Error('Invalid input string');
+  }
+
+  // eslint-disable-next-line prefer-destructuring
+  response.type = matches[1];
+  response.data = Buffer.from(matches[2], 'base64');
+
+  return response;
+};
+
+export const writeOBSFiles = (filePath: string, data: any) => {
+  fs.writeFile(path.join(filePath, 'album.txt'), data.album || '', (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  fs.writeFile(path.join(filePath, 'artists.txt'), (data.artists || []).join(', '), (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  fs.writeFile(
+    path.join(filePath, 'cover.txt'),
+    data.cover_url?.replaceAll('150', '250') || '',
+    (err) => {
+      if (err) {
+        console.log(err);
+      }
+    }
+  );
+  fs.writeFile(path.join(filePath, 'duration.txt'), String(data.duration) || '0', (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  fs.writeFile(path.join(filePath, 'progress.txt'), String(data.progress) || '0', (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  fs.writeFile(path.join(filePath, 'status.txt'), data.status || '', (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  fs.writeFile(path.join(filePath, 'title.txt'), data.title || '', (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+
+  if (data.cover_url) {
+    download.image({
+      url: data.cover_url.replaceAll('150', '250'),
+      dest: path.join(filePath, 'cover.jpg'),
+    });
+  } else {
+    const coverPath = path.join(filePath, 'cover.jpg');
+    const imgBuffer = decodeBase64Image(logo);
+    fs.writeFile(coverPath, imgBuffer.data, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  }
 };

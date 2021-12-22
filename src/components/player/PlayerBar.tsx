@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
 import { FlexboxGrid, Grid, Row, Col, Whisper } from 'rsuite';
@@ -31,10 +32,10 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import { getCurrentEntryList, isCached } from '../../shared/utils';
+import { getCurrentEntryList, isCached, writeOBSFiles } from '../../shared/utils';
 import { StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Artist, Server } from '../../types';
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -67,6 +68,76 @@ const PlayerBar = () => {
     }
     return () => clearInterval();
   }, [playQueue.currentPlayer, player.status]);
+
+  useEffect(() => {
+    if (config.external.obs.enabled && config.external.obs.pollingInterval >= 100) {
+      const interval = setInterval(() => {
+        const currentPlayerRef =
+          playQueue.currentPlayer === 1
+            ? playersRef.current?.player1.audioEl.current
+            : playersRef.current?.player2.audioEl.current;
+
+        if (config.external.obs.type === 'web') {
+          try {
+            axios.post(
+              config.external.obs.url,
+              {
+                data: {
+                  album: playQueue.current?.album,
+                  album_url: null,
+                  artists: (playQueue.current?.artist || []).map((artist: Artist) => artist.title),
+                  cover_url: playQueue.current?.image.match('placeholder')
+                    ? undefined
+                    : playQueue.current?.image.replaceAll('150', '350'),
+                  duration: Math.floor((playQueue.current?.duration || 0) * 1000),
+                  progress: Math.floor((currentPlayerRef.currentTime || 0) * 1000),
+                  status: player.status === 'PLAYING' ? 'playing' : 'stopped',
+                  title: playQueue.current?.title,
+                },
+                date: Date.now(),
+                hostname: 'Sonixd',
+              },
+              {
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Headers': '*',
+                  'Access-Control-Allow-Origin': '*',
+                },
+              }
+            );
+          } catch (e) {
+            console.log(e);
+          }
+        } else if (config.external.obs.path) {
+          writeOBSFiles(config.external.obs.path, {
+            album: playQueue.current?.album,
+            album_url: null,
+            artists: (playQueue.current?.artist || []).map((artist: Artist) => artist.title),
+            cover_url: playQueue.current?.image.match('placeholder')
+              ? undefined
+              : playQueue.current?.image,
+            duration: Math.floor((playQueue.current?.duration || 0) * 1000),
+            progress: Math.floor((currentPlayerRef.currentTime || 0) * 1000),
+            status: player.status === 'PLAYING' ? 'playing' : 'stopped',
+            title: playQueue.current?.title,
+          });
+        }
+      }, config.external.obs.pollingInterval);
+
+      return () => clearInterval(interval);
+    }
+
+    return () => clearInterval();
+  }, [
+    config.external.obs.enabled,
+    config.external.obs.path,
+    config.external.obs.pollingInterval,
+    config.external.obs.type,
+    config.external.obs.url,
+    playQueue,
+    player.status,
+  ]);
 
   useEffect(() => {
     setCurrentEntryList(getCurrentEntryList(playQueue));

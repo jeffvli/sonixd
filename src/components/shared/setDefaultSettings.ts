@@ -2,6 +2,26 @@ import settings from 'electron-settings';
 import path from 'path';
 
 const setDefaultSettings = (force: boolean) => {
+  if (force || !settings.hasSync('obs.enabled')) {
+    settings.setSync('obs.enabled', false);
+  }
+
+  if (force || !settings.hasSync('obs.url')) {
+    settings.setSync('obs.url', '');
+  }
+
+  if (force || !settings.hasSync('obs.type')) {
+    settings.setSync('obs.type', 'local');
+  }
+
+  if (force || !settings.hasSync('obs.path')) {
+    settings.setSync('obs.path', '');
+  }
+
+  if (force || !settings.hasSync('obs.pollingInterval')) {
+    settings.setSync('obs.pollingInterval', 2000);
+  }
+
   if (force || !settings.hasSync('autoUpdate')) {
     settings.setSync('autoUpdate', true);
   }
