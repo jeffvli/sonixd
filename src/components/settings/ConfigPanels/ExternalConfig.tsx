@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setOBS } from '../../../redux/configSlice';
 import ConfigOption from '../ConfigOption';
 
-const { dialog } = require('electron').remote;
+const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
 
 const ExternalConfig = () => {
   const dispatch = useAppDispatch();
