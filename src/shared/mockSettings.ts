@@ -317,6 +317,13 @@ export const mockSettings = {
   windowMaximize: false,
   highlightOnRowHover: false,
   titleBarStyle: 'windows',
+  obs: {
+    enabled: true,
+    url: '',
+    type: 'local',
+    path: 'C:\\Temp',
+    pollingInterval: '2000',
+  },
   themesDefault: [
     {
       label: 'Default Dark',
