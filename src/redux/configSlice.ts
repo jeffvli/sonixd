@@ -43,6 +43,15 @@ export interface ConfigPage {
       alignment: string | 'flex-start' | 'center';
     };
   };
+  external: {
+    obs: {
+      enabled: boolean;
+      url: string;
+      path: string;
+      pollingInterval: number;
+      type: 'web' | 'local';
+    };
+  };
   serverType: Server;
 }
 
@@ -128,6 +137,15 @@ const initialState: ConfigPage = {
       cardSize: Number(parsedSettings.gridCardSize),
       gapSize: Number(parsedSettings.gridGapSize),
       alignment: String(parsedSettings.gridAlignment),
+    },
+  },
+  external: {
+    obs: {
+      enabled: parsedSettings.obs.enabled || false,
+      url: parsedSettings.obs.url || '',
+      path: parsedSettings.obs.path || '',
+      pollingInterval: parsedSettings.obs.pollingInterval || 1000,
+      type: parsedSettings.obs.type || 'local',
     },
   },
   serverType: parsedSettings.serverType,
@@ -233,6 +251,10 @@ const configSlice = createSlice({
         action.payload.moveBeforeId
       );
     },
+
+    setOBS: (state, action: PayloadAction<any>) => {
+      state.external.obs = action.payload;
+    },
   },
 });
 
@@ -251,5 +273,6 @@ export const {
   setGridGapSize,
   setGridAlignment,
   moveToIndex,
+  setOBS,
 } = configSlice.actions;
 export default configSlice.reducer;

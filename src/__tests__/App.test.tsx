@@ -383,6 +383,15 @@ const configState: ConfigPage = {
       alignment: 'flex-start',
     },
   },
+  external: {
+    obs: {
+      enabled: false,
+      url: '',
+      path: '',
+      pollingInterval: 2000,
+      type: 'local',
+    },
+  },
 };
 
 const favoriteState: FavoritePage = {
