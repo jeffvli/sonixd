@@ -5,7 +5,6 @@ import moment from 'moment';
 import arrayMove from 'array-move';
 import settings from 'electron-settings';
 import { mockSettings } from './mockSettings';
-import logo from '../../assets/icon.png';
 
 const download = require('image-downloader');
 
@@ -540,15 +539,6 @@ export const writeOBSFiles = (filePath: string, data: any) => {
       console.log(err);
     }
   });
-  fs.writeFile(
-    path.join(filePath, 'cover.txt'),
-    data.cover_url?.replaceAll('150', '250') || '',
-    (err) => {
-      if (err) {
-        console.log(err);
-      }
-    }
-  );
   fs.writeFile(path.join(filePath, 'duration.txt'), String(data.duration) || '0', (err) => {
     if (err) {
       console.log(err);
@@ -574,14 +564,6 @@ export const writeOBSFiles = (filePath: string, data: any) => {
     download.image({
       url: data.cover_url.replaceAll('150', '250'),
       dest: path.join(filePath, 'cover.jpg'),
-    });
-  } else {
-    const coverPath = path.join(filePath, 'cover.jpg');
-    const imgBuffer = decodeBase64Image(logo);
-    fs.writeFile(coverPath, imgBuffer.data, (err) => {
-      if (err) {
-        console.log(err);
-      }
     });
   }
 };
