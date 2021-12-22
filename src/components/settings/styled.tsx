@@ -8,19 +8,23 @@ export const ConfigPanelTitle = styled.div`
   margin: 15px auto 15px auto;
 `;
 
-export const ConfigPanel = styled(Panel)`
+export const ConfigPanel = styled(Panel)<{ $noBackground: boolean }>`
   color: ${(props) => props.theme.colors.layout.page.color};
   min-width: 500px;
   max-width: 1200px;
-  margin: 15px auto 15px auto;
+  margin: ${(props) => (props.collapsible ? 'none' : '15px auto 15px auto')};
   padding: 15px;
 
-  background: rgba(0, 0, 0, 0.1);
+  background: ${(props) => (props.$noBackground ? 'none' : 'rgba(0, 0, 0, 0.1)')};
   border-radius: 15px;
 
   .rs-panel-heading {
     font-size: ${(props) => props.theme.fonts.size.panelTitle};
     font-weight: bold;
+  }
+
+  .rs-panel-collapsible > .rs-panel-heading::before {
+    top: 0px !important;
   }
 `;
 
