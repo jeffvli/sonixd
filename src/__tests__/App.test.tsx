@@ -384,6 +384,10 @@ const configState: ConfigPage = {
     },
   },
   external: {
+    discord: {
+      enabled: false,
+      clientId: '',
+    },
     obs: {
       enabled: false,
       url: '',

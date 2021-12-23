@@ -2,6 +2,14 @@ import settings from 'electron-settings';
 import path from 'path';
 
 const setDefaultSettings = (force: boolean) => {
+  if (force || !settings.hasSync('discord.enabled')) {
+    settings.setSync('discord.enabled', false);
+  }
+
+  if (force || !settings.hasSync('discord.clientId')) {
+    settings.setSync('discord.clientId', '923372440934055968');
+  }
+
   if (force || !settings.hasSync('obs.enabled')) {
     settings.setSync('obs.enabled', false);
   }

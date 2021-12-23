@@ -44,6 +44,10 @@ export interface ConfigPage {
     };
   };
   external: {
+    discord: {
+      enabled: boolean;
+      clientId: string;
+    };
     obs: {
       enabled: boolean;
       url: string;
@@ -140,6 +144,10 @@ const initialState: ConfigPage = {
     },
   },
   external: {
+    discord: {
+      enabled: parsedSettings.discord.enabled || false,
+      clientId: parsedSettings.discord.clientId || '',
+    },
     obs: {
       enabled: parsedSettings.obs.enabled || false,
       url: parsedSettings.obs.url || '',
@@ -252,6 +260,10 @@ const configSlice = createSlice({
       );
     },
 
+    setDiscord: (state, action: PayloadAction<any>) => {
+      state.external.discord = action.payload;
+    },
+
     setOBS: (state, action: PayloadAction<any>) => {
       state.external.obs = action.payload;
     },
@@ -273,6 +285,7 @@ export const {
   setGridGapSize,
   setGridAlignment,
   moveToIndex,
+  setDiscord,
   setOBS,
 } = configSlice.actions;
 export default configSlice.reducer;

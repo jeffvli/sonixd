@@ -317,6 +317,11 @@ export const mockSettings = {
   windowMaximize: false,
   highlightOnRowHover: false,
   titleBarStyle: 'windows',
+  discord: {
+    enabled: true,
+    applicationId: '',
+    clientId: '923372440934055968',
+  },
   obs: {
     enabled: true,
     url: '',

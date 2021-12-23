@@ -44,6 +44,9 @@ import { StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import logo from '../../../assets/icon.png';
+import { notifyToast } from '../shared/toast';
+
+const DiscordRPC = require('discord-rpc');
 
 const PlayerBar = () => {
   const queryClient = useQueryClient();
@@ -59,6 +62,7 @@ const PlayerBar = () => {
   const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
   const [muted, setMuted] = useState(false);
+  const [discordRpc, setDiscordRpc] = useState<any>();
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -76,6 +80,63 @@ const PlayerBar = () => {
     }
     return () => clearInterval();
   }, [playQueue.currentPlayer, player.status]);
+
+  useEffect(() => {
+    if (config.external.discord.enabled && config.external.discord.clientId.length === 18) {
+      const rpc = new DiscordRPC.Client({ transport: 'ipc' });
+
+      if (discordRpc?.client !== config.external.discord.clientId) {
+        rpc.login({ clientId: config.external.discord.clientId }).catch((err: any) => {
+          notifyToast('error', `${err}`);
+        });
+
+        setDiscordRpc(rpc);
+      }
+    }
+  }, [config.external.discord.clientId, config.external.discord.enabled, discordRpc?.client]);
+
+  useEffect(() => {
+    if (!config.external.discord.enabled) {
+      discordRpc?.destroy();
+    }
+  }, [config.external.discord.enabled, discordRpc]);
+
+  useEffect(() => {
+    if (config.external.discord.enabled) {
+      const setActivity = async () => {
+        if (!discordRpc) {
+          return;
+        }
+
+        // You'll need to have snek_large and snek_small assets uploaded to
+        // https://discord.com/developers/applications/<application_id>/rich-presence/assets
+        discordRpc.setActivity({
+          details:
+            player.status === 'PLAYING'
+              ? playQueue.current?.title.padEnd(2, ' ') || 'Unknown'
+              : `(Paused) ${playQueue.current?.title.padEnd(2, ' ') || 'Not playing'}`,
+          state: playQueue.current?.albumArtist ? `by ${playQueue.current.albumArtist}` : 'Idle',
+          largeImageKey: 'icon',
+          largeImageText: playQueue.current?.album || 'Unknown',
+          instance: false,
+        });
+      };
+
+      // activity can only be set every 15 seconds
+      const interval = setInterval(() => {
+        setActivity();
+      }, 15e3);
+
+      return () => clearInterval(interval);
+    }
+    return () => clearInterval();
+  }, [
+    config.external.discord.enabled,
+    discordRpc,
+    playQueue,
+    playQueue.currentPlayer,
+    player.status,
+  ]);
 
   useEffect(() => {
     if (config.external.obs.enabled && config.external.obs.pollingInterval >= 100) {

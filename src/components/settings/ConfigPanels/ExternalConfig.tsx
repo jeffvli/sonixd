@@ -1,4 +1,5 @@
 import React from 'react';
+import { shell } from 'electron';
 import settings from 'electron-settings';
 import { Icon, RadioGroup } from 'rsuite';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
@@ -7,11 +8,12 @@ import {
   StyledInputGroup,
   StyledInputGroupButton,
   StyledInputNumber,
+  StyledLink,
   StyledRadio,
   StyledToggle,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setOBS } from '../../../redux/configSlice';
+import { setDiscord, setOBS } from '../../../redux/configSlice';
 import ConfigOption from '../ConfigOption';
 
 const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
@@ -25,6 +27,49 @@ const ExternalConfig = () => {
       <ConfigOptionDescription>
         Config for integration with external programs.
       </ConfigOptionDescription>
+      <ConfigPanel header="Discord" collapsible $noBackground>
+        <ConfigOption
+          name="Rich Presence"
+          description="Integrates with Discord's rich presence to display the currently playing song as your status."
+          option={
+            <StyledToggle
+              defaultChecked={config.external.discord.enabled}
+              checked={config.external.discord.enabled}
+              disabled={config.external.discord.clientId.length !== 18}
+              onChange={(e: boolean) => {
+                settings.setSync('discord.enabled', e);
+                dispatch(setDiscord({ ...config.external.discord, enabled: e }));
+              }}
+            />
+          }
+        />
+        <ConfigOption
+          name="Discord Client Id"
+          description={
+            <>
+              The client/application Id of the Sonixd discord application. To use your own, create
+              one on the{' '}
+              <StyledLink
+                onClick={() => shell.openPath('https://discord.com/developers/applications')}
+              >
+                developer application portal
+              </StyledLink>
+              . The large icon uses the name &quot;icon&quot;. Default is 923372440934055968.
+            </>
+          }
+          option={
+            <StyledInput
+              placeholder="Client/Application Id"
+              value={config.external.discord.clientId}
+              disabled={config.external.discord.enabled}
+              onChange={(e: boolean) => {
+                settings.setSync('discord.clientId', e);
+                dispatch(setDiscord({ ...config.external.discord, clientId: e }));
+              }}
+            />
+          }
+        />
+      </ConfigPanel>
       <ConfigPanel header="OBS (Open Broadcaster Software)" collapsible $noBackground>
         <ConfigOption
           name={
