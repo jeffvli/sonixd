@@ -22,6 +22,7 @@ import {
   getScanStatus,
   getSearch,
   getSimilarSongs,
+  getTopSongs,
   getStarred,
   scrobble,
   setRating,
@@ -93,6 +94,7 @@ const endpoints = [
   { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: jfGetMusicDirectorySongs } },
   { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },
   { id: 'getSongs', endpoint: { subsonic: undefined, jellyfin: jfGetSongs } },
+  { id: 'getTopSongs', endpoint: { subsonic: getTopSongs, jellyfin: undefined } },
 
   // Playlist handling logic is split up by server type due to differences in how each server handles them.
   // You will need to add custom logic in the playlist/context menu component handlers.
