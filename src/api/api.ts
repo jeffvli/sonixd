@@ -550,7 +550,16 @@ export const setRating = async (options: { ids: string[]; rating: number }) => {
 
 export const getSimilarSongs = async (options: { id: string; count: number }) => {
   const { data } = await api.get(`/getSimilarSongs2`, { params: options });
-  return (data.similarSongs2.song || []).map((entry: any) => normalizeSong(entry));
+  return (_.uniqBy(data.similarSongs2.song, (e: any) => e.id) || []).map((entry: any) =>
+    normalizeSong(entry)
+  );
+};
+
+export const getTopSongs = async (options: { artist: string; count: number }) => {
+  const { data } = await api.get(`/getTopSongs`, { params: options });
+  return (_.uniqBy(data?.topSongs?.song, (e: any) => e.id) || []).map((entry: any) =>
+    normalizeSong(entry)
+  );
 };
 
 export const updatePlaylistSongs = async (options: { id: string; entry: any[] }) => {
