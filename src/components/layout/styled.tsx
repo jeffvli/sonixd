@@ -197,7 +197,7 @@ export const SidebarNavItem = styled(Nav.Item)`
   }
 `;
 
-export const CoverArtWrapper = styled.div<{ $link?: boolean; size: number }>`
+export const CoverArtWrapper = styled.div<{ $link?: boolean; size: number; card?: boolean }>`
   display: inline-block;
   filter: ${(props) => props.theme.other.coverArtFilter};
   cursor: ${(props) => (props.$link ? 'pointer' : 'default')};
@@ -206,8 +206,9 @@ export const CoverArtWrapper = styled.div<{ $link?: boolean; size: number }>`
   width: ${(props) => props.size}px;
   overflow: hidden;
   border-radius: ${(props) => props.theme.other.coverArtBorderRadius};
-  background: ${(props) => props.theme.colors.layout.page.background};
+  background: transparent;
   vertical-align: middle;
+  overflow: ${(props) => (props.card ? 'visible' : 'hidden')};
 
   &:focus-visible {
     outline: 2px ${(props) => props.theme.colors.primary} solid;
@@ -279,7 +280,6 @@ export const BlurredBackgroundWrapper = styled.div<{ expanded: boolean; hasImage
   width: ${(props) => (props.expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
   top: 32px;
   z-index: 1;
-  display: block;
   background: ${(props) => (props.hasImage ? '#0b0908' : '#00395A')};
   filter: ${(props) => (props.hasImage ? 'none' : 'brightness(0.3)')};
 `;
