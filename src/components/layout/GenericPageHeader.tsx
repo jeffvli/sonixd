@@ -45,21 +45,25 @@ const GenericPageHeader = ({
   return (
     <>
       {image && !Array.isArray(image) && (
-        <CoverArtWrapper size={imageHeight || '195px'}>
-          <LazyLoadImage
-            src={image}
-            alt="header-img"
-            height={imageHeight || '195px'}
-            visibleByDefault
-            afterLoad={() => {
-              if (cacheImages.enabled) {
-                cacheImage(
-                  `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
-                  image.replaceAll(/=150/gi, '=350')
-                );
-              }
-            }}
-          />
+        <CoverArtWrapper size={imageHeight || '195px'} card={typeof image !== 'string'}>
+          {typeof image !== 'string' ? (
+            <>{image}</>
+          ) : (
+            <LazyLoadImage
+              src={image}
+              alt="header-img"
+              height={imageHeight || '195px'}
+              visibleByDefault
+              afterLoad={() => {
+                if (cacheImages.enabled) {
+                  cacheImage(
+                    `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
+                    image.replaceAll(/=150/gi, '=350')
+                  );
+                }
+              }}
+            />
+          )}
         </CoverArtWrapper>
       )}
 
