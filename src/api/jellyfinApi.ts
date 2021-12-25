@@ -476,7 +476,7 @@ export const getArtist = async (options: { id: string; musicFolderId?: string })
   });
 
   const { data: similarData } = await jellyfinApi.get(`/artists/${options.id}/similar`, {
-    params: { limit: 8 },
+    params: { limit: 15 },
   });
 
   return normalizeArtist({

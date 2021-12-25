@@ -401,7 +401,7 @@ export const getRandomSongs = async (options: {
 export const getArtist = async (options: { id: string }) => {
   const { data } = await api.get(`/getArtist`, { params: options });
   const { data: infoData } = await api.get(`/getArtistInfo2`, {
-    params: { id: options.id, count: 8 },
+    params: { id: options.id, count: 15 },
   });
 
   return normalizeArtist({
