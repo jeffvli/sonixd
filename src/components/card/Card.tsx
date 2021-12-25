@@ -47,6 +47,9 @@ const Card = ({
   cacheImages,
   cachePath,
   handleFavorite,
+  notVisibleByDefault,
+  noInfoPanel,
+  noModalButton,
   ...rest
 }: any) => {
   const history = useHistory();
@@ -190,18 +193,16 @@ const Card = ({
 
   return (
     <>
-      <CardPanel
-        tabIndex={0}
-        cardsize={size}
-        onKeyDown={(e: any) => {
-          if (e.key === ' ' || e.key === 'Enter') {
-            handleClick();
-          }
-        }}
-        style={rest.style}
-      >
+      <CardPanel cardsize={size} style={rest.style}>
         <Overlay cardsize={size}>
-          <ImgPanel>
+          <ImgPanel
+            tabIndex={0}
+            onKeyDown={(e: any) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                handleClick();
+              }
+            }}
+          >
             {rest.coverArt.match('placeholder') ? (
               <CardImgWrapper
                 id="placeholder-wrapper"
@@ -234,7 +235,7 @@ const Card = ({
                     alt="img"
                     effect="opacity"
                     cardsize={size}
-                    visibleByDefault={cacheImages}
+                    visibleByDefault={notVisibleByDefault ? false : cacheImages}
                     afterLoad={() => {
                       if (cacheImages) {
                         cacheImage(
@@ -285,7 +286,7 @@ const Card = ({
                     />
                   </CustomTooltip>
                 )}
-                {!rest.isModal && (
+                {!rest.isModal && !noModalButton && (
                   <CustomTooltip text="View in modal" delay={1000}>
                     <ModalViewOverlayButton
                       size={size <= 160 ? 'xs' : 'sm'}
@@ -299,44 +300,46 @@ const Card = ({
           </ImgPanel>
         </Overlay>
 
-        <InfoPanel cardsize={size}>
-          <InfoSpan>
-            <CardTitleWrapper>
-              <CustomTooltip text={rest.title}>
-                <CardTitleButton
-                  appearance="link"
-                  tabIndex={-1}
-                  size="sm"
-                  onClick={handleClick}
-                  cardsize={size}
-                >
-                  {rest.title}
-                </CardTitleButton>
-              </CustomTooltip>
-            </CardTitleWrapper>
-          </InfoSpan>
-          <InfoSpan>
-            {subUrl ? (
+        {!noInfoPanel && (
+          <InfoPanel cardsize={size}>
+            <InfoSpan>
               <CardTitleWrapper>
-                <CustomTooltip text={rest.subtitle}>
-                  <CardSubtitleButton
+                <CustomTooltip text={rest.title}>
+                  <CardTitleButton
                     appearance="link"
                     tabIndex={-1}
-                    size="xs"
-                    onClick={handleSubClick}
+                    size="sm"
+                    onClick={handleClick}
                     cardsize={size}
                   >
-                    {rest.subtitle}
-                  </CardSubtitleButton>
+                    {rest.title}
+                  </CardTitleButton>
                 </CustomTooltip>
               </CardTitleWrapper>
-            ) : (
-              <CardSubtitle cardsize={size}>
-                {rest.subtitle !== 'undefined' ? rest.subtitle : <span>&#8203;</span>}
-              </CardSubtitle>
-            )}
-          </InfoSpan>
-        </InfoPanel>
+            </InfoSpan>
+            <InfoSpan>
+              {subUrl ? (
+                <CardTitleWrapper>
+                  <CustomTooltip text={rest.subtitle}>
+                    <CardSubtitleButton
+                      appearance="link"
+                      tabIndex={-1}
+                      size="xs"
+                      onClick={handleSubClick}
+                      cardsize={size}
+                    >
+                      {rest.subtitle}
+                    </CardSubtitleButton>
+                  </CustomTooltip>
+                </CardTitleWrapper>
+              ) : (
+                <CardSubtitle cardsize={size}>
+                  {rest.subtitle !== 'undefined' ? rest.subtitle : <span>&#8203;</span>}
+                </CardSubtitle>
+              )}
+            </InfoSpan>
+          </InfoPanel>
+        )}
       </CardPanel>
     </>
   );
