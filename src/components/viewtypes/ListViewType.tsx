@@ -19,6 +19,7 @@ const ListViewType = (
     handleRowDoubleClick,
     tableColumns,
     hasDraggableColumns,
+    tableHeight,
     rowHeight,
     virtualized,
     fontSize,
@@ -67,19 +68,21 @@ const ListViewType = (
 
       setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
     }
+    if (!tableHeight) {
+      if (!miniView) {
+        window.addEventListener('resize', handleResize);
 
-    if (!miniView) {
-      window.addEventListener('resize', handleResize);
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      }
     }
+
     return undefined;
-  }, [getHeight, miniView]);
+  }, [getHeight, tableHeight, miniView]);
 
   useEffect(() => {
-    if (!isModal) {
+    if (!isModal && !tableHeight) {
       window.requestAnimationFrame(() => {
         setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
         setShow(true);
@@ -92,7 +95,7 @@ const ListViewType = (
         });
       }, 250);
     }
-  }, [getHeight, isModal]);
+  }, [getHeight, tableHeight, isModal]);
 
   useEffect(() => {
     let scrollDistance = 0;
@@ -320,7 +323,7 @@ const ListViewType = (
         {show && (
           <ListViewTable
             tableRef={tableRef}
-            height={height}
+            height={tableHeight || height}
             data={data}
             virtualized
             rowHeight={rowHeight}
