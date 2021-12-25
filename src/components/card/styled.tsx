@@ -59,10 +59,6 @@ export const CardPanel = styled(Panel)<Card>`
     filter: ${(props) => props.theme.other.card.hover.filter};
     transition: ${(props) => props.theme.other.card.hover.transition};
   }
-
-  &:focus-visible {
-    outline: 2px ${(props) => props.theme.colors.primary} solid;
-  }
 `;
 
 export const InfoPanel = styled(Panel)<Card>`
@@ -81,6 +77,11 @@ export const ImgPanel = styled(Panel)<Card>`
   border-bottom: ${(props) => props.theme.other.card.image.borderBottom} !important;
   border-left: ${(props) => props.theme.other.card.image.borderLeft} !important;
   border-radius: ${(props) => props.theme.other.card.image.borderRadius} !important;
+
+  &:focus-visible {
+    border-color: ${(props) => props.theme.colors.primary} !important;
+    outline: none !important;
+  }
 
   &:hover {
     border-color: ${(props) => props.theme.colors.primary} !important;
@@ -109,6 +110,7 @@ export const CardButton = styled(Button)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: 0s;
 `;
 
 export const CardTitleWrapper = styled.span`
@@ -156,7 +158,6 @@ export const CardSubtitle = styled.div<Card>`
 
 export const CardImg = styled.img<Card>`
   height: ${(props) => `${props.cardsize}px`};
-  width: ${(props) => `${props.cardsize}px`};
 `;
 
 export const LazyCardImg = styled(LazyLoadImage)<Card>`
