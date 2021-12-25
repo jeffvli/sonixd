@@ -3,19 +3,17 @@ import settings from 'electron-settings';
 import styled from 'styled-components';
 import { ButtonGroup, ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
 import Card from '../card/Card';
-import { SectionTitleWrapper, SectionTitle, StyledIconButton } from '../shared/styled';
+import { SectionTitleWrapper, SectionTitle, StyledButton } from '../shared/styled';
 import { useAppSelector } from '../../redux/hooks';
+import { smoothScroll } from '../../shared/utils';
 
-const ScrollMenuContainer = styled.div`
-  margin-bottom: 25px;
+const ScrollMenuContainer = styled.div<{ $noScrollbar?: boolean }>`
   overflow-x: auto;
   white-space: nowrap;
 
   ::-webkit-scrollbar {
-    height: 10px;
+    height: ${(props) => (props.$noScrollbar ? '0px' : '10px')};
   }
-
-  scroll-behavior: smooth;
 `;
 
 const ScrollingMenu = ({
@@ -26,6 +24,7 @@ const ScrollingMenu = ({
   onClickTitle,
   type,
   handleFavorite,
+  noScrollbar,
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
@@ -35,7 +34,7 @@ const ScrollingMenu = ({
   return (
     <>
       <SectionTitleWrapper>
-        <FlexboxGrid justify="space-between">
+        <FlexboxGrid justify="space-between" style={{ alignItems: 'flex-end' }}>
           <FlexboxGrid.Item>
             <SectionTitle
               tabIndex={0}
@@ -53,22 +52,36 @@ const ScrollingMenu = ({
             {data.length > 0 && (
               <ButtonToolbar>
                 <ButtonGroup>
-                  <StyledIconButton
+                  <StyledButton
+                    size="sm"
                     appearance="subtle"
-                    icon={<Icon icon="arrow-left" />}
                     onClick={() => {
-                      scrollContainerRef.current.scrollLeft -=
-                        config.lookAndFeel.gridView.cardSize * 5;
+                      smoothScroll(
+                        400,
+                        scrollContainerRef.current,
+                        scrollContainerRef.current.scrollLeft -
+                          config.lookAndFeel.gridView.cardSize * 5,
+                        'scrollLeft'
+                      );
                     }}
-                  />
-                  <StyledIconButton
+                  >
+                    <Icon icon="arrow-left" />
+                  </StyledButton>
+                  <StyledButton
+                    size="sm"
                     appearance="subtle"
-                    icon={<Icon icon="arrow-right" />}
                     onClick={() => {
-                      scrollContainerRef.current.scrollLeft +=
-                        config.lookAndFeel.gridView.cardSize * 5;
+                      smoothScroll(
+                        400,
+                        scrollContainerRef.current,
+                        scrollContainerRef.current.scrollLeft +
+                          config.lookAndFeel.gridView.cardSize * 5,
+                        'scrollLeft'
+                      );
                     }}
-                  />
+                  >
+                    <Icon icon="arrow-right" />
+                  </StyledButton>
                 </ButtonGroup>
               </ButtonToolbar>
             )}
@@ -76,14 +89,16 @@ const ScrollingMenu = ({
         </FlexboxGrid>
       </SectionTitleWrapper>
 
-      <ScrollMenuContainer ref={scrollContainerRef}>
+      <ScrollMenuContainer ref={scrollContainerRef} $noScrollbar={noScrollbar}>
         {data.map((item: any) => (
           <span key={item.id} style={{ display: 'inline-block' }}>
             <Card
               itemId={item.id}
               title={item[cardTitle.property] || item.title}
               subtitle={
-                cardSubtitle.unit
+                typeof cardSubtitle === 'string'
+                  ? cardSubtitle
+                  : cardSubtitle.unit
                   ? `${item[cardSubtitle.property]}${cardSubtitle.unit}`
                   : item[cardSubtitle.property]
               }

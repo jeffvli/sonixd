@@ -169,6 +169,7 @@ const Dashboard = () => {
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu
+            noScrollbar
             title="Recently Played"
             data={recentAlbums}
             cardTitle={{
@@ -193,6 +194,7 @@ const Dashboard = () => {
           />
 
           <ScrollingMenu
+            noScrollbar
             title="Recently Added"
             data={newestAlbums}
             cardTitle={{
@@ -217,6 +219,7 @@ const Dashboard = () => {
           />
 
           <ScrollingMenu
+            noScrollbar
             title="Random"
             data={randomAlbums}
             cardTitle={{
@@ -241,6 +244,7 @@ const Dashboard = () => {
           />
 
           <ScrollingMenu
+            noScrollbar
             title="Most Played"
             data={frequentAlbums}
             cardTitle={{
