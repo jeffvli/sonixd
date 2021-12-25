@@ -565,7 +565,7 @@ const setDefaultSettings = (force: boolean) => {
           },
           subtle: {
             color: '#D8D8D8',
-            colorHover: '#D8D8D8',
+            colorHover: '#FFFFFF',
             backgroundHover: 'transparent',
           },
         },
@@ -726,7 +726,7 @@ const setDefaultSettings = (force: boolean) => {
           },
           subtle: {
             color: '#575757',
-            colorHover: '#575757',
+            colorHover: '#000000',
             backgroundHover: 'transparent',
           },
         },
@@ -888,7 +888,7 @@ const setDefaultSettings = (force: boolean) => {
           },
           subtle: {
             color: '#D8D8D8',
-            colorHover: '#D8D8D8',
+            colorHover: '#FFFFFF',
             backgroundHover: 'transparent',
           },
         },
@@ -1049,7 +1049,7 @@ const setDefaultSettings = (force: boolean) => {
           },
           subtle: {
             color: '#D8D8D8',
-            colorHover: '#D8D8D8',
+            colorHover: '#FFFFFF',
             backgroundHover: 'transparent',
           },
         },
@@ -1210,7 +1210,7 @@ const setDefaultSettings = (force: boolean) => {
           },
           subtle: {
             color: '#D8D8D8',
-            colorHover: '#D8D8D8',
+            colorHover: '#FFFFFF',
             backgroundHover: '#1D252C',
           },
         },
@@ -1371,7 +1371,7 @@ const setDefaultSettings = (force: boolean) => {
           },
           subtle: {
             color: '#D8D8D8',
-            colorHover: '#D8D8D8',
+            colorHover: '#FFFFFF',
             backgroundHover: '#1D252C',
           },
         },
