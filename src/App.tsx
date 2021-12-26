@@ -65,6 +65,9 @@ const App = () => {
             <Route exact path="/library/artist" component={ArtistList} />
             <Route exact path="/library/genre" component={GenreList} />
             <Route exact path="/library/artist/:id" component={ArtistView} />
+            <Route exact path="/library/artist/:id/albums" component={ArtistView} />
+            <Route exact path="/library/artist/:id/songs" component={ArtistView} />
+            <Route exact path="/library/artist/:id/topsongs" component={ArtistView} />
             <Route exact path="/library/album/:id" component={AlbumView} />
             <Route exact path="/library/folder" component={FolderList} />
             <Route exact path="/library/folder/:id" component={FolderList} />
