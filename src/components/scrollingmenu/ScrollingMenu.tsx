@@ -21,6 +21,7 @@ const ScrollingMenu = ({
   cardSubtitle,
   data,
   title,
+  subtitle,
   onClickTitle,
   type,
   handleFavorite,
@@ -47,6 +48,7 @@ const ScrollingMenu = ({
             >
               {title}
             </SectionTitle>
+            {subtitle}
           </FlexboxGrid.Item>
           <FlexboxGrid.Item>
             {data.length > 0 && (

@@ -849,28 +849,26 @@ const ArtistView = ({ ...rest }: any) => {
               {albumsByYearDesc.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title={
-                      <>
-                        Latest Albums{' '}
-                        <ButtonGroup>
-                          <PlayButton
-                            size="sm"
-                            appearance="subtle"
-                            text="Play Latest Albums"
-                            onClick={() => handlePlay('albums')}
-                          />
-                          <PlayAppendNextButton
-                            size="sm"
-                            appearance="subtle"
-                            onClick={() => handlePlayAppend('next', 'albums')}
-                          />
-                          <PlayAppendButton
-                            size="sm"
-                            appearance="subtle"
-                            onClick={() => handlePlayAppend('later', 'albums')}
-                          />
-                        </ButtonGroup>
-                      </>
+                    title="Latest Albums "
+                    subtitle={
+                      <ButtonGroup>
+                        <PlayButton
+                          size="sm"
+                          appearance="subtle"
+                          text="Play Latest Albums"
+                          onClick={() => handlePlay('albums')}
+                        />
+                        <PlayAppendNextButton
+                          size="sm"
+                          appearance="subtle"
+                          onClick={() => handlePlayAppend('next', 'albums')}
+                        />
+                        <PlayAppendButton
+                          size="sm"
+                          appearance="subtle"
+                          onClick={() => handlePlayAppend('later', 'albums')}
+                        />
+                      </ButtonGroup>
                     }
                     onClickTitle={() => history.push(`/library/artist/${artistId}/albums`)}
                     data={albumsByYearDesc?.slice(0, 15) || []}
@@ -893,28 +891,26 @@ const ArtistView = ({ ...rest }: any) => {
               {data.info.similarArtist.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title={
-                      <>
-                        Related Artists{' '}
-                        <ButtonGroup>
-                          <PlayButton
-                            size="sm"
-                            appearance="subtle"
-                            text="Play Artist Mix"
-                            onClick={() => handlePlay('mix')}
-                          />
-                          <PlayAppendNextButton
-                            size="sm"
-                            appearance="subtle"
-                            onClick={() => handlePlayAppend('next', 'mix')}
-                          />
-                          <PlayAppendButton
-                            size="sm"
-                            appearance="subtle"
-                            onClick={() => handlePlayAppend('later', 'mix')}
-                          />
-                        </ButtonGroup>
-                      </>
+                    title="Related Artists "
+                    subtitle={
+                      <ButtonGroup>
+                        <PlayButton
+                          size="sm"
+                          appearance="subtle"
+                          text="Play Artist Mix"
+                          onClick={() => handlePlay('mix')}
+                        />
+                        <PlayAppendNextButton
+                          size="sm"
+                          appearance="subtle"
+                          onClick={() => handlePlayAppend('next', 'mix')}
+                        />
+                        <PlayAppendButton
+                          size="sm"
+                          appearance="subtle"
+                          onClick={() => handlePlayAppend('later', 'mix')}
+                        />
+                      </ButtonGroup>
                     }
                     data={data.info.similarArtist}
                     cardTitle={{

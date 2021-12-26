@@ -485,6 +485,7 @@ export const SectionTitleWrapper = styled.div`
 `;
 
 export const SectionTitle = styled.a`
+  vertical-align: middle;
   font-size: ${(props) => props.theme.fonts.size.panelTitle};
   color: ${(props) => props.theme.colors.layout.page.color};
   cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
