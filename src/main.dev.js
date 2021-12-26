@@ -475,7 +475,7 @@ const createWindow = async () => {
     });
   }
 
-  mainWindow.on('maximize', () => {
+  mainWindow.once('maximize', () => {
     settings.setSync('windowMaximize', true);
   });
 
@@ -580,6 +580,15 @@ app.on('activate', () => {
 });
 
 ipcMain.on('reload', () => {
-  app.quit();
-  createWindow();
+  if (process.env.APPIMAGE) {
+    app.exit();
+    app.relaunch({
+      execPath: process.env.APPIMAGE,
+      args: process.argv.slice(1).concat(['--appimage-extract-and-run']),
+    });
+    app.exit(0);
+  } else {
+    app.relaunch();
+    app.exit();
+  }
 });
