@@ -32,7 +32,8 @@ const Titlebar = ({ font }: any) => {
         } ~ ${playQueue[currentEntryList][playQueue.currentIndex]?.artist[0]?.title} `
       : 'Sonixd';
 
-    setTitle(`${playStatus} ${songTitle}`);
+    setTitle(`${playStatus} ${songTitle}`.trim());
+    document.title = `${playStatus} ${songTitle}`.trim();
   }, [playQueue, player.status]);
 
   // if the titlebar is native return no custom titlebar
