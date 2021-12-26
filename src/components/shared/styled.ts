@@ -26,8 +26,9 @@ export const HeaderButton = styled(Button)`
   margin-right: 5px;
 `;
 
-export const StyledButton = styled(Button)<{ width: number }>`
-  border-radius: ${(props) => props.theme.other?.button?.borderRadius} !important;
+export const StyledButton = styled(Button)<{ width: number; $circle: boolean }>`
+  border-radius: ${(props) =>
+    props.$circle ? '100px' : props.theme.other?.button?.borderRadius} !important;
   background: ${(props) =>
     props.appearance === 'primary'
       ? `${props.theme.colors.primary}`
@@ -46,18 +47,16 @@ export const StyledButton = styled(Button)<{ width: number }>`
       : `${props.theme.colors.button.default.color}`} !important;
 
   filter: ${(props) => (props.disabled ? 'brightness(0.8)' : 'none')};
-  transition: 0.5s;
+  transition: 0s;
   width: ${(props) => `${props.width}px`};
 
-  &:active,
-  &:focus,
   &:hover {
     color: ${(props) =>
       props.appearance === 'primary'
         ? `${props.theme.colors.button.primary.colorHover}`
         : props.appearance !== 'subtle'
         ? `${props.theme.colors?.button?.default.colorHover}`
-        : `${props.theme.colors.button.subtle.colorHover}`};
+        : `${props.theme.colors.button.subtle.colorHover}`} !important;
 
     background: ${(props) =>
       props.appearance === 'primary'
@@ -69,12 +68,23 @@ export const StyledButton = styled(Button)<{ width: number }>`
         : `${props.theme.colors.button.default.backgroundHover}`} !important;
   }
 
+  &:focus {
+    color: ${(props) =>
+      props.loading
+        ? 'transparent'
+        : props.appearance === 'primary'
+        ? `${props.theme.colors.button.primary.color}`
+        : props.appearance === 'subtle'
+        ? `${props.theme.colors.button.subtle.color}`
+        : props.appearance === 'link'
+        ? undefined
+        : `${props.theme.colors.button.default.color}`};
+    brightness: ${(props) => props.appearance === 'subtle' && 'unset'} !important;
+    background: ${(props) => props.appearance === 'subtle' && 'unset'} !important;
+  }
+
   &:focus-visible {
     filter: brightness(0.8);
-    outline: ${(props) =>
-      props.appearance === 'subtle'
-        ? `2px solid ${props.theme.colors.primary}`
-        : undefined} !important;
   }
 `;
 
@@ -204,7 +214,7 @@ export const StyledRadio = styled(Radio)`
 `;
 
 export const StyledIconButton = styled(IconButton)`
-  border-radius: ${(props) => props.theme.other.button.borderRadius} !important;
+  border-radius: ${(props) => props.theme.other.button.borderRadius};
   background: ${(props) =>
     props.appearance === 'primary'
       ? `${props.theme.colors.primary}`
@@ -223,7 +233,7 @@ export const StyledIconButton = styled(IconButton)`
       : `${props.theme.colors.button.default.color}`} !important;
 
   filter: ${(props) => (props.disabled ? 'brightness(0.8)' : 'none')};
-  transition: 0.5s;
+  transition: 0s;
   width: ${(props) => `${props.width}px`};
 
   &:active,
@@ -475,7 +485,7 @@ export const SectionTitleWrapper = styled.div`
 `;
 
 export const SectionTitle = styled.a`
-  font-size: 20px;
+  font-size: ${(props) => props.theme.fonts.size.panelTitle};
   color: ${(props) => props.theme.colors.layout.page.color};
   cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 
@@ -517,9 +527,21 @@ export const StyledLink = styled.a<{ underline?: boolean }>`
   }
 `;
 
-export const StyledPanel = styled(Panel)`
+export const StyledPanel = styled(Panel)<{ $maxWidth?: string }>`
   color: ${(props) => props.theme.colors.layout.page.color};
   border-radius: ${(props) => props.theme.other.panel.borderRadius};
+  max-width: ${(props) => props.$maxWidth};
+  cursor: default;
+  margin-bottom: 10px;
+
+  .rs-panel-heading {
+    margin-left: 10px;
+    font-size: ${(props) => props.theme.fonts.size.panelTitle};
+
+    .rs-panel-title {
+      align-items: flex-end;
+    }
+  }
 `;
 
 export const StyledTagPicker = styled(TagPicker)`
