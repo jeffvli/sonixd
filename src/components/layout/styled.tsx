@@ -260,9 +260,9 @@ export const PageHeaderSubtitleDataLine = styled.div<{ $top?: boolean; $overflow
   scroll-behavior: smooth;
 `;
 
-export const FlatBackground = styled.div<{ $expanded: boolean; $color: string }>`
+export const FlatBackground = styled.div<{ $expanded: boolean; $color: string; $titleBar: string }>`
   background: ${(props) => props.$color};
-  top: 32px;
+  top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   left: ${(props) => (props.$expanded ? '165px' : '56px')};
   height: 200px;
   position: absolute;
@@ -307,13 +307,17 @@ export const BlurredBackground = styled.img<{ expanded: boolean }>`
   display: block;
 `;
 
-export const GradientBackground = styled.div<{ $expanded: boolean; $color: string }>`
+export const GradientBackground = styled.div<{
+  $expanded: boolean;
+  $color: string;
+  $titleBar: string;
+}>`
   background: ${(props) =>
     `linear-gradient(0deg, transparent 10%, ${props.$color.replace(
       ',1)',
       `${props.theme.type === 'dark' ? ',0.2' : ',0.5'})`
     )} 100%)`};
-  top: 32px;
+  top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   left: ${(props) => (props.$expanded ? '165px' : '56px')};
   height: calc(100% - 130px);
   position: absolute;

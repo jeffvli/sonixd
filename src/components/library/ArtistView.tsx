@@ -343,7 +343,11 @@ const ArtistView = ({ ...rest }: any) => {
   return (
     <>
       {!rest.isModal && (
-        <GradientBackground $expanded={misc.expandSidebar} $color={imageAverageColor.color} />
+        <GradientBackground
+          $expanded={misc.expandSidebar}
+          $color={imageAverageColor.color}
+          $titleBar={misc.titleBar}
+        />
       )}
       <GenericPage
         contentZIndex={1}
