@@ -476,7 +476,7 @@ export const getArtist = async (options: { id: string; musicFolderId?: string })
   });
 
   const { data: similarData } = await jellyfinApi.get(`/artists/${options.id}/similar`, {
-    params: { limit: 15 },
+    params: { limit: 15, userId: auth.username, parentId: options.musicFolderId },
   });
 
   return normalizeArtist({
@@ -614,6 +614,19 @@ export const batchUnstar = async (options: { ids: string[] }) => {
   const res = await Promise.all(promises);
 
   return res;
+};
+
+export const getSimilarSongs = async (options: { id: string; musicFolderId?: string }) => {
+  const { data } = await jellyfinApi.get(`/items/${options.id}/instantmix`, {
+    params: {
+      userId: auth.username,
+      fields: 'Genres, DateCreated, MediaSources, UserData, ParentId',
+      parentId: options.musicFolderId,
+      limit: 100,
+    },
+  });
+
+  return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
 
 export const getGenres = async (options: { musicFolderId?: string }) => {

@@ -62,6 +62,7 @@ import {
   updatePlaylistSongsLg as jfUpdatePlaylingSongsLg,
   updatePlaylist as jfUpdatePlaylist,
   getSongs as jfGetSongs,
+  getSimilarSongs as jfGetSimilarSongs,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -83,7 +84,7 @@ const endpoints = [
   { id: 'batchStar', endpoint: { subsonic: batchStar, jellyfin: jfBatchStar } },
   { id: 'batchUnstar', endpoint: { subsonic: batchUnstar, jellyfin: jfBatchUnstar } },
   { id: 'setRating', endpoint: { subsonic: setRating, jellyfin: undefined } },
-  { id: 'getSimilarSongs', endpoint: { subsonic: getSimilarSongs, jellyfin: undefined } },
+  { id: 'getSimilarSongs', endpoint: { subsonic: getSimilarSongs, jellyfin: jfGetSimilarSongs } },
   { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: jfGetSearch } },
   { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: jfScrobble } },
