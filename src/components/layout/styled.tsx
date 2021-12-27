@@ -249,9 +249,13 @@ export const PageHeaderSubtitleWrapper = styled.span`
   font-size: 14px;
 `;
 
-export const PageHeaderSubtitleDataLine = styled.div<{ $top?: boolean; $overflow?: boolean }>`
+export const PageHeaderSubtitleDataLine = styled.div<{
+  $top?: boolean;
+  $overflow?: boolean;
+  $wrap?: boolean;
+}>`
   margin-top: ${(props) => (props.$top ? '0px' : '7px')};
-  white-space: nowrap;
+  white-space: ${(props) => (props.$wrap ? 'normal' : 'nowrap')};
   overflow: ${(props) => (props.$overflow ? 'visible' : 'auto')};
 
   ::-webkit-scrollbar {
