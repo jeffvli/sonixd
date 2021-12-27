@@ -87,6 +87,7 @@ export interface Artist {
   title: string;
   albumCount?: number;
   duration?: number;
+  genre?: Genre[];
   image?: string;
   starred?: string;
   userRating?: number;

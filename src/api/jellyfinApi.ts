@@ -172,6 +172,7 @@ const normalizeArtist = (item: any) => {
     title: item.Name,
     albumCount: item.AlbumCount,
     duration: item.RunTimeTicks / 10000000,
+    genre: item.GenreItems && item.GenreItems.map((entry: any) => normalizeItem(entry)),
     image: getCoverArtUrl(item),
     starred: item.UserData && item.UserData?.IsFavorite ? 'true' : undefined,
     info: {
@@ -463,7 +464,9 @@ export const getSongs = async (options: {
 };
 
 export const getArtist = async (options: { id: string; musicFolderId?: string }) => {
-  const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`);
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items/${options.id}`, {
+    params: { fields: 'Genres' },
+  });
   const { data: albumData } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       artistIds: options.id,

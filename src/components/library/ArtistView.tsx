@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
+import { nanoid } from 'nanoid/non-secure';
 import FastAverageColor from 'fast-average-color';
 import { clipboard, shell } from 'electron';
 import settings from 'electron-settings';
@@ -43,6 +44,7 @@ import {
   isCached,
 } from '../../shared/utils';
 import {
+  LinkWrapper,
   SectionTitle,
   StyledButton,
   StyledLink,
@@ -52,13 +54,14 @@ import {
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { GenericItem, Item, Server } from '../../types';
+import { Album, GenericItem, Genre, Item, Server, Song } from '../../types';
 import ListViewTable from '../viewtypes/ListViewTable';
 import Card from '../card/Card';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import useColumnSort from '../../hooks/useColumnSort';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import CustomTooltip from '../shared/CustomTooltip';
+import { setActive } from '../../redux/albumSlice';
 
 const fac = new FastAverageColor();
 
@@ -72,6 +75,7 @@ const ArtistView = ({ ...rest }: any) => {
   const history = useHistory();
   const location = useLocation();
   const misc = useAppSelector((state) => state.misc);
+  const album = useAppSelector((state) => state.album);
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
   const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
@@ -81,6 +85,7 @@ const ArtistView = ({ ...rest }: any) => {
   const [musicFolder, setMusicFolder] = useState(undefined);
   const [seeFullDescription, setSeeFullDescription] = useState(false);
   const [seeMoreTopSongs, setSeeMoreTopSongs] = useState(false);
+  const genreLineRef = useRef<any>();
 
   useEffect(() => {
     if (folder.applied.artists) {
@@ -553,6 +558,59 @@ const ArtistView = ({ ...rest }: any) => {
                     <strong>ARTIST</strong>
                   </StyledLink>{' '}
                   • {data.albumCount} albums • {artistSongTotal} songs, {artistDurationTotal}
+                </PageHeaderSubtitleDataLine>
+                <PageHeaderSubtitleDataLine
+                  $wrap
+                  ref={genreLineRef}
+                  onWheel={(e: any) => {
+                    if (!e.shiftKey) {
+                      if (e.deltaY === 0) return;
+                      const position = genreLineRef.current.scrollLeft;
+                      genreLineRef.current.scrollTo({
+                        top: 0,
+                        left: position + e.deltaY,
+                        behavior: 'smooth',
+                      });
+                    }
+                  }}
+                >
+                  {data.genre.map((d: Genre, i: number) => {
+                    return (
+                      <span key={nanoid()}>
+                        {i > 0 && ', '}
+                        <LinkWrapper maxWidth="13vw">
+                          <StyledLink
+                            tabIndex={0}
+                            onClick={() => {
+                              if (!rest.isModal) {
+                                dispatch(setActive({ ...album.active, filter: d.title }));
+                                localStorage.setItem('scroll_list_albumList', '0');
+                                localStorage.setItem('scroll_grid_albumList', '0');
+                                setTimeout(() => {
+                                  history.push(`/library/album?sortType=${d.title}`);
+                                }, 50);
+                              }
+                            }}
+                            onKeyDown={(e: any) => {
+                              if (e.key === ' ' || e.key === 'Enter') {
+                                e.preventDefault();
+                                if (!rest.isModal) {
+                                  dispatch(setActive({ ...album.active, filter: d.title }));
+                                  localStorage.setItem('scroll_list_albumList', '0');
+                                  localStorage.setItem('scroll_grid_albumList', '0');
+                                  setTimeout(() => {
+                                    history.push(`/library/album?sortType=${d.title}`);
+                                  }, 50);
+                                }
+                              }
+                            }}
+                          >
+                            {d.title}
+                          </StyledLink>
+                        </LinkWrapper>
+                      </span>
+                    );
+                  })}
                 </PageHeaderSubtitleDataLine>
 
                 {data?.info.biography
