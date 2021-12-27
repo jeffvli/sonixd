@@ -1,4 +1,3 @@
-import { notifyToast } from '../components/shared/toast';
 import {
   batchStar,
   batchUnstar,
@@ -115,7 +114,7 @@ export const apiController = async (options: {
   const selectedEndpointFn = selectedEndpoint!.endpoint[options.serverType];
 
   if (!selectedEndpointFn || !selectedEndpoint) {
-    return notifyToast('warning', `[${options.endpoint}] not available`);
+    return null;
   }
 
   const res = await selectedEndpointFn(options.args);
