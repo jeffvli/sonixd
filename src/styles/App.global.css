@@ -47,20 +47,6 @@ body {
   opacity: 0.97 !important;
 }
 
-.react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
-  display: none;
-}
-
-.react-horizontal-scrolling-menu--scroll-container {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* .rs-panel-heading {
-  padding-bottom: 5px !important;
-}
- */
-
 /* Fixes the picker menu position */
 .rs-picker-menu {
   left: inherit !important;
@@ -72,8 +58,25 @@ body {
   pointer-events: none !important;
 }
 
-*::-webkit-scrollbar {
+.rs-table-scrollbar-vertical {
+  transform: none !important;
+  width: 10px !important;
+}
+
+.rs-table-scrollbar-horizontal {
+  transform: none !important;
+}
+
+.rs-table-scrollbar-handle {
+  border-radius: 0px;
+}
+
+.rs-table-scrollbar-vertical .rs-table-scrollbar-handle {
   width: 10px;
+}
+
+*::-webkit-scrollbar {
+  width: 12px;
 }
 
 *::-webkit-scrollbar-track {
@@ -81,8 +84,8 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(220, 220, 220, 0.5) !important;
-  border-radius: 20px;
+  background-color: rgba(220, 220, 220, 0.3) !important;
+  border-radius: 0px;
 }
 
 @media (-webkit-device-pixel-ratio: 1.5),
