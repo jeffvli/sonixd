@@ -78,21 +78,24 @@ const NowPlayingMiniView = () => {
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
 
-  const { isLoading: isLoadingGenres, data: genres }: any = useQuery(['genreList'], async () => {
-    const res = await apiController({
-      serverType: config.serverType,
-      endpoint: 'getGenres',
-      args: { musicFolderId: folder.musicFolder },
-    });
-    const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
-    return genresOrderedBySongCount.map((genre: any) => {
-      return {
-        title: `${genre.title} ${genre.albumCount ? `(${genre.albumCount})` : ''}`,
-        id: genre.title,
-        role: 'Genre',
-      };
-    });
-  });
+  const { isLoading: isLoadingGenres, data: genres }: any = useQuery(
+    ['genreList', folder.musicFolder],
+    async () => {
+      const res = await apiController({
+        serverType: config.serverType,
+        endpoint: 'getGenres',
+        args: { musicFolderId: folder.musicFolder },
+      });
+      const genresOrderedBySongCount = _.orderBy(res, 'songCount', 'desc');
+      return genresOrderedBySongCount.map((genre: any) => {
+        return {
+          title: `${genre.title} ${genre.albumCount ? `(${genre.albumCount})` : ''}`,
+          id: genre.title,
+          role: 'Genre',
+        };
+      });
+    }
+  );
 
   const { isLoading: isLoadingMusicFolders, data: musicFolders } = useQuery(['musicFolders'], () =>
     apiController({ serverType: config.serverType, endpoint: 'getMusicFolders' })

@@ -54,7 +54,7 @@ import {
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Album, GenericItem, Genre, Item, Server, Song } from '../../types';
+import { Album, GenericItem, Genre, Item, Server } from '../../types';
 import ListViewTable from '../viewtypes/ListViewTable';
 import Card from '../card/Card';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
@@ -85,6 +85,8 @@ const ArtistView = ({ ...rest }: any) => {
   const [musicFolder, setMusicFolder] = useState(undefined);
   const [seeFullDescription, setSeeFullDescription] = useState(false);
   const [seeMoreTopSongs, setSeeMoreTopSongs] = useState(false);
+  const [albums, setAlbums] = useState([]);
+  const [compilationAlbums, setCompilationAlbums] = useState([]);
   const genreLineRef = useRef<any>();
 
   useEffect(() => {
@@ -125,7 +127,12 @@ const ArtistView = ({ ...rest }: any) => {
     { enabled: Boolean(location.pathname.match('/songs')) }
   );
 
-  const { sortedData: albumsByYearDesc } = useColumnSort(data?.album, Item.Album, {
+  const { sortedData: albumsByYearDesc } = useColumnSort(albums, Item.Album, {
+    column: 'year',
+    type: 'desc',
+  });
+
+  const { sortedData: compilationAlbumsByYearDesc } = useColumnSort(compilationAlbums, Item.Album, {
     column: 'year',
     type: 'desc',
   });
@@ -502,6 +509,11 @@ const ArtistView = ({ ...rest }: any) => {
     setArtistSongTotal(allSongCount);
   }, [data?.album]);
 
+  useEffect(() => {
+    setAlbums(data?.album?.filter((entry: Album) => entry.albumArtistId === data.id));
+    setCompilationAlbums(data?.album?.filter((entry: Album) => entry.albumArtistId !== data.id));
+  }, [data?.album, data?.id]);
+
   if (isLoading || isLoadingTopSongs || imageAverageColor.loaded === false) {
     return <PageLoader />;
   }
@@ -533,7 +545,9 @@ const ArtistView = ({ ...rest }: any) => {
                       : data?.image
                     : data?.image
                 }
-                size={225}
+                size={
+                  location.pathname.match('/songs|/albums|/compilationalbums|/topsongs') ? 180 : 225
+                }
                 hasHoverButtons
                 noInfoPanel
                 noModalButton
@@ -548,7 +562,9 @@ const ArtistView = ({ ...rest }: any) => {
               cacheType: 'artist',
               id: data.id,
             }}
-            imageHeight={225}
+            imageHeight={
+              location.pathname.match('/songs|/albums|/compilationalbums|/topsongs') ? 180 : 225
+            }
             title={data.title}
             showTitleTooltip
             subtitle={
@@ -559,41 +575,30 @@ const ArtistView = ({ ...rest }: any) => {
                   </StyledLink>{' '}
                   • {data.albumCount} albums • {artistSongTotal} songs, {artistDurationTotal}
                 </PageHeaderSubtitleDataLine>
-                <PageHeaderSubtitleDataLine
-                  $wrap
-                  ref={genreLineRef}
-                  onWheel={(e: any) => {
-                    if (!e.shiftKey) {
-                      if (e.deltaY === 0) return;
-                      const position = genreLineRef.current.scrollLeft;
-                      genreLineRef.current.scrollTo({
-                        top: 0,
-                        left: position + e.deltaY,
-                        behavior: 'smooth',
-                      });
-                    }
-                  }}
-                >
-                  {data.genre.map((d: Genre, i: number) => {
-                    return (
-                      <span key={nanoid()}>
-                        {i > 0 && ', '}
-                        <LinkWrapper maxWidth="13vw">
-                          <StyledLink
-                            tabIndex={0}
-                            onClick={() => {
-                              if (!rest.isModal) {
-                                dispatch(setActive({ ...album.active, filter: d.title }));
-                                localStorage.setItem('scroll_list_albumList', '0');
-                                localStorage.setItem('scroll_grid_albumList', '0');
-                                setTimeout(() => {
-                                  history.push(`/library/album?sortType=${d.title}`);
-                                }, 50);
-                              }
-                            }}
-                            onKeyDown={(e: any) => {
-                              if (e.key === ' ' || e.key === 'Enter') {
-                                e.preventDefault();
+                {!location.pathname.match('/songs|/albums|/compilationalbums|/topsongs') && (
+                  <PageHeaderSubtitleDataLine
+                    $wrap
+                    ref={genreLineRef}
+                    onWheel={(e: any) => {
+                      if (!e.shiftKey) {
+                        if (e.deltaY === 0) return;
+                        const position = genreLineRef.current.scrollLeft;
+                        genreLineRef.current.scrollTo({
+                          top: 0,
+                          left: position + e.deltaY,
+                          behavior: 'smooth',
+                        });
+                      }
+                    }}
+                  >
+                    {data.genre?.map((d: Genre, i: number) => {
+                      return (
+                        <span key={nanoid()}>
+                          {i > 0 && ', '}
+                          <LinkWrapper maxWidth="13vw">
+                            <StyledLink
+                              tabIndex={0}
+                              onClick={() => {
                                 if (!rest.isModal) {
                                   dispatch(setActive({ ...album.active, filter: d.title }));
                                   localStorage.setItem('scroll_list_albumList', '0');
@@ -602,44 +607,58 @@ const ArtistView = ({ ...rest }: any) => {
                                     history.push(`/library/album?sortType=${d.title}`);
                                   }, 50);
                                 }
-                              }
-                            }}
-                          >
-                            {d.title}
-                          </StyledLink>
-                        </LinkWrapper>
-                      </span>
-                    );
-                  })}
-                </PageHeaderSubtitleDataLine>
-
-                {data?.info.biography
-                  ?.replace(/<[^>]*>/, '')
-                  .replace('Read more on Last.fm</a>', '')
-                  ?.trim() && (
-                  <PageHeaderSubtitleDataLine
-                    onClick={() => setSeeFullDescription(!seeFullDescription)}
-                    style={{
-                      minHeight: '2.5rem',
-                      maxHeight: seeFullDescription ? 'none' : '5.0rem',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'pre-wrap',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <span>
-                      {data?.info.biography
-                        ?.replace(/<[^>]*>/, '')
-                        .replace('Read more on Last.fm</a>', '')
-                        ?.trim()
-                        ? `${data?.info.biography
-                            ?.replace(/<[^>]*>/, '')
-                            .replace('Read more on Last.fm</a>', '')}`
-                        : ''}
-                    </span>
+                              }}
+                              onKeyDown={(e: any) => {
+                                if (e.key === ' ' || e.key === 'Enter') {
+                                  e.preventDefault();
+                                  if (!rest.isModal) {
+                                    dispatch(setActive({ ...album.active, filter: d.title }));
+                                    localStorage.setItem('scroll_list_albumList', '0');
+                                    localStorage.setItem('scroll_grid_albumList', '0');
+                                    setTimeout(() => {
+                                      history.push(`/library/album?sortType=${d.title}`);
+                                    }, 50);
+                                  }
+                                }
+                              }}
+                            >
+                              {d.title}
+                            </StyledLink>
+                          </LinkWrapper>
+                        </span>
+                      );
+                    })}
                   </PageHeaderSubtitleDataLine>
                 )}
+
+                {!location.pathname.match('/songs|/albums|/compilationalbums|/topsongs') &&
+                  data?.info.biography
+                    ?.replace(/<[^>]*>/, '')
+                    .replace('Read more on Last.fm</a>', '')
+                    ?.trim() && (
+                    <PageHeaderSubtitleDataLine
+                      onClick={() => setSeeFullDescription(!seeFullDescription)}
+                      style={{
+                        minHeight: '2.5rem',
+                        maxHeight: seeFullDescription ? 'none' : '5.0rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'pre-wrap',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span>
+                        {data?.info.biography
+                          ?.replace(/<[^>]*>/, '')
+                          .replace('Read more on Last.fm</a>', '')
+                          ?.trim()
+                          ? `${data?.info.biography
+                              ?.replace(/<[^>]*>/, '')
+                              .replace('Read more on Last.fm</a>', '')}`
+                          : ''}
+                      </span>
+                    </PageHeaderSubtitleDataLine>
+                  )}
 
                 <div style={{ marginTop: '10px' }}>
                   <ButtonToolbar>
@@ -713,7 +732,7 @@ const ArtistView = ({ ...rest }: any) => {
                 </div>
               </>
             }
-            showViewTypeButtons={location.pathname.match('/albums')}
+            showViewTypeButtons={location.pathname.match('/albums|/compilationalbums')}
             viewTypeSetting="album"
             handleListClick={() => setViewType('list')}
             handleGridClick={() => setViewType('grid')}
@@ -745,11 +764,17 @@ const ArtistView = ({ ...rest }: any) => {
                 handleRowRating(rowData, e, ['artistSongs', artistId])
               }
             />
-          ) : location.pathname.match('/albums') ? (
+          ) : location.pathname.match('/albums|/compilationalbums') ? (
             <>
               {viewType === 'list' && (
                 <ListViewType
-                  data={misc.searchQuery !== '' ? filteredData : data.album}
+                  data={
+                    misc.searchQuery !== ''
+                      ? filteredData
+                      : location.pathname.match('/albums')
+                      ? data.album.filter((entry: Album) => entry.albumArtistId === data.id)
+                      : data.album.filter((entry: Album) => entry.albumArtistId !== data.id)
+                  }
                   tableColumns={config.lookAndFeel.listView.album.columns}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
@@ -776,7 +801,13 @@ const ArtistView = ({ ...rest }: any) => {
 
               {viewType === 'grid' && (
                 <GridViewType
-                  data={misc.searchQuery !== '' ? filteredData : data.album}
+                  data={
+                    misc.searchQuery !== ''
+                      ? filteredData
+                      : location.pathname.match('/albums')
+                      ? data.album.filter((entry: Album) => entry.albumArtistId === data.id)
+                      : data.album.filter((entry: Album) => entry.albumArtistId !== data.id)
+                  }
                   cardTitle={{
                     prefix: '/library/album',
                     property: 'title',
@@ -946,7 +977,51 @@ const ArtistView = ({ ...rest }: any) => {
                 </StyledPanel>
               )}
 
-              {data.info.similarArtist.length > 0 && (
+              {compilationAlbumsByYearDesc.length > 0 && (
+                <StyledPanel>
+                  <ScrollingMenu
+                    title="Appears On "
+                    subtitle={
+                      <ButtonGroup>
+                        <PlayButton
+                          size="sm"
+                          appearance="subtle"
+                          text="Play Compilation Albums"
+                          onClick={() => handlePlay('albums')}
+                        />
+                        <PlayAppendNextButton
+                          size="sm"
+                          appearance="subtle"
+                          onClick={() => handlePlayAppend('next', 'albums')}
+                        />
+                        <PlayAppendButton
+                          size="sm"
+                          appearance="subtle"
+                          onClick={() => handlePlayAppend('later', 'albums')}
+                        />
+                      </ButtonGroup>
+                    }
+                    onClickTitle={() =>
+                      history.push(`/library/artist/${artistId}/compilationalbums`)
+                    }
+                    data={compilationAlbumsByYearDesc?.slice(0, 15) || []}
+                    cardTitle={{
+                      prefix: '/library/album',
+                      property: 'title',
+                      urlProperty: 'id',
+                    }}
+                    cardSubtitle={{
+                      property: 'year',
+                    }}
+                    cardSize={config.lookAndFeel.gridView.cardSize}
+                    type="album"
+                    noScrollbar
+                    handleFavorite={handleRowFavorite}
+                  />
+                </StyledPanel>
+              )}
+
+              {data.info?.similarArtist.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
                     title="Related Artists "
