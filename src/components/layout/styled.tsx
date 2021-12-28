@@ -279,7 +279,7 @@ export const FlatBackground = styled.div<{ $expanded: boolean; $color: string; $
 export const BlurredBackgroundWrapper = styled.div<{
   expanded: boolean;
   hasImage: boolean;
-  $titleBar: string;
+  $titleBar: boolean;
 }>`
   clip: rect(0, auto, auto, 0);
   -webkit-clip-path: inset(0 0);

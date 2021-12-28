@@ -61,6 +61,7 @@ import {
 import { apiController } from '../../api/controller';
 import { Artist, Genre, Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
+import Card from '../card/Card';
 
 interface AlbumParams {
   id: string;
@@ -314,9 +315,23 @@ const AlbumView = ({ ...rest }: any) => {
           <GenericPageHeader
             isDark={!rest.isModal}
             image={
-              isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
-                ? `${misc.imageCachePath}album_${albumId}.jpg`
-                : data.image
+              <Card
+                title="None"
+                subtitle=""
+                coverArt={
+                  isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
+                    ? `${misc.imageCachePath}album_${albumId}.jpg`
+                    : data.image
+                }
+                size={200}
+                hasHoverButtons
+                noInfoPanel
+                noModalButton
+                details={data}
+                playClick={{ type: 'album', id: data.id }}
+                url={`/library/album/${data.id}`}
+                handleFavorite={handleFavorite}
+              />
             }
             cacheImages={{
               enabled: settings.getSync('cacheImages'),
@@ -463,16 +478,22 @@ const AlbumView = ({ ...rest }: any) => {
                 </PageHeaderSubtitleDataLine>
                 <div style={{ marginTop: '10px' }}>
                   <ButtonToolbar>
-                    <PlayButton appearance="primary" size="lg" onClick={handlePlay} />
+                    <PlayButton appearance="primary" size="lg" $circle onClick={handlePlay} />
                     <PlayAppendNextButton
-                      appearance="primary"
+                      appearance="subtle"
                       size="lg"
                       onClick={() => handlePlayAppend('next')}
                     />
                     <PlayAppendButton
-                      appearance="primary"
+                      appearance="subtle"
                       size="lg"
                       onClick={() => handlePlayAppend('later')}
+                    />
+                    <FavoriteButton
+                      size="lg"
+                      appearance="subtle"
+                      isFavorite={data.starred}
+                      onClick={handleFavorite}
                     />
                     <Whisper
                       trigger="hover"
@@ -493,9 +514,12 @@ const AlbumView = ({ ...rest }: any) => {
                         </StyledPopover>
                       }
                     >
-                      <DownloadButton size="lg" downloadSize={getAlbumSize(data.song)} />
+                      <DownloadButton
+                        size="lg"
+                        appearance="subtle"
+                        downloadSize={getAlbumSize(data.song)}
+                      />
                     </Whisper>
-                    <FavoriteButton size="lg" isFavorite={data.starred} onClick={handleFavorite} />
                   </ButtonToolbar>
                 </div>
               </div>
@@ -509,7 +533,6 @@ const AlbumView = ({ ...rest }: any) => {
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleRating={handleRowRating}
-          tableHeight={700}
           virtualized
           rowHeight={Number(settings.getSync('musicListRowHeight'))}
           fontSize={Number(settings.getSync('musicListFontSize'))}
