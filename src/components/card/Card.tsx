@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -35,6 +36,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
 import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
+import { CoverArtWrapper, CustomImageGrid, CustomImageGridWrapper } from '../layout/styled';
 
 const Card = ({
   onClick,
@@ -203,7 +205,44 @@ const Card = ({
               }
             }}
           >
-            {rest.coverArt.match('placeholder') ? (
+            {Array.isArray(rest.coverArt) ? (
+              <CoverArtWrapper size={size}>
+                <CustomImageGridWrapper>
+                  <CustomImageGrid $gridArea="1 / 1 / 2 / 2">
+                    <LazyLoadImage
+                      src={rest.coverArt[0]}
+                      alt="header-img"
+                      height={size / 2}
+                      width={size / 2}
+                    />
+                  </CustomImageGrid>
+                  <CustomImageGrid $gridArea="1 / 2 / 2 / 3">
+                    <LazyLoadImage
+                      src={rest.coverArt[1]}
+                      alt="header-img"
+                      height={size / 2}
+                      width={size / 2}
+                    />
+                  </CustomImageGrid>
+                  <CustomImageGrid $gridArea="2 / 1 / 3 / 2">
+                    <LazyLoadImage
+                      src={rest.coverArt[2]}
+                      alt="header-img"
+                      height={size / 2}
+                      width={size / 2}
+                    />
+                  </CustomImageGrid>
+                  <CustomImageGrid $gridArea="2 / 2 / 3 / 3">
+                    <LazyLoadImage
+                      src={rest.coverArt[3]}
+                      alt="header-img"
+                      height={size / 2}
+                      width={size / 2}
+                    />
+                  </CustomImageGrid>
+                </CustomImageGridWrapper>
+              </CoverArtWrapper>
+            ) : rest.coverArt.match('placeholder') ? (
               <CardImgWrapper
                 id="placeholder-wrapper"
                 size={size}

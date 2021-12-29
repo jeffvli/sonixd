@@ -73,6 +73,7 @@ import { PageHeaderSubtitleDataLine } from '../layout/styled';
 import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
+import Card from '../card/Card';
 
 interface PlaylistParams {
   id: string;
@@ -504,18 +505,31 @@ const PlaylistView = ({ ...rest }) => {
       header={
         <GenericPageHeader
           image={
-            data?.image.match('placeholder')
-              ? customPlaylistImage
-              : isCached(`${misc.imageCachePath}playlist_${playlistId}.jpg`)
-              ? `${misc.imageCachePath}playlist_${playlistId}.jpg`
-              : data.image
+            <Card
+              title="None"
+              subtitle=""
+              coverArt={
+                data?.image.match('placeholder')
+                  ? customPlaylistImage
+                  : isCached(`${misc.imageCachePath}playlist_${playlistId}.jpg`)
+                  ? `${misc.imageCachePath}playlist_${playlistId}.jpg`
+                  : data.image
+              }
+              size={185}
+              hasHoverButtons
+              noInfoPanel
+              noModalButton
+              details={data}
+              playClick={{ type: 'playlist', id: data.id }}
+              url={`/playlist/${data.id}`}
+            />
           }
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'playlist',
             id: data.id,
           }}
-          imageHeight={184}
+          imageHeight={185}
           title={data.title}
           subtitle={
             <div>
@@ -541,7 +555,7 @@ const PlaylistView = ({ ...rest }) => {
                     whiteSpace: 'pre-wrap',
                   }}
                 >
-                  <span>{data.comment ? data.comment : 'No description'}</span>
+                  <span>{data.comment ? data.comment : ''}</span>
                 </PageHeaderSubtitleDataLine>
               </CustomTooltip>
 
@@ -549,24 +563,26 @@ const PlaylistView = ({ ...rest }) => {
                 <ButtonToolbar>
                   <PlayButton
                     appearance="primary"
-                    size="md"
+                    size="lg"
+                    $circle
                     onClick={handlePlay}
                     disabled={playlist.entry?.length < 1}
                   />
                   <PlayAppendNextButton
-                    appearance="primary"
+                    appearance="subtle"
                     size="md"
                     onClick={() => handlePlayAppend('next')}
                     disabled={playlist.entry?.length < 1}
                   />
                   <PlayAppendButton
-                    appearance="primary"
+                    appearance="subtle"
                     size="md"
                     onClick={() => handlePlayAppend('later')}
                     disabled={playlist.entry?.length < 1}
                   />
                   <SaveButton
                     size="md"
+                    appearance="subtle"
                     text={
                       needsRecovery
                         ? 'Recover playlist'
@@ -582,6 +598,7 @@ const PlaylistView = ({ ...rest }) => {
                   />
                   <UndoButton
                     size="md"
+                    appearance="subtle"
                     color={needsRecovery ? 'red' : undefined}
                     disabled={
                       needsRecovery || !isModified || misc.isProcessingPlaylist.includes(data?.id)
@@ -631,7 +648,11 @@ const PlaylistView = ({ ...rest }) => {
                       </StyledPopover>
                     }
                   >
-                    <EditButton size="md" disabled={misc.isProcessingPlaylist.includes(data?.id)} />
+                    <EditButton
+                      size="md"
+                      appearance="subtle"
+                      disabled={misc.isProcessingPlaylist.includes(data?.id)}
+                    />
                   </Whisper>
 
                   <Whisper
@@ -649,6 +670,7 @@ const PlaylistView = ({ ...rest }) => {
                   >
                     <DeleteButton
                       size="md"
+                      appearance="subtle"
                       disabled={misc.isProcessingPlaylist.includes(data?.id)}
                     />
                   </Whisper>
