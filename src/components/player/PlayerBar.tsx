@@ -83,7 +83,7 @@ const PlayerBar = () => {
         } else {
           setSeek(playersRef.current?.player2.audioEl.current.currentTime || 0);
         }
-      }, 500);
+      }, 200);
 
       return () => clearInterval(interval);
     }
@@ -117,8 +117,6 @@ const PlayerBar = () => {
           return;
         }
 
-        // You'll need to have snek_large and snek_small assets uploaded to
-        // https://discord.com/developers/applications/<application_id>/rich-presence/assets
         discordRpc.setActivity({
           details:
             player.status === 'PLAYING'
