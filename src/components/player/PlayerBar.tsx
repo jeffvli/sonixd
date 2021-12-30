@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
+import { ipcRenderer } from 'electron';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
 import { FlexboxGrid, Grid, Row, Col, Whisper } from 'rsuite';
@@ -65,6 +66,14 @@ const PlayerBar = () => {
   const [discordRpc, setDiscordRpc] = useState<any>();
   const playersRef = useRef<any>();
   const history = useHistory();
+
+  ipcRenderer.on('seek-request', (_event, arg) => {
+    if (arg.currentPlayer === 1) {
+      playersRef.current.player1.audioEl.current.currentTime = Math.floor(arg.position / 1000000);
+    } else {
+      playersRef.current.player2.audioEl.current.currentTime = Math.floor(arg.position / 1000000);
+    }
+  });
 
   useEffect(() => {
     if (player.status === 'PLAYING') {
@@ -254,6 +263,9 @@ const PlayerBar = () => {
   }, [playQueue.playerUpdated]);
 
   useEffect(() => {
+    // Sets the MPRIS seek slider
+    ipcRenderer.send('seeked', manualSeek * 1000000);
+
     const debounce = setTimeout(() => {
       if (isDragging) {
         if (playQueue.currentPlayer === 1) {
@@ -301,8 +313,23 @@ const PlayerBar = () => {
     if (playQueue[currentEntryList].length > 0) {
       if (player.status === 'PAUSED') {
         dispatch(setStatus('PLAYING'));
+
+        ipcRenderer.send('playpause', {
+          status: 'PLAYING',
+          position:
+            playQueue.currentPlayer === 1
+              ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+              : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
+        });
       } else {
         dispatch(setStatus('PAUSED'));
+        ipcRenderer.send('playpause', {
+          status: 'PAUSED',
+          position:
+            playQueue.currentPlayer === 1
+              ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+              : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
+        });
       }
     }
   };
