@@ -202,6 +202,11 @@ if (isLinux) {
     if (mprisPlayer.playbackStatus === 'Playing') {
       mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
     }
+
+    const storeValues = store.getState();
+    mainWindow.webContents.send('current-position-request', {
+      currentPlayer: storeValues.playQueue.currentPlayer,
+    });
   });
 
   mprisPlayer.on('play', () => {
@@ -210,6 +215,11 @@ if (isLinux) {
     if (mprisPlayer.playbackStatus !== 'Playing') {
       mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
     }
+
+    const storeValues = store.getState();
+    mainWindow.webContents.send('current-position-request', {
+      currentPlayer: storeValues.playQueue.currentPlayer,
+    });
   });
 
   mprisPlayer.on('playpause', () => {
@@ -220,6 +230,11 @@ if (isLinux) {
     } else {
       mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
     }
+
+    const storeValues = store.getState();
+    mainWindow.webContents.send('current-position-request', {
+      currentPlayer: storeValues.playQueue.currentPlayer,
+    });
   });
 
   mprisPlayer.on('next', () => {
@@ -263,8 +278,17 @@ if (isLinux) {
   mprisPlayer.on('position', (event) => {
     const storeValues = store.getState();
 
-    mainWindow.webContents.send('seek-request', {
+    mainWindow.webContents.send('position-request', {
       position: event.position,
+      currentPlayer: storeValues.playQueue.currentPlayer,
+    });
+  });
+
+  mprisPlayer.on('seek', (event) => {
+    const storeValues = store.getState();
+
+    mainWindow.webContents.send('seek-request', {
+      offset: event,
       currentPlayer: storeValues.playQueue.currentPlayer,
     });
   });
@@ -278,12 +302,14 @@ if (isLinux) {
 
     setTimeout(() => {
       mprisPlayer.seeked(arg.position);
-    }, 2000);
+    }, 100);
   });
 
   ipcMain.on('seeked', (_event, arg) => {
     // Send the position from Sonixd to MPRIS on manual seek
-    mprisPlayer.seeked(arg);
+    setTimeout(() => {
+      mprisPlayer.seeked(arg);
+    }, 100);
   });
 
   ipcMain.on('current-song', (_event, arg) => {
@@ -298,7 +324,14 @@ if (isLinux) {
       'xesam:title': arg.title || null,
       'xesam:album': arg.album || null,
       'xesam:artist': arg.artist?.length !== 0 ? arg.artist?.map((artist) => artist.title) : null,
-      'xesam:genre': arg.genre[0]?.title || null,
+      'xesam:albumArtist': arg.albumArtist ? arg.albumArtist : null,
+      'xesam:discNumber': arg.discNumber ? arg.discNumber : null,
+      'xesam:trackNumber': arg.track ? arg.track : null,
+      'xesam:useCount': arg.playCount ? arg.playCount : null,
+      'xesam:genre':
+        arg.genre.filter((genre) => genre.title).length !== 0
+          ? arg.genre.filter((genre) => genre.title).map((genre) => genre.title)
+          : null,
     };
   });
 }
