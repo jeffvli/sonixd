@@ -769,7 +769,7 @@ export const GlobalContextMenu = () => {
           <Whisper
             enterable
             placement="autoHorizontal"
-            trigger="hover"
+            trigger={misc.contextMenu.disabledOptions.includes('moveSelectedTo') ? 'none' : 'hover'}
             delayShow={300}
             speaker={
               <ContextMenuPopover style={{ width: '150px' }}>
@@ -954,7 +954,12 @@ export const GlobalContextMenu = () => {
           <Whisper
             enterable
             placement="autoHorizontal"
-            trigger="hover"
+            trigger={
+              misc.contextMenu.disabledOptions.includes('setRating') ||
+              config.serverType === Server.Jellyfin
+                ? 'none'
+                : 'hover'
+            }
             delayShow={300}
             speaker={
               <ContextMenuPopover>
