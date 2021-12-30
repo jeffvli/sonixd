@@ -1,7 +1,7 @@
 {
   "name": "sonixd",
   "productName": "Sonixd",
-  "description": "A full-featured Subsonic API compatible cross-platform desktop client",
+  "description": "A full-featured Subsonic/Jellyfin compatible desktop client",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
