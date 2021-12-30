@@ -26,6 +26,9 @@ import playQueueReducer, {
   incrementCurrentIndex,
   fixPlayer2Index,
   clearPlayQueue,
+  toggleShuffle,
+  toggleRepeat,
+  setVolume,
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
@@ -174,10 +177,13 @@ const previousTrack = () => {
 if (isLinux) {
   const mprisPlayer = Player({
     name: 'Sonixd',
-    identity: 'A full-featured Subsonic API compatible cross-platform desktop client',
+    identity: 'Sonixd',
     supportedUriSchemes: ['file'],
     supportedMimeTypes: ['audio/mpeg', 'application/ogg'],
     supportedInterfaces: ['player'],
+    rate: 1.0,
+    minimumRate: 1.0,
+    maximumRate: 1.0,
   });
 
   mprisPlayer.on('quit', () => {
@@ -232,12 +238,61 @@ if (isLinux) {
     }
   });
 
-  ipcMain.on('current-song', (event, arg) => {
+  mprisPlayer.on('shuffle', () => {
+    store.dispatch(toggleShuffle());
+    settings.setSync('shuffle', !settings.getSync('shuffle'));
+    mprisPlayer.shuffle = Boolean(settings.getSync('shuffle'));
+  });
+
+  mprisPlayer.on('volume', (event) => {
+    store.dispatch(setVolume(event));
+    settings.setSync('volume', event);
+  });
+
+  mprisPlayer.on('loopStatus', () => {
+    const currentRepeat = settings.getSync('repeat');
+    const newRepeat = currentRepeat === 'none' ? 'all' : currentRepeat === 'all' ? 'one' : 'none';
+    store.dispatch(toggleRepeat());
+
+    mprisPlayer.loopStatus =
+      newRepeat === 'none' ? 'None' : newRepeat === 'all' ? 'Playlist' : 'Track';
+
+    settings.setSync('repeat', newRepeat);
+  });
+
+  mprisPlayer.on('position', (event) => {
+    const storeValues = store.getState();
+
+    mainWindow.webContents.send('seek-request', {
+      position: event.position,
+      currentPlayer: storeValues.playQueue.currentPlayer,
+    });
+  });
+
+  ipcMain.on('playpause', (_event, arg) => {
+    if (arg.status === 'PLAYING') {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
+    } else {
+      mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PAUSED;
+    }
+
+    setTimeout(() => {
+      mprisPlayer.seeked(arg.position);
+    }, 2000);
+  });
+
+  ipcMain.on('seeked', (_event, arg) => {
+    // Send the position from Sonixd to MPRIS on manual seek
+    mprisPlayer.seeked(arg);
+  });
+
+  ipcMain.on('current-song', (_event, arg) => {
     if (mprisPlayer.playbackStatus !== 'Playing') {
       mprisPlayer.playbackStatus = Player.PLAYBACK_STATUS_PLAYING;
     }
 
     mprisPlayer.metadata = {
+      'mpris:trackid': mprisPlayer.objectPath(`track/${arg.id}`),
       'mpris:length': arg.duration ? Math.round((arg.duration || 0) * 1000 * 1000) : null,
       'mpris:artUrl': arg.image.includes('placeholder') ? null : arg.image,
       'xesam:title': arg.title || null,
