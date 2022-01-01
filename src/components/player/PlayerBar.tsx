@@ -79,6 +79,7 @@ const PlayerBar = () => {
         Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000)
       );
     }
+    ipcRenderer.removeAllListeners('current-position-request');
   });
 
   ipcRenderer.once('position-request', (_event, arg) => {
@@ -91,6 +92,7 @@ const PlayerBar = () => {
     }
 
     ipcRenderer.send('seeked', arg.position);
+    ipcRenderer.removeAllListeners('position-request');
   });
 
   ipcRenderer.once('seek-request', (_event, arg) => {
@@ -106,6 +108,7 @@ const PlayerBar = () => {
       setIsDragging(true);
       ipcRenderer.send('seeked', newPosition * 1000000);
     }
+    ipcRenderer.removeAllListeners('seek-request');
   });
 
   useEffect(() => {
