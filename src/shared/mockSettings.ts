@@ -20,6 +20,7 @@ export const mockSettings = {
   fadeDuration: 9,
   fadeType: 'equalPower',
   scrobble: false,
+  transcode: false,
   playbackFilters: [
     {
       filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',

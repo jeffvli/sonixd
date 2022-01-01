@@ -30,6 +30,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('obs.pollingInterval', 2000);
   }
 
+  if (force || !settings.hasSync('transcode')) {
+    settings.setSync('transcode', false);
+  }
+
   if (force || !settings.hasSync('autoUpdate')) {
     settings.setSync('autoUpdate', true);
   }
