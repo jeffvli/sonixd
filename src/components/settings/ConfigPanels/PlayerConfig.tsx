@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
-import { Form } from 'rsuite';
+import { Form, Whisper } from 'rsuite';
+import { WhisperInstance } from 'rsuite/lib/Whisper';
 import { ConfigOptionDescription, ConfigOptionName, ConfigPanel } from '../styled';
 import {
   StyledButton,
@@ -12,6 +13,7 @@ import {
   StyledInputPickerContainer,
   StyledLink,
   StyledPanel,
+  StyledPopover,
   StyledToggle,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -20,6 +22,7 @@ import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter, setAudioDeviceId } from '../../../redux/configSlice';
 import { notifyToast } from '../../shared/toast';
 import ConfigOption from '../ConfigOption';
+import { Server } from '../../../types';
 
 const getAudioDevice = async () => {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -67,12 +70,14 @@ const PlayerConfig = () => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
   const [newFilter, setNewFilter] = useState({ string: '', valid: false });
+  const [transcode, setTranscode] = useState(Boolean(settings.getSync('transcode')));
   const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
     Boolean(settings.getSync('globalMediaHotkeys'))
   );
   const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>();
   const audioDevicePickerContainerRef = useRef(null);
+  const transcodingRestartWhisper = useRef<WhisperInstance>();
 
   useEffect(() => {
     settings.setSync('playbackFilters', config.playback.filters);
@@ -143,6 +148,52 @@ const PlayerConfig = () => {
           />
         }
       />
+
+      {config.serverType === Server.Jellyfin && (
+        <ConfigOption
+          name="Allow Transcoding"
+          description="If your audio files are not playing properly or are not in a supported web
+          streaming format, you will need to enable this (requires app restart)."
+          option={
+            <>
+              <Whisper
+                ref={transcodingRestartWhisper}
+                trigger="none"
+                placement="auto"
+                speaker={
+                  <StyledPopover title="Restart?">
+                    <div>Do you want to restart the application now?</div>
+                    <strong>This is highly recommended!</strong>
+                    <div>
+                      <StyledButton
+                        id="titlebar-restart-button"
+                        size="sm"
+                        onClick={() => {
+                          ipcRenderer.send('reload');
+                        }}
+                        appearance="primary"
+                      >
+                        Yes
+                      </StyledButton>
+                    </div>
+                  </StyledPopover>
+                }
+              >
+                <StyledToggle
+                  defaultChecked={transcode}
+                  checked={transcode}
+                  onChange={(e: boolean) => {
+                    settings.setSync('transcode', e);
+                    setTranscode(e);
+                    transcodingRestartWhisper.current?.open();
+                  }}
+                />
+              </Whisper>
+            </>
+          }
+        />
+      )}
+
       <ConfigOption
         name="Global Media Hotkeys"
         description={

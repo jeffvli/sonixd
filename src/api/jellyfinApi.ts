@@ -1,12 +1,17 @@
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
+import settings from 'electron-settings';
 import _ from 'lodash';
 import moment from 'moment';
 import { nanoid } from 'nanoid/non-secure';
 import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
 import { GenericItem, Item, Song } from '../types';
+import { mockSettings } from '../shared/mockSettings';
+
+const transcode =
+  process.env.NODE_ENV === 'test' ? mockSettings.transcode : Boolean(settings.getSync('transcode'));
 
 const getAuth = () => {
   return {
@@ -14,6 +19,7 @@ const getAuth = () => {
     token: localStorage.getItem('token') || '',
     server: localStorage.getItem('server') || '',
     deviceId: localStorage.getItem('deviceId') || '',
+    transcode,
   };
 };
 
@@ -56,15 +62,30 @@ axiosRetry(jellyfinApi, {
 });
 
 const getStreamUrl = (id: string, container: string, mediaSourceId: string, eTag: string) => {
+  if (!auth.transcode) {
+    return (
+      `${API_BASE_URL}/audio` +
+      `/${id}` +
+      `/stream${container ? `.${container}` : ''}` +
+      `?static=true` +
+      `&deviceId=${auth.deviceId}` +
+      `&mediaSourceId=${mediaSourceId}` +
+      `&tag=${eTag}` +
+      `&api_key=${auth.token}`
+    );
+  }
+
   return (
-    `${API_BASE_URL}/Audio` +
-    `/${id}` +
-    `/stream${container ? `.${container}` : ''}` +
-    `?static=true` +
+    `${API_BASE_URL}/audio` +
+    `/${id}/universal` +
+    `?userId=${auth.username}` +
     `&deviceId=${auth.deviceId}` +
-    `&mediaSourceId=${mediaSourceId}` +
-    `&tag=${eTag}` +
-    `&api_key=${auth.token}`
+    `&audioCodec=aac` +
+    `&api_key=${auth.token}` +
+    `&playSessionId=${auth.deviceId}` +
+    `&container=opus,mp3,aac,m4a,m4b,flac,wav,ogg` +
+    `&transcodingContainer=ts` +
+    `&transcodingProtocol=hls`
   );
 };
 
