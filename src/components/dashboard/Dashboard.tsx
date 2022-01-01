@@ -19,58 +19,73 @@ const Dashboard = () => {
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
   const album = useAppSelector((state) => state.album);
-  const [musicFolder, setMusicFolder] = useState(undefined);
+  const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
 
   useEffect(() => {
     if (folder.applied.dashboard) {
-      setMusicFolder(folder.musicFolder);
+      setMusicFolder({ loaded: true, id: folder.musicFolder });
+    } else {
+      setMusicFolder({ loaded: true, id: undefined });
     }
   }, [folder]);
 
   const { isLoading: isLoadingRecent, data: recentAlbums }: any = useQuery(
-    ['recentAlbums', musicFolder],
+    ['recentAlbums', musicFolder.id],
     () =>
       apiController({
         serverType: config.serverType,
         endpoint: config.serverType === Server.Jellyfin ? 'getSongs' : 'getAlbums',
-        args: { type: 'recent', size: 20, offset: 0, order: 'desc', musicFolderId: musicFolder },
+        args: { type: 'recent', size: 20, offset: 0, order: 'desc', musicFolderId: musicFolder.id },
       }),
     {
       refetchOnWindowFocus: true,
       refetchInterval: 30000,
+      enabled: musicFolder.loaded,
     }
   );
 
   const { isLoading: isLoadingNewest, data: newestAlbums }: any = useQuery(
-    ['newestAlbums', musicFolder],
+    ['newestAlbums', musicFolder.id],
     () =>
       apiController({
         serverType: config.serverType,
         endpoint: 'getAlbums',
-        args: { type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder },
-      })
+        args: { type: 'newest', size: 20, offset: 0, musicFolderId: musicFolder.id },
+      }),
+    {
+      enabled: musicFolder.loaded,
+    }
   );
 
   const { isLoading: isLoadingRandom, data: randomAlbums }: any = useQuery(
-    ['randomAlbums', musicFolder],
+    ['randomAlbums', musicFolder.id],
     () =>
       apiController({
         serverType: config.serverType,
         endpoint: 'getAlbums',
-        args: { type: 'random', size: 20, offset: 0, musicFolderId: musicFolder },
-      })
+        args: { type: 'random', size: 20, offset: 0, musicFolderId: musicFolder.id },
+      }),
+    {
+      enabled: musicFolder.loaded,
+    }
   );
 
   const { isLoading: isLoadingFrequent, data: frequentAlbums }: any = useQuery(
-    ['frequentAlbums', musicFolder],
+    ['frequentAlbums', musicFolder.id],
     () =>
       apiController({
         serverType: config.serverType,
         endpoint: config.serverType === Server.Jellyfin ? 'getSongs' : 'getAlbums',
-        args: { type: 'frequent', size: 20, offset: 0, order: 'desc', musicFolderId: musicFolder },
+        args: {
+          type: 'frequent',
+          size: 20,
+          offset: 0,
+          order: 'desc',
+          musicFolderId: musicFolder.id,
+        },
       }),
     {
-      refetchOnWindowFocus: true,
+      enabled: musicFolder.loaded,
     }
   );
 
@@ -82,7 +97,7 @@ const Dashboard = () => {
         args: { id: rowData.id, type: 'album' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
-      queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['recentAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -90,7 +105,7 @@ const Dashboard = () => {
 
         return oldData;
       });
-      queryClient.setQueryData(['newestAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['newestAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -98,7 +113,7 @@ const Dashboard = () => {
 
         return oldData;
       });
-      queryClient.setQueryData(['randomAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['randomAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -106,7 +121,7 @@ const Dashboard = () => {
 
         return oldData;
       });
-      queryClient.setQueryData(['frequentAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['frequentAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = Date.now();
@@ -121,7 +136,7 @@ const Dashboard = () => {
         args: { id: rowData.id, type: 'album' },
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-      queryClient.setQueryData(['recentAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['recentAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
@@ -129,7 +144,7 @@ const Dashboard = () => {
 
         return oldData;
       });
-      queryClient.setQueryData(['newestAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['newestAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
@@ -137,7 +152,7 @@ const Dashboard = () => {
 
         return oldData;
       });
-      queryClient.setQueryData(['randomAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['randomAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
@@ -145,7 +160,7 @@ const Dashboard = () => {
 
         return oldData;
       });
-      queryClient.setQueryData(['frequentAlbums', musicFolder], (oldData: any) => {
+      queryClient.setQueryData(['frequentAlbums', musicFolder.id], (oldData: any) => {
         const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
         starredIndices.forEach((index) => {
           oldData[index].starred = undefined;
