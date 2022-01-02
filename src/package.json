@@ -1,8 +1,8 @@
 {
   "name": "sonixd",
   "productName": "Sonixd",
-  "version": "0.10.0",
-  "description": "A full-featured Subsonic API compatible cross-platform desktop client",
+  "version": "0.11.0",
+  "description": "A full-featured Subsonic/Jellyfin compatible desktop client",
   "main": "./main.prod.js",
   "author": {
     "name": "jeffvli",

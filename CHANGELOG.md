@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.11.0] - 2022-01-01
+
+### Added
+
+- Added external integrations
+  - Added Discord rich presence to display the currently playing song (#155)
+  - Added OBS (Open Broadcaster Software) scrobbling to send current track metadata to desktop or the Tuna plugin (#136)
+- Added a `Native` option for Titlebar Style (#148) (Thanks @gelaechter)
+- (Jellyfin) Added toggle to allow transcoding for non-directplay compatible filetypes (#158)
+- Additional MPRIS support
+  - Added metadata:
+    - `albumArtist`, `discNumber`, `trackNumber`, `useCount`, `genre`
+  - Added events:
+    - `seek`, `position`, `volume`, `repeat`, `shuffle`
+
+### Changed
+
+- Overhauled the Artist page
+  - (Jellyfin) Split albums by album artist OR compilation
+  - (Jellyfin) Added artist genres
+  - (Subsonic) Added Top Songs section
+  - Moved related artists to the main page scrolling menu
+  - Added `View All Songs` button to view all songs by the artist
+  - Added artist radio (mix) button
+- Horizontal scrolling menu no longer displays scrollbar
+- Changed button styling on Playlist/Album/Artist pages
+- Changed page image styling to use the card on Playlist/Album/Artist pages
+
+### Fixed
+
+- Fixed various MPRIS features
+  - Synchronized the play/pause state between the player and MPRIS client when pausing from Sonixd (#152)
+  - Fixed the identity of Sonixd to use the app name instead of description (#163)
+- Fixed various submenus opening in the right-click context menu when the option is disabled (#164)
+- Fixed compatibility with older Subsonic API servers (now targets Subsonic v1.13.0) (#144)
+- Fixed playback causing heavily increased CPU/Power usage #145)
+
+[0.10.0] - 2021-12-15
+
 ### Added
 
 - Added 2 new default themes
