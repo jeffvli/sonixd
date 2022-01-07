@@ -318,6 +318,7 @@ export const mockSettings = {
   windowMaximize: false,
   highlightOnRowHover: false,
   titleBarStyle: 'windows',
+  startPage: '/',
   discord: {
     enabled: true,
     applicationId: '',

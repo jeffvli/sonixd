@@ -86,6 +86,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('titleBarStyle', 'windows');
   }
 
+  if (force || !settings.hasSync('startPage')) {
+    settings.setSync('startPage', '/');
+  }
+
   if (force || !settings.hasSync('scrobble')) {
     settings.setSync('scrobble', false);
   }
