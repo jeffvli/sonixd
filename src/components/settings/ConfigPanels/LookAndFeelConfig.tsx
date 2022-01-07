@@ -275,6 +275,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
+  const startPagePickerContainerRef = useRef(null);
   const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
@@ -424,6 +425,54 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               setDynamicBackgroundChk(e);
             }}
           />
+        }
+      />
+
+      <ConfigOption
+        name="Start page"
+        description="Page Sonixd will display on start."
+        option={
+          <StyledInputPickerContainer ref={startPagePickerContainerRef}>
+            <StyledInputPicker
+              container={() => startPagePickerContainerRef.current}
+              data={[
+                {
+                  label: 'Dashboard',
+                  value: '/',
+                },
+                {
+                  label: 'Playlists',
+                  value: '/playlist',
+                },
+                {
+                  label: 'Favorites',
+                  value: '/starred',
+                },
+                {
+                  label: 'Albums',
+                  value: '/library/album',
+                },
+                {
+                  label: 'Artists',
+                  value: '/library/artist',
+                },
+                {
+                  label: 'Genres',
+                  value: '/library/genre',
+                },
+                {
+                  label: 'Folders',
+                  value: '/library/folder',
+                },
+              ]}
+              cleanable={false}
+              defaultValue={String(settings.getSync('startPage'))}
+              width={200}
+              onChange={(e: string) => {
+                settings.setSync('startPage', e);
+              }}
+            />
+          </StyledInputPickerContainer>
         }
       />
     </ConfigPanel>
