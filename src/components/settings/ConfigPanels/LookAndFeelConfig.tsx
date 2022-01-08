@@ -20,6 +20,7 @@ import {
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
+import { ALBUM_SORT_TYPES } from '../../library/AlbumList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setTheme, setFont, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
 import {
@@ -276,6 +277,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
   const startPagePickerContainerRef = useRef(null);
+  const albumSortDefaultPickerContainerRef = useRef(null);
   const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
@@ -470,6 +472,25 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               width={200}
               onChange={(e: string) => {
                 settings.setSync('startPage', e);
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
+
+      <ConfigOption
+        name="Default album sorting"
+        description="Choose with which sorting the album page will open."
+        option={
+          <StyledInputPickerContainer ref={albumSortDefaultPickerContainerRef}>
+            <StyledInputPicker
+              container={() => albumSortDefaultPickerContainerRef.current}
+              data={ALBUM_SORT_TYPES}
+              cleanable={false}
+              defaultValue={String(settings.getSync('albumSortDefault'))}
+              width={200}
+              onChange={(e: string) => {
+                settings.setSync('albumSortDefault', e);
               }}
             />
           </StyledInputPickerContainer>

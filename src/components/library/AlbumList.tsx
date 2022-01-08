@@ -34,7 +34,7 @@ import useAdvancedFilter from '../../hooks/useAdvancedFilter';
 import ColumnSort from '../shared/ColumnSort';
 import useColumnSort from '../../hooks/useColumnSort';
 
-const ALBUM_SORT_TYPES = [
+export const ALBUM_SORT_TYPES = [
   { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
   { label: 'A-Z (Artist)', value: 'alphabeticalByArtist', role: 'Default' },
   { label: 'Most Played', value: 'frequent', role: 'Default' },
