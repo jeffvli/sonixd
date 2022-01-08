@@ -1,4 +1,4 @@
-name: Publish
+name: Publish (Windows)
 
 # Only allow manual run
 on: workflow_dispatch
