@@ -14,7 +14,7 @@
     <img src="https://img.shields.io/github/downloads/jeffvli/sonixd/total?style=flat-square&color=orange"
     alt="Downloads">
   </a>
-  <a href="https://discord.gg/PcJCMgthGa">
+  <a href="https://discord.gg/FVKpcMDy5f">
     <img src="https://img.shields.io/discord/922656312888811530?color=red&label=discord&logo=discord&logoColor=white"
     alt="Discord">
   </a>
