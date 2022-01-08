@@ -479,7 +479,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Default album sorting"
+        name="Default Album Sort"
         description="Choose with which sorting the album page will open."
         option={
           <StyledInputPickerContainer ref={albumSortDefaultPickerContainerRef}>
