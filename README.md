@@ -28,7 +28,7 @@ Sonixd is a cross-platform desktop client built for Subsonic-API (and Jellyfin i
 - [**Usage documentation & FAQ**](https://github.com/jeffvli/sonixd/discussions/15)
 - [**Theming documentation**](https://github.com/jeffvli/sonixd/discussions/61)
 
-Sonixd has been tested on the following: [Navidrome](https://github.com/navidrome/navidrome), [Airsonic](https://github.com/airsonic/airsonic), [Airsonic-Advanced](https://github.com/airsonic-advanced/airsonic-advanced), [Supysonic](https://github.com/spl0k/supysonic), [Gonic](https://github.com/sentriz/gonic), [Astiga](https://asti.ga/), [Jellyfin](https://github.com/jellyfin/jellyfin)
+Sonixd has been tested on the following: [Navidrome](https://github.com/navidrome/navidrome), [Airsonic](https://github.com/airsonic/airsonic), [Airsonic-Advanced](https://github.com/airsonic-advanced/airsonic-advanced), [Gonic](https://github.com/sentriz/gonic), [Astiga](https://asti.ga/), [Jellyfin](https://github.com/jellyfin/jellyfin)
 
 ## Features
 
