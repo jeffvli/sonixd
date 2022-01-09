@@ -268,6 +268,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
 
 export const ThemeConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
+  const config = useAppSelector((state) => state.config);
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
     Boolean(settings.getSync('dynamicBackground'))
   );
@@ -480,12 +481,15 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
 
       <ConfigOption
         name="Default Album Sort"
-        description="Choose with which sorting the album page will open."
+        description="The default album page sort selection on application startup."
         option={
           <StyledInputPickerContainer ref={albumSortDefaultPickerContainerRef}>
             <StyledInputPicker
               container={() => albumSortDefaultPickerContainerRef.current}
               data={ALBUM_SORT_TYPES}
+              disabledItemValues={
+                config.serverType === Server.Jellyfin ? ['frequent', 'recent'] : []
+              }
               cleanable={false}
               defaultValue={String(settings.getSync('albumSortDefault'))}
               width={200}
