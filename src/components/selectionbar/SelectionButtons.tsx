@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconButton, Icon } from 'rsuite';
 import { useAppDispatch } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
@@ -24,24 +25,32 @@ const CustomIconButton = ({ tooltipText, icon, handleClick, ...rest }: any) => {
 };
 
 export const MoveUpButton = ({ handleClick }: any) => {
-  return <CustomIconButton handleClick={handleClick} tooltipText="Move up" icon="arrow-up2" />;
+  const { t } = useTranslation();
+  return <CustomIconButton handleClick={handleClick} tooltipText={t('Move up')} icon="arrow-up2" />;
 };
 
 export const MoveDownButton = ({ handleClick }: any) => {
-  return <CustomIconButton handleClick={handleClick} tooltipText="Move down" icon="arrow-down2" />;
+  const { t } = useTranslation();
+  return (
+    <CustomIconButton handleClick={handleClick} tooltipText={t('Move down')} icon="arrow-down2" />
+  );
 };
 
 export const MoveManualButton = ({ handleClick }: any) => {
-  return <CustomIconButton handleClick={handleClick} tooltipText="Move to index" icon="arrows-v" />;
+  const { t } = useTranslation();
+  return (
+    <CustomIconButton handleClick={handleClick} tooltipText={t('Move to index')} icon="arrows-v" />
+  );
 };
 
 export const DeselectAllButton = ({ handleClick }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   return (
     <CustomIconButton
       handleClick={handleClick}
-      tooltipText="Deselect All"
+      tooltipText={t('Deselect All')}
       icon="close"
       onClick={() => dispatch(clearSelected())}
       color="red"

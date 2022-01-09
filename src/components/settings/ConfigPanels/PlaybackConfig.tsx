@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import { ConfigPanel } from '../styled';
 import {
   StyledButton,
@@ -14,6 +15,7 @@ import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
 
 const PlaybackConfig = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [crossfadeDuration, setCrossfadeDuration] = useState(
     Number(settings.getSync('fadeDuration'))
@@ -54,10 +56,12 @@ const PlaybackConfig = () => {
 
   return (
     <>
-      <ConfigPanel header="Playback">
+      <ConfigPanel header={t('Playback')}>
         <ConfigOption
-          name="Crossfade Duration (s)"
-          description="The number in seconds before starting the crossfade to the next track. Setting this to 0 will enable gapless playback."
+          name={t('Crossfade Duration (s)')}
+          description={t(
+            'The number in seconds before starting the crossfade to the next track. Setting this to 0 will enable gapless playback.'
+          )}
           option={
             <StyledInputNumber
               defaultValue={crossfadeDuration}
@@ -72,8 +76,10 @@ const PlaybackConfig = () => {
         />
 
         <ConfigOption
-          name="Polling Interval"
-          description="The number in milliseconds between each poll when music is playing. This is used in the calculation for crossfading and gapless playback. Recommended value for gapless playback is between 10 and 20."
+          name={t('Polling Interval')}
+          description={t(
+            'The number in milliseconds between each poll when music is playing. This is used in the calculation for crossfading and gapless playback. Recommended value for gapless playback is between 10 and 20.'
+          )}
           option={
             <StyledInputNumber
               defaultValue={pollingInterval}
@@ -88,44 +94,47 @@ const PlaybackConfig = () => {
         />
 
         <ConfigOption
-          name="Crossfade Type"
-          description="The fade calculation to use when crossfading between two tracks. Enable the debug window to view the differences between each fade type."
+          name={t('Crossfade Type')}
+          description={t(
+            'The fade calculation to use when crossfading between two tracks. Enable the debug window to view the differences between each fade type.'
+          )}
           option={
             <StyledInputPickerContainer ref={crossfadePickerContainerRef}>
               <StyledInputPicker
                 container={() => crossfadePickerContainerRef.current}
                 data={[
                   {
-                    label: 'Equal Power',
+                    label: t('Equal Power'),
                     value: 'equalPower',
                   },
                   {
-                    label: 'Linear',
+                    label: t('Linear'),
                     value: 'linear',
                   },
                   {
-                    label: 'Dipped',
+                    label: t('Dipped'),
                     value: 'dipped',
                   },
                   {
-                    label: 'Constant Power',
+                    label: t('Constant Power'),
                     value: 'constantPower',
                   },
                   {
-                    label: 'Constant Power (slow fade)',
+                    label: t('Constant Power (slow fade)'),
                     value: 'constantPowerSlowFade',
                   },
                   {
-                    label: 'Constant Power (slow cut)',
+                    label: t('Constant Power (slow cut)'),
                     value: 'constantPowerSlowCut',
                   },
                   {
-                    label: 'Constant Power (fast cut)',
+                    label: t('Constant Power (fast cut)'),
                     value: 'constantPowerFastCut',
                   },
                 ]}
                 cleanable={false}
                 defaultValue={String(settings.getSync('fadeType'))}
+                placeholder={t('Select')}
                 onChange={(e: string) => {
                   settings.setSync('fadeType', e);
                   dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
@@ -137,8 +146,10 @@ const PlaybackConfig = () => {
         />
 
         <ConfigOption
-          name="Volume Fade"
-          description="Enable or disable the volume fade used by the crossfading players. If disabled, the fading in track will start at full volume."
+          name={t('Volume Fade')}
+          description={t(
+            'Enable or disable the volume fade used by the crossfading players. If disabled, the fading in track will start at full volume.'
+          )}
           option={
             <StyledToggle
               size="md"
@@ -150,8 +161,8 @@ const PlaybackConfig = () => {
         />
 
         <ConfigOption
-          name="Playback Presets"
-          description="Don't know where to start? Apply a preset and tweak from there."
+          name={t('Playback Presets')}
+          description={t("Don't know where to start? Apply a preset and tweak from there.")}
           option={
             <ButtonToolbar>
               <StyledButton
@@ -163,7 +174,7 @@ const PlaybackConfig = () => {
                   handleSetPollingInterval(15);
                 }}
               >
-                Gapless
+                {t('Gapless')}
               </StyledButton>
               <StyledButton
                 width={100}
@@ -176,7 +187,7 @@ const PlaybackConfig = () => {
                   handleSetVolumeFade(true);
                 }}
               >
-                Fade
+                {t('Fade')}
               </StyledButton>
             </ButtonToolbar>
           }

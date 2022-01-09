@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { HelmetProvider } from 'react-helmet-async';
 import { store } from './redux/store';
+import './i18n/i18n';
 import App from './App';
 
 const queryClient = new QueryClient({

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   TitleHeader,
   DragRegion,
@@ -12,6 +13,7 @@ import { getCurrentEntryList } from '../../shared/utils';
 import logo from '../../../assets/icon.png';
 
 const Titlebar = ({ font }: any) => {
+  const { t } = useTranslation();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const misc = useAppSelector((state) => state.misc);
@@ -24,7 +26,7 @@ const Titlebar = ({ font }: any) => {
     const currentEntryList = getCurrentEntryList(playQueue);
 
     const playStatus =
-      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0 ? '(Paused)' : '';
+      player.status !== 'PLAYING' && playQueue[currentEntryList].length > 0 ? t('(Paused)') : '';
 
     const songTitle = playQueue[currentEntryList][playQueue.currentIndex]?.title
       ? `(${playQueue.currentIndex + 1} / ${playQueue[currentEntryList].length}) ~ ${
@@ -34,7 +36,7 @@ const Titlebar = ({ font }: any) => {
 
     setTitle(`${playStatus} ${songTitle}`.trim());
     document.title = `${playStatus} ${songTitle}`.trim();
-  }, [playQueue, player.status]);
+  }, [playQueue, player.status, t]);
 
   // if the titlebar is native return no custom titlebar
   if (misc.titleBar === 'native') {

@@ -9,6 +9,7 @@ import { FlexboxGrid, Grid, Row, Col, Whisper } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
+import { useTranslation } from 'react-i18next';
 import {
   PlayerContainer,
   PlayerColumn,
@@ -50,6 +51,7 @@ import { notifyToast } from '../shared/toast';
 const DiscordRPC = require('discord-rpc');
 
 const PlayerBar = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
@@ -626,7 +628,7 @@ const PlayerBar = () => {
                         placement="topStart"
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                          'Unknown title'
+                          t('Unknown title')
                         }
                       >
                         <LinkButton
@@ -642,7 +644,7 @@ const PlayerBar = () => {
                           }}
                         >
                           {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                            'Unknown title'}
+                            t('Unknown title')}
                         </LinkButton>
                       </CustomTooltip>
                     </Row>
@@ -660,7 +662,7 @@ const PlayerBar = () => {
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
                             ? playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
-                            : 'Unknown artist'
+                            : t('Unknown artist')
                         }
                       >
                         <span
@@ -687,7 +689,7 @@ const PlayerBar = () => {
                             }}
                           >
                             {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
-                              'Unknown artist'}
+                              t('Unknown artist')}
                           </LinkButton>
                         </span>
                       </CustomTooltip>
@@ -700,7 +702,7 @@ const PlayerBar = () => {
           <FlexboxGrid.Item colspan={12} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
             <PlayerColumn center height="45px">
               {/* Seek Backward Button */}
-              <CustomTooltip text="Seek backward" delay={1000}>
+              <CustomTooltip text={t('Seek backward')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="backward"
@@ -715,7 +717,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Previous Song Button */}
-              <CustomTooltip text="Previous track" delay={1000}>
+              <CustomTooltip text={t('Previous track')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="step-backward"
@@ -730,7 +732,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Play/Pause Button */}
-              <CustomTooltip text="Play/Pause" delay={1000}>
+              <CustomTooltip text={t('Play/Pause')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon={player.status === 'PLAYING' ? 'pause' : 'play'}
@@ -745,7 +747,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Next Song Button */}
-              <CustomTooltip text="Next track" delay={1000}>
+              <CustomTooltip text={t('Next track')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="step-forward"
@@ -760,7 +762,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Seek Forward Button */}
-              <CustomTooltip text="Seek forward" delay={1000}>
+              <CustomTooltip text={t('Seek forward')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="forward"
@@ -846,7 +848,7 @@ const PlayerBar = () => {
                 >
                   <>
                     {/* Favorite Button */}
-                    <CustomTooltip text="Favorite">
+                    <CustomTooltip text={t('Favorite')}>
                       <PlayerControlIcon
                         tabIndex={0}
                         icon={
@@ -874,10 +876,10 @@ const PlayerBar = () => {
                     <CustomTooltip
                       text={
                         playQueue.repeat === 'all'
-                          ? 'Repeat all'
+                          ? t('Repeat all')
                           : playQueue.repeat === 'one'
-                          ? 'Repeat one'
-                          : 'Repeat'
+                          ? t('Repeat one')
+                          : t('Repeat')
                       }
                     >
                       <PlayerControlIcon
@@ -900,7 +902,7 @@ const PlayerBar = () => {
                       />
                     </CustomTooltip>
                     {/* Shuffle Button */}
-                    <CustomTooltip text="Shuffle">
+                    <CustomTooltip text={t('Shuffle')}>
                       <PlayerControlIcon
                         tabIndex={0}
                         icon="random"
@@ -916,7 +918,7 @@ const PlayerBar = () => {
                       />
                     </CustomTooltip>
                     {/* Display Queue Button */}
-                    <CustomTooltip text="Mini">
+                    <CustomTooltip text={t('Mini')}>
                       <PlayerControlIcon
                         tabIndex={0}
                         icon="tasks"
@@ -956,7 +958,7 @@ const PlayerBar = () => {
                     preventOverflow
                     speaker={
                       <StyledPopover>
-                        {muted ? 'Muted' : Math.floor(localVolume * 100)}
+                        {muted ? t('Muted') : Math.floor(localVolume * 100)}
                       </StyledPopover>
                     }
                   >

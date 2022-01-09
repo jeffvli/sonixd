@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { shell } from 'electron';
 import { Whisper, Nav, ButtonToolbar } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -23,6 +24,7 @@ import ExternalConfig from './ConfigPanels/ExternalConfig';
 const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
 const Config = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
@@ -80,7 +82,7 @@ const Config = () => {
       id="settings"
       header={
         <GenericPageHeader
-          title="Config"
+          title={t('Config')}
           subtitle={
             <>
               <Nav
@@ -96,7 +98,7 @@ const Config = () => {
                     }
                   }}
                 >
-                  Playback
+                  {t('Playback')}
                 </StyledNavItem>
                 <StyledNavItem
                   eventKey="lookandfeel"
@@ -107,7 +109,7 @@ const Config = () => {
                     }
                   }}
                 >
-                  Look & Feel
+                  {t('Look & Feel')}
                 </StyledNavItem>
                 <StyledNavItem
                   eventKey="other"
@@ -118,7 +120,7 @@ const Config = () => {
                     }
                   }}
                 >
-                  Other
+                  {t('Other')}
                 </StyledNavItem>
               </Nav>
             </>
@@ -139,16 +141,16 @@ const Config = () => {
                   }}
                   disabled={isScanning}
                 >
-                  {isScanning ? `${scanProgress}` : 'Scan'}
+                  {isScanning ? `${scanProgress}` : t('Scan')}
                 </StyledButton>
               </>
               <Whisper
                 trigger="click"
                 placement="auto"
                 speaker={
-                  <StyledPopover title="Confirm">
-                    <div>Are you sure you want to reset your settings to default?</div>
-                    <strong>WARNING: This will reload the application</strong>
+                  <StyledPopover title={t('Confirm')}>
+                    <div>{t('Are you sure you want to reset your settings to default?')}</div>
+                    <strong>{t('WARNING: This will reload the application')}</strong>
                     <div>
                       <StyledButton
                         id="reset-submit-button"
@@ -159,13 +161,13 @@ const Config = () => {
                         }}
                         appearance="primary"
                       >
-                        Yes
+                        {t('Yes')}
                       </StyledButton>
                     </div>
                   </StyledPopover>
                 }
               >
-                <StyledButton size="sm">Reset defaults</StyledButton>
+                <StyledButton size="sm">{t('Reset defaults')}</StyledButton>
               </Whisper>
               <Whisper
                 trigger="hover"
@@ -175,9 +177,9 @@ const Config = () => {
                 speaker={
                   <StyledPopover>
                     <>
-                      Current version: {packageJson.version}
+                      {t('Current version:')} {packageJson.version}
                       <br />
-                      Latest version: {latestRelease}
+                      {t('Latest version:')} {latestRelease}
                       <br />
                       Node: {process.versions.node}
                       <br />
@@ -190,7 +192,7 @@ const Config = () => {
                         appearance="primary"
                         onClick={() => shell.openExternal('https://github.com/jeffvli/sonixd')}
                       >
-                        View on GitHub
+                        {t('View on GitHub')}
                       </StyledButton>
                       <StyledButton
                         size="xs"
@@ -202,7 +204,7 @@ const Config = () => {
                           )
                         }
                       >
-                        View CHANGELOG
+                        {t('View CHANGELOG')}
                       </StyledButton>
                     </>
                   </StyledPopover>

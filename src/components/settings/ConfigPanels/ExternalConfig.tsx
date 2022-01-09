@@ -2,6 +2,7 @@ import React from 'react';
 import { shell } from 'electron';
 import settings from 'electron-settings';
 import { Icon, RadioGroup } from 'rsuite';
+import { Trans, useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
 import {
   StyledInput,
@@ -19,18 +20,21 @@ import ConfigOption from '../ConfigOption';
 const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
 
 const ExternalConfig = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
 
   return (
-    <ConfigPanel header="External">
+    <ConfigPanel header={t('External')}>
       <ConfigOptionDescription>
-        Config for integration with external programs.
+        {t('Config for integration with external programs.')}
       </ConfigOptionDescription>
       <ConfigPanel header="Discord" collapsible $noBackground>
         <ConfigOption
-          name="Rich Presence"
-          description="Integrates with Discord's rich presence to display the currently playing song as your status."
+          name={t('Rich Presence')}
+          description={t(
+            "Integrates with Discord's rich presence to display the currently playing song as your status."
+          )}
           option={
             <StyledToggle
               defaultChecked={config.external.discord.enabled}
@@ -44,9 +48,9 @@ const ExternalConfig = () => {
           }
         />
         <ConfigOption
-          name="Discord Client Id"
+          name={t('Discord Client Id')}
           description={
-            <>
+            <Trans t={t}>
               The client/application Id of the Sonixd discord application. To use your own, create
               one on the{' '}
               <StyledLink
@@ -54,12 +58,12 @@ const ExternalConfig = () => {
               >
                 developer application portal
               </StyledLink>
-              . The large icon uses the name &quot;icon&quot;. Default is 923372440934055968.
-            </>
+              . The large icon uses the name "icon". Default is 923372440934055968.
+            </Trans>
           }
           option={
             <StyledInput
-              placeholder="Client/Application Id"
+              placeholder={t('Client/Application Id')}
               value={config.external.discord.clientId}
               disabled={config.external.discord.enabled}
               onChange={(e: boolean) => {
@@ -74,7 +78,7 @@ const ExternalConfig = () => {
         <ConfigOption
           name={
             <>
-              Scrobbling
+              {t('Scrobbling')}
               <RadioGroup
                 inline
                 defaultValue={config.external.obs.type}
@@ -84,12 +88,14 @@ const ExternalConfig = () => {
                   dispatch(setOBS({ ...config.external.obs, type: e }));
                 }}
               >
-                <StyledRadio value="local">Local</StyledRadio>
-                <StyledRadio value="web">Web</StyledRadio>
+                <StyledRadio value="local">{t('Local')}</StyledRadio>
+                <StyledRadio value="web">{t('Web')}</StyledRadio>
               </RadioGroup>
             </>
           }
-          description="If local, scrobbles the currently playing song to local .txt files. If web, scrobbles the currently playing song to Tuna plugin's webserver."
+          description={t(
+            "If local, scrobbles the currently playing song to local .txt files. If web, scrobbles the currently playing song to Tuna plugin's webserver."
+          )}
           option={
             <>
               <StyledToggle
@@ -104,8 +110,10 @@ const ExternalConfig = () => {
           }
         />
         <ConfigOption
-          name="Polling Interval"
-          description="The number in milliseconds (ms) between each poll when metadata is sent."
+          name={t('Polling Interval')}
+          description={t(
+            'The number in milliseconds (ms) between each poll when metadata is sent.'
+          )}
           option={
             <StyledInputNumber
               defaultValue={config.external.obs.pollingInterval}
@@ -124,8 +132,8 @@ const ExternalConfig = () => {
 
         {config.external.obs.type === 'web' ? (
           <ConfigOption
-            name="Tuna Webserver Url"
-            description="The full URL to the Tuna webserver."
+            name={t('Tuna Webserver Url')}
+            description={t('The full URL to the Tuna webserver.')}
             option={
               <StyledInput
                 width={200}
@@ -140,8 +148,8 @@ const ExternalConfig = () => {
           />
         ) : (
           <ConfigOption
-            name="File Path"
-            description="The full path to the directory where song metadata will be created."
+            name={t('File Path')}
+            description={t('The full path to the directory where song metadata will be created.')}
             option={
               <StyledInputGroup>
                 <StyledInput disabled width={200} value={config.external.obs.path} />

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlexboxGrid, RadioGroup } from 'rsuite';
 import { FilterHeader } from '../library/AdvancedFilters';
 import { StyledButton, StyledInputPickerContainer, StyledInputPicker, StyledRadio } from './styled';
@@ -12,6 +13,7 @@ const ColumnSort = ({
   clearSortType,
   disabledItemValues,
 }: any) => {
+  const { t } = useTranslation();
   const sortFilterPickerContainerRef = useRef<any>();
 
   return (
@@ -26,15 +28,15 @@ const ColumnSort = ({
               disabled={!sortColumn}
               onClick={clearSortType}
             >
-              Reset
+              {t('Reset')}
             </StyledButton>
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </FilterHeader>
 
       <RadioGroup inline defaultValue={sortType} onChange={setSortType}>
-        <StyledRadio value="asc">ASC</StyledRadio>
-        <StyledRadio value="desc">DESC</StyledRadio>
+        <StyledRadio value="asc">{t('ASC')}</StyledRadio>
+        <StyledRadio value="desc">{t('DESC')}</StyledRadio>
       </RadioGroup>
       <StyledInputPickerContainer ref={sortFilterPickerContainerRef}>
         <StyledInputPicker
@@ -47,6 +49,7 @@ const ColumnSort = ({
           virtualized
           cleanable={false}
           style={{ width: '250px' }}
+          placeholder={t('Select')}
           onChange={setSortColumn}
         />
       </StyledInputPickerContainer>

@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { CheckboxGroup } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigOptionInput, ConfigPanel } from '../styled';
 import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -12,6 +13,7 @@ import PageLoader from '../../loader/PageLoader';
 import ConfigOption from '../ConfigOption';
 
 const ServerConfig = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
@@ -25,10 +27,12 @@ const ServerConfig = () => {
   }
 
   return (
-    <ConfigPanel header="Server">
+    <ConfigPanel header={t('Server')}>
       <ConfigOption
-        name="Media Folder"
-        description="Sets the parent media folder your audio files are located in. Leaving this blank will use all media folders."
+        name={t('Media Folder')}
+        description={t(
+          'Sets the parent media folder your audio files are located in. Leaving this blank will use all media folders.'
+        )}
         option={
           <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
             <StyledInputPicker
@@ -38,6 +42,7 @@ const ServerConfig = () => {
               valueKey="id"
               labelKey="title"
               width={200}
+              placeholder={t('Select')}
               onChange={(e: string) => {
                 const selectedFolder = musicFolders.find((f: Folder) => f.id === e);
                 settings.setSync('musicFolder.id', e);
@@ -50,7 +55,7 @@ const ServerConfig = () => {
       />
 
       <ConfigOptionDescription>
-        Select which pages to apply media folder filtering to:
+        {t('Select which pages to apply media folder filtering to:')}
       </ConfigOptionDescription>
       <ConfigOptionInput>
         <CheckboxGroup>
@@ -61,7 +66,7 @@ const ServerConfig = () => {
               settings.setSync('musicFolder.albums', e);
             }}
           >
-            Albums
+            {t('Albums')}
           </StyledCheckbox>
           <StyledCheckbox
             defaultChecked={folder.applied.artists}
@@ -70,7 +75,7 @@ const ServerConfig = () => {
               settings.setSync('musicFolder.artists', e);
             }}
           >
-            Artists
+            {t('Artists')}
           </StyledCheckbox>
           <StyledCheckbox
             defaultChecked={folder.applied.dashboard}
@@ -79,7 +84,7 @@ const ServerConfig = () => {
               settings.setSync('musicFolder.dashboard', e);
             }}
           >
-            Dashboard
+            {t('Dashboard')}
           </StyledCheckbox>
           <StyledCheckbox
             defaultChecked={folder.applied.starred}
@@ -88,7 +93,7 @@ const ServerConfig = () => {
               settings.setSync('musicFolder.starred', e);
             }}
           >
-            Favorites
+            {t('Favorites')}
           </StyledCheckbox>
           <StyledCheckbox
             defaultChecked={folder.applied.search}
@@ -97,7 +102,7 @@ const ServerConfig = () => {
               settings.setSync('musicFolder.search', e);
             }}
           >
-            Search
+            {t('Search')}
           </StyledCheckbox>
         </CheckboxGroup>
       </ConfigOptionInput>

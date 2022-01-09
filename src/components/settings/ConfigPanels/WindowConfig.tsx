@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import settings from 'electron-settings';
+import { useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
 import { StyledToggle } from '../../shared/styled';
 import ConfigOption from '../ConfigOption';
 
 const WindowConfig = () => {
+  const { t } = useTranslation();
   const [minimizeToTray, setMinimizeToTray] = useState(Boolean(settings.getSync('minimizeToTray')));
   const [exitToTray, setExitToTray] = useState(Boolean(settings.getSync('exitToTray')));
   return (
-    <ConfigPanel header="Window">
+    <ConfigPanel header={t('Window')}>
       <ConfigOptionDescription>
-        Note: These settings may not function correctly depending on your desktop environment.
+        {t(
+          'Note: These settings may not function correctly depending on your desktop environment.'
+        )}
       </ConfigOptionDescription>
 
       <ConfigOption
-        name="Minimize to Tray"
-        description="Minimizes to the system tray."
+        name={t('Minimize to Tray')}
+        description={t('Minimizes to the system tray.')}
         option={
           <StyledToggle
             defaultChecked={minimizeToTray}
@@ -29,8 +33,8 @@ const WindowConfig = () => {
       />
 
       <ConfigOption
-        name="Exit to Tray"
-        description="Exits to the system tray."
+        name={t('Exit to Tray')}
+        description={t('Exits to the system tray.')}
         option={
           <StyledToggle
             defaultChecked={exitToTray}

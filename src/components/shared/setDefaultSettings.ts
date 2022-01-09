@@ -1,4 +1,5 @@
 import settings from 'electron-settings';
+import i18next from 'i18next';
 import path from 'path';
 
 const setDefaultSettings = (force: boolean) => {
@@ -234,39 +235,39 @@ const setDefaultSettings = (force: boolean) => {
         label: '# (Drag/Drop)',
       },
       {
-        id: 'Title',
+        id: i18next.t('Title')?.toString(),
         dataKey: 'combinedtitle',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Title (Combined)',
+        label: i18next.t('Title (Combined)')?.toString(),
       },
       {
-        id: 'Album',
+        id: i18next.t('Album')?.toString(),
         dataKey: 'album',
         alignment: 'left',
         flexGrow: 3,
-        label: 'Album',
+        label: i18next.t('Album')?.toString(),
       },
       {
-        id: 'Duration',
+        id: i18next.t('Duration')?.toString(),
         dataKey: 'duration',
         alignment: 'center',
         flexGrow: 2,
-        label: 'Duration',
+        label: i18next.t('Duration')?.toString(),
       },
       {
-        id: 'Bitrate',
+        id: i18next.t('Bitrate')?.toString(),
         dataKey: 'bitRate',
         alignment: 'left',
         flexGrow: 1,
-        label: 'Bitrate',
+        label: i18next.t('Bitrate')?.toString(),
       },
       {
-        id: 'Fav',
+        id: i18next.t('Fav')?.toString(),
         dataKey: 'starred',
         alignment: 'center',
         flexGrow: 1,
-        label: 'Favorite',
+        label: i18next.t('Favorite')?.toString(),
       },
     ]);
   }
@@ -290,32 +291,32 @@ const setDefaultSettings = (force: boolean) => {
         label: '#',
       },
       {
-        id: 'Title',
+        id: i18next.t('Title')?.toString(),
         dataKey: 'combinedtitle',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Title (Combined)',
+        label: i18next.t('Title (Combined)')?.toString(),
       },
       {
-        id: 'Tracks',
+        id: i18next.t('Tracks')?.toString(),
         dataKey: 'songCount',
         alignment: 'center',
         flexGrow: 1,
-        label: 'Track Count',
+        label: i18next.t('Track Count')?.toString(),
       },
       {
-        id: 'Duration',
+        id: i18next.t('Duration')?.toString(),
         dataKey: 'duration',
         alignment: 'center',
         flexGrow: 2,
-        label: 'Duration',
+        label: i18next.t('Duration')?.toString(),
       },
       {
-        id: 'Fav',
+        id: i18next.t('Fav')?.toString(),
         dataKey: 'starred',
         alignment: 'center',
         flexGrow: 1,
-        label: 'Favorite',
+        label: i18next.t('Favorite')?.toString(),
       },
     ]);
   }
@@ -339,39 +340,39 @@ const setDefaultSettings = (force: boolean) => {
         label: '#',
       },
       {
-        id: 'Title',
+        id: i18next.t('Title')?.toString(),
         dataKey: 'title',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Title',
+        label: i18next.t('Title')?.toString(),
       },
       {
-        id: 'Description',
+        id: i18next.t('Description')?.toString(),
         dataKey: 'comment',
         alignment: 'left',
         flexGrow: 3,
-        label: 'Description',
+        label: i18next.t('Description')?.toString(),
       },
       {
-        id: 'Tracks',
+        id: i18next.t('Tracks')?.toString(),
         dataKey: 'songCount',
         alignment: 'center',
         flexGrow: 1,
-        label: 'Track Count',
+        label: i18next.t('Track Count')?.toString(),
       },
       {
-        id: 'Owner',
+        id: i18next.t('Owner')?.toString(),
         dataKey: 'owner',
         alignment: 'left',
         flexGrow: 2,
-        label: 'Owner',
+        label: i18next.t('Owner')?.toString(),
       },
       {
-        id: 'Modified',
+        id: i18next.t('Modified')?.toString(),
         dataKey: 'changed',
         alignment: 'left',
         flexGrow: 1,
-        label: 'Modified',
+        label: i18next.t('Modified')?.toString(),
       },
     ]);
   }
@@ -395,33 +396,33 @@ const setDefaultSettings = (force: boolean) => {
         label: '#',
       },
       {
-        id: 'Art',
+        id: i18next.t('Art')?.toString(),
         dataKey: 'coverart',
         alignment: 'center',
         resizable: true,
         width: 50,
-        label: 'CoverArt',
+        label: i18next.t('CoverArt')?.toString(),
       },
       {
-        id: 'Title',
+        id: i18next.t('Title')?.toString(),
         dataKey: 'title',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Title',
+        label: i18next.t('Title')?.toString(),
       },
       {
-        id: 'Albums',
+        id: i18next.t('Albums')?.toString(),
         dataKey: 'albumCount',
         alignment: 'left',
         flexGrow: 1,
-        label: 'Album Count',
+        label: i18next.t('Album Count')?.toString(),
       },
       {
-        id: 'Fav',
+        id: i18next.t('Fav')?.toString(),
         dataKey: 'starred',
         alignment: 'center',
         flexGrow: 1,
-        label: 'Favorite',
+        label: i18next.t('Favorite')?.toString(),
       },
     ]);
   }
@@ -446,28 +447,28 @@ const setDefaultSettings = (force: boolean) => {
       },
       {
         width: 220,
-        id: 'Title',
+        id: i18next.t('Title')?.toString(),
         dataKey: 'combinedtitle',
         alignment: 'left',
-        label: 'Title (Combined)',
+        label: i18next.t('Title (Combined)')?.toString(),
         rowIndex: 7,
         resizable: true,
       },
       {
         width: 60,
-        id: 'Duration',
+        id: i18next.t('Duration')?.toString(),
         dataKey: 'duration',
         alignment: 'center',
-        label: 'Duration',
+        label: i18next.t('Duration')?.toString(),
         rowIndex: 3,
         resizable: true,
       },
       {
         width: 45,
-        id: 'Fav',
+        id: i18next.t('Fav')?.toString(),
         dataKey: 'starred',
         alignment: 'center',
-        label: 'Favorite',
+        label: i18next.t('Favorite')?.toString(),
         rowIndex: 6,
         resizable: true,
       },
@@ -493,25 +494,25 @@ const setDefaultSettings = (force: boolean) => {
         label: '#',
       },
       {
-        id: 'Title',
+        id: i18next.t('Title')?.toString(),
         dataKey: 'title',
         alignment: 'left',
         flexGrow: 5,
-        label: 'Title',
+        label: i18next.t('Title')?.toString(),
       },
       {
-        id: 'Albums',
+        id: i18next.t('Albums')?.toString(),
         dataKey: 'albumCount',
         alignment: 'left',
         flexGrow: 3,
-        label: 'Album Count',
+        label: i18next.t('Album Count')?.toString(),
       },
       {
-        id: 'Tracks',
+        id: i18next.t('Tracks')?.toString(),
         dataKey: 'songCount',
         alignment: 'left',
         flexGrow: 1,
-        label: 'Song Count',
+        label: i18next.t('Song Count')?.toString(),
       },
     ]);
   }
@@ -522,7 +523,7 @@ const setDefaultSettings = (force: boolean) => {
 
   settings.setSync('themesDefault', [
     {
-      label: 'Default Dark',
+      label: i18next.t('Default Dark')?.toString(),
       value: 'defaultDark',
       type: 'dark',
       fonts: {
@@ -683,7 +684,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: 'Default Light',
+      label: i18next.t('Default Light')?.toString(),
       value: 'defaultLight',
       type: 'light',
       fonts: {
@@ -845,7 +846,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: 'Plex-like',
+      label: i18next.t('Plex-like')?.toString(),
       value: 'plexLike',
       type: 'dark',
       fonts: {
@@ -1006,7 +1007,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: 'Spotify-like',
+      label: i18next.t('Spotify-like')?.toString(),
       value: 'spotifyLike',
       type: 'dark',
       fonts: {
@@ -1167,7 +1168,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: 'City Lights',
+      label: i18next.t('City Lights')?.toString(),
       value: 'cityLights',
       type: 'dark',
       fonts: {
@@ -1328,7 +1329,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: 'One Dark',
+      label: i18next.t('One Dark')?.toString(),
       value: 'oneDark',
       type: 'dark',
       fonts: {

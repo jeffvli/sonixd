@@ -4,6 +4,7 @@ import randomstring from 'randomstring';
 import settings from 'electron-settings';
 import { Form, ControlLabel, Message, RadioGroup } from 'rsuite';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import setDefaultSettings from '../shared/setDefaultSettings';
 import {
   StyledButton,
@@ -20,6 +21,7 @@ import packageJson from '../../package.json';
 import { Server } from '../../types';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [serverType, setServerType] = useState('subsonic');
   const [serverName, setServerName] = useState('');
   const [userName, setUserName] = useState('');
@@ -54,7 +56,7 @@ const Login = () => {
         setMessage(`${err.message}`);
         return;
       }
-      setMessage('An unknown error occurred');
+      setMessage(t('An unknown error occurred'));
       return;
     }
 
@@ -116,7 +118,7 @@ const Login = () => {
         setMessage(`${err.message}`);
         return;
       }
-      setMessage('An unknown error occurred');
+      setMessage(t('An unknown error occurred'));
       return;
     }
 
@@ -136,7 +138,7 @@ const Login = () => {
         {message !== '' && <Message type="error" description={message} />}
         <Form id="login-form" fluid style={{ paddingTop: '20px' }}>
           <StyledInputPickerContainer ref={serverTypePickerRef}>
-            <ControlLabel>Server type</ControlLabel>
+            <ControlLabel>{t('Server type')}</ControlLabel>
             <RadioGroup
               inline
               defaultValue="subsonic"
@@ -148,32 +150,32 @@ const Login = () => {
             </RadioGroup>
           </StyledInputPickerContainer>
           <br />
-          <ControlLabel>Server</ControlLabel>
+          <ControlLabel>{t('Server')}</ControlLabel>
           <StyledInput
             id="login-servername"
             name="servername"
             value={serverName}
             onChange={(e: string) => setServerName(e)}
-            placeholder="Requires http(s)://"
+            placeholder={t('Requires http(s)://')}
           />
           <br />
-          <ControlLabel>Username</ControlLabel>
+          <ControlLabel>{t('Username')}</ControlLabel>
           <StyledInput
             id="login-username"
             name="name"
             value={userName}
             onChange={(e: string) => setUserName(e)}
-            placeholder="Enter username"
+            placeholder={t('Enter username')}
           />
           <br />
-          <ControlLabel>Password</ControlLabel>
+          <ControlLabel>{t('Password')}</ControlLabel>
           <StyledInput
             id="login-password"
             name="password"
             type="password"
             value={password}
             onChange={(e: string) => setPassword(e)}
-            placeholder="Enter password"
+            placeholder={t('Enter password')}
           />
           <br />
           {serverType !== 'jellyfin' && (
@@ -190,7 +192,7 @@ const Login = () => {
                   setLegacyAuth(e);
                 }}
               >
-                Legacy auth (plaintext)
+                {t('Legacy auth (plaintext)')}
               </StyledCheckbox>
               <br />
             </>
@@ -202,7 +204,7 @@ const Login = () => {
             block
             onClick={serverType !== 'jellyfin' ? handleConnect : handleConnectJellyfin}
           >
-            Connect
+            {t('Connect')}
           </StyledButton>
         </Form>
       </LoginPanel>

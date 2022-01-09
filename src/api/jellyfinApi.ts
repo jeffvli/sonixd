@@ -5,6 +5,7 @@ import settings from 'electron-settings';
 import _ from 'lodash';
 import moment from 'moment';
 import { nanoid } from 'nanoid/non-secure';
+import i18next from 'i18next';
 import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
 import { GenericItem, Item, Song } from '../types';
@@ -46,7 +47,7 @@ jellyfinApi.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response && err.response.status === 401) {
-      notifyToast('warning', 'Session expired. Logging out.');
+      notifyToast('warning', i18next.t('Session expired. Logging out.'));
       handleDisconnect();
     }
 

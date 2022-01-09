@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { useQuery, useQueryClient } from 'react-query';
 import { Nav } from 'rsuite';
 import settings from 'electron-settings';
+import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -33,6 +34,7 @@ import { FilterButton } from '../shared/ToolbarButtons';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 
 const StarredView = () => {
+  const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
@@ -176,7 +178,7 @@ const StarredView = () => {
         <GenericPageHeader
           title={
             <>
-              Favorites{' '}
+              {t('Favorites')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
                 {favorite.active.tab === 'tracks' && (data?.song?.length || '...')}
                 {favorite.active.tab === 'albums' && (data?.album?.length || '...')}
@@ -287,7 +289,7 @@ const StarredView = () => {
                 }}
                 tabIndex={0}
               >
-                Tracks
+                {t('Tracks')}
               </StyledNavItem>
               <StyledNavItem
                 eventKey="albums"
@@ -297,7 +299,7 @@ const StarredView = () => {
                   }
                 }}
               >
-                Albums
+                {t('Albums')}
               </StyledNavItem>
               <StyledNavItem
                 eventKey="artists"
@@ -307,7 +309,7 @@ const StarredView = () => {
                   }
                 }}
               >
-                Artists
+                {t('Artists')}
               </StyledNavItem>
             </Nav>
           }

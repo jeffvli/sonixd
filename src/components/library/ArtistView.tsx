@@ -7,6 +7,7 @@ import { clipboard, shell } from 'electron';
 import settings from 'electron-settings';
 import { ButtonToolbar, Whisper, ButtonGroup, Icon } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import { useParams, useHistory, useLocation } from 'react-router-dom';
 import {
   DownloadButton,
@@ -70,6 +71,7 @@ interface ArtistParams {
 }
 
 const ArtistView = ({ ...rest }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const history = useHistory();
@@ -405,7 +407,7 @@ const ArtistView = ({ ...rest }: any) => {
 
       if (type === 'copy') {
         clipboard.writeText(downloadUrls.join('\n'));
-        notifyToast('info', 'Download links copied!');
+        notifyToast('info', t('Download links copied!'));
       }
     } else if (data.album[0]?.parent) {
       if (type === 'download') {
@@ -424,7 +426,7 @@ const ArtistView = ({ ...rest }: any) => {
             args: { id: data.album[0].parent },
           })
         );
-        notifyToast('info', 'Download links copied!');
+        notifyToast('info', t('Download links copied!'));
       }
     } else {
       const downloadUrls: string[] = [];
@@ -446,7 +448,10 @@ const ArtistView = ({ ...rest }: any) => {
             })
           );
         } else {
-          notifyToast('warning', `[${albumRes.title}] No parent album found`);
+          notifyToast(
+            'warning',
+            t('[{{albumTitle}}] No parent album found', { albumTitle: albumRes.title })
+          );
         }
       }
 
@@ -456,7 +461,7 @@ const ArtistView = ({ ...rest }: any) => {
 
       if (type === 'copy') {
         clipboard.writeText(downloadUrls.join('\n'));
-        notifyToast('info', 'Download links copied!');
+        notifyToast('info', t('Download links copied!'));
       }
     }
   };
@@ -538,7 +543,7 @@ const ArtistView = ({ ...rest }: any) => {
           <GenericPageHeader
             image={
               <Card
-                title="None"
+                title={t('None')}
                 subtitle=""
                 coverArt={
                   isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
@@ -698,10 +703,10 @@ const ArtistView = ({ ...rest }: any) => {
                         <StyledPopover>
                           <ButtonToolbar>
                             <StyledButton onClick={() => handleDownload('download')}>
-                              Download
+                              {t('Download')}
                             </StyledButton>
                             <StyledButton onClick={() => handleDownload('copy')}>
-                              Copy to clipboard
+                              {t('Copy to clipboard')}
                             </StyledButton>
                           </ButtonToolbar>
                         </StyledPopover>
@@ -726,7 +731,7 @@ const ArtistView = ({ ...rest }: any) => {
                         </StyledPopover>
                       }
                     >
-                      <CustomTooltip text="Info">
+                      <CustomTooltip text="{t('Info')}">
                         <StyledButton appearance="subtle" size="lg">
                           <Icon icon="info-circle" />
                         </StyledButton>
@@ -861,14 +866,14 @@ const ArtistView = ({ ...rest }: any) => {
                   appearance="subtle"
                   onClick={() => history.push(`/library/artist/${artistId}/albums`)}
                 >
-                  View Discography
+                  {t('View Discography')}
                 </StyledButton>
                 <StyledButton
                   size="sm"
                   appearance="subtle"
                   onClick={() => history.push(`/library/artist/${artistId}/songs`)}
                 >
-                  View All Songs
+                  {t('View All Songs')}
                 </StyledButton>
               </ButtonToolbar>
               <br />
@@ -879,13 +884,13 @@ const ArtistView = ({ ...rest }: any) => {
                       <SectionTitle
                         onClick={() => history.push(`/library/artist/${artistId}/topsongs`)}
                       >
-                        Top Songs
+                        {t('Top Songs')}
                       </SectionTitle>{' '}
                       <ButtonGroup>
                         <PlayButton
                           size="sm"
                           appearance="subtle"
-                          text="Play Top Songs"
+                          text={t('Play Top Songs')}
                           onClick={() => handlePlay('topSongs')}
                         />
                         <PlayAppendNextButton
@@ -933,7 +938,7 @@ const ArtistView = ({ ...rest }: any) => {
                       appearance="subtle"
                       onClick={() => setSeeMoreTopSongs(!seeMoreTopSongs)}
                     >
-                      {seeMoreTopSongs ? 'SHOW LESS' : 'SHOW MORE'}
+                      {seeMoreTopSongs ? t('SHOW LESS') : t('SHOW MORE')}
                     </StyledButton>
                   )}
                 </StyledPanel>
@@ -942,13 +947,13 @@ const ArtistView = ({ ...rest }: any) => {
               {albumsByYearDesc.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title="Latest Albums "
+                    title={t('Latest Albums ')}
                     subtitle={
                       <ButtonGroup>
                         <PlayButton
                           size="sm"
                           appearance="subtle"
-                          text="Play Latest Albums"
+                          text={t('Play Latest Albums')}
                           onClick={() => handlePlay('albums')}
                         />
                         <PlayAppendNextButton
@@ -984,13 +989,13 @@ const ArtistView = ({ ...rest }: any) => {
               {compilationAlbumsByYearDesc.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title="Appears On "
+                    title={t('Appears On ')}
                     subtitle={
                       <ButtonGroup>
                         <PlayButton
                           size="sm"
                           appearance="subtle"
-                          text="Play Compilation Albums"
+                          text={t('Play Compilation Albums')}
                           onClick={() => handlePlay('albums')}
                         />
                         <PlayAppendNextButton
@@ -1028,13 +1033,13 @@ const ArtistView = ({ ...rest }: any) => {
               {data.info?.similarArtist.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title="Related Artists "
+                    title={t('Related Artists ')}
                     subtitle={
                       <ButtonGroup>
                         <PlayButton
                           size="sm"
                           appearance="subtle"
-                          text="Play Artist Mix"
+                          text={t('Play Artist Mix')}
                           onClick={() => handlePlay('mix')}
                         />
                         <PlayAppendNextButton

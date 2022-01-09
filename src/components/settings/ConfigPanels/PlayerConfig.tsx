@@ -3,6 +3,8 @@ import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
 import { Form, Whisper } from 'rsuite';
 import { WhisperInstance } from 'rsuite/lib/Whisper';
+import i18next from 'i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigOptionName, ConfigPanel } from '../styled';
 import {
   StyledButton,
@@ -44,7 +46,8 @@ const playbackFilterColumns = [
     alignment: 'left',
     resizable: false,
     flexGrow: 2,
-    label: 'Filter',
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    label: i18next.t('Filter'),
   },
   {
     id: 'Enabled',
@@ -52,7 +55,8 @@ const playbackFilterColumns = [
     alignment: 'left',
     resizable: false,
     width: 100,
-    label: 'Enabled',
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    label: i18next.t('Enabled'),
   },
   {
     id: 'Delete',
@@ -60,11 +64,13 @@ const playbackFilterColumns = [
     alignment: 'left',
     resizable: false,
     width: 100,
-    label: 'Delete',
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    label: i18next.t('Delete'),
   },
 ];
 
 const PlayerConfig = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -87,17 +93,19 @@ const PlayerConfig = () => {
     const getAudioDevices = () => {
       getAudioDevice()
         .then((dev) => setAudioDevices(dev))
-        .catch(() => notifyToast('error', 'Error fetching audio devices'));
+        .catch(() => notifyToast('error', t('Error fetching audio devices')));
     };
 
     getAudioDevices();
-  }, []);
+  }, [t]);
 
   return (
-    <ConfigPanel header="Player">
+    <ConfigPanel header={t('Player')}>
       <ConfigOption
-        name="Audio Device"
-        description="The audio device for Sonixd. Leaving this blank will use the system default."
+        name={t('Audio Device')}
+        description={t(
+          'The audio device for Sonixd. Leaving this blank will use the system default.'
+        )}
         option={
           <StyledInputPickerContainer ref={audioDevicePickerContainerRef}>
             <StyledInputPicker
@@ -108,6 +116,7 @@ const PlayerConfig = () => {
               labelKey="label"
               valueKey="deviceId"
               placement="bottomStart"
+              placeholder={t('Select')}
               onChange={(e: string) => {
                 dispatch(setAudioDeviceId(e));
                 settings.setSync('audioDeviceId', e);
@@ -117,8 +126,10 @@ const PlayerConfig = () => {
         }
       />
       <ConfigOption
-        name="Seek Forward"
-        description="The number in seconds the player will skip forwards when clicking the seek forward button."
+        name={t('Seek Forward')}
+        description={t(
+          'The number in seconds the player will skip forwards when clicking the seek forward button.'
+        )}
         option={
           <StyledInputNumber
             defaultValue={String(settings.getSync('seekForwardInterval')) || '0'}
@@ -133,8 +144,10 @@ const PlayerConfig = () => {
         }
       />
       <ConfigOption
-        name="Seek Backward"
-        description="The number in seconds the player will skip backwards when clicking the seek backward button."
+        name={t('Seek Backward')}
+        description={t(
+          'The number in seconds the player will skip backwards when clicking the seek backward button.'
+        )}
         option={
           <StyledInputNumber
             defaultValue={String(settings.getSync('seekBackwardInterval')) || '0'}
@@ -151,9 +164,10 @@ const PlayerConfig = () => {
 
       {config.serverType === Server.Jellyfin && (
         <ConfigOption
-          name="Allow Transcoding"
-          description="If your audio files are not playing properly or are not in a supported web
-          streaming format, you will need to enable this (requires app restart)."
+          name={t('Allow Transcoding')}
+          description={t(
+            'If your audio files are not playing properly or are not in a supported web streaming format, you will need to enable this (requires app restart).'
+          )}
           option={
             <>
               <Whisper
@@ -161,9 +175,9 @@ const PlayerConfig = () => {
                 trigger="none"
                 placement="auto"
                 speaker={
-                  <StyledPopover title="Restart?">
-                    <div>Do you want to restart the application now?</div>
-                    <strong>This is highly recommended!</strong>
+                  <StyledPopover title={t('Restart?')}>
+                    <div>{t('Do you want to restart the application now?')}</div>
+                    <strong>{t('This is highly recommended!')}</strong>
                     <div>
                       <StyledButton
                         id="titlebar-restart-button"
@@ -173,7 +187,7 @@ const PlayerConfig = () => {
                         }}
                         appearance="primary"
                       >
-                        Yes
+                        {t('Yes')}
                       </StyledButton>
                     </div>
                   </StyledPopover>
@@ -195,9 +209,9 @@ const PlayerConfig = () => {
       )}
 
       <ConfigOption
-        name="Global Media Hotkeys"
+        name={t('Global Media Hotkeys')}
         description={
-          <>
+          <Trans>
             Enable or disable global media hotkeys (play/pause, next, previous, stop, etc). For
             macOS, you will need to add Sonixd as a{' '}
             <StyledLink
@@ -209,7 +223,7 @@ const PlayerConfig = () => {
             >
               trusted accessibility client.
             </StyledLink>
-          </>
+          </Trans>
         }
         option={
           <StyledToggle
@@ -228,8 +242,10 @@ const PlayerConfig = () => {
         }
       />
       <ConfigOption
-        name="Scrobble"
-        description="Send player updates to your server. This is required by servers such as Jellyfin and Navidrome to track play counts and use external services such as Last.fm."
+        name={t('Scrobble')}
+        description={t(
+          'Send player updates to your server. This is required by servers such as Jellyfin and Navidrome to track play counts and use external services such as Last.fm.'
+        )}
         option={
           <StyledToggle
             defaultChecked={scrobble}
@@ -242,10 +258,11 @@ const PlayerConfig = () => {
           />
         }
       />
-      <ConfigOptionName>Track Filters</ConfigOptionName>
+      <ConfigOptionName>{t('Track Filters')}</ConfigOptionName>
       <ConfigOptionDescription>
-        Filter out tracks based on regex string(s) by their title when adding to the queue. Adding
-        by double-clicking a track will ignore all filters for that one track.
+        {t(
+          'Filter out tracks based on regex string(s) by their title when adding to the queue. Adding by double-clicking a track will ignore all filters for that one track.'
+        )}
       </ConfigOptionDescription>
       <br />
       <StyledPanel bodyFill>
@@ -264,7 +281,7 @@ const PlayerConfig = () => {
 
                 setNewFilter({ string: e, valid: isValid });
               }}
-              placeholder="Enter regex string"
+              placeholder={t('Enter regex string')}
             />
             <StyledButton
               type="submit"
@@ -281,7 +298,7 @@ const PlayerConfig = () => {
                 setNewFilter({ string: '', valid: false });
               }}
             >
-              Add
+              {t('Add')}
             </StyledButton>
           </StyledInputGroup>
         </Form>

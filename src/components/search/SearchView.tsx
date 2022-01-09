@@ -3,6 +3,7 @@ import _ from 'lodash';
 import settings from 'electron-settings';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -24,6 +25,7 @@ import { Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const SearchView = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const query = useRouterQuery();
@@ -203,13 +205,13 @@ const SearchView = () => {
   };
 
   return (
-    <GenericPage header={<GenericPageHeader title={`Search: ${urlQuery}`} />}>
+    <GenericPage header={<GenericPageHeader title={t('Search: {{urlQuery}}', { urlQuery })} />}>
       {isLoading && <PageLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && data && (
         <>
           <ScrollingMenu
-            title="Artists"
+            title={t('Artists')}
             data={data.artist}
             cardTitle={{
               prefix: '/library/artist',
@@ -219,7 +221,7 @@ const SearchView = () => {
             cardSubtitle={
               config.serverType === Server.Subsonic && {
                 property: 'albumCount',
-                unit: ' albums',
+                unit: t(' albums'),
               }
             }
             cardSize={config.lookAndFeel.gridView.cardSize}
@@ -228,7 +230,7 @@ const SearchView = () => {
           />
 
           <ScrollingMenu
-            title="Albums"
+            title={t('Albums')}
             data={data.album}
             cardTitle={{
               prefix: '/library/album',
@@ -246,7 +248,7 @@ const SearchView = () => {
             handleFavorite={handleAlbumFavorite}
           />
           <SectionTitleWrapper>
-            <SectionTitle>Songs</SectionTitle>
+            <SectionTitle>{t('Songs')}</SectionTitle>
           </SectionTitleWrapper>
           <StyledPanel bodyFill bordered>
             <ListViewTable

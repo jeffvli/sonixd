@@ -6,6 +6,8 @@ import settings from 'electron-settings';
 import { ButtonToolbar, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import {
   DownloadButton,
   FavoriteButton,
@@ -39,7 +41,6 @@ import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
 import {
   filterPlayQueue,
-  formatDate,
   formatDuration,
   getAlbumSize,
   getPlayedSongsNotification,
@@ -68,6 +69,7 @@ interface AlbumParams {
 }
 
 const AlbumView = ({ ...rest }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
   const album = useAppSelector((state) => state.album);
@@ -226,7 +228,7 @@ const AlbumView = ({ ...rest }: any) => {
         downloadUrls.forEach((url) => shell.openExternal(url));
       } else {
         clipboard.writeText(downloadUrls.join('\n'));
-        notifyToast('info', 'Download links copied!');
+        notifyToast('info', t('Download links copied!'));
       }
 
       // If not Navidrome (this assumes Airsonic), then we need to use a song's parent
@@ -250,10 +252,10 @@ const AlbumView = ({ ...rest }: any) => {
               config.serverType === Server.Subsonic ? { id: data.song[0].parent } : { id: data.id },
           })
         );
-        notifyToast('info', 'Download links copied!');
+        notifyToast('info', t('Download links copied!'));
       }
     } else {
-      notifyToast('warning', 'No parent album found');
+      notifyToast('warning', t('No parent album found'));
     }
   };
 
@@ -344,10 +346,12 @@ const AlbumView = ({ ...rest }: any) => {
             subtitle={
               <div>
                 <PageHeaderSubtitleDataLine $top $overflow>
-                  <StyledLink onClick={() => history.push('/library/album')}>ALBUM</StyledLink>{' '}
+                  <StyledLink onClick={() => history.push('/library/album')}>
+                    {t('ALBUM')}
+                  </StyledLink>{' '}
                   {data.albumArtist && (
                     <>
-                      by{' '}
+                      {t('by')}{' '}
                       <LinkWrapper maxWidth="20vw">
                         <StyledLink
                           onClick={() => history.push(`/library/artist/${data.albumArtistId}`)}
@@ -379,7 +383,12 @@ const AlbumView = ({ ...rest }: any) => {
                     }
                   }}
                 >
-                  Added {formatDate(data.created)}
+                  {t('Added {{val, datetime}}', {
+                    val: moment(data.created),
+                    formatParams: {
+                      val: { year: 'numeric', month: 'short', day: 'numeric' },
+                    },
+                  })}
                   {data.genre.map((d: Genre, i: number) => {
                     return (
                       <span key={nanoid()}>
@@ -505,10 +514,10 @@ const AlbumView = ({ ...rest }: any) => {
                         <StyledPopover>
                           <ButtonToolbar>
                             <StyledButton onClick={() => handleDownload('download')}>
-                              Download
+                              {t('Download')}
                             </StyledButton>
                             <StyledButton onClick={() => handleDownload('copy')}>
-                              Copy to clipboard
+                              {t('Copy to clipboard')}
                             </StyledButton>
                           </ButtonToolbar>
                         </StyledPopover>
