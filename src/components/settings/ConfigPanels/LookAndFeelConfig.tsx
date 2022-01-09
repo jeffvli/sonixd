@@ -42,6 +42,8 @@ import {
 } from '../../../redux/configSlice';
 import { Server } from '../../../types';
 import ConfigOption from '../ConfigOption';
+import i18n, { Languages } from '../../../i18n/i18n';
+import { notifyToast } from '../../shared/toast';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
@@ -283,6 +285,30 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
 
   return (
     <ConfigPanel header="Look & Feel" bordered={bordered}>
+      <ConfigOption
+        name={t('Language')}
+        description={t('The application language.')}
+        option={
+          <StyledInputPickerContainer ref={languagePickerContainerRef}>
+            <StyledInputPicker
+              container={() => languagePickerContainerRef.current}
+              data={Languages}
+              width={200}
+              cleanable={false}
+              defaultValue={String(settings.getSync('language'))}
+              onChange={(e: string) => {
+                i18n.changeLanguage(e, (err) => {
+                  if (err) {
+                    notifyToast('error', 'Error while changing the language');
+                  }
+                });
+                settings.setSync('language', e);
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
+
       <ConfigOption
         name={
           <>

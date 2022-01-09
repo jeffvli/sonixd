@@ -46,6 +46,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('legacyAuth', false);
   }
 
+  if (force || !settings.hasSync('language')) {
+    settings.setSync('language', 'en');
+  }
+
   if (force || !settings.hasSync('theme')) {
     settings.setSync('theme', 'defaultDark');
   }
