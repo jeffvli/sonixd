@@ -35,7 +35,11 @@ export interface AdvancedFilters {
 
 const initialState: AlbumPage = {
   active: {
-    filter: String(parsedSettings.albumSortDefault),
+    filter:
+      parsedSettings.serverType === 'jellyfin' &&
+      ['frequent', 'recent'].includes(String(parsedSettings.albumSortDefault))
+        ? 'random'
+        : String(parsedSettings.albumSortDefault),
   },
   advancedFilters: {
     enabled: false,
