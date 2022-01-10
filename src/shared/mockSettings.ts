@@ -44,6 +44,7 @@ export const mockSettings = {
   gridAlignment: 'flex-start',
   playlistViewType: 'grid',
   albumViewType: 'grid',
+  albumSortDefault: 'random',
   musicListFontSize: 13,
   musicListRowHeight: 50,
   musicListColumns: [

@@ -195,6 +195,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('albumViewType', 'list');
   }
 
+  if (force || !settings.hasSync('albumSortDefault')) {
+    settings.setSync('albumSortDefault', 'random');
+  }
+
   if (force || !settings.hasSync('artistViewType')) {
     settings.setSync('artistViewType', 'list');
   }

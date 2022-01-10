@@ -1,5 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import settings from 'electron-settings';
+import { mockSettings } from '../shared/mockSettings';
 import { Sort } from '../types';
+
+const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface AlbumPage {
   active: {
@@ -31,7 +35,11 @@ export interface AdvancedFilters {
 
 const initialState: AlbumPage = {
   active: {
-    filter: 'random',
+    filter:
+      parsedSettings.serverType === 'jellyfin' &&
+      ['frequent', 'recent'].includes(String(parsedSettings.albumSortDefault))
+        ? 'random'
+        : String(parsedSettings.albumSortDefault),
   },
   advancedFilters: {
     enabled: false,

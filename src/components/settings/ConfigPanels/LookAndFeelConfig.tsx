@@ -21,6 +21,7 @@ import {
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
+import { ALBUM_SORT_TYPES } from '../../library/AlbumList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setTheme, setFont, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
 import {
@@ -277,6 +278,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
 export const ThemeConfigPanel = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const config = useAppSelector((state) => state.config);
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
     Boolean(settings.getSync('dynamicBackground'))
   );
@@ -287,6 +289,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
   const startPagePickerContainerRef = useRef(null);
+  const albumSortDefaultPickerContainerRef = useRef(null);
   const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
@@ -510,6 +513,28 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               placeholder={t('Select')}
               onChange={(e: string) => {
                 settings.setSync('startPage', e);
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
+
+      <ConfigOption
+        name={t('Default Album Sort')}
+        description={t('The default album page sort selection on application startup.')}
+        option={
+          <StyledInputPickerContainer ref={albumSortDefaultPickerContainerRef}>
+            <StyledInputPicker
+              container={() => albumSortDefaultPickerContainerRef.current}
+              data={ALBUM_SORT_TYPES}
+              disabledItemValues={
+                config.serverType === Server.Jellyfin ? ['frequent', 'recent'] : []
+              }
+              cleanable={false}
+              defaultValue={String(settings.getSync('albumSortDefault'))}
+              width={200}
+              onChange={(e: string) => {
+                settings.setSync('albumSortDefault', e);
               }}
             />
           </StyledInputPickerContainer>

@@ -1,4 +1,4 @@
-name: Publish
+name: Publish (Windows)
 
 # Only allow manual run
 on: workflow_dispatch
@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [windows-latest]
 
     steps:
       - name: Checkout git repo
@@ -45,4 +45,4 @@ jobs:
           # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.PAT}}
         run: |
-          yarn postinstall && yarn build && yarn electron-builder --publish always --mac --linux
+          yarn postinstall && yarn build && yarn electron-builder --publish always --win

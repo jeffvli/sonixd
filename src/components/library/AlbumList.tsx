@@ -36,7 +36,7 @@ import useAdvancedFilter from '../../hooks/useAdvancedFilter';
 import ColumnSort from '../shared/ColumnSort';
 import useColumnSort from '../../hooks/useColumnSort';
 
-const ALBUM_SORT_TYPES = [
+export const ALBUM_SORT_TYPES = [
   { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Artist)'), value: 'alphabeticalByArtist', role: i18next.t('Default') },
   { label: i18next.t('Most Played'), value: 'frequent', role: i18next.t('Default') },
