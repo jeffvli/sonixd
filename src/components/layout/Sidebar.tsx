@@ -51,7 +51,7 @@ const Sidebar = ({
             <SidebarNavItem
               tabIndex={0}
               eventKey="nowplaying"
-              icon={<Icon icon="music" />}
+              icon={<Icon icon="headphones" />}
               onSelect={handleSidebarSelect}
               disabled={disableSidebar}
               onKeyDown={(e: any) => {
@@ -89,6 +89,20 @@ const Sidebar = ({
               }}
             >
               Favorites
+            </SidebarNavItem>
+            <SidebarNavItem
+              tabIndex={0}
+              eventKey="songs"
+              icon={<Icon icon="music" />}
+              onSelect={handleSidebarSelect}
+              disabled={disableSidebar}
+              onKeyDown={(e: any) => {
+                if (e.key === ' ' || e.key === 'Enter') {
+                  history.push('/library/song');
+                }
+              }}
+            >
+              Songs
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
