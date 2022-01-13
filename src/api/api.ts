@@ -796,3 +796,8 @@ export const getMusicDirectorySongs = async (options: { id: string }, data: any[
 
   return folders;
 };
+
+export const getLyrics = async (options: { artist: string; title: string }) => {
+  const { data } = await api.get(`/getLyrics`, { params: options });
+  return data?.lyrics?.value;
+};

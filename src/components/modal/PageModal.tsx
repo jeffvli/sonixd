@@ -18,6 +18,7 @@ const StyledModal = styled(Modal)<{ width?: string }>`
   .rs-modal-body {
     margin-top: 0px;
     padding-bottom: 0px;
+    white-space: pre-wrap;
   }
 
   .rs-modal-content {
