@@ -32,6 +32,7 @@ import {
   updatePlaylist,
   updatePlaylistSongs,
   updatePlaylistSongsLg,
+  getLyrics,
 } from './api';
 import {
   getDownloadUrl as jfGetDownloadUrl,
@@ -97,6 +98,7 @@ const endpoints = [
   { id: 'getSongs', endpoint: { subsonic: undefined, jellyfin: jfGetSongs } },
   { id: 'getTopSongs', endpoint: { subsonic: getTopSongs, jellyfin: undefined } },
   { id: 'getSongsByGenre', endpoint: { subsonic: getSongsByGenre, jellyfin: jfGetSongs } },
+  { id: 'getLyrics', endpoint: { subsonic: getLyrics, jellyfin: undefined } },
 
   // Playlist handling logic is split up by server type due to differences in how each server handles them.
   // You will need to add custom logic in the playlist/context menu component handlers.

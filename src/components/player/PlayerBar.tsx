@@ -5,7 +5,7 @@ import path from 'path';
 import { ipcRenderer } from 'electron';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
-import { FlexboxGrid, Grid, Row, Col, Whisper } from 'rsuite';
+import { FlexboxGrid, Grid, Row, Col, Whisper, Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
@@ -38,13 +38,20 @@ import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
 import { decodeBase64Image, getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
-import { LinkWrapper, SecondaryTextWrapper, StyledPopover, StyledRate } from '../shared/styled';
+import {
+  LinkWrapper,
+  SecondaryTextWrapper,
+  StyledButton,
+  StyledPopover,
+  StyledRate,
+} from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import logo from '../../../assets/icon.png';
 import { notifyToast } from '../shared/toast';
 import { InfoModal } from '../modal/PageModal';
 import { setPlaylistRate } from '../../redux/playlistSlice';
+import useGetLyrics from '../../hooks/useGetLyrics';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -63,7 +70,9 @@ const PlayerBar = () => {
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
   const [muted, setMuted] = useState(false);
   const [discordRpc, setDiscordRpc] = useState<any>();
-  const [showModal, setShowModal] = useState(false);
+  const [showCoverArtModal, setShowCoverArtModal] = useState(false);
+  const [showLyricsModal, setShowLyricsModal] = useState(false);
+
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -109,6 +118,11 @@ const PlayerBar = () => {
       ipcRenderer.send('seeked', newPosition * 1000000);
     }
     ipcRenderer.removeAllListeners('seek-request');
+  });
+
+  const { data: lyrics } = useGetLyrics(config, {
+    artist: playQueue.current?.albumArtist,
+    title: playQueue.current?.title,
   });
 
   useEffect(() => {
@@ -568,10 +582,10 @@ const PlayerBar = () => {
                           placeholderImg
                         }
                         tabIndex={0}
-                        onClick={() => setShowModal(true)}
+                        onClick={() => setShowCoverArtModal(true)}
                         onKeyDown={(e: any) => {
                           if (e.key === ' ' || e.key === 'Enter') {
-                            setShowModal(true);
+                            setShowCoverArtModal(true);
                           }
                         }}
                         alt="trackImg"
@@ -592,7 +606,7 @@ const PlayerBar = () => {
                     >
                       <CustomTooltip
                         enterable
-                        placement="topStart"
+                        placement="top"
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]?.title ||
                           t('Unknown Title')
@@ -603,6 +617,18 @@ const PlayerBar = () => {
                             t('Unknown Title')}
                         </LinkButton>
                       </CustomTooltip>
+                      {lyrics && (
+                        <CustomTooltip
+                          enterable
+                          placement="top"
+                          text={t('Lyrics')}
+                          onClick={() => setShowLyricsModal(true)}
+                        >
+                          <StyledButton size="xs" appearance="subtle">
+                            <Icon icon="commenting-o" />
+                          </StyledButton>
+                        </CustomTooltip>
+                      )}
                     </Row>
 
                     <Row
@@ -1011,18 +1037,19 @@ const PlayerBar = () => {
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </PlayerContainer>
-      <InfoModal show={showModal} handleHide={() => setShowModal(false)}>
-        <CoverArtWrapper size={750}>
-          <LazyLoadImage
-            src={
-              playQueue[currentEntryList][playQueue.currentIndex]?.image.replace(
-                /&size=\d+|width=\d+&height=\d+&quality=\d+/,
-                ''
-              ) || placeholderImg
-            }
-            height={750}
-          />
-        </CoverArtWrapper>
+      <InfoModal show={showCoverArtModal} handleHide={() => setShowCoverArtModal(false)}>
+        <LazyLoadImage
+          src={
+            playQueue[currentEntryList][playQueue.currentIndex]?.image.replace(
+              /&size=\d+|width=\d+&height=\d+&quality=\d+/,
+              ''
+            ) || placeholderImg
+          }
+          height={750}
+        />
+      </InfoModal>
+      <InfoModal width="90vw" show={showLyricsModal} handleHide={() => setShowLyricsModal(false)}>
+        {lyrics}
       </InfoModal>
     </Player>
   );
