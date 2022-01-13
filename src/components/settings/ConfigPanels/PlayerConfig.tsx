@@ -23,6 +23,7 @@ import { appendPlaybackFilter, setAudioDeviceId } from '../../../redux/configSli
 import { notifyToast } from '../../shared/toast';
 import ConfigOption from '../ConfigOption';
 import { Server } from '../../../types';
+import { isWindows, isWindows10 } from '../../../shared/utils';
 
 const getAudioDevice = async () => {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -73,6 +74,9 @@ const PlayerConfig = () => {
   const [transcode, setTranscode] = useState(Boolean(settings.getSync('transcode')));
   const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
     Boolean(settings.getSync('globalMediaHotkeys'))
+  );
+  const [systemMediaTransportControls, setSystemMediaTransportControls] = useState(
+    Boolean(settings.getSync('systemMediaTransportControls'))
   );
   const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>();
@@ -220,6 +224,10 @@ const PlayerConfig = () => {
               setGlobalMediaHotkeys(e);
               if (e) {
                 ipcRenderer.send('enableGlobalHotkeys');
+
+                settings.setSync('systemMediaTransportControls', !e);
+                setSystemMediaTransportControls(!e);
+                ipcRenderer.send('disableSystemMediaTransportControls');
               } else {
                 ipcRenderer.send('disableGlobalHotkeys');
               }
@@ -227,6 +235,39 @@ const PlayerConfig = () => {
           />
         }
       />
+
+      {isWindows() && isWindows10() && (
+        <ConfigOption
+          name="Windows System Media Transport Controls"
+          description={
+            <>
+              Enable or disable the Windows System Media Transport Controls (play/pause, next,
+              previous, stop). This will show the Windows Media Popup (Windows 10 only) when
+              pressing a media key. This feauture will override the Global Media Hotkeys option.
+            </>
+          }
+          option={
+            <StyledToggle
+              defaultChecked={systemMediaTransportControls}
+              checked={systemMediaTransportControls}
+              onChange={(e: boolean) => {
+                settings.setSync('systemMediaTransportControls', e);
+                setSystemMediaTransportControls(e);
+                if (e) {
+                  ipcRenderer.send('enableSystemMediaTransportControls');
+
+                  settings.setSync('globalMediaHotkeys', !e);
+                  setGlobalMediaHotkeys(!e);
+                  ipcRenderer.send('disableGlobalHotkeys');
+                } else {
+                  ipcRenderer.send('disableSystemMediaTransportControls');
+                }
+              }}
+            />
+          }
+        />
+      )}
+
       <ConfigOption
         name="Scrobble"
         description="Send player updates to your server. This is required by servers such as Jellyfin and Navidrome to track play counts and use external services such as Last.fm."
