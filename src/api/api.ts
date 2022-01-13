@@ -51,6 +51,7 @@ const authParams = legacyAuth
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  validateStatus: (status) => status >= 200,
 });
 
 api.interceptors.request.use((config) => {
@@ -406,10 +407,10 @@ export const getArtist = async (options: { id: string }) => {
 
   return normalizeArtist({
     ...data.artist,
-    biography: infoData.artistInfo2.biography,
-    lastFmUrl: infoData.artistInfo2.lastFmUrl,
-    externalImageUrl: infoData.artistInfo2.largeImageUrl,
-    similarArtist: infoData.artistInfo2.similarArtist,
+    biography: infoData?.artistInfo2?.biography,
+    lastFmUrl: infoData?.artistInfo2?.lastFmUrl,
+    externalImageUrl: infoData?.artistInfo2?.largeImageUrl,
+    similarArtist: infoData?.artistInfo2?.similarArtist,
   });
 };
 
