@@ -43,6 +43,10 @@
       "img/"
     ],
     "afterSign": ".erb/scripts/Notarize.js",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
     "mac": {
       "target": [
         "dmg"
