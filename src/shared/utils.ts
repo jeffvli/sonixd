@@ -1,5 +1,6 @@
 import fs from 'fs';
 import _ from 'lodash';
+import os from 'os';
 import path from 'path';
 import moment from 'moment';
 import arrayMove from 'array-move';
@@ -610,4 +611,20 @@ export const smoothScroll = (
     }
   };
   animateScroll();
+};
+
+export const isWindows = () => {
+  return process.platform === 'win32';
+};
+
+export const isWindows10 = () => {
+  return os.release().match(/^10\.*/g);
+};
+
+export const isMacOS = () => {
+  return process.platform === 'darwin';
+};
+
+export const isLinux = () => {
+  return process.platform === 'linux';
 };

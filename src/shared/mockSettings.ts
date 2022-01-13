@@ -4,6 +4,7 @@ export const mockSettings = {
   theme: 'defaultDark',
   showDebugWindow: false,
   globalMediaHotkeys: true,
+  systemMediaTransportControls: false,
   cachePath: 'C:\\Users\\jli\\AppData\\Roaming\\Electron',
   legacyAuth: false,
   volume: 0.93,

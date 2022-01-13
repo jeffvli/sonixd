@@ -78,6 +78,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('globalMediaHotkeys', false);
   }
 
+  if (force || !settings.hasSync('systemMediaTransportControls')) {
+    settings.setSync('systemMediaTransportControls', false);
+  }
+
   if (force || !settings.hasSync('cachePath')) {
     settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
