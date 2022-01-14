@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, self-hosted]
+        os: [macos-latest, ubuntu-latest]
 
     steps:
       - name: Check out Git repository
