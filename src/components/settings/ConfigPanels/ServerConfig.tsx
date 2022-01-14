@@ -7,11 +7,11 @@ import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '.
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
 import { apiController } from '../../../api/controller';
-import { Folder } from '../../../types';
+import { Folder, Server } from '../../../types';
 import PageLoader from '../../loader/PageLoader';
 import ConfigOption from '../ConfigOption';
 
-const ServerConfig = () => {
+const ServerConfig = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
@@ -25,7 +25,7 @@ const ServerConfig = () => {
   }
 
   return (
-    <ConfigPanel header="Server">
+    <ConfigPanel bordered={bordered} header="Server">
       <ConfigOption
         name="Media Folder"
         description="Sets the parent media folder your audio files are located in. Leaving this blank will use all media folders."
@@ -99,6 +99,17 @@ const ServerConfig = () => {
           >
             Search
           </StyledCheckbox>
+          {config.serverType === Server.Jellyfin && (
+            <StyledCheckbox
+              defaultChecked={folder.applied.music}
+              onChange={(_v: any, e: boolean) => {
+                dispatch(setAppliedFolderViews({ ...folder.applied, music: e }));
+                settings.setSync('musicFolder.music', e);
+              }}
+            >
+              Songs
+            </StyledCheckbox>
+          )}
         </CheckboxGroup>
       </ConfigOptionInput>
     </ConfigPanel>

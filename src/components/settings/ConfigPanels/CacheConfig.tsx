@@ -22,7 +22,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 
 const fsUtils = require('nodejs-fs-utils');
 
-const CacheConfig = () => {
+const CacheConfig = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const [imgCacheSize, setImgCacheSize] = useState(0);
   const [songCacheSize, setSongCacheSize] = useState(0);
@@ -104,7 +104,7 @@ const CacheConfig = () => {
   };
 
   return (
-    <ConfigPanel header="Cache">
+    <ConfigPanel bordered={bordered} header="Cache">
       {errorMessage !== '' && (
         <>
           <Message showIcon type="error" description={errorMessage} />

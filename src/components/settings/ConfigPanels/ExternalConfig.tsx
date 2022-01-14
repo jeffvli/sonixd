@@ -18,12 +18,12 @@ import ConfigOption from '../ConfigOption';
 
 const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
 
-const ExternalConfig = () => {
+const ExternalConfig = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
 
   return (
-    <ConfigPanel header="External">
+    <ConfigPanel bordered={bordered} header="External">
       <ConfigOptionDescription>
         Config for integration with external programs.
       </ConfigOptionDescription>

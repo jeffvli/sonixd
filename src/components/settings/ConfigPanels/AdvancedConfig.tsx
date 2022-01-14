@@ -8,7 +8,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
 
-const AdvancedConfig = () => {
+const AdvancedConfig = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const [showDebugWindow, setShowDebugWindow] = useState(
     Boolean(settings.getSync('showDebugWindow'))
@@ -16,7 +16,7 @@ const AdvancedConfig = () => {
   const [autoUpdate, setAutoUpdate] = useState(Boolean(settings.getSync('autoUpdate')));
 
   return (
-    <ConfigPanel header="Advanced">
+    <ConfigPanel bordered={bordered} header="Advanced">
       <ConfigOption
         name="Automatic Updates"
         description="Enables or disables automatic updates. When a new version is detected, it will automatically be downloaded and installed."

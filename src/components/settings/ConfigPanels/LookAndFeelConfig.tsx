@@ -504,12 +504,12 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   );
 };
 
-const LookAndFeelConfig = () => {
+const LookAndFeelConfig = ({ bordered }: any) => {
   return (
     <>
-      <ThemeConfigPanel />
-      <ListViewConfigPanel />
-      <GridViewConfigPanel />
+      <ThemeConfigPanel bordered={bordered} />
+      <ListViewConfigPanel bordered={bordered} />
+      <GridViewConfigPanel bordered={bordered} />
     </>
   );
 };

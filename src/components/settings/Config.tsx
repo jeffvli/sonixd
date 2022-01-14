@@ -222,20 +222,20 @@ const Config = () => {
     >
       {(config.active.tab === 'playback' || '') && (
         <>
-          <PlaybackConfig />
-          <PlayerConfig />
+          <PlaybackConfig bordered />
+          <PlayerConfig bordered />
         </>
       )}
 
-      {config.active.tab === 'lookandfeel' && <LookAndFeelConfig />}
+      {config.active.tab === 'lookandfeel' && <LookAndFeelConfig bordered />}
 
       {config.active.tab === 'other' && (
         <>
-          <ServerConfig />
-          <CacheConfig />
-          {!showWindowConfig && <WindowConfig />}
-          <ExternalConfig />
-          <AdvancedConfig />
+          <ServerConfig bordered />
+          <CacheConfig bordered />
+          {!showWindowConfig && <WindowConfig bordered />}
+          <ExternalConfig bordered />
+          <AdvancedConfig bordered />
         </>
       )}
     </GenericPage>

@@ -13,7 +13,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
 
-const PlaybackConfig = () => {
+const PlaybackConfig = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const [crossfadeDuration, setCrossfadeDuration] = useState(
     Number(settings.getSync('fadeDuration'))
@@ -54,7 +54,7 @@ const PlaybackConfig = () => {
 
   return (
     <>
-      <ConfigPanel header="Playback">
+      <ConfigPanel bordered={bordered} header="Playback">
         <ConfigOption
           name="Crossfade Duration (s)"
           description="The number in seconds before starting the crossfade to the next track. Setting this to 0 will enable gapless playback."
