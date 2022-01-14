@@ -4,11 +4,11 @@ import { ConfigOptionDescription, ConfigPanel } from '../styled';
 import { StyledToggle } from '../../shared/styled';
 import ConfigOption from '../ConfigOption';
 
-const WindowConfig = () => {
+const WindowConfig = ({ bordered }: any) => {
   const [minimizeToTray, setMinimizeToTray] = useState(Boolean(settings.getSync('minimizeToTray')));
   const [exitToTray, setExitToTray] = useState(Boolean(settings.getSync('exitToTray')));
   return (
-    <ConfigPanel header="Window">
+    <ConfigPanel bordered={bordered} header="Window">
       <ConfigOptionDescription>
         Note: These settings may not function correctly depending on your desktop environment.
       </ConfigOptionDescription>

@@ -65,7 +65,7 @@ const playbackFilterColumns = [
   },
 ];
 
-const PlayerConfig = () => {
+const PlayerConfig = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -98,7 +98,7 @@ const PlayerConfig = () => {
   }, []);
 
   return (
-    <ConfigPanel header="Player">
+    <ConfigPanel bordered={bordered} header="Player">
       <ConfigOption
         name="Audio Device"
         description="The audio device for Sonixd. Leaving this blank will use the system default."
