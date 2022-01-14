@@ -75,6 +75,9 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
       case 'albums':
         route = '/library/album';
         break;
+      case 'music':
+        route = '/library/music';
+        break;
       case 'artists':
         route = '/library/artist';
         break;
