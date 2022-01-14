@@ -13,6 +13,7 @@ export interface FolderSelection {
     dashboard: boolean;
     search: boolean;
     starred: boolean;
+    music: boolean;
   };
   currentViewedFolder?: string;
 }
@@ -29,6 +30,7 @@ const initialState: FolderSelection = {
     dashboard: Boolean(parsedSettings.musicFolder.artists),
     search: Boolean(parsedSettings.musicFolder.search),
     starred: Boolean(parsedSettings.musicFolder.starred),
+    music: Boolean(parsedSettings.musicFolder.music),
   },
   currentViewedFolder: undefined,
 };

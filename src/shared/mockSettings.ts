@@ -22,6 +22,9 @@ export const mockSettings = {
   fadeType: 'equalPower',
   scrobble: false,
   transcode: false,
+  pagination: {
+    music: 100,
+  },
   playbackFilters: [
     {
       filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',
@@ -43,6 +46,7 @@ export const mockSettings = {
   playlistViewType: 'grid',
   albumViewType: 'grid',
   albumSortDefault: 'random',
+  musicSortDefault: 'random',
   musicListFontSize: 13,
   musicListRowHeight: 50,
   musicListColumns: [

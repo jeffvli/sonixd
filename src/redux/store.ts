@@ -10,6 +10,7 @@ import configReducer from './configSlice';
 import favoriteReducer from './favoriteSlice';
 import albumReducer from './albumSlice';
 import artistReducer from './artistSlice';
+import viewReducer from './viewSlice';
 
 export const store = configureStore<PlayQueue | any>({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore<PlayQueue | any>({
     favorite: favoriteReducer,
     album: albumReducer,
     artist: artistReducer,
+    view: viewReducer,
   },
   middleware: [forwardToMain],
 });

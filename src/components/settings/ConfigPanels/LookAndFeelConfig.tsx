@@ -41,8 +41,10 @@ import {
   setGridCardSize,
   setGridGapSize,
 } from '../../../redux/configSlice';
-import { Server } from '../../../types';
+import { Item, Server } from '../../../types';
 import ConfigOption from '../ConfigOption';
+import { setPagination } from '../../../redux/viewSlice';
+import { MUSIC_SORT_TYPES } from '../../library/MusicList';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
@@ -279,6 +281,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const titleBarPickerContainerRef = useRef(null);
   const startPagePickerContainerRef = useRef(null);
   const albumSortDefaultPickerContainerRef = useRef(null);
+  const musicSortDefaultPickerContainerRef = useRef(null);
   const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
@@ -500,6 +503,54 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
           </StyledInputPickerContainer>
         }
       />
+      {config.serverType === Server.Jellyfin && (
+        <ConfigOption
+          name="Default Song Sort"
+          description="The default song page sort selection on application startup."
+          option={
+            <StyledInputPickerContainer ref={musicSortDefaultPickerContainerRef}>
+              <StyledInputPicker
+                container={() => musicSortDefaultPickerContainerRef.current}
+                data={MUSIC_SORT_TYPES}
+                cleanable={false}
+                defaultValue={String(settings.getSync('musicSortDefault'))}
+                width={200}
+                onChange={(e: string) => {
+                  settings.setSync('musicSortDefault', e);
+                }}
+              />
+            </StyledInputPickerContainer>
+          }
+        />
+      )}
+    </ConfigPanel>
+  );
+};
+
+export const PaginationConfigPanel = ({ bordered }: any) => {
+  const dispatch = useAppDispatch();
+  const view = useAppSelector((state) => state.view);
+
+  return (
+    <ConfigPanel header="Pagination" bordered={bordered}>
+      <ConfigOption
+        name="Items per page (Songs)"
+        description="The number of items that will be retrieved per page. Setting this to 0 will disable pagination."
+        option={
+          <StyledInputNumber
+            defaultValue={view.music.pagination.recordsPerPage}
+            step={1}
+            min={0}
+            width={125}
+            onChange={(e: number) => {
+              dispatch(
+                setPagination({ listType: Item.Music, data: { recordsPerPage: Number(e) } })
+              );
+              settings.setSync('pagination.music', Number(e));
+            }}
+          />
+        }
+      />
     </ConfigPanel>
   );
 };
@@ -510,6 +561,7 @@ const LookAndFeelConfig = ({ bordered }: any) => {
       <ThemeConfigPanel bordered={bordered} />
       <ListViewConfigPanel bordered={bordered} />
       <GridViewConfigPanel bordered={bordered} />
+      <PaginationConfigPanel bordered={bordered} />
     </>
   );
 };
