@@ -37,6 +37,8 @@ const ListViewType = (
     handleRating,
     initialScrollOffset,
     onScroll,
+    loading,
+    paginationProps,
     ...rest
   }: any,
   ref: any
@@ -66,7 +68,12 @@ const ListViewType = (
         // tableRef?.current?.scrollTop(Math.abs(scrollY));
       }, 500);
 
-      setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
+      setHeight(
+        wrapperRef.current
+          ? getHeight(wrapperRef.current) -
+              (paginationProps && paginationProps?.recordsPerPage !== 0 ? 45 : 0)
+          : 200
+      );
     }
     if (!tableHeight) {
       if (!miniView) {
@@ -79,23 +86,33 @@ const ListViewType = (
     }
 
     return undefined;
-  }, [getHeight, tableHeight, miniView]);
+  }, [getHeight, tableHeight, miniView, paginationProps]);
 
   useEffect(() => {
     if (!isModal && !tableHeight) {
       window.requestAnimationFrame(() => {
-        setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
+        setHeight(
+          wrapperRef.current
+            ? getHeight(wrapperRef.current) -
+                (paginationProps && paginationProps?.recordsPerPage !== 0 ? 45 : 0)
+            : 200
+        );
         setShow(true);
       });
     } else {
       setTimeout(() => {
         window.requestAnimationFrame(() => {
-          setHeight(wrapperRef.current ? getHeight(wrapperRef.current) : 200);
+          setHeight(
+            wrapperRef.current
+              ? getHeight(wrapperRef.current) -
+                  (paginationProps && paginationProps?.recordsPerPage !== 0 ? 45 : 0)
+              : 200
+          );
           setShow(true);
         });
       }, 250);
     }
-  }, [getHeight, tableHeight, isModal]);
+  }, [getHeight, tableHeight, isModal, paginationProps]);
 
   useEffect(() => {
     let scrollDistance = 0;
@@ -345,6 +362,8 @@ const ListViewType = (
             handleFavorite={handleFavorite}
             handleRating={handleRating}
             onScroll={onScroll || (() => {})}
+            paginationProps={paginationProps}
+            loading={loading}
           />
         )}
       </div>

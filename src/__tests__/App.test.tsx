@@ -15,6 +15,7 @@ import App from '../App';
 import { AlbumPage } from '../redux/albumSlice';
 import { Server } from '../types';
 import { ArtistPage } from '../redux/artistSlice';
+import { View } from '../redux/viewSlice';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
@@ -114,6 +115,7 @@ const folderState: FolderSelection = {
     dashboard: false,
     search: false,
     starred: false,
+    music: false,
   },
   currentViewedFolder: undefined,
 };
@@ -457,6 +459,21 @@ const artistState: ArtistPage = {
   },
 };
 
+const viewState: View = {
+  music: {
+    filter: 'random',
+    sort: {
+      column: undefined,
+      type: 'asc',
+    },
+    pagination: {
+      recordsPerPage: 100,
+      activePage: 1,
+      pages: 1,
+    },
+  },
+};
+
 const mockInitialState = {
   player: playerState,
   playQueue: playQueueState,
@@ -467,32 +484,11 @@ const mockInitialState = {
   favorite: favoriteState,
   album: albumState,
   artist: artistState,
+  view: viewState,
 };
 
 describe('App', () => {
-  it('Should render with dark theme', () => {
-    const store = mockStore(mockInitialState);
-    expect(
-      render(
-        <Provider store={store}>
-          <App />
-        </Provider>
-      )
-    ).toBeTruthy();
-  });
-
-  it('Should render with light theme', () => {
-    const store = mockStore(mockInitialState);
-    expect(
-      render(
-        <Provider store={store}>
-          <App />
-        </Provider>
-      )
-    ).toBeTruthy();
-  });
-
-  it('Should render with no theme specified', () => {
+  it('Should render', () => {
     const store = mockStore(mockInitialState);
     expect(
       render(

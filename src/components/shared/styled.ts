@@ -17,6 +17,7 @@ import {
   Tag,
   CheckPicker,
   Toggle,
+  Pagination,
 } from 'rsuite';
 import styled from 'styled-components';
 import TagLink from './TagLink';
@@ -640,4 +641,27 @@ export const SecondaryTextWrapper = styled.span<{
       : props.subtitle === 'true'
       ? props.theme.colors.layout.page.colorSecondary
       : props.theme.colors.layout.page.color};
+`;
+
+export const StyledPagination = styled(Pagination)`
+  vertical-align: middle;
+  .rs-pagination-btn {
+    a {
+      transition: none;
+      &:hover {
+        color: ${(props) => props.theme.colors.button.subtle.colorHover} !important;
+        background-color: ${(props) => props.theme.colors.button.subtle.backgroundHover} !important;
+      }
+
+      &:active {
+        background-color: none !important;
+      }
+    }
+  }
+
+  .rs-pagination-btn-active {
+    a {
+      color: ${(props) => props.theme.colors.primary} !important;
+    }
+  }
 `;
