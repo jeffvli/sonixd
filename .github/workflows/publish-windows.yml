@@ -9,16 +9,19 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [self-hosted]
 
     steps:
       - name: Checkout git repo
         uses: actions/checkout@v1
 
-      - name: Install Node, NPM and Yarn
+      - name: Install Node, NPM
         uses: actions/setup-node@v1
         with:
-          node-version: 15
+          node-version: '14.16.1'
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -43,6 +46,6 @@ jobs:
       - name: Publish releases
         env:
           # This is used for uploading release assets to github
-          GITHUB_TOKEN: ${{ secrets.PAT}}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           yarn postinstall && yarn build && yarn electron-builder --publish always --win
