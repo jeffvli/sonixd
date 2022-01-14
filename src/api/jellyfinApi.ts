@@ -120,6 +120,13 @@ export const getDownloadUrl = (options: { id: string }) => {
   return `${API_BASE_URL}/items/${options.id}/download?api_key=${auth.token}`;
 };
 
+const normalizeAPIResult = (items: any, totalRecordCount?: number) => {
+  return {
+    data: items,
+    totalRecordCount,
+  };
+};
+
 const normalizeItem = (item: any) => {
   return {
     id: item.Id || item.Url,
@@ -434,14 +441,14 @@ export const getSongs = async (options: {
   musicFolderId?: string;
 }) => {
   const sortTypes = [
-    { original: 'alphabeticalByName', replacement: 'SortName' },
+    { original: 'alphabeticalByName', replacement: 'Name' },
+    { original: 'alphabeticalByAlbum', replacement: 'Album' },
     { original: 'alphabeticalByArtist', replacement: 'AlbumArtist' },
     { original: 'alphabeticalByTrackArtist', replacement: 'Artist' },
     { original: 'frequent', replacement: 'PlayCount' },
     { original: 'random', replacement: 'Random' },
     { original: 'newest', replacement: 'DateCreated' },
     { original: 'recent', replacement: 'DatePlayed' },
-    { original: 'playCount', replacement: 'PlayCount' },
     { original: 'year', replacement: 'PremiereDate' },
     { original: 'duration', replacement: 'Runtime' },
   ];
@@ -463,7 +470,10 @@ export const getSongs = async (options: {
       },
     });
 
-    return (data.Items || []).map((entry: any) => normalizeSong(entry));
+    return normalizeAPIResult(
+      (data.Items || []).map((entry: any) => normalizeSong(entry)),
+      data.TotalRecordCount
+    );
   }
 
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
@@ -481,7 +491,10 @@ export const getSongs = async (options: {
     },
   });
 
-  return (data.Items || []).map((entry: any) => normalizeSong(entry));
+  return normalizeAPIResult(
+    (data.Items || []).map((entry: any) => normalizeSong(entry)),
+    data.TotalRecordCount
+  );
 };
 
 export const getArtist = async (options: { id: string; musicFolderId?: string }) => {

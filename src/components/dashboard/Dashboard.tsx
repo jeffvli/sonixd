@@ -186,7 +186,7 @@ const Dashboard = () => {
           <ScrollingMenu
             noScrollbar
             title="Recently Played"
-            data={recentAlbums}
+            data={config.serverType === Server.Jellyfin ? recentAlbums.data : recentAlbums}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',
@@ -261,7 +261,7 @@ const Dashboard = () => {
           <ScrollingMenu
             noScrollbar
             title="Most Played"
-            data={frequentAlbums}
+            data={config.serverType === Server.Jellyfin ? frequentAlbums.data : frequentAlbums}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',

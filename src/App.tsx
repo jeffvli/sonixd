@@ -28,6 +28,7 @@ import FolderList from './components/library/FolderList';
 import { getTheme } from './shared/utils';
 import { defaultDark } from './styles/styledTheme';
 import { mockSettings } from './shared/mockSettings';
+import MusicList from './components/library/MusicList';
 
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
@@ -61,6 +62,7 @@ const App = () => {
       <Router>
         <Layout footer={<PlayerBar />} font={font}>
           <Switch>
+            <Route exact path="/library/music" component={MusicList} />
             <Route exact path="/library/album" component={AlbumList} />
             <Route exact path="/library/artist" component={ArtistList} />
             <Route exact path="/library/genre" component={GenreList} />
