@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Sidenav, Nav, Icon } from 'rsuite';
 import { useAppSelector } from '../../redux/hooks';
+import { Server } from '../../types';
 import { FixedSidebar, SidebarNavItem } from './styled';
 
 const Sidebar = ({
@@ -14,6 +15,7 @@ const Sidebar = ({
   ...rest
 }: any) => {
   const history = useHistory();
+  const config = useAppSelector((state) => state.config);
 
   return (
     <FixedSidebar
@@ -90,20 +92,22 @@ const Sidebar = ({
             >
               Favorites
             </SidebarNavItem>
-            <SidebarNavItem
-              tabIndex={0}
-              eventKey="songs"
-              icon={<Icon icon="music" />}
-              onSelect={handleSidebarSelect}
-              disabled={disableSidebar}
-              onKeyDown={(e: any) => {
-                if (e.key === ' ' || e.key === 'Enter') {
-                  history.push('/library/song');
-                }
-              }}
-            >
-              Songs
-            </SidebarNavItem>
+            {config.serverType === Server.Jellyfin && (
+              <SidebarNavItem
+                tabIndex={0}
+                eventKey="music"
+                icon={<Icon icon="music" />}
+                onSelect={handleSidebarSelect}
+                disabled={disableSidebar}
+                onKeyDown={(e: any) => {
+                  if (e.key === ' ' || e.key === 'Enter') {
+                    history.push('/library/music');
+                  }
+                }}
+              >
+                Songs
+              </SidebarNavItem>
+            )}
             <SidebarNavItem
               tabIndex={0}
               eventKey="albums"
