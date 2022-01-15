@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [self-hosted]
+        os: [windows-latest]
 
     steps:
       - name: Checkout git repo
@@ -35,17 +35,48 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install dependencies
-        run: |
-          yarn install --prefer-offline
+      - name: Install `src/` dependencies
+        uses: nick-invision/retry@v2.4.0
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_on: error
+          command: |
+            cd src && yarn --frozen-lockfile --ignore-scripts --network-concurrency 1 --network-timeout 300000
+          on_retry_command: npm cache clean --force && yarn cache clean --all
+          shell: cmd
 
       - name: Install dependencies
-        run: |
-          yarn install
+        uses: nick-invision/retry@v2.4.0
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_on: error
+          command: |
+            yarn install --frozen-lockfile --ignore-scripts --prefer-offline --network-concurrency 1 --network-timeout 300000
+          on_retry_command: npm cache clean --force && yarn cache clean --all
+          shell: cmd
+
+      - name: Install dependencies with scripts
+        uses: nick-invision/retry@v2.4.0
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_on: error
+          command: |
+            yarn install --frozen-lockfile --prefer-offline --network-concurrency 1 --network-timeout 300000
+          on_retry_command: npm cache clean --force && yarn cache clean --all
+          shell: cmd
 
       - name: Publish releases
         env:
-          # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: |
-          yarn postinstall && yarn build && yarn electron-builder --publish always --win
+        uses: nick-invision/retry@v2.4.0
+        with:
+          timeout_minutes: 30
+          max_attempts: 3
+          retry_on: error
+          command: |
+            yarn postinstall && yarn build && yarn electron-builder --publish always --win
+          on_retry_command: npm cache clean --force && yarn cache clean --all
+          shell: cmd
