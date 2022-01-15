@@ -628,7 +628,7 @@ const PlayerBar = () => {
                         placement="topStart"
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                          t('Unknown title')
+                          t('Unknown Title')
                         }
                       >
                         <LinkButton
@@ -644,7 +644,7 @@ const PlayerBar = () => {
                           }}
                         >
                           {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                            t('Unknown title')}
+                            t('Unknown Title')}
                         </LinkButton>
                       </CustomTooltip>
                     </Row>
@@ -662,7 +662,7 @@ const PlayerBar = () => {
                         text={
                           playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
                             ? playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
-                            : t('Unknown artist')
+                            : t('Unknown Artist')
                         }
                       >
                         <span
@@ -689,7 +689,7 @@ const PlayerBar = () => {
                             }}
                           >
                             {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
-                              t('Unknown artist')}
+                              t('Unknown Artist')}
                           </LinkButton>
                         </span>
                       </CustomTooltip>
@@ -717,7 +717,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Previous Song Button */}
-              <CustomTooltip text={t('Previous track')} delay={1000}>
+              <CustomTooltip text={t('Previous Track')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="step-backward"
@@ -747,7 +747,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Next Song Button */}
-              <CustomTooltip text={t('Next track')} delay={1000}>
+              <CustomTooltip text={t('Next Track')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
                   icon="step-forward"
