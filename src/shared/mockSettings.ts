@@ -337,7 +337,7 @@ export const mockSettings = {
   },
   themesDefault: [
     {
-      label: i18next.t('Default Dark'),
+      label: 'Default Dark',
       value: 'defaultDark',
       fonts: {
         size: {
@@ -497,7 +497,7 @@ export const mockSettings = {
       },
     },
     {
-      label: i18next.t('Default Light'),
+      label: 'Default Light',
       value: 'defaultLight',
       fonts: {
         size: {

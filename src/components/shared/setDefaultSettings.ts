@@ -527,7 +527,7 @@ const setDefaultSettings = (force: boolean) => {
 
   settings.setSync('themesDefault', [
     {
-      label: i18next.t('Default Dark')?.toString(),
+      label: 'Default Dark',
       value: 'defaultDark',
       type: 'dark',
       fonts: {
@@ -688,7 +688,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: i18next.t('Default Light')?.toString(),
+      label: 'Default Light',
       value: 'defaultLight',
       type: 'light',
       fonts: {
@@ -850,7 +850,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: i18next.t('Plex-like')?.toString(),
+      label: 'Plex-like',
       value: 'plexLike',
       type: 'dark',
       fonts: {
@@ -1011,7 +1011,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: i18next.t('Spotify-like')?.toString(),
+      label: 'Spotify-like',
       value: 'spotifyLike',
       type: 'dark',
       fonts: {
@@ -1172,7 +1172,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: i18next.t('City Lights')?.toString(),
+      label: 'City Lights',
       value: 'cityLights',
       type: 'dark',
       fonts: {
@@ -1333,7 +1333,7 @@ const setDefaultSettings = (force: boolean) => {
       },
     },
     {
-      label: i18next.t('One Dark')?.toString(),
+      label: 'One Dark',
       value: 'oneDark',
       type: 'dark',
       fonts: {
