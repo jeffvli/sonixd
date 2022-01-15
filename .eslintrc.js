@@ -11,6 +11,12 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-nested-ternary': 'off',
+    'react/no-unescaped-entities': [
+      'error',
+      {
+        forbid: ['>', "'", '}'],
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2020,

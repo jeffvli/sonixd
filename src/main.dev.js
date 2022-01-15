@@ -12,7 +12,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Player from 'mpris-service';
 import path from 'path';
-import os from 'os';
 import settings from 'electron-settings';
 import { ipcMain, app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';

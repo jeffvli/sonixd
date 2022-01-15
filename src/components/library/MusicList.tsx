@@ -29,6 +29,7 @@ import { setStatus } from '../../redux/playerSlice';
 export const MUSIC_SORT_TYPES = [
   { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Album)'), value: 'alphabeticalByAlbum', role: i18next.t('Default') },
+  // eslint-disable-next-line prettier/prettier
   { label: i18next.t('A-Z (Album Artist)'), value: 'alphabeticalByArtist', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Artist)'), value: 'alphabeticalByTrackArtist', replacement: 'Artist' },
   { label: i18next.t('Most Played'), value: 'frequent', role: i18next.t('Default') },
