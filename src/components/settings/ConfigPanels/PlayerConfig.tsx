@@ -269,6 +269,7 @@ const PlayerConfig = () => {
         <Form fluid>
           <StyledInputGroup>
             <StyledInput
+              style={{ width: 'auto' }}
               value={newFilter.string}
               onChange={(e: string) => {
                 let isValid = true;

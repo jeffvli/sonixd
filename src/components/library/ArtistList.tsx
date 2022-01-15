@@ -155,7 +155,7 @@ const ArtistList = () => {
           }
           subtitle={
             <ButtonToolbar>
-              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
+              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} />
             </ButtonToolbar>
           }
           sidetitle={

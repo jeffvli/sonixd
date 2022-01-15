@@ -227,8 +227,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                   speaker={
                     <StyledPopover
                       style={{
-                        maxWidth: '500px',
-                        maxHeight: '500px',
+                        maxWidth: '620px',
+                        maxHeight: '620px',
                         overflowY: 'auto',
                         overflowX: 'hidden',
                         padding: '0px',

@@ -166,7 +166,6 @@ const PlaybackConfig = () => {
           option={
             <ButtonToolbar>
               <StyledButton
-                width={100}
                 onClick={() => {
                   setCrossfadeDuration(0);
                   setPollingInterval(15);
@@ -177,7 +176,6 @@ const PlaybackConfig = () => {
                 {t('Gapless')}
               </StyledButton>
               <StyledButton
-                width={100}
                 onClick={() => {
                   setCrossfadeDuration(7);
                   setPollingInterval(50);
