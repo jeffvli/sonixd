@@ -20,6 +20,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
 import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
+import i18next from 'i18next';
 import playerReducer, { setStatus } from './redux/playerSlice';
 import playQueueReducer, {
   decrementCurrentIndex,
@@ -32,18 +33,13 @@ import playQueueReducer, {
 } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
-import { getCurrentEntryList } from './shared/utils';
+import { getCurrentEntryList, isWindows, isWindows10, isMacOS, isLinux } from './shared/utils';
 import setDefaultSettings from './components/shared/setDefaultSettings';
 
 settings.configure({
   prettify: true,
   numSpaces: 2,
 });
-
-const isWindows = process.platform === 'win32';
-const isWindows10 = os.release().match(/^10\.*/g);
-const isMacOS = process.platform === 'darwin';
-const isLinux = process.platform === 'linux';
 
 setDefaultSettings(false);
 
@@ -101,7 +97,7 @@ const getAssetPath = (...paths) => {
 };
 
 const createWinThumbnailClip = () => {
-  if (isWindows) {
+  if (isWindows()) {
     // Set the current song image as thumbnail
     mainWindow.setThumbnailClip({
       x: 15,
@@ -174,7 +170,7 @@ const previousTrack = () => {
   }
 };
 
-if (isLinux) {
+if (isLinux()) {
   const mprisPlayer = Player({
     name: 'Sonixd',
     identity: 'Sonixd',
@@ -336,21 +332,133 @@ if (isLinux) {
   });
 }
 
+if (isWindows() && isWindows10()) {
+  const windowsMedia = require('@nodert-win10-au/windows.media');
+  const windowsMediaPlayback = require('@nodert-win10-au/windows.media.playback');
+  const windowsStorage = require('@nodert-win10-au/windows.storage');
+  const windowsStorageStreams = require('@nodert-win10-au/windows.storage.streams');
+  const windowsFoundation = require('@nodert-win10-au/windows.foundation');
+
+  const Controls = windowsMediaPlayback.BackgroundMediaPlayer.current.systemMediaTransportControls;
+
+  if (settings.getSync('systemMediaTransportControls')) {
+    Controls.isEnabled = true;
+  } else {
+    Controls.isEnabled = false;
+  }
+
+  ipcMain.on('enableSystemMediaTransportControls', () => {
+    Controls.isEnabled = true;
+  });
+
+  ipcMain.on('disableSystemMediaTransportControls', () => {
+    Controls.isEnabled = false;
+  });
+
+  Controls.isChannelUpEnabled = false;
+  Controls.isChannelDownEnabled = false;
+  Controls.isFastForwardEnabled = false;
+  Controls.isRewindEnabled = false;
+  Controls.isRecordEnabled = false;
+  Controls.isPlayEnabled = true;
+  Controls.isPauseEnabled = true;
+  Controls.isStopEnabled = true;
+  Controls.isNextEnabled = true;
+  Controls.isPreviousEnabled = true;
+
+  Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.closed;
+  Controls.displayUpdater.type = windowsMedia.MediaPlaybackType.music;
+
+  Controls.displayUpdater.musicProperties.title = 'Sonixd';
+  Controls.displayUpdater.musicProperties.artist = i18next.t('No Track Playing');
+  Controls.displayUpdater.musicProperties.albumTitle = i18next.t('No Album Playing');
+  Controls.displayUpdater.update();
+
+  Controls.on('buttonpressed', (sender, eventArgs) => {
+    switch (eventArgs.button) {
+      case windowsMedia.SystemMediaTransportControlsButton.play:
+        play();
+        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.pause:
+        pause();
+        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.paused;
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.stop:
+        stop();
+        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.stopped;
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.next:
+        nextTrack();
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.previous:
+        previousTrack();
+        break;
+      default:
+        break;
+    }
+  });
+
+  ipcMain.on('playpause', (_event, arg) => {
+    if (arg.status === 'PLAYING') {
+      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
+    } else {
+      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.paused;
+    }
+  });
+
+  ipcMain.on('current-song', (_event, arg) => {
+    if (Controls.playbackStatus !== windowsMedia.MediaPlaybackStatus.playing) {
+      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
+    }
+
+    Controls.displayUpdater.musicProperties.title = arg.title || i18next.t('Unknown Title');
+    Controls.displayUpdater.musicProperties.artist =
+      arg.artist?.length !== 0
+        ? arg.artist?.map((artist) => artist.title).join(', ')
+        : i18next.t('Unknown Artist');
+    Controls.displayUpdater.musicProperties.albumTitle = arg.album || i18next.t('Unknown Album');
+
+    if (arg.image.includes('placeholder')) {
+      windowsStorage.StorageFile.getFileFromPathAsync(
+        getAssetPath('icon.png'),
+        (error, storageFile) => {
+          if (error) {
+            Controls.displayUpdater.thumbnail = null;
+          } else {
+            Controls.displayUpdater.thumbnail = windowsStorageStreams.RandomAccessStreamReference.createFromFile(
+              storageFile
+            );
+          }
+
+          Controls.displayUpdater.update();
+        }
+      );
+    } else {
+      Controls.displayUpdater.thumbnail = windowsStorageStreams.RandomAccessStreamReference.createFromUri(
+        new windowsFoundation.Uri(arg.image)
+      );
+    }
+
+    Controls.displayUpdater.update();
+  });
+}
+
 const createWinThumbarButtons = () => {
-  if (isWindows) {
+  if (isWindows()) {
     mainWindow.setThumbarButtons([
       {
-        tooltip: 'Previous Track',
+        tooltip: i18next.t('Previous Track'),
         icon: getAssetPath('skip-previous.png'),
         click: () => previousTrack(),
       },
       {
-        tooltip: 'Play/Pause',
+        tooltip: i18next.t('Play/Pause'),
         icon: getAssetPath('play-circle.png'),
         click: () => playPause(),
       },
       {
-        tooltip: 'Next Track',
+        tooltip: i18next.t('Next Track'),
         icon: getAssetPath('skip-next.png'),
         click: () => {
           nextTrack();
@@ -405,7 +513,7 @@ const createWindow = async () => {
     globalShortcut.register('MediaPreviousTrack', () => {
       previousTrack();
     });
-  } else {
+  } else if (!settings.getSync('systemMediaTransportControls')) {
     electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
       stop();
     });
@@ -424,6 +532,8 @@ const createWindow = async () => {
   }
 
   ipcMain.on('enableGlobalHotkeys', () => {
+    electronLocalshortcut.unregisterAll(mainWindow);
+
     globalShortcut.register('MediaStop', () => {
       stop();
     });
@@ -443,21 +553,24 @@ const createWindow = async () => {
 
   ipcMain.on('disableGlobalHotkeys', () => {
     globalShortcut.unregisterAll();
-    electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
-      stop();
-    });
 
-    electronLocalshortcut.register(mainWindow, 'MediaPlayPause', () => {
-      playPause();
-    });
+    if (!settings.getSync('systemMediaTransportControls')) {
+      electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
+        stop();
+      });
 
-    electronLocalshortcut.register(mainWindow, 'MediaNextTrack', () => {
-      nextTrack();
-    });
+      electronLocalshortcut.register(mainWindow, 'MediaPlayPause', () => {
+        playPause();
+      });
 
-    electronLocalshortcut.register(mainWindow, 'MediaPreviousTrack', () => {
-      previousTrack();
-    });
+      electronLocalshortcut.register(mainWindow, 'MediaNextTrack', () => {
+        nextTrack();
+      });
+
+      electronLocalshortcut.register(mainWindow, 'MediaPreviousTrack', () => {
+        previousTrack();
+      });
+    }
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html#${settings.getSync('startPage')}`);
@@ -493,7 +606,7 @@ const createWindow = async () => {
       mainWindow.hide();
     }
 
-    if (isWindows && isWindows10) {
+    if (isWindows() && isWindows10()) {
       mainWindow.setThumbnailClip({
         x: 0,
         y: 0,
@@ -504,7 +617,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('restore', () => {
-    if (isWindows && isWindows10) {
+    if (isWindows() && isWindows10()) {
       createWinThumbnailClip();
     }
   });
@@ -516,7 +629,7 @@ const createWindow = async () => {
     }
   });
 
-  if (isWindows) {
+  if (isWindows()) {
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
 
@@ -540,7 +653,7 @@ const createWindow = async () => {
     });
   }
 
-  if (isMacOS) {
+  if (isMacOS()) {
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
 
@@ -592,11 +705,11 @@ const createWindow = async () => {
 };
 
 const createTray = () => {
-  if (isMacOS) {
+  if (isMacOS()) {
     return;
   }
 
-  tray = isLinux ? new Tray(getAssetPath('icon.png')) : new Tray(getAssetPath('icon.ico'));
+  tray = isLinux() ? new Tray(getAssetPath('icon.png')) : new Tray(getAssetPath('icon.ico'));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Open main window',

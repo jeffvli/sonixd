@@ -8,11 +8,11 @@ import { StyledCheckbox, StyledInputPicker, StyledInputPickerContainer } from '.
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
 import { apiController } from '../../../api/controller';
-import { Folder } from '../../../types';
+import { Folder, Server } from '../../../types';
 import PageLoader from '../../loader/PageLoader';
 import ConfigOption from '../ConfigOption';
 
-const ServerConfig = () => {
+const ServerConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const folder = useAppSelector((state) => state.folder);
@@ -27,7 +27,7 @@ const ServerConfig = () => {
   }
 
   return (
-    <ConfigPanel header={t('Server')}>
+    <ConfigPanel bordered={bordered} header={t('Server')}>
       <ConfigOption
         name={t('Media Folder')}
         description={t(
@@ -104,6 +104,17 @@ const ServerConfig = () => {
           >
             {t('Search')}
           </StyledCheckbox>
+          {config.serverType === Server.Jellyfin && (
+            <StyledCheckbox
+              defaultChecked={folder.applied.music}
+              onChange={(_v: any, e: boolean) => {
+                dispatch(setAppliedFolderViews({ ...folder.applied, music: e }));
+                settings.setSync('musicFolder.music', e);
+              }}
+            >
+              {t('Songs')}
+            </StyledCheckbox>
+          )}
         </CheckboxGroup>
       </ConfigOptionInput>
     </ConfigPanel>

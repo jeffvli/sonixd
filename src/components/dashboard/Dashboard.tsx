@@ -186,9 +186,9 @@ const Dashboard = () => {
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu
-            title={t('Recently Played')}
             noScrollbar
-            data={recentAlbums}
+            title={t('Recently Played')}
+            data={config.serverType === Server.Jellyfin ? recentAlbums.data : recentAlbums}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',
@@ -261,9 +261,9 @@ const Dashboard = () => {
           />
 
           <ScrollingMenu
-            title={t('Most Played')}
             noScrollbar
-            data={frequentAlbums}
+            title={t('Most Played')}
+            data={config.serverType === Server.Jellyfin ? frequentAlbums.data : frequentAlbums}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',

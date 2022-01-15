@@ -170,7 +170,7 @@ const AlbumView = ({ ...rest }: any) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'unstar',
-        args: config.serverType === Server.Subsonic ? { id: data.id, type: 'album' } : null,
+        args: { id: data.id, type: 'album' },
       });
       queryClient.setQueryData(['album', id], { ...data, starred: undefined });
     }

@@ -61,6 +61,7 @@ import { setActive } from '../../redux/albumSlice';
 import { setStatus } from '../../redux/playerSlice';
 import { GenericItem } from '../../types';
 import { CoverArtWrapper } from '../layout/styled';
+import Paginator from '../shared/Paginator';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -77,6 +78,14 @@ const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-cell-group,
   .rs-table-cell {
     transition: none;
+  }
+
+  .rs-table-loader-wrapper {
+    background-color: transparent;
+  }
+
+  .rs-table-loader-text {
+    display: none;
   }
 
   // Prevent default drag
@@ -114,6 +123,8 @@ const ListViewTable = ({
   handleFavorite,
   handleRating,
   onScroll,
+  loading,
+  paginationProps,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -370,6 +381,7 @@ const ListViewTable = ({
               : ''
           } ${rowData?.isDir ? 'isdir' : ''}`
         }
+        loading={loading}
         ref={tableRef}
         height={height}
         data={sortColumn && !nowPlaying ? sortedData : data}
@@ -1206,6 +1218,9 @@ const ListViewTable = ({
           </Table.Column>
         ))}
       </StyledTable>
+      {paginationProps && paginationProps?.recordsPerPage !== 0 && (
+        <Paginator {...paginationProps} />
+      )}
     </>
   );
 };

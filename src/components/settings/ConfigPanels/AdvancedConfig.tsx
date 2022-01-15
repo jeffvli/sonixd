@@ -9,7 +9,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
 
-const AdvancedConfig = () => {
+const AdvancedConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [showDebugWindow, setShowDebugWindow] = useState(
@@ -18,7 +18,7 @@ const AdvancedConfig = () => {
   const [autoUpdate, setAutoUpdate] = useState(Boolean(settings.getSync('autoUpdate')));
 
   return (
-    <ConfigPanel header={t('Advanced')}>
+    <ConfigPanel bordered={bordered} header={t('Advanced')}>
       <ConfigOption
         name={t('Automatic Updates')}
         description={t(

@@ -83,6 +83,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('globalMediaHotkeys', false);
   }
 
+  if (force || !settings.hasSync('systemMediaTransportControls')) {
+    settings.setSync('systemMediaTransportControls', false);
+  }
+
   if (force || !settings.hasSync('cachePath')) {
     settings.setSync('cachePath', path.join(path.dirname(settings.file())));
   }
@@ -121,6 +125,14 @@ const setDefaultSettings = (force: boolean) => {
 
   if (force || !settings.hasSync('musicFolder.starred')) {
     settings.setSync('musicFolder.starred', false);
+  }
+
+  if (force || !settings.hasSync('musicFolder.music')) {
+    settings.setSync('musicFolder.music', true);
+  }
+
+  if (force || !settings.hasSync('pagination.music')) {
+    settings.setSync('pagination.music', 50);
   }
 
   if (force || !settings.hasSync('volume')) {
@@ -197,6 +209,10 @@ const setDefaultSettings = (force: boolean) => {
 
   if (force || !settings.hasSync('albumSortDefault')) {
     settings.setSync('albumSortDefault', 'random');
+  }
+
+  if (force || !settings.hasSync('musicSortDefault')) {
+    settings.setSync('musicSortDefault', 'random');
   }
 
   if (force || !settings.hasSync('artistViewType')) {

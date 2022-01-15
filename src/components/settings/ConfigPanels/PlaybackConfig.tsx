@@ -14,7 +14,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
 
-const PlaybackConfig = () => {
+const PlaybackConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [crossfadeDuration, setCrossfadeDuration] = useState(
@@ -56,7 +56,7 @@ const PlaybackConfig = () => {
 
   return (
     <>
-      <ConfigPanel header={t('Playback')}>
+      <ConfigPanel bordered={bordered} header={t('Playback')}>
         <ConfigOption
           name={t('Crossfade Duration (s)')}
           description={t(

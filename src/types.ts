@@ -59,6 +59,11 @@ export interface GenericItem {
   title: string;
 }
 
+export interface APIResult {
+  data: Album[] | Artist[] | Genre[] | Playlist[] | Song[];
+  totalRecordCount?: number;
+}
+
 export interface Album {
   id: string;
   title: string;
@@ -179,4 +184,10 @@ export interface ScanStatus {
 export interface Sort {
   column?: string;
   type: 'asc' | 'desc';
+}
+
+export interface Pagination {
+  pages?: number;
+  activePage?: number;
+  recordsPerPage: number;
 }

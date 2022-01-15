@@ -15,12 +15,12 @@ export const ConfigPanel = styled(Panel)<{ $noBackground: boolean }>`
   margin: ${(props) => (props.collapsible ? 'none' : '15px auto 15px auto')};
   padding: 15px;
 
-  background: ${(props) => (props.$noBackground ? 'none' : 'rgba(0, 0, 0, 0.1)')};
+  background: ${(props) =>
+    props.$noBackground || !props.bordered ? 'none' : 'rgba(0, 0, 0, 0.1)'};
   border-radius: 15px;
 
   .rs-panel-heading {
     font-size: ${(props) => props.theme.fonts.size.panelTitle};
-    font-weight: bold;
   }
 
   .rs-panel-collapsible > .rs-panel-heading::before {
