@@ -20,7 +20,7 @@ const ColumnSort = ({
     <>
       <FilterHeader>
         <FlexboxGrid justify="space-between">
-          <FlexboxGrid.Item>Sort</FlexboxGrid.Item>
+          <FlexboxGrid.Item>{t('Sort')}</FlexboxGrid.Item>
           <FlexboxGrid.Item>
             <StyledButton
               size="xs"

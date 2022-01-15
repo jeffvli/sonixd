@@ -272,6 +272,7 @@
   "Song Count": "Song Anzahl",
   "Songs": "Songs",
   "Songs are cached only when playback for the track fully completes and ends. Skipping to the next or previous track after only partially completing the track will not begin the caching process.": "Titel werden nur dann gecached, wenn die Wiedergabe des Titels vollständig abgeschlossen ist. Springt man zum nächsten oder vorherigen Titel, bevor der Titel vollständig abgespielt ist, wird der Caching-Vorgang nicht gestartet.",
+  "Sort": "Sortieren",
   "Sort Type": "Typ Sortieren",
   "Spotify-like": "Spotify",
   "Start page": "Startseite",
