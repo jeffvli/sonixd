@@ -131,8 +131,20 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('musicFolder.music', true);
   }
 
-  if (force || !settings.hasSync('pagination.music')) {
-    settings.setSync('pagination.music', 50);
+  if (force || !settings.hasSync('pagination.music.recordsPerPage')) {
+    settings.setSync('pagination.music.recordsPerPage', 50);
+  }
+
+  if (force || !settings.hasSync('pagination.music.serverSide')) {
+    settings.setSync('pagination.music.serverSide', true);
+  }
+
+  if (force || !settings.hasSync('pagination.album.recordsPerPage')) {
+    settings.setSync('pagination.album.recordsPerPage', 50);
+  }
+
+  if (force || !settings.hasSync('pagination.album.serverSide')) {
+    settings.setSync('pagination.album.serverSide', false);
   }
 
   if (force || !settings.hasSync('volume')) {

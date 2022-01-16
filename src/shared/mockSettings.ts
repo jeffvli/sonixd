@@ -26,7 +26,14 @@ export const mockSettings = {
   scrobble: false,
   transcode: false,
   pagination: {
-    music: 100,
+    music: {
+      recordsPerPage: 50,
+      serverSide: true,
+    },
+    album: {
+      recordsPerPage: 50,
+      serverSide: false,
+    },
   },
   playbackFilters: [
     {
