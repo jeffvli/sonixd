@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
-import { ButtonToolbar, Col, FlexboxGrid, Grid, Form, Icon, Row, Whisper } from 'rsuite';
+import { ButtonToolbar, Col, Grid, Form, Icon, Row, Whisper } from 'rsuite';
 import { t } from 'i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -61,14 +61,12 @@ import { setStatus } from '../../redux/playerSlice';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 
-export const ContextMenuButton = ({ text, hotkey, children, ...rest }: any) => {
+export const ContextMenuButton = ({ text, hotkey, ...rest }: any) => {
   return (
     <StyledContextMenuButton {...rest} appearance="subtle" size="sm" block>
-      {children}
-      <FlexboxGrid justify="space-between">
-        <FlexboxGrid.Item>{text}</FlexboxGrid.Item>
-        <FlexboxGrid.Item>{hotkey}</FlexboxGrid.Item>
-      </FlexboxGrid>
+      <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+        {text}
+      </div>
     </StyledContextMenuButton>
   );
 };
@@ -76,7 +74,8 @@ export const ContextMenuButton = ({ text, hotkey, children, ...rest }: any) => {
 export const ContextMenu = ({
   yPos,
   xPos,
-  width,
+  minWidth,
+  maxWidth,
   numOfButtons,
   numOfDividers,
   hasTitle,
@@ -86,7 +85,8 @@ export const ContextMenu = ({
     <ContextMenuWindow
       yPos={yPos}
       xPos={xPos}
-      width={width}
+      minWidth={minWidth}
+      maxWidth={maxWidth}
       numOfButtons={numOfButtons}
       numOfDividers={numOfDividers}
       hasTitle={hasTitle}
@@ -749,7 +749,8 @@ export const GlobalContextMenu = () => {
         <ContextMenu
           xPos={misc.contextMenu.xPos}
           yPos={misc.contextMenu.yPos}
-          width={190}
+          minWidth={200}
+          maxWidth={350}
           numOfButtons={12}
           numOfDividers={3}
         >

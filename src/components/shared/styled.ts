@@ -417,7 +417,8 @@ export const ContextMenuWindow = styled.div<{
   xPos: number;
   numOfButtons: number;
   numOfDividers: number;
-  width: number;
+  minWidth: number;
+  maxWidth: number;
   hasTitle: boolean;
 }>`
   background: ${(props) => props.theme.colors.contextMenu.background};
@@ -426,7 +427,8 @@ export const ContextMenuWindow = styled.div<{
   left: ${(props) => `${props.xPos}px`};
   height: ${(props) =>
     `${props.numOfButtons * 30 + props.numOfDividers * 1.5 + (props.hasTitle ? 16 : 0)}px`};
-  width: ${(props) => `${props.width}px`};
+  min-width: ${(props) => `${props.minWidth}px`};
+  max-width: ${(props) => `${props.maxWidth}px`};
   margin: 0px;
   white-space: normal;
   overflow: hidden;
@@ -441,6 +443,7 @@ export const StyledContextMenuButton = styled(Button)`
     props.disabled
       ? props.theme.colors.contextMenu.colorDisabled
       : props.theme.colors.contextMenu.color} !important;
+  transition: none;
   &:hover,
   &:active,
   &:focus {
