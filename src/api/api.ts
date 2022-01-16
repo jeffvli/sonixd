@@ -167,6 +167,13 @@ const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
   );
 };
 
+const normalizeAPIResult = (items: any, totalRecordCount?: number) => {
+  return {
+    data: items,
+    totalRecordCount,
+  };
+};
+
 const normalizeSong = (item: any) => {
   return {
     id: item.id,
@@ -363,7 +370,11 @@ export const getAlbums = async (
         if (!res.data.albumList2.album || res.data.albumList2.album.length === 0) {
           // Flatten and return once there are no more albums left
           const flattenedAlbums = _.flatten(recursiveData);
-          return (flattenedAlbums || []).map((entry: any) => normalizeAlbum(entry));
+
+          return normalizeAPIResult(
+            (flattenedAlbums || []).map((entry: any) => normalizeAlbum(entry)),
+            flattenedAlbums.length
+          );
         }
 
         // On every iteration, push the existing combined album array and increase the offset
@@ -385,7 +396,10 @@ export const getAlbums = async (
   }
 
   const { data } = await api.get(`/getAlbumList2`, { params: options });
-  return (data.albumList2.album || []).map((entry: any) => normalizeAlbum(entry));
+  return normalizeAPIResult(
+    (data.albumList2.album || []).map((entry: any) => normalizeAlbum(entry)),
+    data.albumList2.album.length
+  );
 };
 
 export const getRandomSongs = async (options: {
