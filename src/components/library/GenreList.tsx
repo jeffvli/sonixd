@@ -15,16 +15,16 @@ import {
   toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
-import { setActive } from '../../redux/albumSlice';
 import { apiController } from '../../api/controller';
 import { StyledTag } from '../shared/styled';
+import { setFilter, setPagination } from '../../redux/viewSlice';
+import { Item } from '../../types';
 
 const GenreList = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const config = useAppSelector((state) => state.config);
-  const album = useAppSelector((state) => state.album);
   const misc = useAppSelector((state) => state.misc);
   const folder = useAppSelector((state) => state.folder);
   const { isLoading, isError, data: genres, error }: any = useQuery(['genrePageList'], async () => {
@@ -56,7 +56,8 @@ const GenreList = () => {
   const handleRowDoubleClick = (rowData: any) => {
     window.clearTimeout(timeout);
     timeout = null;
-    dispatch(setActive({ ...album.active, filter: rowData.title }));
+    dispatch(setFilter({ listType: Item.Album, data: rowData.title }));
+    dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
     localStorage.setItem('scroll_list_albumList', '0');
     localStorage.setItem('scroll_grid_albumList', '0');
     dispatch(clearSelected());

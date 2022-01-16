@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ButtonToolbar, ControlLabel, Divider, FlexboxGrid, RadioGroup } from 'rsuite';
 import styled from 'styled-components';
 import { useAppDispatch } from '../../redux/hooks';
+import { Item } from '../../types';
 import {
   StyledButton,
   StyledCheckbox,
@@ -154,7 +155,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
               defaultChecked={filter.enabled}
               checked={filter.enabled}
               onChange={(e: boolean) => {
-                dispatch(setAdvancedFilters({ filter: 'enabled', value: e }));
+                dispatch(setAdvancedFilters({ listType: Item.Album, filter: 'enabled', value: e }));
               }}
             />
           </FlexboxGrid.Item>
@@ -166,6 +167,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         onChange={(_v: any, e: boolean) => {
           dispatch(
             setAdvancedFilters({
+              listType: Item.Album,
               filter: 'starred',
               value: e,
             })
@@ -186,6 +188,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
               onClick={() => {
                 dispatch(
                   setAdvancedFilters({
+                    listType: Item.Album,
                     filter: 'genre',
                     value: { ...filter.properties.genre, list: [] },
                   })
@@ -202,7 +205,11 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         defaultValue={filter.properties.genre.type}
         onChange={(e: string) => {
           dispatch(
-            setAdvancedFilters({ filter: 'genre', value: { ...filter.properties.genre, type: e } })
+            setAdvancedFilters({
+              listType: Item.Album,
+              filter: 'genre',
+              value: { ...filter.properties.genre, type: e },
+            })
           );
         }}
       >
@@ -245,6 +252,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             onChange={(e: string[]) => {
               dispatch(
                 setAdvancedFilters({
+                  listType: Item.Album,
                   filter: 'genre',
                   value: { ...filter.properties.genre, list: e },
                 })
@@ -265,6 +273,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
               onClick={() => {
                 dispatch(
                   setAdvancedFilters({
+                    listType: Item.Album,
                     filter: 'artist',
                     value: { ...filter.properties.artist, list: [] },
                   })
@@ -282,6 +291,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
         onChange={(e: string) => {
           dispatch(
             setAdvancedFilters({
+              listType: Item.Album,
               filter: 'artist',
               value: { ...filter.properties.artist, type: e },
             })
@@ -327,6 +337,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             onChange={(e: string[]) => {
               dispatch(
                 setAdvancedFilters({
+                  listType: Item.Album,
                   filter: 'artist',
                   value: { ...filter.properties.artist, list: e },
                 })
@@ -351,6 +362,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
               onClick={() => {
                 dispatch(
                   setAdvancedFilters({
+                    listType: Item.Album,
                     filter: 'year',
                     value: { from: 0, to: 0 },
                   })
@@ -375,6 +387,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             onChange={(e: number) => {
               dispatch(
                 setAdvancedFilters({
+                  listType: Item.Album,
                   filter: 'year',
                   value: { ...filter.properties.year, from: Number(e) },
                 })
@@ -394,6 +407,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
             onChange={(e: number) => {
               dispatch(
                 setAdvancedFilters({
+                  listType: Item.Album,
                   filter: 'year',
                   value: { ...filter.properties.year, to: Number(e) },
                 })

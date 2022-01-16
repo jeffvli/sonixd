@@ -57,11 +57,11 @@ import {
   setPageSort,
   setPlaybackFilter,
 } from '../../redux/configSlice';
-import { setActive } from '../../redux/albumSlice';
 import { setStatus } from '../../redux/playerSlice';
-import { GenericItem } from '../../types';
+import { GenericItem, Item } from '../../types';
 import { CoverArtWrapper } from '../layout/styled';
 import Paginator from '../shared/Paginator';
+import { setFilter, setPagination } from '../../redux/viewSlice';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -132,7 +132,6 @@ const ListViewTable = ({
   const configState = useAppSelector((state) => state.config);
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
-  const album = useAppSelector((state) => state.album);
   const [sortColumn, setSortColumn] = useState<any>();
   const [sortType, setSortType] = useState<any>();
   const [sortedData, setSortedData] = useState(data);
@@ -955,11 +954,15 @@ const ListViewTable = ({
                                       onClick={(e: any) => {
                                         if (!e.ctrlKey && !e.shiftKey) {
                                           dispatch(
-                                            setActive({
-                                              ...album.active,
-                                              filter: genre.title,
+                                            setFilter({ listType: Item.Album, data: genre.title })
+                                          );
+                                          dispatch(
+                                            setPagination({
+                                              listType: Item.Album,
+                                              data: { activePage: 1 },
                                             })
                                           );
+
                                           localStorage.setItem('scroll_list_albumList', '0');
                                           localStorage.setItem('scroll_grid_albumList', '0');
                                           setTimeout(() => {

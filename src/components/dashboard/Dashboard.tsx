@@ -9,9 +9,9 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setStar } from '../../redux/playQueueSlice';
-import { setActive } from '../../redux/albumSlice';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Item, Server } from '../../types';
+import { setFilter, setPagination } from '../../redux/viewSlice';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -20,7 +20,6 @@ const Dashboard = () => {
   const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
-  const album = useAppSelector((state) => state.album);
   const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
 
   useEffect(() => {
@@ -100,33 +99,33 @@ const Dashboard = () => {
       });
       dispatch(setStar({ id: [rowData.id], type: 'star' }));
       queryClient.setQueryData(['recentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = Date.now();
+          oldData.data[index].starred = Date.now();
         });
 
         return oldData;
       });
       queryClient.setQueryData(['newestAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = Date.now();
+          oldData.data[index].starred = Date.now();
         });
 
         return oldData;
       });
       queryClient.setQueryData(['randomAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = Date.now();
+          oldData.data[index].starred = Date.now();
         });
 
         return oldData;
       });
       queryClient.setQueryData(['frequentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = Date.now();
+          oldData.data[index].starred = Date.now();
         });
 
         return oldData;
@@ -139,33 +138,33 @@ const Dashboard = () => {
       });
       dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
       queryClient.setQueryData(['recentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = undefined;
+          oldData.data[index].starred = undefined;
         });
 
         return oldData;
       });
       queryClient.setQueryData(['newestAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = undefined;
+          oldData.data[index].starred = undefined;
         });
 
         return oldData;
       });
       queryClient.setQueryData(['randomAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = undefined;
+          oldData.data[index].starred = undefined;
         });
 
         return oldData;
       });
       queryClient.setQueryData(['frequentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
+        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
         starredIndices.forEach((index) => {
-          oldData[index].starred = undefined;
+          oldData.data[index].starred = undefined;
         });
 
         return oldData;
@@ -188,7 +187,7 @@ const Dashboard = () => {
           <ScrollingMenu
             noScrollbar
             title={t('Recently Played')}
-            data={config.serverType === Server.Jellyfin ? recentAlbums.data : recentAlbums}
+            data={recentAlbums.data}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',
@@ -201,7 +200,8 @@ const Dashboard = () => {
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
-              dispatch(setActive({ ...album.active, filter: 'recent' }));
+              dispatch(setFilter({ listType: Item.Album, data: 'recent' }));
+              dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
               setTimeout(() => {
                 history.push(`/library/album?sortType=recent`);
               }, 50);
@@ -213,7 +213,7 @@ const Dashboard = () => {
           <ScrollingMenu
             title={t('Recently Added')}
             noScrollbar
-            data={newestAlbums}
+            data={newestAlbums.data}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',
@@ -226,7 +226,8 @@ const Dashboard = () => {
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
-              dispatch(setActive({ ...album.active, filter: 'newest' }));
+              dispatch(setFilter({ listType: Item.Album, data: 'newest' }));
+              dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
               setTimeout(() => {
                 history.push(`/library/album?sortType=newest`);
               }, 50);
@@ -238,7 +239,7 @@ const Dashboard = () => {
           <ScrollingMenu
             title={t('Random')}
             noScrollbar
-            data={randomAlbums}
+            data={randomAlbums.data}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',
@@ -251,7 +252,8 @@ const Dashboard = () => {
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
-              dispatch(setActive({ ...album.active, filter: 'random' }));
+              dispatch(setFilter({ listType: Item.Album, data: 'random' }));
+              dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
               setTimeout(() => {
                 history.push(`/library/album?sortType=random`);
               }, 50);
@@ -263,7 +265,7 @@ const Dashboard = () => {
           <ScrollingMenu
             noScrollbar
             title={t('Most Played')}
-            data={config.serverType === Server.Jellyfin ? frequentAlbums.data : frequentAlbums}
+            data={frequentAlbums.data}
             cardTitle={{
               prefix: '/library/album',
               property: 'title',
@@ -276,7 +278,8 @@ const Dashboard = () => {
             }}
             cardSize={config.lookAndFeel.gridView.cardSize}
             onClickTitle={() => {
-              dispatch(setActive({ ...album.active, filter: 'frequent' }));
+              dispatch(setFilter({ listType: Item.Album, data: 'frequent' }));
+              dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
               setTimeout(() => {
                 history.push(`/library/album?sortType=frequent`);
               }, 50);
