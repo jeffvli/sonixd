@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -19,6 +20,7 @@ import { apiController } from '../../api/controller';
 import { StyledTag } from '../shared/styled';
 
 const GenreList = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const config = useAppSelector((state) => state.config);
@@ -72,7 +74,7 @@ const GenreList = () => {
         <GenericPageHeader
           title={
             <>
-              Genres{' '}
+              {t('Genres')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
                 {genres?.length || '...'}
               </StyledTag>
@@ -82,7 +84,7 @@ const GenreList = () => {
       }
     >
       {isLoading && <PageLoader />}
-      {isError && <div>Error: {error}</div>}
+      {isError && <div>{t('Error: {{error}}', { error })}</div>}
       {!isLoading && genres && !isError && (
         <ListViewType
           data={misc.searchQuery !== '' ? filteredData : genres}

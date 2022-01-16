@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { Sidenav, Nav, Icon } from 'rsuite';
 import { useAppSelector } from '../../redux/hooks';
@@ -14,6 +15,7 @@ const Sidebar = ({
   titleBar,
   ...rest
 }: any) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const config = useAppSelector((state) => state.config);
 
@@ -48,7 +50,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Dashboard
+              {t('Dashboard')}
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
@@ -62,7 +64,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Now Playing
+              {t('Now Playing')}
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
@@ -76,7 +78,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Playlists
+              {t('Playlists')}
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
@@ -90,7 +92,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Favorites
+              {t('Favorites')}
             </SidebarNavItem>
             {config.serverType === Server.Jellyfin && (
               <SidebarNavItem
@@ -120,7 +122,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Albums
+              {t('Albums')}
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
@@ -134,7 +136,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Artists
+              {t('Artists')}{' '}
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
@@ -148,7 +150,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Genres
+              {t('Genres')}{' '}
             </SidebarNavItem>
             {useAppSelector((state) => state.config).serverType !== 'funkwhale' && (
               <>
@@ -164,7 +166,7 @@ const Sidebar = ({
                     }
                   }}
                 >
-                  Folders
+                  {t('Folders')}{' '}
                 </SidebarNavItem>
               </>
             )}
@@ -182,7 +184,7 @@ const Sidebar = ({
                 }
               }}
             >
-              Config
+              {t('Config')}{' '}
             </SidebarNavItem>
             <SidebarNavItem
               tabIndex={0}
@@ -195,7 +197,7 @@ const Sidebar = ({
                 }
               }}
             >
-              {expand ? 'Collapse' : 'Expand'}
+              {expand ? t('Collapse') : t('Expand')}
             </SidebarNavItem>
           </Nav>
         </Sidenav.Body>

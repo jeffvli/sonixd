@@ -4,6 +4,8 @@ import settings from 'electron-settings';
 import { ButtonToolbar, Nav, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import GridViewType from '../viewtypes/GridViewType';
 import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -35,15 +37,16 @@ import ColumnSort from '../shared/ColumnSort';
 import useColumnSort from '../../hooks/useColumnSort';
 
 export const ALBUM_SORT_TYPES = [
-  { label: 'A-Z (Name)', value: 'alphabeticalByName', role: 'Default' },
-  { label: 'A-Z (Artist)', value: 'alphabeticalByArtist', role: 'Default' },
-  { label: 'Most Played', value: 'frequent', role: 'Default' },
-  { label: 'Random', value: 'random', role: 'Default' },
-  { label: 'Recently Added', value: 'newest', role: 'Default' },
-  { label: 'Recently Played', value: 'recent', role: 'Default' },
+  { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
+  { label: i18next.t('A-Z (Artist)'), value: 'alphabeticalByArtist', role: i18next.t('Default') },
+  { label: i18next.t('Most Played'), value: 'frequent', role: i18next.t('Default') },
+  { label: i18next.t('Random'), value: 'random', role: i18next.t('Default') },
+  { label: i18next.t('Recently Added'), value: 'newest', role: i18next.t('Default') },
+  { label: i18next.t('Recently Played'), value: 'recent', role: i18next.t('Default') },
 ];
 
 const AlbumList = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -240,7 +243,7 @@ const AlbumList = () => {
         <GenericPageHeader
           title={
             <>
-              Albums{' '}
+              {t('Albums')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
                 {filteredData?.length || '...'}
               </StyledTag>
@@ -261,7 +264,7 @@ const AlbumList = () => {
                     config.serverType === Server.Jellyfin ? ['frequent', 'recent'] : []
                   }
                   cleanable={false}
-                  placeholder="Sort Type"
+                  placeholder={t('Sort Type')}
                   onChange={async (value: string) => {
                     setIsRefresh(true);
                     await queryClient.cancelQueries([

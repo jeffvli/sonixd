@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Content, FlexboxGrid, Icon, Nav, Whisper } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
@@ -30,6 +31,7 @@ import WindowConfig from '../settings/ConfigPanels/WindowConfig';
 import AdvancedConfig from '../settings/ConfigPanels/AdvancedConfig';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
@@ -228,8 +230,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                   speaker={
                     <StyledPopover
                       style={{
-                        maxWidth: '500px',
-                        maxHeight: '500px',
+                        maxWidth: '620px',
+                        maxHeight: '620px',
                         overflowY: 'auto',
                         overflowX: 'hidden',
                         padding: '0px',
@@ -240,13 +242,13 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                         onSelect={(e) => setActiveConfigNav(e)}
                         appearance="tabs"
                       >
-                        <StyledNavItem eventKey="listView">List View</StyledNavItem>
-                        <StyledNavItem eventKey="gridView">Grid View</StyledNavItem>
-                        <StyledNavItem eventKey="playback">Playback</StyledNavItem>
-                        <StyledNavItem eventKey="player">Player</StyledNavItem>
-                        <StyledNavItem eventKey="theme">Theme</StyledNavItem>
-                        <StyledNavItem eventKey="server">Server</StyledNavItem>
-                        <StyledNavItem eventKey="other">Other</StyledNavItem>
+                        <StyledNavItem eventKey="listView">{t('List View')}</StyledNavItem>
+                        <StyledNavItem eventKey="gridView">{t('Grid View')}</StyledNavItem>
+                        <StyledNavItem eventKey="playback">{t('Playback')}</StyledNavItem>
+                        <StyledNavItem eventKey="player">{t('Player')}</StyledNavItem>
+                        <StyledNavItem eventKey="theme">{t('Theme')}</StyledNavItem>
+                        <StyledNavItem eventKey="server">{t('Server')}</StyledNavItem>
+                        <StyledNavItem eventKey="other">{t('Other')}</StyledNavItem>
                       </Nav>
                       {activeConfigNav === 'listView' && <ListViewConfigPanel />}
                       {activeConfigNav === 'gridView' && <GridViewConfigPanel />}

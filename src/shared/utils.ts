@@ -5,6 +5,7 @@ import path from 'path';
 import moment from 'moment';
 import arrayMove from 'array-move';
 import settings from 'electron-settings';
+import i18next from 'i18next';
 import { mockSettings } from './mockSettings';
 
 const download = require('image-downloader');
@@ -479,17 +480,23 @@ export const getPlayedSongsNotification = (options: {
 }) => {
   if (options.type === 'play') {
     if (options.original === options.filtered) {
-      return `Playing ${options.original} songs`;
+      return i18next.t('Playing {{n}} songs', { n: options.original });
     }
 
-    return `Playing ${options.filtered} songs [${options.original - options.filtered} filtered]`;
+    return i18next.t('Playing {{n}} songs [{{i}} filtered]', {
+      n: options.filtered,
+      i: options.original - options.filtered,
+    });
   }
 
   if (options.original === options.filtered) {
-    return `Added ${options.original} songs`;
+    return i18next.t('Added {{n}} songs', { n: options.original });
   }
 
-  return `Added ${options.filtered} songs [${options.original - options.filtered} filtered]`;
+  return i18next.t('Added {{n}} songs [{{i}} filtered]', {
+    n: options.filtered,
+    i: options.original - options.filtered,
+  });
 };
 
 export const getUniqueRandomNumberArr = (count: number, maxRange: number) => {

@@ -12,7 +12,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Player from 'mpris-service';
 import path from 'path';
-import os from 'os';
 import settings from 'electron-settings';
 import { ipcMain, app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
@@ -20,6 +19,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
 import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
+import i18next from 'i18next';
 import playerReducer, { setStatus } from './redux/playerSlice';
 import playQueueReducer, {
   decrementCurrentIndex,
@@ -369,8 +369,8 @@ if (isWindows() && isWindows10()) {
   Controls.displayUpdater.type = windowsMedia.MediaPlaybackType.music;
 
   Controls.displayUpdater.musicProperties.title = 'Sonixd';
-  Controls.displayUpdater.musicProperties.artist = 'No Track Playing';
-  Controls.displayUpdater.musicProperties.albumTitle = 'No Album Playing';
+  Controls.displayUpdater.musicProperties.artist = i18next.t('No Track Playing');
+  Controls.displayUpdater.musicProperties.albumTitle = i18next.t('No Album Playing');
   Controls.displayUpdater.update();
 
   Controls.on('buttonpressed', (sender, eventArgs) => {
@@ -411,12 +411,12 @@ if (isWindows() && isWindows10()) {
       Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
     }
 
-    Controls.displayUpdater.musicProperties.title = arg.title || 'Unknown Title';
+    Controls.displayUpdater.musicProperties.title = arg.title || i18next.t('Unknown Title');
     Controls.displayUpdater.musicProperties.artist =
       arg.artist?.length !== 0
         ? arg.artist?.map((artist) => artist.title).join(', ')
-        : 'Unknown Artist';
-    Controls.displayUpdater.musicProperties.albumTitle = arg.album || 'Unknown Album';
+        : i18next.t('Unknown Artist');
+    Controls.displayUpdater.musicProperties.albumTitle = arg.album || i18next.t('Unknown Album');
 
     if (arg.image.includes('placeholder')) {
       windowsStorage.StorageFile.getFileFromPathAsync(
@@ -447,17 +447,17 @@ const createWinThumbarButtons = () => {
   if (isWindows()) {
     mainWindow.setThumbarButtons([
       {
-        tooltip: 'Previous Track',
+        tooltip: i18next.t('Previous Track'),
         icon: getAssetPath('skip-previous.png'),
         click: () => previousTrack(),
       },
       {
-        tooltip: 'Play/Pause',
+        tooltip: i18next.t('Play/Pause'),
         icon: getAssetPath('play-circle.png'),
         click: () => playPause(),
       },
       {
-        tooltip: 'Next Track',
+        tooltip: i18next.t('Next Track'),
         icon: getAssetPath('skip-next.png'),
         click: () => {
           nextTrack();

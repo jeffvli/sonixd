@@ -4,6 +4,7 @@ import { shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { Message, Icon, ButtonToolbar, Whisper } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
 import {
   StyledInput,
@@ -23,6 +24,7 @@ import { useAppDispatch } from '../../../redux/hooks';
 const fsUtils = require('nodejs-fs-utils');
 
 const CacheConfig = ({ bordered }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [imgCacheSize, setImgCacheSize] = useState(0);
   const [songCacheSize, setSongCacheSize] = useState(0);
@@ -50,7 +52,7 @@ const CacheConfig = ({ bordered }: any) => {
     const songCachePath = getSongCachePath();
     fs.readdir(songCachePath, (err, files) => {
       if (err) {
-        return notifyToast('error', `Unable to scan directory: ${err}`);
+        return notifyToast('error', t('Unable to scan directory: {{err}}', { err }));
       }
 
       return files.forEach((file) => {
@@ -60,21 +62,21 @@ const CacheConfig = ({ bordered }: any) => {
         if (path.extname(songPath) === '.mp3') {
           fs.unlink(songPath, (error) => {
             if (err) {
-              return notifyToast('error', `Unable to clear cache item: ${error}`);
+              return notifyToast('error', t('Unable to clear cache item: {{error}}', { error }));
             }
             return null;
           });
         }
       });
     });
-    notifyToast('success', `Cleared song cache`);
+    notifyToast('success', t('Cleared song cache'));
   };
 
   const handleClearImageCache = (type: 'playlist' | 'album' | 'artist' | 'folder') => {
     const imageCachePath = getImageCachePath();
     fs.readdir(imageCachePath, (err, files) => {
       if (err) {
-        return notifyToast('error', `Unable to scan directory: ${err}`);
+        return notifyToast('error', t('Unable to scan directory: {{err}}', { err }));
       }
 
       const selectedFiles =
@@ -93,18 +95,18 @@ const CacheConfig = ({ bordered }: any) => {
         if (path.extname(imagePath) === '.jpg') {
           fs.unlink(imagePath, (error) => {
             if (err) {
-              return notifyToast('error', `Unable to clear cache item: ${error}`);
+              return notifyToast('error', t('Unable to clear cache item: {{error}}', { error }));
             }
             return null;
           });
         }
       });
     });
-    notifyToast('success', `Cleared ${type} image cache`);
+    notifyToast('success', t('Cleared {{type}} image cache', { type }));
   };
 
   return (
-    <ConfigPanel bordered={bordered} header="Cache">
+    <ConfigPanel bordered={bordered} header={t('Cache')}>
       {errorMessage !== '' && (
         <>
           <Message showIcon type="error" description={errorMessage} />
@@ -112,9 +114,9 @@ const CacheConfig = ({ bordered }: any) => {
         </>
       )}
       <ConfigOptionDescription>
-        Songs are cached only when playback for the track fully completes and ends. Skipping to the
-        next or previous track after only partially completing the track will not begin the caching
-        process.
+        {t(
+          'Songs are cached only when playback for the track fully completes and ends. Skipping to the next or previous track after only partially completing the track will not begin the caching process.'
+        )}
       </ConfigOptionDescription>
       <br />
       {isEditingCachePath && (
@@ -136,7 +138,11 @@ const CacheConfig = ({ bordered }: any) => {
                   return setIsEditingCachePath(false);
                 }
 
-                return setErrorMessage(`Path: ${newCachePath} not found. Enter a valid path.`);
+                return setErrorMessage(
+                  t('Path: {{newCachePath}} not found. Enter a valid path.', {
+                    newCachePath,
+                  })
+                );
               }}
             >
               <Icon icon="check" />
@@ -159,17 +165,17 @@ const CacheConfig = ({ bordered }: any) => {
                 return setIsEditingCachePath(false);
               }}
             >
-              Reset to default
+              {t('Reset to default')}
             </StyledInputGroupButton>
           </StyledInputGroup>
           <p style={{ fontSize: 'smaller' }}>
-            *You will need to manually move any existing cached files to their new location.
+            {t('*You will need to manually move any existing cached files to their new location.')}
           </p>
         </>
       )}
       {!isEditingCachePath && (
         <>
-          Location:{' '}
+          {t('Location:')}{' '}
           <div style={{ overflow: 'auto' }}>
             <StyledLink onClick={() => shell.openPath(getRootCachePath())}>
               {getRootCachePath()} <Icon icon="external-link" />
@@ -185,9 +191,9 @@ const CacheConfig = ({ bordered }: any) => {
             setCacheSongs(e);
           }}
         >
-          Songs{' '}
+          {t('Songs')}{' '}
           <StyledTag>
-            {songCacheSize} MB {imgCacheSize === 9999999 && '- Folder not found'}
+            {songCacheSize} MB {imgCacheSize === 9999999 && t('- Folder not found')}
           </StyledTag>
         </StyledCheckbox>
         <StyledCheckbox
@@ -197,42 +203,44 @@ const CacheConfig = ({ bordered }: any) => {
             setCacheImages(e);
           }}
         >
-          Images{' '}
+          {t('Images')}{' '}
           <StyledTag>
-            {imgCacheSize} MB {imgCacheSize === 9999999 && '- Folder not found'}
+            {imgCacheSize} MB {imgCacheSize === 9999999 && t('- Folder not found')}
           </StyledTag>
         </StyledCheckbox>
       </div>
       <br />
       <ButtonToolbar>
-        <StyledButton onClick={() => setIsEditingCachePath(true)}>Edit cache location</StyledButton>
+        <StyledButton onClick={() => setIsEditingCachePath(true)}>
+          {t('Edit cache location')}
+        </StyledButton>
         <Whisper
           trigger="click"
           placement="autoVertical"
           speaker={
             <StyledPopover>
-              Which cache would you like to clear?
+              {t('Which cache would you like to clear?')}
               <ButtonToolbar>
                 <StyledButton size="sm" onClick={handleClearSongCache}>
-                  Songs
+                  {t('Songs')}
                 </StyledButton>
                 <StyledButton size="sm" onClick={() => handleClearImageCache('playlist')}>
-                  Playlist images
+                  {t('Playlist images')}
                 </StyledButton>
                 <StyledButton size="sm" onClick={() => handleClearImageCache('album')}>
-                  Album images
+                  {t('Album images')}
                 </StyledButton>
                 <StyledButton size="sm" onClick={() => handleClearImageCache('artist')}>
-                  Artist images
+                  {t('Artist images')}
                 </StyledButton>
                 <StyledButton size="sm" onClick={() => handleClearImageCache('folder')}>
-                  Folder images
+                  {t('Folder images')}
                 </StyledButton>
               </ButtonToolbar>
             </StyledPopover>
           }
         >
-          <StyledButton>Clear cache</StyledButton>
+          <StyledButton>{t('Clear cache')}</StyledButton>
         </Whisper>
       </ButtonToolbar>
     </ConfigPanel>

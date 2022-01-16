@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -13,6 +14,7 @@ import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
@@ -173,19 +175,19 @@ const Dashboard = () => {
 
   if (isLoadingRecent || isLoadingNewest || isLoadingRandom || isLoadingFrequent) {
     return (
-      <GenericPage hideDivider header={<GenericPageHeader title="Dashboard" />}>
+      <GenericPage hideDivider header={<GenericPageHeader title={t('Dashboard')} />}>
         <PageLoader />
       </GenericPage>
     );
   }
 
   return (
-    <GenericPage header={<GenericPageHeader title="Dashboard" />} hideDivider>
+    <GenericPage header={<GenericPageHeader title={t('Dashboard')} />} hideDivider>
       {newestAlbums && recentAlbums && randomAlbums && (
         <>
           <ScrollingMenu
             noScrollbar
-            title="Recently Played"
+            title={t('Recently Played')}
             data={config.serverType === Server.Jellyfin ? recentAlbums.data : recentAlbums}
             cardTitle={{
               prefix: '/library/album',
@@ -209,8 +211,8 @@ const Dashboard = () => {
           />
 
           <ScrollingMenu
+            title={t('Recently Added')}
             noScrollbar
-            title="Recently Added"
             data={newestAlbums}
             cardTitle={{
               prefix: '/library/album',
@@ -234,8 +236,8 @@ const Dashboard = () => {
           />
 
           <ScrollingMenu
+            title={t('Random')}
             noScrollbar
-            title="Random"
             data={randomAlbums}
             cardTitle={{
               prefix: '/library/album',
@@ -260,7 +262,7 @@ const Dashboard = () => {
 
           <ScrollingMenu
             noScrollbar
-            title="Most Played"
+            title={t('Most Played')}
             data={config.serverType === Server.Jellyfin ? frequentAlbums.data : frequentAlbums}
             cardTitle={{
               prefix: '/library/album',

@@ -4,6 +4,7 @@ import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { ButtonToolbar } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -26,6 +27,7 @@ import { setSort } from '../../redux/artistSlice';
 import { StyledTag } from '../shared/styled';
 
 const ArtistList = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -145,7 +147,7 @@ const ArtistList = () => {
         <GenericPageHeader
           title={
             <>
-              Artists{' '}
+              {t('Artists')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
                 {sortedData?.length || '...'}
               </StyledTag>
@@ -153,7 +155,7 @@ const ArtistList = () => {
           }
           subtitle={
             <ButtonToolbar>
-              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} width={100} />
+              <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} />
             </ButtonToolbar>
           }
           sidetitle={
@@ -212,7 +214,7 @@ const ArtistList = () => {
       }
     >
       {isLoading && <PageLoader />}
-      {isError && <div>Error: {error}</div>}
+      {isError && <div>{t('Error: {{error}}', { error })}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
           data={misc.searchQuery !== '' ? filteredData : sortedData}

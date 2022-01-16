@@ -7,6 +7,8 @@ import { ButtonToolbar, ControlLabel, Form, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import {
   DeleteButton,
   EditButton,
@@ -37,8 +39,6 @@ import {
   createRecoveryFile,
   errorMessages,
   filterPlayQueue,
-  formatDate,
-  formatDateTime,
   formatDuration,
   getCurrentEntryList,
   getPlayedSongsNotification,
@@ -80,6 +80,7 @@ interface PlaylistParams {
 }
 
 const PlaylistView = ({ ...rest }) => {
+  const { t } = useTranslation();
   const [isModified, setIsModified] = useState(false);
   const dispatch = useAppDispatch();
   const playlist = useAppSelector((state) => state.playlist);
@@ -232,7 +233,7 @@ const PlaylistView = ({ ...rest }) => {
           if (isFailedResponse(res)) {
             notifyToast('error', errorMessages(res)[0]);
           } else {
-            notifyToast('success', `Saved playlist`);
+            notifyToast('success', t('Saved playlist'));
             await queryClient.refetchQueries(['playlist'], {
               active: true,
             });
@@ -275,9 +276,9 @@ const PlaylistView = ({ ...rest }) => {
             // If the recovery succeeds, we can remove the recovery file
             fs.unlinkSync(recoveryPath);
             setNeedsRecovery(false);
-            notifyToast('success', `Recovered playlist from backup`);
+            notifyToast('success', t('Recovered playlist from backup'));
           } else {
-            notifyToast('success', `Saved playlist`);
+            notifyToast('success', t('Saved playlist'));
           }
 
           await queryClient.refetchQueries(['playlist'], {
@@ -285,7 +286,7 @@ const PlaylistView = ({ ...rest }) => {
           });
         }
       } catch (err) {
-        notifyToast('error', 'Errored while saving playlist');
+        notifyToast('error', t('Errored while saving playlist'));
         const playlistData = recovery
           ? JSON.parse(fs.readFileSync(recoveryPath, { encoding: 'utf-8' }))
           : playlist[getCurrentEntryList(playlist)];
@@ -323,9 +324,9 @@ const PlaylistView = ({ ...rest }) => {
         });
 
         history.replace(`/playlist/${newPlaylistId}`);
-        notifyToast('success', `Saved playlist`);
+        notifyToast('success', t('Saved playlist'));
       } else {
-        notifyToast('error', 'Error saving playlist');
+        notifyToast('error', t('Error saving playlist'));
       }
     }
 
@@ -361,7 +362,7 @@ const PlaylistView = ({ ...rest }) => {
           });
         }
       } catch {
-        notifyToast('error', 'Error saving playlist');
+        notifyToast('error', t('Error saving playlist'));
       } finally {
         setIsSubmittingEdit(false);
       }
@@ -381,12 +382,12 @@ const PlaylistView = ({ ...rest }) => {
           },
         });
       } catch {
-        notifyToast('error', 'Error saving playlist');
+        notifyToast('error', t('Error saving playlist'));
       } finally {
         setIsSubmittingEdit(false);
       }
 
-      notifyToast('success', 'Saved playlist');
+      notifyToast('success', t('Saved playlist'));
       queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
         return { ...oldData, title: editName, comment: editDescription, public: editPublic };
       });
@@ -506,7 +507,7 @@ const PlaylistView = ({ ...rest }) => {
         <GenericPageHeader
           image={
             <Card
-              title="None"
+              title={t('None')}
               subtitle=""
               coverArt={
                 data?.image.match('placeholder')
@@ -535,15 +536,33 @@ const PlaylistView = ({ ...rest }) => {
             <div>
               <PageHeaderSubtitleDataLine $top>
                 <StyledLink onClick={() => history.push('/playlist')}>
-                  <strong>PLAYLIST</strong>
+                  <strong>{t('PLAYLIST')}</strong>
                 </StyledLink>{' '}
                 • {data.songCount} songs, {formatDuration(data.duration)} •{' '}
-                {data.public ? 'Public' : 'Private'}
+                {data.public ? t('Public') : t('Private')}
               </PageHeaderSubtitleDataLine>
               <PageHeaderSubtitleDataLine>
-                {data.owner && `By ${data.owner} • `}
-                {data.created && `Created ${formatDate(data.created)}`}
-                {data.changed && ` • Modified ${formatDateTime(data.changed)}`}
+                {data.owner && t('By {{dataOwner}} • ', { dataOwner: data.owner })}
+                {data.created &&
+                  t('Created {{val, datetime}}', {
+                    val: moment(data.created),
+                    formatParams: {
+                      val: { year: 'numeric', month: 'short', day: 'numeric' },
+                    },
+                  })}
+                {data.changed &&
+                  t(' • Modified {{val, datetime}}', {
+                    val: moment(data.changed),
+                    formatParams: {
+                      val: {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      },
+                    },
+                  })}
               </PageHeaderSubtitleDataLine>
               <CustomTooltip text={data.comment} placement="bottomStart" disabled={!data.comment}>
                 <PageHeaderSubtitleDataLine
@@ -585,8 +604,10 @@ const PlaylistView = ({ ...rest }) => {
                     appearance="subtle"
                     text={
                       needsRecovery
-                        ? 'Recover playlist'
-                        : 'Save (WARNING: Closing the application while saving may result in data loss)'
+                        ? t('Recover playlist')
+                        : t(
+                            'Save (WARNING: Closing the application while saving may result in data loss)'
+                          )
                     }
                     color={needsRecovery ? 'red' : undefined}
                     disabled={
@@ -613,15 +634,15 @@ const PlaylistView = ({ ...rest }) => {
                     speaker={
                       <StyledPopover>
                         <Form>
-                          <ControlLabel>Name</ControlLabel>
+                          <ControlLabel>{t('Name')}</ControlLabel>
                           <StyledInput
-                            placeholder="Name"
+                            placeholder={t('Name')}
                             value={editName}
                             onChange={(e: string) => setEditName(e)}
                           />
-                          <ControlLabel>Description</ControlLabel>
+                          <ControlLabel>{t('Description')}</ControlLabel>
                           <StyledInput
-                            placeholder="Description"
+                            placeholder={t('Description')}
                             value={editDescription}
                             onChange={(e: string) => setEditDescription(e)}
                           />
@@ -631,7 +652,7 @@ const PlaylistView = ({ ...rest }) => {
                             onChange={(_v: any, e: boolean) => setEditPublic(e)}
                             disabled={config.serverType === Server.Jellyfin}
                           >
-                            Public
+                            {t('Public')}
                           </StyledCheckbox>
                           <StyledButton
                             size="md"
@@ -642,7 +663,7 @@ const PlaylistView = ({ ...rest }) => {
                             onClick={handleEdit}
                             appearance="primary"
                           >
-                            Save
+                            {t('Save')}
                           </StyledButton>
                         </Form>
                       </StyledPopover>
@@ -661,9 +682,9 @@ const PlaylistView = ({ ...rest }) => {
                     trigger="click"
                     speaker={
                       <StyledPopover>
-                        <p>Are you sure you want to delete this playlist?</p>
+                        <p>{t('Are you sure you want to delete this playlist?')}</p>
                         <StyledButton onClick={handleDelete} appearance="link">
-                          Yes
+                          {t('Yes')}
                         </StyledButton>
                       </StyledPopover>
                     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import settings from 'electron-settings';
+import { useTranslation } from 'react-i18next';
 import { StyledButton } from '../shared/styled';
 
 export const handleDisconnect = () => {
@@ -27,9 +28,10 @@ export const handleDisconnect = () => {
 };
 
 const DisconnectButton = () => {
+  const { t } = useTranslation();
   return (
     <StyledButton onClick={handleDisconnect} size="sm">
-      Disconnect
+      {t('Disconnect')}
     </StyledButton>
   );
 };

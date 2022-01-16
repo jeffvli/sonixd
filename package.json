@@ -13,7 +13,8 @@
     "start": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && yarn start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main.dev.js",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
-    "test": "jest"
+    "test": "jest",
+    "i18next": "i18next -c src/i18n/i18next-parser.config.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -268,6 +269,8 @@
     "fast-average-color": "^7.0.1",
     "format-duration": "^1.4.0",
     "history": "^5.0.0",
+    "i18next": "^21.6.5",
+    "i18next-parser": "^5.4.0",
     "image-downloader": "^4.0.3",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
@@ -281,6 +284,7 @@
     "react-dom": "^17.0.2",
     "react-helmet-async": "^1.1.2",
     "react-hotkeys-hook": "^3.4.3",
+    "react-i18next": "^11.15.3",
     "react-lazy-load-image-component": "^1.5.1",
     "react-query": "^3.19.1",
     "react-redux": "^7.2.4",

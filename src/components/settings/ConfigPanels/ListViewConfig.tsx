@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid/non-secure';
 import settings from 'electron-settings';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import {
   StyledCheckPicker,
   StyledInputNumber,
@@ -34,20 +36,20 @@ const columnSelectorColumns = [
     label: '#',
   },
   {
-    id: 'Column',
+    id: i18next.t('Column'),
     dataKey: 'label',
     alignment: 'left',
     resizable: false,
     flexGrow: 2,
-    label: 'Column',
+    label: i18next.t('Column'),
   },
   {
-    id: 'Resizable',
+    id: i18next.t('Resizable'),
     dataKey: 'columnResizable',
     alignment: 'left',
     resizable: false,
     width: 100,
-    label: 'Resizable',
+    label: i18next.t('Resizable'),
   },
 ];
 
@@ -59,6 +61,7 @@ const ListViewConfig = ({
   settingsConfig,
   disabledItemValues,
 }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const multiSelect = useAppSelector((state) => state.multiSelect);
@@ -187,13 +190,15 @@ const ListViewConfig = ({
             config={{ option: columnListType, columnList }}
             virtualized
           />
-          <p style={{ fontSize: 'smaller' }}>* Drag & drop rows from the # column to re-order</p>
+          <p style={{ fontSize: 'smaller' }}>
+            {t('* Drag & drop rows from the # column to re-order')}
+          </p>
         </StyledPanel>
       </div>
 
       <ConfigOption
-        name={`Row Height (${type})`}
-        description="The height in pixels (px) of each row in the list view."
+        name={t('Row Height {{type}}', { type })}
+        description={t('The height in pixels (px) of each row in the list view.')}
         option={
           <StyledInputNumber
             defaultValue={config.lookAndFeel.listView[columnListType]?.rowHeight || 40}
@@ -210,8 +215,8 @@ const ListViewConfig = ({
       />
 
       <ConfigOption
-        name={`Font Size (${type})`}
-        description="The height in pixels (px) of each row in the list view."
+        name={t('Font Size {{type}}', { type })}
+        description={t('The height in pixels (px) of each row in the list view.')}
         option={
           <StyledInputNumber
             defaultValue={config.lookAndFeel.listView[columnListType]?.fontSize || 12}

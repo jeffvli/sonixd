@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ButtonToolbar, ControlLabel, Divider, FlexboxGrid, RadioGroup } from 'rsuite';
 import styled from 'styled-components';
 import { useAppDispatch } from '../../redux/hooks';
@@ -20,6 +21,7 @@ export const FilterHeader = styled.div`
 `;
 
 const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilters }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [availableGenres, setAvailableGenres] = useState<any[]>([]);
   const [availableArtists, setAvailableArtists] = useState<any[]>([]);
@@ -336,7 +338,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
       <Divider />
       <FilterHeader>
         <FlexboxGrid justify="space-between">
-          <FlexboxGrid.Item>Years</FlexboxGrid.Item>
+          <FlexboxGrid.Item>{t('Years')}</FlexboxGrid.Item>
           <FlexboxGrid.Item>
             <StyledButton
               size="xs"
@@ -355,14 +357,14 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
                 );
               }}
             >
-              Reset
+              {t('Reset')}
             </StyledButton>
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </FilterHeader>
       <FlexboxGrid justify="space-between">
         <FlexboxGrid.Item>
-          <ControlLabel>From</ControlLabel>
+          <ControlLabel>{t('From')}</ControlLabel>
           <StyledInputNumber
             width={100}
             min={0}
@@ -381,7 +383,7 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
           />
         </FlexboxGrid.Item>
         <FlexboxGrid.Item>
-          <ControlLabel>To</ControlLabel>
+          <ControlLabel>{t('To')}</ControlLabel>
           <StyledInputNumber
             width={100}
             min={0}

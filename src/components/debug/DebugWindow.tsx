@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Button, Checkbox, Divider, FlexboxGrid, Panel, Slider } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import CustomTooltip from '../shared/CustomTooltip';
 import { setFadeData } from '../../redux/playQueueSlice';
 
 const DebugWindow = ({ ...rest }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
@@ -81,7 +83,7 @@ const DebugWindow = ({ ...rest }) => {
         }}
       >
         <h5 style={{ paddingRight: '10px' }}>Debug</h5>
-        <CustomTooltip text="Clickable">
+        <CustomTooltip text={t('Clickable')}>
           <FlexboxGrid.Item>
             <Checkbox
               style={{
@@ -95,7 +97,7 @@ const DebugWindow = ({ ...rest }) => {
             />
           </FlexboxGrid.Item>
         </CustomTooltip>
-        <CustomTooltip text="Opacity">
+        <CustomTooltip text={t('Opacity')}>
           <FlexboxGrid.Item>
             <Slider
               value={opacity}

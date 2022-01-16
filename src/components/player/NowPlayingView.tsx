@@ -4,6 +4,7 @@ import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { ButtonToolbar, ButtonGroup, ControlLabel, FlexboxGrid, Icon, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
@@ -64,6 +65,7 @@ import { Song } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const NowPlayingView = () => {
+  const { t } = useTranslation();
   const tableRef = useRef<any>();
   const genrePickerContainerRef = useRef(null);
   const musicFolderPickerContainerRef = useRef(null);
@@ -266,7 +268,7 @@ const NowPlayingView = () => {
       return autoPlaylistTriggerRef.current.close();
     }
     setIsLoadingRandom(false);
-    return notifyToast('warning', `No songs found, adjust your filters`);
+    return notifyToast('warning', t('No songs found, adjust your filters'));
   };
 
   const handleRowFavorite = async (rowData: any) => {
@@ -304,7 +306,7 @@ const NowPlayingView = () => {
         <GenericPageHeader
           title={
             <>
-              Now Playing{' '}
+              {t('Now Playing')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
                 {playQueue.entry?.length || '...'}
               </StyledTag>
@@ -339,7 +341,7 @@ const NowPlayingView = () => {
                   enterable
                   speaker={
                     <StyledPopover>
-                      <ControlLabel>How many tracks? (1-500)*</ControlLabel>
+                      <ControlLabel>{t('How many tracks? (1-500)*')}</ControlLabel>
                       <StyledInputNumber
                         min={1}
                         max={500}
@@ -354,7 +356,7 @@ const NowPlayingView = () => {
                       <br />
                       <FlexboxGrid justify="space-between">
                         <FlexboxGrid.Item>
-                          <ControlLabel>From year</ControlLabel>
+                          <ControlLabel>{t('From year')}</ControlLabel>
                           <div>
                             <StyledInputNumber
                               width={100}
@@ -370,7 +372,7 @@ const NowPlayingView = () => {
                           </div>
                         </FlexboxGrid.Item>
                         <FlexboxGrid.Item>
-                          <ControlLabel>To year</ControlLabel>
+                          <ControlLabel>{t('To year')}</ControlLabel>
                           <div>
                             <StyledInputNumber
                               width={100}
@@ -386,7 +388,7 @@ const NowPlayingView = () => {
                       </FlexboxGrid>
                       <br />
                       <StyledInputPickerContainer ref={genrePickerContainerRef}>
-                        <ControlLabel>Genre</ControlLabel>
+                        <ControlLabel>{t('Genre')}</ControlLabel>
                         <br />
                         <StyledInputPicker
                           style={{ width: '100%' }}
@@ -396,12 +398,13 @@ const NowPlayingView = () => {
                           valueKey="id"
                           labelKey="title"
                           virtualized
+                          placeholder={t('Select')}
                           onChange={(e: string) => setRandomPlaylistGenre(e)}
                         />
                       </StyledInputPickerContainer>
                       <br />
                       <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
-                        <ControlLabel>Music folder</ControlLabel>
+                        <ControlLabel>{t('Music folder')}</ControlLabel>
                         <br />
                         <StyledInputPicker
                           style={{ width: '100%' }}
@@ -410,6 +413,7 @@ const NowPlayingView = () => {
                           defaultValue={musicFolder}
                           valueKey="id"
                           labelKey="title"
+                          placeholder={t('Select')}
                           onChange={(e: any) => {
                             setMusicFolder(e);
                           }}
@@ -423,7 +427,8 @@ const NowPlayingView = () => {
                           loading={isLoadingRandom}
                           disabled={!(typeof autoPlaylistTrackCount === 'number')}
                         >
-                          <Icon icon="plus-circle" style={{ marginRight: '10px' }} /> Add (next)
+                          <Icon icon="plus-circle" style={{ marginRight: '10px' }} />
+                          {t('Add (next)')}
                         </StyledButton>
                         <StyledButton
                           appearance="subtle"
@@ -431,7 +436,8 @@ const NowPlayingView = () => {
                           loading={isLoadingRandom}
                           disabled={!(typeof autoPlaylistTrackCount === 'number')}
                         >
-                          <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (later)
+                          <Icon icon="plus" style={{ marginRight: '10px' }} />
+                          {t('Add (later)')}
                         </StyledButton>
                       </ButtonToolbar>
                       <ButtonToolbar>
@@ -443,7 +449,7 @@ const NowPlayingView = () => {
                           disabled={!(typeof autoPlaylistTrackCount === 'number')}
                         >
                           <Icon icon="play" style={{ marginRight: '10px' }} />
-                          Play
+                          {t('Play')}
                         </StyledButton>
                       </ButtonToolbar>
                     </StyledPopover>
@@ -509,7 +515,7 @@ const NowPlayingView = () => {
                 );
               }}
             >
-              Auto scroll
+              {t('Auto scroll')}
             </StyledCheckbox>
           }
         />

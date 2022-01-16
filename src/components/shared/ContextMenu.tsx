@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { ButtonToolbar, Col, FlexboxGrid, Grid, Form, Icon, Row, Whisper } from 'rsuite';
+import { t } from 'i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addModalPage,
@@ -346,9 +347,10 @@ export const GlobalContextMenu = () => {
   const playlistSuccessToast = (songCount: number, playlistId: string) => {
     notifyToast(
       'success',
-      `Added ${songCount} item(s) to playlist ${
-        playlists.find((pl: any) => pl.id === playlistId)?.title
-      }`,
+      t('Added {{songCount}} item(s) to playlist {{playlist}}', {
+        songCount,
+        playlist: playlists.find((pl: any) => pl.id === playlistId)?.title,
+      }),
       <>
         <StyledButton
           appearance="link"
@@ -357,7 +359,7 @@ export const GlobalContextMenu = () => {
             dispatch(setContextMenu({ show: false }));
           }}
         >
-          Go to playlist
+          {t('Go to playlist')}
         </StyledButton>
       </>
     );
@@ -491,7 +493,7 @@ export const GlobalContextMenu = () => {
         }
       }
     } catch (err) {
-      notifyToast('error', 'Error adding to playlist');
+      notifyToast('error', t('Error adding to playlist'));
     } finally {
       dispatch(removeProcessingPlaylist(localSelectedPlaylistId));
       queryClient.removeQueries(['playlist', localSelectedPlaylistId]);
@@ -521,7 +523,12 @@ export const GlobalContextMenu = () => {
     if (isFailedResponse(res)) {
       notifyToast('error', errorMessages(res)[0]);
     } else {
-      notifyToast('info', `Deleted ${multiSelect.selected.length} playlist(s)`);
+      notifyToast(
+        'info',
+        t('Deleted {{n}} playlists', {
+          n: multiSelect.selected.length,
+        })
+      );
     }
 
     await queryClient.refetchQueries(['playlists'], {
@@ -543,7 +550,7 @@ export const GlobalContextMenu = () => {
         await queryClient.refetchQueries(['playlists'], {
           active: true,
         });
-        notifyToast('success', `Playlist "${newPlaylistName}" created!`);
+        notifyToast('success', t('Playlist "{{newPlaylistName}}" created!', { newPlaylistName }));
       }
     } catch (err) {
       notifyToast('error', err);
@@ -710,7 +717,7 @@ export const GlobalContextMenu = () => {
         })
       );
     } else {
-      notifyToast('error', 'Select only one row');
+      notifyToast('error', t('Select only one row'));
     }
   };
 
@@ -719,7 +726,7 @@ export const GlobalContextMenu = () => {
     if (misc.contextMenu.type.match('music|nowPlaying') && multiSelect.selected.length === 1) {
       history.push(`/library/folder?folderId=${multiSelect.selected[0].parent}`);
     } else {
-      notifyToast('error', 'Select only one row');
+      notifyToast('error', t('Select only one row'));
     }
   };
 
@@ -747,22 +754,22 @@ export const GlobalContextMenu = () => {
           numOfDividers={3}
         >
           <ContextMenuButton
-            text="Play"
+            text={t('Play')}
             onClick={handlePlay}
             disabled={misc.contextMenu.disabledOptions.includes('play')}
           />
           <ContextMenuButton
-            text="Add to queue (next)"
+            text={t('Add to queue (next)')}
             onClick={() => handleAddToQueue('next')}
             disabled={misc.contextMenu.disabledOptions.includes('addToQueueNext')}
           />
           <ContextMenuButton
-            text="Add to queue (later)"
+            text={t('Add to queue (later)')}
             onClick={() => handleAddToQueue('later')}
             disabled={misc.contextMenu.disabledOptions.includes('addToQueueLast')}
           />
           <ContextMenuButton
-            text="Remove selected"
+            text={t('Remove selected')}
             onClick={handleRemoveSelected}
             disabled={misc.contextMenu.disabledOptions.includes('removeSelected')}
           />
@@ -824,7 +831,7 @@ export const GlobalContextMenu = () => {
                           : indexToMoveTo > playlist.entry?.length) || indexToMoveTo < 0
                       }
                     >
-                      Go
+                      {t('Go')}
                     </StyledInputGroupButton>
                   </StyledInputGroup>
                 </Form>
@@ -832,7 +839,7 @@ export const GlobalContextMenu = () => {
             }
           >
             <ContextMenuButton
-              text="Move selected to [...]"
+              text={t('Move selected to [...]')}
               disabled={misc.contextMenu.disabledOptions.includes('moveSelectedTo')}
             />
           </Whisper>
@@ -855,6 +862,7 @@ export const GlobalContextMenu = () => {
                       labelKey="title"
                       valueKey="id"
                       width={200}
+                      placeholder={t('Select')}
                       onChange={(e: any) => setSelectedPlaylistId(e)}
                     />
                     <StyledButton
@@ -875,7 +883,7 @@ export const GlobalContextMenu = () => {
                     appearance="subtle"
                     onClick={() => setShouldCreatePlaylist(!shouldCreatePlaylist)}
                   >
-                    Create new playlist
+                    {t('Create new playlist')}
                   </StyledButton>
                 </div>
                 {shouldCreatePlaylist && (
@@ -883,7 +891,7 @@ export const GlobalContextMenu = () => {
                     <br />
                     <StyledInputGroup>
                       <StyledInput
-                        placeholder="Enter name..."
+                        placeholder={t('Enter name...')}
                         value={newPlaylistName}
                         onChange={(e: string) => setNewPlaylistName(e)}
                       />
@@ -898,7 +906,7 @@ export const GlobalContextMenu = () => {
                           setShouldCreatePlaylist(false);
                         }}
                       >
-                        Ok
+                        {t('Ok')}
                       </StyledButton>
                     </StyledInputGroup>
                   </Form>
@@ -907,7 +915,7 @@ export const GlobalContextMenu = () => {
             }
           >
             <ContextMenuButton
-              text="Add to playlist"
+              text={t('Add to playlist')}
               onClick={() =>
                 addToPlaylistTriggerRef.current.state.isOverlayShown
                   ? addToPlaylistTriggerRef.current.close()
@@ -923,15 +931,20 @@ export const GlobalContextMenu = () => {
             trigger="none"
             speaker={
               <ContextMenuPopover>
-                <p>Are you sure you want to delete {multiSelect.selected?.length} playlist(s)?</p>
+                <p>
+                  {
+                    (t('Are you sure you want to delete {{n}} playlist(s)?'),
+                    { n: multiSelect.selected?.length })
+                  }
+                </p>
                 <StyledButton onClick={handleDeletePlaylist} appearance="link">
-                  Yes
+                  {t('Yes')}
                 </StyledButton>
               </ContextMenuPopover>
             }
           >
             <ContextMenuButton
-              text="Delete playlist(s)"
+              text={t('Delete playlist(s)')}
               onClick={() =>
                 deletePlaylistTriggerRef.current.state.isOverlayShown
                   ? deletePlaylistTriggerRef.current.close()
@@ -942,12 +955,12 @@ export const GlobalContextMenu = () => {
           </Whisper>
           <ContextMenuDivider />
           <ContextMenuButton
-            text="Add to favorites"
+            text={t('Add to favorites')}
             onClick={handleFavorite}
             disabled={misc.contextMenu.disabledOptions.includes('addToFavorites')}
           />
           <ContextMenuButton
-            text="Remove from favorites"
+            text={t('Remove from favorites')}
             onClick={handleUnfavorite}
             disabled={misc.contextMenu.disabledOptions.includes('removeFromFavorites')}
           />
@@ -975,7 +988,7 @@ export const GlobalContextMenu = () => {
             }
           >
             <ContextMenuButton
-              text="Set rating"
+              text={t('Set rating')}
               onClick={handleUnfavorite}
               disabled={
                 misc.contextMenu.disabledOptions.includes('setRating') ||
@@ -985,12 +998,12 @@ export const GlobalContextMenu = () => {
           </Whisper>
           <ContextMenuDivider />
           <ContextMenuButton
-            text="View in modal"
+            text={t('View in modal')}
             onClick={handleViewInModal}
             disabled={misc.contextMenu.disabledOptions.includes('viewInModal')}
           />
           <ContextMenuButton
-            text="View in folder"
+            text={t('View in folder')}
             onClick={handleViewInFolder}
             disabled={misc.contextMenu.disabledOptions.includes('viewInFolder')}
           />

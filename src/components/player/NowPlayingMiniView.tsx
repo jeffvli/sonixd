@@ -4,6 +4,7 @@ import settings from 'electron-settings';
 import { ButtonToolbar, FlexboxGrid, Icon, Whisper, ControlLabel } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   toggleSelected,
@@ -60,6 +61,7 @@ import { apiController } from '../../api/controller';
 import { Song } from '../../types';
 
 const NowPlayingMiniView = () => {
+  const { t } = useTranslation();
   const tableRef = useRef<any>();
   const dispatch = useAppDispatch();
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -255,7 +257,7 @@ const NowPlayingMiniView = () => {
       return autoPlaylistTriggerRef.current.close();
     }
     setIsLoadingRandom(false);
-    return notifyToast('warning', `No songs found, adjust your filters`);
+    return notifyToast('warning', t('No songs found, adjust your filters'));
   };
 
   const handleRowFavorite = async (rowData: any) => {
@@ -317,7 +319,7 @@ const NowPlayingMiniView = () => {
                         enterable
                         speaker={
                           <StyledPopover>
-                            <ControlLabel>How many tracks? (1-500)*</ControlLabel>
+                            <ControlLabel>{t('How many tracks? (1-500)*')}</ControlLabel>
                             <StyledInputNumber
                               min={1}
                               max={500}
@@ -332,7 +334,7 @@ const NowPlayingMiniView = () => {
                             <br />
                             <FlexboxGrid justify="space-between">
                               <FlexboxGrid.Item>
-                                <ControlLabel>From year</ControlLabel>
+                                <ControlLabel>{t('From year')}</ControlLabel>
                                 <div>
                                   <StyledInputNumber
                                     width={100}
@@ -348,7 +350,7 @@ const NowPlayingMiniView = () => {
                                 </div>
                               </FlexboxGrid.Item>
                               <FlexboxGrid.Item>
-                                <ControlLabel>To year</ControlLabel>
+                                <ControlLabel>{t('To year')}</ControlLabel>
                                 <div>
                                   <StyledInputNumber
                                     width={100}
@@ -363,7 +365,7 @@ const NowPlayingMiniView = () => {
                               </FlexboxGrid.Item>
                             </FlexboxGrid>
                             <br />
-                            <ControlLabel>Genre</ControlLabel>
+                            <ControlLabel>{t('Genre')}</ControlLabel>
                             <StyledInputPickerContainer ref={genrePickerContainerRef}>
                               <StyledInputPicker
                                 style={{ width: '100%' }}
@@ -373,12 +375,13 @@ const NowPlayingMiniView = () => {
                                 valueKey="id"
                                 labelKey="title"
                                 virtualized
+                                placeholder={t('Select')}
                                 onChange={(e: string) => setRandomPlaylistGenre(e)}
                               />
                             </StyledInputPickerContainer>
                             <br />
                             <StyledInputPickerContainer ref={musicFolderPickerContainerRef}>
-                              <ControlLabel>Music folder</ControlLabel>
+                              <ControlLabel>{t('Music folder')}</ControlLabel>
                               <br />
                               <StyledInputPicker
                                 style={{ width: '100%' }}
@@ -387,6 +390,7 @@ const NowPlayingMiniView = () => {
                                 defaultValue={musicFolder}
                                 valueKey="id"
                                 labelKey="title"
+                                placeholder={t('Select')}
                                 onChange={(e: any) => {
                                   setMusicFolder(e);
                                 }}
@@ -400,8 +404,8 @@ const NowPlayingMiniView = () => {
                                 loading={isLoadingRandom}
                                 disabled={!(typeof autoPlaylistTrackCount === 'number')}
                               >
-                                <Icon icon="plus-circle" style={{ marginRight: '10px' }} /> Add
-                                (next)
+                                <Icon icon="plus-circle" style={{ marginRight: '10px' }} />
+                                {t('Add (next)')}
                               </StyledButton>
                               <StyledButton
                                 appearance="subtle"
@@ -409,7 +413,8 @@ const NowPlayingMiniView = () => {
                                 loading={isLoadingRandom}
                                 disabled={!(typeof autoPlaylistTrackCount === 'number')}
                               >
-                                <Icon icon="plus" style={{ marginRight: '10px' }} /> Add (later)
+                                <Icon icon="plus" style={{ marginRight: '10px' }} />
+                                {t('Add (later)')}
                               </StyledButton>
                             </ButtonToolbar>
                             <ButtonToolbar>
@@ -421,7 +426,7 @@ const NowPlayingMiniView = () => {
                                 disabled={!(typeof autoPlaylistTrackCount === 'number')}
                               >
                                 <Icon icon="play" style={{ marginRight: '10px' }} />
-                                Play
+                                {t('Play')}
                               </StyledButton>
                             </ButtonToolbar>
                           </StyledPopover>

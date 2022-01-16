@@ -2,58 +2,59 @@
 /* eslint-disable consistent-return */
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
+import i18next from 'i18next';
 import { Item } from '../types';
 
 const ALBUM_COLUMNS = [
-  { label: 'Artist', dataKey: 'albumArtist' },
-  { label: 'Created', dataKey: 'created' },
-  { label: 'Duration', dataKey: 'duration' },
-  { label: 'Favorite', dataKey: 'starred' },
-  { label: 'Genre', dataKey: 'albumGenre' },
-  { label: 'Play Count', dataKey: 'playCount' },
-  { label: 'Rating', dataKey: 'userRating' },
-  { label: 'Song Count', dataKey: 'songCount' },
-  { label: 'Title', dataKey: 'title' },
-  { label: 'Year', dataKey: 'year' },
+  { label: i18next.t('Artist'), dataKey: 'albumArtist' },
+  { label: i18next.t('Created'), dataKey: 'created' },
+  { label: i18next.t('Duration'), dataKey: 'duration' },
+  { label: i18next.t('Favorite'), dataKey: 'starred' },
+  { label: i18next.t('Genre'), dataKey: 'albumGenre' },
+  { label: i18next.t('Play Count'), dataKey: 'playCount' },
+  { label: i18next.t('Rating'), dataKey: 'userRating' },
+  { label: i18next.t('Song Count'), dataKey: 'songCount' },
+  { label: i18next.t('Title'), dataKey: 'title' },
+  { label: i18next.t('Year'), dataKey: 'year' },
 ];
 
 const ARTIST_COLUMNS = [
-  { label: 'Album Count', dataKey: 'albumCount' },
-  { label: 'Duration', dataKey: 'duration' },
-  { label: 'Favorite', dataKey: 'starred' },
-  { label: 'Rating', dataKey: 'userRating' },
-  { label: 'Title', dataKey: 'title' },
+  { label: i18next.t('Album Count'), dataKey: 'albumCount' },
+  { label: i18next.t('Duration'), dataKey: 'duration' },
+  { label: i18next.t('Favorite'), dataKey: 'starred' },
+  { label: i18next.t('Rating'), dataKey: 'userRating' },
+  { label: i18next.t('Title'), dataKey: 'title' },
 ];
 
 const MUSIC_COLUMNS = [
-  { label: 'Artist', dataKey: 'albumArtist' },
-  { label: 'Bitrate', dataKey: 'bitRate' },
-  { label: 'Created', dataKey: 'created' },
-  { label: 'Duration', dataKey: 'duration' },
-  { label: 'Favorite', dataKey: 'starred' },
-  { label: 'Genre', dataKey: 'albumGenre' },
-  { label: 'Play Count', dataKey: 'playCount' },
-  { label: 'Rating', dataKey: 'userRating' },
-  { label: 'Size', dataKey: 'size' },
-  { label: 'Title', dataKey: 'title' },
-  { label: 'Year', dataKey: 'year' },
+  { label: i18next.t('Artist'), dataKey: 'albumArtist' },
+  { label: i18next.t('Bitrate'), dataKey: 'bitRate' },
+  { label: i18next.t('Created'), dataKey: 'created' },
+  { label: i18next.t('Duration'), dataKey: 'duration' },
+  { label: i18next.t('Favorite'), dataKey: 'starred' },
+  { label: i18next.t('Genre'), dataKey: 'albumGenre' },
+  { label: i18next.t('Play Count'), dataKey: 'playCount' },
+  { label: i18next.t('Rating'), dataKey: 'userRating' },
+  { label: i18next.t('Size'), dataKey: 'size' },
+  { label: i18next.t('Title'), dataKey: 'title' },
+  { label: i18next.t('Year'), dataKey: 'year' },
 ];
 
 const PLAYLIST_COLUMNS = [
-  { label: 'Created', dataKey: 'created' },
-  { label: 'Description', dataKey: 'comment' },
-  { label: 'Duration', dataKey: 'duration' },
-  { label: 'Modified', dataKey: 'changed' },
-  { label: 'Owner', dataKey: 'owner' },
-  { label: 'Song Count', dataKey: 'songCount' },
-  { label: 'Title', dataKey: 'title' },
-  { label: 'Visibility', dataKey: 'public' },
+  { label: i18next.t('Created'), dataKey: 'created' },
+  { label: i18next.t('Description'), dataKey: 'comment' },
+  { label: i18next.t('Duration'), dataKey: 'duration' },
+  { label: i18next.t('Modified'), dataKey: 'changed' },
+  { label: i18next.t('Owner'), dataKey: 'owner' },
+  { label: i18next.t('Song Count'), dataKey: 'songCount' },
+  { label: i18next.t('Title'), dataKey: 'title' },
+  { label: i18next.t('Visibility'), dataKey: 'public' },
 ];
 
 const GENRE_COLUMNS = [
-  { label: 'Album Count', dataKey: 'albumCount' },
-  { label: 'Song Count', dataKey: 'songCount' },
-  { label: 'Title', dataKey: 'title' },
+  { label: i18next.t('Album Count'), dataKey: 'albumCount' },
+  { label: i18next.t('Song Count'), dataKey: 'songCount' },
+  { label: i18next.t('Title'), dataKey: 'title' },
 ];
 
 const useColumnSort = (data: any[], type: Item, sort: { column: string; type: 'asc' | 'desc' }) => {

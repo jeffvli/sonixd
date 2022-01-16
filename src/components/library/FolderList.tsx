@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Icon } from 'rsuite';
+import { useTranslation } from 'react-i18next';
 import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -26,6 +27,7 @@ import { apiController } from '../../api/controller';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const FolderList = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const query = useRouterQuery();
@@ -179,8 +181,8 @@ const FolderList = () => {
                 folderData?.title
                   ? folderData.title
                   : isLoadingFolderData
-                  ? 'Loading...'
-                  : 'Select a folder'
+                  ? t('Loading...')
+                  : t('Select a folder')
               }`}
               showTitleTooltip
               subtitle={
@@ -195,6 +197,7 @@ const FolderList = () => {
                         defaultValue={musicFolder}
                         valueKey="id"
                         labelKey="title"
+                        placeholder={t('Select')}
                         onChange={(e: any) => {
                           setMusicFolder(e);
                         }}
@@ -215,7 +218,7 @@ const FolderList = () => {
                         }}
                       >
                         <Icon icon="level-up" style={{ marginRight: '10px' }} />
-                        Go up
+                        {t('Go up')}
                       </StyledButton>
                     </ButtonToolbar>
                   </StyledInputPickerContainer>

@@ -4,6 +4,7 @@ import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
 import { Nav, Icon, RadioGroup, Whisper } from 'rsuite';
 import { WhisperInstance } from 'rsuite/lib/Whisper';
+import { Trans, useTranslation } from 'react-i18next';
 import { ConfigPanel } from '../styled';
 import {
   StyledInputPicker,
@@ -43,10 +44,13 @@ import {
 } from '../../../redux/configSlice';
 import { Item, Server } from '../../../types';
 import ConfigOption from '../ConfigOption';
+import i18n, { Languages } from '../../../i18n/i18n';
+import { notifyToast } from '../../shared/toast';
 import { setPagination } from '../../../redux/viewSlice';
 import { MUSIC_SORT_TYPES } from '../../library/MusicList';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
 
@@ -69,21 +73,21 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
   const currentGenreColumns = genreCols?.map((column: any) => column.label) || [];
 
   return (
-    <ConfigPanel header="List View" bordered={bordered}>
+    <ConfigPanel header={t('List View')} bordered={bordered}>
       <Nav
         activeKey={config.active.columnSelectorTab}
         onSelect={(e) => dispatch(setActive({ ...config.active, columnSelectorTab: e }))}
       >
-        <StyledNavItem eventKey="music">Songs</StyledNavItem>
-        <StyledNavItem eventKey="album">Albums</StyledNavItem>
-        <StyledNavItem eventKey="playlist">Playlists</StyledNavItem>
-        <StyledNavItem eventKey="artist">Artists</StyledNavItem>
-        <StyledNavItem eventKey="genre">Genres</StyledNavItem>
-        <StyledNavItem eventKey="mini">Miniplayer</StyledNavItem>
+        <StyledNavItem eventKey="music">{t('Songs')}</StyledNavItem>
+        <StyledNavItem eventKey="album">{t('Albums')}</StyledNavItem>
+        <StyledNavItem eventKey="playlist">{t('Playlists')}</StyledNavItem>
+        <StyledNavItem eventKey="artist">{t('Artists')}</StyledNavItem>
+        <StyledNavItem eventKey="genre">{t('Genres')}</StyledNavItem>
+        <StyledNavItem eventKey="mini">{t('Miniplayer')}</StyledNavItem>
       </Nav>
       {config.active.columnSelectorTab === 'music' && (
         <ListViewConfig
-          type="Songs"
+          type={t('Songs')}
           defaultColumns={currentSongColumns}
           columnPicker={songColumnPicker}
           columnList={songColumnListAuto}
@@ -92,13 +96,13 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'musicListRowHeight',
             fontSize: 'musicListFontSize',
           }}
-          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating'] : []}
+          disabledItemValues={config.serverType === Server.Jellyfin ? [t('Rating')] : []}
         />
       )}
 
       {config.active.columnSelectorTab === 'album' && (
         <ListViewConfig
-          type="Albums"
+          type={t('Albums')}
           defaultColumns={currentAlbumColumns}
           columnPicker={albumColumnPicker}
           columnList={albumColumnListAuto}
@@ -107,13 +111,15 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'albumListRowHeight',
             fontSize: 'albumListFontSize',
           }}
-          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating', 'Play Count'] : []}
+          disabledItemValues={
+            config.serverType === Server.Jellyfin ? [t('Rating'), t('Play Count')] : []
+          }
         />
       )}
 
       {config.active.columnSelectorTab === 'playlist' && (
         <ListViewConfig
-          type="Playlists"
+          type={t('Playlists')}
           defaultColumns={currentPlaylistColumns}
           columnPicker={playlistColumnPicker}
           columnList={playlistColumnListAuto}
@@ -124,7 +130,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
           }}
           disabledItemValues={
             config.serverType === Server.Jellyfin
-              ? ['Modified', 'Owner', 'Track Count', 'Visibility']
+              ? [t('Modified'), t('Owner'), t('Track Count'), t('Visibility')]
               : []
           }
         />
@@ -132,7 +138,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 
       {config.active.columnSelectorTab === 'artist' && (
         <ListViewConfig
-          type="Artists"
+          type={t('Artists')}
           defaultColumns={currentArtistColumns}
           columnPicker={artistColumnPicker}
           columnList={artistColumnListAuto}
@@ -142,14 +148,16 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             fontSize: 'artistListFontSize',
           }}
           disabledItemValues={
-            config.serverType === Server.Jellyfin ? ['Album Count', 'Rating'] : ['Duration']
+            config.serverType === Server.Jellyfin
+              ? [t('Album Count'), t('Rating')]
+              : [t('Duration')]
           }
         />
       )}
 
       {config.active.columnSelectorTab === 'genre' && (
         <ListViewConfig
-          type="Genres"
+          type={t('Genres')}
           defaultColumns={currentGenreColumns}
           columnPicker={genreColumnPicker}
           columnList={genreColumnListAuto}
@@ -159,14 +167,14 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             fontSize: 'genreListFontSize',
           }}
           disabledItemValues={
-            config.serverType === Server.Jellyfin ? ['Album Count', 'Track Count'] : []
+            config.serverType === Server.Jellyfin ? [t('Album Count'), t('Track Count')] : []
           }
         />
       )}
 
       {config.active.columnSelectorTab === 'mini' && (
         <ListViewConfig
-          type="Mini-player"
+          type={t('Mini-player')}
           defaultColumns={currentMiniColumns}
           columnPicker={songColumnPicker}
           columnList={songColumnListAuto}
@@ -175,13 +183,13 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             rowHeight: 'miniListRowHeight',
             fontSize: 'miniListFontSize',
           }}
-          disabledItemValues={config.serverType === Server.Jellyfin ? ['Rating'] : []}
+          disabledItemValues={config.serverType === Server.Jellyfin ? [t('Rating')] : []}
         />
       )}
 
       <ConfigOption
-        name="Highlight On Hover"
-        description="Highlights the list view row when hovering it with the mouse."
+        name={t('Highlight On Hover')}
+        description={t('Highlights the list view row when hovering it with the mouse.')}
         option={
           <StyledToggle
             defaultChecked={highlightOnRowHoverChk}
@@ -204,14 +212,15 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
 };
 
 export const GridViewConfigPanel = ({ bordered }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
 
   return (
-    <ConfigPanel header="Grid View" bordered={bordered}>
+    <ConfigPanel header={t('Grid View')} bordered={bordered}>
       <ConfigOption
-        name="Card Size"
-        description="The width and height in pixels (px) of each grid view card."
+        name={t('Card Size')}
+        description={t('The width and height in pixels (px) of each grid view card.')}
         option={
           <StyledInputNumber
             defaultValue={config.lookAndFeel.gridView.cardSize}
@@ -228,8 +237,8 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Gap Size"
-        description="The gap in pixels (px) of the grid view layout."
+        name={t('Gap Size')}
+        description={t('The gap in pixels (px) of the grid view layout.')}
         option={
           <StyledInputNumber
             defaultValue={config.lookAndFeel.gridView.gapSize}
@@ -246,8 +255,8 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Grid Alignment"
-        description="The alignment of cards in the grid view layout."
+        name={t('Grid Alignment')}
+        description={t('The alignment of cards in the grid view layout.')}
         option={
           <RadioGroup
             name="gridAlignemntRadioList"
@@ -259,8 +268,8 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
               settings.setSync('gridAlignment', e);
             }}
           >
-            <StyledRadio value="flex-start">Left</StyledRadio>
-            <StyledRadio value="center">Center</StyledRadio>
+            <StyledRadio value="flex-start">{t('Left')}</StyledRadio>
+            <StyledRadio value="center">{t('Center')}</StyledRadio>
           </RadioGroup>
         }
       />
@@ -269,6 +278,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
 };
 
 export const ThemeConfigPanel = ({ bordered }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
@@ -276,6 +286,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   );
 
   const [selectedTheme, setSelectedTheme] = useState(String(settings.getSync('theme')));
+  const languagePickerContainerRef = useRef(null);
   const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
   const titleBarPickerContainerRef = useRef(null);
@@ -288,11 +299,36 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   );
 
   return (
-    <ConfigPanel header="Look & Feel" bordered={bordered}>
+    <ConfigPanel header={t('Look & Feel')} bordered={bordered}>
+      <ConfigOption
+        name={t('Language')}
+        description={t('The application language.')}
+        option={
+          <StyledInputPickerContainer ref={languagePickerContainerRef}>
+            <StyledInputPicker
+              container={() => languagePickerContainerRef.current}
+              data={Languages}
+              width={200}
+              cleanable={false}
+              defaultValue={String(settings.getSync('language'))}
+              placeholder={t('Select')}
+              onChange={(e: string) => {
+                i18n.changeLanguage(e, (err) => {
+                  if (err) {
+                    notifyToast('error', 'Error while changing the language');
+                  }
+                });
+                settings.setSync('language', e);
+              }}
+            />
+          </StyledInputPickerContainer>
+        }
+      />
+
       <ConfigOption
         name={
           <>
-            Theme{' '}
+            {t('Theme')}{' '}
             <StyledIconButton
               size="xs"
               icon={<Icon icon="refresh" />}
@@ -307,7 +343,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
           </>
         }
         description={
-          <>
+          <Trans>
             The application theme. Want to create your own themes? Check out the documentation{' '}
             <StyledLink
               onClick={() => shell.openExternal('https://github.com/jeffvli/sonixd/discussions/61')}
@@ -315,7 +351,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               here
             </StyledLink>
             .
-          </>
+          </Trans>
         }
         option={
           <StyledInputPickerContainer ref={themePickerContainerRef}>
@@ -328,6 +364,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                 cleanable={false}
                 width={200}
                 defaultValue={selectedTheme}
+                placeholder={t('Select')}
                 onChange={(e: string) => {
                   settings.setSync('theme', e);
                   setSelectedTheme(e);
@@ -340,8 +377,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Font"
-        description="The application font."
+        name={t('Font')}
+        description={t('The application font.')}
         option={
           <StyledInputPickerContainer ref={fontPickerContainerRef}>
             <StyledInputPicker
@@ -351,6 +388,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               width={200}
               cleanable={false}
               defaultValue={String(settings.getSync('font'))}
+              placeholder={t('Select')}
               onChange={(e: string) => {
                 settings.setSync('font', e);
                 dispatch(setFont(e));
@@ -361,8 +399,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Titlebar Style"
-        description="The titlebar style (requires app restart). "
+        name={t('Titlebar Style')}
+        description={t('The titlebar style (requires app restart). ')}
         option={
           <StyledInputPickerContainer ref={titleBarPickerContainerRef}>
             <Whisper
@@ -370,9 +408,9 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               trigger="none"
               placement="auto"
               speaker={
-                <StyledPopover title="Restart?">
-                  <div>Do you want to restart the application now?</div>
-                  <strong>This is highly recommended!</strong>
+                <StyledPopover title={t('Restart?')}>
+                  <div>{t('Do you want to restart the application now?')}</div>
+                  <strong>{t('This is highly recommended!')}</strong>
                   <div>
                     <StyledButton
                       id="titlebar-restart-button"
@@ -382,7 +420,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                       }}
                       appearance="primary"
                     >
-                      Yes
+                      {t('Yes')}
                     </StyledButton>
                   </div>
                 </StyledPopover>
@@ -400,13 +438,14 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                     value: 'windows',
                   },
                   {
-                    label: 'Native',
+                    label: t('Native'),
                     value: 'native',
                   },
                 ]}
                 cleanable={false}
                 defaultValue={String(settings.getSync('titleBarStyle'))}
                 width={200}
+                placeholder={t('Select')}
                 onChange={(e: string) => {
                   settings.setSync('titleBarStyle', e);
                   dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
@@ -419,8 +458,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Dynamic Background"
-        description="Sets a dynamic background based on the currently playing song."
+        name={t('Dynamic Background')}
+        description={t('Sets a dynamic background based on the currently playing song.')}
         option={
           <StyledToggle
             defaultChecked={dynamicBackgroundChk}
@@ -435,45 +474,46 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Start page"
-        description="Page Sonixd will display on start."
+        name={t('Start page')}
+        description={t('Page Sonixd will display on start.')}
         option={
           <StyledInputPickerContainer ref={startPagePickerContainerRef}>
             <StyledInputPicker
               container={() => startPagePickerContainerRef.current}
               data={[
                 {
-                  label: 'Dashboard',
+                  label: t('Dashboard'),
                   value: '/',
                 },
                 {
-                  label: 'Playlists',
+                  label: t('Playlists'),
                   value: '/playlist',
                 },
                 {
-                  label: 'Favorites',
+                  label: t('Favorites'),
                   value: '/starred',
                 },
                 {
-                  label: 'Albums',
+                  label: t('Albums'),
                   value: '/library/album',
                 },
                 {
-                  label: 'Artists',
+                  label: t('Artists'),
                   value: '/library/artist',
                 },
                 {
-                  label: 'Genres',
+                  label: t('Genres'),
                   value: '/library/genre',
                 },
                 {
-                  label: 'Folders',
+                  label: t('Folders'),
                   value: '/library/folder',
                 },
               ]}
               cleanable={false}
               defaultValue={String(settings.getSync('startPage'))}
               width={200}
+              placeholder={t('Select')}
               onChange={(e: string) => {
                 settings.setSync('startPage', e);
               }}
@@ -483,8 +523,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
 
       <ConfigOption
-        name="Default Album Sort"
-        description="The default album page sort selection on application startup."
+        name={t('Default Album Sort')}
+        description={t('The default album page sort selection on application startup.')}
         option={
           <StyledInputPickerContainer ref={albumSortDefaultPickerContainerRef}>
             <StyledInputPicker
@@ -505,8 +545,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       />
       {config.serverType === Server.Jellyfin && (
         <ConfigOption
-          name="Default Song Sort"
-          description="The default song page sort selection on application startup."
+          name={t('Default Song Sort')}
+          description={t('The default song page sort selection on application startup.')}
           option={
             <StyledInputPickerContainer ref={musicSortDefaultPickerContainerRef}>
               <StyledInputPicker
@@ -528,14 +568,17 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
 };
 
 export const PaginationConfigPanel = ({ bordered }: any) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const view = useAppSelector((state) => state.view);
 
   return (
-    <ConfigPanel header="Pagination" bordered={bordered}>
+    <ConfigPanel header={t('Pagination')} bordered={bordered}>
       <ConfigOption
-        name="Items per page (Songs)"
-        description="The number of items that will be retrieved per page. Setting this to 0 will disable pagination."
+        name={t('Items per page (Songs)')}
+        description={t(
+          'The number of items that will be retrieved per page. Setting this to 0 will disable pagination.'
+        )}
         option={
           <StyledInputNumber
             defaultValue={view.music.pagination.recordsPerPage}

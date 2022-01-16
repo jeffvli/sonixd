@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -54,6 +55,7 @@ const Card = ({
   noModalButton,
   ...rest
 }: any) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
@@ -300,7 +302,7 @@ const Card = ({
                   onClick={handlePlayClick}
                 />
 
-                <CustomTooltip text="Add to queue (later)" delay={1000}>
+                <CustomTooltip text={t('Add to queue (later)')} delay={1000}>
                   <AppendOverlayButton
                     onClick={() => handlePlayAppend('later')}
                     size={size <= 160 ? 'xs' : 'sm'}
@@ -308,7 +310,7 @@ const Card = ({
                   />
                 </CustomTooltip>
 
-                <CustomTooltip text="Add to queue (next)" delay={1000}>
+                <CustomTooltip text={t('Add to queue (next)')} delay={1000}>
                   <AppendNextOverlayButton
                     onClick={() => handlePlayAppend('next')}
                     size={size <= 160 ? 'xs' : 'sm'}
@@ -317,7 +319,7 @@ const Card = ({
                 </CustomTooltip>
 
                 {playClick.type !== 'playlist' && (
-                  <CustomTooltip text="Toggle favorite" delay={1000}>
+                  <CustomTooltip text={t('Toggle favorite')} delay={1000}>
                     <FavoriteOverlayButton
                       onClick={() => handleFavorite(rest.details)}
                       size={size <= 160 ? 'xs' : 'sm'}
@@ -326,7 +328,7 @@ const Card = ({
                   </CustomTooltip>
                 )}
                 {!rest.isModal && !noModalButton && (
-                  <CustomTooltip text="View in modal" delay={1000}>
+                  <CustomTooltip text={t('View in modal')} delay={1000}>
                     <ModalViewOverlayButton
                       size={size <= 160 ? 'xs' : 'sm'}
                       icon={<Icon icon="external-link" />}

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Form, Whisper } from 'rsuite';
 import settings from 'electron-settings';
+import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import ListViewType from '../viewtypes/ListViewType';
 import PageLoader from '../loader/PageLoader';
@@ -33,6 +34,7 @@ import { setSort } from '../../redux/playlistSlice';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 
 const PlaylistList = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -102,7 +104,7 @@ const PlaylistList = () => {
   }
 
   if (isError) {
-    return <span>Error: {error.message}</span>;
+    return <span>{t('Error: {{error}}', { error: error.message })}</span>;
   }
 
   return (
@@ -112,7 +114,7 @@ const PlaylistList = () => {
         <GenericPageHeader
           title={
             <>
-              Playlists{' '}
+              {t('Playlists')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
                 {sortedData?.length || '...'}
               </StyledTag>
@@ -179,7 +181,7 @@ const PlaylistList = () => {
                   <Form>
                     <StyledInputGroup>
                       <StyledInput
-                        placeholder="Enter name..."
+                        placeholder={t('Enter name...')}
                         value={newPlaylistName}
                         onChange={(e: string) => setNewPlaylistName(e)}
                       />
@@ -196,7 +198,7 @@ const PlaylistList = () => {
                         playlistTriggerRef.current.close();
                       }}
                     >
-                      Create
+                      {t('Create')}
                     </StyledButton>
                   </Form>
                 </StyledPopover>
@@ -204,7 +206,6 @@ const PlaylistList = () => {
             >
               <AddPlaylistButton
                 size="sm"
-                width={125}
                 onClick={() =>
                   playlistTriggerRef.current.state.isOverlayShown
                     ? playlistTriggerRef.current.close()
