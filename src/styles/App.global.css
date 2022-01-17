@@ -25,6 +25,26 @@ body {
   z-index: 1;
 }
 
+.rs-modal-wrapper {
+  display: flex;
+  overflow-y: hidden !important;
+}
+
+.rs-modal-backdrop.fade {
+  transition: none !important;
+}
+
+.rs-modal-backdrop.out {
+  transition: none !important;
+}
+
+.rs-modal {
+  transition: none !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
 .rs-table-cell-content > div::selection,
 .rs-table-cell-content > div > div::selection,
 .rs-table-cell-content > div > span > img::selection,

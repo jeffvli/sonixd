@@ -20,7 +20,7 @@ import ArtistList from './components/library/ArtistList';
 import GenreList from './components/library/GenreList';
 import { MockFooter } from './components/settings/styled';
 import { useAppSelector } from './redux/hooks';
-import PageModal from './components/modal/PageModal';
+import { PageModal } from './components/modal/PageModal';
 import NowPlayingMiniView from './components/player/NowPlayingMiniView';
 import { GlobalContextMenu } from './components/shared/ContextMenu';
 import SearchView from './components/search/SearchView';
