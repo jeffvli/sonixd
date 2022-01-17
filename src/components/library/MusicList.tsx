@@ -20,16 +20,17 @@ import { StyledInputPicker, StyledInputPickerContainer, StyledTag } from '../sha
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
-import { Item } from '../../types';
+import { Item, Server } from '../../types';
 import useColumnSort from '../../hooks/useColumnSort';
 import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/playQueueSlice';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { setStatus } from '../../redux/playerSlice';
+import useListScroll from '../../hooks/useListScroll';
 
+// prettier-ignore
 export const MUSIC_SORT_TYPES = [
   { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Album)'), value: 'alphabeticalByAlbum', role: i18next.t('Default') },
-  // eslint-disable-next-line prettier/prettier
   { label: i18next.t('A-Z (Album Artist)'), value: 'alphabeticalByArtist', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Artist)'), value: 'alphabeticalByTrackArtist', replacement: 'Artist' },
   { label: i18next.t('Most Played'), value: 'frequent', role: i18next.t('Default') },
@@ -50,9 +51,11 @@ const MusicList = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortTypes, setSortTypes] = useState<any[]>([]);
   const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
-
   const musicFilterPickerContainerRef = useRef(null);
   const [currentQueryKey, setCurrentQueryKey] = useState<any>(['musicList']);
+
+  const listRef = useRef<any>();
+  const { listScroll } = useListScroll(listRef);
 
   useEffect(() => {
     if (folder.applied.music) {
@@ -60,22 +63,18 @@ const MusicList = () => {
     } else {
       setMusicFolder({ loaded: true, id: undefined });
     }
+  }, [folder.applied.music, folder.musicFolder]);
 
+  useEffect(() => {
     setCurrentQueryKey([
       'musicList',
       view.music.filter,
       view.music.pagination.activePage,
       musicFolder.id,
     ]);
-  }, [
-    folder.applied.music,
-    folder.musicFolder,
-    musicFolder.id,
-    view.music.filter,
-    view.music.pagination.activePage,
-  ]);
+  }, [musicFolder.id, view.music.filter, view.music.pagination.activePage]);
 
-  const { isLoading, isError, data: musicData, error }: any = useQuery(
+  const { isLoading, isError, data: songs, error }: any = useQuery(
     currentQueryKey,
     () =>
       view.music.filter === 'random' || view.music.pagination.recordsPerPage !== 0
@@ -116,31 +115,51 @@ const MusicList = () => {
       cacheTime: view.music.pagination.recordsPerPage !== 0 ? 600000 : Infinity,
       staleTime: view.music.pagination.recordsPerPage !== 0 ? 600000 : Infinity,
       enabled: currentQueryKey !== ['musicList'] && musicFolder.loaded,
-      onSuccess: (e) => {
-        dispatch(
-          setPagination({
-            listType: Item.Music,
-            data: {
-              pages: Math.floor(e.totalRecordCount / view.music.pagination.recordsPerPage) + 1,
-            },
-          })
-        );
-      },
     }
   );
 
-  const searchedData = useSearchQuery(misc.searchQuery, musicData?.data, [
+  const searchedData = useSearchQuery(misc.searchQuery, songs?.data, [
     'title',
     'artist',
     'genre',
     'year',
   ]);
 
-  const { sortedData } = useColumnSort(musicData?.data, Item.Album, view.music.sort);
+  const { sortedData } = useColumnSort(songs?.data, Item.Album, view.music.sort);
 
   useEffect(() => {
     setSortTypes(MUSIC_SORT_TYPES);
   }, []);
+
+  useEffect(() => {
+    if (songs?.data && sortedData?.length) {
+      const pages =
+        Math.floor(
+          (view.music.pagination.serverSide && config.serverType === Server.Jellyfin
+            ? songs?.totalRecordCount
+            : sortedData?.length) / view.music.pagination.recordsPerPage
+        ) + 1;
+
+      if (pages && view.music.pagination.pages !== pages) {
+        dispatch(
+          setPagination({
+            listType: Item.Music,
+            data: {
+              pages,
+            },
+          })
+        );
+      }
+    }
+  }, [
+    songs,
+    config.serverType,
+    dispatch,
+    sortedData?.length,
+    view.music.pagination.serverSide,
+    view.music.pagination.recordsPerPage,
+    view.music.pagination.pages,
+  ]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -165,7 +184,7 @@ const MusicList = () => {
     dispatch(clearSelected());
     dispatch(
       setPlayQueueByRowClick({
-        entries: musicData.data,
+        entries: songs.data,
         currentIndex: rowData.rowIndex,
         currentSongId: rowData.id,
         uniqueSongId: rowData.uniqueId,
@@ -244,7 +263,7 @@ const MusicList = () => {
             <>
               {t('Songs')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
-                {musicData?.totalRecordCount || '...'}
+                {songs?.totalRecordCount || '...'}
               </StyledTag>
             </>
           }
@@ -286,6 +305,7 @@ const MusicList = () => {
       {isError && <div>Error: {error}</div>}
       {!isError && (
         <ListViewType
+          ref={listRef}
           data={misc.searchQuery !== '' ? searchedData : sortedData}
           tableColumns={config.lookAndFeel.listView.music.columns}
           rowHeight={config.lookAndFeel.listView.music.rowHeight}
@@ -348,6 +368,7 @@ const MusicList = () => {
                     },
                   })
                 );
+                listScroll(0);
               },
             }
           }

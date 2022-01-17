@@ -12,7 +12,6 @@ import { ConfigPage } from '../redux/configSlice';
 import { FolderSelection } from '../redux/folderSlice';
 import { FavoritePage } from '../redux/favoriteSlice';
 import App from '../App';
-import { AlbumPage } from '../redux/albumSlice';
 import { Server } from '../types';
 import { ArtistPage } from '../redux/artistSlice';
 import { View } from '../redux/viewSlice';
@@ -416,34 +415,6 @@ const favoriteState: FavoritePage = {
   },
 };
 
-const albumState: AlbumPage = {
-  active: {
-    filter: 'random',
-  },
-  advancedFilters: {
-    enabled: false,
-    nav: 'filters',
-    properties: {
-      starred: false,
-      genre: {
-        list: [],
-        type: 'and',
-      },
-      artist: {
-        list: [],
-        type: 'and',
-      },
-      year: {
-        from: 0,
-        to: 0,
-      },
-      sort: {
-        type: 'asc',
-      },
-    },
-  },
-};
-
 const artistState: ArtistPage = {
   active: {
     list: {
@@ -460,6 +431,37 @@ const artistState: ArtistPage = {
 };
 
 const viewState: View = {
+  album: {
+    filter: 'alphabeticalByName',
+    sort: {
+      type: 'asc',
+    },
+    advancedFilters: {
+      enabled: false,
+      nav: 'filters',
+      properties: {
+        starred: false,
+        genre: {
+          list: [],
+          type: 'and',
+        },
+        artist: {
+          list: [],
+          type: 'and',
+        },
+        year: {
+          from: 0,
+          to: 0,
+        },
+      },
+    },
+    pagination: {
+      serverSide: true,
+      recordsPerPage: 19,
+      activePage: 147,
+      pages: 285,
+    },
+  },
   music: {
     filter: 'random',
     sort: {
@@ -482,7 +484,6 @@ const mockInitialState = {
   folder: folderState,
   config: configState,
   favorite: favoriteState,
-  album: albumState,
   artist: artistState,
   view: viewState,
 };

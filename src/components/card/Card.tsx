@@ -276,7 +276,7 @@ const Card = ({
                     alt="img"
                     effect="opacity"
                     cardsize={size}
-                    visibleByDefault={notVisibleByDefault ? false : cacheImages}
+                    visibleByDefault={!notVisibleByDefault}
                     afterLoad={() => {
                       if (cacheImages) {
                         cacheImage(
