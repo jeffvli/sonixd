@@ -28,6 +28,7 @@ import {
   toggleDisplayQueue,
   setStar,
   toggleShuffle,
+  setRate,
 } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -36,17 +37,14 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import {
-  decodeBase64Image,
-  getCurrentEntryList,
-  isCached,
-  writeOBSFiles,
-} from '../../shared/utils';
-import { LinkWrapper, SecondaryTextWrapper, StyledPopover } from '../shared/styled';
+import { decodeBase64Image, getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
+import { LinkWrapper, SecondaryTextWrapper, StyledPopover, StyledRate } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import logo from '../../../assets/icon.png';
 import { notifyToast } from '../shared/toast';
+import { InfoModal } from '../modal/PageModal';
+import { setPlaylistRate } from '../../redux/playlistSlice';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -55,7 +53,6 @@ const PlayerBar = () => {
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
-  const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
@@ -66,6 +63,7 @@ const PlayerBar = () => {
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
   const [muted, setMuted] = useState(false);
   const [discordRpc, setDiscordRpc] = useState<any>();
+  const [showModal, setShowModal] = useState(false);
   const playersRef = useRef<any>();
   const history = useHistory();
 
@@ -535,6 +533,18 @@ const PlayerBar = () => {
     });
   };
 
+  const handleRating = (e: number) => {
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'setRating',
+      args: { ids: [playQueue[currentEntryList][playQueue.currentIndex].id], rating: e },
+    });
+    dispatch(setRate({ id: [playQueue[currentEntryList][playQueue.currentIndex].id], rating: e }));
+    dispatch(
+      setPlaylistRate({ id: [playQueue[currentEntryList][playQueue.currentIndex].id], rating: e })
+    );
+  };
+
   return (
     <Player ref={playersRef} currentEntryList={currentEntryList} muted={muted}>
       {playQueue.showDebugWindow && <DebugWindow currentEntryList={currentEntryList} />}
@@ -551,68 +561,26 @@ const PlayerBar = () => {
                   }}
                 >
                   <Col xs={2} style={{ height: '100%', width: '80px', paddingRight: '10px' }}>
-                    <Whisper
-                      trigger="hover"
-                      delay={500}
-                      placement="topStart"
-                      preventOverflow
-                      speaker={
-                        <StyledPopover>
-                          <div style={{ height: '500px' }}>
-                            <CoverArtWrapper size={500}>
-                              <LazyLoadImage
-                                src={
-                                  isCached(
-                                    `${misc.imageCachePath}album_${
-                                      playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                    }.jpg`
-                                  )
-                                    ? `${misc.imageCachePath}album_${
-                                        playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                      }.jpg`
-                                    : playQueue[currentEntryList][
-                                        playQueue.currentIndex
-                                      ]?.image.replace(
-                                        /&size=\d+|width=\d+&height=\d+&quality=\d+/,
-                                        ''
-                                      ) || placeholderImg
-                                }
-                                height={500}
-                              />
-                            </CoverArtWrapper>
-                          </div>
-                        </StyledPopover>
-                      }
-                    >
-                      <CoverArtWrapper size={65}>
-                        <LazyLoadImage
-                          src={
-                            isCached(
-                              `${misc.imageCachePath}album_${
-                                playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                              }.jpg`
-                            )
-                              ? `${misc.imageCachePath}album_${
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                }.jpg`
-                              : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
-                                placeholderImg
+                    <CoverArtWrapper size={65}>
+                      <LazyLoadImage
+                        src={
+                          playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                          placeholderImg
+                        }
+                        tabIndex={0}
+                        onClick={() => setShowModal(true)}
+                        onKeyDown={(e: any) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                            setShowModal(true);
                           }
-                          tabIndex={0}
-                          onClick={() => history.push(`/nowplaying`)}
-                          onKeyDown={(e: any) => {
-                            if (e.key === ' ' || e.key === 'Enter') {
-                              history.push(`/nowplaying`);
-                            }
-                          }}
-                          alt="trackImg"
-                          effect="opacity"
-                          width="65"
-                          height="65"
-                          style={{ cursor: 'pointer' }}
-                        />
-                      </CoverArtWrapper>
-                    </Whisper>
+                        }}
+                        alt="trackImg"
+                        effect="opacity"
+                        width="65"
+                        height="65"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </CoverArtWrapper>
                   </Col>
                   <Col xs={2} style={{ minWidth: '140px', maxWidth: '450px', width: '100%' }}>
                     <Row
@@ -641,7 +609,7 @@ const PlayerBar = () => {
                       style={{
                         height: '23px',
                         display: 'flex',
-                        alignItems: 'flex-start',
+                        alignItems: 'center',
                       }}
                     >
                       <CustomTooltip
@@ -880,150 +848,182 @@ const PlayerBar = () => {
             </PlayerColumn>
           </FlexboxGrid.Item>
           <FlexboxGrid.Item colspan={6} style={{ textAlign: 'right', paddingRight: '10px' }}>
-            <PlayerColumn right height="80px">
-              <Grid>
-                <Row
-                  style={{
-                    height: '35px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                  }}
-                >
-                  <>
-                    {/* Favorite Button */}
-                    <CustomTooltip text={t('Favorite')}>
-                      <PlayerControlIcon
-                        tabIndex={0}
-                        icon={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.starred
-                            ? 'heart'
-                            : 'heart-o'
-                        }
-                        size="lg"
-                        fixedWidth
-                        active={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.starred
-                            ? 'true'
-                            : 'false'
-                        }
-                        onClick={handleFavorite}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ') {
-                            handleFavorite();
-                          }
-                        }}
-                      />
-                    </CustomTooltip>
-
-                    {/* Repeat Button */}
-                    <CustomTooltip
-                      text={
-                        playQueue.repeat === 'all'
-                          ? t('Repeat all')
-                          : playQueue.repeat === 'one'
-                          ? t('Repeat one')
-                          : t('Repeat')
-                      }
-                    >
-                      <PlayerControlIcon
-                        tabIndex={0}
-                        icon="refresh"
-                        size="lg"
-                        fixedWidth
-                        onClick={handleRepeat}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ') {
-                            handleRepeat();
-                          }
-                        }}
-                        active={
-                          playQueue.repeat === 'all' || playQueue.repeat === 'one'
-                            ? 'true'
-                            : 'false'
-                        }
-                        flip={playQueue.repeat === 'one' ? 'horizontal' : undefined}
-                      />
-                    </CustomTooltip>
-                    {/* Shuffle Button */}
-                    <CustomTooltip text={t('Shuffle')}>
-                      <PlayerControlIcon
-                        tabIndex={0}
-                        icon="random"
-                        size="lg"
-                        fixedWidth
-                        onClick={handleShuffle}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ') {
-                            handleShuffle();
-                          }
-                        }}
-                        active={playQueue.shuffle ? 'true' : 'false'}
-                      />
-                    </CustomTooltip>
-                    {/* Display Queue Button */}
-                    <CustomTooltip text={t('Mini')}>
-                      <PlayerControlIcon
-                        tabIndex={0}
-                        icon="tasks"
-                        size="lg"
-                        fixedWidth
-                        onClick={handleDisplayQueue}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ') {
-                            handleDisplayQueue();
-                          }
-                        }}
-                        active={playQueue.displayQueue ? 'true' : 'false'}
-                      />
-                    </CustomTooltip>
-                  </>
-                </Row>
-                <Row
-                  style={{
-                    height: '35px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                  }}
-                >
-                  {/* Volume Slider */}
-                  <VolumeIcon
-                    icon={
-                      muted ? 'volume-off' : playQueue.volume > 0.7 ? 'volume-up' : 'volume-down'
+            <PlayerColumn right height="80px" style={{ flexDirection: 'column' }}>
+              <div
+                style={{
+                  height: '30px',
+                  display: 'flex',
+                  alignSelf: 'flex-end',
+                  alignItems: 'flex-start',
+                }}
+              >
+                {config.serverType === Server.Subsonic && (
+                  <StyledRate
+                    size="xs"
+                    readOnly={false}
+                    value={
+                      playQueue[currentEntryList][playQueue.currentIndex]?.userRating
+                        ? playQueue[currentEntryList][playQueue.currentIndex].userRating
+                        : 0
                     }
-                    onClick={() => setMuted(!muted)}
-                    size="lg"
+                    defaultValue={
+                      playQueue[currentEntryList][playQueue.currentIndex]?.userRating
+                        ? playQueue[currentEntryList][playQueue.currentIndex].userRating
+                        : 0
+                    }
+                    onChange={(e: number) => handleRating(e)}
                   />
-                  <Whisper
-                    trigger="hover"
-                    placement="top"
-                    delay={200}
-                    preventOverflow
-                    speaker={
-                      <StyledPopover>
-                        {muted ? t('Muted') : Math.floor(localVolume * 100)}
-                      </StyledPopover>
+                )}
+              </div>
+              <div
+                style={{
+                  height: '25px',
+                  display: 'flex',
+                  alignSelf: 'flex-end',
+                  alignItems: 'baseline',
+                }}
+              >
+                {/* Favorite Button */}
+                <CustomTooltip text={t('Favorite')}>
+                  <PlayerControlIcon
+                    tabIndex={0}
+                    icon={
+                      playQueue[currentEntryList][playQueue.currentIndex]?.starred
+                        ? 'heart'
+                        : 'heart-o'
                     }
-                  >
-                    <CustomSlider
-                      tabIndex={0}
-                      progress
-                      value={Math.floor(localVolume * 100)}
-                      $isDragging={isDraggingVolume}
-                      tooltip={false}
-                      style={{ width: '100px', marginRight: '10px' }}
-                      onChange={handleVolumeSlider}
-                      onKeyDown={handleVolumeKey}
-                      onWheel={handleVolumeWheel}
-                    />
-                  </Whisper>
-                </Row>
-              </Grid>
+                    size="lg"
+                    fixedWidth
+                    active={
+                      playQueue[currentEntryList][playQueue.currentIndex]?.starred
+                        ? 'true'
+                        : 'false'
+                    }
+                    onClick={handleFavorite}
+                    onKeyDown={(e: any) => {
+                      if (e.key === ' ') {
+                        handleFavorite();
+                      }
+                    }}
+                  />
+                </CustomTooltip>
+
+                {/* Repeat Button */}
+                <CustomTooltip
+                  text={
+                    playQueue.repeat === 'all'
+                      ? t('Repeat all')
+                      : playQueue.repeat === 'one'
+                      ? t('Repeat one')
+                      : t('Repeat')
+                  }
+                >
+                  <PlayerControlIcon
+                    tabIndex={0}
+                    icon="refresh"
+                    size="lg"
+                    fixedWidth
+                    onClick={handleRepeat}
+                    onKeyDown={(e: any) => {
+                      if (e.key === ' ') {
+                        handleRepeat();
+                      }
+                    }}
+                    active={
+                      playQueue.repeat === 'all' || playQueue.repeat === 'one' ? 'true' : 'false'
+                    }
+                    flip={playQueue.repeat === 'one' ? 'horizontal' : undefined}
+                  />
+                </CustomTooltip>
+                {/* Shuffle Button */}
+                <CustomTooltip text={t('Shuffle')}>
+                  <PlayerControlIcon
+                    tabIndex={0}
+                    icon="random"
+                    size="lg"
+                    fixedWidth
+                    onClick={handleShuffle}
+                    onKeyDown={(e: any) => {
+                      if (e.key === ' ') {
+                        handleShuffle();
+                      }
+                    }}
+                    active={playQueue.shuffle ? 'true' : 'false'}
+                  />
+                </CustomTooltip>
+
+                {/* Display Queue Button */}
+                <CustomTooltip text={t('Mini')}>
+                  <PlayerControlIcon
+                    tabIndex={0}
+                    icon="tasks"
+                    size="lg"
+                    fixedWidth
+                    onClick={handleDisplayQueue}
+                    onKeyDown={(e: any) => {
+                      if (e.key === ' ') {
+                        handleDisplayQueue();
+                      }
+                    }}
+                    active={playQueue.displayQueue ? 'true' : 'false'}
+                  />
+                </CustomTooltip>
+              </div>
+              <div
+                style={{
+                  height: '25px',
+                  display: 'flex',
+                  alignSelf: 'flex-end',
+                  alignItems: 'center',
+                }}
+              >
+                {/* Volume Slider */}
+                <VolumeIcon
+                  icon={muted ? 'volume-off' : 'volume-down'}
+                  onClick={() => setMuted(!muted)}
+                  size="lg"
+                />
+                <Whisper
+                  trigger="hover"
+                  placement="top"
+                  delay={200}
+                  preventOverflow
+                  speaker={
+                    <StyledPopover>
+                      {muted ? t('Muted') : Math.floor(localVolume * 100)}
+                    </StyledPopover>
+                  }
+                >
+                  <CustomSlider
+                    tabIndex={0}
+                    progress
+                    value={Math.floor(localVolume * 100)}
+                    $isDragging={isDraggingVolume}
+                    tooltip={false}
+                    style={{ width: '87px', marginRight: '10px' }}
+                    onChange={handleVolumeSlider}
+                    onKeyDown={handleVolumeKey}
+                    onWheel={handleVolumeWheel}
+                  />
+                </Whisper>
+              </div>
             </PlayerColumn>
           </FlexboxGrid.Item>
         </FlexboxGrid>
       </PlayerContainer>
+      <InfoModal show={showModal} handleHide={() => setShowModal(false)}>
+        <CoverArtWrapper size={750}>
+          <LazyLoadImage
+            src={
+              playQueue[currentEntryList][playQueue.currentIndex]?.image.replace(
+                /&size=\d+|width=\d+&height=\d+&quality=\d+/,
+                ''
+              ) || placeholderImg
+            }
+            height={750}
+          />
+        </CoverArtWrapper>
+      </InfoModal>
     </Player>
   );
 };
