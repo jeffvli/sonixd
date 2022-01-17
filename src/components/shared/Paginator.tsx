@@ -11,7 +11,16 @@ import {
 const Paginator = ({ startIndex, endIndex, handleGoToButton, children, ...rest }: any) => {
   return (
     <>
-      <FlexboxGrid justify="space-between" style={{ paddingLeft: '10px', paddingTop: '10px' }}>
+      <FlexboxGrid
+        justify="space-between"
+        style={{
+          paddingLeft: '10px',
+          paddingTop: '15px',
+          width: rest.bottom && '100%',
+          bottom: '0px',
+          position: rest.bottom && 'absolute',
+        }}
+      >
         <FlexboxGrid.Item style={{ alignSelf: 'center' }}>
           {children}
           <SecondaryTextWrapper subtitle="true">

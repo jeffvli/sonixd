@@ -53,16 +53,16 @@ import {
   StyledPopover,
   StyledTagLink,
 } from '../shared/styled';
-import { setActive } from '../../redux/albumSlice';
 import {
   BlurredBackground,
   BlurredBackgroundWrapper,
   PageHeaderSubtitleDataLine,
 } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Artist, Genre, Server } from '../../types';
+import { Artist, Genre, Item, Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import Card from '../card/Card';
+import { setFilter, setPagination } from '../../redux/viewSlice';
 
 interface AlbumParams {
   id: string;
@@ -72,7 +72,6 @@ const AlbumView = ({ ...rest }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
-  const album = useAppSelector((state) => state.album);
   const config = useAppSelector((state) => state.config);
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -399,7 +398,15 @@ const AlbumView = ({ ...rest }: any) => {
                             tabIndex={0}
                             onClick={() => {
                               if (!rest.isModal) {
-                                dispatch(setActive({ ...album.active, filter: d.title }));
+                                dispatch(
+                                  setFilter({
+                                    listType: Item.Album,
+                                    data: d.title,
+                                  })
+                                );
+                                dispatch(
+                                  setPagination({ listType: Item.Album, data: { activePage: 1 } })
+                                );
                                 localStorage.setItem('scroll_list_albumList', '0');
                                 localStorage.setItem('scroll_grid_albumList', '0');
                                 setTimeout(() => {
@@ -411,7 +418,15 @@ const AlbumView = ({ ...rest }: any) => {
                               if (e.key === ' ' || e.key === 'Enter') {
                                 e.preventDefault();
                                 if (!rest.isModal) {
-                                  dispatch(setActive({ ...album.active, filter: d.title }));
+                                  dispatch(
+                                    setFilter({
+                                      listType: Item.Album,
+                                      data: d.title,
+                                    })
+                                  );
+                                  dispatch(
+                                    setPagination({ listType: Item.Album, data: { activePage: 1 } })
+                                  );
                                   localStorage.setItem('scroll_list_albumList', '0');
                                   localStorage.setItem('scroll_grid_albumList', '0');
                                   setTimeout(() => {

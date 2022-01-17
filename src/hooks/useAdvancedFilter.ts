@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { AdvancedFilters } from '../redux/albumSlice';
+import { AdvancedFilters } from '../redux/viewSlice';
 
 const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
   const [filteredData, setFilteredData] = useState<any[]>([]);

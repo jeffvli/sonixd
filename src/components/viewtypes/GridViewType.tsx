@@ -1,11 +1,13 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
-import React, { createRef, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
 import 'react-virtualized/styles.css';
 import { useAppSelector } from '../../redux/hooks';
+import Paginator from '../shared/Paginator';
+import CenterLoader from '../loader/CenterLoader';
 
 const GridCard = ({ data, index, style }: any) => {
   const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
@@ -93,14 +95,13 @@ function ListWrapper({
   musicFolderId,
   initialScrollOffset,
   onScroll,
-  refresh,
+  gridRef,
 }: any) {
   const cardHeight = size + 55;
   const cardWidth = size;
   // How many cards can we show per row, given the current width?
   const columnCount = Math.floor((width - gapSize + 3) / (cardWidth + gapSize + 2));
   const rowCount = Math.ceil(itemCount / columnCount);
-  const gridRef = createRef<any>();
 
   const itemData = useMemo(
     () => ({
@@ -141,28 +142,25 @@ function ListWrapper({
     ]
   );
 
-  useEffect(() => {
-    if (refresh) {
-      gridRef.current.scrollTo(0);
-    }
-  }, [gridRef, refresh]);
-
   return (
-    <List
-      ref={gridRef}
-      className="List"
-      height={height}
-      itemCount={rowCount}
-      itemSize={cardHeight + gapSize}
-      width={width}
-      itemData={itemData}
-      initialScrollOffset={initialScrollOffset || 0}
-      onScroll={({ scrollOffset }) => {
-        onScroll(scrollOffset);
-      }}
-    >
-      {GridCard}
-    </List>
+    <>
+      <List
+        ref={gridRef}
+        className="List"
+        height={height}
+        itemCount={rowCount}
+        itemSize={cardHeight + gapSize}
+        width={width}
+        itemData={itemData}
+        initialScrollOffset={initialScrollOffset || 0}
+        onScroll={({ scrollOffset }) => {
+          onScroll(scrollOffset);
+        }}
+        overscanCount={4}
+      >
+        {GridCard}
+      </List>
+    </>
   );
 }
 
@@ -176,7 +174,9 @@ const GridViewType = ({
   handleFavorite,
   initialScrollOffset,
   onScroll,
-  refresh,
+  paginationProps,
+  loading,
+  gridRef,
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
@@ -191,30 +191,48 @@ const GridViewType = ({
   }, [folder]);
 
   return (
-    <AutoSizer>
-      {({ height, width }: any) => (
-        <ListWrapper
-          height={height}
-          itemCount={data?.length}
-          width={width}
-          data={data}
-          cardTitle={cardTitle}
-          cardSubtitle={cardSubtitle}
-          playClick={playClick}
-          size={size}
-          gapSize={config.lookAndFeel.gridView.gapSize}
-          alignment={config.lookAndFeel.gridView.alignment}
-          cacheType={cacheType}
-          cacheImages={cacheImages}
-          cachePath={misc.imageCachePath}
-          handleFavorite={handleFavorite}
-          musicFolderId={musicFolder}
-          initialScrollOffset={initialScrollOffset}
-          onScroll={onScroll || (() => {})}
-          refresh={refresh}
-        />
-      )}
-    </AutoSizer>
+    <>
+      <AutoSizer>
+        {({ height, width }: any) => (
+          <>
+            {data?.length ? (
+              <ListWrapper
+                height={
+                  height - (paginationProps && paginationProps?.recordsPerPage !== 0 ? 45 : 0)
+                }
+                itemCount={data?.length}
+                width={width}
+                data={data}
+                cardTitle={cardTitle}
+                cardSubtitle={cardSubtitle}
+                playClick={playClick}
+                size={size}
+                gapSize={config.lookAndFeel.gridView.gapSize}
+                alignment={config.lookAndFeel.gridView.alignment}
+                cacheType={cacheType}
+                cacheImages={cacheImages}
+                cachePath={misc.imageCachePath}
+                handleFavorite={handleFavorite}
+                musicFolderId={musicFolder}
+                initialScrollOffset={initialScrollOffset}
+                onScroll={onScroll || (() => {})}
+                paginationProps={paginationProps}
+                loading={loading}
+                gridRef={gridRef}
+              />
+            ) : (
+              <CenterLoader />
+            )}
+
+            {paginationProps && paginationProps?.recordsPerPage !== 0 && (
+              <div style={{ height: data?.length ? '45px' : height, width, position: 'relative' }}>
+                <Paginator {...paginationProps} bottom="true" />
+              </div>
+            )}
+          </>
+        )}
+      </AutoSizer>
+    </>
   );
 };
 

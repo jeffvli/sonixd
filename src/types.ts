@@ -189,5 +189,6 @@ export interface Sort {
 export interface Pagination {
   pages?: number;
   activePage?: number;
+  serverSide?: boolean;
   recordsPerPage: number;
 }

@@ -414,23 +414,30 @@ export const getAlbums = async (options: {
       },
     });
 
-    return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
+    return normalizeAPIResult(
+      (data.Items || []).map((entry: any) => normalizeAlbum(entry)),
+      data.TotalRecordCount
+    );
   }
 
   const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
     params: {
       fields: 'Genres, DateCreated, ChildCount, ParentId',
+      genres: !sortType ? options.type : undefined,
       includeItemTypes: 'MusicAlbum',
       limit: options.size,
       startIndex: options.offset,
       parentId: options.musicFolderId,
       recursive: true,
-      sortBy: sortType!.replacement,
-      sortOrder: sortType!.sortOrder,
+      sortBy: sortType ? sortType!.replacement : 'SortName',
+      sortOrder: sortType ? sortType!.sortOrder : 'Ascending',
     },
   });
 
-  return (data.Items || []).map((entry: any) => normalizeAlbum(entry));
+  return normalizeAPIResult(
+    (data.Items || []).map((entry: any) => normalizeAlbum(entry)),
+    data.TotalRecordCount
+  );
 };
 
 export const getSongs = async (options: {
