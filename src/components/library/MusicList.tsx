@@ -25,11 +25,12 @@ import useColumnSort from '../../hooks/useColumnSort';
 import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/playQueueSlice';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { setStatus } from '../../redux/playerSlice';
+import useListScroll from '../../hooks/useListScroll';
 
+// prettier-ignore
 export const MUSIC_SORT_TYPES = [
   { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Album)'), value: 'alphabeticalByAlbum', role: i18next.t('Default') },
-  // eslint-disable-next-line prettier/prettier
   { label: i18next.t('A-Z (Album Artist)'), value: 'alphabeticalByArtist', role: i18next.t('Default') },
   { label: i18next.t('A-Z (Artist)'), value: 'alphabeticalByTrackArtist', replacement: 'Artist' },
   { label: i18next.t('Most Played'), value: 'frequent', role: i18next.t('Default') },
@@ -50,9 +51,11 @@ const MusicList = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortTypes, setSortTypes] = useState<any[]>([]);
   const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
-
   const musicFilterPickerContainerRef = useRef(null);
   const [currentQueryKey, setCurrentQueryKey] = useState<any>(['musicList']);
+
+  const listRef = useRef<any>();
+  const { listScroll } = useListScroll(listRef);
 
   useEffect(() => {
     if (folder.applied.music) {
@@ -302,6 +305,7 @@ const MusicList = () => {
       {isError && <div>Error: {error}</div>}
       {!isError && (
         <ListViewType
+          ref={listRef}
           data={misc.searchQuery !== '' ? searchedData : sortedData}
           tableColumns={config.lookAndFeel.listView.music.columns}
           rowHeight={config.lookAndFeel.listView.music.rowHeight}
@@ -364,6 +368,7 @@ const MusicList = () => {
                     },
                   })
                 );
+                listScroll(0);
               },
             }
           }
