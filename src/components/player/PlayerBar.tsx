@@ -42,7 +42,7 @@ import {
   isCached,
   writeOBSFiles,
 } from '../../shared/utils';
-import { StyledPopover } from '../shared/styled';
+import { LinkWrapper, SecondaryTextWrapper, StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import logo from '../../../assets/icon.png';
@@ -542,15 +542,15 @@ const PlayerBar = () => {
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
           <FlexboxGrid.Item colspan={6} style={{ textAlign: 'left', paddingLeft: '10px' }}>
             <PlayerColumn left height="80px">
-              <Grid>
+              <Grid style={{ width: '100%' }}>
                 <Row
                   style={{
                     height: '70px',
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  <Col xs={2} style={{ height: '100%', width: '80px' }}>
+                  <Col xs={2} style={{ height: '100%', width: '80px', paddingRight: '10px' }}>
                     <Whisper
                       trigger="hover"
                       delay={500}
@@ -614,11 +614,10 @@ const PlayerBar = () => {
                       </CoverArtWrapper>
                     </Whisper>
                   </Col>
-                  <Col xs={2} style={{ minWidth: '140px', width: '40%' }}>
+                  <Col xs={2} style={{ minWidth: '140px', maxWidth: '450px', width: '100%' }}>
                     <Row
                       style={{
-                        height: '35px',
-                        width: '100%',
+                        height: '23px',
                         display: 'flex',
                         alignItems: 'flex-end',
                       }}
@@ -631,18 +630,7 @@ const PlayerBar = () => {
                           t('Unknown Title')
                         }
                       >
-                        <LinkButton
-                          tabIndex={0}
-                          onClick={() => {
-                            if (playQueue[currentEntryList][playQueue.currentIndex]?.albumId) {
-                              history.push(
-                                `/library/album/${
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                }`
-                              );
-                            }
-                          }}
-                        >
+                        <LinkButton tabIndex={0} onClick={() => history.push(`/nowplaying`)}>
                           {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
                             t('Unknown Title')}
                         </LinkButton>
@@ -651,9 +639,9 @@ const PlayerBar = () => {
 
                     <Row
                       style={{
-                        height: '35px',
-                        minWidth: '130px',
-                        width: '50%',
+                        height: '23px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
                       }}
                     >
                       <CustomTooltip
@@ -672,26 +660,82 @@ const PlayerBar = () => {
                             overflow: 'hidden',
                           }}
                         >
-                          <LinkButton
-                            tabIndex={0}
-                            subtitle="true"
-                            onClick={() => {
-                              if (
-                                playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
-                              ) {
-                                history.push(
-                                  `/library/artist/${
-                                    playQueue[currentEntryList][playQueue.currentIndex]
-                                      ?.albumArtistId
-                                  }`
-                                );
-                              }
-                            }}
-                          >
-                            {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
-                              t('Unknown Artist')}
-                          </LinkButton>
+                          {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtistId ? (
+                            <LinkButton
+                              tabIndex={0}
+                              subtitle="true"
+                              onClick={() => {
+                                if (
+                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumArtistId
+                                ) {
+                                  history.push(
+                                    `/library/artist/${
+                                      playQueue[currentEntryList][playQueue.currentIndex]
+                                        ?.albumArtistId
+                                    }`
+                                  );
+                                }
+                              }}
+                            >
+                              {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
+                                t('Unknown Artist')}
+                            </LinkButton>
+                          ) : (
+                            <SecondaryTextWrapper
+                              subtitle="true"
+                              onClick={() => {
+                                if (
+                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumArtistId
+                                ) {
+                                  history.push(
+                                    `/library/artist/${
+                                      playQueue[currentEntryList][playQueue.currentIndex]
+                                        ?.albumArtistId
+                                    }`
+                                  );
+                                }
+                              }}
+                            >
+                              <LinkWrapper maxWidth="100%">
+                                {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
+                                  t('Unknown Artist')}
+                              </LinkWrapper>
+                            </SecondaryTextWrapper>
+                          )}
                         </span>
+                      </CustomTooltip>
+                    </Row>
+                    <Row
+                      style={{
+                        height: '23px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <CustomTooltip
+                        enterable
+                        placement="topStart"
+                        text={
+                          playQueue[currentEntryList][playQueue.currentIndex]?.album ||
+                          t('Unknown Album')
+                        }
+                      >
+                        <LinkButton
+                          tabIndex={0}
+                          subtitle="true"
+                          onClick={() => {
+                            if (playQueue[currentEntryList][playQueue.currentIndex]?.albumId) {
+                              history.push(
+                                `/library/album/${
+                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                }`
+                              );
+                            }
+                          }}
+                        >
+                          {playQueue[currentEntryList][playQueue.currentIndex]?.album ||
+                            t('Unknown Album')}
+                        </LinkButton>
                       </CustomTooltip>
                     </Row>
                   </Col>
