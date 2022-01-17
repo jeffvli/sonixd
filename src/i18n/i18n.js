@@ -8,10 +8,12 @@ import { mockSettings } from '../shared/mockSettings';
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const de = require('./locales/de.json');
 const en = require('./locales/en.json');
+const zhcn = require('./locales/zhcn.json');
 
 const resources = {
   en: { translation: en },
   de: { translation: de },
+  zhcn: { translation: zhcn },
 };
 
 i18n
@@ -38,5 +40,9 @@ export const Languages = [
   {
     label: 'Deutsch',
     value: 'de',
+  },
+  {
+    label: '简体中文',
+    value: 'zhcn',
   },
 ];
