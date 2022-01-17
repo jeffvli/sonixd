@@ -179,10 +179,6 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('scrollWithCurrentSong', true);
   }
 
-  if (force || !settings.hasSync('cacheImages')) {
-    settings.setSync('cacheImages', true);
-  }
-
   if (force || !settings.hasSync('cacheSongs')) {
     settings.setSync('cacheSongs', false);
   }

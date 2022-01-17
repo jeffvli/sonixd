@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Divider } from 'rsuite';
 import { useAppSelector } from '../../redux/hooks';
 import { PageContainer, PageHeader, PageContent } from './styled';
-import { isCached } from '../../shared/utils';
 
 const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
   const playQueue = useAppSelector((state) => state.playQueue);
@@ -11,23 +10,16 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
 
   useEffect(() => {
     if (misc.dynamicBackground) {
-      const cachedImagePath = `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`;
       const serverImagePath = playQueue.current?.image.replace(/size=\d+/, 'size=500');
-      const cssBackgroundImagePath = `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`.replaceAll(
-        '\\',
-        '/'
-      );
+      const preloadImage = new Image();
+      preloadImage.src = serverImagePath;
+      const imagePath = serverImagePath;
 
-      if (!isCached(cachedImagePath)) {
-        const preloadImage = new Image();
-        preloadImage.src = serverImagePath;
+      if (imagePath) {
+        setBackgroundImage(imagePath);
       }
-
-      const imagePath = isCached(cachedImagePath) ? cssBackgroundImagePath : serverImagePath;
-
-      setBackgroundImage(imagePath);
     }
-  }, [misc.imageCachePath, misc.dynamicBackground, playQueue]);
+  }, [misc.dynamicBackground, playQueue]);
 
   return (
     <PageContainer

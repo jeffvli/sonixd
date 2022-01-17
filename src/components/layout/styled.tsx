@@ -236,6 +236,7 @@ export const PageHeaderWrapper = styled.div<{
   imageHeight: string;
   isDark?: boolean;
 }>`
+  user-select: none;
   display: ${(props) => (props.hasImage ? 'inline-block' : 'undefined')};
   width: ${(props) => (props.hasImage ? `calc(100% - ${props.imageHeight + 15}px)` : '100%')};
   margin-left: ${(props) => (props.hasImage ? '15px' : '0px')};

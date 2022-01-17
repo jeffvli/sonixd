@@ -36,12 +36,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import {
-  decodeBase64Image,
-  getCurrentEntryList,
-  isCached,
-  writeOBSFiles,
-} from '../../shared/utils';
+import { decodeBase64Image, getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
 import { StyledPopover } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
@@ -55,7 +50,6 @@ const PlayerBar = () => {
   const queryClient = useQueryClient();
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
-  const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
@@ -562,20 +556,12 @@ const PlayerBar = () => {
                             <CoverArtWrapper size={500}>
                               <LazyLoadImage
                                 src={
-                                  isCached(
-                                    `${misc.imageCachePath}album_${
-                                      playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                    }.jpg`
-                                  )
-                                    ? `${misc.imageCachePath}album_${
-                                        playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                      }.jpg`
-                                    : playQueue[currentEntryList][
-                                        playQueue.currentIndex
-                                      ]?.image.replace(
-                                        /&size=\d+|width=\d+&height=\d+&quality=\d+/,
-                                        ''
-                                      ) || placeholderImg
+                                  playQueue[currentEntryList][
+                                    playQueue.currentIndex
+                                  ]?.image.replace(
+                                    /&size=\d+|width=\d+&height=\d+&quality=\d+/,
+                                    ''
+                                  ) || placeholderImg
                                 }
                                 height={500}
                               />
@@ -587,16 +573,8 @@ const PlayerBar = () => {
                       <CoverArtWrapper size={65}>
                         <LazyLoadImage
                           src={
-                            isCached(
-                              `${misc.imageCachePath}album_${
-                                playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                              }.jpg`
-                            )
-                              ? `${misc.imageCachePath}album_${
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                }.jpg`
-                              : playQueue[currentEntryList][playQueue.currentIndex]?.image ||
-                                placeholderImg
+                            playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                            placeholderImg
                           }
                           tabIndex={0}
                           onClick={() => history.push(`/nowplaying`)}

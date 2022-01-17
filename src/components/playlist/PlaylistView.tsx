@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
-import settings from 'electron-settings';
 import { ButtonToolbar, ControlLabel, Form, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
@@ -44,7 +43,6 @@ import {
   getPlayedSongsNotification,
   getRecoveryPath,
   getUniqueRandomNumberArr,
-  isCached,
   isFailedResponse,
 } from '../../shared/utils';
 import useSearchQuery from '../../hooks/useSearchQuery';
@@ -509,13 +507,7 @@ const PlaylistView = ({ ...rest }) => {
             <Card
               title={t('None')}
               subtitle=""
-              coverArt={
-                data?.image.match('placeholder')
-                  ? customPlaylistImage
-                  : isCached(`${misc.imageCachePath}playlist_${playlistId}.jpg`)
-                  ? `${misc.imageCachePath}playlist_${playlistId}.jpg`
-                  : data.image
-              }
+              coverArt={data?.image.match('placeholder') ? customPlaylistImage : data.image}
               size={185}
               hasHoverButtons
               noInfoPanel
@@ -525,11 +517,6 @@ const PlaylistView = ({ ...rest }) => {
               url={`/playlist/${data.id}`}
             />
           }
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'playlist',
-            id: data.id,
-          }}
           imageHeight={185}
           title={data.title}
           subtitle={
@@ -711,11 +698,6 @@ const PlaylistView = ({ ...rest }) => {
         virtualized
         rowHeight={config.lookAndFeel.listView.music.rowHeight}
         fontSize={config.lookAndFeel.listView.music.fontSize}
-        cacheImages={{
-          enabled: settings.getSync('cacheImages'),
-          cacheType: 'album',
-          cacheIdProperty: 'albumId',
-        }}
         listType="music"
         playlist
         dnd

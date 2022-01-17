@@ -245,11 +245,6 @@ const FolderList = () => {
               handleRowDoubleClick={handleRowDoubleClick}
               handleFavorite={handleRowFavorite}
               handleRating={handleRowRating}
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'folder',
-                cacheIdProperty: 'albumId',
-              }}
               page="folderListPage"
               listType="folder"
               virtualized

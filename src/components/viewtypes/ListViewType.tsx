@@ -23,7 +23,6 @@ const ListViewType = (
     rowHeight,
     virtualized,
     fontSize,
-    cacheImages,
     children,
     page,
     listType,
@@ -348,7 +347,6 @@ const ListViewType = (
             columns={tableColumns}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
-            cacheImages={cacheImages}
             page={page}
             listType={listType}
             nowPlaying={rest.nowPlaying}

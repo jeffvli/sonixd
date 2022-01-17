@@ -1,6 +1,5 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
 import React, { useEffect, useMemo, useState } from 'react';
-import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
@@ -54,8 +53,6 @@ const GridCard = ({ data, index, style }: any) => {
             id: data.data[i][data.playClick.idProperty],
           }}
           details={{ cacheType: data.cacheType, ...data.data[i] }}
-          cacheImages={data.cacheImages}
-          cachePath={data.cachePath}
           handleFavorite={data.handleFavorite}
           musicFolderId={data.musicFolderId}
         />
@@ -89,8 +86,6 @@ function ListWrapper({
   itemCount,
   width,
   cacheType,
-  cacheImages,
-  cachePath,
   handleFavorite,
   musicFolderId,
   initialScrollOffset,
@@ -117,8 +112,6 @@ function ListWrapper({
       cardWidth,
       cardHeight,
       gapSize,
-      cacheImages,
-      cachePath,
       handleFavorite,
       musicFolderId,
     }),
@@ -135,8 +128,6 @@ function ListWrapper({
       size,
       gapSize,
       alignment,
-      cacheImages,
-      cachePath,
       handleFavorite,
       musicFolderId,
     ]
@@ -178,8 +169,6 @@ const GridViewType = ({
   loading,
   gridRef,
 }: any) => {
-  const cacheImages = Boolean(settings.getSync('cacheImages'));
-  const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
   const [musicFolder, setMusicFolder] = useState(undefined);
@@ -210,8 +199,6 @@ const GridViewType = ({
                 gapSize={config.lookAndFeel.gridView.gapSize}
                 alignment={config.lookAndFeel.gridView.alignment}
                 cacheType={cacheType}
-                cacheImages={cacheImages}
-                cachePath={misc.imageCachePath}
                 handleFavorite={handleFavorite}
                 musicFolderId={musicFolder}
                 initialScrollOffset={initialScrollOffset}

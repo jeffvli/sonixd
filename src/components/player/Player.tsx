@@ -251,22 +251,22 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   const [scrobbled, setScrobbled] = useState(false);
 
   const getSrc1 = useCallback(() => {
-    const cachedSongPath = `${misc.imageCachePath}/${
+    const cachedSongPath = `${misc.songCachePath}/${
       playQueue[currentEntryList][playQueue.player1.index]?.id
     }.mp3`;
     return isCached(cachedSongPath)
       ? cachedSongPath
       : playQueue[currentEntryList][playQueue.player1.index]?.streamUrl;
-  }, [misc.imageCachePath, currentEntryList, playQueue]);
+  }, [misc.songCachePath, currentEntryList, playQueue]);
 
   const getSrc2 = useCallback(() => {
-    const cachedSongPath = `${misc.imageCachePath}/${
+    const cachedSongPath = `${misc.songCachePath}/${
       playQueue[currentEntryList][playQueue.player2.index]?.id
     }.mp3`;
     return isCached(cachedSongPath)
       ? cachedSongPath
       : playQueue[currentEntryList][playQueue.player2.index]?.streamUrl;
-  }, [misc.imageCachePath, currentEntryList, playQueue]);
+  }, [misc.songCachePath, currentEntryList, playQueue]);
 
   useImperativeHandle(ref, () => ({
     get player1() {

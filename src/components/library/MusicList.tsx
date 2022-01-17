@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
@@ -313,11 +312,6 @@ const MusicList = () => {
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleRating={handleRowRating}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'album',
-            cacheIdProperty: 'albumId',
-          }}
           page="musicListPage"
           listType="music"
           virtualized

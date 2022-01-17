@@ -229,11 +229,6 @@ const PlaylistList = () => {
           tableColumns={config.lookAndFeel.listView.playlist.columns}
           rowHeight={config.lookAndFeel.listView.playlist.rowHeight}
           fontSize={config.lookAndFeel.listView.playlist.fontSize}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'playlist',
-            cacheIdProperty: 'id',
-          }}
           page="playlistListPage"
           listType="playlist"
           virtualized

@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import settings from 'electron-settings';
 import styled from 'styled-components';
 import { ButtonGroup, ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
 import Card from '../card/Card';
@@ -27,8 +26,6 @@ const ScrollingMenu = ({
   handleFavorite,
   noScrollbar,
 }: any) => {
-  const cacheImages = Boolean(settings.getSync('cacheImages'));
-  const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const scrollContainerRef = useRef<any>();
 
@@ -120,8 +117,6 @@ const ScrollingMenu = ({
               hasHoverButtons
               size={config.lookAndFeel.gridView.cardSize}
               lazyLoad
-              cacheImages={cacheImages}
-              cachePath={misc.imageCachePath}
               style={{ margin: '5px' }}
               handleFavorite={handleFavorite}
             />

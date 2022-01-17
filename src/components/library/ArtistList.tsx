@@ -224,11 +224,6 @@ const ArtistList = () => {
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleRating={handleRowRating}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'artist',
-            cacheIdProperty: 'id',
-          }}
           page="artistListPage"
           listType="artist"
           virtualized

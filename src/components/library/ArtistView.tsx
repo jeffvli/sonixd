@@ -38,12 +38,7 @@ import {
   setRate,
 } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
-import {
-  filterPlayQueue,
-  formatDuration,
-  getPlayedSongsNotification,
-  isCached,
-} from '../../shared/utils';
+import { filterPlayQueue, formatDuration, getPlayedSongsNotification } from '../../shared/utils';
 import {
   LinkWrapper,
   SectionTitle,
@@ -467,9 +462,7 @@ const ArtistView = ({ ...rest }: any) => {
 
   useEffect(() => {
     if (!isLoading) {
-      const img = isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
-        ? `${misc.imageCachePath}artist_${data?.id}.jpg`
-        : data?.image?.includes('placeholder')
+      const img = data?.image?.includes('placeholder')
         ? data?.info?.imageUrl
           ? data?.info?.imageUrl
           : data?.image
@@ -503,7 +496,7 @@ const ArtistView = ({ ...rest }: any) => {
       };
       setAvgColor(img);
     }
-  }, [data?.id, data?.image, data?.info, isLoading, misc.imageCachePath]);
+  }, [data?.id, data?.image, data?.info, isLoading]);
 
   useEffect(() => {
     const allAlbumDurations = _.sum(_.map(data?.album, 'duration'));
@@ -545,9 +538,7 @@ const ArtistView = ({ ...rest }: any) => {
                 title={t('None')}
                 subtitle=""
                 coverArt={
-                  isCached(`${misc.imageCachePath}artist_${data?.id}.jpg`)
-                    ? `${misc.imageCachePath}artist_${data?.id}.jpg`
-                    : data?.image?.includes('placeholder')
+                  data?.image?.includes('placeholder')
                     ? data?.info?.imageUrl
                       ? data?.info?.imageUrl
                       : data?.image
@@ -565,11 +556,6 @@ const ArtistView = ({ ...rest }: any) => {
                 handleFavorite={handleFavorite}
               />
             }
-            cacheImages={{
-              enabled: settings.getSync('cacheImages'),
-              cacheType: 'artist',
-              id: data.id,
-            }}
             imageHeight={
               location.pathname.match('/songs|/albums|/compilationalbums|/topsongs') ? 180 : 225
             }
@@ -751,7 +737,7 @@ const ArtistView = ({ ...rest }: any) => {
                         </StyledPopover>
                       }
                     >
-                      <CustomTooltip text="{t('Info')}">
+                      <CustomTooltip text={t('Info')}>
                         <StyledButton appearance="subtle" size="lg">
                           <Icon icon="info-circle" />
                         </StyledButton>
@@ -778,11 +764,6 @@ const ArtistView = ({ ...rest }: any) => {
               virtualized
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'album',
-                cacheIdProperty: 'albumId',
-              }}
               listType="music"
               dnd
               disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
@@ -810,11 +791,6 @@ const ArtistView = ({ ...rest }: any) => {
                   virtualized
                   rowHeight={config.lookAndFeel.listView.album.rowHeight}
                   fontSize={config.lookAndFeel.listView.album.fontSize}
-                  cacheImages={{
-                    enabled: settings.getSync('cacheImages'),
-                    cacheType: 'album',
-                    cacheIdProperty: 'albumId',
-                  }}
                   page="artistPage"
                   listType="album"
                   isModal={rest.isModal}
@@ -863,11 +839,6 @@ const ArtistView = ({ ...rest }: any) => {
               virtualized
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'album',
-                cacheIdProperty: 'albumId',
-              }}
               listType="music"
               dnd
               disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
@@ -934,7 +905,6 @@ const ArtistView = ({ ...rest }: any) => {
                     rowHeight={config.lookAndFeel.listView.music.rowHeight}
                     fontSize={config.lookAndFeel.listView.music.fontSize}
                     listType="music"
-                    cacheImages={{ enabled: false }}
                     isModal={false}
                     miniView={false}
                     handleFavorite={(rowData: any) =>

@@ -506,11 +506,6 @@ const NowPlayingMiniView = () => {
               virtualized
               rowHeight={config.lookAndFeel.listView.mini.rowHeight}
               fontSize={config.lookAndFeel.listView.mini.fontSize}
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'album',
-                cacheIdProperty: 'albumId',
-              }}
               listType="music"
               miniView
               nowPlaying

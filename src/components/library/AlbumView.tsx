@@ -44,7 +44,6 @@ import {
   formatDuration,
   getAlbumSize,
   getPlayedSongsNotification,
-  isCached,
 } from '../../shared/utils';
 import {
   LinkWrapper,
@@ -298,13 +297,7 @@ const AlbumView = ({ ...rest }: any) => {
             // which causes the background-image to flicker
             expanded={misc.expandSidebar}
             style={{
-              backgroundImage: `url(${
-                !data?.image.match('placeholder')
-                  ? isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
-                    ? `${misc.imageCachePath}album_${albumId}.jpg`.replaceAll('\\', '/')
-                    : data.image
-                  : 'null'
-              })`,
+              backgroundImage: `url(${!data?.image.match('placeholder') ? data.image : 'null'})`,
             }}
           />
         </BlurredBackgroundWrapper>
@@ -319,11 +312,7 @@ const AlbumView = ({ ...rest }: any) => {
               <Card
                 title="None"
                 subtitle=""
-                coverArt={
-                  isCached(`${misc.imageCachePath}album_${albumId}.jpg`)
-                    ? `${misc.imageCachePath}album_${albumId}.jpg`
-                    : data.image
-                }
+                coverArt={data.image}
                 size={200}
                 hasHoverButtons
                 noInfoPanel
@@ -334,11 +323,6 @@ const AlbumView = ({ ...rest }: any) => {
                 handleFavorite={handleFavorite}
               />
             }
-            cacheImages={{
-              enabled: settings.getSync('cacheImages'),
-              cacheType: 'album',
-              id: data.albumId,
-            }}
             imageHeight={200}
             title={data.title}
             showTitleTooltip
@@ -560,11 +544,6 @@ const AlbumView = ({ ...rest }: any) => {
           virtualized
           rowHeight={Number(settings.getSync('musicListRowHeight'))}
           fontSize={Number(settings.getSync('musicListFontSize'))}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'album',
-            cacheIdProperty: 'albumId',
-          }}
           page="albumPage"
           listType="music"
           isModal={rest.isModal}

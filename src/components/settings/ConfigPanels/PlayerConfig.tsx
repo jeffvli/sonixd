@@ -352,7 +352,7 @@ const PlayerConfig = ({ bordered }: any) => {
           rowHeight={35}
           fontSize={12}
           listType="column"
-          cacheImages={{ enabled: false }}
+          s={{ enabled: false }}
           playQueue={playQueue}
           multiSelect={multiSelect}
           isModal={false}

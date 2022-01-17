@@ -3,7 +3,6 @@ import { Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   appendPlayQueue,
@@ -11,7 +10,7 @@ import {
   fixPlayer2Index,
   setPlayQueue,
 } from '../../redux/playQueueSlice';
-import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
+import { filterPlayQueue, getPlayedSongsNotification } from '../../shared/utils';
 
 import {
   CardPanel,
@@ -47,8 +46,6 @@ const Card = ({
   lazyLoad,
   playClick,
   size,
-  cacheImages,
-  cachePath,
   handleFavorite,
   notVisibleByDefault,
   noInfoPanel,
@@ -268,23 +265,10 @@ const Card = ({
               <CardImgWrapper size={size} onClick={handleClick}>
                 {lazyLoad ? (
                   <LazyCardImg
-                    src={
-                      isCached(`${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`)
-                        ? `${cachePath}${rest.details.cacheType}_${rest.details.id}.jpg`
-                        : rest.coverArt
-                    }
+                    src={rest.coverArt}
                     alt="img"
-                    effect="opacity"
                     cardsize={size}
                     visibleByDefault={!notVisibleByDefault}
-                    afterLoad={() => {
-                      if (cacheImages) {
-                        cacheImage(
-                          `${rest.details.cacheType}_${rest.details.id}.jpg`,
-                          rest.coverArt.replaceAll(/=150/gi, '=350')
-                        );
-                      }
-                    }}
                   />
                 ) : (
                   <CardImg src={rest.coverArt} alt="img" onClick={handleClick} cardsize={size} />

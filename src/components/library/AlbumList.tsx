@@ -451,11 +451,6 @@ const AlbumList = () => {
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleRating={handleRowRating}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'album',
-            cacheIdProperty: 'albumId',
-          }}
           page="albumListPage"
           listType="album"
           virtualized

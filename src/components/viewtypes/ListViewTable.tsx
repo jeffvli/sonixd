@@ -16,13 +16,7 @@ import {
   StyledTableHeaderCell,
   TableCellWrapper,
 } from './styled';
-import {
-  formatSongDuration,
-  isCached,
-  formatDate,
-  convertByteToMegabyte,
-} from '../../shared/utils';
-import cacheImage from '../shared/cacheImage';
+import { formatSongDuration, formatDate, convertByteToMegabyte } from '../../shared/utils';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
@@ -106,7 +100,6 @@ const ListViewTable = ({
   columns,
   handleRowClick,
   handleRowDoubleClick,
-  cacheImages,
   autoHeight,
   page,
   listType,
@@ -666,32 +659,11 @@ const ListViewTable = ({
                           >
                             <CoverArtWrapper size={rowHeight - 10}>
                               <LazyLoadImage
-                                src={
-                                  isCached(
-                                    `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                      rowData[cacheImages.cacheIdProperty]
-                                    }.jpg`
-                                  )
-                                    ? `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                        rowData[cacheImages.cacheIdProperty]
-                                      }.jpg`
-                                    : rowData.image
-                                }
+                                src={rowData.image}
                                 alt="track-img"
-                                effect="opacity"
                                 width={rowHeight - 10}
                                 height={rowHeight - 10}
                                 visibleByDefault
-                                afterLoad={() => {
-                                  if (cacheImages.enabled) {
-                                    cacheImage(
-                                      `${cacheImages.cacheType}_${
-                                        rowData[cacheImages.cacheIdProperty]
-                                      }.jpg`,
-                                      rowData.image.replaceAll(/=150/gi, '=350')
-                                    );
-                                  }
-                                }}
                               />
                             </CoverArtWrapper>
                           </Col>
@@ -846,32 +818,11 @@ const ListViewTable = ({
                     >
                       <CoverArtWrapper size={rowHeight - 10}>
                         <LazyLoadImage
-                          src={
-                            isCached(
-                              `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                rowData[cacheImages.cacheIdProperty]
-                              }.jpg`
-                            )
-                              ? `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                  rowData[cacheImages.cacheIdProperty]
-                                }.jpg`
-                              : rowData.image
-                          }
+                          src={rowData.image}
                           alt="track-img"
-                          effect="opacity"
                           width={rowHeight - 10}
                           height={rowHeight - 10}
                           visibleByDefault
-                          afterLoad={() => {
-                            if (cacheImages.enabled) {
-                              cacheImage(
-                                `${cacheImages.cacheType}_${
-                                  rowData[cacheImages.cacheIdProperty]
-                                }.jpg`,
-                                rowData.image.replaceAll(/=150/gi, '=350')
-                              );
-                            }
-                          }}
                         />
                       </CoverArtWrapper>
                     </TableCellWrapper>

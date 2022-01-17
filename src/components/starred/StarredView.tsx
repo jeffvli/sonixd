@@ -332,11 +332,6 @@ const StarredView = () => {
               handleRating={handleRowRating}
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'album',
-                cacheIdProperty: 'albumId',
-              }}
               page="favoriteTracksPage"
               listType="music"
               virtualized
@@ -364,11 +359,6 @@ const StarredView = () => {
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
                   handleRating={handleRowRating}
-                  cacheImages={{
-                    enabled: settings.getSync('cacheImages'),
-                    cacheType: 'album',
-                    cacheIdProperty: 'albumId',
-                  }}
                   page="favoriteAlbumsPage"
                   listType="album"
                   virtualized
@@ -424,11 +414,6 @@ const StarredView = () => {
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
                   handleRating={handleRowRating}
-                  cacheImages={{
-                    enabled: false,
-                    cacheType: 'artist',
-                    cacheIdProperty: 'id',
-                  }}
                   page="favoriteArtistsPage"
                   listType="artist"
                   virtualized

@@ -535,11 +535,6 @@ const NowPlayingView = () => {
           virtualized
           rowHeight={config.lookAndFeel.listView.music.rowHeight}
           fontSize={config.lookAndFeel.listView.music.fontSize}
-          cacheImages={{
-            enabled: settings.getSync('cacheImages'),
-            cacheType: 'album',
-            cacheIdProperty: 'albumId',
-          }}
           listType="music"
           nowPlaying
           dnd

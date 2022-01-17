@@ -17,7 +17,6 @@ import {
   PageHeaderTitle,
   PageHeaderWrapper,
 } from './styled';
-import cacheImage from '../shared/cacheImage';
 import CustomTooltip from '../shared/CustomTooltip';
 
 const GenericPageHeader = ({
@@ -35,7 +34,6 @@ const GenericPageHeader = ({
   handleListClick,
   handleGridClick,
   viewTypeSetting,
-  cacheImages,
   showTitleTooltip,
   isDark,
 }: any) => {
@@ -54,14 +52,6 @@ const GenericPageHeader = ({
               alt="header-img"
               height={imageHeight || '195px'}
               visibleByDefault
-              afterLoad={() => {
-                if (cacheImages.enabled) {
-                  cacheImage(
-                    `${cacheImages.cacheType}_${cacheImages.id}.jpg`,
-                    image.replaceAll(/=150/gi, '=350')
-                  );
-                }
-              }}
             />
           )}
         </CoverArtWrapper>

@@ -261,11 +261,6 @@ const SearchView = () => {
               handleRowDoubleClick={handleRowDoubleClick}
               handleRating={handleRowRating}
               listType="music"
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'album',
-                cacheIdProperty: 'albumId',
-              }}
               disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
               playQueue={playQueue}
               multiSelect={multiSelect}
