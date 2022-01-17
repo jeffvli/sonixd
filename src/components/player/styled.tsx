@@ -17,6 +17,7 @@ export const PlayerColumn = styled.div<{
   right?: boolean;
   height: string;
 }>`
+  user-select: none;
   height: ${(props) => props.height};
   display: flex;
   align-items: center;
@@ -47,7 +48,6 @@ export const PlayerControlIcon = styled(Icon)`
 `;
 
 export const LinkButton = styled(Button)<{ subtitle?: string }>`
-  user-select: text;
   border-radius: 0px;
   background: transparent;
   max-width: 100%;
@@ -62,12 +62,15 @@ export const LinkButton = styled(Button)<{ subtitle?: string }>`
       ? props.theme.colors.layout.playerBar.colorSecondary
       : props.theme.colors.layout.playerBar.color} !important;
 
+  &:hover {
+    text-decoration: underline;
+  }
+
   &:hover,
   &:active,
   &:focus {
     background: transparent !important;
     color: ${(props) => props.theme.colors.layout.playerBar.color};
-    text-decoration: underline;
     cursor: pointer;
   }
 
