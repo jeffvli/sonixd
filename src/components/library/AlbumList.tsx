@@ -34,6 +34,8 @@ import useAdvancedFilter from '../../hooks/useAdvancedFilter';
 import ColumnSort from '../shared/ColumnSort';
 import useColumnSort from '../../hooks/useColumnSort';
 import { setFilter, setPagination, setAdvancedFilters, setColumnSort } from '../../redux/viewSlice';
+import useGridScroll from '../../hooks/useGridScroll';
+import useListScroll from '../../hooks/useListScroll';
 
 export const ALBUM_SORT_TYPES = [
   { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
@@ -58,8 +60,12 @@ const AlbumList = () => {
   const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
   const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
   const albumFilterPickerContainerRef = useRef(null);
-  const [isRefresh, setIsRefresh] = useState(false);
   const [currentQueryKey, setCurrentQueryKey] = useState<any>(['albumList']);
+
+  const gridRef = useRef<any>();
+  const listRef = useRef<any>();
+  const { gridScroll } = useGridScroll(gridRef);
+  const { listScroll } = useListScroll(listRef);
 
   useEffect(() => {
     if (folder.applied.albums) {
@@ -184,32 +190,26 @@ const AlbumList = () => {
   }, [genres]);
 
   useEffect(() => {
-    const pages =
-      Math.floor(
-        (view.album.pagination.serverSide && config.serverType === Server.Jellyfin
-          ? albums?.totalRecordCount
-          : sortedData?.length) / view.album.pagination.recordsPerPage
-      ) + 1;
+    if (albums?.data && sortedData?.length) {
+      const pages =
+        Math.floor(
+          (view.album.pagination.serverSide && config.serverType === Server.Jellyfin
+            ? albums?.totalRecordCount
+            : sortedData?.length) / view.album.pagination.recordsPerPage
+        ) + 1;
 
-    if (albums && view.album.pagination.pages !== pages) {
-      dispatch(
-        setPagination({
-          listType: Item.Album,
-          data: {
-            pages,
-          },
-        })
-      );
+      if (pages && view.album.pagination.pages !== pages) {
+        dispatch(
+          setPagination({
+            listType: Item.Album,
+            data: {
+              pages,
+            },
+          })
+        );
+      }
     }
-  }, [
-    albums,
-    config.serverType,
-    dispatch,
-    sortedData?.length,
-    view.album.pagination.pages,
-    view.album.pagination.recordsPerPage,
-    view.album.pagination.serverSide,
-  ]);
+  }, [albums, config.serverType, dispatch, sortedData?.length, view.album.pagination]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
@@ -320,7 +320,6 @@ const AlbumList = () => {
                   cleanable={false}
                   placeholder={t('Sort Type')}
                   onChange={async (value: string) => {
-                    setIsRefresh(true);
                     await queryClient.cancelQueries([
                       'albumList',
                       view.album.filter,
@@ -331,7 +330,8 @@ const AlbumList = () => {
                     dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
                     localStorage.setItem('scroll_grid_albumList', '0');
                     localStorage.setItem('scroll_list_albumList', '0');
-                    setIsRefresh(false);
+                    gridScroll(0);
+                    listScroll(0);
                   }}
                 />
                 <RefreshButton onClick={handleRefresh} size="sm" loading={isRefreshing} />
@@ -438,6 +438,7 @@ const AlbumList = () => {
       {isError && <div>Error: {error}</div>}
       {!isError && viewType === 'list' && (
         <ListViewType
+          ref={listRef}
           data={
             misc.searchQuery !== ''
               ? searchedData
@@ -510,6 +511,7 @@ const AlbumList = () => {
                     },
                   })
                 );
+                listScroll(0);
               },
             }
           }
@@ -517,6 +519,7 @@ const AlbumList = () => {
       )}
       {!isError && viewType === 'grid' && (
         <GridViewType
+          gridRef={gridRef}
           data={
             misc.searchQuery !== ''
               ? searchedData
@@ -548,7 +551,6 @@ const AlbumList = () => {
             localStorage.setItem('scroll_grid_albumList', String(scrollIndex));
           }}
           loading={isLoading}
-          refresh={isRefresh}
           paginationProps={
             view.album.pagination.recordsPerPage !== 0 && {
               disabled: misc.searchQuery !== '' ? true : null,
@@ -563,7 +565,7 @@ const AlbumList = () => {
                 view.album.pagination.recordsPerPage * (view.album.pagination.activePage - 1) + 1,
               endIndex: view.album.pagination.recordsPerPage * view.album.pagination.activePage,
               handleGoToButton: (e: number) => {
-                localStorage.setItem('scroll_list_albumList', '0');
+                localStorage.setItem('scroll_grid_albumList', '0');
                 dispatch(
                   setPagination({
                     listType: Item.Album,
@@ -574,8 +576,8 @@ const AlbumList = () => {
                 );
               },
               onSelect: async (e: number) => {
-                localStorage.setItem('scroll_list_albumList', '0');
-                await queryClient.cancelQueries(['albumList'], { active: true });
+                localStorage.setItem('scroll_grid_albumList', '0');
+                await queryClient.cancelQueries(['albumList']);
                 dispatch(
                   setPagination({
                     listType: Item.Album,
@@ -584,6 +586,7 @@ const AlbumList = () => {
                     },
                   })
                 );
+                gridScroll(0);
               },
             }
           }
