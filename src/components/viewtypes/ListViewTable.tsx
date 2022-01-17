@@ -681,7 +681,7 @@ const ListViewTable = ({
                                 effect="opacity"
                                 width={rowHeight - 10}
                                 height={rowHeight - 10}
-                                visibleByDefault={cacheImages.enabled}
+                                visibleByDefault
                                 afterLoad={() => {
                                   if (cacheImages.enabled) {
                                     cacheImage(
@@ -861,7 +861,7 @@ const ListViewTable = ({
                           effect="opacity"
                           width={rowHeight - 10}
                           height={rowHeight - 10}
-                          visibleByDefault={cacheImages.enabled}
+                          visibleByDefault
                           afterLoad={() => {
                             if (cacheImages.enabled) {
                               cacheImage(
