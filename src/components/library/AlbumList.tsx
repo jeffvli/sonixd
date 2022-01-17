@@ -73,21 +73,16 @@ const AlbumList = () => {
     } else {
       setMusicFolder({ loaded: true, id: undefined });
     }
+  }, [folder.applied.albums, folder.musicFolder]);
 
+  useEffect(() => {
     if (config.serverType === Server.Subsonic || !view.album.pagination.serverSide) {
       // Client-side paging won't require a separate key for the active page
       setCurrentQueryKey(['albumList', view.album.filter, musicFolder.id]);
     } else {
       setCurrentQueryKey(['albumList', view.album.filter, view.album.pagination, musicFolder.id]);
     }
-  }, [
-    config.serverType,
-    folder.applied.albums,
-    folder.musicFolder,
-    musicFolder.id,
-    view.album.filter,
-    view.album.pagination,
-  ]);
+  }, [config.serverType, musicFolder.id, view.album.filter, view.album.pagination]);
 
   const { isLoading, isError, data: albums, error }: any = useQuery(
     currentQueryKey,
