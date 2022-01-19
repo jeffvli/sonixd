@@ -8,7 +8,6 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 import {
   DeleteButton,
   EditButton,
@@ -39,6 +38,8 @@ import {
   createRecoveryFile,
   errorMessages,
   filterPlayQueue,
+  formatDate,
+  formatDateTime,
   formatDuration,
   getCurrentEntryList,
   getPlayedSongsNotification,
@@ -543,41 +544,25 @@ const PlaylistView = ({ ...rest }) => {
               </PageHeaderSubtitleDataLine>
               <PageHeaderSubtitleDataLine>
                 {data.owner && t('By {{dataOwner}} • ', { dataOwner: data.owner })}
-                {data.created &&
-                  t('Created {{val, datetime}}', {
-                    val: moment(data.created),
-                    formatParams: {
-                      val: { year: 'numeric', month: 'short', day: 'numeric' },
-                    },
-                  })}
+                {data.created && t('Created {{val, datetime}}', { val: formatDate(data.created) })}
                 {data.changed &&
-                  t(' • Modified {{val, datetime}}', {
-                    val: moment(data.changed),
-                    formatParams: {
-                      val: {
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      },
-                    },
-                  })}
+                  t(' • Modified {{val, datetime}}', { val: formatDateTime(data.changed) })}
               </PageHeaderSubtitleDataLine>
-              <CustomTooltip text={data.comment} placement="bottomStart" disabled={!data.comment}>
-                <PageHeaderSubtitleDataLine
-                  style={{
-                    minHeight: '1.2rem',
-                    maxHeight: '1.2rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'pre-wrap',
-                  }}
-                >
-                  <span>{data.comment ? data.comment : ''}</span>
-                </PageHeaderSubtitleDataLine>
-              </CustomTooltip>
-
+              {data.comment && (
+                <CustomTooltip text={data.comment} placement="bottomStart" disabled={!data.comment}>
+                  <PageHeaderSubtitleDataLine
+                    style={{
+                      minHeight: '1.2rem',
+                      maxHeight: '1.2rem',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    <span>{data.comment ? data.comment : ''}</span>
+                  </PageHeaderSubtitleDataLine>
+                </CustomTooltip>
+              )}
               <div style={{ marginTop: '10px' }}>
                 <ButtonToolbar>
                   <PlayButton

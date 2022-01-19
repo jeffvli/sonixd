@@ -7,7 +7,6 @@ import { ButtonToolbar, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
 import {
   DownloadButton,
   FavoriteButton,
@@ -41,6 +40,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
 import {
   filterPlayQueue,
+  formatDate,
   formatDuration,
   getAlbumSize,
   getPlayedSongsNotification,
@@ -382,12 +382,7 @@ const AlbumView = ({ ...rest }: any) => {
                     }
                   }}
                 >
-                  {t('Added {{val, datetime}}', {
-                    val: moment(data.created),
-                    formatParams: {
-                      val: { year: 'numeric', month: 'short', day: 'numeric' },
-                    },
-                  })}
+                  {t('Added {{val, datetime}}', { val: formatDate(data.created) })}
                   {data.genre.map((d: Genre, i: number) => {
                     return (
                       <span key={nanoid()}>
