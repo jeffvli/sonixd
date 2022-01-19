@@ -7,9 +7,11 @@ import { SectionTitleWrapper, SectionTitle, StyledButton } from '../shared/style
 import { useAppSelector } from '../../redux/hooks';
 import { smoothScroll } from '../../shared/utils';
 
-const ScrollMenuContainer = styled.div<{ $noScrollbar?: boolean }>`
+const ScrollMenuContainer = styled.div<{ $noScrollbar?: boolean; maxWidth: string }>`
   overflow-x: auto;
   white-space: nowrap;
+
+  max-width: ${(props) => props.maxWidth};
 
   ::-webkit-scrollbar {
     height: ${(props) => (props.$noScrollbar ? '0px' : '10px')};
@@ -26,6 +28,9 @@ const ScrollingMenu = ({
   type,
   handleFavorite,
   noScrollbar,
+  cardSize,
+  maxWidth,
+  noButtons,
 }: any) => {
   const cacheImages = Boolean(settings.getSync('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
@@ -34,7 +39,7 @@ const ScrollingMenu = ({
 
   return (
     <>
-      <SectionTitleWrapper>
+      <SectionTitleWrapper maxWidth={maxWidth}>
         <FlexboxGrid justify="space-between" style={{ alignItems: 'flex-end' }}>
           <FlexboxGrid.Item>
             <SectionTitle
@@ -51,7 +56,7 @@ const ScrollingMenu = ({
             {subtitle}
           </FlexboxGrid.Item>
           <FlexboxGrid.Item>
-            {data.length > 0 && (
+            {data.length > 0 && !noButtons && (
               <ButtonToolbar>
                 <ButtonGroup>
                   <StyledButton
@@ -62,7 +67,7 @@ const ScrollingMenu = ({
                         400,
                         scrollContainerRef.current,
                         scrollContainerRef.current.scrollLeft -
-                          config.lookAndFeel.gridView.cardSize * 5,
+                          (cardSize || config.lookAndFeel.gridView.cardSize) * 5,
                         'scrollLeft'
                       );
                     }}
@@ -77,7 +82,7 @@ const ScrollingMenu = ({
                         400,
                         scrollContainerRef.current,
                         scrollContainerRef.current.scrollLeft +
-                          config.lookAndFeel.gridView.cardSize * 5,
+                          (cardSize || config.lookAndFeel.gridView.cardSize) * 5,
                         'scrollLeft'
                       );
                     }}
@@ -91,7 +96,7 @@ const ScrollingMenu = ({
         </FlexboxGrid>
       </SectionTitleWrapper>
 
-      <ScrollMenuContainer ref={scrollContainerRef} $noScrollbar={noScrollbar}>
+      <ScrollMenuContainer ref={scrollContainerRef} $noScrollbar={noScrollbar} maxWidth={maxWidth}>
         {data.map((item: any) => (
           <span key={item.id} style={{ display: 'inline-block' }}>
             <Card
@@ -118,7 +123,7 @@ const ScrollingMenu = ({
               playClick={{ type, id: type === 'music' ? item.albumId : item.id }}
               details={{ cacheType: type, ...item }}
               hasHoverButtons
-              size={config.lookAndFeel.gridView.cardSize}
+              size={cardSize || config.lookAndFeel.gridView.cardSize}
               lazyLoad
               cacheImages={cacheImages}
               cachePath={misc.imageCachePath}

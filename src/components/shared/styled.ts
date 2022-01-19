@@ -483,12 +483,14 @@ export const StyledPopover = styled(Popover)<{ width?: string }>`
   width: ${(props) => props.width};
 `;
 
-export const SectionTitleWrapper = styled.div`
+export const SectionTitleWrapper = styled.div<{ maxWidth?: string }>`
   margin-left: 10px;
   margin-bottom: 10px;
+  max-width: ${(props) => props.maxWidth};
 `;
 
 export const SectionTitle = styled.a`
+  user-select: none;
   vertical-align: middle;
   font-size: ${(props) => props.theme.fonts.size.panelTitle};
   color: ${(props) => props.theme.colors.layout.page.color};
@@ -537,9 +539,10 @@ export const StyledPanel = styled(Panel)<{ $maxWidth?: string }>`
   border-radius: ${(props) => props.theme.other.panel.borderRadius};
   max-width: ${(props) => props.$maxWidth};
   cursor: default;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 
   .rs-panel-heading {
+    user-select: none;
     margin-left: 10px;
     font-size: ${(props) => props.theme.fonts.size.panelTitle};
 
