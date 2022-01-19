@@ -661,13 +661,17 @@ export const batchUnstar = async (options: { ids: string[] }) => {
   return res;
 };
 
-export const getSimilarSongs = async (options: { id: string; musicFolderId?: string }) => {
+export const getSimilarSongs = async (options: {
+  id: string;
+  count: number;
+  musicFolderId?: string;
+}) => {
   const { data } = await jellyfinApi.get(`/items/${options.id}/instantmix`, {
     params: {
       userId: auth.username,
       fields: 'Genres, DateCreated, MediaSources, UserData, ParentId',
       parentId: options.musicFolderId,
-      limit: 100,
+      limit: options.count || 100,
     },
   });
 
