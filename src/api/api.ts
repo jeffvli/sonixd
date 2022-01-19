@@ -199,7 +199,7 @@ const normalizeSong = (item: any) => {
     discNumber: item.discNumber,
     created: item.created,
     streamUrl: getStreamUrl(item.id, legacyAuth),
-    image: getCoverArtUrl(item, legacyAuth, 150),
+    image: getCoverArtUrl(item, legacyAuth, 350),
     starred: item.starred,
     userRating: item.userRating,
     type: Item.Music,
@@ -288,7 +288,7 @@ const normalizeFolder = (item: any) => {
     title: item.name || item.title,
     created: item.DateCreated,
     isDir: true,
-    image: getCoverArtUrl(item, legacyAuth, 150),
+    image: getCoverArtUrl(item, legacyAuth, 350),
     type: Item.Folder,
     uniqueId: nanoid(),
   };
@@ -565,7 +565,7 @@ export const setRating = async (options: { ids: string[]; rating: number }) => {
 
 export const getSimilarSongs = async (options: { id: string; count: number }) => {
   const { data } = await api.get(`/getSimilarSongs2`, { params: options });
-  return (_.uniqBy(data.similarSongs2.song, (e: any) => e.id) || []).map((entry: any) =>
+  return (_.uniqBy(data?.similarSongs2?.song, (e: any) => e.id) || []).map((entry: any) =>
     normalizeSong(entry)
   );
 };
@@ -573,6 +573,18 @@ export const getSimilarSongs = async (options: { id: string; count: number }) =>
 export const getTopSongs = async (options: { artist: string; count: number }) => {
   const { data } = await api.get(`/getTopSongs`, { params: options });
   return (_.uniqBy(data?.topSongs?.song, (e: any) => e.id) || []).map((entry: any) =>
+    normalizeSong(entry)
+  );
+};
+
+export const getSongsByGenre = async (options: {
+  genre: string;
+  count: number;
+  offset: number;
+  musicFolderId?: string | number;
+}) => {
+  const { data } = await api.get(`/getSongsByGenre`, { params: options });
+  return (_.uniqBy(data?.songsByGenre?.song, (e: any) => e.id) || []).map((entry: any) =>
     normalizeSong(entry)
   );
 };

@@ -52,7 +52,8 @@ export type APIEndpoints =
   | 'getMusicDirectorySongs'
   | 'getDownloadUrl'
   | 'getSongs'
-  | 'getTopSongs';
+  | 'getTopSongs'
+  | 'getSongsByGenre';
 
 export interface GenericItem {
   id: string;
