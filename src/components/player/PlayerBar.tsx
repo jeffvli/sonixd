@@ -582,7 +582,7 @@ const PlayerBar = () => {
                       />
                     </CoverArtWrapper>
                   </Col>
-                  <Col xs={2} style={{ minWidth: '140px', maxWidth: '450px', width: '100%' }}>
+                  <Col xs={2} style={{ minWidth: '120px', maxWidth: '450px', width: '100%' }}>
                     <Row
                       style={{
                         height: '23px',
