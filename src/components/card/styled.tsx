@@ -128,7 +128,9 @@ export const CardTitleButton = styled(CardButton)`
   &:focus {
     text-decoration: none;
     color: ${(props) =>
-      !props.onClick ? props.theme.colors.layout.page.color : props.theme.colors.primary};
+      !props.onClick
+        ? props.theme.colors.layout.page.color
+        : props.theme.colors.primary} !important;
   }
 
   &:focus-visible {
@@ -140,14 +142,18 @@ export const CardSubtitleButton = styled(CardButton)`
   color: ${(props) => props.theme.colors.layout.page.colorSecondary};
 
   &:hover,
-  &:focus {
+  &:focus,
+  &:active {
     text-decoration: none;
     color: ${(props) =>
-      !props.onClick ? props.theme.colors.layout.page.color : props.theme.colors.primary};
+      !props.onClick
+        ? props.theme.colors.layout.page.color
+        : props.theme.colors.primary} !important;
   }
 `;
 
 export const CardSubtitle = styled.div<Card>`
+  user-select: none;
   padding-bottom: 5px;
   font-size: 12px;
   white-space: nowrap;
