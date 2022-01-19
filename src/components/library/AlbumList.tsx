@@ -98,7 +98,7 @@ const AlbumList = () => {
                     type: view.album.filter,
                     size: 500,
                     offset: 0,
-                    musicFolderId: musicFolder,
+                    musicFolderId: musicFolder.id,
                     recursive: view.album.filter !== 'random',
                   }
                 : {
