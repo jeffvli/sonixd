@@ -61,7 +61,9 @@ const Card = ({
   const config = useAppSelector((state) => state.config);
 
   const handleClick = () => {
-    history.push(url);
+    if (url) {
+      history.push(url);
+    }
   };
 
   const handleSubClick = () => {
@@ -197,7 +199,7 @@ const Card = ({
 
   return (
     <>
-      <CardPanel cardsize={size} style={rest.style}>
+      <CardPanel cardsize={size} style={rest.style} $noInfoPanel={noInfoPanel}>
         <Overlay cardsize={size}>
           <ImgPanel
             tabIndex={0}
