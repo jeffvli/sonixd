@@ -279,6 +279,7 @@
     "nodejs-fs-utils": "^1.2.5",
     "randomstring": "^1.2.1",
     "react": "^17.0.2",
+    "react-animated-css": "^1.2.1",
     "react-audio-player": "^0.17.0",
     "react-chartjs-2": "^3.0.4",
     "react-dom": "^17.0.2",
