@@ -174,6 +174,13 @@ const normalizeAPIResult = (items: any, totalRecordCount?: number) => {
   };
 };
 
+const normalizeItem = (item: any) => {
+  return {
+    id: item.id || item.url,
+    title: item.name,
+  };
+};
+
 const normalizeSong = (item: any) => {
   return {
     id: item.id,
@@ -199,7 +206,7 @@ const normalizeSong = (item: any) => {
     discNumber: item.discNumber,
     created: item.created,
     streamUrl: getStreamUrl(item.id, legacyAuth),
-    image: getCoverArtUrl(item, legacyAuth, 350),
+    image: getCoverArtUrl(item, legacyAuth, 150),
     starred: item.starred,
     userRating: item.userRating,
     type: Item.Music,
@@ -242,7 +249,7 @@ const normalizeArtist = (item: any) => {
     userRating: item.userRating,
     info: {
       biography: item.biography,
-      externalUrl: item.lastFmUrl && [{ id: item.lastFmUrl, title: 'Last.fm' }],
+      externalUrl: (item.externalUrls || []).map((entry: any) => normalizeItem(entry)),
       imageUrl:
         !item.externalImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f') && item.externalImageUrl,
       similarArtist: (item.similarArtist || []).map((entry: any) => normalizeArtist(entry)),
@@ -419,10 +426,22 @@ export const getArtist = async (options: { id: string }) => {
     params: { id: options.id, count: 15 },
   });
 
+  const externalUrls = [];
+  if (infoData?.artistInfo2?.lastFmUrl) {
+    externalUrls.push({ name: 'Last.fm', url: infoData?.artistInfo2?.lastFmUrl });
+  }
+
+  if (infoData?.artistInfo2?.musicBrainzId) {
+    externalUrls.push({
+      name: 'Musicbrainz',
+      url: `https://musicbrainz.org/artist/${infoData.artistInfo2.musicBrainzId}`,
+    });
+  }
+
   return normalizeArtist({
     ...data.artist,
     biography: infoData?.artistInfo2?.biography,
-    lastFmUrl: infoData?.artistInfo2?.lastFmUrl,
+    externalUrls,
     externalImageUrl: infoData?.artistInfo2?.largeImageUrl,
     similarArtist: infoData?.artistInfo2?.similarArtist,
   });
