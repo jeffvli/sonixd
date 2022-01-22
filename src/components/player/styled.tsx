@@ -139,3 +139,53 @@ export const MiniViewContainer = styled.div<{ display: string }>`
   color: ${(props) => `${props.theme.colors.layout.page.color} !important`};
   z-index: 500;
 `;
+
+export const InfoViewPanel = styled.div<{ height?: string }>`
+  background: rgba(150, 150, 150, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 0 0 5px 0;
+  height: ${(props) => props.height};
+`;
+
+export const SongTitle = styled.div`
+  text-align: center;
+  font-size: 20px;
+  user-select: none;
+`;
+
+export const ArtistTitle = styled.h1`
+  font-size: 28px;
+  user-select: none;
+`;
+
+export const InfoGridContainer = styled.div`
+  display: grid;
+  margin-bottom: 5px;
+  grid-auto-columns: 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.5fr 1fr;
+  gap: 5px 0px;
+  grid-template-areas:
+    'Player'
+    'Artist-Info';
+
+  @media screen and (min-width: 800px) {
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 1fr 1fr;
+    grid-auto-columns: 1fr;
+    gap: 0px 5px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      'Player Artist-Info'
+      'Player Artist-Info';
+  }
+`;
+
+export const InfoPlayerContainer = styled.div`
+  grid-area: Player;
+`;
+
+export const ArtistInfoContainer = styled.div`
+  grid-area: Artist-Info;
+`;
