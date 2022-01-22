@@ -26,7 +26,7 @@ export const CardPanel = styled(Panel)<Card>`
 
   text-align: center;
   width: ${(props) => `${Number(props.cardsize) + 2}px`};
-  height: ${(props) => `${Number(props.cardsize) + 55}px`};
+  height: ${(props) => `${Number(props.cardsize) + (props.$noInfoPanel ? 5 : 55)}px`};
   border: ${(props) => props.theme.other.card.border};
 
   /* Hover effects inspired from https://codepen.io/SabAsan/pen/bGNrmzq */
