@@ -195,7 +195,7 @@ const GridViewType = ({
       <AutoSizer>
         {({ height, width }: any) => (
           <>
-            {data?.length ? (
+            {!loading ? (
               <ListWrapper
                 height={
                   height - (paginationProps && paginationProps?.recordsPerPage !== 0 ? 45 : 0)
@@ -217,7 +217,6 @@ const GridViewType = ({
                 initialScrollOffset={initialScrollOffset}
                 onScroll={onScroll || (() => {})}
                 paginationProps={paginationProps}
-                loading={loading}
                 gridRef={gridRef}
               />
             ) : (

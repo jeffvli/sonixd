@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
-import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
@@ -12,6 +11,7 @@ import { setStar } from '../../redux/playQueueSlice';
 import { apiController } from '../../api/controller';
 import { Item, Server } from '../../types';
 import { setFilter, setPagination } from '../../redux/viewSlice';
+import CenterLoader from '../loader/CenterLoader';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -58,7 +58,11 @@ const Dashboard = () => {
     }
   );
 
-  const { isLoading: isLoadingRandom, data: randomAlbums }: any = useQuery(
+  const {
+    isLoading: isLoadingRandom,
+    isFetching: isFetchingRandom,
+    data: randomAlbums,
+  }: any = useQuery(
     ['randomAlbums', musicFolder.id],
     () =>
       apiController({
@@ -172,12 +176,14 @@ const Dashboard = () => {
     }
   };
 
-  if (isLoadingRecent || isLoadingNewest || isLoadingRandom || isLoadingFrequent) {
-    return (
-      <GenericPage hideDivider header={<GenericPageHeader title={t('Dashboard')} />}>
-        <PageLoader />
-      </GenericPage>
-    );
+  if (
+    isLoadingRecent ||
+    isLoadingNewest ||
+    isLoadingRandom ||
+    isLoadingFrequent ||
+    isFetchingRandom
+  ) {
+    return <CenterLoader />;
   }
 
   return (

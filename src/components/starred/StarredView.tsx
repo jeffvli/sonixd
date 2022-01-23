@@ -20,7 +20,6 @@ import {
 } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 import { setStatus } from '../../redux/playerSlice';
@@ -32,6 +31,7 @@ import useColumnSort from '../../hooks/useColumnSort';
 import { Item, Server } from '../../types';
 import { FilterButton } from '../shared/ToolbarButtons';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
+import CenterLoader from '../loader/CenterLoader';
 
 const StarredView = () => {
   const { t } = useTranslation();
@@ -320,12 +320,12 @@ const StarredView = () => {
         />
       }
     >
-      {(isLoading || !data) && <PageLoader />}
+      {(isLoading || !data) && <CenterLoader />}
       {data && (
         <>
           {favorite.active.tab === 'tracks' && (
             <ListViewType
-              data={misc.searchQuery !== '' ? filteredData : data.song}
+              data={misc.searchQuery !== '' ? filteredData : data?.song}
               tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
@@ -351,6 +351,7 @@ const StarredView = () => {
               onScroll={(scrollIndex: number) => {
                 localStorage.setItem('scroll_list_starredMusicList', String(Math.abs(scrollIndex)));
               }}
+              loading={isLoading}
             />
           )}
           {favorite.active.tab === 'albums' && (
@@ -385,6 +386,7 @@ const StarredView = () => {
                       String(Math.abs(scrollIndex))
                     );
                   }}
+                  loading={isLoading}
                 />
               )}
               {viewType === 'grid' && (
@@ -409,6 +411,7 @@ const StarredView = () => {
                   onScroll={(scrollIndex: number) => {
                     localStorage.setItem('scroll_grid_starredAlbumList', String(scrollIndex));
                   }}
+                  loading={isLoading}
                 />
               )}
             </>
@@ -448,6 +451,7 @@ const StarredView = () => {
                       String(Math.abs(scrollIndex))
                     );
                   }}
+                  loading={isLoading}
                 />
               )}
               {viewType === 'grid' && (
@@ -472,6 +476,7 @@ const StarredView = () => {
                   onScroll={(scrollIndex: number) => {
                     localStorage.setItem('scroll_grid_starredArtistList', String(scrollIndex));
                   }}
+                  loading={isLoading}
                 />
               )}
             </>

@@ -9,7 +9,6 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
-import PageLoader from '../loader/PageLoader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   clearSelected,
@@ -213,7 +212,6 @@ const ArtistList = () => {
         />
       }
     >
-      {isLoading && <PageLoader />}
       {isError && <div>{t('Error: {{error}}', { error })}</div>}
       {!isLoading && !isError && viewType === 'list' && (
         <ListViewType
@@ -243,6 +241,7 @@ const ArtistList = () => {
           onScroll={(scrollIndex: number) => {
             localStorage.setItem('scroll_list_artistList', String(Math.abs(scrollIndex)));
           }}
+          loading={isLoading}
         />
       )}
       {!isLoading && !isError && viewType === 'grid' && (
@@ -261,13 +260,13 @@ const ArtistList = () => {
           }
           playClick={{ type: 'artist', idProperty: 'id' }}
           size={config.lookAndFeel.gridView.cardSize}
-          s
           cacheType="artist"
           handleFavorite={handleRowFavorite}
           initialScrollOffset={Number(localStorage.getItem('scroll_grid_artistList'))}
           onScroll={(scrollIndex: number) => {
             localStorage.setItem('scroll_grid_artistList', String(scrollIndex));
           }}
+          loading={isLoading}
         />
       )}
     </GenericPage>

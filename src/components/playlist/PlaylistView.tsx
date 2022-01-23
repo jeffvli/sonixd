@@ -51,7 +51,6 @@ import {
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
-import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
@@ -75,6 +74,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 import Card from '../card/Card';
+import CenterLoader from '../loader/CenterLoader';
 
 interface PlaylistParams {
   id: string;
@@ -494,7 +494,7 @@ const PlaylistView = ({ ...rest }) => {
   }, [data?.image, data?.song]);
 
   if (isLoading) {
-    return <PageLoader />;
+    return <CenterLoader />;
   }
 
   if (isError) {
@@ -708,6 +708,7 @@ const PlaylistView = ({ ...rest }) => {
         disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
         handleFavorite={handleRowFavorite}
         handleRating={handleRowRating}
+        loading={isLoading}
       />
     </GenericPage>
   );
