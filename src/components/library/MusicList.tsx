@@ -20,7 +20,7 @@ import { StyledInputPicker, StyledInputPickerContainer, StyledTag } from '../sha
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
-import { Item, Server } from '../../types';
+import { Item } from '../../types';
 import useColumnSort from '../../hooks/useColumnSort';
 import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/playQueueSlice';
 import { setFilter, setPagination } from '../../redux/viewSlice';
@@ -66,18 +66,19 @@ const MusicList = () => {
   }, [folder.applied.music, folder.musicFolder]);
 
   useEffect(() => {
-    setCurrentQueryKey([
-      'musicList',
-      view.music.filter,
-      view.music.pagination.activePage,
-      musicFolder.id,
-    ]);
-  }, [musicFolder.id, view.music.filter, view.music.pagination.activePage]);
+    if (!view.music.pagination.serverSide) {
+      // Client-side paging won't require a separate key for the active page
+      setCurrentQueryKey(['musicList', view.music.filter, musicFolder.id]);
+    } else {
+      setCurrentQueryKey(['musicList', view.music.filter, view.music.pagination, musicFolder.id]);
+    }
+  }, [musicFolder.id, view.music.filter, view.music.pagination]);
 
   const { isLoading, isError, data: songs, error }: any = useQuery(
     currentQueryKey,
     () =>
-      view.music.filter === 'random' || view.music.pagination.recordsPerPage !== 0
+      view.music.filter === 'random' ||
+      (view.music.pagination.recordsPerPage !== 0 && view.music.pagination.serverSide)
         ? apiController({
             serverType: config.serverType,
             endpoint: 'getSongs',
@@ -133,12 +134,11 @@ const MusicList = () => {
 
   useEffect(() => {
     if (songs?.data && sortedData?.length) {
-      const pages =
-        Math.floor(
-          (view.music.pagination.serverSide && config.serverType === Server.Jellyfin
-            ? songs?.totalRecordCount
-            : sortedData?.length) / view.music.pagination.recordsPerPage
-        ) + 1;
+      const pages = Math.ceil(
+        (view.music.pagination.serverSide && view.music.filter !== 'random'
+          ? songs?.totalRecordCount
+          : sortedData?.length) / view.music.pagination.recordsPerPage
+      );
 
       if (pages && view.music.pagination.pages !== pages) {
         dispatch(
@@ -152,13 +152,14 @@ const MusicList = () => {
       }
     }
   }, [
-    songs,
-    config.serverType,
     dispatch,
+    songs?.data,
+    songs?.totalRecordCount,
     sortedData?.length,
-    view.music.pagination.serverSide,
-    view.music.pagination.recordsPerPage,
+    view.music.filter,
     view.music.pagination.pages,
+    view.music.pagination.recordsPerPage,
+    view.music.pagination.serverSide,
   ]);
 
   let timeout: any = null;
@@ -306,7 +307,16 @@ const MusicList = () => {
       {!isError && (
         <ListViewType
           ref={listRef}
-          data={misc.searchQuery !== '' ? searchedData : sortedData}
+          data={
+            misc.searchQuery !== ''
+              ? searchedData
+              : view.music.pagination.recordsPerPage !== 0 && !view.music.pagination.serverSide
+              ? sortedData?.slice(
+                  (view.music.pagination.activePage - 1) * view.music.pagination.recordsPerPage,
+                  view.music.pagination.activePage * view.music.pagination.recordsPerPage
+                )
+              : sortedData
+          }
           tableColumns={config.lookAndFeel.listView.music.columns}
           rowHeight={config.lookAndFeel.listView.music.rowHeight}
           fontSize={config.lookAndFeel.listView.music.fontSize}

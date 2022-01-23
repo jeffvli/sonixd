@@ -186,12 +186,11 @@ const AlbumList = () => {
 
   useEffect(() => {
     if (albums?.data && sortedData?.length) {
-      const pages =
-        Math.floor(
-          (view.album.pagination.serverSide && config.serverType === Server.Jellyfin
-            ? albums?.totalRecordCount
-            : sortedData?.length) / view.album.pagination.recordsPerPage
-        ) + 1;
+      const pages = Math.ceil(
+        (view.album.pagination.serverSide && config.serverType === Server.Jellyfin
+          ? albums?.totalRecordCount
+          : sortedData?.length) / view.album.pagination.recordsPerPage
+      );
 
       if (pages && view.album.pagination.pages !== pages) {
         dispatch(
@@ -294,7 +293,7 @@ const AlbumList = () => {
             <>
               {t('Albums')}{' '}
               <StyledTag style={{ verticalAlign: 'middle', cursor: 'default' }}>
-                {filteredData?.length || '...'}
+                {albums?.totalRecordCount || '...'}
               </StyledTag>
             </>
           }
