@@ -581,40 +581,43 @@ export const PaginationConfigPanel = ({ bordered }: any) => {
           'The number of items that will be retrieved per page. Setting this to 0 will disable pagination.'
         )}
       </ConfigOptionDescription>
-      <ConfigOption
-        name={t('Items per page (Songs)')}
-        option={
-          <>
-            <StyledInputNumber
-              defaultValue={view.music.pagination.recordsPerPage}
-              step={1}
-              min={0}
-              width={125}
-              onChange={(e: number) => {
-                dispatch(
-                  setPagination({
-                    listType: Item.Music,
-                    data: { activePage: 1, recordsPerPage: Number(e) },
-                  })
-                );
-                settings.setSync('pagination.music.recordsPerPage', Number(e));
-              }}
-            />
-            {config.serverType === Server.Jellyfin && (
-              <StyledCheckbox
-                defaultChecked={settings.getSync('pagination.music.serverSide')}
-                checked={view.music.pagination.serverSide}
-                onChange={(_v: any, e: boolean) => {
-                  settings.setSync('pagination.music.serverSide', e);
-                  dispatch(setPagination({ listType: Item.Music, data: { serverSide: e } }));
+      {config.serverType === Server.Jellyfin && (
+        <ConfigOption
+          name={t('Items per page (Songs)')}
+          option={
+            <>
+              <StyledInputNumber
+                defaultValue={view.music.pagination.recordsPerPage}
+                step={1}
+                min={0}
+                width={125}
+                onChange={(e: number) => {
+                  dispatch(
+                    setPagination({
+                      listType: Item.Music,
+                      data: { activePage: 1, recordsPerPage: Number(e) },
+                    })
+                  );
+                  settings.setSync('pagination.music.recordsPerPage', Number(e));
                 }}
-              >
-                {t('Server-side')}
-              </StyledCheckbox>
-            )}
-          </>
-        }
-      />
+              />
+              {config.serverType === Server.Jellyfin && (
+                <StyledCheckbox
+                  defaultChecked={settings.getSync('pagination.music.serverSide')}
+                  checked={view.music.pagination.serverSide}
+                  onChange={(_v: any, e: boolean) => {
+                    settings.setSync('pagination.music.serverSide', e);
+                    dispatch(setPagination({ listType: Item.Music, data: { serverSide: e } }));
+                  }}
+                >
+                  {t('Server-side')}
+                </StyledCheckbox>
+              )}
+            </>
+          }
+        />
+      )}
+
       <ConfigOption
         name={t('Items per page (Albums)')}
         option={
