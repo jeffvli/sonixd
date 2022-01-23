@@ -621,6 +621,7 @@ export const StyledTag = styled(Tag)`
   color: ${(props) => props.theme.colors.tag.text} !important;
   background: ${(props) => props.theme.colors.tag.background};
   border-radius: ${(props) => props.theme.other.tag.borderRadius};
+  font-weight: 200;
 
   cursor: pointer;
 `;
