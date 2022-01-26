@@ -181,7 +181,7 @@ const GenericPageHeader = ({
                     onClick={() => {
                       setOpenSearch(true);
                       setTimeout(() => {
-                        document.getElementById('local-search-input')?.focus();
+                        document.getElementById('local-search-input')?.select();
                       }, 50);
                     }}
                     appearance="subtle"
