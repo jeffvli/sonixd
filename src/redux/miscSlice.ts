@@ -16,6 +16,11 @@ export interface Modal {
   currentPageIndex: number | undefined;
 }
 
+export interface ImgModal {
+  show: boolean;
+  src?: string;
+}
+
 type ContextMenuOptions =
   | 'play'
   | 'addToQueueNext'
@@ -44,6 +49,7 @@ export interface General {
   font: string;
   modal: Modal;
   modalPages: ModalPage[];
+  imgModal: ImgModal;
   expandSidebar: boolean;
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
@@ -63,6 +69,10 @@ const initialState: General = {
     currentPageIndex: undefined,
   },
   modalPages: [],
+  imgModal: {
+    show: false,
+    src: undefined,
+  },
   expandSidebar: false,
   isProcessingPlaylist: [],
   contextMenu: {
@@ -138,6 +148,10 @@ const miscSlice = createSlice({
       state.font = action.payload;
     },
 
+    setImgModal: (state, action: PayloadAction<ImgModal>) => {
+      state.imgModal = action.payload;
+    },
+
     hideModal: (state) => {
       state.modal.show = false;
       state.modal.currentPageIndex = undefined;
@@ -197,5 +211,6 @@ export const {
   setExpandSidebar,
   setDynamicBackground,
   setMiscSetting,
+  setImgModal,
 } = miscSlice.actions;
 export default miscSlice.reducer;

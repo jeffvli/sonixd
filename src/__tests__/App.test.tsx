@@ -78,6 +78,10 @@ const miscState: General = {
     currentPageIndex: undefined,
     show: false,
   },
+  imgModal: {
+    src: '',
+    show: false,
+  },
   modalPages: [],
   isProcessingPlaylist: [],
   dynamicBackground: false,
