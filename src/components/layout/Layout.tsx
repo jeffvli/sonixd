@@ -51,7 +51,9 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
 
   useHotkeys('ctrl+f', () => {
     setOpenSearch(true);
-    document.getElementById('local-search-input')?.focus();
+    const searchInput = document.getElementById('local-search-input') as HTMLInputElement;
+    searchInput.focus();
+    searchInput.select();
   });
 
   const handleToggle = () => {
@@ -218,7 +220,11 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                       onClick={() => {
                         setOpenSearch(true);
                         setTimeout(() => {
-                          document.getElementById('local-search-input')?.focus();
+                          const searchInput = document.getElementById(
+                            'local-search-input'
+                          ) as HTMLInputElement;
+                          searchInput.focus();
+                          searchInput.select();
                         }, 50);
                       }}
                       appearance="subtle"
