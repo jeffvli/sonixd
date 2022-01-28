@@ -769,7 +769,7 @@ export const scrobble = async (options: {
   id: string;
   submission: boolean;
   position?: number;
-  event?: 'pause' | 'unpause' | 'timeupdate';
+  event?: 'pause' | 'unpause' | 'timeupdate' | 'start';
 }) => {
   if (options.submission) {
     // Checked by jellyfin-plugin-lastfm for whether or not to send the "finished" scrobble (uses PositionTicks)
@@ -778,16 +778,16 @@ export const scrobble = async (options: {
       IsPaused: true,
       PositionTicks: options.position && Math.round(options.position),
     });
-
-    // Marks the item as played on Jellyfin and adds +1 to the play count for the item (songs only)
-    return jellyfinApi.post(`/users/${auth.username}/playeditems/${options.id}`, null, {
-      params: {
-        datePlayed: moment().format(),
-      },
-    });
   }
 
   if (options.event) {
+    if (options.event === 'start') {
+      return jellyfinApi.post(`/sessions/playing`, {
+        ItemId: options.id,
+        PositionTicks: options.position && Math.round(options.position),
+      });
+    }
+
     return jellyfinApi.post(`/sessions/playing/progress`, {
       ItemId: options.id,
       EventName: options.event,

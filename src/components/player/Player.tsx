@@ -551,6 +551,24 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
               },
             });
           }, 1000);
+
+          if (config.serverType === Server.Jellyfin && currentSeek < 1) {
+            setTimeout(() => {
+              apiController({
+                serverType: config.serverType,
+                endpoint: 'scrobble',
+                args: {
+                  id:
+                    playerNumber === 1
+                      ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                      : playQueue[currentEntryList][playQueue.player2.index]?.id,
+                  submission: false,
+                  position: currentSeek * 10000000,
+                  event: 'start',
+                },
+              });
+            }, 1000);
+          }
         }
       }
     },
