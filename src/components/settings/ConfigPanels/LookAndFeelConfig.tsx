@@ -401,7 +401,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
 
       <ConfigOption
         name={t('Titlebar Style')}
-        description={t('The titlebar style (requires app restart). ')}
+        description={t('The titlebar style (requires app restart).')}
         option={
           <StyledInputPickerContainer ref={titleBarPickerContainerRef}>
             <Whisper

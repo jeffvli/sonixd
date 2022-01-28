@@ -4,7 +4,7 @@ import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
+import i18n from '../../i18n/i18n';
 import ListViewType from '../viewtypes/ListViewType';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
@@ -29,15 +29,15 @@ import useListScroll from '../../hooks/useListScroll';
 
 // prettier-ignore
 export const MUSIC_SORT_TYPES = [
-  { label: i18next.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18next.t('Default') },
-  { label: i18next.t('A-Z (Album)'), value: 'alphabeticalByAlbum', role: i18next.t('Default') },
-  { label: i18next.t('A-Z (Album Artist)'), value: 'alphabeticalByArtist', role: i18next.t('Default') },
-  { label: i18next.t('A-Z (Artist)'), value: 'alphabeticalByTrackArtist', replacement: 'Artist' },
-  { label: i18next.t('Most Played'), value: 'frequent', role: i18next.t('Default') },
-  { label: i18next.t('Random'), value: 'random', role: i18next.t('Default') },
-  { label: i18next.t('Recently Added'), value: 'newest', role: i18next.t('Default') },
-  { label: i18next.t('Recently Played'), value: 'recent', role: i18next.t('Default') },
-  { label: i18next.t('Release Date'), value: 'year', role: i18next.t('Default') },
+  { label: i18n.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18n.t('Default') },
+  { label: i18n.t('A-Z (Album)'), value: 'alphabeticalByAlbum', role: i18n.t('Default') },
+  { label: i18n.t('A-Z (Album Artist)'), value: 'alphabeticalByArtist', role: i18n.t('Default') },
+  { label: i18n.t('A-Z (Artist)'), value: 'alphabeticalByTrackArtist', replacement: 'Artist' },
+  { label: i18n.t('Most Played'), value: 'frequent', role: i18n.t('Default') },
+  { label: i18n.t('Random'), value: 'random', role: i18n.t('Default') },
+  { label: i18n.t('Recently Added'), value: 'newest', role: i18n.t('Default') },
+  { label: i18n.t('Recently Played'), value: 'recent', role: i18n.t('Default') },
+  { label: i18n.t('Release Date'), value: 'year', role: i18n.t('Default') },
 ];
 
 const MusicList = () => {

@@ -757,7 +757,7 @@ const ArtistView = ({ ...rest }: any) => {
                         </StyledPopover>
                       }
                     >
-                      <CustomTooltip text="{t('Info')}">
+                      <CustomTooltip text={t('Info')}>
                         <StyledButton appearance="subtle" size="lg">
                           <Icon icon="info-circle" />
                         </StyledButton>
@@ -973,7 +973,7 @@ const ArtistView = ({ ...rest }: any) => {
               {albumsByYearDesc.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title={t('Latest Albums ')}
+                    title={`${t('Latest Albums')} `}
                     subtitle={
                       <ButtonGroup>
                         <PlayButton
@@ -1015,7 +1015,7 @@ const ArtistView = ({ ...rest }: any) => {
               {compilationAlbumsByYearDesc.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title={t('Appears On ')}
+                    title={`${t('Appears On')} `}
                     subtitle={
                       <ButtonGroup>
                         <PlayButton
@@ -1059,7 +1059,7 @@ const ArtistView = ({ ...rest }: any) => {
               {data.info?.similarArtist.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu
-                    title={t('Related Artists ')}
+                    title={`${t('Related Artists')} `}
                     subtitle={
                       <ButtonGroup>
                         <PlayButton

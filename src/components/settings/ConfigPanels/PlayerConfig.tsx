@@ -3,7 +3,6 @@ import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
 import { Form, Whisper } from 'rsuite';
 import { WhisperInstance } from 'rsuite/lib/Whisper';
-import i18next from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigOptionName, ConfigPanel } from '../styled';
 import {
@@ -19,6 +18,7 @@ import {
   StyledToggle,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import i18n from '../../../i18n/i18n';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter, setAudioDeviceId } from '../../../redux/configSlice';
@@ -47,8 +47,7 @@ const playbackFilterColumns = [
     alignment: 'left',
     resizable: false,
     flexGrow: 2,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    label: i18next.t('Filter'),
+    label: i18n.t('Filter'),
   },
   {
     id: 'Enabled',
@@ -56,8 +55,7 @@ const playbackFilterColumns = [
     alignment: 'left',
     resizable: false,
     width: 100,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    label: i18next.t('Enabled'),
+    label: i18n.t('Enabled'),
   },
   {
     id: 'Delete',
@@ -65,8 +63,7 @@ const playbackFilterColumns = [
     alignment: 'left',
     resizable: false,
     width: 100,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    label: i18next.t('Delete'),
+    label: i18n.t('Delete'),
   },
 ];
 

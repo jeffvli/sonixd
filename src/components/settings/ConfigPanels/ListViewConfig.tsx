@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid/non-secure';
 import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
+import i18n from '../../../i18n/i18n';
 import {
   StyledCheckPicker,
   StyledInputNumber,
@@ -36,20 +36,20 @@ const columnSelectorColumns = [
     label: '#',
   },
   {
-    id: i18next.t('Column'),
+    id: i18n.t('Column'),
     dataKey: 'label',
     alignment: 'left',
     resizable: false,
     flexGrow: 2,
-    label: i18next.t('Column'),
+    label: i18n.t('Column'),
   },
   {
-    id: i18next.t('Resizable'),
+    id: i18n.t('Resizable'),
     dataKey: 'columnResizable',
     alignment: 'left',
     resizable: false,
     width: 100,
-    label: i18next.t('Resizable'),
+    label: i18n.t('Resizable'),
   },
 ];
 

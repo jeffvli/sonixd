@@ -1,12 +1,12 @@
-import i18next from 'i18next';
 import React from 'react';
 import { Icon } from 'rsuite';
+import i18n from '../../i18n/i18n';
 import CustomTooltip from './CustomTooltip';
 import { StyledButton } from './styled';
 
 export const PlayButton = ({ text, ...rest }: any) => {
   return (
-    <CustomTooltip text={text || i18next.t('Play')}>
+    <CustomTooltip text={text || i18n.t('Play')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="play" />
       </StyledButton>
@@ -16,7 +16,7 @@ export const PlayButton = ({ text, ...rest }: any) => {
 
 export const PlayAppendButton = ({ text, ...rest }: any) => {
   return (
-    <CustomTooltip text={text || i18next.t('Add to queue (later)')}>
+    <CustomTooltip text={text || i18n.t('Add to queue (later)')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="plus" />
       </StyledButton>
@@ -26,7 +26,7 @@ export const PlayAppendButton = ({ text, ...rest }: any) => {
 
 export const PlayAppendNextButton = ({ text, ...rest }: any) => {
   return (
-    <CustomTooltip text={text || i18next.t('Add to queue (next)')}>
+    <CustomTooltip text={text || i18n.t('Add to queue (next)')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="plus-circle" />
       </StyledButton>
@@ -36,7 +36,7 @@ export const PlayAppendNextButton = ({ text, ...rest }: any) => {
 
 export const PlayShuffleAppendButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Add shuffled to queue')} onClick={rest.onClick}>
+    <CustomTooltip text={i18n.t('Add shuffled to queue')} onClick={rest.onClick}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="plus-square" />
       </StyledButton>
@@ -46,7 +46,7 @@ export const PlayShuffleAppendButton = ({ ...rest }) => {
 
 export const SaveButton = ({ text, ...rest }: any) => {
   return (
-    <CustomTooltip text={text || i18next.t('Save')}>
+    <CustomTooltip text={text || i18n.t('Save')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="save" />
       </StyledButton>
@@ -56,7 +56,7 @@ export const SaveButton = ({ text, ...rest }: any) => {
 
 export const EditButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Edit')}>
+    <CustomTooltip text={i18n.t('Edit')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="edit2" />
       </StyledButton>
@@ -66,7 +66,7 @@ export const EditButton = ({ ...rest }) => {
 
 export const UndoButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Reset')}>
+    <CustomTooltip text={i18n.t('Reset')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="undo" />
       </StyledButton>
@@ -76,7 +76,7 @@ export const UndoButton = ({ ...rest }) => {
 
 export const DeleteButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Delete')}>
+    <CustomTooltip text={i18n.t('Delete')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="trash" />
       </StyledButton>
@@ -86,7 +86,7 @@ export const DeleteButton = ({ ...rest }) => {
 
 export const FavoriteButton = ({ isFavorite, ...rest }: any) => {
   return (
-    <CustomTooltip text={i18next.t('Toggle favorite')}>
+    <CustomTooltip text={i18n.t('Toggle favorite')}>
       <StyledButton tabIndex={0} {...rest}>
         <Icon icon={isFavorite ? 'heart' : 'heart-o'} />
       </StyledButton>
@@ -98,9 +98,7 @@ export const DownloadButton = ({ downloadSize, ...rest }: any) => {
   return (
     <CustomTooltip
       text={
-        downloadSize
-          ? i18next.t('Download ({{downloadSize}})', { downloadSize })
-          : i18next.t('Download')
+        downloadSize ? i18n.t('Download ({{downloadSize}})', { downloadSize }) : i18n.t('Download')
       }
     >
       <StyledButton {...rest} tabIndex={0}>
@@ -112,7 +110,7 @@ export const DownloadButton = ({ downloadSize, ...rest }: any) => {
 
 export const ShuffleButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Shuffle queue')}>
+    <CustomTooltip text={i18n.t('Shuffle queue')}>
       <StyledButton tabIndex={0} {...rest}>
         <Icon icon="random" />
       </StyledButton>
@@ -122,7 +120,7 @@ export const ShuffleButton = ({ ...rest }) => {
 
 export const ClearQueueButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Clear queue')}>
+    <CustomTooltip text={i18n.t('Clear queue')}>
       <StyledButton tabIndex={0} {...rest}>
         <Icon icon="trash2" />
       </StyledButton>
@@ -134,7 +132,7 @@ export const AddPlaylistButton = ({ ...rest }) => {
   return (
     <StyledButton tabIndex={0} {...rest}>
       <Icon icon="plus-square" style={{ marginRight: '10px' }} />
-      {i18next.t('Add playlist')}
+      {i18n.t('Add playlist')}
     </StyledButton>
   );
 };
@@ -143,7 +141,7 @@ export const RefreshButton = ({ ...rest }) => {
   return (
     <StyledButton tabIndex={0} {...rest}>
       <Icon icon="refresh" style={{ marginRight: '10px' }} />
-      {i18next.t('Refresh')}
+      {i18n.t('Refresh')}
     </StyledButton>
   );
 };
@@ -152,17 +150,17 @@ export const FilterButton = ({ ...rest }) => {
   return (
     <StyledButton tabIndex={0} {...rest}>
       <Icon icon="filter" style={{ marginRight: '10px' }} />
-      {i18next.t('Filter')}
+      {i18n.t('Filter')}
     </StyledButton>
   );
 };
 
 export const AutoPlaylistButton = ({ noText, ...rest }: any) => {
   return (
-    <CustomTooltip text={i18next.t('Auto playlist')}>
+    <CustomTooltip text={i18n.t('Auto playlist')}>
       <StyledButton tabIndex={0} {...rest}>
         <Icon icon="plus-square" style={{ marginRight: noText ? '0px' : '10px' }} />
-        {!noText && i18next.t('Auto playlist')}
+        {!noText && i18n.t('Auto playlist')}
       </StyledButton>
     </CustomTooltip>
   );
@@ -170,7 +168,7 @@ export const AutoPlaylistButton = ({ noText, ...rest }: any) => {
 
 export const MoveUpButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Move selected up')}>
+    <CustomTooltip text={i18n.t('Move selected up')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="angle-up" />
       </StyledButton>
@@ -180,7 +178,7 @@ export const MoveUpButton = ({ ...rest }) => {
 
 export const MoveDownButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Move selected down')}>
+    <CustomTooltip text={i18n.t('Move selected down')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="angle-down" />
       </StyledButton>
@@ -190,7 +188,7 @@ export const MoveDownButton = ({ ...rest }) => {
 
 export const MoveTopButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Move selected to top')}>
+    <CustomTooltip text={i18n.t('Move selected to top')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="arrow-up2" />
       </StyledButton>
@@ -200,7 +198,7 @@ export const MoveTopButton = ({ ...rest }) => {
 
 export const MoveBottomButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Move selected to bottom')}>
+    <CustomTooltip text={i18n.t('Move selected to bottom')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="arrow-down2" />
       </StyledButton>
@@ -210,7 +208,7 @@ export const MoveBottomButton = ({ ...rest }) => {
 
 export const RemoveSelectedButton = ({ ...rest }) => {
   return (
-    <CustomTooltip text={i18next.t('Remove selected')}>
+    <CustomTooltip text={i18n.t('Remove selected')}>
       <StyledButton {...rest} tabIndex={0}>
         <Icon icon="close" />
       </StyledButton>
