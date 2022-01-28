@@ -143,7 +143,7 @@
   "Grid View": "网格视图",
   "Highlight On Hover": "悬停突出显示",
   "Highlights the list view row when hovering it with the mouse.": "鼠标悬停时突出显示列表视图所在行。",
-  "How many tracks? (1-500)*": "有多少曲目? (1-500)*",
+  "How many tracks?": "有多少曲目?",
   "If local, scrobbles the currently playing song to local .txt files. If web, scrobbles the currently playing song to Tuna plugin's webserver.": "如果在本地，则将当前播放的歌曲添加到本地的 .txt 文件中。如果是Web，将当前播放的歌曲添加到 Tuna 插件的网络服务器。",
   "If your audio files are not playing properly or are not in a supported web streaming format, you will need to enable this (requires app restart).": "如果音频文件无法正常播放或是不支持的网络流格式，你将需要启用此功能（需要重新启动软件）。",
   "Images": "图片",

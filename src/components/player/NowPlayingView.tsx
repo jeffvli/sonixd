@@ -60,7 +60,7 @@ import {
 } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
-import { Song } from '../../types';
+import { Server, Song } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import NowPlayingInfoView from './NowPlayingInfoView';
 import CenterLoader from '../loader/CenterLoader';
@@ -348,10 +348,12 @@ const NowPlayingView = () => {
                     enterable
                     speaker={
                       <StyledPopover>
-                        <ControlLabel>{t('How many tracks? (1-500)*')}</ControlLabel>
+                        <ControlLabel>{`${t('How many tracks?')} ${
+                          config.serverType === Server.Subsonic ? '(1 - 500)*' : '(1 - ∞)'
+                        }`}</ControlLabel>
                         <StyledInputNumber
                           min={1}
-                          max={500}
+                          max={config.serverType === Server.Subsonic ? 500 : undefined}
                           step={10}
                           defaultValue={autoPlaylistTrackCount}
                           value={autoPlaylistTrackCount}

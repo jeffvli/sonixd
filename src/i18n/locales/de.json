@@ -143,7 +143,7 @@
   "Grid View": "Gitteransicht",
   "Highlight On Hover": "Hervorhebung bei Hover",
   "Highlights the list view row when hovering it with the mouse.": "Hebt die Zeile in der Listenansicht beim Darüberfahren mit der Maus hervor.",
-  "How many tracks? (1-500)*": "Wieviele Tracks? (1-500)*",
+  "How many tracks?": "Wieviele Tracks?",
   "If local, scrobbles the currently playing song to local .txt files. If web, scrobbles the currently playing song to Tuna plugin's webserver.": "Wenn Lokal, wird der aktuell spielende Song in lokale .txt-Dateien gescrobbelt. Wenn Web, wird der aktuell wiedergegebene Song auf den Webserver des Tuna-Plugins gescrobbelt.",
   "If your audio files are not playing properly or are not in a supported web streaming format, you will need to enable this (requires app restart).": "Wenn Audiodateien nicht richtig abgespielt werden oder nicht in einem unterstützten Webstreaming-Format vorliegen, aktiviere diese Funktion (Neustart der App erforderlich).",
   "Images": "Bilder",
