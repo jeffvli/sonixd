@@ -689,6 +689,8 @@ const playQueueSlice = createSlice({
       // Used with gridview where you just want to set the entry queue directly
       resetPlayerDefaults(state);
 
+      state.player1.src = action.payload.entries[0].streamUrl;
+
       action.payload.entries.map((entry: any) => state.entry.push(entry));
       if (state.shuffle) {
         // If shuffle is enabled, add all entries randomly
@@ -719,6 +721,8 @@ const playQueueSlice = createSlice({
       // Setting the entry queue by row will add all entries, but set the current index to
       // the row that was double clicked
       resetPlayerDefaults(state);
+
+      state.player1.src = action.payload.entries[action.payload.currentIndex].streamUrl;
 
       // Apply filters to all entries except the entry that was double clicked
       const filteredFromStartToCurrent = filterPlayQueue(
