@@ -7,7 +7,6 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
-import PageLoader from '../loader/PageLoader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   clearSelected,
@@ -19,6 +18,7 @@ import { apiController } from '../../api/controller';
 import { StyledTag } from '../shared/styled';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { Item } from '../../types';
+import CenterLoader from '../loader/CenterLoader';
 
 const GenreList = () => {
   const { t } = useTranslation();
@@ -84,7 +84,7 @@ const GenreList = () => {
         />
       }
     >
-      {isLoading && <PageLoader />}
+      {isLoading && <CenterLoader />}
       {isError && <div>{t('Error: {{error}}', { error })}</div>}
       {!isLoading && genres && !isError && (
         <ListViewType

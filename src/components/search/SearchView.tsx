@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import PageLoader from '../loader/PageLoader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -23,6 +22,7 @@ import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
+import CenterLoader from '../loader/CenterLoader';
 
 const SearchView = () => {
   const { t } = useTranslation();
@@ -206,7 +206,7 @@ const SearchView = () => {
 
   return (
     <GenericPage header={<GenericPageHeader title={t('Search: {{urlQuery}}', { urlQuery })} />}>
-      {isLoading && <PageLoader />}
+      {isLoading && <CenterLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && data && (
         <>

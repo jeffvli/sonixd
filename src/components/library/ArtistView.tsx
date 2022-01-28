@@ -27,7 +27,6 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
-import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import {
   appendPlayQueue,
@@ -63,6 +62,7 @@ import useColumnSort from '../../hooks/useColumnSort';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { setFilter, setPagination } from '../../redux/viewSlice';
+import CenterLoader from '../loader/CenterLoader';
 
 const fac = new FastAverageColor();
 
@@ -525,7 +525,7 @@ const ArtistView = ({ ...rest }: any) => {
   }, [data?.album, data?.id]);
 
   if (isLoading || isLoadingTopSongs || imageAverageColor.loaded === false) {
-    return <PageLoader />;
+    return <CenterLoader />;
   }
 
   if (isError) {

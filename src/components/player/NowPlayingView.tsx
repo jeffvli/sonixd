@@ -33,7 +33,6 @@ import {
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
-import PageLoader from '../loader/PageLoader';
 import { setStatus } from '../../redux/playerSlice';
 import {
   AutoPlaylistButton,
@@ -64,6 +63,7 @@ import { apiController } from '../../api/controller';
 import { Song } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import NowPlayingInfoView from './NowPlayingInfoView';
+import CenterLoader from '../loader/CenterLoader';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -544,7 +544,7 @@ const NowPlayingView = () => {
         }
       >
         {!playQueue ? (
-          <PageLoader />
+          <CenterLoader />
         ) : (
           <>
             {infoMode && <NowPlayingInfoView />}

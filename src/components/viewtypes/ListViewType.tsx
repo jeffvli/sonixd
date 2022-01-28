@@ -3,7 +3,7 @@
 // Resize derived from @nimrod-cohen https://gitter.im/rsuite/rsuite?at=5e1cd3f165540a529a0f5deb
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { DOMHelper } from 'rsuite';
-import PageLoader from '../loader/PageLoader';
+import CenterLoader from '../loader/CenterLoader';
 import ListViewTable from './ListViewTable';
 
 declare global {
@@ -175,7 +175,7 @@ const ListViewType = (
 
   return (
     <>
-      {!show && <PageLoader />}
+      {!show && <CenterLoader />}
       <div
         style={{
           flexGrow: 1,

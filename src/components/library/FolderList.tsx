@@ -5,7 +5,6 @@ import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Icon } from 'rsuite';
 import { useTranslation } from 'react-i18next';
-import PageLoader from '../loader/PageLoader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -25,6 +24,7 @@ import useRouterQuery from '../../hooks/useRouterQuery';
 import { Server } from '../../types';
 import { apiController } from '../../api/controller';
 import { setPlaylistRate } from '../../redux/playlistSlice';
+import CenterLoader from '../loader/CenterLoader';
 
 const FolderList = () => {
   const { t } = useTranslation();
@@ -170,7 +170,7 @@ const FolderList = () => {
 
   return (
     <>
-      {(isLoading || isLoadingMusicFolders) && <PageLoader />}
+      {(isLoading || isLoadingMusicFolders) && <CenterLoader />}
       {isError && <div>Error: {error}</div>}
       {!isLoading && indexData && (
         <GenericPage
@@ -227,43 +227,40 @@ const FolderList = () => {
             />
           }
         >
-          {isLoadingFolderData ? (
-            <PageLoader />
-          ) : (
-            <ListViewType
-              data={
-                misc.searchQuery !== ''
-                  ? filteredData
-                  : folder.currentViewedFolder
-                  ? folderData?.child
-                  : indexData
-              }
-              tableColumns={settings.getSync('musicListColumns')}
-              rowHeight={Number(settings.getSync('musicListRowHeight'))}
-              fontSize={Number(settings.getSync('musicListFontSize'))}
-              handleRowClick={handleRowClick}
-              handleRowDoubleClick={handleRowDoubleClick}
-              handleFavorite={handleRowFavorite}
-              handleRating={handleRowRating}
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'folder',
-                cacheIdProperty: 'albumId',
-              }}
-              page="folderListPage"
-              listType="folder"
-              virtualized
-              disabledContextMenuOptions={[
-                'addToFavorites',
-                'removeFromFavorites',
-                'viewInModal',
-                'moveSelectedTo',
-                'removeSelected',
-                'deletePlaylist',
-                'viewInFolder',
-              ]}
-            />
-          )}
+          <ListViewType
+            data={
+              misc.searchQuery !== ''
+                ? filteredData
+                : folder.currentViewedFolder
+                ? folderData?.child
+                : indexData
+            }
+            loading={isLoadingFolderData}
+            tableColumns={settings.getSync('musicListColumns')}
+            rowHeight={Number(settings.getSync('musicListRowHeight'))}
+            fontSize={Number(settings.getSync('musicListFontSize'))}
+            handleRowClick={handleRowClick}
+            handleRowDoubleClick={handleRowDoubleClick}
+            handleFavorite={handleRowFavorite}
+            handleRating={handleRowRating}
+            cacheImages={{
+              enabled: settings.getSync('cacheImages'),
+              cacheType: 'folder',
+              cacheIdProperty: 'albumId',
+            }}
+            page="folderListPage"
+            listType="folder"
+            virtualized
+            disabledContextMenuOptions={[
+              'addToFavorites',
+              'removeFromFavorites',
+              'viewInModal',
+              'moveSelectedTo',
+              'removeSelected',
+              'deletePlaylist',
+              'viewInFolder',
+            ]}
+          />
         </GenericPage>
       )}
     </>

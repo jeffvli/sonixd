@@ -219,8 +219,10 @@ const GridViewType = ({
                 paginationProps={paginationProps}
                 gridRef={gridRef}
               />
-            ) : (
+            ) : loading ? (
               <CenterLoader />
+            ) : (
+              <></>
             )}
 
             {paginationProps && paginationProps?.recordsPerPage !== 0 && (

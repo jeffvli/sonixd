@@ -6,7 +6,6 @@ import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import ListViewType from '../viewtypes/ListViewType';
-import PageLoader from '../loader/PageLoader';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
@@ -98,10 +97,6 @@ const PlaylistList = () => {
     dispatch(clearSelected());
     history.push(`playlist/${rowData.id}`);
   };
-
-  if (isLoading) {
-    return <PageLoader />;
-  }
 
   if (isError) {
     return <span>{t('Error: {{error}}', { error: error.message })}</span>;
@@ -224,6 +219,7 @@ const PlaylistList = () => {
       {viewType === 'list' && (
         <ListViewType
           data={misc.searchQuery === '' ? sortedData : filteredData}
+          loading={isLoading}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           tableColumns={config.lookAndFeel.listView.playlist.columns}
@@ -253,6 +249,7 @@ const PlaylistList = () => {
       {viewType === 'grid' && (
         <GridViewType
           data={misc.searchQuery === '' ? sortedData : filteredData}
+          loading={isLoading}
           cardTitle={{
             prefix: 'playlist',
             property: 'title',

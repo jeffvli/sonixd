@@ -33,7 +33,6 @@ import {
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
-import PageLoader from '../loader/PageLoader';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
@@ -63,6 +62,7 @@ import { Artist, Genre, Item, Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import Card from '../card/Card';
 import { setFilter, setPagination } from '../../redux/viewSlice';
+import CenterLoader from '../loader/CenterLoader';
 
 interface AlbumParams {
   id: string;
@@ -278,7 +278,7 @@ const AlbumView = ({ ...rest }: any) => {
   };
 
   if (isLoading) {
-    return <PageLoader />;
+    return <CenterLoader />;
   }
 
   if (isError) {

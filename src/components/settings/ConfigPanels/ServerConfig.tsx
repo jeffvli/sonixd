@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setAppliedFolderViews, setMusicFolder } from '../../../redux/folderSlice';
 import { apiController } from '../../../api/controller';
 import { Folder, Server } from '../../../types';
-import PageLoader from '../../loader/PageLoader';
 import ConfigOption from '../ConfigOption';
+import CenterLoader from '../../loader/CenterLoader';
 
 const ServerConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ const ServerConfig = ({ bordered }: any) => {
   const musicFolderPickerContainerRef = useRef(null);
 
   if (isLoading) {
-    return <PageLoader />;
+    return <CenterLoader />;
   }
 
   return (
