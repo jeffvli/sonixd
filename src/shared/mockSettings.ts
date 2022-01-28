@@ -10,6 +10,7 @@ export const mockSettings = {
   systemMediaTransportControls: false,
   cachePath: 'C:\\Users\\jli\\AppData\\Roaming\\Electron',
   legacyAuth: false,
+  artistPageLegacy: false,
   volume: 0.93,
   audioDeviceId: null,
   seekForwardInterval: 5,

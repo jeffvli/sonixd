@@ -95,6 +95,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('titleBarStyle', 'windows');
   }
 
+  if (force || !settings.hasSync('artistPageLegacy')) {
+    settings.setSync('artistPageLegacy', false);
+  }
+
   if (force || !settings.hasSync('startPage')) {
     settings.setSync('startPage', '/');
   }

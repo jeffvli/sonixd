@@ -145,6 +145,12 @@ const ArtistView = ({ ...rest }: any) => {
     'year',
   ]);
 
+  useEffect(() => {
+    if (settings.getSync('artistPageLegacy')) {
+      history.push(`/library/artist/${artistId}/albums`);
+    }
+  }, [artistId, history]);
+
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
     if (timeout === null) {

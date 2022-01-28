@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
-import { Nav, Icon, RadioGroup, Whisper } from 'rsuite';
+import { Nav, Icon, RadioGroup, Whisper, Divider } from 'rsuite';
 import { WhisperInstance } from 'rsuite/lib/Whisper';
 import { Trans, useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
@@ -474,6 +474,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
         }
       />
 
+      <Divider />
+
       <ConfigOption
         name={t('Start page')}
         description={t('Page Sonixd will display on start.')}
@@ -554,7 +556,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                 container={() => musicSortDefaultPickerContainerRef.current}
                 data={MUSIC_SORT_TYPES}
                 cleanable={false}
-                defaultValue={String(settings.getSync('musicSortDefault'))}
+                defaultValue={String(settings.getSync(''))}
                 width={200}
                 onChange={(e: string) => {
                   settings.setSync('musicSortDefault', e);
@@ -564,6 +566,20 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
           }
         />
       )}
+      <ConfigOption
+        name={t('Default to Album List on Artist Page')}
+        description={t(
+          'Enabling this will open the Artist page to their list of albums instead of the main page.'
+        )}
+        option={
+          <StyledToggle
+            defaultChecked={Boolean(settings.getSync('artistPageLegacy'))}
+            onChange={(e: boolean) => {
+              settings.setSync('artistPageLegacy', e);
+            }}
+          />
+        }
+      />
     </ConfigPanel>
   );
 };
