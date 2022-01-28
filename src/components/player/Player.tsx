@@ -317,7 +317,30 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           ? player1Ref.current.audioEl.current?.currentTime
           : player2Ref.current.audioEl.current?.currentTime;
 
-      if (currentSeek < 1) {
+      // Handle gapless
+      if (playQueue.fadeDuration === 0 && currentSeek < 1) {
+        const timer = setTimeout(() => {
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id:
+                playQueue.currentPlayer === 1
+                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
+              submission: false,
+              position: currentSeek * 10000000,
+              event: 'start',
+            },
+          });
+        }, 5000);
+
+        return () => {
+          clearTimeout(timer);
+        };
+      }
+
+      if (playQueue.fadeDuration !== 0 && currentSeek < playQueue.fadeDuration + 1) {
         const timer = setTimeout(() => {
           apiController({
             serverType: config.serverType,
