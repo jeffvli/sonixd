@@ -311,6 +311,39 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   }, [playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
+    if (config.serverType === Server.Jellyfin) {
+      const currentSeek =
+        playQueue.currentPlayer === 1
+          ? player1Ref.current.audioEl.current?.currentTime
+          : player2Ref.current.audioEl.current?.currentTime;
+
+      if (currentSeek < 1) {
+        const timer = setTimeout(() => {
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id:
+                playQueue.currentPlayer === 1
+                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
+              submission: false,
+              position: currentSeek * 10000000,
+              event: 'start',
+            },
+          });
+        }, 5000);
+
+        return () => {
+          clearTimeout(timer);
+        };
+      }
+    }
+
+    return undefined;
+  }, [config.serverType, currentEntryList, playQueue, playQueue.currentPlayer]);
+
+  useEffect(() => {
     // Adding a small delay when setting the track src helps to not break the player when we're modifying
     // the currentSongIndex such as when sorting the table, shuffling, or drag and dropping rows.
     // It can also prevent loading unneeded tracks when rapidly incrementing/decrementing the player.
@@ -551,24 +584,6 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
               },
             });
           }, 1000);
-
-          if (config.serverType === Server.Jellyfin && currentSeek < 1) {
-            setTimeout(() => {
-              apiController({
-                serverType: config.serverType,
-                endpoint: 'scrobble',
-                args: {
-                  id:
-                    playerNumber === 1
-                      ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                      : playQueue[currentEntryList][playQueue.player2.index]?.id,
-                  submission: false,
-                  position: currentSeek * 10000000,
-                  event: 'start',
-                },
-              });
-            }, 1000);
-          }
         }
       }
     },
