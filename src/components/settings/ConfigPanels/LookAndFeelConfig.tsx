@@ -556,7 +556,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                 container={() => musicSortDefaultPickerContainerRef.current}
                 data={MUSIC_SORT_TYPES}
                 cleanable={false}
-                defaultValue={String(settings.getSync(''))}
+                defaultValue={String(settings.getSync('musicSortDefault'))}
                 width={200}
                 onChange={(e: string) => {
                   settings.setSync('musicSortDefault', e);
