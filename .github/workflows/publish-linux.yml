@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Checkout git repo
@@ -45,4 +45,4 @@ jobs:
           # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
-          yarn postinstall && yarn build && yarn electron-builder --publish always --mac
+          yarn postinstall && yarn build && yarn electron-builder --publish always --linux
