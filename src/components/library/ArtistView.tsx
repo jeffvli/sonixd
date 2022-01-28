@@ -146,10 +146,10 @@ const ArtistView = ({ ...rest }: any) => {
   ]);
 
   useEffect(() => {
-    if (settings.getSync('artistPageLegacy')) {
+    if (settings.getSync('artistPageLegacy') && !rest.isModal) {
       history.push(`/library/artist/${artistId}/albums`);
     }
-  }, [artistId, history]);
+  }, [artistId, history, rest.isModal]);
 
   let timeout: any = null;
   const handleRowClick = (e: any, rowData: any, tableData: any) => {
