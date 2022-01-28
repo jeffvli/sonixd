@@ -1045,7 +1045,13 @@ const PlayerBar = () => {
               ''
             ) || placeholderImg
           }
-          height={750}
+          style={{
+            width: 'auto',
+            height: 'auto',
+            minHeight: '50vh',
+            maxHeight: '70vh',
+            maxWidth: '95vw',
+          }}
         />
       </InfoModal>
       <InfoModal width="90vw" show={showLyricsModal} handleHide={() => setShowLyricsModal(false)}>

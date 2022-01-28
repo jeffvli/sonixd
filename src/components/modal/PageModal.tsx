@@ -24,10 +24,6 @@ const StyledModal = styled(Modal)<{ width?: string }>`
   .rs-modal-content {
     background: ${(props) => `${props.theme.colors.layout.page.background} !important`};
   }
-
-  .rs-container {
-    overflow-y: hidden;
-  }
 `;
 
 export const PageModal = () => {
