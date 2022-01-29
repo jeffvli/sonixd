@@ -213,7 +213,7 @@ const ArtistList = () => {
       }
     >
       {isError && <div>{t('Error: {{error}}', { error })}</div>}
-      {!isLoading && !isError && viewType === 'list' && (
+      {!isError && viewType === 'list' && (
         <ListViewType
           data={misc.searchQuery !== '' ? filteredData : sortedData}
           tableColumns={config.lookAndFeel.listView.artist.columns}
@@ -244,7 +244,7 @@ const ArtistList = () => {
           loading={isLoading}
         />
       )}
-      {!isLoading && !isError && viewType === 'grid' && (
+      {!isError && viewType === 'grid' && (
         <GridViewType
           data={misc.searchQuery !== '' ? filteredData : sortedData}
           cardTitle={{
