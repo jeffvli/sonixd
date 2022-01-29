@@ -27,6 +27,7 @@ import cacheSong from '../shared/cacheSong';
 import { isCached } from '../../shared/utils';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
+import { setStatus } from '../../redux/playerSlice';
 
 const gaplessListenHandler = (
   currentPlayerRef: any,
@@ -45,6 +46,10 @@ const gaplessListenHandler = (
   // seek value doesn't always reach the duration
   const durationPadding = pollingInterval <= 10 ? 0.12 : pollingInterval <= 20 ? 0.13 : 0.15;
   if (currentSeek + durationPadding >= duration) {
+    if (playQueue.repeat === 'none' && playQueue.currentIndex === playQueue.entry.length - 1) {
+      return;
+    }
+
     nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
     nextPlayerRef.current.audioEl.current.play();
   }
@@ -100,7 +105,8 @@ const listenHandler = (
   // Fade only if repeat is 'all' or if not on the last track
   if (
     playQueue[`player${player}`].index + 1 < playQueue[currentEntryList].length ||
-    playQueue.repeat === 'all'
+    playQueue.repeat === 'all' ||
+    playQueue.repeat === 'one'
   ) {
     // Detect to start fading when seek is greater than the fade time
     if (currentSeek >= fadeAtTime) {
@@ -446,8 +452,10 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         playQueue[currentEntryList][playQueue.player1.index].streamUrl.replace(/stream/, 'download')
       );
     }
-    if (playQueue.repeat === 'none' && playQueue.player1.index > playQueue.player2.index) {
+
+    if (playQueue.repeat === 'none' && playQueue.currentIndex === playQueue.entry.length - 1) {
       dispatch(fixPlayer2Index());
+      dispatch(setStatus('PAUSED'));
       setTimeout(() => {
         player1Ref.current.audioEl.current.pause();
         player2Ref.current.audioEl.current.pause();
@@ -458,7 +466,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         dispatch(setCurrentIndex(playQueue[currentEntryList][playQueue.player2.index]));
         dispatch(setAutoIncremented(true));
       }
-      if (playQueue[currentEntryList].length > 1 || playQueue.repeat === 'all') {
+      if (playQueue[currentEntryList].length > 0 || playQueue.repeat === 'all') {
         dispatch(setCurrentPlayer(2));
         dispatch(incrementPlayerIndex(1));
         if (playQueue.fadeDuration !== 0) {
@@ -489,8 +497,9 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         playQueue[currentEntryList][playQueue.player2.index].streamUrl.replace(/stream/, 'download')
       );
     }
-    if (playQueue.repeat === 'none' && playQueue.player2.index > playQueue.player1.index) {
+    if (playQueue.repeat === 'none' && playQueue.currentIndex === playQueue.entry.length - 1) {
       dispatch(fixPlayer2Index());
+      dispatch(setStatus('PAUSED'));
       setTimeout(() => {
         player1Ref.current.audioEl.current.pause();
         player2Ref.current.audioEl.current.pause();
@@ -501,7 +510,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         dispatch(setCurrentIndex(playQueue[currentEntryList][playQueue.player1.index]));
         dispatch(setAutoIncremented(true));
       }
-      if (playQueue[currentEntryList].length > 1 || playQueue.repeat === 'all') {
+      if (playQueue[currentEntryList].length > 0 || playQueue.repeat === 'all') {
         dispatch(setCurrentPlayer(1));
         dispatch(incrementPlayerIndex(2));
         if (playQueue.fadeDuration !== 0) {
