@@ -558,7 +558,16 @@ export const getArtistSongs = async (options: { id: string; musicFolderId?: stri
     },
   });
 
-  return (data.Items || []).map((entry: any) => normalizeSong(entry));
+  const entries = (data.Items || []).map((entry: any) => normalizeSong(entry));
+
+  // The entries returned by Jellyfin's API are out of their normal album order
+  const entriesDescByYear = _.orderBy(
+    entries || [],
+    ['year', 'album', 'track'],
+    ['desc', 'asc', 'asc']
+  );
+
+  return entriesDescByYear;
 };
 
 export const getRandomSongs = async (options: {
