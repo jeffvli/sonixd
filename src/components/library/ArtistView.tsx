@@ -520,9 +520,18 @@ const ArtistView = ({ ...rest }: any) => {
   }, [data?.album]);
 
   useEffect(() => {
-    setAlbums(data?.album?.filter((entry: Album) => entry.albumArtistId === data.id));
-    setCompilationAlbums(data?.album?.filter((entry: Album) => entry.albumArtistId !== data.id));
-  }, [data?.album, data?.id]);
+    setAlbums(
+      data?.album?.filter(
+        (entry: Album) => entry.albumArtistId === data.id || entry.albumArtist === data.title
+      )
+    );
+
+    setCompilationAlbums(
+      data?.album?.filter(
+        (entry: Album) => entry.albumArtistId !== data.id && entry.albumArtist !== data.title
+      )
+    );
+  }, [data?.album, data?.id, data?.title]);
 
   if (isLoading || isLoadingTopSongs || imageAverageColor.loaded === false) {
     return <CenterLoader />;
@@ -807,8 +816,8 @@ const ArtistView = ({ ...rest }: any) => {
                     misc.searchQuery !== ''
                       ? filteredData
                       : location.pathname.match('/albums')
-                      ? data.album.filter((entry: Album) => entry.albumArtistId === data.id)
-                      : data.album.filter((entry: Album) => entry.albumArtistId !== data.id)
+                      ? albumsByYearDesc
+                      : compilationAlbumsByYearDesc
                   }
                   tableColumns={config.lookAndFeel.listView.album.columns}
                   handleRowClick={handleRowClick}
@@ -840,8 +849,8 @@ const ArtistView = ({ ...rest }: any) => {
                     misc.searchQuery !== ''
                       ? filteredData
                       : location.pathname.match('/albums')
-                      ? data.album.filter((entry: Album) => entry.albumArtistId === data.id)
-                      : data.album.filter((entry: Album) => entry.albumArtistId !== data.id)
+                      ? albumsByYearDesc
+                      : compilationAlbumsByYearDesc
                   }
                   cardTitle={{
                     prefix: '/library/album',
