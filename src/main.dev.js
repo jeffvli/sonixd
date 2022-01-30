@@ -19,19 +19,11 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
 import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
-import playerReducer, { setStatus } from './redux/playerSlice';
-import playQueueReducer, {
-  decrementCurrentIndex,
-  incrementCurrentIndex,
-  fixPlayer2Index,
-  clearPlayQueue,
-  toggleShuffle,
-  toggleRepeat,
-  setVolume,
-} from './redux/playQueueSlice';
+import playerReducer from './redux/playerSlice';
+import playQueueReducer, { toggleShuffle, toggleRepeat, setVolume } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import MenuBuilder from './menu';
-import { getCurrentEntryList, isWindows, isWindows10, isMacOS, isLinux } from './shared/utils';
+import { isWindows, isWindows10, isMacOS, isLinux } from './shared/utils';
 import setDefaultSettings from './components/shared/setDefaultSettings';
 
 settings.configure({
@@ -107,65 +99,27 @@ const createWinThumbnailClip = () => {
 };
 
 const stop = () => {
-  const storeValues = store.getState();
-  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
-
-  if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(clearPlayQueue());
-    store.dispatch(setStatus('PAUSED'));
-  }
+  mainWindow.webContents.send('player-stop');
 };
 
 const pause = () => {
-  const storeValues = store.getState();
-  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
-
-  if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(setStatus('PAUSED'));
-  }
+  mainWindow.webContents.send('player-pause');
 };
 
 const play = () => {
-  const storeValues = store.getState();
-  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
-
-  if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(setStatus('PLAYING'));
-  }
+  mainWindow.webContents.send('player-play');
 };
 
 const playPause = () => {
-  const storeValues = store.getState();
-  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
-
-  if (storeValues.playQueue[currentEntryList].length > 0) {
-    if (storeValues.player.status === 'PAUSED') {
-      store.dispatch(setStatus('PLAYING'));
-    } else {
-      store.dispatch(setStatus('PAUSED'));
-    }
-  }
+  mainWindow.webContents.send('player-play-pause');
 };
 
 const nextTrack = () => {
-  const storeValues = store.getState();
-  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
-
-  if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(incrementCurrentIndex('usingHotkey'));
-    store.dispatch(setStatus('PLAYING'));
-  }
+  mainWindow.webContents.send('player-next-track');
 };
 
 const previousTrack = () => {
-  const storeValues = store.getState();
-  const currentEntryList = getCurrentEntryList(storeValues.playQueue);
-
-  if (storeValues.playQueue[currentEntryList].length > 0) {
-    store.dispatch(decrementCurrentIndex('usingHotkey'));
-    store.dispatch(fixPlayer2Index());
-    store.dispatch(setStatus('PLAYING'));
-  }
+  mainWindow.webContents.send('player-prev-track');
 };
 
 if (isLinux()) {

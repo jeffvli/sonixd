@@ -19,18 +19,7 @@ import {
   VolumeIcon,
   LinkButton,
 } from './styled';
-import {
-  incrementCurrentIndex,
-  decrementCurrentIndex,
-  setVolume,
-  fixPlayer2Index,
-  toggleRepeat,
-  toggleDisplayQueue,
-  setStar,
-  toggleShuffle,
-  setRate,
-} from '../../redux/playQueueSlice';
-import { setStatus } from '../../redux/playerSlice';
+import { setVolume, setStar, setRate } from '../../redux/playQueueSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -52,6 +41,7 @@ import { notifyToast } from '../shared/toast';
 import { InfoModal } from '../modal/PageModal';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import useGetLyrics from '../../hooks/useGetLyrics';
+import usePlayerControls from '../../hooks/usePlayerControls';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -76,49 +66,54 @@ const PlayerBar = () => {
   const playersRef = useRef<any>();
   const history = useHistory();
 
-  ipcRenderer.once('current-position-request', (_event, arg) => {
-    if (arg.currentPlayer === 1) {
-      ipcRenderer.send(
-        'seeked',
-        Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
-      );
-    } else {
-      ipcRenderer.send(
-        'seeked',
-        Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000)
-      );
-    }
-    ipcRenderer.removeAllListeners('current-position-request');
-  });
+  useEffect(() => {
+    ipcRenderer.once('current-position-request', (_event, arg) => {
+      if (arg.currentPlayer === 1) {
+        ipcRenderer.send(
+          'seeked',
+          Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+        );
+      } else {
+        ipcRenderer.send(
+          'seeked',
+          Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000)
+        );
+      }
+    });
 
-  ipcRenderer.once('position-request', (_event, arg) => {
-    const newPosition = Math.floor(arg.position / 1000000);
+    ipcRenderer.once('position-request', (_event, arg) => {
+      const newPosition = Math.floor(arg.position / 1000000);
 
-    if (arg.currentPlayer === 1) {
-      playersRef.current.player1.audioEl.current.currentTime = newPosition;
-    } else {
-      playersRef.current.player2.audioEl.current.currentTime = newPosition;
-    }
+      if (arg.currentPlayer === 1) {
+        playersRef.current.player1.audioEl.current.currentTime = newPosition;
+      } else {
+        playersRef.current.player2.audioEl.current.currentTime = newPosition;
+      }
 
-    ipcRenderer.send('seeked', arg.position);
-    ipcRenderer.removeAllListeners('position-request');
-  });
+      ipcRenderer.send('seeked', arg.position);
+    });
 
-  ipcRenderer.once('seek-request', (_event, arg) => {
-    let newPosition;
-    if (arg.currentPlayer === 1) {
-      newPosition = playersRef.current.player1.audioEl.current.currentTime + arg.offset / 1000000;
-      setManualSeek(newPosition);
-      setIsDragging(true);
-      ipcRenderer.send('seeked', newPosition * 1000000);
-    } else {
-      newPosition = playersRef.current.player2.audioEl.current.currentTime + arg.offset / 1000000;
-      setManualSeek(newPosition);
-      setIsDragging(true);
-      ipcRenderer.send('seeked', newPosition * 1000000);
-    }
-    ipcRenderer.removeAllListeners('seek-request');
-  });
+    ipcRenderer.once('seek-request', (_event, arg) => {
+      let newPosition;
+      if (arg.currentPlayer === 1) {
+        newPosition = playersRef.current.player1.audioEl.current.currentTime + arg.offset / 1000000;
+        setManualSeek(newPosition);
+        setIsDragging(true);
+        ipcRenderer.send('seeked', newPosition * 1000000);
+      } else {
+        newPosition = playersRef.current.player2.audioEl.current.currentTime + arg.offset / 1000000;
+        setManualSeek(newPosition);
+        setIsDragging(true);
+        ipcRenderer.send('seeked', newPosition * 1000000);
+      }
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('current-position-request');
+      ipcRenderer.removeAllListeners('position-request');
+      ipcRenderer.removeAllListeners('seek-request');
+    };
+  }, []);
 
   const { data: lyrics } = useGetLyrics(config, {
     artist: playQueue.current?.albumArtist,
@@ -282,6 +277,31 @@ const PlayerBar = () => {
     setCurrentEntryList(getCurrentEntryList(playQueue));
   }, [playQueue]);
 
+  const {
+    handleNextTrack,
+    handlePrevTrack,
+    handlePlayPause,
+    handleSeekBackward,
+    handleSeekForward,
+    handleSeekSlider,
+    handleVolumeKey,
+    handleVolumeSlider,
+    handleVolumeWheel,
+    handleRepeat,
+    handleShuffle,
+    handleDisplayQueue,
+  } = usePlayerControls(
+    player,
+    playQueue,
+    currentEntryList,
+    playersRef,
+    setIsDragging,
+    setManualSeek,
+    isDraggingVolume,
+    setIsDraggingVolume,
+    setLocalVolume
+  );
+
   useEffect(() => {
     // Handle volume slider dragging
     const debounce = setTimeout(() => {
@@ -341,173 +361,6 @@ const PlayerBar = () => {
 
     return () => clearTimeout(debounce);
   }, [config.serverType, isDragging, manualSeek, playQueue.currentPlayer]);
-
-  const handleClickNext = () => {
-    if (playQueue[currentEntryList].length > 0) {
-      dispatch(incrementCurrentIndex('usingHotkey'));
-      dispatch(setStatus('PLAYING'));
-    }
-  };
-
-  const handleClickPrevious = () => {
-    if (playQueue[currentEntryList].length > 0) {
-      dispatch(decrementCurrentIndex('usingHotkey'));
-      dispatch(fixPlayer2Index());
-      dispatch(setStatus('PLAYING'));
-    }
-  };
-
-  const handleClickPlayPause = () => {
-    if (playQueue[currentEntryList].length > 0) {
-      if (player.status === 'PAUSED') {
-        dispatch(setStatus('PLAYING'));
-
-        ipcRenderer.send('playpause', {
-          status: 'PLAYING',
-          position:
-            playQueue.currentPlayer === 1
-              ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
-              : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
-        });
-      } else {
-        dispatch(setStatus('PAUSED'));
-        ipcRenderer.send('playpause', {
-          status: 'PAUSED',
-          position:
-            playQueue.currentPlayer === 1
-              ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
-              : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
-        });
-      }
-    }
-  };
-
-  const handleVolumeSlider = (e: number) => {
-    if (!isDraggingVolume) {
-      setIsDraggingVolume(true);
-    }
-    const vol = Number((e / 100).toFixed(2));
-    setLocalVolume(vol);
-  };
-
-  const handleVolumeKey = (e: any) => {
-    if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
-      const vol = Number((playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2));
-      setLocalVolume(vol);
-      dispatch(setVolume(vol));
-    } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
-      const vol = Number((playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2));
-      setLocalVolume(vol);
-      dispatch(setVolume(vol));
-    }
-  };
-
-  const handleVolumeWheel = (e: any) => {
-    if (e.deltaY > 0) {
-      if (!isDraggingVolume) {
-        setIsDraggingVolume(true);
-      }
-      let vol = Number((playQueue.volume - 0.01).toFixed(2));
-      vol = vol < 0 ? 0 : vol;
-      setLocalVolume(vol);
-      dispatch(setVolume(vol));
-    } else {
-      let vol = Number((playQueue.volume + 0.01).toFixed(2));
-      vol = vol > 1 ? 1 : vol;
-      setLocalVolume(vol);
-      dispatch(setVolume(vol));
-    }
-  };
-
-  const handleClickForward = () => {
-    if (playQueue[currentEntryList].length > 0) {
-      const seekForwardInterval = Number(settings.getSync('seekForwardInterval'));
-      setIsDragging(true);
-
-      if (playQueue.isFading) {
-        if (playQueue.currentPlayer === 1) {
-          playersRef.current.player2.audioEl.current.pause();
-          playersRef.current.player2.audioEl.current.currentTime = 0;
-        } else {
-          playersRef.current.player1.audioEl.current.pause();
-          playersRef.current.player1.audioEl.current.currentTime = 0;
-        }
-      }
-
-      if (playQueue.currentPlayer === 1) {
-        const calculatedTime =
-          playersRef.current.player1.audioEl.current.currentTime + seekForwardInterval;
-        const songDuration = playersRef.current.player1.audioEl.current.duration;
-        setManualSeek(calculatedTime > songDuration ? songDuration - 1 : calculatedTime);
-      } else {
-        const calculatedTime =
-          playersRef.current.player2.audioEl.current.currentTime + seekForwardInterval;
-        const songDuration = playersRef.current.player2.audioEl.current.duration;
-        setManualSeek(calculatedTime > songDuration ? songDuration - 1 : calculatedTime);
-      }
-    }
-  };
-
-  const handleClickBackward = () => {
-    const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
-    if (playQueue[currentEntryList].length > 0) {
-      setIsDragging(true);
-
-      if (playQueue.isFading) {
-        if (playQueue.currentPlayer === 1) {
-          playersRef.current.player2.audioEl.current.pause();
-          playersRef.current.player2.audioEl.current.currentTime = 0;
-        } else {
-          playersRef.current.player1.audioEl.current.pause();
-          playersRef.current.player1.audioEl.current.currentTime = 0;
-        }
-      }
-
-      if (playQueue.currentPlayer === 1) {
-        const calculatedTime =
-          playersRef.current.player1.audioEl.current.currentTime - seekBackwardInterval;
-        setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
-      } else {
-        const calculatedTime =
-          playersRef.current.player2.audioEl.current.currentTime - seekBackwardInterval;
-        setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
-      }
-    }
-  };
-
-  const handleSeekSlider = (e: number) => {
-    setIsDragging(true);
-
-    // If trying to seek back while fading to the next track, we need to
-    // pause and reset the next track so that they don't begin overlapping
-    if (playQueue.isFading) {
-      if (playQueue.currentPlayer === 1) {
-        playersRef.current.player2.audioEl.current.pause();
-        playersRef.current.player2.audioEl.current.currentTime = 0;
-      } else {
-        playersRef.current.player1.audioEl.current.pause();
-        playersRef.current.player1.audioEl.current.currentTime = 0;
-      }
-    }
-
-    setManualSeek(e);
-  };
-
-  const handleRepeat = () => {
-    const currentRepeat = settings.getSync('repeat');
-    const newRepeat = currentRepeat === 'none' ? 'all' : currentRepeat === 'all' ? 'one' : 'none';
-    dispatch(toggleRepeat());
-    settings.setSync('repeat', newRepeat);
-  };
-
-  const handleShuffle = () => {
-    dispatch(toggleShuffle());
-    settings.setSync('shuffle', !settings.getSync('shuffle'));
-  };
-
-  const handleDisplayQueue = () => {
-    dispatch(toggleDisplayQueue());
-  };
 
   const handleFavorite = async () => {
     if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
@@ -746,10 +599,10 @@ const PlayerBar = () => {
                   icon="backward"
                   size="lg"
                   fixedWidth
-                  onClick={handleClickBackward}
+                  onClick={handleSeekBackward}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
-                      handleClickBackward();
+                      handleSeekBackward();
                     }
                   }}
                 />
@@ -761,10 +614,10 @@ const PlayerBar = () => {
                   icon="step-backward"
                   size="lg"
                   fixedWidth
-                  onClick={handleClickPrevious}
+                  onClick={handlePrevTrack}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
-                      handleClickPrevious();
+                      handlePrevTrack();
                     }
                   }}
                 />
@@ -776,10 +629,10 @@ const PlayerBar = () => {
                   icon={player.status === 'PLAYING' ? 'pause' : 'play'}
                   size="2x"
                   fixedWidth
-                  onClick={handleClickPlayPause}
+                  onClick={handlePlayPause}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
-                      handleClickPlayPause();
+                      handlePlayPause();
                     }
                   }}
                 />
@@ -791,10 +644,10 @@ const PlayerBar = () => {
                   icon="step-forward"
                   size="lg"
                   fixedWidth
-                  onClick={handleClickNext}
+                  onClick={handleNextTrack}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
-                      handleClickNext();
+                      handleNextTrack();
                     }
                   }}
                 />
@@ -806,10 +659,10 @@ const PlayerBar = () => {
                   icon="forward"
                   size="lg"
                   fixedWidth
-                  onClick={handleClickForward}
+                  onClick={handleSeekForward}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
-                      handleClickForward();
+                      handleSeekForward();
                     }
                   }}
                 />
@@ -848,9 +701,9 @@ const PlayerBar = () => {
                     onChange={handleSeekSlider}
                     onKeyDown={(e: any) => {
                       if (e.key === 'ArrowLeft') {
-                        handleClickBackward();
+                        handleSeekBackward();
                       } else if (e.key === 'ArrowRight') {
-                        handleClickForward();
+                        handleSeekForward();
                       }
                     }}
                     style={{ width: '100%' }}
