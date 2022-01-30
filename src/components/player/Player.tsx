@@ -317,56 +317,57 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   }, [playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
-    if (config.serverType === Server.Jellyfin) {
-      const currentSeek =
-        playQueue.currentPlayer === 1
-          ? player1Ref.current.audioEl.current?.currentTime
-          : player2Ref.current.audioEl.current?.currentTime;
+    setScrobbled(false); // Only scrobble a single time per song change
 
-      // Handle gapless
-      if (playQueue.fadeDuration === 0 && currentSeek < 1) {
-        const timer = setTimeout(() => {
-          apiController({
-            serverType: config.serverType,
-            endpoint: 'scrobble',
-            args: {
-              id:
-                playQueue.currentPlayer === 1
-                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
-              submission: false,
-              position: currentSeek * 10000000,
-              event: 'start',
-            },
-          });
-        }, 5000);
+    const currentSeek =
+      playQueue.currentPlayer === 1
+        ? player1Ref.current.audioEl.current?.currentTime
+        : player2Ref.current.audioEl.current?.currentTime;
 
-        return () => {
-          clearTimeout(timer);
-        };
-      }
+    // Handle gapless players
+    if (playQueue.fadeDuration === 0 && currentSeek < 1) {
+      const timer = setTimeout(() => {
+        apiController({
+          serverType: config.serverType,
+          endpoint: 'scrobble',
+          args: {
+            id:
+              playQueue.currentPlayer === 1
+                ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                : playQueue[currentEntryList][playQueue.player2.index]?.id,
+            submission: false,
+            position: currentSeek * 10000000,
+            event: 'start',
+          },
+        });
+      }, 5000);
 
-      if (playQueue.fadeDuration !== 0 && currentSeek < playQueue.fadeDuration + 1) {
-        const timer = setTimeout(() => {
-          apiController({
-            serverType: config.serverType,
-            endpoint: 'scrobble',
-            args: {
-              id:
-                playQueue.currentPlayer === 1
-                  ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                  : playQueue[currentEntryList][playQueue.player2.index]?.id,
-              submission: false,
-              position: currentSeek * 10000000,
-              event: 'start',
-            },
-          });
-        }, 5000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
 
-        return () => {
-          clearTimeout(timer);
-        };
-      }
+    // Handle crossfade players
+    if (playQueue.fadeDuration !== 0 && currentSeek < playQueue.fadeDuration + 1) {
+      const timer = setTimeout(() => {
+        apiController({
+          serverType: config.serverType,
+          endpoint: 'scrobble',
+          args: {
+            id:
+              playQueue.currentPlayer === 1
+                ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                : playQueue[currentEntryList][playQueue.player2.index]?.id,
+            submission: false,
+            position: currentSeek * 10000000,
+            event: 'start',
+          },
+        });
+      }, 5000);
+
+      return () => {
+        clearTimeout(timer);
+      };
     }
 
     return undefined;
@@ -587,62 +588,9 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     );
   }, [config.serverType, currentEntryList, playQueue, scrobbled]);
 
-  const handleOnPlay = useCallback(
-    (playerNumber: 1 | 2) => {
-      ipcRenderer.send('current-song', playQueue.current);
-
-      if (playQueue.scrobble) {
-        const currentSeek =
-          playerNumber === 1
-            ? player1Ref.current.audioEl.current?.currentTime
-            : player2Ref.current.audioEl.current?.currentTime;
-        const duration =
-          playerNumber === 1
-            ? player1Ref.current.audioEl.current?.duration
-            : player2Ref.current.audioEl.current?.duration;
-
-        const fadeAtTime = duration - playQueue.fadeDuration;
-
-        const scrobbleFadeCondition =
-          !(currentSeek >= 240 || currentSeek >= fadeAtTime - 15) && currentSeek <= fadeAtTime;
-        const scrobbleGaplessCondition = !(currentSeek >= 240 || currentSeek >= duration * 0.9);
-
-        // Set the reset scrobble condition based on fade or gapless
-        if (playQueue.fadeDuration > 0 ? scrobbleFadeCondition : scrobbleGaplessCondition) {
-          setScrobbled(false);
-
-          // Since the gapless player overlaps as well, we need to set this timeout after the "pause"
-          // event that happens after the previous track ends
-          setTimeout(() => {
-            apiController({
-              serverType: config.serverType,
-              endpoint: 'scrobble',
-              args: {
-                id:
-                  playerNumber === 1
-                    ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                    : playQueue[currentEntryList][playQueue.player2.index]?.id,
-                submission: false,
-                position:
-                  config.serverType === Server.Jellyfin ? currentSeek * 10000000 : undefined,
-                event:
-                  config.serverType === Server.Jellyfin
-                    ? playQueue.fadeDuration > 0
-                      ? currentSeek > playQueue.fadeDuration
-                        ? 'unpause'
-                        : undefined
-                      : currentSeek > 3
-                      ? 'unpause'
-                      : undefined
-                    : undefined,
-              },
-            });
-          }, 1000);
-        }
-      }
-    },
-    [config.serverType, currentEntryList, playQueue]
-  );
+  const handleOnPlay = useCallback(() => {
+    ipcRenderer.send('current-song', playQueue.current);
+  }, [playQueue]);
 
   const handleOnPause = useCallback(
     async (playerNumber: 1 | 2) => {
@@ -716,7 +664,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.player1.src}
-        onPlay={() => handleOnPlay(1)}
+        onPlay={() => handleOnPlay()}
         onPause={() => handleOnPause(1)}
         listenInterval={playQueue.pollingInterval}
         preload="auto"
@@ -742,7 +690,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player2Ref}
         src={playQueue.player2.src}
-        onPlay={() => handleOnPlay(2)}
+        onPlay={() => handleOnPlay()}
         onPause={() => handleOnPause(2)}
         listenInterval={playQueue.pollingInterval}
         preload="auto"
