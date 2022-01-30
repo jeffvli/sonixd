@@ -455,11 +455,22 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
 
     if (playQueue.repeat === 'none' && playQueue.currentIndex === playQueue.entry.length - 1) {
       dispatch(fixPlayer2Index());
-      dispatch(setStatus('PAUSED'));
+      player1Ref.current.audioEl.current.pause();
+      player1Ref.current.audioEl.current.currentTime = 0;
+      player2Ref.current.audioEl.current.pause();
+      player2Ref.current.audioEl.current.currentTime = 0;
+
+      ipcRenderer.send('playpause', {
+        status: 'PAUSED',
+        position:
+          playQueue.currentPlayer === 1
+            ? Math.floor(player1Ref.current.audioEl.current.currentTime * 1000000)
+            : Math.floor(player2Ref.current.audioEl.current.currentTime * 1000000),
+      });
+
       setTimeout(() => {
-        player1Ref.current.audioEl.current.pause();
-        player2Ref.current.audioEl.current.pause();
-      }, 200);
+        dispatch(setStatus('PAUSED'));
+      }, 250);
     } else {
       if (!playQueue.autoIncremented) {
         dispatch(incrementCurrentIndex('none'));
@@ -499,11 +510,22 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     }
     if (playQueue.repeat === 'none' && playQueue.currentIndex === playQueue.entry.length - 1) {
       dispatch(fixPlayer2Index());
-      dispatch(setStatus('PAUSED'));
+      player1Ref.current.audioEl.current.pause();
+      player1Ref.current.audioEl.current.currentTime = 0;
+      player2Ref.current.audioEl.current.pause();
+      player2Ref.current.audioEl.current.currentTime = 0;
+
+      ipcRenderer.send('playpause', {
+        status: 'PAUSED',
+        position:
+          playQueue.currentPlayer === 1
+            ? Math.floor(player1Ref.current.audioEl.current.currentTime * 1000000)
+            : Math.floor(player2Ref.current.audioEl.current.currentTime * 1000000),
+      });
+
       setTimeout(() => {
-        player1Ref.current.audioEl.current.pause();
-        player2Ref.current.audioEl.current.pause();
-      }, 200);
+        dispatch(setStatus('PAUSED'));
+      }, 250);
     } else {
       if (!playQueue.autoIncremented) {
         dispatch(incrementCurrentIndex('none'));

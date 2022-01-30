@@ -58,7 +58,6 @@ const usePlayerControls = (
       ) {
         dispatch(decrementCurrentIndex('usingHotkey'));
         dispatch(fixPlayer2Index());
-        dispatch(setStatus('PLAYING'));
       } else if (currentPlayer === 1) {
         playersRef.current.player1.audioEl.current.currentTime = 0;
 
@@ -75,6 +74,8 @@ const usePlayerControls = (
         playersRef.current.player1.audioEl.current.pause();
       }
     }
+
+    dispatch(setStatus('PLAYING'));
   }, [currentEntryList, dispatch, playQueue, playersRef]);
 
   const handlePlayPause = useCallback(() => {
@@ -103,22 +104,48 @@ const usePlayerControls = (
   }, [currentEntryList, dispatch, playQueue, player.status, playersRef]);
 
   const handlePlay = useCallback(() => {
-    if (player.status === 'PAUSED') {
-      dispatch(setStatus('PLAYING'));
-    }
-  }, [dispatch, player.status]);
+    ipcRenderer.send('playpause', {
+      status: 'PLAYING',
+      position:
+        playQueue.currentPlayer === 1
+          ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+          : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
+    });
+
+    dispatch(setStatus('PLAYING'));
+  }, [dispatch, playQueue.currentPlayer, playersRef]);
 
   const handlePause = useCallback(() => {
-    if (player.status === 'PLAYING') {
-      dispatch(setStatus('PAUSED'));
-    }
-  }, [dispatch, player.status]);
+    ipcRenderer.send('playpause', {
+      status: 'PAUSED',
+      position:
+        playQueue.currentPlayer === 1
+          ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+          : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
+    });
+
+    dispatch(setStatus('PAUSED'));
+  }, [dispatch, playQueue.currentPlayer, playersRef]);
 
   const handleStop = useCallback(() => {
-    if (player.status === 'PLAYING') {
-      dispatch(setStatus('PAUSED'));
+    if (playQueue.currentPlayer === 1) {
+      playersRef.current.player2.audioEl.current.pause();
+      playersRef.current.player2.audioEl.current.currentTime = 0;
+    } else {
+      playersRef.current.player1.audioEl.current.pause();
+      playersRef.current.player1.audioEl.current.currentTime = 0;
     }
-  }, [dispatch, player.status]);
+
+    ipcRenderer.send('playpause', {
+      status: 'PAUSED',
+      position:
+        playQueue.currentPlayer === 1
+          ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+          : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
+    });
+
+    dispatch(setStatus('PAUSED'));
+  }, [dispatch, playQueue.currentPlayer, playersRef]);
 
   const handleSeekBackward = useCallback(() => {
     const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
@@ -295,6 +322,7 @@ const usePlayerControls = (
       ipcRenderer.removeAllListeners('player-play-pause');
       ipcRenderer.removeAllListeners('player-play');
       ipcRenderer.removeAllListeners('player-pause');
+      ipcRenderer.removeAllListeners('player-stop');
       ipcRenderer.removeAllListeners('player-shuffle');
       ipcRenderer.removeAllListeners('player-repeat');
     };
