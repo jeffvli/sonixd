@@ -21,6 +21,7 @@ import {
 import {
   GridViewConfigPanel,
   ListViewConfigPanel,
+  PaginationConfigPanel,
   ThemeConfigPanel,
 } from '../settings/ConfigPanels/LookAndFeelConfig';
 import PlaybackConfig from '../settings/ConfigPanels/PlaybackConfig';
@@ -236,7 +237,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                   speaker={
                     <StyledPopover
                       style={{
-                        maxWidth: '620px',
+                        width: '620px',
                         maxHeight: '620px',
                         overflowY: 'auto',
                         overflowX: 'hidden',
@@ -264,6 +265,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                       {activeConfigNav === 'server' && <ServerConfig />}
                       {activeConfigNav === 'other' && (
                         <>
+                          <PaginationConfigPanel />
                           <CacheConfig />
                           <WindowConfig />
                           <AdvancedConfig />
