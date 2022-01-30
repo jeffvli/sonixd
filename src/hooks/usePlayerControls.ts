@@ -128,24 +128,20 @@ const usePlayerControls = (
   }, [dispatch, playQueue.currentPlayer, playersRef]);
 
   const handleStop = useCallback(() => {
-    if (playQueue.currentPlayer === 1) {
-      playersRef.current.player2.audioEl.current.pause();
-      playersRef.current.player2.audioEl.current.currentTime = 0;
-    } else {
-      playersRef.current.player1.audioEl.current.pause();
-      playersRef.current.player1.audioEl.current.currentTime = 0;
-    }
+    playersRef.current.player2.audioEl.current.pause();
+    playersRef.current.player2.audioEl.current.currentTime = 0;
+    playersRef.current.player1.audioEl.current.pause();
+    playersRef.current.player1.audioEl.current.currentTime = 0;
 
     ipcRenderer.send('playpause', {
       status: 'PAUSED',
-      position:
-        playQueue.currentPlayer === 1
-          ? Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
-          : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
+      position: 0,
     });
 
-    dispatch(setStatus('PAUSED'));
-  }, [dispatch, playQueue.currentPlayer, playersRef]);
+    setTimeout(() => {
+      dispatch(setStatus('PAUSED'));
+    }, 250);
+  }, [dispatch, playersRef]);
 
   const handleSeekBackward = useCallback(() => {
     const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
