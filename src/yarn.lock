@@ -30,13 +30,6 @@
   dependencies:
     nan latest
 
-"@nodert-win10-au/windows.storage@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@nodert-win10-au/windows.storage/-/windows.storage-0.4.4.tgz#c76f70fa8ecd359812f3d546f97ef34ec6ef8298"
-  integrity sha512-TXqWUV2d8TrDn+Wyeahg2Krg51b0nNXH5sRcX+QWRDEAiR51G/gYC0MRGrZ5snT5mbw933cpe1FbKl98yH5hFA==
-  dependencies:
-    nan latest
-
 "@nornagon/put@0.0.8":
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/@nornagon/put/-/put-0.0.8.tgz#9d497ec46c9364acc3f8b59aa3cf8ee4134ae337"
