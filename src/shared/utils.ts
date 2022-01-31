@@ -8,8 +8,6 @@ import settings from 'electron-settings';
 import i18n from '../i18n/i18n';
 import { mockSettings } from './mockSettings';
 
-const download = require('image-downloader');
-
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
 };
@@ -568,12 +566,15 @@ export const writeOBSFiles = (filePath: string, data: any) => {
     }
   });
 
-  if (data.cover_url) {
-    download.image({
-      url: data.cover_url.replaceAll('150', '250'),
-      dest: path.join(filePath, 'cover.jpg'),
-    });
-  }
+  fs.writeFile(
+    path.join(filePath, 'image.txt'),
+    data.cover_url.replace(/&size=\d+|width=\d+&height=\d+&quality=\d+/, '') || '',
+    (err) => {
+      if (err) {
+        console.log(err);
+      }
+    }
+  );
 };
 
 // From https://gist.github.com/andjosh/6764939#gistcomment-3564498

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
 import { ipcRenderer } from 'electron';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
@@ -26,7 +24,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { CoverArtWrapper } from '../layout/styled';
-import { decodeBase64Image, getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
+import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
 import {
   LinkWrapper,
   SecondaryTextWrapper,
@@ -36,7 +34,6 @@ import {
 } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
-import logo from '../../../assets/icon.png';
 import { notifyToast } from '../shared/toast';
 import { InfoModal } from '../modal/PageModal';
 import { setPlaylistRate } from '../../redux/playlistSlice';
@@ -194,19 +191,6 @@ const PlayerBar = () => {
             status: player.status === 'PLAYING' ? 'playing' : 'stopped',
             title: playQueue.current?.title,
           });
-
-          if (playQueue.current?.image.match('placeholder')) {
-            const imgBuffer = decodeBase64Image(logo);
-            fs.writeFile(
-              path.join(config.external.obs.path, 'cover.jpg'),
-              imgBuffer.data,
-              (err) => {
-                if (err) {
-                  console.log(err);
-                }
-              }
-            );
-          }
         }
       }, config.external.obs.pollingInterval);
 
