@@ -141,7 +141,7 @@ export const MiniViewContainer = styled.div<{ display: string }>`
 `;
 
 export const InfoViewPanel = styled.div<{ height?: string }>`
-  background: rgba(150, 150, 150, 0.1);
+  background: rgba(150, 150, 150, 0.03);
   border-radius: 15px;
   padding: 20px;
   margin: 0 0 5px 0;
