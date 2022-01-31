@@ -24,7 +24,7 @@ import {
   getNextPlayerIndex,
 } from '../../redux/playQueueSlice';
 import cacheSong from '../shared/cacheSong';
-import { isCached } from '../../shared/utils';
+import { isCached, isLinux } from '../../shared/utils';
 import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 import { setStatus } from '../../redux/playerSlice';
@@ -315,6 +315,26 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       }, 100);
     }
   }, [playQueue.currentPlayer, player.status]);
+
+  useEffect(() => {
+    // Since we aren't able to request the time from the main process, we will continuously send it
+    // for mpris-service's getPosition() function
+    if (isLinux()) {
+      const interval = setInterval(() => {
+        ipcRenderer.send('current-position', player1Ref.current.audioEl.current.currentTime);
+
+        if (player.status === 'PAUSED') {
+          clearInterval(interval);
+        }
+      }, 500);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+
+    return undefined;
+  }, [player.status]);
 
   useEffect(() => {
     setScrobbled(false); // Only scrobble a single time per song change

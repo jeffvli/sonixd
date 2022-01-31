@@ -259,7 +259,7 @@ if (isLinux()) {
 
     mprisPlayer.metadata = {
       'mpris:trackid': mprisPlayer.objectPath(`track/${arg.id}`),
-      'mpris:length': arg.duration ? Math.round((arg.duration || 0) * 1000 * 1000) : null,
+      'mpris:length': arg.duration ? Math.round((arg.duration || 0) * 1e6) : null,
       'mpris:artUrl': arg.image.includes('placeholder') ? null : arg.image,
       'xesam:title': arg.title || null,
       'xesam:album': arg.album || null,
@@ -273,6 +273,10 @@ if (isLinux()) {
           ? arg.genre.filter((genre) => genre.title).map((genre) => genre.title)
           : null,
     };
+  });
+
+  ipcMain.on('current-position', (e, arg) => {
+    mprisPlayer.getPosition = () => arg * 1e6;
   });
 }
 
