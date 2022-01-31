@@ -29,6 +29,7 @@ import { getTheme } from './shared/utils';
 import { defaultDark } from './styles/styledTheme';
 import { mockSettings } from './shared/mockSettings';
 import MusicList from './components/library/MusicList';
+import ReleaseNotes from './components/modal/ReleaseNotes';
 
 const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
@@ -84,6 +85,7 @@ const App = () => {
           </Switch>
         </Layout>
         <PageModal />
+        <ReleaseNotes />
         <NowPlayingMiniView />
         <GlobalContextMenu />
       </Router>

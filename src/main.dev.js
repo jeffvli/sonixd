@@ -44,14 +44,6 @@ export const store = configureStore({
 
 replayActionMain(store);
 
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
-
 let mainWindow = null;
 let tray = null;
 let exitFromTray = false;
@@ -651,8 +643,13 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   if (settings.getSync('autoUpdate') === true) {
-    // eslint-disable-next-line
-    new AppUpdater();
+    log.transports.file.level = 'info';
+    autoUpdater.logger = log;
+    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.on('update-downloaded', () => {
+      settings.setSync('autoUpdateNotice', true);
+    });
   }
 };
 

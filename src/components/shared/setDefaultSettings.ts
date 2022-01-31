@@ -39,6 +39,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('autoUpdate', true);
   }
 
+  if (force || !settings.hasSync('autoUpdateNotice')) {
+    settings.setSync('autoUpdateNotice', true);
+  }
+
   if (force || !settings.hasSync('serverType')) {
     settings.setSync('serverType', 'subsonic');
   }
