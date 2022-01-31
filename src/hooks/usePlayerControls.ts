@@ -333,6 +333,55 @@ const usePlayerControls = (
     handleStop,
   ]);
 
+  useEffect(() => {
+    ipcRenderer.on('current-position-request', (_event, arg) => {
+      if (arg.currentPlayer === 1) {
+        ipcRenderer.send(
+          'seeked',
+          Math.floor(playersRef.current.player1.audioEl.current.currentTime * 1000000)
+        );
+      } else {
+        ipcRenderer.send(
+          'seeked',
+          Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000)
+        );
+      }
+    });
+
+    ipcRenderer.on('position-request', (_event, arg) => {
+      const newPosition = Math.floor(arg.position / 1000000);
+
+      if (arg.currentPlayer === 1) {
+        playersRef.current.player1.audioEl.current.currentTime = newPosition;
+      } else {
+        playersRef.current.player2.audioEl.current.currentTime = newPosition;
+      }
+
+      ipcRenderer.send('seeked', arg.position);
+    });
+
+    ipcRenderer.on('seek-request', (_event, arg) => {
+      let newPosition;
+      if (arg.currentPlayer === 1) {
+        newPosition = playersRef.current.player1.audioEl.current.currentTime + arg.offset / 1000000;
+        setManualSeek(newPosition);
+        setIsDragging(true);
+        ipcRenderer.send('seeked', newPosition * 1000000);
+      } else {
+        newPosition = playersRef.current.player2.audioEl.current.currentTime + arg.offset / 1000000;
+        setManualSeek(newPosition);
+        setIsDragging(true);
+        ipcRenderer.send('seeked', newPosition * 1000000);
+      }
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('current-position-request');
+      ipcRenderer.removeAllListeners('position-request');
+      ipcRenderer.removeAllListeners('seek-request');
+    };
+  }, [playersRef, setIsDragging, setManualSeek]);
+
   return {
     handleNextTrack,
     handlePrevTrack,
