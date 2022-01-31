@@ -283,7 +283,6 @@ if (isLinux()) {
 if (isWindows() && isWindows10()) {
   const windowsMedia = require('@nodert-win10-au/windows.media');
   const windowsMediaPlayback = require('@nodert-win10-au/windows.media.playback');
-  const windowsStorage = require('@nodert-win10-au/windows.storage');
   const windowsStorageStreams = require('@nodert-win10-au/windows.storage.streams');
   const windowsFoundation = require('@nodert-win10-au/windows.foundation');
 
@@ -367,26 +366,13 @@ if (isWindows() && isWindows10()) {
         : 'Unknown Artist';
     Controls.displayUpdater.musicProperties.albumTitle = arg.album || 'Unknown Album';
 
-    if (arg.image.includes('placeholder')) {
-      windowsStorage.StorageFile.getFileFromPathAsync(
-        getAssetPath('icon.png'),
-        (error, storageFile) => {
-          if (error) {
-            Controls.displayUpdater.thumbnail = null;
-          } else {
-            Controls.displayUpdater.thumbnail = windowsStorageStreams.RandomAccessStreamReference.createFromFile(
-              storageFile
-            );
-          }
-
-          Controls.displayUpdater.update();
-        }
-      );
-    } else {
-      Controls.displayUpdater.thumbnail = windowsStorageStreams.RandomAccessStreamReference.createFromUri(
-        new windowsFoundation.Uri(arg.image)
-      );
-    }
+    Controls.displayUpdater.thumbnail = windowsStorageStreams.RandomAccessStreamReference.createFromUri(
+      new windowsFoundation.Uri(
+        arg.image.includes('placeholder')
+          ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
+          : arg.image
+      )
+    );
 
     Controls.displayUpdater.update();
   });
