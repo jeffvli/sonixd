@@ -519,14 +519,14 @@ export const LinkWrapper = styled.span<{ maxWidth: string }>`
   vertical-align: bottom;
 `;
 
-export const StyledLink = styled.a<{ underline?: boolean }>`
-  color: ${(props) => props.theme.colors.layout.page.color};
+export const StyledLink = styled.a<{ underline?: boolean; color?: string }>`
+  color: ${(props) => props?.color || props.theme.colors.layout.page.color};
   cursor: pointer;
   text-decoration: ${(props) => (props.underline ? 'underline' : undefined)};
   font-weight: bold;
 
   &:hover {
-    color: ${(props) => props.theme.colors.layout.page.color};
+    color: ${(props) => props?.color || props.theme.colors.layout.page.color};
   }
 
   &:focus-visible {

@@ -345,7 +345,7 @@ const AlbumView = ({ ...rest }: any) => {
             subtitle={
               <div>
                 <PageHeaderSubtitleDataLine $top $overflow>
-                  <StyledLink onClick={() => history.push('/library/album')}>
+                  <StyledLink color="#D8D8D8" onClick={() => history.push('/library/album')}>
                     {t('ALBUM')}
                   </StyledLink>{' '}
                   {data.albumArtist && (
@@ -353,6 +353,7 @@ const AlbumView = ({ ...rest }: any) => {
                       {t('by')}{' '}
                       <LinkWrapper maxWidth="20vw">
                         <StyledLink
+                          color="#D8D8D8"
                           onClick={() => history.push(`/library/artist/${data.albumArtistId}`)}
                         >
                           <strong>{data.albumArtist}</strong>
@@ -390,6 +391,7 @@ const AlbumView = ({ ...rest }: any) => {
                         {i > 0 && ', '}
                         <LinkWrapper maxWidth="13vw">
                           <StyledLink
+                            color="#D8D8D8"
                             tabIndex={0}
                             onClick={() => {
                               if (!rest.isModal) {
