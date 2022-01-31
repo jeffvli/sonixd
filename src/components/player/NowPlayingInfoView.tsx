@@ -370,7 +370,7 @@ const NowPlayingInfoView = () => {
           {currentArtist?.info?.similarArtist?.length > 0 && (
             <InfoViewPanel>
               <ScrollingMenu
-                title={t('Related Artists ')}
+                title={`${t('Related Artists')} `}
                 data={currentArtist?.info?.similarArtist?.slice(0, 10)}
                 cardTitle={{
                   prefix: '/library/artist',

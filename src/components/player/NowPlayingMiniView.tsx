@@ -58,7 +58,7 @@ import {
 } from '../shared/ToolbarButtons';
 import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
-import { Song } from '../../types';
+import { Server, Song } from '../../types';
 
 const NowPlayingMiniView = () => {
   const { t } = useTranslation();
@@ -319,7 +319,9 @@ const NowPlayingMiniView = () => {
                         enterable
                         speaker={
                           <StyledPopover>
-                            <ControlLabel>{t('How many tracks? (1-500)*')}</ControlLabel>
+                            <ControlLabel>{`${t('How many tracks?')} ${
+                              config.serverType === Server.Subsonic ? '(1 - 500)*' : '(1 - ∞)'
+                            }`}</ControlLabel>
                             <StyledInputNumber
                               min={1}
                               max={500}
