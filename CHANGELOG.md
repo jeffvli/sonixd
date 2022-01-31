@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.12.0] - 2022-01-31
+
+### Added
+
+- Added support for language/translations (#146) (Thanks @gelaechter)
+  - German translation added (Thanks @gelaecheter)
+  - Simplified Chinese translation added (Thanks @@fangxx3863)
+- (Windows) Added media keys with desktop overlay (#79) (Thanks @GermanDarknes)
+- (Subsonic) Added support for `/getLyrics` to display the current song's lyrics in a popup (#151)
+- (Jellyfin) Added song list page
+- Added config to choose the default Album/Song list sort on startup (#169)
+- Added config to choose the application start page (#176) (Thanks @GermanDarknes)
+- Added config for pagination for Album/Song list pages
+- Added option to set custom directory on installation (#184)
+- Added config to set the default artist page to the album list (#199)
+- Added info mode for the Now Playing page (#160)
+- Added release notes popup
+
+### Changed
+
+- Player behavior
+  - `Media Stop` now stops the track and resets it instead of clearing the queue (#200)
+  - `Media Prev` now resets to the start of the song if pressed after 5 seconds (#207)
+  - `Media Prev` now resets to the start of the song if repeat is off and is the first song of the queue (#207)
+  - `Media Next` now does nothing if repeat is off and is the last song of the queue (#207)
+  - Playing a single track in the queue without repeat no longer plays the track twice (#205)
+  - Scrobbling
+    - (Jellyfin) Scrobbling has been reverted to use the `/sessions/playing` endpoint to support the Playback Reporting (#187)
+    - Scrobbling occurs after 5 seconds has elapsed for the current track as to not instantly mark the song as played
+- Pressing `CTRL + F` or the search button now focuses the text in the searchbar (#203) (Thanks @WeekendWarrior1)
+- Changed loading indicators for all pages
+- OBS scrobble now outputs an image.txt file instead of the dowloading the cover image (#136)
+
+### Fixed
+
+- (macOS) Fixed macOS exit behavior (#198) (Thanks @zackslash)
+- (Linux) Fixed MPRIS `position` result (#162)
+- (Subsonic) Fixed artist page crashing the application if server does not support `/getArtistInfo2` (#170)
+- (Jellyfin) Fixed `View all songs` returning songs out of their album track order
+- Fixed card overlay button color on click
+- Fixed buttons on the Album page to work better with light mode
+- Fixed unfavorite button on Album page
+
 [0.11.0] - 2022-01-01
 
 ### Added
