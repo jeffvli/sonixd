@@ -209,6 +209,8 @@ const OverlayButton = styled(IconButton)`
   &:hover {
     opacity: 1;
     background: ${(props) => props.theme.colors.card.overlayButton.backgroundHover};
+    background-color: ${(props) =>
+      props.theme.colors.card.overlayButton.backgroundHover} !important;
     color: ${(props) => props.theme.colors.card.overlayButton.colorHover};
   }
 `;
