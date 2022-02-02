@@ -4,8 +4,8 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { ButtonToolbar, Col, Grid, Form, Icon, Row, Whisper } from 'rsuite';
-import { t } from 'i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   addModalPage,
@@ -97,6 +97,7 @@ export const ContextMenu = ({
 };
 
 export const GlobalContextMenu = () => {
+  const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
@@ -933,12 +934,11 @@ export const GlobalContextMenu = () => {
             speaker={
               <ContextMenuPopover>
                 <p>
-                  {
-                    (t('Are you sure you want to delete {{n}} playlist(s)?'),
-                    { n: multiSelect.selected?.length })
-                  }
+                  {t('Are you sure you want to delete {{n}} playlist(s)?', {
+                    n: String(multiSelect?.selected?.length),
+                  })}
                 </p>
-                <StyledButton onClick={handleDeletePlaylist} appearance="link">
+                <StyledButton size="sm" onClick={handleDeletePlaylist} appearance="primary">
                   {t('Yes')}
                 </StyledButton>
               </ContextMenuPopover>
