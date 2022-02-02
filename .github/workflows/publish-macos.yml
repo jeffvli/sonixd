@@ -1,4 +1,4 @@
-name: Publish
+name: Publish (macOS)
 
 # Only allow manual run
 on: workflow_dispatch
