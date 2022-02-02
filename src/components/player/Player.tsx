@@ -74,7 +74,7 @@ const gaplessListenHandler = (
         id: playQueue.currentSongId,
         albumId: playQueue.current.albumId,
         submission: true,
-        position: serverType === Server.Jellyfin ? currentSeek * 10000000 : undefined,
+        position: serverType === Server.Jellyfin ? currentSeek * 1e7 : undefined,
       },
     });
   }
@@ -238,7 +238,7 @@ const listenHandler = (
         id: playQueue.currentSongId,
         albumId: playQueue.current.albumId,
         submission: true,
-        position: serverType === Server.Jellyfin ? currentSeek * 10000000 : undefined,
+        position: serverType === Server.Jellyfin ? currentSeek * 1e7 : undefined,
       },
     });
   }
@@ -342,7 +342,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   }, [playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
-    if (playQueue.scrobble) {
+    if (playQueue.scrobble && player.status === 'PLAYING') {
       setScrobbled(false); // Only scrobble a single time per song change
 
       const currentSeek =
@@ -362,7 +362,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
                   ? playQueue[currentEntryList][playQueue.player1.index]?.id
                   : playQueue[currentEntryList][playQueue.player2.index]?.id,
               submission: false,
-              position: currentSeek * 10000000,
+              position: 5 * 1e7,
               event: 'start',
             },
           });
@@ -385,7 +385,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
                   ? playQueue[currentEntryList][playQueue.player1.index]?.id
                   : playQueue[currentEntryList][playQueue.player2.index]?.id,
               submission: false,
-              position: currentSeek * 10000000,
+              position: 5 * 1e7,
               event: 'start',
             },
           });
@@ -398,7 +398,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     }
 
     return undefined;
-  }, [config.serverType, currentEntryList, playQueue, playQueue.currentPlayer]);
+  }, [config.serverType, currentEntryList, playQueue, playQueue.currentPlayer, player.status]);
 
   useEffect(() => {
     // Adding a small delay when setting the track src helps to not break the player when we're modifying
@@ -615,15 +615,44 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     );
   }, [config.serverType, currentEntryList, playQueue, scrobbled]);
 
-  const handleOnPlay = useCallback(() => {
-    ipcRenderer.send('current-song', playQueue.current);
-  }, [playQueue]);
+  const handleOnPlay = useCallback(
+    (playerNumber: 1 | 2) => {
+      ipcRenderer.send('current-song', playQueue.current);
+
+      if (config.serverType === Server.Jellyfin) {
+        const currentSeek =
+          playerNumber === 1
+            ? player1Ref.current.audioEl.current.currentTime
+            : player2Ref.current.audioEl.current.currentTime;
+
+        apiController({
+          serverType: config.serverType,
+          endpoint: 'scrobble',
+          args: {
+            id:
+              playerNumber === 1
+                ? playQueue[currentEntryList][playQueue.player1.index]?.id
+                : playQueue[currentEntryList][playQueue.player2.index]?.id,
+            submission: false,
+            position: currentSeek * 1e7,
+            event: 'unpause',
+          },
+        });
+      }
+    },
+    [config.serverType, currentEntryList, playQueue]
+  );
 
   const handleOnPause = useCallback(
     async (playerNumber: 1 | 2) => {
       if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
         // Handle gapless pause
-        if (player.currentSeek > 3 && playQueue.fadeDuration === 0) {
+        const currentSeek =
+          playerNumber === 1
+            ? player1Ref.current.audioEl.current.currentTime
+            : player2Ref.current.audioEl.current.currentTime;
+
+        if (currentSeek > 3 && playQueue.fadeDuration === 0) {
           apiController({
             serverType: config.serverType,
             endpoint: 'scrobble',
@@ -633,7 +662,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
                   ? playQueue[currentEntryList][playQueue.player1.index]?.id
                   : playQueue[currentEntryList][playQueue.player2.index]?.id,
               submission: false,
-              position: player.currentSeek * 10000000,
+              position: currentSeek * 1e7,
               event: 'pause',
             },
           });
@@ -649,14 +678,14 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
                   ? playQueue[currentEntryList][playQueue.player1.index]?.id
                   : playQueue[currentEntryList][playQueue.player2.index]?.id,
               submission: false,
-              position: player.currentSeek * 10000000,
+              position: currentSeek * 1e7,
               event: 'pause',
             },
           });
         }
       }
     },
-    [config.serverType, currentEntryList, playQueue, player.currentSeek]
+    [config.serverType, currentEntryList, playQueue]
   );
 
   useEffect(() => {
@@ -691,7 +720,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player1Ref}
         src={playQueue.player1.src}
-        onPlay={() => handleOnPlay()}
+        onPlay={() => handleOnPlay(1)}
         onPause={() => handleOnPause(1)}
         listenInterval={playQueue.pollingInterval}
         preload="auto"
@@ -717,7 +746,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       <ReactAudioPlayer
         ref={player2Ref}
         src={playQueue.player2.src}
-        onPlay={() => handleOnPlay()}
+        onPlay={() => handleOnPlay(2)}
         onPause={() => handleOnPause(2)}
         listenInterval={playQueue.pollingInterval}
         preload="auto"

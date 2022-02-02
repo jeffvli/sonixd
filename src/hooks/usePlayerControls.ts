@@ -12,8 +12,11 @@ import {
   toggleShuffle,
 } from '../redux/playQueueSlice';
 import { setStatus } from '../redux/playerSlice';
+import { apiController } from '../api/controller';
+import { Server } from '../types';
 
 const usePlayerControls = (
+  config: any,
   player: any,
   playQueue: any,
   currentEntryList: any,
@@ -65,6 +68,19 @@ const usePlayerControls = (
         playersRef.current.player2.audioEl.current.currentTime = 0;
         playersRef.current.player2.audioEl.current.volume = 0;
         playersRef.current.player2.audioEl.current.pause();
+
+        if (config.serverType === Server.Jellyfin) {
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id: playQueue[currentEntryList][playQueue.player1.index]?.id,
+              submission: false,
+              position: 0,
+              event: 'timeupdate',
+            },
+          });
+        }
       } else {
         playersRef.current.player2.audioEl.current.currentTime = 0;
 
@@ -72,11 +88,24 @@ const usePlayerControls = (
         playersRef.current.player1.audioEl.current.currentTime = 0;
         playersRef.current.player1.audioEl.current.volume = 0;
         playersRef.current.player1.audioEl.current.pause();
+
+        if (config.serverType === Server.Jellyfin) {
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'scrobble',
+            args: {
+              id: playQueue[currentEntryList][playQueue.player2.index]?.id,
+              submission: false,
+              position: 0,
+              event: 'timeupdate',
+            },
+          });
+        }
       }
     }
 
     dispatch(setStatus('PLAYING'));
-  }, [currentEntryList, dispatch, playQueue, playersRef]);
+  }, [config.serverType, currentEntryList, dispatch, playQueue, playersRef]);
 
   const handlePlayPause = useCallback(() => {
     if (playQueue[currentEntryList].length > 0) {

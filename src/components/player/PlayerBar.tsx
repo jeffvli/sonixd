@@ -226,6 +226,7 @@ const PlayerBar = () => {
     handleShuffle,
     handleDisplayQueue,
   } = usePlayerControls(
+    config,
     player,
     playQueue,
     currentEntryList,
