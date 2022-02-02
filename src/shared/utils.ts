@@ -568,7 +568,7 @@ export const writeOBSFiles = (filePath: string, data: any) => {
 
   fs.writeFile(
     path.join(filePath, 'image.txt'),
-    data.cover_url.replace(/&size=\d+|width=\d+&height=\d+&quality=\d+/, '') || '',
+    data.cover_url?.replace(/&size=\d+|width=\d+&height=\d+&quality=\d+/, '') || '',
     (err) => {
       if (err) {
         console.log(err);
