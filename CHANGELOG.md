@@ -5,20 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.12.1] - 2022-02-02
+
+### Fixed
+
+- Fixed translation syntax error causing application to crash when deleting playlists from the context menu (#216)
+- Fixed Player behavior (#217)
+  - No longer scrobbles an additional time after the last song ends when repeat is off
+  - (Jellyfin) Properly handles scrobbling the player's pause/resume and time position
+
 [0.12.0] - 2022-01-31
 
 ### Added
 
 - Added support for language/translations (#146) (Thanks @gelaechter)
-  - German translation added (Thanks @gelaecheter)
-  - Simplified Chinese translation added (Thanks @@fangxx3863)
+  - German translation added (Thanks @gelaechter)
+  - Simplified Chinese translation added (Thanks @fangxx3863)
 - (Windows) Added media keys with desktop overlay (#79) (Thanks @GermanDarknes)
 - (Subsonic) Added support for `/getLyrics` to display the current song's lyrics in a popup (#151)
 - (Jellyfin) Added song list page
 - Added config to choose the default Album/Song list sort on startup (#169)
 - Added config to choose the application start page (#176) (Thanks @GermanDarknes)
 - Added config for pagination for Album/Song list pages
-- Added option to set custom directory on installation (#184)
+- (Windows) Added option to set custom directory on installation (#184)
 - Added config to set the default artist page to the album list (#199)
 - Added info mode for the Now Playing page (#160)
 - Added release notes popup
@@ -32,11 +41,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Media Next` now does nothing if repeat is off and is the last song of the queue (#207)
   - Playing a single track in the queue without repeat no longer plays the track twice (#205)
   - Scrobbling
-    - (Jellyfin) Scrobbling has been reverted to use the `/sessions/playing` endpoint to support the Playback Reporting (#187)
+    - (Jellyfin) Scrobbling has been reverted to use the `/sessions/playing` endpoint to support the Playback Reporting plugin (#187)
     - Scrobbling occurs after 5 seconds has elapsed for the current track as to not instantly mark the song as played
 - Pressing `CTRL + F` or the search button now focuses the text in the searchbar (#203) (Thanks @WeekendWarrior1)
 - Changed loading indicators for all pages
-- OBS scrobble now outputs an image.txt file instead of the dowloading the cover image (#136)
+- OBS scrobble now outputs an image.txt file instead of the downloading the cover image (#136)
+- Player Bar
+  - Album name now appears under the artist
+  - (Subsonic) 5-star rating is available
+  - Clicking on the cover art now displays a full-size image
+  - Clicking on the song name now redirects to the Now Playing queue
+- (Jellyfin) Removed track limit for "Auto Playlist"
 
 ### Fixed
 
@@ -44,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Linux) Fixed MPRIS `position` result (#162)
 - (Subsonic) Fixed artist page crashing the application if server does not support `/getArtistInfo2` (#170)
 - (Jellyfin) Fixed `View all songs` returning songs out of their album track order
+- (Jellyfin) Fixed the "Latest Albums" on the album artist page displaying no albums
 - Fixed card overlay button color on click
 - Fixed buttons on the Album page to work better with light mode
 - Fixed unfavorite button on Album page
