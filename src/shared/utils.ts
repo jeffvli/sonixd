@@ -254,6 +254,19 @@ export const consecutiveRanges = (a: number[]) => {
   return list;
 };
 
+export const sliceRangeByUniqueId = (data: any, startUniqueId: string, endUniqueId: string) => {
+  const beginningIndex = data.findIndex((e: any) => e.uniqueId === startUniqueId);
+  const endingIndex = data.findIndex((e: any) => e.uniqueId === endUniqueId);
+
+  // Handle both selection directions
+  const newSlice =
+    beginningIndex < endingIndex
+      ? data.slice(beginningIndex, endingIndex + 1)
+      : data.slice(endingIndex, beginningIndex + 1);
+
+  return newSlice;
+};
+
 export const moveSelectedUp = (entryData: any[], selectedEntries: any[]) => {
   // Ascending index is needed to move the indexes in order
   const selectedIndices = selectedEntries.map((selected: any) => {
