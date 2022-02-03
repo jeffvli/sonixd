@@ -21,6 +21,7 @@ import {
   isCached,
   formatDate,
   convertByteToMegabyte,
+  sliceRangeByUniqueId,
 } from '../../shared/utils';
 import cacheImage from '../shared/cacheImage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -43,10 +44,8 @@ import {
   setCurrentMouseOverId,
   setIsDragging,
   setIsSelectDragging,
-  setRangeSelected,
   setSelected,
   setSelectedSingle,
-  toggleRangeSelected,
   toggleSelected,
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -242,8 +241,15 @@ const ListViewTable = ({
   // mousing over a row will set the range selection from the initial mousedown location
   // to the mouse-entered row
   const debouncedMouseEnterFn = _.debounce((rowData: any) => {
-    dispatch(setRangeSelected(rowData));
-    dispatch(toggleRangeSelected(sortColumn && !nowPlaying ? sortedData : data));
+    dispatch(
+      setSelected(
+        sliceRangeByUniqueId(
+          sortColumn && !nowPlaying ? sortedData : data,
+          multiSelect.lastSelected.uniqueId,
+          rowData.uniqueId
+        )
+      )
+    );
   }, 200);
 
   const handleSelectMouseEnter = (rowData: any) => {
