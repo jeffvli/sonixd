@@ -17,12 +17,6 @@ import {
   PlayButton,
 } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  toggleSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  clearSelected,
-} from '../../redux/multiSelectSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
@@ -63,6 +57,7 @@ import { setPlaylistRate } from '../../redux/playlistSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const fac = new FastAverageColor();
 
@@ -151,50 +146,31 @@ const ArtistView = ({ ...rest }: any) => {
     }
   }, [artistId, history, rest.isModal]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any, songs: any) => {
+      if (rowData.type === Item.Album) {
+        history.push(`/library/album/${rowData.id}`);
+      }
 
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
+      if (rowData.type === Item.Music) {
+        if (rowData.isDir) {
+          history.push(`/library/folder?folderId=${rowData.parent}`);
+        } else {
+          dispatch(
+            setPlayQueueByRowClick({
+              entries: songs.filter((entry: any) => entry.isDir !== true),
+              currentIndex: rowData.rowIndex,
+              currentSongId: rowData.id,
+              uniqueSongId: rowData.uniqueId,
+              filters: config.playback.filters,
+            })
+          );
+          dispatch(setStatus('PLAYING'));
+          dispatch(fixPlayer2Index());
         }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-    dispatch(clearSelected());
-    history.push(`/library/album/${rowData.id}`);
-  };
-
-  const handleMusicRowDoubleClick = (rowData: any, songs: any[]) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    if (rowData.isDir) {
-      history.push(`/library/folder?folderId=${rowData.parent}`);
-    } else {
-      dispatch(
-        setPlayQueueByRowClick({
-          entries: songs.filter((entry: any) => entry.isDir !== true),
-          currentIndex: rowData.rowIndex,
-          currentSongId: rowData.id,
-          uniqueSongId: rowData.uniqueId,
-          filters: config.playback.filters,
-        })
-      );
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
-    }
-  };
+      }
+    },
+  });
 
   const handleFavorite = async () => {
     if (!data.starred) {
@@ -789,7 +765,7 @@ const ArtistView = ({ ...rest }: any) => {
               data={allSongs || []}
               tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
-              handleRowDoubleClick={(e: any) => handleMusicRowDoubleClick(e, allSongs)}
+              handleRowDoubleClick={(e: any) => handleRowDoubleClick(e, allSongs)}
               virtualized
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
@@ -874,7 +850,7 @@ const ArtistView = ({ ...rest }: any) => {
               data={topSongs || []}
               tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
-              handleRowDoubleClick={(e: any) => handleMusicRowDoubleClick(e, topSongs)}
+              handleRowDoubleClick={(e: any) => handleRowDoubleClick(e, topSongs)}
               virtualized
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
@@ -956,7 +932,7 @@ const ArtistView = ({ ...rest }: any) => {
                       handleMusicRowFavorite(rowData, ['artistTopSongs', data.title])
                     }
                     handleRowClick={handleRowClick}
-                    handleRowDoubleClick={(e: any) => handleMusicRowDoubleClick(e, topSongs)}
+                    handleRowDoubleClick={(e: any) => handleRowDoubleClick(e, topSongs)}
                     handleRating={(rowData: any, e: number) =>
                       handleRowRating(rowData, e, ['artistTopSongs', data?.title])
                     }

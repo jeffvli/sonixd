@@ -8,17 +8,12 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  clearSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  toggleSelected,
-} from '../../redux/multiSelectSlice';
 import { apiController } from '../../api/controller';
 import { StyledTag } from '../shared/styled';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { Item } from '../../types';
 import CenterLoader from '../loader/CenterLoader';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const GenreList = () => {
   const { t } = useTranslation();
@@ -37,36 +32,19 @@ const GenreList = () => {
   });
   const filteredData = useSearchQuery(misc.searchQuery, genres, ['title']);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => {
+      dispatch(setFilter({ listType: Item.Album, data: rowData.title }));
+      dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
+      localStorage.setItem('scroll_list_albumList', '0');
+      localStorage.setItem('scroll_grid_albumList', '0');
 
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-    dispatch(setFilter({ listType: Item.Album, data: rowData.title }));
-    dispatch(setPagination({ listType: Item.Album, data: { activePage: 1 } }));
-    localStorage.setItem('scroll_list_albumList', '0');
-    localStorage.setItem('scroll_grid_albumList', '0');
-    dispatch(clearSelected());
-
-    // Needs a small delay or the filter won't set properly when navigating to the album list
-    setTimeout(() => {
-      history.push(`/library/album?sortType=${rowData.title}`);
-    }, 50);
-  };
+      // Needs a small delay or the filter won't set properly when navigating to the album list
+      setTimeout(() => {
+        history.push(`/library/album?sortType=${rowData.title}`);
+      }, 50);
+    },
+  });
 
   return (
     <GenericPage

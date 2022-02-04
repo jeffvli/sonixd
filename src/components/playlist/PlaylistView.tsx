@@ -27,13 +27,7 @@ import {
   setRate,
   clearPlayQueue,
 } from '../../redux/playQueueSlice';
-import {
-  toggleSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  clearSelected,
-  setIsDragging,
-} from '../../redux/multiSelectSlice';
+import { clearSelected, setIsDragging } from '../../redux/multiSelectSlice';
 import {
   createRecoveryFile,
   errorMessages,
@@ -75,6 +69,7 @@ import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 import Card from '../card/Card';
 import CenterLoader from '../loader/CenterLoader';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 interface PlaylistParams {
   id: string;
@@ -153,39 +148,21 @@ const PlaylistView = ({ ...rest }) => {
     }
   }, [data?.song, playlist]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    dispatch(
-      setPlayQueueByRowClick({
-        entries: playlist[getCurrentEntryList(playlist)],
-        currentIndex: rowData.rowIndex,
-        currentSongId: rowData.id,
-        uniqueSongId: rowData.uniqueId,
-        filters: config.playback.filters,
-      })
-    );
-    dispatch(setStatus('PLAYING'));
-    dispatch(fixPlayer2Index());
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => {
+      dispatch(
+        setPlayQueueByRowClick({
+          entries: playlist[getCurrentEntryList(playlist)],
+          currentIndex: rowData.rowIndex,
+          currentSongId: rowData.id,
+          uniqueSongId: rowData.uniqueId,
+          filters: config.playback.filters,
+        })
+      );
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    },
+  });
 
   const handlePlay = () => {
     const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);

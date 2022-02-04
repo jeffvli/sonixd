@@ -12,12 +12,6 @@ import {
   setRate,
   setStar,
 } from '../../redux/playQueueSlice';
-import {
-  clearSelected,
-  toggleSelected,
-  toggleRangeSelected,
-  setRangeSelected,
-} from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
@@ -32,6 +26,7 @@ import { Item, Server } from '../../types';
 import { FilterButton } from '../shared/ToolbarButtons';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 import CenterLoader from '../loader/CenterLoader';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const StarredView = () => {
   const { t } = useTranslation();
@@ -79,45 +74,27 @@ const StarredView = () => {
     favorite.active.tab === 'albums' ? favorite.active.album.sort : favorite.active.artist.sort
   );
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-    dispatch(clearSelected());
-
-    if (favorite.active.tab === 'tracks') {
-      dispatch(
-        setPlayQueueByRowClick({
-          entries: data.song,
-          currentIndex: rowData.rowIndex,
-          currentSongId: rowData.id,
-          uniqueSongId: rowData.uniqueId,
-          filters: config.playback.filters,
-        })
-      );
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
-    } else if (favorite.active.tab === 'albums') {
-      history.push(`/library/album/${rowData.id}`);
-    } else {
-      history.push(`/library/artist/${rowData.id}`);
-    }
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => {
+      if (favorite.active.tab === 'tracks') {
+        dispatch(
+          setPlayQueueByRowClick({
+            entries: data.song,
+            currentIndex: rowData.rowIndex,
+            currentSongId: rowData.id,
+            uniqueSongId: rowData.uniqueId,
+            filters: config.playback.filters,
+          })
+        );
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else if (favorite.active.tab === 'albums') {
+        history.push(`/library/album/${rowData.id}`);
+      } else {
+        history.push(`/library/artist/${rowData.id}`);
+      }
+    },
+  });
 
   const handleRowFavorite = async (rowData: any) => {
     await apiController({

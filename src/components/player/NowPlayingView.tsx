@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import {
-  setPlayerIndex,
   fixPlayer2Index,
   clearPlayQueue,
   shuffleInPlace,
@@ -23,13 +22,7 @@ import {
   moveToTop,
   moveToBottom,
 } from '../../redux/playQueueSlice';
-import {
-  toggleSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  clearSelected,
-  setIsDragging,
-} from '../../redux/multiSelectSlice';
+import { clearSelected, setIsDragging } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
@@ -64,6 +57,7 @@ import { Server, Song } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import NowPlayingInfoView from './NowPlayingInfoView';
 import CenterLoader from '../loader/CenterLoader';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -149,31 +143,7 @@ const NowPlayingView = () => {
     }
   }, [playQueue.currentIndex, playQueue.scrollWithCurrentSong, tableRef]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    dispatch(setPlayerIndex(rowData));
-    dispatch(fixPlayer2Index());
-    dispatch(setStatus('PLAYING'));
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler();
 
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {

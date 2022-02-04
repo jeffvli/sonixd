@@ -13,12 +13,6 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
-  toggleSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  clearSelected,
-} from '../../redux/multiSelectSlice';
-import {
   StyledInputPicker,
   StyledInputPickerContainer,
   StyledNavItem,
@@ -36,6 +30,7 @@ import useColumnSort from '../../hooks/useColumnSort';
 import { setFilter, setPagination, setAdvancedFilters, setColumnSort } from '../../redux/viewSlice';
 import useGridScroll from '../../hooks/useGridScroll';
 import useListScroll from '../../hooks/useListScroll';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 export const ALBUM_SORT_TYPES = [
   { label: i18n.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18n.t('Default') },
@@ -205,29 +200,9 @@ const AlbumList = () => {
     }
   }, [albums, config.serverType, dispatch, sortedData?.length, view.album.pagination]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    history.push(`/library/album/${rowData.id}`);
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => history.push(`/library/album/${rowData.id}`),
+  });
 
   const handleRefresh = async () => {
     setIsRefreshing(true);

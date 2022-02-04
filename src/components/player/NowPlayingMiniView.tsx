@@ -6,15 +6,8 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { clearSelected, setIsDragging } from '../../redux/multiSelectSlice';
 import {
-  toggleSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  clearSelected,
-  setIsDragging,
-} from '../../redux/multiSelectSlice';
-import {
-  setPlayerIndex,
   fixPlayer2Index,
   clearPlayQueue,
   shuffleInPlace,
@@ -59,6 +52,7 @@ import {
 import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
 import { Server, Song } from '../../types';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const NowPlayingMiniView = () => {
   const { t } = useTranslation();
@@ -135,31 +129,7 @@ const NowPlayingMiniView = () => {
     }
   }, [playQueue.currentIndex, tableRef, playQueue.displayQueue, playQueue.scrollWithCurrentSong]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    dispatch(setPlayerIndex(rowData));
-    dispatch(fixPlayer2Index());
-    dispatch(setStatus('PLAYING'));
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler();
 
   const handleDragEnd = () => {
     if (multiSelect.isDragging) {
