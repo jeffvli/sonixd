@@ -10,12 +10,6 @@ import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GenericPage from '../layout/GenericPage';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  toggleSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  clearSelected,
-} from '../../redux/multiSelectSlice';
 import { StyledInputPicker, StyledInputPickerContainer, StyledTag } from '../shared/styled';
 import { RefreshButton } from '../shared/ToolbarButtons';
 import { setSearchQuery } from '../../redux/miscSlice';
@@ -26,6 +20,7 @@ import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/pl
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useListScroll from '../../hooks/useListScroll';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 // prettier-ignore
 export const MUSIC_SORT_TYPES = [
@@ -162,39 +157,21 @@ const MusicList = () => {
     view.music.pagination.serverSide,
   ]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    dispatch(
-      setPlayQueueByRowClick({
-        entries: songs.data,
-        currentIndex: rowData.rowIndex,
-        currentSongId: rowData.id,
-        uniqueSongId: rowData.uniqueId,
-        filters: config.playback.filters,
-      })
-    );
-    dispatch(setStatus('PLAYING'));
-    dispatch(fixPlayer2Index());
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => {
+      dispatch(
+        setPlayQueueByRowClick({
+          entries: songs.data,
+          currentIndex: rowData.rowIndex,
+          currentSongId: rowData.id,
+          uniqueSongId: rowData.uniqueId,
+          filters: config.playback.filters,
+        })
+      );
+      dispatch(setStatus('PLAYING'));
+      dispatch(fixPlayer2Index());
+    },
+  });
 
   const handleRefresh = async () => {
     setIsRefreshing(true);

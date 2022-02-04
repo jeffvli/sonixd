@@ -11,12 +11,7 @@ import {
 } from '../../shared/styled';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import {
-  setIsDragging,
-  setRangeSelected,
-  toggleRangeSelected,
-  toggleSelected,
-} from '../../../redux/multiSelectSlice';
+import { setIsDragging } from '../../../redux/multiSelectSlice';
 import {
   ColumnList,
   moveToIndex,
@@ -25,6 +20,7 @@ import {
   setRowHeight,
 } from '../../../redux/configSlice';
 import ConfigOption from '../ConfigOption';
+import useListClickHandler from '../../../hooks/useListClickHandler';
 
 const columnSelectorColumns = [
   {
@@ -83,21 +79,7 @@ const ListViewConfig = ({
     );
   }, [columnListType, config.lookAndFeel.listView, settingsConfig.columnList]);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
+  const { handleRowClick } = useListClickHandler({});
 
   const handleDragEnd = (listType: ColumnList) => {
     if (multiSelect.isDragging) {

@@ -20,17 +20,12 @@ import { errorMessages, isFailedResponse } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { AddPlaylistButton, FilterButton } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  clearSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  toggleSelected,
-} from '../../redux/multiSelectSlice';
 import { apiController } from '../../api/controller';
 import useColumnSort from '../../hooks/useColumnSort';
 import { Item, Server } from '../../types';
 import { setSort } from '../../redux/playlistSlice';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const PlaylistList = () => {
   const { t } = useTranslation();
@@ -74,29 +69,9 @@ const PlaylistList = () => {
     }
   };
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    history.push(`playlist/${rowData.id}`);
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => history.push(`playlist/${rowData.id}`),
+  });
 
   if (isError) {
     return <span>{t('Error: {{error}}', { error: error.message })}</span>;

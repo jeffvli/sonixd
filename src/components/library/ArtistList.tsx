@@ -10,12 +10,6 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  clearSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  toggleSelected,
-} from '../../redux/multiSelectSlice';
 import GridViewType from '../viewtypes/GridViewType';
 import { FilterButton, RefreshButton } from '../shared/ToolbarButtons';
 import { apiController } from '../../api/controller';
@@ -24,6 +18,7 @@ import ColumnSortPopover from '../shared/ColumnSortPopover';
 import useColumnSort from '../../hooks/useColumnSort';
 import { setSort } from '../../redux/artistSlice';
 import { StyledTag } from '../shared/styled';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const ArtistList = () => {
   const { t } = useTranslation();
@@ -60,29 +55,9 @@ const ArtistList = () => {
   const filteredData = useSearchQuery(misc.searchQuery, artists, ['title']);
   const { sortedData, sortColumns } = useColumnSort(artists, Item.Artist, artist.active.list.sort);
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    history.push(`/library/artist/${rowData.id}`);
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => history.push(`/library/artist/${rowData.id}`),
+  });
 
   const handleRefresh = async () => {
     setIsRefreshing(true);

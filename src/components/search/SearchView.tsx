@@ -9,12 +9,6 @@ import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  clearSelected,
-  setRangeSelected,
-  toggleRangeSelected,
-  toggleSelected,
-} from '../../redux/multiSelectSlice';
 import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import ListViewTable from '../viewtypes/ListViewTable';
@@ -23,6 +17,7 @@ import { apiController } from '../../api/controller';
 import { Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import CenterLoader from '../loader/CenterLoader';
+import useListClickHandler from '../../hooks/useListClickHandler';
 
 const SearchView = () => {
   const { t } = useTranslation();
@@ -51,43 +46,25 @@ const SearchView = () => {
     })
   );
 
-  let timeout: any = null;
-  const handleRowClick = (e: any, rowData: any, tableData: any) => {
-    if (timeout === null) {
-      timeout = window.setTimeout(() => {
-        timeout = null;
-
-        if (e.ctrlKey) {
-          dispatch(toggleSelected(rowData));
-        } else if (e.shiftKey) {
-          dispatch(setRangeSelected(rowData));
-          dispatch(toggleRangeSelected(tableData));
-        }
-      }, 100);
-    }
-  };
-
-  const handleRowDoubleClick = (rowData: any) => {
-    window.clearTimeout(timeout);
-    timeout = null;
-
-    dispatch(clearSelected());
-    if (rowData.isDir) {
-      history.push(`/library/folder?folderId=${rowData.parent}`);
-    } else {
-      dispatch(
-        setPlayQueueByRowClick({
-          entries: data.song.filter((entry: any) => entry.isDir !== true),
-          currentIndex: rowData.rowIndex,
-          currentSongId: rowData.id,
-          uniqueSongId: rowData.uniqueId,
-          filters: config.playback.filters,
-        })
-      );
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
-    }
-  };
+  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+    doubleClick: (rowData: any) => {
+      if (rowData.isDir) {
+        history.push(`/library/folder?folderId=${rowData.parent}`);
+      } else {
+        dispatch(
+          setPlayQueueByRowClick({
+            entries: data.song.filter((entry: any) => entry.isDir !== true),
+            currentIndex: rowData.rowIndex,
+            currentSongId: rowData.id,
+            uniqueSongId: rowData.uniqueId,
+            filters: config.playback.filters,
+          })
+        );
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      }
+    },
+  });
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
