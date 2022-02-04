@@ -1,10 +1,21 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { clearSelected, setSelected, toggleSelected } from '../redux/multiSelectSlice';
+import {
+  clearSelected,
+  setIsDragging,
+  setSelected,
+  toggleSelected,
+} from '../redux/multiSelectSlice';
 import { setStatus } from '../redux/playerSlice';
-import { fixPlayer2Index, setPlayerIndex } from '../redux/playQueueSlice';
-import { sliceRangeByUniqueId } from '../shared/utils';
+import { fixPlayer2Index, moveToIndex, setPlayerIndex } from '../redux/playQueueSlice';
+import { moveToIndex as moveToIndexPlaylist } from '../redux/playlistSlice';
+import { moveToIndex as moveToIndexConfig } from '../redux/configSlice';
+import { moveSelectedToIndex, sliceRangeByUniqueId } from '../shared/utils';
 
-const useListClickHandler = (options?: { singleClick?: any; doubleClick?: any }) => {
+const useListClickHandler = (options?: {
+  singleClick?: any;
+  doubleClick?: any;
+  dnd?: 'playQueue' | 'playlist' | 'config';
+}) => {
   const dispatch = useAppDispatch();
   const multiSelect = useAppSelector((state) => state.multiSelect);
 
@@ -46,7 +57,31 @@ const useListClickHandler = (options?: { singleClick?: any; doubleClick?: any })
     }
   };
 
-  return { handleRowClick, handleRowDoubleClick };
+  const handleDragEnd = (entries: any) => {
+    if (multiSelect.isDragging) {
+      const reorderedQueue = moveSelectedToIndex(
+        entries,
+        multiSelect.selected,
+        multiSelect.currentMouseOverId
+      );
+
+      if (options?.dnd === 'playQueue') {
+        dispatch(moveToIndex(reorderedQueue));
+      }
+
+      if (options?.dnd === 'playlist') {
+        dispatch(moveToIndexPlaylist(reorderedQueue));
+      }
+
+      if (options?.dnd === 'config') {
+        dispatch(moveToIndexConfig(reorderedQueue));
+      }
+
+      dispatch(setIsDragging(false));
+    }
+  };
+
+  return { handleRowClick, handleRowDoubleClick, handleDragEnd };
 };
 
 export default useListClickHandler;

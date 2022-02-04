@@ -602,7 +602,11 @@ const ListViewTable = ({
                       }}
                       onMouseUp={() => {
                         if (dnd) {
-                          handleDragEnd();
+                          handleDragEnd(sortColumn && !nowPlaying ? sortedData : data);
+
+                          if (nowPlaying && playQueue.currentPlayer === 1) {
+                            dispatch(fixPlayer2Index());
+                          }
                         } else {
                           handleSelectMouseUp();
                         }

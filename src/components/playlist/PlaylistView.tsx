@@ -27,7 +27,7 @@ import {
   setRate,
   clearPlayQueue,
 } from '../../redux/playQueueSlice';
-import { clearSelected, setIsDragging } from '../../redux/multiSelectSlice';
+import { clearSelected } from '../../redux/multiSelectSlice';
 import {
   createRecoveryFile,
   errorMessages,
@@ -57,7 +57,6 @@ import {
   StyledPopover,
 } from '../shared/styled';
 import {
-  moveToIndex,
   removeFromPlaylist,
   setPlaylistData,
   setPlaylistRate,
@@ -148,7 +147,7 @@ const PlaylistView = ({ ...rest }) => {
     }
   }, [data?.song, playlist]);
 
-  const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
+  const { handleRowClick, handleRowDoubleClick, handleDragEnd } = useListClickHandler({
     doubleClick: (rowData: any) => {
       dispatch(
         setPlayQueueByRowClick({
@@ -162,6 +161,7 @@ const PlaylistView = ({ ...rest }) => {
       dispatch(setStatus('PLAYING'));
       dispatch(fixPlayer2Index());
     },
+    dnd: 'playlist',
   });
 
   const handlePlay = () => {
@@ -389,18 +389,6 @@ const PlaylistView = ({ ...rest }) => {
       }
     } catch (err) {
       notifyToast('error', err);
-    }
-  };
-
-  const handleDragEnd = () => {
-    if (multiSelect.isDragging) {
-      dispatch(
-        moveToIndex({
-          selectedEntries: multiSelect.selected,
-          moveBeforeId: multiSelect.currentMouseOverId,
-        })
-      );
-      dispatch(setIsDragging(false));
     }
   };
 

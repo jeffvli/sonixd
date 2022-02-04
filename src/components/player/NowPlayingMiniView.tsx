@@ -6,13 +6,12 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { clearSelected, setIsDragging } from '../../redux/multiSelectSlice';
+import { clearSelected } from '../../redux/multiSelectSlice';
 import {
   fixPlayer2Index,
   clearPlayQueue,
   shuffleInPlace,
   toggleShuffle,
-  moveToIndex,
   setPlaybackSetting,
   removeFromPlayQueue,
   setStar,
@@ -129,22 +128,9 @@ const NowPlayingMiniView = () => {
     }
   }, [playQueue.currentIndex, tableRef, playQueue.displayQueue, playQueue.scrollWithCurrentSong]);
 
-  const { handleRowClick, handleRowDoubleClick } = useListClickHandler();
-
-  const handleDragEnd = () => {
-    if (multiSelect.isDragging) {
-      dispatch(
-        moveToIndex({
-          entries: multiSelect.selected,
-          moveBeforeId: multiSelect.currentMouseOverId,
-        })
-      );
-      dispatch(setIsDragging(false));
-      if (playQueue.currentPlayer === 1) {
-        dispatch(fixPlayer2Index());
-      }
-    }
-  };
+  const { handleRowClick, handleRowDoubleClick, handleDragEnd } = useListClickHandler({
+    dnd: 'playQueue',
+  });
 
   const handlePlayRandom = async (action: 'play' | 'addNext' | 'addLater') => {
     setIsLoadingRandom(true);
