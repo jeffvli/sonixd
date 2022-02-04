@@ -907,73 +907,18 @@ const playQueueSlice = createSlice({
       state.isFading = action.payload;
     },
 
-    moveToIndex: (state, action: PayloadAction<{ entries: Entry[]; moveBeforeId: string }>) => {
+    moveToIndex: (state, action: PayloadAction<Entry[]>) => {
       const currentEntry = entrySelect(state);
-      const tempQueue = state[currentEntry].slice();
-      const uniqueIds = _.map(action.payload.entries, 'uniqueId');
 
-      // Remove the selected entries from the queue
-      const newQueue = tempQueue.filter((entry: Entry) => {
-        return !uniqueIds.includes(entry.uniqueId);
-      });
-
-      /* Used if dragging onto the first selected row. We'll need to calculate the number of selected rows above the first selected row
-      so we can subtract it from the spliceIndexPre value when moving it into the newQueue, which has all selected entries removed */
-      const spliceIndexPre = getCurrentEntryIndexByUID(tempQueue, action.payload.moveBeforeId);
-
-      const queueAbovePre = tempQueue.slice(0, spliceIndexPre);
-      const selectedAbovePre = queueAbovePre.filter((entry: Entry) => {
-        return uniqueIds.includes(entry.uniqueId);
-      });
-
-      // Used if dragging onto a non-selected row
-      const spliceIndexPost = getCurrentEntryIndexByUID(newQueue, action.payload.moveBeforeId);
-
-      /* Used if dragging onto consecutive selected rows
-      If the moveBeforeId index is selected, then we find the first consecutive selected index to move to */
-      let firstConsecutiveSelectedDragIndex = -1;
-      for (let i = spliceIndexPre - 1; i > 0; i -= 1) {
-        if (uniqueIds.includes(tempQueue[i].uniqueId)) {
-          firstConsecutiveSelectedDragIndex = i;
-        } else {
-          break;
-        }
-      }
-
-      /* If we get a negative index, don't move the entry.
-      This can happen if you try to drag and drop too fast */
-      if (spliceIndexPre < 0 && spliceIndexPre < 0) {
-        return;
-      }
-
-      // Find the slice index to add the selected entries to
-      const spliceIndex =
-        spliceIndexPost >= 0
-          ? spliceIndexPost
-          : firstConsecutiveSelectedDragIndex >= 0
-          ? firstConsecutiveSelectedDragIndex
-          : spliceIndexPre - selectedAbovePre.length;
-
-      // Get the updated entry rowIndexes since dragging an entry multiple times will change the existing selected rowIndex
-      const updatedEntries = action.payload.entries.map((entry: Entry) => {
-        const findIndex = state[currentEntry].findIndex(
-          (item: Entry) => item.uniqueId === entry.uniqueId
-        );
-        return { ...entry, rowIndex: findIndex };
-      });
-
-      // Sort the entries by their rowIndex so that we can re-add them in the proper order
-      const sortedEntries = updatedEntries.sort((a, b) => a.rowIndex - b.rowIndex);
-
-      // Splice the entries into the new queue array
-      newQueue.splice(spliceIndex, 0, ...sortedEntries);
-
-      // Finally, set the modified entries into the redux state
-      state[currentEntry] = newQueue;
+      // Set the modified entries into the redux state
+      state[currentEntry] = action.payload;
 
       // We'll need to fix the current player index after swapping the queue order
       // This will be used in conjunction with fixPlayer2Index
-      const newCurrentSongIndex = getCurrentEntryIndexByUID(newQueue, state.currentSongUniqueId);
+      const newCurrentSongIndex = getCurrentEntryIndexByUID(
+        action.payload,
+        state.currentSongUniqueId
+      );
 
       if (state.currentPlayer === 1) {
         state.player1.index = newCurrentSongIndex;

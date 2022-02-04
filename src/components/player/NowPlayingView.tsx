@@ -12,7 +12,6 @@ import {
   clearPlayQueue,
   shuffleInPlace,
   toggleShuffle,
-  moveToIndex,
   setPlaybackSetting,
   removeFromPlayQueue,
   setPlayQueue,
@@ -22,7 +21,7 @@ import {
   moveToTop,
   moveToBottom,
 } from '../../redux/playQueueSlice';
-import { clearSelected, setIsDragging } from '../../redux/multiSelectSlice';
+import { clearSelected } from '../../redux/multiSelectSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
@@ -143,22 +142,9 @@ const NowPlayingView = () => {
     }
   }, [playQueue.currentIndex, playQueue.scrollWithCurrentSong, tableRef]);
 
-  const { handleRowClick, handleRowDoubleClick } = useListClickHandler();
-
-  const handleDragEnd = () => {
-    if (multiSelect.isDragging) {
-      dispatch(
-        moveToIndex({
-          entries: multiSelect.selected,
-          moveBeforeId: multiSelect.currentMouseOverId,
-        })
-      );
-      dispatch(setIsDragging(false));
-      if (playQueue.currentPlayer === 1) {
-        dispatch(fixPlayer2Index());
-      }
-    }
-  };
+  const { handleRowClick, handleRowDoubleClick, handleDragEnd } = useListClickHandler({
+    dnd: 'playQueue',
+  });
 
   const handlePlayRandom = async (action: 'play' | 'addNext' | 'addLater') => {
     setIsLoadingRandom(true);

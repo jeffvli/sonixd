@@ -56,6 +56,7 @@ import {
   getCurrentEntryList,
   getPlayedSongsNotification,
   isFailedResponse,
+  moveSelectedToIndex,
 } from '../../shared/utils';
 import { setStatus } from '../../redux/playerSlice';
 import { apiController } from '../../api/controller';
@@ -644,20 +645,27 @@ export const GlobalContextMenu = () => {
       if (Number(indexToMoveTo) === playQueue[currentEntryList].length) {
         dispatch(moveToBottom({ selectedEntries: multiSelect.selected }));
       } else {
-        const uniqueIdOfIndexToMoveTo = playQueue[currentEntryList][indexToMoveTo].uniqueId;
         dispatch(
-          moveToIndex({ entries: multiSelect.selected, moveBeforeId: uniqueIdOfIndexToMoveTo })
+          moveToIndex(
+            moveSelectedToIndex(
+              playQueue[currentEntryList],
+              multiSelect.selected,
+              playQueue[currentEntryList][indexToMoveTo].uniqueId
+            )
+          )
         );
       }
     } else if (Number(indexToMoveTo) === playlist.entry.length) {
       dispatch(plMoveToBottom({ selectedEntries: multiSelect.selected }));
     } else {
-      const uniqueIdOfIndexToMoveTo = playlist.entry[indexToMoveTo].uniqueId;
       dispatch(
-        plMoveToIndex({
-          selectedEntries: multiSelect.selected,
-          moveBeforeId: uniqueIdOfIndexToMoveTo,
-        })
+        plMoveToIndex(
+          moveSelectedToIndex(
+            playlist.entry,
+            multiSelect.selected,
+            playlist.entry[indexToMoveTo].uniqueId
+          )
+        )
       );
     }
   };

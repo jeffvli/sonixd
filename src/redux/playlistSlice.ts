@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {
   moveSelectedDown,
   moveSelectedToBottom,
-  moveSelectedToIndex,
   moveSelectedToTop,
   moveSelectedUp,
 } from '../shared/utils';
@@ -85,15 +84,8 @@ const playlistSlice = createSlice({
       state.entry = state.entry.filter((entry) => !uniqueIds.includes(entry.uniqueId));
     },
 
-    moveToIndex: (
-      state,
-      action: PayloadAction<{ selectedEntries: Entry[]; moveBeforeId: string }>
-    ) => {
-      state.entry = moveSelectedToIndex(
-        state.entry,
-        action.payload.selectedEntries,
-        action.payload.moveBeforeId
-      );
+    moveToIndex: (state, action: PayloadAction<Entry[]>) => {
+      state.entry = action.payload;
     },
 
     moveUp: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
