@@ -267,13 +267,14 @@ const AlbumView = ({ ...rest }: any) => {
       {!rest.isModal && (
         <BlurredBackgroundWrapper
           hasImage={!data?.image.match('placeholder')}
-          expanded={misc.expandSidebar}
+          expanded={misc.sidebar.expand}
           $titleBar={misc.titleBar} // transient prop to determine margin
+          sidebarwidth={misc.sidebar.width}
         >
           <BlurredBackground
             // We have to use an inline style here due to the context menu forcing a component rerender
             // which causes the background-image to flicker
-            expanded={misc.expandSidebar}
+            expanded={misc.sidebar.expand}
             style={{
               backgroundImage: `url(${
                 !data?.image.match('placeholder')

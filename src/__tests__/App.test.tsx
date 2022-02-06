@@ -73,7 +73,11 @@ const miscState: General = {
   contextMenu: {
     show: false,
   },
-  expandSidebar: false,
+  sidebar: {
+    expand: false,
+    coverArt: true,
+    width: '225px',
+  },
   modal: {
     currentPageIndex: undefined,
     show: false,

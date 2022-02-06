@@ -4,7 +4,7 @@ import { mockSettings } from '../shared/mockSettings';
 import { getImageCachePath, getSongCachePath } from '../shared/utils';
 import { Entry } from './playQueueSlice';
 
-const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
+const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
 export interface ModalPage {
   pageType: string;
@@ -44,13 +44,19 @@ export interface ContextMenu {
   details?: Entry;
   disabledOptions?: ContextMenuOptions[];
 }
+
+export interface Sidebar {
+  expand: boolean;
+  width: string;
+  coverArt: boolean;
+}
 export interface General {
   theme: string;
   font: string;
   modal: Modal;
   modalPages: ModalPage[];
   imgModal: ImgModal;
-  expandSidebar: boolean;
+  sidebar: Sidebar;
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
   dynamicBackground: boolean;
@@ -73,7 +79,11 @@ const initialState: General = {
     show: false,
     src: undefined,
   },
-  expandSidebar: false,
+  sidebar: {
+    expand: Boolean(parsedSettings.sidebar.expand) || true,
+    width: String(parsedSettings.sidebar.width) || '225px',
+    coverArt: Boolean(parsedSettings.sidebar.coverArt) || true,
+  },
   isProcessingPlaylist: [],
   contextMenu: {
     show: false,
@@ -94,8 +104,11 @@ const miscSlice = createSlice({
       state.dynamicBackground = action.payload;
     },
 
-    setExpandSidebar: (state, action: PayloadAction<boolean>) => {
-      state.expandSidebar = action.payload;
+    setSidebar: (state, action: PayloadAction<any>) => {
+      state.sidebar = {
+        ...state.sidebar,
+        ...action.payload,
+      };
     },
 
     setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
@@ -208,7 +221,7 @@ export const {
   addProcessingPlaylist,
   removeProcessingPlaylist,
   setContextMenu,
-  setExpandSidebar,
+  setSidebar,
   setDynamicBackground,
   setMiscSetting,
   setImgModal,

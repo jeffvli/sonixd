@@ -16,6 +16,7 @@ import {
   DurationSpan,
   VolumeIcon,
   LinkButton,
+  CoverArtContainer,
 } from './styled';
 import { setVolume, setStar, setRate } from '../../redux/playQueueSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -23,7 +24,6 @@ import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
-import { CoverArtWrapper } from '../layout/styled';
 import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
 import {
   LinkWrapper,
@@ -39,6 +39,7 @@ import { InfoModal } from '../modal/PageModal';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
+import { setSidebar } from '../../redux/miscSlice';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -48,6 +49,7 @@ const PlayerBar = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const config = useAppSelector((state) => state.config);
+  const misc = useAppSelector((state) => state.misc);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -363,28 +365,40 @@ const PlayerBar = () => {
                     alignItems: 'flex-start',
                   }}
                 >
-                  <Col xs={2} style={{ height: '100%', width: '80px', paddingRight: '10px' }}>
-                    <CoverArtWrapper size={65}>
-                      <LazyLoadImage
-                        src={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.image ||
-                          placeholderImg
-                        }
-                        tabIndex={0}
-                        onClick={() => setShowCoverArtModal(true)}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ' || e.key === 'Enter') {
-                            setShowCoverArtModal(true);
+                  {(!misc.sidebar.coverArt || !misc.sidebar.expand) && (
+                    <Col xs={2} style={{ height: '100%', width: '80px', paddingRight: '10px' }}>
+                      <CoverArtContainer expand={misc.sidebar.expand}>
+                        <LazyLoadImage
+                          src={
+                            playQueue[currentEntryList][playQueue.currentIndex]?.image ||
+                            placeholderImg
                           }
-                        }}
-                        alt="trackImg"
-                        effect="opacity"
-                        width="65"
-                        height="65"
-                        style={{ cursor: 'pointer' }}
-                      />
-                    </CoverArtWrapper>
-                  </Col>
+                          tabIndex={0}
+                          onClick={() => setShowCoverArtModal(true)}
+                          onKeyDown={(e: any) => {
+                            if (e.key === ' ' || e.key === 'Enter') {
+                              setShowCoverArtModal(true);
+                            }
+                          }}
+                          alt="trackImg"
+                          effect="opacity"
+                          width="65"
+                          height="65"
+                          style={{ cursor: 'pointer' }}
+                        />
+                        <StyledButton
+                          size="xs"
+                          onClick={() => {
+                            dispatch(setSidebar({ coverArt: true }));
+                            settings.setSync('sidebar.coverArt', true);
+                          }}
+                        >
+                          <Icon icon="up" />
+                        </StyledButton>
+                      </CoverArtContainer>
+                    </Col>
+                  )}
+
                   <Col xs={2} style={{ minWidth: '120px', maxWidth: '450px', width: '100%' }}>
                     <Row
                       style={{
