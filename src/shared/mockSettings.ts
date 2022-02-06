@@ -24,6 +24,10 @@ export const mockSettings = {
   fadeType: 'equalPower',
   scrobble: false,
   transcode: false,
+  sidebar: {
+    expand: false,
+    width: '165px',
+  },
   pagination: {
     music: {
       recordsPerPage: 50,

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import settings from 'electron-settings';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Content, FlexboxGrid, Icon, Nav, Whisper } from 'rsuite';
@@ -6,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
-import { setContextMenu, setExpandSidebar, setSearchQuery } from '../../redux/miscSlice';
+import { setContextMenu, setSearchQuery, setSidebar } from '../../redux/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
 import {
@@ -58,7 +59,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   });
 
   const handleToggle = () => {
-    dispatch(setExpandSidebar(!misc.expandSidebar));
+    settings.setSync('sidebar.expand', !misc.sidebar.expand);
+    dispatch(setSidebar({ expand: !misc.sidebar.expand }));
   };
 
   const handleSidebarSelect = (e: string) => {
@@ -111,7 +113,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
     <>
       <Titlebar font={font} />
       <Sidebar
-        expand={misc.expandSidebar}
+        expand={misc.sidebar.expand}
         handleToggle={handleToggle}
         handleSidebarSelect={handleSidebarSelect}
         disableSidebar={disableSidebar}
@@ -145,7 +147,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
       >
         <MainContainer
           id="container-main"
-          expanded={misc.expandSidebar}
+          expanded={misc.sidebar.expand}
+          sidebarwidth={misc.sidebar.width}
           $titleBar={misc.titleBar} // transient prop to determine margin
         >
           <FlexboxGrid

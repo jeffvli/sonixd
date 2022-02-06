@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Container, Content, Footer, Header, Nav, Sidebar } from 'rsuite';
+import { Container, Content, Divider, Footer, Header, Nav, Sidebar } from 'rsuite';
 
 // Layout.tsx
 export const RootContainer = styled(Container)<{ font: string }>`
@@ -23,8 +23,8 @@ const StyledContainer = ({ id, expanded, children, ...props }: ContainerProps) =
   <Container {...props}>{children}</Container>
 );
 
-export const MainContainer = styled(StyledContainer)<{ $titleBar: string }>`
-  padding-left: ${(props) => (props.expanded ? '165px' : '56px')};
+export const MainContainer = styled(StyledContainer)<{ $titleBar: string; sidebarwidth: string }>`
+  padding-left: ${(props) => (props.expanded ? props.sidebarwidth : '56px')};
   height: calc(100% - 32px);
   margin-top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   overflow-y: auto;
@@ -178,13 +178,23 @@ export const FixedSidebar = styled(Sidebar)<{ font: string; $titleBar: string }>
     props.font?.match('Light') ? 300 : props.font?.match('Medium') ? 500 : 400};
   overflow-y: auto;
   overflow-x: hidden;
+  user-select: none;
 
   ::-webkit-scrollbar {
     display: none;
   }
+
+  .rs-sidenav-body {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 
 export const SidebarNavItem = styled(Nav.Item)`
+  padding-right: 5px;
+  user-select: none;
+
   a {
     color: ${(props) => props.theme.colors.layout.sideBar.button.color} !important;
 
@@ -193,7 +203,7 @@ export const SidebarNavItem = styled(Nav.Item)`
     }
 
     &:focus-visible {
-      color: ${(props) => props.theme.colors.primary} !important;
+      color: ${(props) => props.theme.colors.layout.sideBar.button.colorHover} !important;
     }
   }
 `;
@@ -241,6 +251,7 @@ export const PageHeaderWrapper = styled.div<{
   margin-left: ${(props) => (props.hasImage ? '15px' : '0px')};
   vertical-align: top;
   color: ${(props) => (props.isDark ? '#D8D8D8' : props.theme.colors.layout.page.color)};
+  user-select: none;
 `;
 
 export const PageHeaderSubtitleWrapper = styled.span`
@@ -265,13 +276,19 @@ export const PageHeaderSubtitleDataLine = styled.div<{
   scroll-behavior: smooth;
 `;
 
-export const FlatBackground = styled.div<{ $expanded: boolean; $color: string; $titleBar: string }>`
+export const FlatBackground = styled.div<{
+  $expanded: boolean;
+  $color: string;
+  $titleBar: string;
+  sidebarwidth: string;
+}>`
   background: ${(props) => props.$color};
   top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
-  left: ${(props) => (props.$expanded ? '165px' : '56px')};
+  left: ${(props) => (props.$expanded ? props.sidebarwidth : '56px')};
   height: 200px;
   position: absolute;
-  width: ${(props) => (props.$expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
+  width: ${(props) =>
+    props.$expanded ? `calc(100% - ${props.sidebarwidth})` : 'calc(100% - 56px)'};
   user-select: none;
   pointer-events: none;
 `;
@@ -280,13 +297,15 @@ export const BlurredBackgroundWrapper = styled.div<{
   expanded: boolean;
   hasImage: boolean;
   $titleBar: string;
+  sidebarwidth: string;
 }>`
   clip: rect(0, auto, auto, 0);
   -webkit-clip-path: inset(0 0);
   clip-path: inset(0 0);
   position: absolute;
-  left: ${(props) => (props.expanded ? '165px' : '56px')};
-  width: ${(props) => (props.expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
+  left: ${(props) => (props.expanded ? props.sidebarwidth : '56px')};
+  width: ${(props) =>
+    props.expanded ? `calc(100% - ${props.sidebarwidth})` : 'calc(100% - 56px)'};
   top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
   z-index: 1;
   background: ${(props) => (props.hasImage ? '#0b0908' : '#00395A')};
@@ -315,6 +334,7 @@ export const GradientBackground = styled.div<{
   $expanded: boolean;
   $color: string;
   $titleBar: string;
+  sidebarwidth: string;
 }>`
   background: ${(props) =>
     `linear-gradient(0deg, transparent 10%, ${props.$color.replace(
@@ -322,10 +342,11 @@ export const GradientBackground = styled.div<{
       `${props.theme.type === 'dark' ? ',0.2' : ',0.5'})`
     )} 100%)`};
   top: ${(props) => (props.$titleBar === 'native' ? '0px' : '32px')};
-  left: ${(props) => (props.$expanded ? '165px' : '56px')};
+  left: ${(props) => (props.$expanded ? props.sidebarwidth : '56px')};
   height: calc(100% - 130px);
   position: absolute;
-  width: ${(props) => (props.$expanded ? `calc(100% - 165px)` : 'calc(100% - 56px)')};
+  width: ${(props) =>
+    props.$expanded ? `calc(100% - ${props.sidebarwidth})` : 'calc(100% - 56px)'};
   z-index: 1;
   user-select: none;
   pointer-events: none;
@@ -341,4 +362,58 @@ export const CustomImageGridWrapper = styled.div`
 
 export const CustomImageGrid = styled.div<{ $gridArea: string }>`
   grid-area: ${(props) => props.$gridArea};
+`;
+
+export const SidebarDragContainer = styled.div<{ $resizing: boolean }>`
+  position: absolute;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  z-index: 1;
+
+  background-color: ${(props) => props.$resizing && '#323232'};
+
+  &:hover {
+    cursor: w-resize !important;
+  }
+`;
+
+export const SidebarCoverArtContainer = styled.div<{ height: string }>`
+  position: absolute;
+  bottom: 0;
+  height: ${(props) => props.height};
+  width: 100%;
+  z-index: 100;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(50, 50, 50, 0.2);
+
+  img {
+    max-height: ${(props) => props.height};
+    max-width: 100%;
+    height: auto;
+  }
+
+  .rs-btn {
+    display: none;
+  }
+
+  &:hover {
+    .rs-btn {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      z-index: 99;
+      border-radius: 0px !important;
+    }
+  }
+`;
+
+export const PlaylistDivider = styled(Divider)`
+  margin: 10px 0 !important;
+  cursor: pointer;
 `;

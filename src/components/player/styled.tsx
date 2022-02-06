@@ -47,6 +47,24 @@ export const PlayerControlIcon = styled(Icon)`
   }
 `;
 
+export const CoverArtContainer = styled.div<{ expand: boolean }>`
+  height: 65px;
+  width: 65px;
+  .rs-btn {
+    display: none;
+  }
+
+  &:hover {
+    .rs-btn {
+      display: ${(props) => (props.expand ? 'block' : 'none')};
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 0px !important;
+    }
+  }
+`;
+
 export const LinkButton = styled(Button)<{ subtitle?: string }>`
   border-radius: 0px;
   background: transparent;

@@ -139,6 +139,18 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('musicFolder.music', true);
   }
 
+  if (force || !settings.hasSync('sidebar.expand')) {
+    settings.setSync('sidebar.expand', true);
+  }
+
+  if (force || !settings.hasSync('sidebar.width')) {
+    settings.setSync('sidebar.width', '225px');
+  }
+
+  if (force || !settings.hasSync('sidebar.coverArt')) {
+    settings.setSync('sidebar.coverArt', true);
+  }
+
   if (force || !settings.hasSync('pagination.music.recordsPerPage')) {
     settings.setSync('pagination.music.recordsPerPage', 50);
   }
