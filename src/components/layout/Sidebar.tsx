@@ -153,6 +153,7 @@ const Sidebar = ({
                         history.push('/');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('dashboard')}
                   >
                     {t('Dashboard')}
                   </SidebarNavItem>
@@ -167,6 +168,7 @@ const Sidebar = ({
                         history.push('/nowplaying');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('nowplaying')}
                   >
                     {t('Now Playing')}
                   </SidebarNavItem>
@@ -182,6 +184,7 @@ const Sidebar = ({
                         history.push('/starred');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('favorites')}
                   >
                     {t('Favorites')}
                   </SidebarNavItem>
@@ -197,6 +200,7 @@ const Sidebar = ({
                           history.push('/library/music');
                         }
                       }}
+                      hide={!config.lookAndFeel.sidebar.selected.includes('songs')}
                     >
                       Songs
                     </SidebarNavItem>
@@ -212,6 +216,7 @@ const Sidebar = ({
                         history.push('/library/album');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('albums')}
                   >
                     {t('Albums')}
                   </SidebarNavItem>
@@ -226,6 +231,7 @@ const Sidebar = ({
                         history.push('/library/artist');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('artists')}
                   >
                     {t('Artists')}
                   </SidebarNavItem>
@@ -240,6 +246,7 @@ const Sidebar = ({
                         history.push('/library/genre');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('genres')}
                   >
                     {t('Genres')}
                   </SidebarNavItem>
@@ -256,6 +263,7 @@ const Sidebar = ({
                             history.push('/library/folder');
                           }
                         }}
+                        hide={!config.lookAndFeel.sidebar.selected.includes('folders')}
                       >
                         {t('Folders')}
                       </SidebarNavItem>
@@ -272,6 +280,7 @@ const Sidebar = ({
                         history.push('/config');
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('config')}
                   >
                     {t('Config')}
                   </SidebarNavItem>
@@ -285,6 +294,7 @@ const Sidebar = ({
                         handleToggle();
                       }
                     }}
+                    hide={!config.lookAndFeel.sidebar.selected.includes('collapse')}
                   >
                     {expand ? t('Collapse') : t('Expand')}
                   </SidebarNavItem>
@@ -300,32 +310,35 @@ const Sidebar = ({
                           history.push('/playlist');
                         }
                       }}
+                      hide={!config.lookAndFeel.sidebar.selected.includes('playlists')}
                     >
                       {t('Playlists')}
                     </SidebarNavItem>
                   )}
                 </div>
               </Nav>
-              {expand && !disableSidebar && (
-                <div
-                  style={{
-                    height: `${
-                      sidebarBodyHeight - mainNavHeight < 170
-                        ? 170
-                        : sidebarBodyHeight - mainNavHeight
-                    }px`,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
-                >
-                  <>
-                    <PlaylistDivider onClick={() => history.push('/playlist')}>
-                      {t('Playlists')}
-                    </PlaylistDivider>
-                    <SidebarPlaylists width={width} />
-                  </>
-                </div>
-              )}
+              {expand &&
+                !disableSidebar &&
+                config.lookAndFeel.sidebar.selected.includes('playlists') && (
+                  <div
+                    style={{
+                      height: `${
+                        sidebarBodyHeight - mainNavHeight < 170
+                          ? 170
+                          : sidebarBodyHeight - mainNavHeight
+                      }px`,
+                      overflow: 'hidden',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <>
+                      <PlaylistDivider onClick={() => history.push('/playlist')}>
+                        {t('Playlists')}
+                      </PlaylistDivider>
+                      <SidebarPlaylists width={width} />
+                    </>
+                  </div>
+                )}
             </div>
           </Sidenav.Body>
         </Sidenav>

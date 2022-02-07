@@ -73,11 +73,6 @@ const miscState: General = {
   contextMenu: {
     show: false,
   },
-  sidebar: {
-    expand: false,
-    coverArt: true,
-    width: '225px',
-  },
   modal: {
     currentPageIndex: undefined,
     show: false,
@@ -390,6 +385,12 @@ const configState: ConfigPage = {
       cardSize: 160,
       gapSize: 20,
       alignment: 'flex-start',
+    },
+    sidebar: {
+      expand: false,
+      coverArt: true,
+      width: '225px',
+      selected: ['dashboard', 'nowplaying'],
     },
   },
   external: {

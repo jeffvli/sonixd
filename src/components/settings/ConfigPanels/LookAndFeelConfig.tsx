@@ -19,6 +19,7 @@ import {
   StyledButton,
   StyledPopover,
   StyledCheckbox,
+  StyledCheckPicker,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
@@ -42,6 +43,7 @@ import {
   setGridAlignment,
   setGridCardSize,
   setGridGapSize,
+  setSidebar,
 } from '../../../redux/configSlice';
 import { Item, Server } from '../../../types';
 import ConfigOption from '../ConfigOption';
@@ -294,6 +296,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const startPagePickerContainerRef = useRef(null);
   const albumSortDefaultPickerContainerRef = useRef(null);
   const musicSortDefaultPickerContainerRef = useRef(null);
+  const sidebarPickerContainerRef = useRef(null);
   const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
@@ -578,6 +581,71 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               settings.setSync('artistPageLegacy', e);
             }}
           />
+        }
+      />
+      <ConfigOption
+        name={t('Sidebar')}
+        option={
+          <StyledInputPickerContainer ref={sidebarPickerContainerRef}>
+            <StyledCheckPicker
+              container={() => sidebarPickerContainerRef.current}
+              data={[
+                {
+                  label: i18n.t('Dashboard'),
+                  value: 'dashboard',
+                },
+                {
+                  label: i18n.t('Now Playing'),
+                  value: 'nowplaying',
+                },
+                {
+                  label: i18n.t('Favorites'),
+                  value: 'favorites',
+                },
+                {
+                  label: i18n.t('Songs'),
+                  value: 'songs',
+                },
+                {
+                  label: i18n.t('Albums'),
+                  value: 'albums',
+                },
+                {
+                  label: i18n.t('Artists'),
+                  value: 'artists',
+                },
+                {
+                  label: i18n.t('Genres'),
+                  value: 'genres',
+                },
+                {
+                  label: i18n.t('Folders'),
+                  value: 'folders',
+                },
+                {
+                  label: i18n.t('Config'),
+                  value: 'config',
+                },
+                {
+                  label: i18n.t('Collapse'),
+                  value: 'collapse',
+                },
+                {
+                  label: i18n.t('Playlists'),
+                  value: 'playlists',
+                },
+              ]}
+              searchable={false}
+              cleanable={false}
+              defaultValue={config.lookAndFeel.sidebar.selected}
+              width={250}
+              disabledItemValues={config.serverType === Server.Subsonic ? ['songs'] : []}
+              onChange={(e: string) => {
+                settings.setSync('sidebar.selected', e);
+                dispatch(setSidebar({ selected: e }));
+              }}
+            />
+          </StyledInputPickerContainer>
         }
       />
     </ConfigPanel>
