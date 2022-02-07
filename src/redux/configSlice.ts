@@ -42,6 +42,7 @@ export interface ConfigPage {
       gapSize: number;
       alignment: string | 'flex-start' | 'center';
     };
+    sidebar: Sidebar;
   };
   external: {
     discord: {
@@ -67,6 +68,12 @@ interface SortColumn {
 interface PlaybackFilter {
   filter: string;
   enabled: boolean;
+}
+
+export interface Sidebar {
+  expand: boolean;
+  width: string;
+  coverArt: boolean;
 }
 
 export type ColumnList = 'music' | 'album' | 'playlist' | 'artist' | 'genre' | 'mini';
@@ -142,6 +149,11 @@ const initialState: ConfigPage = {
       gapSize: Number(parsedSettings.gridGapSize),
       alignment: String(parsedSettings.gridAlignment),
     },
+    sidebar: {
+      expand: Boolean(parsedSettings.sidebar?.expand) || true,
+      width: String(parsedSettings.sidebar?.width) || '225px',
+      coverArt: Boolean(parsedSettings.sidebar?.coverArt) || true,
+    },
   },
   external: {
     discord: {
@@ -165,6 +177,13 @@ const configSlice = createSlice({
   reducers: {
     setActive: (state, action: PayloadAction<any>) => {
       state.active = action.payload;
+    },
+
+    setSidebar: (state, action: PayloadAction<any>) => {
+      state.lookAndFeel.sidebar = {
+        ...state.lookAndFeel.sidebar,
+        ...action.payload,
+      };
     },
 
     setPageSort: (
@@ -287,5 +306,6 @@ export const {
   moveToIndex,
   setDiscord,
   setOBS,
+  setSidebar,
 } = configSlice.actions;
 export default configSlice.reducer;
