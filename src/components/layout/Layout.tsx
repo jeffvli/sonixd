@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
-import { setContextMenu, setSearchQuery, setSidebar } from '../../redux/miscSlice';
+import { setContextMenu, setSearchQuery } from '../../redux/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
 import {
@@ -31,12 +31,14 @@ import ServerConfig from '../settings/ConfigPanels/ServerConfig';
 import CacheConfig from '../settings/ConfigPanels/CacheConfig';
 import WindowConfig from '../settings/ConfigPanels/WindowConfig';
 import AdvancedConfig from '../settings/ConfigPanels/AdvancedConfig';
+import { setSidebar } from '../../redux/configSlice';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const [openSearch, setOpenSearch] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState('');
@@ -59,8 +61,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   });
 
   const handleToggle = () => {
-    settings.setSync('sidebar.expand', !misc.sidebar.expand);
-    dispatch(setSidebar({ expand: !misc.sidebar.expand }));
+    settings.setSync('sidebar.expand', !config.lookAndFeel.sidebar.expand);
+    dispatch(setSidebar({ expand: !config.lookAndFeel.sidebar.expand }));
   };
 
   const handleSidebarSelect = (e: string) => {
@@ -113,7 +115,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
     <>
       <Titlebar font={font} />
       <Sidebar
-        expand={misc.sidebar.expand}
+        expand={config.lookAndFeel.sidebar.expand}
         handleToggle={handleToggle}
         handleSidebarSelect={handleSidebarSelect}
         disableSidebar={disableSidebar}
@@ -147,8 +149,8 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
       >
         <MainContainer
           id="container-main"
-          expanded={misc.sidebar.expand}
-          sidebarwidth={misc.sidebar.width}
+          expanded={config.lookAndFeel.sidebar.expand}
+          sidebarwidth={config.lookAndFeel.sidebar.width}
           $titleBar={misc.titleBar} // transient prop to determine margin
         >
           <FlexboxGrid
@@ -164,13 +166,13 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                 <StyledIconButton
                   appearance="subtle"
                   size="sm"
-                  icon={<Icon icon="arrow-circle-left" />}
+                  icon={<Icon icon="arrow-left-line" />}
                   onClick={() => history.goBack()}
                 />
                 <StyledIconButton
                   appearance="subtle"
                   size="sm"
-                  icon={<Icon icon="arrow-circle-right" />}
+                  icon={<Icon icon="arrow-right-line" />}
                   onClick={() => history.goForward()}
                 />
               </ButtonToolbar>

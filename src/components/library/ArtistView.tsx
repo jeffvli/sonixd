@@ -521,10 +521,10 @@ const ArtistView = ({ ...rest }: any) => {
     <>
       {!rest.isModal && (
         <GradientBackground
-          $expanded={misc.sidebar.expand}
+          $expanded={config.lookAndFeel.sidebar.expand}
           $color={imageAverageColor.color}
           $titleBar={misc.titleBar}
-          sidebarwidth={misc.sidebar.width}
+          sidebarwidth={config.lookAndFeel.sidebar.width}
         />
       )}
       <GenericPage

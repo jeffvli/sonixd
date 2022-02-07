@@ -15,11 +15,11 @@ import {
   SidebarDragContainer,
   SidebarNavItem,
 } from './styled';
-import { setSidebar } from '../../redux/miscSlice';
 import { StyledButton } from '../shared/styled';
 import { InfoModal } from '../modal/PageModal';
 import placeholderImg from '../../img/placeholder.png';
 import SidebarPlaylists from './SidebarPlaylists';
+import { setSidebar } from '../../redux/configSlice';
 
 const Sidebar = ({
   expand,
@@ -35,12 +35,11 @@ const Sidebar = ({
   const history = useHistory();
   const playQueue = useAppSelector((state) => state.playQueue);
   const config = useAppSelector((state) => state.config);
-  const misc = useAppSelector((state) => state.misc);
-  const [width, setWidth] = useState(Number(misc.sidebar.width.replace('px', '')));
+  const [width, setWidth] = useState(Number(config.lookAndFeel.sidebar.width.replace('px', '')));
   const [isResizing, setIsResizing] = useState(false);
   const [showCoverArtModal, setShowCoverArtModal] = useState(false);
   const [throttledWidth, setThrottledWidth] = useState(
-    Number(misc.sidebar.width.replace('px', ''))
+    Number(config.lookAndFeel.sidebar.width.replace('px', ''))
   );
   const [mainNavRef, { height: mainNavHeight }] = useMeasure<HTMLDivElement>();
   const [sidebarBodyRef, { height: sidebarBodyHeight }] = useMeasure<HTMLDivElement>();
@@ -99,7 +98,7 @@ const Sidebar = ({
         onClick={rest.onClick}
       >
         <Sidenav style={{ height: '100%' }} expanded={expand} appearance="default">
-          {expand && misc.sidebar.coverArt && (
+          {expand && config.lookAndFeel.sidebar.coverArt && (
             <SidebarCoverArtContainer height={`${width}px`}>
               <LazyLoadImage
                 onClick={() => setShowCoverArtModal(true)}
@@ -124,7 +123,9 @@ const Sidebar = ({
 
           <Sidenav.Body
             style={{
-              height: expand ? `calc(100% - ${misc.sidebar.coverArt ? width : 0}px)` : '100%',
+              height: expand
+                ? `calc(100% - ${config.lookAndFeel.sidebar.coverArt ? width : 0}px)`
+                : '100%',
               overflowY: 'auto',
             }}
           >

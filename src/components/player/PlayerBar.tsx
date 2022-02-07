@@ -39,7 +39,7 @@ import { InfoModal } from '../modal/PageModal';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
-import { setSidebar } from '../../redux/miscSlice';
+import { setSidebar } from '../../redux/configSlice';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -49,7 +49,6 @@ const PlayerBar = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const config = useAppSelector((state) => state.config);
-  const misc = useAppSelector((state) => state.misc);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -365,9 +364,9 @@ const PlayerBar = () => {
                     alignItems: 'flex-start',
                   }}
                 >
-                  {(!misc.sidebar.coverArt || !misc.sidebar.expand) && (
+                  {(!config.lookAndFeel.sidebar.coverArt || !config.lookAndFeel.sidebar.expand) && (
                     <Col xs={2} style={{ height: '100%', width: '80px', paddingRight: '10px' }}>
-                      <CoverArtContainer expand={misc.sidebar.expand}>
+                      <CoverArtContainer expand={config.lookAndFeel.sidebar.expand}>
                         <LazyLoadImage
                           src={
                             playQueue[currentEntryList][playQueue.currentIndex]?.image ||
@@ -576,9 +575,8 @@ const PlayerBar = () => {
               <CustomTooltip text={t('Play/Pause')} delay={1000}>
                 <PlayerControlIcon
                   tabIndex={0}
-                  icon={player.status === 'PLAYING' ? 'pause' : 'play'}
-                  size="2x"
-                  fixedWidth
+                  icon={player.status === 'PLAYING' ? 'pause-circle' : 'play-circle'}
+                  size="3x"
                   onClick={handlePlayPause}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {

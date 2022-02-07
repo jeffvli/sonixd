@@ -45,18 +45,12 @@ export interface ContextMenu {
   disabledOptions?: ContextMenuOptions[];
 }
 
-export interface Sidebar {
-  expand: boolean;
-  width: string;
-  coverArt: boolean;
-}
 export interface General {
   theme: string;
   font: string;
   modal: Modal;
   modalPages: ModalPage[];
   imgModal: ImgModal;
-  sidebar: Sidebar;
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
   dynamicBackground: boolean;
@@ -79,11 +73,6 @@ const initialState: General = {
     show: false,
     src: undefined,
   },
-  sidebar: {
-    expand: Boolean(parsedSettings.sidebar.expand) || true,
-    width: String(parsedSettings.sidebar.width) || '225px',
-    coverArt: Boolean(parsedSettings.sidebar.coverArt) || true,
-  },
   isProcessingPlaylist: [],
   contextMenu: {
     show: false,
@@ -102,13 +91,6 @@ const miscSlice = createSlice({
   reducers: {
     setDynamicBackground: (state, action: PayloadAction<boolean>) => {
       state.dynamicBackground = action.payload;
-    },
-
-    setSidebar: (state, action: PayloadAction<any>) => {
-      state.sidebar = {
-        ...state.sidebar,
-        ...action.payload,
-      };
     },
 
     setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
@@ -221,7 +203,6 @@ export const {
   addProcessingPlaylist,
   removeProcessingPlaylist,
   setContextMenu,
-  setSidebar,
   setDynamicBackground,
   setMiscSetting,
   setImgModal,
