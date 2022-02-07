@@ -220,7 +220,7 @@ const GridViewType = ({
                 gridRef={gridRef}
               />
             ) : loading ? (
-              <CenterLoader />
+              <CenterLoader absolute />
             ) : (
               <></>
             )}

@@ -16,7 +16,7 @@ import {
   SidebarNavItem,
 } from './styled';
 import { StyledButton } from '../shared/styled';
-import { InfoModal } from '../modal/PageModal';
+import { InfoModal } from '../modal/Modal';
 import placeholderImg from '../../img/placeholder.png';
 import SidebarPlaylists from './SidebarPlaylists';
 import { setSidebar } from '../../redux/configSlice';

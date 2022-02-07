@@ -52,7 +52,7 @@ const SidebarPlaylists = ({ width }: any) => {
       {({ height }: any) => (
         <>
           {isLoading ? (
-            <CenterLoader />
+            <CenterLoader absolute />
           ) : (
             <List
               height={height - 25}
