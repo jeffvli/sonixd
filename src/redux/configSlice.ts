@@ -74,7 +74,21 @@ export interface Sidebar {
   expand: boolean;
   width: string;
   coverArt: boolean;
+  selected: SidebarList[];
 }
+
+export type SidebarList =
+  | 'dashboard'
+  | 'nowplaying'
+  | 'favorites'
+  | 'songs'
+  | 'albums'
+  | 'artists'
+  | 'genres'
+  | 'folders'
+  | 'config'
+  | 'collapse'
+  | 'playlists';
 
 export type ColumnList = 'music' | 'album' | 'playlist' | 'artist' | 'genre' | 'mini';
 
@@ -153,6 +167,19 @@ const initialState: ConfigPage = {
       expand: Boolean(parsedSettings.sidebar?.expand) || true,
       width: String(parsedSettings.sidebar?.width) || '225px',
       coverArt: Boolean(parsedSettings.sidebar?.coverArt) || true,
+      selected: parsedSettings.sidebar?.selected || [
+        'dashboard',
+        'nowplaying',
+        'favorites',
+        'songs',
+        'albums',
+        'artists',
+        'genres',
+        'folders',
+        'config',
+        'collapse',
+        'playlists',
+      ],
     },
   },
   external: {

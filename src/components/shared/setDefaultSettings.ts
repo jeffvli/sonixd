@@ -151,6 +151,22 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('sidebar.coverArt', true);
   }
 
+  if (force || !settings.hasSync('sidebar.selected')) {
+    settings.setSync('sidebar.selected', [
+      'dashboard',
+      'nowplaying',
+      'favorites',
+      'songs',
+      'albums',
+      'artists',
+      'genres',
+      'folders',
+      'config',
+      'collapse',
+      'playlists',
+    ]);
+  }
+
   if (force || !settings.hasSync('pagination.music.recordsPerPage')) {
     settings.setSync('pagination.music.recordsPerPage', 50);
   }

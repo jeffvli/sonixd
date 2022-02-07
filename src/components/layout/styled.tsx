@@ -191,9 +191,10 @@ export const FixedSidebar = styled(Sidebar)<{ font: string; $titleBar: string }>
   }
 `;
 
-export const SidebarNavItem = styled(Nav.Item)`
+export const SidebarNavItem = styled(Nav.Item)<{ hide?: boolean }>`
   padding-right: 5px;
   user-select: none;
+  display: ${(props) => (props.hide ? 'none' : 'block')};
 
   a {
     color: ${(props) => props.theme.colors.layout.sideBar.button.color} !important;
