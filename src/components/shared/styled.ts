@@ -575,9 +575,10 @@ export const StyledTagPicker = styled(TagPicker)`
   }
 `;
 
-export const StyledCheckPicker = styled(CheckPicker)`
+export const StyledCheckPicker = styled(CheckPicker)<{ width?: number }>`
   border: 1px #3c3f43 solid !important;
   border-radius: ${(props) => props.theme.other.input.borderRadius} !important;
+  width: ${(props) => props.width}px;
 
   &:hover,
   &:active,
