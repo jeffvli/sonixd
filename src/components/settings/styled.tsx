@@ -45,7 +45,7 @@ export const LoginPanel = styled(Panel)`
 
 export const ConfigOptionName = styled.div`
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
 `;
 
 export const ConfigOptionDescription = styled.div`
