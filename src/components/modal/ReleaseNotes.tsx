@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import settings from 'electron-settings';
 import { shell } from 'electron';
 import axios from 'axios';
-import { InfoModal } from './PageModal';
+import { InfoModal } from './Modal';
 import { StyledButton } from '../shared/styled';
 import { ConfigPanel } from '../settings/styled';
 

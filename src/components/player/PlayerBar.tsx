@@ -35,7 +35,7 @@ import {
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import { notifyToast } from '../shared/toast';
-import { InfoModal } from '../modal/PageModal';
+import { InfoModal } from '../modal/Modal';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
