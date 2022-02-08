@@ -538,7 +538,6 @@ export const StyledPanel = styled(Panel)<{ $maxWidth?: string }>`
   color: ${(props) => props.theme.colors.layout.page.color};
   border-radius: ${(props) => props.theme.other.panel.borderRadius};
   max-width: ${(props) => props.$maxWidth};
-  cursor: default;
   /* margin-bottom: 10px; */
 
   .rs-panel-heading {
@@ -641,12 +640,9 @@ export const StyledTagLink = styled(TagLink)`
 export const SecondaryTextWrapper = styled.span<{
   subtitle?: string;
   active?: boolean;
-  playing?: string;
 }>`
   color: ${(props) =>
-    props.playing === 'true'
-      ? props.theme.colors.primary
-      : props.subtitle === 'true'
+    props.subtitle === 'true'
       ? props.theme.colors.layout.page.colorSecondary
       : props.theme.colors.layout.page.color};
 `;

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-cycle */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import styled from 'styled-components';
@@ -9,10 +9,12 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { nanoid } from 'nanoid';
 import { Table, Grid, Row, Col, Icon } from 'rsuite';
 import { useHistory } from 'react-router';
+import useLongPress from 'react-use/lib/useLongPress';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {
+  CombinedTitleContainer,
   CombinedTitleTextWrapper,
-  RsuiteLinkButton,
+  TableLinkButton,
   StyledTableHeaderCell,
   TableCellWrapper,
 } from './styled';
@@ -46,7 +48,7 @@ import {
   setIsSelectDragging,
   setSelected,
   setSelectedSingle,
-  toggleSelected,
+  toggleSelectedSingle,
 } from '../../redux/multiSelectSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { sortPlaylist } from '../../redux/playlistSlice';
@@ -61,6 +63,10 @@ import { GenericItem, Item } from '../../types';
 import { CoverArtWrapper } from '../layout/styled';
 import Paginator from '../shared/Paginator';
 import { setFilter, setPagination } from '../../redux/viewSlice';
+import CoverArtCell from './TableCells/CoverArtCell';
+import TextCell from './TableCells/TextCell';
+import LinkCell from './TableCells/LinkCell';
+import CustomCell from './TableCells/CustomCell';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -69,8 +75,36 @@ const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
     height: ${(props) => `${props.rowHeight + 1}px !important`};
   }
 
+  .col-default-hide {
+    display: none;
+  }
+
+  .rs-table-row {
+    &:hover {
+      .col-default-hide {
+        display: block !important;
+      }
+
+      .col-default-show {
+        display: none;
+      }
+    }
+  }
+
   .rs-table-row.dragover {
     box-shadow: ${(props) => `inset 0px 5px 0px -3px ${props.theme.colors.primary}`};
+  }
+
+  .rs-table-row.playing {
+    color: ${(props) => props.theme.colors.primary};
+
+    .rs-btn {
+      color: ${(props) => props.theme.colors.primary};
+    }
+  }
+
+  .rs-table-cell {
+    background: transparent;
   }
 
   .rs-table-row,
@@ -124,6 +158,7 @@ const ListViewTable = ({
   onScroll,
   loading,
   paginationProps,
+  affixHeader,
 }: any) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -206,57 +241,60 @@ const ListViewTable = ({
     }
   };
 
-  // Acts as our initial multiSelect handler by toggling the selected row
-  // and continuing the selection drag if the mouse button is held down
-  const handleSelectMouseDown = (e: any, rowData: any) => {
-    // If ctrl or shift is used, we want to ignore this drag selection handler
-    // and use the ones provided in handleRowClick
-    if (!disableRowClick) {
-      dispatch(setContextMenu({ show: false }));
-      if (e.button === 0 && !e.ctrlKey && !e.shiftKey) {
-        if (
-          multiSelect.selected.length === 1 &&
-          multiSelect.selected[0].uniqueId === rowData.uniqueId
-        ) {
-          // Toggle single entry if the same entry is clicked
-          dispatch(clearSelected());
-        } else {
-          if (multiSelect.selected.length > 0) {
-            dispatch(clearSelected());
-          }
-          dispatch(setIsSelectDragging(true));
-          dispatch(toggleSelected(rowData));
+  const handleSelectMouseDown = useCallback(
+    (e: any, rowData: any) => {
+      if (!disableRowClick) {
+        dispatch(setContextMenu({ show: false }));
+        // If ctrl or shift is used, we want to ignore this drag selection handler and use the ones
+        // provided in handleRowClick
+        if (e.button === 0 && !e.ctrlKey && !e.shiftKey) {
+          dispatch(toggleSelectedSingle(rowData));
         }
       }
-    }
-  };
+    },
+    [disableRowClick, dispatch]
+  );
 
-  // Completes the multiSelect handler once the mouse button is lifted
-  const handleSelectMouseUp = () => {
+  const handleSelectMouseUp = useCallback(() => {
     dispatch(setIsDragging(false));
     dispatch(setIsSelectDragging(false));
-  };
+    document.body.style.cursor = 'default';
+  }, [dispatch]);
 
-  // If mouse is still held down from the handleSelectMouseDown function, then
-  // mousing over a row will set the range selection from the initial mousedown location
-  // to the mouse-entered row
-  const debouncedMouseEnterFn = _.debounce((rowData: any) => {
-    dispatch(
-      setSelected(
-        sliceRangeByUniqueId(
-          sortColumn && !nowPlaying ? sortedData : data,
-          multiSelect.lastSelected.uniqueId,
-          rowData.uniqueId
-        )
-      )
-    );
-  }, 200);
+  const handleStartSelectDrag = useLongPress(
+    (rowData) => {
+      dispatch(setSelectedSingle(rowData));
+      dispatch(setIsSelectDragging(true));
+      document.body.style.cursor = 'crosshair';
+    },
+    { isPreventDefault: true, delay: 150 }
+  );
 
-  const handleSelectMouseEnter = (rowData: any) => {
-    if (multiSelect.isSelectDragging) {
-      debouncedMouseEnterFn(rowData);
-    }
-  };
+  const handleContinueSelectDrag = useMemo(
+    () =>
+      _.debounce((rowData: any) => {
+        if (multiSelect.isSelectDragging) {
+          dispatch(
+            setSelected(
+              sliceRangeByUniqueId(
+                sortColumn && !nowPlaying ? sortedData : data,
+                multiSelect.lastSelected.uniqueId,
+                rowData.uniqueId
+              )
+            )
+          );
+        }
+      }, 200),
+    [
+      data,
+      dispatch,
+      multiSelect.isSelectDragging,
+      multiSelect.lastSelected.uniqueId,
+      nowPlaying,
+      sortColumn,
+      sortedData,
+    ]
+  );
 
   useEffect(() => {
     if (!nowPlaying) {
@@ -384,7 +422,14 @@ const ListViewTable = ({
             multiSelect.currentMouseOverId
               ? 'dragover'
               : ''
-          } ${rowData?.isDir ? 'isdir' : ''}`
+          } ${rowData?.isDir ? 'isdir' : ''} ${
+            (nowPlaying &&
+              rowData?.uniqueId === playQueue.current?.uniqueId &&
+              playQueue?.current) ||
+            (!nowPlaying && rowData?.id === playQueue?.currentSongId && playQueue?.currentSongId)
+              ? 'playing'
+              : ''
+          }`
         }
         loading={loading}
         ref={tableRef}
@@ -395,7 +440,7 @@ const ListViewTable = ({
         hover={multiSelect.isDragging ? false : misc.highlightOnRowHover}
         cellBordered={false}
         bordered={false}
-        affixHeader
+        affixHeader={affixHeader || true}
         autoHeight={autoHeight}
         affixHorizontalScrollbar
         shouldUpdateScroll={false}
@@ -463,7 +508,6 @@ const ListViewTable = ({
             }
           }
         }}
-        // onScroll={onScroll}
       >
         {columns.map((column: any) => (
           <Table.Column
@@ -490,8 +534,8 @@ const ListViewTable = ({
                 miniView ? 'mini' : listType
               ].columns.map((c: any) => {
                 if (c.dataKey === column.dataKey) {
-                  const { width, ...rest } = c;
-                  return { width: newWidth, ...rest };
+                  const { width, ...props } = c;
+                  return { width: newWidth, ...props };
                 }
 
                 return { ...c };
@@ -511,19 +555,9 @@ const ListViewTable = ({
                 {(rowData: any, rowIndex: any) => {
                   return (
                     <TableCellWrapper
-                      className={
-                        multiSelect?.selected.find((e: any) => e.uniqueId === rowData.uniqueId)
-                          ? 'custom-cell selected'
-                          : 'custom-cell'
-                      }
-                      playing={
-                        (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
-                        (!nowPlaying &&
-                          rowData.id === playQueue?.currentSongId &&
-                          playQueue?.currentSongId)
-                          ? 'true'
-                          : 'false'
-                      }
+                      style={{
+                        cursor: multiSelect.isDragging ? 'grabbing' : dnd ? 'grab' : undefined,
+                      }}
                       height={rowHeight}
                       onClick={(e: any) => {
                         if (!dnd) {
@@ -545,7 +579,7 @@ const ListViewTable = ({
                           });
                         }
                       }}
-                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
+                      onMouseEnter={() => handleContinueSelectDrag(rowData)}
                       onMouseOver={() => {
                         if (multiSelect.isDragging && dnd) {
                           dispatch(
@@ -568,6 +602,8 @@ const ListViewTable = ({
                       }}
                       onMouseDown={(e: any) => {
                         if (dnd) {
+                          document.body.style.cursor = 'grabbing';
+
                           if (e.button === 0) {
                             const isSelected = multiSelect.selected.find(
                               (item: any) => item.uniqueId === rowData.uniqueId
@@ -597,11 +633,13 @@ const ListViewTable = ({
                             }
                           }
                         } else {
+                          handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
                         }
                       }}
                       onMouseUp={() => {
                         if (dnd) {
+                          document.body.style.cursor = 'default';
                           handleDragEnd(sortColumn && !nowPlaying ? sortedData : data);
 
                           if (nowPlaying && playQueue.currentPlayer === 1) {
@@ -609,15 +647,9 @@ const ListViewTable = ({
                           }
                         } else {
                           handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
                         }
                       }}
-                      dragover={
-                        multiSelect.currentMouseOverId === rowData.uniqueId &&
-                        multiSelect.isDragging
-                          ? 'true'
-                          : 'false'
-                      }
-                      dragfield={dnd ? 'true' : 'false'}
                     >
                       {rowData.isDir ? (
                         <Icon size="lg" icon="folder-open" style={{ color: '#FFD662' }} />
@@ -633,7 +665,8 @@ const ListViewTable = ({
               <Table.Cell dataKey={column.id}>
                 {(rowData: any, rowIndex: any) => {
                   return (
-                    <TableCellWrapper
+                    <CombinedTitleContainer
+                      height={rowHeight}
                       onClick={(e: any) =>
                         handleRowClick(
                           e,
@@ -650,30 +683,19 @@ const ListViewTable = ({
                           rowIndex,
                         })
                       }
-                      onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
-                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
-                      onMouseUp={() => handleSelectMouseUp()}
-                      dragover={
-                        multiSelect.currentMouseOverId === rowData.uniqueId &&
-                        multiSelect.isDragging
-                          ? 'true'
-                          : 'false'
-                      }
+                      onMouseDown={(e: any) => {
+                        handleStartSelectDrag.onMouseDown(rowData);
+                        handleSelectMouseDown(e, rowData);
+                      }}
+                      onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                      onMouseUp={() => {
+                        handleSelectMouseUp();
+                        handleStartSelectDrag.onMouseUp();
+                      }}
                     >
                       <Grid fluid>
-                        <Row
-                          style={{
-                            height: `${rowHeight}px`,
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Col
-                            style={{
-                              paddingRight: '5px',
-                              width: `${rowHeight}px`,
-                            }}
-                          >
+                        <Row className="row-main">
+                          <Col className="col-cover">
                             <CoverArtWrapper size={rowHeight - 10}>
                               <LazyLoadImage
                                 src={
@@ -705,21 +727,8 @@ const ListViewTable = ({
                               />
                             </CoverArtWrapper>
                           </Col>
-                          <Col
-                            style={{
-                              width: '100%',
-                              overflow: 'hidden',
-                              paddingLeft: '10px',
-                              paddingRight: '20px',
-                            }}
-                          >
-                            <Row
-                              style={{
-                                height: `${rowHeight / 2}px`,
-                                overflow: 'hidden',
-                                position: 'relative',
-                              }}
-                            >
+                          <Col className="col-text">
+                            <Row className="row-sub-text">
                               <CombinedTitleTextWrapper
                                 tabIndex={0}
                                 onKeyDown={(e: any) => {
@@ -733,70 +742,24 @@ const ListViewTable = ({
                                     }
                                   }
                                 }}
-                                playing={
-                                  (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                    nowPlaying) ||
-                                  (!nowPlaying &&
-                                    rowData.id === playQueue?.currentSongId &&
-                                    playQueue?.currentSongId)
-                                    ? 'true'
-                                    : 'false'
-                                }
-                                style={{
-                                  position: 'absolute',
-                                  bottom: 0,
-                                  width: '100%',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
-                                }}
                               >
                                 {rowData.title || rowData.name}
                               </CombinedTitleTextWrapper>
                             </Row>
-                            <Row
-                              style={{
-                                height: `${rowHeight / 2}px`,
-                                fontSize: 'smaller',
-                                overflow: 'hidden',
-                                position: 'relative',
-                                width: '100%',
-                              }}
-                            >
-                              <span
-                                style={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
-                                  width: '100%',
-                                }}
-                              >
+                            <Row className="row-sub-secondarytext">
+                              <span>
                                 {(rowData.artist || []).map((artist: GenericItem, i: number) => (
                                   <span key={`${rowData.uniqueId}-${artist.id}`}>
-                                    <SecondaryTextWrapper
-                                      key={nanoid()}
-                                      playing={
-                                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                          nowPlaying) ||
-                                        (!nowPlaying &&
-                                          rowData.id === playQueue?.currentSongId &&
-                                          playQueue?.currentSongId)
-                                          ? 'true'
-                                          : 'false'
-                                      }
-                                      subtitle="true"
-                                    >
+                                    <SecondaryTextWrapper key={nanoid()} subtitle="true">
                                       {i > 0 && ', '}
                                     </SecondaryTextWrapper>
                                     <CustomTooltip
                                       key={`artist-${rowData.uniqueId}-${artist.id}`}
                                       text={artist.title}
                                     >
-                                      <RsuiteLinkButton
+                                      <TableLinkButton
+                                        font={`${fontSize}px`}
                                         subtitle="true"
-                                        appearance="link"
                                         onClick={(e: any) => {
                                           if (!e.ctrlKey && !e.shiftKey) {
                                             if (artist.id && !isModal) {
@@ -811,21 +774,9 @@ const ListViewTable = ({
                                             }
                                           }
                                         }}
-                                        style={{
-                                          fontSize: `${fontSize}px`,
-                                        }}
-                                        playing={
-                                          (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                            nowPlaying) ||
-                                          (!nowPlaying &&
-                                            rowData.id === playQueue?.currentSongId &&
-                                            playQueue?.currentSongId)
-                                            ? 'true'
-                                            : 'false'
-                                        }
                                       >
                                         {artist.title}
-                                      </RsuiteLinkButton>
+                                      </TableLinkButton>
                                     </CustomTooltip>
                                   </span>
                                 ))}
@@ -834,397 +785,456 @@ const ListViewTable = ({
                           </Col>
                         </Row>
                       </Grid>
-                    </TableCellWrapper>
-                  );
-                }}
-              </Table.Cell>
-            ) : column.dataKey === 'coverart' ? (
-              <Table.Cell dataKey={column.id}>
-                {(rowData: any) => {
-                  return (
-                    <TableCellWrapper
-                      height={rowHeight}
-                      onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
-                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
-                      onMouseUp={() => handleSelectMouseUp()}
-                      dragover={
-                        multiSelect.currentMouseOverId === rowData.uniqueId &&
-                        multiSelect.isDragging
-                          ? 'true'
-                          : 'false'
-                      }
-                    >
-                      <CoverArtWrapper size={rowHeight - 10}>
-                        <LazyLoadImage
-                          src={
-                            isCached(
-                              `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                rowData[cacheImages.cacheIdProperty]
-                              }.jpg`
-                            )
-                              ? `${misc.imageCachePath}${cacheImages.cacheType}_${
-                                  rowData[cacheImages.cacheIdProperty]
-                                }.jpg`
-                              : rowData.image
-                          }
-                          alt="track-img"
-                          effect="opacity"
-                          width={rowHeight - 10}
-                          height={rowHeight - 10}
-                          visibleByDefault
-                          afterLoad={() => {
-                            if (cacheImages.enabled) {
-                              cacheImage(
-                                `${cacheImages.cacheType}_${
-                                  rowData[cacheImages.cacheIdProperty]
-                                }.jpg`,
-                                rowData.image.replaceAll(/=150/gi, '=350')
-                              );
-                            }
-                          }}
-                        />
-                      </CoverArtWrapper>
-                    </TableCellWrapper>
+                    </CombinedTitleContainer>
                   );
                 }}
               </Table.Cell>
             ) : (
               <Table.Cell dataKey={column.id}>
                 {(rowData: any, rowIndex: any) => {
-                  return (
-                    <TableCellWrapper
-                      playing={
-                        (rowData.uniqueId === playQueue?.currentSongUniqueId && nowPlaying) ||
-                        (!nowPlaying &&
-                          rowData.id === playQueue?.currentSongId &&
-                          playQueue.currentSongId)
-                          ? 'true'
-                          : 'false'
-                      }
-                      height={rowHeight}
-                      onClick={(e: any) => {
-                        if (
-                          !column.dataKey?.match(
-                            /starred|userRating|genre|columnResizable|columnDefaultSort/
-                          )
-                        ) {
-                          handleRowClick(
-                            e,
-                            {
-                              ...rowData,
-                              rowIndex,
-                            },
-                            sortColumn && !nowPlaying ? sortedData : data
-                          );
-                        }
-                      }}
-                      onDoubleClick={() => {
-                        if (
-                          !column.dataKey?.match(
-                            /starred|userRating|genre|columnResizable|columnDefaultSort/
-                          )
-                        ) {
-                          handleRowDoubleClick({
-                            ...rowData,
-                            rowIndex,
-                          });
-                        }
-                      }}
-                      onMouseDown={(e: any) => handleSelectMouseDown(e, rowData)}
-                      onMouseEnter={() => handleSelectMouseEnter(rowData)}
-                      onMouseUp={() => handleSelectMouseUp()}
-                      dragover={
-                        multiSelect.currentMouseOverId === rowData.uniqueId &&
-                        multiSelect.isDragging
-                          ? 'true'
-                          : 'false'
-                      }
-                    >
-                      <div
-                        style={{
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          paddingRight: !column.dataKey?.match(
-                            /starred|userRating|columnResizable|columnDefaultSort|filterEnabled|filterDelete/
-                          )
-                            ? '10px'
-                            : undefined,
+                  // Playback filter columns -------------------------------------------------------
+                  if (column.dataKey === 'filter') {
+                    return <div style={{ userSelect: 'text' }}>{rowData.filter}</div>;
+                  }
+
+                  if (column.dataKey === 'filterDelete') {
+                    return (
+                      <>
+                        <StyledIconButton
+                          appearance="subtle"
+                          icon={<Icon icon="trash2" />}
+                          onClick={() => {
+                            dispatch(removePlaybackFilter({ filterName: rowData.filter }));
+                          }}
+                        />
+                      </>
+                    );
+                  }
+
+                  if (column.dataKey === 'filterEnabled') {
+                    return (
+                      <>
+                        <StyledCheckbox
+                          defaultChecked={
+                            configState.playback.filters.find(
+                              (f: any) => f.filter === rowData.filter
+                            )?.enabled === true
+                          }
+                          checked={
+                            configState.playback.filters.find(
+                              (f: any) => f.filter === rowData.filter
+                            )?.enabled === true
+                          }
+                          onChange={(_v: any, e: boolean) => {
+                            dispatch(
+                              setPlaybackFilter({
+                                filterName: rowData.filter,
+                                newFilter: {
+                                  ...configState.playback.filters.find(
+                                    (f: any) => f.filter === rowData.filter
+                                  ),
+                                  enabled: e,
+                                },
+                              })
+                            );
+                          }}
+                        />
+                      </>
+                    );
+                  }
+                  // -------------------------------------------------------------------------------
+
+                  // List-view column selector columns
+                  if (column.dataKey === 'columnResizable') {
+                    return (
+                      <>
+                        <StyledCheckbox
+                          defaultChecked={
+                            configState.lookAndFeel.listView[config.option].columns[
+                              configState.lookAndFeel.listView[config.option].columns.findIndex(
+                                (col: any) => col.dataKey === rowData.dataKey
+                              )
+                            ]?.resizable === true
+                          }
+                          checked={
+                            configState.lookAndFeel.listView[config.option].columns[
+                              configState.lookAndFeel.listView[config.option].columns.findIndex(
+                                (col: any) => col.dataKey === rowData.dataKey
+                              )
+                            ]?.resizable === true
+                          }
+                          onChange={(_v: any, e: any) => {
+                            const cols = configState.lookAndFeel.listView[
+                              config.option
+                            ].columns.map((col: any) => {
+                              if (rowData.dataKey === col.dataKey) {
+                                if (e === true) {
+                                  const { flexGrow, ...newCols } = col;
+                                  return { ...newCols, resizable: e };
+                                }
+                                const columnPickerMatch = config.columnList.findIndex(
+                                  (picker: any) => picker.value.dataKey === rowData.dataKey
+                                );
+                                const matchedFlexGrowValue =
+                                  config.columnList[columnPickerMatch]?.value.flexGrow || 1;
+
+                                const { width, rowIndex: r, ...newCols } = col;
+
+                                return {
+                                  ...newCols,
+                                  flexGrow: matchedFlexGrowValue,
+                                  resizable: e,
+                                };
+                              }
+
+                              return { ...col };
+                            });
+
+                            dispatch(setColumnList({ listType: config.option, entries: cols }));
+                          }}
+                        />
+                      </>
+                    );
+                  }
+                  // -------------------------------------------------------------------------------
+
+                  // Misc --------------------------------------------------------------------------
+                  if (column.dataKey === 'custom') {
+                    <div>{column.custom}</div>;
+                  }
+                  // -------------------------------------------------------------------------------
+
+                  // List-view columns -------------------------------------------------------------
+                  if (column.dataKey === 'coverart') {
+                    return (
+                      <CoverArtCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        misc={misc}
+                        rowHeight={rowHeight}
+                        cacheImages={cacheImages}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                      />
+                    );
+                  }
+
+                  if (column.dataKey === 'album') {
+                    return (
+                      <LinkCell
+                        linkProp="album"
+                        onClickLink={(e: any) => {
+                          if (!e.ctrlKey && !e.shiftKey) {
+                            if (rowData.albumId && !isModal) {
+                              history.push(`/library/album/${rowData.albumId}`);
+                            } else if (rowData[0]?.id && isModal) {
+                              dispatch(
+                                addModalPage({
+                                  pageType: 'album',
+                                  id: rowData[0]?.id,
+                                })
+                              );
+                            }
+                          }
+                        }}
+                        rowData={rowData}
+                        column={column}
+                        misc={misc}
+                        rowHeight={rowHeight}
+                        cacheImages={cacheImages}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                        fontSize={fontSize}
+                      />
+                    );
+                  }
+
+                  if (column.dataKey === 'artist') {
+                    return (
+                      <LinkCell
+                        linkProp="albumArtist"
+                        onClickLink={(e: any) => {
+                          if (!e.ctrlKey && !e.shiftKey) {
+                            if (rowData.albumArtistId && !isModal) {
+                              history.push(`/library/artist/${rowData.albumArtistId}`);
+                            } else if (rowData[0]?.id && isModal) {
+                              dispatch(
+                                addModalPage({
+                                  pageType: 'artist',
+                                  id: rowData[0]?.id,
+                                })
+                              );
+                            }
+                          }
+                        }}
+                        rowData={rowData}
+                        column={column}
+                        misc={misc}
+                        rowHeight={rowHeight}
+                        cacheImages={cacheImages}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                        fontSize={fontSize}
+                      />
+                    );
+                  }
+
+                  if (column.dataKey === 'bitRate') {
+                    return (
+                      <CustomCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        rowHeight={rowHeight}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
                         }}
                       >
-                        {column.dataKey === 'genre' ? (
-                          <>
-                            {rowData.genre ? (
-                              rowData.genre.map((genre: GenericItem, i: number) => (
-                                <span key={`${rowData.uniqueId}-${genre.id}`}>
-                                  {i > 0 && ', '}
-                                  <CustomTooltip text={genre.title}>
-                                    <RsuiteLinkButton
-                                      appearance="link"
-                                      onClick={(e: any) => {
-                                        if (!e.ctrlKey && !e.shiftKey) {
-                                          dispatch(
-                                            setFilter({ listType: Item.Album, data: genre.title })
-                                          );
-                                          dispatch(
-                                            setPagination({
-                                              listType: Item.Album,
-                                              data: { activePage: 1 },
-                                            })
-                                          );
+                        {rowData[column.dataKey]} kbps
+                      </CustomCell>
+                    );
+                  }
 
-                                          localStorage.setItem('scroll_list_albumList', '0');
-                                          localStorage.setItem('scroll_grid_albumList', '0');
-                                          setTimeout(() => {
-                                            history.push(`/library/album?sortType=${genre.title}`);
-                                          }, 50);
-                                        }
-                                      }}
-                                      playing={
-                                        (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                          nowPlaying) ||
-                                        (!nowPlaying &&
-                                          rowData.id === playQueue?.currentSongId &&
-                                          playQueue?.currentSongId)
-                                          ? 'true'
-                                          : 'false'
-                                      }
-                                      style={{
-                                        fontSize: `${fontSize}px`,
-                                      }}
-                                    >
-                                      {genre.title}
-                                    </RsuiteLinkButton>
-                                  </CustomTooltip>
-                                </span>
-                              ))
-                            ) : (
-                              <span>&#8203;</span>
-                            )}
-                          </>
-                        ) : column.dataKey === 'artist' ? (
-                          <>
-                            {rowData[column.dataKey] ? (
-                              <CustomTooltip text={rowData.albumArtist}>
-                                <RsuiteLinkButton
-                                  appearance="link"
-                                  onClick={(e: any) => {
-                                    if (!e.ctrlKey && !e.shiftKey) {
-                                      if (rowData.albumArtistId && !isModal) {
-                                        history.push(`/library/artist/${rowData.albumArtistId}`);
-                                      } else if (rowData[0]?.id && isModal) {
-                                        dispatch(
-                                          addModalPage({
-                                            pageType: 'artist',
-                                            id: rowData[0]?.id,
-                                          })
-                                        );
-                                      }
-                                    }
-                                  }}
-                                  playing={
-                                    (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                      nowPlaying) ||
-                                    (!nowPlaying &&
-                                      rowData.id === playQueue?.currentSongId &&
-                                      playQueue?.currentSongId)
-                                      ? 'true'
-                                      : 'false'
-                                  }
-                                  style={{
-                                    fontSize: `${fontSize}px`,
-                                  }}
-                                >
-                                  {rowData.albumArtist}
-                                </RsuiteLinkButton>
-                              </CustomTooltip>
-                            ) : (
-                              <span>&#8203;</span>
-                            )}
-                          </>
-                        ) : column.dataKey === 'album' ? (
-                          <CustomTooltip text={rowData[column.dataKey]}>
-                            <RsuiteLinkButton
-                              appearance="link"
-                              onClick={(e: any) => {
-                                if (!e.ctrlKey && !e.shiftKey) {
-                                  if (rowData.albumId && !isModal) {
-                                    history.push(`/library/album/${rowData.albumId}`);
-                                  } else if (rowData.albumId && isModal) {
-                                    dispatch(
-                                      addModalPage({
-                                        pageType: 'album',
-                                        id: rowData.albumId,
-                                      })
-                                    );
-                                  }
-                                }
-                              }}
-                              playing={
-                                (rowData.uniqueId === playQueue?.currentSongUniqueId &&
-                                  nowPlaying) ||
-                                (!nowPlaying &&
-                                  rowData.id === playQueue?.currentSongId &&
-                                  playQueue?.currentSongId)
-                                  ? 'true'
-                                  : 'false'
-                              }
-                              style={{
-                                fontSize: `${fontSize}px`,
-                              }}
-                            >
-                              {rowData[column.dataKey]}
-                            </RsuiteLinkButton>
-                          </CustomTooltip>
-                        ) : column.dataKey === 'duration' ? (
-                          !formatSongDuration(rowData[column.dataKey]) ? (
-                            <span>&#8203;</span>
-                          ) : (
-                            formatSongDuration(rowData[column.dataKey])
-                          )
-                        ) : column.dataKey === 'public' ? (
-                          rowData[column.dataKey] ? (
-                            'Public'
-                          ) : (
-                            'Private'
-                          )
-                        ) : column.dataKey === 'changed' || column.dataKey === 'created' ? (
-                          <>
-                            {rowData[column.dataKey] ? (
-                              formatDate(rowData[column.dataKey])
-                            ) : (
-                              <span>&#8203;</span>
-                            )}
-                          </>
-                        ) : column.dataKey === 'size' ? (
-                          `${convertByteToMegabyte(rowData[column.dataKey])} MB`
-                        ) : column.dataKey === 'starred' ? (
-                          <>
-                            {rowData.isDir ? (
-                              <></>
-                            ) : (
-                              <StyledIconToggle
-                                tabIndex={0}
-                                icon={rowData?.starred ? 'heart' : 'heart-o'}
-                                size="lg"
-                                fixedWidth
-                                active={rowData?.starred ? 'true' : 'false'}
-                                onClick={() => handleFavorite(rowData)}
-                              />
-                            )}
-                          </>
-                        ) : column.dataKey === 'userRating' ? (
-                          <StyledRate
-                            size="xs"
-                            readOnly={false}
-                            value={rowData.userRating ? rowData.userRating : 0}
-                            defaultValue={rowData?.userRating ? rowData.userRating : 0}
-                            onChange={(e: any) => handleRating(rowData, e)}
-                          />
-                        ) : column.dataKey === 'bitRate' ? (
-                          !rowData[column.dataKey] ? (
-                            <span>&#8203;</span>
-                          ) : (
-                            `${rowData[column.dataKey]} kbps`
-                          )
-                        ) : column.dataKey === 'custom' ? (
-                          <div>{column.custom}</div>
-                        ) : column.dataKey === 'filter' ? (
-                          <div style={{ userSelect: 'text' }}>{rowData.filter}</div>
-                        ) : column.dataKey === 'filterDelete' ? (
-                          <>
-                            <StyledIconButton
-                              appearance="subtle"
-                              icon={<Icon icon="trash2" />}
-                              onClick={() => {
-                                dispatch(removePlaybackFilter({ filterName: rowData.filter }));
-                              }}
-                            />
-                          </>
-                        ) : column.dataKey === 'filterEnabled' ? (
-                          <>
-                            <StyledCheckbox
-                              defaultChecked={
-                                configState.playback.filters.find(
-                                  (f: any) => f.filter === rowData.filter
-                                )?.enabled === true
-                              }
-                              checked={
-                                configState.playback.filters.find(
-                                  (f: any) => f.filter === rowData.filter
-                                )?.enabled === true
-                              }
-                              onChange={(_v: any, e: boolean) => {
-                                dispatch(
-                                  setPlaybackFilter({
-                                    filterName: rowData.filter,
-                                    newFilter: {
-                                      ...configState.playback.filters.find(
-                                        (f: any) => f.filter === rowData.filter
-                                      ),
-                                      enabled: e,
-                                    },
-                                  })
-                                );
-                              }}
-                            />
-                          </>
-                        ) : column.dataKey === 'columnResizable' ? (
-                          <div>
-                            <StyledCheckbox
-                              defaultChecked={
-                                configState.lookAndFeel.listView[config.option].columns[
-                                  configState.lookAndFeel.listView[config.option].columns.findIndex(
-                                    (col: any) => col.dataKey === rowData.dataKey
-                                  )
-                                ]?.resizable === true
-                              }
-                              checked={
-                                configState.lookAndFeel.listView[config.option].columns[
-                                  configState.lookAndFeel.listView[config.option].columns.findIndex(
-                                    (col: any) => col.dataKey === rowData.dataKey
-                                  )
-                                ]?.resizable === true
-                              }
-                              onChange={(_v: any, e: any) => {
-                                const cols = configState.lookAndFeel.listView[
-                                  config.option
-                                ].columns.map((col: any) => {
-                                  if (rowData.dataKey === col.dataKey) {
-                                    if (e === true) {
-                                      const { flexGrow, ...newCols } = col;
-                                      return { ...newCols, resizable: e };
-                                    }
-                                    const columnPickerMatch = config.columnList.findIndex(
-                                      (picker: any) => picker.value.dataKey === rowData.dataKey
-                                    );
-                                    const matchedFlexGrowValue =
-                                      config.columnList[columnPickerMatch]?.value.flexGrow || 1;
+                  if (column.dataKey === 'changed' || column.dataKey === 'created') {
+                    return (
+                      <CustomCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        rowHeight={rowHeight}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                      >
+                        {formatDate(rowData[column.dataKey])}
+                      </CustomCell>
+                    );
+                  }
 
-                                    const { width, rowIndex: r, ...newCols } = col;
+                  if (column.dataKey === 'duration') {
+                    return (
+                      <CustomCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        rowHeight={rowHeight}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                      >
+                        {formatSongDuration(rowData.duration)}
+                      </CustomCell>
+                    );
+                  }
 
-                                    return {
-                                      ...newCols,
-                                      flexGrow: matchedFlexGrowValue,
-                                      resizable: e,
-                                    };
-                                  }
+                  if (column.dataKey === 'genre') {
+                    return (
+                      <LinkCell
+                        linkProp="genre"
+                        onClickLink={(e: any, index: number) => {
+                          if (!e.ctrlKey && !e.shiftKey) {
+                            dispatch(
+                              setFilter({
+                                listType: Item.Album,
+                                data: rowData.genre[index].title,
+                              })
+                            );
+                            dispatch(
+                              setPagination({
+                                listType: Item.Album,
+                                data: { activePage: 1 },
+                              })
+                            );
 
-                                  return { ...col };
-                                });
+                            localStorage.setItem('scroll_list_albumList', '0');
+                            localStorage.setItem('scroll_grid_albumList', '0');
+                            setTimeout(() => {
+                              history.push(`/library/album?sortType=${rowData.genre[index].title}`);
+                            }, 50);
+                          }
+                        }}
+                        rowData={rowData}
+                        column={column}
+                        misc={misc}
+                        rowHeight={rowHeight}
+                        cacheImages={cacheImages}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                        fontSize={fontSize}
+                      />
+                    );
+                  }
 
-                                dispatch(setColumnList({ listType: config.option, entries: cols }));
-                              }}
-                            />
-                          </div>
-                        ) : rowData[column.dataKey] ? (
-                          rowData[column.dataKey]
-                        ) : (
+                  if (column.dataKey === 'size') {
+                    return (
+                      <CustomCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        rowHeight={rowHeight}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                      >
+                        {convertByteToMegabyte(rowData[column.dataKey])} MB
+                      </CustomCell>
+                    );
+                  }
+
+                  if (column.dataKey === 'starred') {
+                    return (
+                      <CustomCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        rowHeight={rowHeight}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                      >
+                        {rowData.isDir ? (
                           <span>&#8203;</span>
+                        ) : (
+                          <StyledIconToggle
+                            tabIndex={0}
+                            icon={rowData?.starred ? 'heart' : 'heart-o'}
+                            size="lg"
+                            fixedWidth
+                            active={rowData?.starred ? 'true' : 'false'}
+                            onClick={() => handleFavorite(rowData)}
+                          />
                         )}
-                      </div>
-                    </TableCellWrapper>
+                      </CustomCell>
+                    );
+                  }
+
+                  if (column.dataKey === 'userRating') {
+                    return (
+                      <CustomCell
+                        rowData={rowData}
+                        rowIndex={rowIndex}
+                        column={column}
+                        rowHeight={rowHeight}
+                        handleRowClick={handleRowClick}
+                        handleRowDoubleClick={handleRowDoubleClick}
+                        onMouseDown={(e: any) => {
+                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleSelectMouseDown(e, rowData);
+                        }}
+                        onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                        onMouseUp={() => {
+                          handleSelectMouseUp();
+                          handleStartSelectDrag.onMouseUp();
+                        }}
+                      >
+                        <StyledRate
+                          size="xs"
+                          readOnly={false}
+                          value={rowData.userRating ? rowData.userRating : 0}
+                          defaultValue={rowData?.userRating ? rowData.userRating : 0}
+                          onChange={(e: any) => handleRating(rowData, e)}
+                        />
+                      </CustomCell>
+                    );
+                  }
+
+                  return (
+                    <TextCell
+                      rowData={rowData}
+                      rowIndex={rowIndex}
+                      column={column}
+                      rowHeight={rowHeight}
+                      handleRowClick={handleRowClick}
+                      handleRowDoubleClick={handleRowDoubleClick}
+                      onMouseDown={(e: any) => {
+                        handleStartSelectDrag.onMouseDown(rowData);
+                        handleSelectMouseDown(e, rowData);
+                      }}
+                      onMouseEnter={() => handleContinueSelectDrag(rowData)}
+                      onMouseUp={() => {
+                        handleSelectMouseUp();
+                        handleStartSelectDrag.onMouseUp();
+                      }}
+                    />
                   );
+                  // -------------------------------------------------------------------------------
                 }}
               </Table.Cell>
             )}

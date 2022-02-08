@@ -212,7 +212,7 @@ export const SidebarNavItem = styled(Nav.Item)<{ hide?: boolean }>`
 export const CoverArtWrapper = styled.div<{ $link?: boolean; size: number; card?: boolean }>`
   display: inline-block;
   filter: ${(props) => props.theme.other.coverArtFilter};
-  cursor: ${(props) => (props.$link ? 'pointer' : 'default')};
+  cursor: ${(props) => (props.$link ? 'pointer' : undefined)};
   text-align: center;
   height: ${(props) => props.size}px;
   width: ${(props) => props.size}px;
