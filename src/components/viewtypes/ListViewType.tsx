@@ -180,7 +180,6 @@ const ListViewType = (
         style={{
           flexGrow: 1,
           height: '100%',
-          cursor: isDragging ? 'all-scroll' : 'default',
         }}
         ref={wrapperRef}
         onMouseDown={(e) => {
