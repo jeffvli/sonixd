@@ -28,6 +28,7 @@ body {
 .rs-modal-wrapper {
   display: flex;
   overflow-y: hidden !important;
+  backdrop-filter: blur(3px);
 }
 
 .rs-modal-backdrop.fade {
@@ -52,10 +53,6 @@ body {
 .rs-table-cell-content > div > div > div > div > span > img::selection,
 .rs-table-cell-content > div > div > div > div > img::selection {
   background-color: transparent;
-}
-
-.rs-table-row {
-  cursor: default;
 }
 
 .rs-panel-body,
