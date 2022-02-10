@@ -47,7 +47,7 @@ export const StyledButton = styled(Button)<{ width: number; $circle: boolean }>`
       ? undefined
       : `${props.theme.colors.button.default.color}`} !important;
 
-  filter: ${(props) => (props.disabled ? 'brightness(0.8)' : 'none')};
+  filter: ${(props) => (props.disabled ? 'brightness(0.65)' : 'none')};
   transition: 0s;
   width: ${(props) => `${props.width}px`};
 
@@ -233,7 +233,7 @@ export const StyledIconButton = styled(IconButton)`
       ? undefined
       : `${props.theme.colors.button.default.color}`} !important;
 
-  filter: ${(props) => (props.disabled ? 'brightness(0.8)' : 'none')};
+  filter: ${(props) => (props.disabled ? 'brightness(0.65)' : 'none')};
   transition: 0s;
   width: ${(props) => `${props.width}px`};
 
