@@ -167,12 +167,10 @@ export const StyledInput = styled(Input)<{ width: number; opacity?: number }>`
 `;
 
 export const StyledCheckbox = styled(Checkbox)`
+  user-select: none;
   div {
     label {
       span {
-        &:before {
-          border: ${(props) => `1px solid ${props.theme.colors.primary}`};
-        }
         span {
           &:before {
             background-color: ${(props) =>
