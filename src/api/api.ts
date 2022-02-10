@@ -699,20 +699,32 @@ export const getGenres = async () => {
 
 export const getSearch = async (options: {
   query: string;
-  artistCount?: number;
+  artistCount?: 0;
   artistOffset?: 0;
-  albumCount?: number;
+  albumCount?: 0;
   albumOffset?: 0;
-  songCount?: number;
+  songCount?: 0;
   songOffset?: 0;
   musicFolderId?: string | number;
 }) => {
   const { data } = await api.get(`/search3`, { params: options });
 
   return {
-    artist: (data.searchResult3.artist || []).map((entry: any) => normalizeArtist(entry)),
-    album: (data.searchResult3.album || []).map((entry: any) => normalizeAlbum(entry)),
-    song: (data.searchResult3.song || []).map((entry: any) => normalizeSong(entry)),
+    artist: {
+      data: (data.searchResult3?.artist || []).map((entry: any) => normalizeArtist(entry)),
+      nextCursor:
+        data.searchResult3?.artist && (options!.artistOffset || 0) + (options!.artistCount || 0),
+    },
+    album: {
+      data: (data.searchResult3?.album || []).map((entry: any) => normalizeAlbum(entry)),
+      nextCursor:
+        data.searchResult3?.album && (options!.albumOffset || 0) + (options!.albumCount || 0),
+    },
+    song: {
+      data: (data.searchResult3?.song || []).map((entry: any) => normalizeSong(entry)),
+      nextCursor:
+        data.searchResult3?.song && (options!.songOffset || 0) + (options!.songCount || 0),
+    },
   };
 };
 

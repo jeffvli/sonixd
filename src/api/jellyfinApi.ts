@@ -744,33 +744,89 @@ export const getMusicFolders = async () => {
   return (data.Items || []).map((entry: any) => normalizeFolder(entry));
 };
 
-export const getSearch = async (options: { query: string; musicFolderId?: string | number }) => {
-  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
-    params: {
-      fields: 'Genres, DateCreated, MediaSources, ChildCount, UserData, ParentId',
-      includeArtists: false,
-      includeGenres: false,
-      includeItemTypes: 'Audio, MusicArtist, MusicAlbum',
-      includeMedia: false,
-      includeStudios: false,
-      limit: 50,
-      parentId: options.musicFolderId,
-      recursive: true,
-      searchTerm: options.query,
-    },
-  });
+export const getSearch = async (options: {
+  query: string;
+  artistCount?: 0;
+  artistOffset?: 0;
+  albumCount?: 0;
+  albumOffset?: 0;
+  songCount?: 0;
+  songOffset?: 0;
+  musicFolderId?: string | number;
+}) => {
+  const songs =
+    options.songCount !== 0 &&
+    (
+      await jellyfinApi.get(`/users/${auth.username}/items`, {
+        params: {
+          fields: 'Genres, DateCreated, MediaSources, ParentId',
+          includeItemTypes: 'Audio',
+          includeArtists: false,
+          includeGenres: false,
+          includeMedia: false,
+          includeStudios: false,
+          limit: options.songCount,
+          startIndex: options.songOffset,
+          parentId: options.musicFolderId,
+          recursive: true,
+          searchTerm: options.query,
+        },
+      })
+    )?.data;
 
-  const { data: artistData } = await jellyfinApi.get(`/artists`, {
-    params: { limit: 10, parentId: options.musicFolderId, searchTerm: options.query },
-  });
+  const albums =
+    options.albumCount !== 0 &&
+    (
+      await jellyfinApi.get(`/users/${auth.username}/items`, {
+        params: {
+          fields: 'Genres, DateCreated, ChildCount, ParentId',
+          includeItemTypes: 'MusicAlbum',
+          includeArtists: false,
+          includeGenres: false,
+          includeMedia: false,
+          includeStudios: false,
+          limit: options.albumCount,
+          startIndex: options.albumOffset,
+          parentId: options.musicFolderId,
+          recursive: true,
+          searchTerm: options.query,
+        },
+      })
+    )?.data;
 
-  const albumItems = data.Items.filter((entry: any) => entry.Type === 'MusicAlbum');
-  const songItems = data.Items.filter((entry: any) => entry.Type === 'Audio');
+  const artists =
+    options.artistCount !== 0 &&
+    (
+      await jellyfinApi.get(`/artists`, {
+        params: {
+          fields: 'Genres, ParentId',
+          limit: options.artistCount,
+          startIndex: options.artistOffset,
+          parentId: options.musicFolderId,
+          searchTerm: options.query,
+        },
+      })
+    )?.data;
 
   return {
-    artist: (artistData.Items || []).map((entry: any) => normalizeArtist(entry)),
-    album: (albumItems || []).map((entry: any) => normalizeAlbum(entry)),
-    song: (songItems || []).map((entry: any) => normalizeSong(entry)),
+    artist: {
+      data: (artists.Items || []).map((entry: any) => normalizeArtist(entry)),
+      nextCursor:
+        (options!.artistCount || 0) + (options!.artistOffset || 0) < artists.TotalRecordCount &&
+        (options!.artistCount || 0) + (options!.artistOffset || 0),
+    },
+    album: {
+      data: (albums.Items || []).map((entry: any) => normalizeAlbum(entry)),
+      nextCursor:
+        (options!.albumCount || 0) + (options!.albumOffset || 0) < albums.TotalRecordCount &&
+        (options!.albumCount || 0) + (options!.albumOffset || 0),
+    },
+    song: {
+      data: (songs?.Items || []).map((entry: any) => normalizeSong(entry)),
+      nextCursor:
+        (options!.songCount || 0) + (options!.songOffset || 0) < songs?.TotalRecordCount &&
+        (options!.songCount || 0) + (options!.songOffset || 0),
+    },
   };
 };
 
