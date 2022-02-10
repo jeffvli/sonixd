@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import settings from 'electron-settings';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
@@ -7,18 +7,10 @@ import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Titlebar from './Titlebar';
 import { RootContainer, RootFooter, MainContainer } from './styled';
-import { setContextMenu, setSearchQuery } from '../../redux/miscSlice';
+import { setContextMenu } from '../../redux/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
-import {
-  StyledIconButton,
-  StyledInput,
-  StyledInputGroup,
-  StyledInputGroupButton,
-  StyledNavItem,
-  StyledPopover,
-} from '../shared/styled';
-
+import { StyledButton, StyledNavItem, StyledPopover } from '../shared/styled';
 import {
   GridViewConfigPanel,
   ListViewConfigPanel,
@@ -32,6 +24,7 @@ import CacheConfig from '../settings/ConfigPanels/CacheConfig';
 import WindowConfig from '../settings/ConfigPanels/WindowConfig';
 import AdvancedConfig from '../settings/ConfigPanels/AdvancedConfig';
 import { setSidebar } from '../../redux/configSlice';
+import SearchBar from '../search/SearchBar';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const { t } = useTranslation();
@@ -40,8 +33,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const multiSelect = useAppSelector((state) => state.multiSelect);
-  const [openSearch, setOpenSearch] = useState(false);
-  const [localSearchQuery, setLocalSearchQuery] = useState('');
+
   const [activeConfigNav, setActiveConfigNav] = useState('listView');
 
   useHotkeys(
@@ -52,13 +44,6 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
     },
     []
   );
-
-  useHotkeys('ctrl+f', () => {
-    setOpenSearch(true);
-    const searchInput = document.getElementById('local-search-input') as HTMLInputElement;
-    searchInput.focus();
-    searchInput.select();
-  });
 
   const handleToggle = () => {
     settings.setSync('sidebar.expand', !config.lookAndFeel.sidebar.expand);
@@ -106,10 +91,6 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
 
     history.push(route);
   };
-
-  useEffect(() => {
-    dispatch(setSearchQuery(localSearchQuery));
-  }, [dispatch, localSearchQuery]);
 
   return (
     <>
@@ -163,87 +144,23 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
           >
             <FlexboxGrid.Item>
               <ButtonToolbar>
-                <StyledIconButton
-                  appearance="subtle"
-                  size="sm"
-                  icon={<Icon icon="arrow-left-line" />}
-                  onClick={() => history.goBack()}
-                />
-                <StyledIconButton
-                  appearance="subtle"
-                  size="sm"
-                  icon={<Icon icon="arrow-right-line" />}
-                  onClick={() => history.goForward()}
-                />
+                <StyledButton appearance="subtle" size="sm" onClick={() => history.goBack()}>
+                  <Icon icon="arrow-left-line" />
+                </StyledButton>
+                <StyledButton appearance="subtle" size="sm" onClick={() => history.goForward()}>
+                  <Icon icon="arrow-right-line" />
+                </StyledButton>
               </ButtonToolbar>
             </FlexboxGrid.Item>
             <FlexboxGrid.Item>
               <ButtonToolbar>
-                <span style={{ display: 'inline-block' }}>
-                  {misc.searchQuery !== '' || openSearch ? (
-                    <StyledInputGroup inside>
-                      <StyledInput
-                        opacity={0.6}
-                        size="sm"
-                        id="local-search-input"
-                        value={localSearchQuery}
-                        onChange={(e: string) => setLocalSearchQuery(e)}
-                        onPressEnter={() => {
-                          if (misc.searchQuery.trim()) {
-                            history.push(`/search?query=${misc.searchQuery}`);
-                          }
-                          dispatch(setSearchQuery(''));
-                          setOpenSearch(false);
-                        }}
-                        onKeyDown={(e: KeyboardEvent) => {
-                          if (e.key === 'Escape') {
-                            dispatch(setSearchQuery(''));
-                            setOpenSearch(false);
-                          }
-                        }}
-                        style={{ width: '180px' }}
-                      />
-                      <StyledInputGroupButton
-                        height={30}
-                        appearance="subtle"
-                        tabIndex={0}
-                        onClick={() => {
-                          dispatch(setSearchQuery(''));
-                          setOpenSearch(false);
-                        }}
-                        onKeyDown={(e: any) => {
-                          if (e.key === ' ' || e.key === 'Enter') {
-                            dispatch(setSearchQuery(''));
-                            setOpenSearch(false);
-                          }
-                        }}
-                      >
-                        <Icon icon="close" />
-                      </StyledInputGroupButton>
-                    </StyledInputGroup>
-                  ) : (
-                    <StyledIconButton
-                      onClick={() => {
-                        setOpenSearch(true);
-                        setTimeout(() => {
-                          const searchInput = document.getElementById(
-                            'local-search-input'
-                          ) as HTMLInputElement;
-                          searchInput.focus();
-                          searchInput.select();
-                        }, 50);
-                      }}
-                      appearance="subtle"
-                      icon={<Icon icon="search" />}
-                    />
-                  )}
-                </span>
+                <SearchBar />
                 <Whisper
                   speaker={
                     <StyledPopover
                       style={{
                         width: '620px',
-                        maxHeight: '620px',
+                        maxHeight: '80vh',
                         overflowY: 'auto',
                         overflowX: 'hidden',
                         padding: '0px',
@@ -282,7 +199,9 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                   placement="bottomEnd"
                   preventOverflow
                 >
-                  <StyledIconButton appearance="subtle" icon={<Icon icon="cog" />} />
+                  <StyledButton appearance="subtle">
+                    <Icon icon="cog" />
+                  </StyledButton>
                 </Whisper>
               </ButtonToolbar>
             </FlexboxGrid.Item>
