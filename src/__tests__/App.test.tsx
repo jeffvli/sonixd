@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { Middleware, Dispatch, AnyAction } from 'redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import configureMockStore from 'redux-mock-store';
 import { render } from '@testing-library/react';
 import { PlayQueue } from '../redux/playQueueSlice';
@@ -18,6 +19,8 @@ import { View } from '../redux/viewSlice';
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);
+
+const queryClient = new QueryClient();
 
 const playQueueState: PlayQueue = {
   player1: {
@@ -503,7 +506,9 @@ describe('App', () => {
     expect(
       render(
         <Provider store={store}>
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </Provider>
       )
     ).toBeTruthy();
