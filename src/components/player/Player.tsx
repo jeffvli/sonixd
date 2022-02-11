@@ -619,7 +619,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     (playerNumber: 1 | 2) => {
       ipcRenderer.send('current-song', playQueue.current);
 
-      if (config.serverType === Server.Jellyfin) {
+      if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
         const currentSeek =
           playerNumber === 1
             ? player1Ref.current.audioEl.current.currentTime

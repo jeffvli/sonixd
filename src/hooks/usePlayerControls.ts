@@ -70,7 +70,7 @@ const usePlayerControls = (
         playersRef.current.player2.audioEl.current.volume = 0;
         playersRef.current.player2.audioEl.current.pause();
 
-        if (config.serverType === Server.Jellyfin) {
+        if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
           apiController({
             serverType: config.serverType,
             endpoint: 'scrobble',
@@ -91,7 +91,7 @@ const usePlayerControls = (
         playersRef.current.player1.audioEl.current.volume = 0;
         playersRef.current.player1.audioEl.current.pause();
 
-        if (config.serverType === Server.Jellyfin) {
+        if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
           apiController({
             serverType: config.serverType,
             endpoint: 'scrobble',
