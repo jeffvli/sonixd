@@ -10,7 +10,7 @@ import { RootContainer, RootFooter, MainContainer } from './styled';
 import { setContextMenu } from '../../redux/miscSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearSelected } from '../../redux/multiSelectSlice';
-import { StyledButton, StyledNavItem, StyledPopover } from '../shared/styled';
+import { StyledButton, StyledNavItem } from '../shared/styled';
 import {
   GridViewConfigPanel,
   ListViewConfigPanel,
@@ -25,6 +25,7 @@ import WindowConfig from '../settings/ConfigPanels/WindowConfig';
 import AdvancedConfig from '../settings/ConfigPanels/AdvancedConfig';
 import { setSidebar } from '../../redux/configSlice';
 import SearchBar from '../search/SearchBar';
+import Popup from '../shared/Popup';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const { t } = useTranslation();
@@ -157,7 +158,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                 <SearchBar />
                 <Whisper
                   speaker={
-                    <StyledPopover
+                    <Popup
                       style={{
                         width: '620px',
                         maxHeight: '80vh',
@@ -193,7 +194,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                           <AdvancedConfig />
                         </>
                       )}
-                    </StyledPopover>
+                    </Popup>
                   }
                   trigger="click"
                   placement="bottomEnd"

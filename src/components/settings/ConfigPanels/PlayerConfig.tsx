@@ -14,7 +14,6 @@ import {
   StyledInputPickerContainer,
   StyledLink,
   StyledPanel,
-  StyledPopover,
   StyledToggle,
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -26,6 +25,7 @@ import { notifyToast } from '../../shared/toast';
 import ConfigOption from '../ConfigOption';
 import { Server } from '../../../types';
 import { isWindows, isWindows10 } from '../../../shared/utils';
+import Popup from '../../shared/Popup';
 
 const getAudioDevice = async () => {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -176,7 +176,7 @@ const PlayerConfig = ({ bordered }: any) => {
                 trigger="none"
                 placement="auto"
                 speaker={
-                  <StyledPopover title={t('Restart?')}>
+                  <Popup title={t('Restart?')}>
                     <div>{t('Do you want to restart the application now?')}</div>
                     <strong>{t('This is highly recommended!')}</strong>
                     <div>
@@ -191,7 +191,7 @@ const PlayerConfig = ({ bordered }: any) => {
                         {t('Yes')}
                       </StyledButton>
                     </div>
-                  </StyledPopover>
+                  </Popup>
                 }
               >
                 <StyledToggle

@@ -16,7 +16,6 @@ import {
   StyledInputPicker,
   StyledInputPickerContainer,
   StyledNavItem,
-  StyledPopover,
   StyledTag,
 } from '../shared/styled';
 import { FilterButton, RefreshButton } from '../shared/ToolbarButtons';
@@ -31,6 +30,7 @@ import { setFilter, setPagination, setAdvancedFilters, setColumnSort } from '../
 import useGridScroll from '../../hooks/useGridScroll';
 import useListScroll from '../../hooks/useListScroll';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 export const ALBUM_SORT_TYPES = [
   { label: i18n.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18n.t('Default') },
@@ -315,7 +315,7 @@ const AlbumList = () => {
                 placement="bottomEnd"
                 preventOverflow
                 speaker={
-                  <StyledPopover width="275px" opacity={0.97}>
+                  <Popup width="275px">
                     <Nav
                       activeKey={view.album.advancedFilters.nav}
                       onSelect={(e) =>
@@ -383,7 +383,7 @@ const AlbumList = () => {
                         }
                       />
                     )}
-                  </StyledPopover>
+                  </Popup>
                 }
               >
                 <FilterButton

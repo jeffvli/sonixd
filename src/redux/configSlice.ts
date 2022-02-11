@@ -29,6 +29,7 @@ export interface ConfigPage {
     playlistListPage?: SortColumn;
   };
   lookAndFeel: {
+    font: string;
     listView: {
       music: { columns: any; rowHeight: number; fontSize: number };
       album: { columns: any; rowHeight: number; fontSize: number };
@@ -114,6 +115,7 @@ const initialState: ConfigPage = {
     playlistListPage: undefined,
   },
   lookAndFeel: {
+    font: String(parsedSettings.font),
     listView: {
       music: {
         columns: parsedSettings.musicListColumns!.map((col: any) => {
@@ -250,6 +252,10 @@ const configSlice = createSlice({
       state.playback.filters[selectedFilterIndex] = action.payload.newFilter;
     },
 
+    setFont: (state, action: PayloadAction<string>) => {
+      state.lookAndFeel.font = action.payload;
+    },
+
     setAudioDeviceId: (state, action: PayloadAction<string>) => {
       state.playback.audioDeviceId = action.payload;
     },
@@ -326,6 +332,7 @@ export const {
   setAudioDeviceId,
   setColumnList,
   setRowHeight,
+  setFont,
   setFontSize,
   setGridCardSize,
   setGridGapSize,

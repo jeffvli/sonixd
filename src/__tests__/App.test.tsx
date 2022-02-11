@@ -72,7 +72,6 @@ const playerState: Player = {
 
 const miscState: General = {
   theme: 'defaultDark',
-  font: 'Poppins',
   contextMenu: {
     show: false,
   },
@@ -136,6 +135,7 @@ const configState: ConfigPage = {
   sort: {},
   serverType: Server.Subsonic,
   lookAndFeel: {
+    font: 'Poppins',
     listView: {
       music: {
         columns: [

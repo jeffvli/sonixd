@@ -472,13 +472,14 @@ export const ContextMenuPopover = styled(Popover)`
   z-index: 2000;
 `;
 
-export const StyledPopover = styled(Popover)<{ width?: string }>`
+export const StyledPopover = styled(Popover)<{ width?: string; font?: string }>`
   color: ${(props) => props.theme.colors.popover.color};
   background: ${(props) => props.theme.colors.popover.background};
   border: 1px #3c4043 solid;
   position: absolute;
   z-index: 1000;
   width: ${(props) => props.width};
+  font-family: ${(props) => props.font};
 `;
 
 export const SectionTitleWrapper = styled.div<{ maxWidth?: string }>`

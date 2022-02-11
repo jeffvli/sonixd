@@ -17,9 +17,9 @@ import {
   StyledInput,
   StyledInputGroup,
   StyledInputGroupButton,
-  StyledPopover,
 } from '../shared/styled';
 import { Item, Song } from '../../types';
+import Popup from '../shared/Popup';
 
 const SearchContainer = styled.div`
   height: 100%;
@@ -313,7 +313,7 @@ const SearchBar = () => {
       preventOverflow
       enterable
       speaker={
-        <StyledPopover
+        <Popup
           style={{
             width: '620px',
             maxHeight: '80vh',
@@ -583,7 +583,7 @@ const SearchBar = () => {
               <></>
             )}
           </SearchContainer>
-        </StyledPopover>
+        </Popup>
       }
     >
       <span style={{ display: 'inline-block' }}>

@@ -17,7 +17,6 @@ import {
   StyledIconButton,
   StyledToggle,
   StyledButton,
-  StyledPopover,
   StyledCheckbox,
   StyledCheckPicker,
 } from '../../shared/styled';
@@ -25,7 +24,7 @@ import ListViewConfig from './ListViewConfig';
 import { Fonts } from '../Fonts';
 import { ALBUM_SORT_TYPES } from '../../library/AlbumList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setTheme, setFont, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
+import { setTheme, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
 import {
   songColumnPicker,
   songColumnListAuto,
@@ -40,6 +39,7 @@ import {
 } from '../ListViewColumns';
 import {
   setActive,
+  setFont,
   setGridAlignment,
   setGridCardSize,
   setGridGapSize,
@@ -51,6 +51,7 @@ import i18n, { Languages } from '../../../i18n/i18n';
 import { notifyToast } from '../../shared/toast';
 import { setPagination } from '../../../redux/viewSlice';
 import { MUSIC_SORT_TYPES } from '../../library/MusicList';
+import Popup from '../../shared/Popup';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -412,7 +413,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               trigger="none"
               placement="auto"
               speaker={
-                <StyledPopover title={t('Restart?')}>
+                <Popup title={t('Restart?')}>
                   <div>{t('Do you want to restart the application now?')}</div>
                   <strong>{t('This is highly recommended!')}</strong>
                   <div>
@@ -427,7 +428,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                       {t('Yes')}
                     </StyledButton>
                   </div>
-                </StyledPopover>
+                </Popup>
               }
             >
               <StyledInputPicker

@@ -9,13 +9,7 @@ import ListViewType from '../viewtypes/ListViewType';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import GridViewType from '../viewtypes/GridViewType';
-import {
-  StyledButton,
-  StyledInput,
-  StyledInputGroup,
-  StyledPopover,
-  StyledTag,
-} from '../shared/styled';
+import { StyledButton, StyledInput, StyledInputGroup, StyledTag } from '../shared/styled';
 import { errorMessages, isFailedResponse } from '../../shared/utils';
 import { notifyToast } from '../shared/toast';
 import { AddPlaylistButton, FilterButton } from '../shared/ToolbarButtons';
@@ -26,6 +20,7 @@ import { Item, Server } from '../../types';
 import { setSort } from '../../redux/playlistSlice';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 const PlaylistList = () => {
   const { t } = useTranslation();
@@ -147,7 +142,7 @@ const PlaylistList = () => {
               placement="auto"
               trigger="click"
               speaker={
-                <StyledPopover>
+                <Popup>
                   <Form>
                     <StyledInputGroup>
                       <StyledInput
@@ -171,7 +166,7 @@ const PlaylistList = () => {
                       {t('Create')}
                     </StyledButton>
                   </Form>
-                </StyledPopover>
+                </Popup>
               }
             >
               <AddPlaylistButton

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tooltip, Whisper } from 'rsuite';
 import styled from 'styled-components';
+import { useAppSelector } from '../../redux/hooks';
 
 const StyledTooltip = styled(Tooltip)`
   .rs-tooltip-inner {
@@ -11,14 +12,15 @@ const StyledTooltip = styled(Tooltip)`
   }
 `;
 
-export const tooltip = (text: string) => <StyledTooltip>{text}</StyledTooltip>;
-
 const CustomTooltip = ({ children, text, delay, placement, disabled, ...rest }: any) => {
+  const config = useAppSelector((state) => state.config);
   return (
     <Whisper
       trigger={disabled ? 'none' : 'hover'}
       delay={delay || 500}
-      speaker={tooltip(text)}
+      speaker={
+        <StyledTooltip style={{ fontFamily: config.lookAndFeel.font }}>{text}</StyledTooltip>
+      }
       placement={placement || 'top'}
       {...rest}
     >

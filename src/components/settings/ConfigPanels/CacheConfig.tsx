@@ -11,7 +11,6 @@ import {
   StyledCheckbox,
   StyledInputGroup,
   StyledLink,
-  StyledPopover,
   StyledTag,
   StyledButton,
   StyledInputGroupButton,
@@ -20,6 +19,7 @@ import { getSongCachePath, getImageCachePath, getRootCachePath } from '../../../
 import { notifyToast } from '../../shared/toast';
 import { setMiscSetting } from '../../../redux/miscSlice';
 import { useAppDispatch } from '../../../redux/hooks';
+import Popup from '../../shared/Popup';
 
 const fsUtils = require('nodejs-fs-utils');
 
@@ -218,7 +218,7 @@ const CacheConfig = ({ bordered }: any) => {
           trigger="click"
           placement="autoVertical"
           speaker={
-            <StyledPopover>
+            <Popup>
               {t('Which cache would you like to clear?')}
               <ButtonToolbar>
                 <StyledButton size="sm" onClick={handleClearSongCache}>
@@ -237,7 +237,7 @@ const CacheConfig = ({ bordered }: any) => {
                   {t('Folder images')}
                 </StyledButton>
               </ButtonToolbar>
-            </StyledPopover>
+            </Popup>
           }
         >
           <StyledButton>{t('Clear cache')}</StyledButton>

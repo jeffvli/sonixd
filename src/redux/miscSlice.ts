@@ -47,7 +47,6 @@ export interface ContextMenu {
 
 export interface General {
   theme: string;
-  font: string;
   modal: Modal;
   modalPages: ModalPage[];
   imgModal: ImgModal;
@@ -63,7 +62,6 @@ export interface General {
 
 const initialState: General = {
   theme: String(parsedSettings.theme),
-  font: String(parsedSettings.font),
   modal: {
     show: false,
     currentPageIndex: undefined,
@@ -139,10 +137,6 @@ const miscSlice = createSlice({
       state.theme = action.payload;
     },
 
-    setFont: (state, action: PayloadAction<string>) => {
-      state.font = action.payload;
-    },
-
     setImgModal: (state, action: PayloadAction<ImgModal>) => {
       state.imgModal = action.payload;
     },
@@ -194,7 +188,6 @@ const miscSlice = createSlice({
 
 export const {
   setTheme,
-  setFont,
   setSearchQuery,
   hideModal,
   addModalPage,

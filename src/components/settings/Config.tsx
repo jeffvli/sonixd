@@ -7,7 +7,7 @@ import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import setDefaultSettings from '../shared/setDefaultSettings';
-import { StyledButton, StyledNavItem, StyledPopover } from '../shared/styled';
+import { StyledButton, StyledNavItem } from '../shared/styled';
 import PlaybackConfig from './ConfigPanels/PlaybackConfig';
 import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';
 import PlayerConfig from './ConfigPanels/PlayerConfig';
@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setActive } from '../../redux/configSlice';
 import { apiController } from '../../api/controller';
 import ExternalConfig from './ConfigPanels/ExternalConfig';
+import Popup from '../shared/Popup';
 
 const GITHUB_RELEASE_URL = 'https://api.github.com/repos/jeffvli/sonixd/releases?per_page=3';
 
@@ -148,7 +149,7 @@ const Config = () => {
                 trigger="click"
                 placement="auto"
                 speaker={
-                  <StyledPopover title={t('Confirm')}>
+                  <Popup title={t('Confirm')}>
                     <div>{t('Are you sure you want to reset your settings to default?')}</div>
                     <strong>{t('WARNING: This will reload the application')}</strong>
                     <div>
@@ -164,7 +165,7 @@ const Config = () => {
                         {t('Yes')}
                       </StyledButton>
                     </div>
-                  </StyledPopover>
+                  </Popup>
                 }
               >
                 <StyledButton size="sm">{t('Reset defaults')}</StyledButton>
@@ -175,7 +176,7 @@ const Config = () => {
                 enterable
                 preventOverflow
                 speaker={
-                  <StyledPopover>
+                  <Popup>
                     <>
                       {t('Current version:')} {packageJson.version}
                       <br />
@@ -207,7 +208,7 @@ const Config = () => {
                         {t('View CHANGELOG')}
                       </StyledButton>
                     </>
-                  </StyledPopover>
+                  </Popup>
                 }
               >
                 <StyledButton

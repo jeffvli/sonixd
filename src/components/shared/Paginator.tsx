@@ -1,12 +1,7 @@
 import React from 'react';
 import { ButtonGroup, ButtonToolbar, FlexboxGrid, Icon, Whisper } from 'rsuite';
-import {
-  SecondaryTextWrapper,
-  StyledButton,
-  StyledIconButton,
-  StyledPagination,
-  StyledPopover,
-} from './styled';
+import Popup from './Popup';
+import { SecondaryTextWrapper, StyledButton, StyledIconButton, StyledPagination } from './styled';
 
 const Paginator = ({ startIndex, endIndex, handleGoToButton, children, ...rest }: any) => {
   return (
@@ -37,7 +32,7 @@ const Paginator = ({ startIndex, endIndex, handleGoToButton, children, ...rest }
               placement="autoVerticalEnd"
               trigger="click"
               speaker={
-                <StyledPopover>
+                <Popup>
                   <ButtonGroup>
                     <StyledButton
                       appearance="subtle"
@@ -96,7 +91,7 @@ const Paginator = ({ startIndex, endIndex, handleGoToButton, children, ...rest }
                       -50
                     </StyledButton>
                   </ButtonToolbar>
-                </StyledPopover>
+                </Popup>
               }
             >
               <StyledIconButton size="sm" appearance="subtle" icon={<Icon icon="caret-right" />} />

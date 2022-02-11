@@ -25,13 +25,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
-import {
-  LinkWrapper,
-  SecondaryTextWrapper,
-  StyledButton,
-  StyledPopover,
-  StyledRate,
-} from '../shared/styled';
+import { LinkWrapper, SecondaryTextWrapper, StyledButton, StyledRate } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import { notifyToast } from '../shared/toast';
@@ -40,6 +34,7 @@ import { setPlaylistRate } from '../../redux/playlistSlice';
 import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
 import { setSidebar } from '../../redux/configSlice';
+import Popup from '../shared/Popup';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -815,11 +810,7 @@ const PlayerBar = () => {
                   placement="top"
                   delay={200}
                   preventOverflow
-                  speaker={
-                    <StyledPopover>
-                      {muted ? t('Muted') : Math.floor(localVolume * 100)}
-                    </StyledPopover>
-                  }
+                  speaker={<Popup>{muted ? t('Muted') : Math.floor(localVolume * 100)}</Popup>}
                 >
                   <CustomSlider
                     tabIndex={0}

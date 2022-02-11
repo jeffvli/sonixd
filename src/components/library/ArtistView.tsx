@@ -37,14 +37,7 @@ import {
   getPlayedSongsNotification,
   isCached,
 } from '../../shared/utils';
-import {
-  LinkWrapper,
-  SectionTitle,
-  StyledButton,
-  StyledLink,
-  StyledPanel,
-  StyledPopover,
-} from '../shared/styled';
+import { LinkWrapper, SectionTitle, StyledButton, StyledLink, StyledPanel } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
@@ -58,6 +51,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 const fac = new FastAverageColor();
 
@@ -712,7 +706,7 @@ const ArtistView = ({ ...rest }: any) => {
                       enterable
                       preventOverflow
                       speaker={
-                        <StyledPopover>
+                        <Popup>
                           <ButtonToolbar>
                             <StyledButton onClick={() => handleDownload('download')}>
                               {t('Download')}
@@ -721,7 +715,7 @@ const ArtistView = ({ ...rest }: any) => {
                               {t('Copy to clipboard')}
                             </StyledButton>
                           </ButtonToolbar>
-                        </StyledPopover>
+                        </Popup>
                       }
                     >
                       <DownloadButton size="lg" appearance="subtle" />
@@ -733,14 +727,14 @@ const ArtistView = ({ ...rest }: any) => {
                       enterable
                       preventOverflow
                       speaker={
-                        <StyledPopover>
+                        <Popup>
                           {data.info.externalUrl &&
                             data.info.externalUrl.map((ext: GenericItem) => (
                               <StyledButton key={ext.id} onClick={() => shell.openExternal(ext.id)}>
                                 {ext.title}
                               </StyledButton>
                             ))}
-                        </StyledPopover>
+                        </Popup>
                       }
                     >
                       <CustomTooltip text={t('Info')}>

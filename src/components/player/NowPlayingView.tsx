@@ -40,7 +40,6 @@ import {
   StyledInputNumber,
   StyledInputPicker,
   StyledInputPickerContainer,
-  StyledPopover,
   StyledTag,
 } from '../shared/styled';
 import {
@@ -57,6 +56,7 @@ import { setPlaylistRate } from '../../redux/playlistSlice';
 import NowPlayingInfoView from './NowPlayingInfoView';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -303,7 +303,7 @@ const NowPlayingView = () => {
                     trigger="click"
                     enterable
                     speaker={
-                      <StyledPopover>
+                      <Popup>
                         <ControlLabel>{`${t('How many tracks?')} ${
                           config.serverType === Server.Subsonic ? '(1 - 500)*' : '(1 - ∞)'
                         }`}</ControlLabel>
@@ -417,7 +417,7 @@ const NowPlayingView = () => {
                             {t('Play')}
                           </StyledButton>
                         </ButtonToolbar>
-                      </StyledPopover>
+                      </Popup>
                     }
                   >
                     <AutoPlaylistButton size="sm" />

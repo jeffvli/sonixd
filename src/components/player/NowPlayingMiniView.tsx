@@ -29,7 +29,6 @@ import {
   StyledInputNumber,
   StyledInputPicker,
   StyledInputPickerContainer,
-  StyledPopover,
   StyledTag,
 } from '../shared/styled';
 import { MiniViewContainer } from './styled';
@@ -52,6 +51,7 @@ import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
 import { Server, Song } from '../../types';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 const NowPlayingMiniView = () => {
   const { t } = useTranslation();
@@ -274,7 +274,7 @@ const NowPlayingMiniView = () => {
                         trigger="click"
                         enterable
                         speaker={
-                          <StyledPopover>
+                          <Popup>
                             <ControlLabel>{`${t('How many tracks?')} ${
                               config.serverType === Server.Subsonic ? '(1 - 500)*' : '(1 - ∞)'
                             }`}</ControlLabel>
@@ -387,7 +387,7 @@ const NowPlayingMiniView = () => {
                                 {t('Play')}
                               </StyledButton>
                             </ButtonToolbar>
-                          </StyledPopover>
+                          </Popup>
                         }
                       >
                         <AutoPlaylistButton size="xs" noText />

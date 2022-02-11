@@ -49,13 +49,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
-import {
-  StyledButton,
-  StyledCheckbox,
-  StyledInput,
-  StyledLink,
-  StyledPopover,
-} from '../shared/styled';
+import { StyledButton, StyledCheckbox, StyledInput, StyledLink } from '../shared/styled';
 import {
   removeFromPlaylist,
   setPlaylistData,
@@ -69,6 +63,7 @@ import { Server } from '../../types';
 import Card from '../card/Card';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 interface PlaylistParams {
   id: string;
@@ -582,7 +577,7 @@ const PlaylistView = ({ ...rest }) => {
                     placement="auto"
                     trigger="click"
                     speaker={
-                      <StyledPopover>
+                      <Popup>
                         <Form>
                           <ControlLabel>{t('Name')}</ControlLabel>
                           <StyledInput
@@ -616,7 +611,7 @@ const PlaylistView = ({ ...rest }) => {
                             {t('Save')}
                           </StyledButton>
                         </Form>
-                      </StyledPopover>
+                      </Popup>
                     }
                   >
                     <EditButton
@@ -631,12 +626,12 @@ const PlaylistView = ({ ...rest }) => {
                     placement="auto"
                     trigger="click"
                     speaker={
-                      <StyledPopover>
+                      <Popup>
                         <p>{t('Are you sure you want to delete this playlist?')}</p>
                         <StyledButton onClick={handleDelete} appearance="link">
                           {t('Yes')}
                         </StyledButton>
-                      </StyledPopover>
+                      </Popup>
                     }
                   >
                     <DeleteButton

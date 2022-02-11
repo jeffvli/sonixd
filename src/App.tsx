@@ -35,6 +35,7 @@ const App = () => {
   const [theme, setTheme] = useState<any>(defaultDark);
   const [font, setFont] = useState('Poppins');
   const misc = useAppSelector((state) => state.misc);
+  const config = useAppSelector((state) => state.config);
 
   useEffect(() => {
     const themes: any =
@@ -45,8 +46,8 @@ const App = () => {
   }, [misc.theme]);
 
   useEffect(() => {
-    setFont(misc.font);
-  }, [misc.font]);
+    setFont(config.lookAndFeel.font);
+  }, [config.lookAndFeel.font]);
 
   if (!localStorage.getItem('server') || !localStorage.getItem('serverBase64')) {
     return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Whisper } from 'rsuite';
-import { StyledPopover } from './styled';
 import ColumnSort from './ColumnSort';
+import Popup from './Popup';
 
 const ColumnSortPopover = ({ children, ...rest }: any) => {
   return (
@@ -11,9 +11,9 @@ const ColumnSortPopover = ({ children, ...rest }: any) => {
       placement="bottomEnd"
       preventOverflow
       speaker={
-        <StyledPopover width="275px" placement="bottomEnd">
+        <Popup width="275px" placement="bottomEnd">
           <ColumnSort {...rest} />
-        </StyledPopover>
+        </Popup>
       }
     >
       {children}

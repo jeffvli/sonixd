@@ -39,13 +39,7 @@ import {
   getPlayedSongsNotification,
   isCached,
 } from '../../shared/utils';
-import {
-  LinkWrapper,
-  StyledButton,
-  StyledLink,
-  StyledPopover,
-  StyledTagLink,
-} from '../shared/styled';
+import { LinkWrapper, StyledButton, StyledLink, StyledTagLink } from '../shared/styled';
 import {
   BlurredBackground,
   BlurredBackgroundWrapper,
@@ -58,6 +52,7 @@ import Card from '../card/Card';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import Popup from '../shared/Popup';
 
 interface AlbumParams {
   id: string;
@@ -501,7 +496,7 @@ const AlbumView = ({ ...rest }: any) => {
                       enterable
                       preventOverflow
                       speaker={
-                        <StyledPopover>
+                        <Popup>
                           <ButtonToolbar>
                             <StyledButton onClick={() => handleDownload('download')}>
                               {t('Download')}
@@ -510,7 +505,7 @@ const AlbumView = ({ ...rest }: any) => {
                               {t('Copy to clipboard')}
                             </StyledButton>
                           </ButtonToolbar>
-                        </StyledPopover>
+                        </Popup>
                       }
                     >
                       <DownloadButton
