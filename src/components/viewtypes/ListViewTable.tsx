@@ -309,29 +309,31 @@ const ListViewTable = ({
       if (sortColumn && sortType) {
         // Since the column title(id) won't always match the actual column dataKey, we need to match it
         const actualSortColumn = columns.find((c: any) => c.id === sortColumn);
-        const sortColumnDataKey =
-          actualSortColumn.dataKey === 'combinedtitle'
-            ? 'title'
-            : actualSortColumn.dataKey === 'artist'
-            ? 'albumArtist'
-            : actualSortColumn.dataKey === 'genre'
-            ? 'albumGenre'
-            : actualSortColumn.dataKey;
+        if (actualSortColumn) {
+          const sortColumnDataKey =
+            actualSortColumn.dataKey === 'combinedtitle'
+              ? 'title'
+              : actualSortColumn.dataKey === 'artist'
+              ? 'albumArtist'
+              : actualSortColumn.dataKey === 'genre'
+              ? 'albumGenre'
+              : actualSortColumn.dataKey;
 
-        const sortData = _.orderBy(
-          data,
-          [
-            (entry: any) => {
-              return typeof entry[sortColumnDataKey] === 'string'
-                ? entry[sortColumnDataKey].toLowerCase() || ''
-                : +entry[sortColumnDataKey] || '';
-            },
-          ],
-          sortType
-        );
-        setSortedData(sortData);
-      } else {
-        setSortedData(data);
+          const sortData = _.orderBy(
+            data,
+            [
+              (entry: any) => {
+                return typeof entry[sortColumnDataKey] === 'string'
+                  ? entry[sortColumnDataKey].toLowerCase() || ''
+                  : +entry[sortColumnDataKey] || '';
+              },
+            ],
+            sortType
+          );
+          setSortedData(sortData);
+        } else {
+          setSortedData(data);
+        }
       }
     }
   }, [columns, configState.sort, data, nowPlaying, page, sortColumn, sortType]);
@@ -340,32 +342,34 @@ const ListViewTable = ({
     if (nowPlaying) {
       if (playQueue.sortColumn && playQueue.sortType) {
         const actualSortColumn = columns.find((c: any) => c.id === playQueue.sortColumn);
-        const sortColumnDataKey =
-          actualSortColumn.dataKey === 'combinedtitle'
-            ? 'title'
-            : actualSortColumn.dataKey === 'artist'
-            ? 'albumArtist'
-            : actualSortColumn.dataKey === 'genre'
-            ? 'albumGenre'
-            : actualSortColumn.dataKey;
+        if (actualSortColumn) {
+          const sortColumnDataKey =
+            actualSortColumn?.dataKey === 'combinedtitle'
+              ? 'title'
+              : actualSortColumn?.dataKey === 'artist'
+              ? 'albumArtist'
+              : actualSortColumn?.dataKey === 'genre'
+              ? 'albumGenre'
+              : actualSortColumn?.dataKey;
 
-        dispatch(
-          sortPlayQueue({
-            columnDataKey: sortColumnDataKey,
-            sortType: playQueue.sortType,
-          })
-        );
-      } else {
-        // Clear the sortedEntry[]
-        dispatch(
-          sortPlayQueue({
-            columnDataKey: '',
-            sortType: playQueue.sortType,
-          })
-        );
-      }
-      if (playQueue.currentPlayer === 1 && !playQueue.isFading) {
-        dispatch(fixPlayer2Index());
+          dispatch(
+            sortPlayQueue({
+              columnDataKey: sortColumnDataKey,
+              sortType: playQueue.sortType,
+            })
+          );
+        } else {
+          // Clear the sortedEntry[]
+          dispatch(
+            sortPlayQueue({
+              columnDataKey: '',
+              sortType: playQueue.sortType,
+            })
+          );
+        }
+        if (playQueue.currentPlayer === 1 && !playQueue.isFading) {
+          dispatch(fixPlayer2Index());
+        }
       }
     } else if (playlist) {
       if (sortColumn && sortType) {
@@ -914,8 +918,22 @@ const ListViewTable = ({
                         misc={misc}
                         rowHeight={rowHeight}
                         cacheImages={cacheImages}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -952,8 +970,22 @@ const ListViewTable = ({
                         misc={misc}
                         rowHeight={rowHeight}
                         cacheImages={cacheImages}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -992,7 +1024,12 @@ const ListViewTable = ({
                         rowHeight={rowHeight}
                         cacheImages={cacheImages}
                         handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1014,8 +1051,22 @@ const ListViewTable = ({
                         rowIndex={rowIndex}
                         column={column}
                         rowHeight={rowHeight}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1038,8 +1089,22 @@ const ListViewTable = ({
                         rowIndex={rowIndex}
                         column={column}
                         rowHeight={rowHeight}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1062,8 +1127,22 @@ const ListViewTable = ({
                         rowIndex={rowIndex}
                         column={column}
                         rowHeight={rowHeight}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1110,8 +1189,22 @@ const ListViewTable = ({
                         misc={misc}
                         rowHeight={rowHeight}
                         cacheImages={cacheImages}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1133,8 +1226,22 @@ const ListViewTable = ({
                         rowIndex={rowIndex}
                         column={column}
                         rowHeight={rowHeight}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1157,8 +1264,22 @@ const ListViewTable = ({
                         rowIndex={rowIndex}
                         column={column}
                         rowHeight={rowHeight}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1192,8 +1313,22 @@ const ListViewTable = ({
                         rowIndex={rowIndex}
                         column={column}
                         rowHeight={rowHeight}
-                        handleRowClick={handleRowClick}
-                        handleRowDoubleClick={handleRowDoubleClick}
+                        handleRowClick={(e: any) => {
+                          handleRowClick(
+                            e,
+                            {
+                              ...rowData,
+                              rowIndex,
+                            },
+                            sortColumn && !nowPlaying ? sortedData : data
+                          );
+                        }}
+                        handleRowDoubleClick={() => {
+                          handleRowDoubleClick({
+                            ...rowData,
+                            rowIndex,
+                          });
+                        }}
                         onMouseDown={(e: any) => {
                           handleStartSelectDrag.onMouseDown(rowData);
                           handleSelectMouseDown(e, rowData);
@@ -1221,8 +1356,22 @@ const ListViewTable = ({
                       rowIndex={rowIndex}
                       column={column}
                       rowHeight={rowHeight}
-                      handleRowClick={handleRowClick}
-                      handleRowDoubleClick={handleRowDoubleClick}
+                      handleRowClick={(e: any) => {
+                        handleRowClick(
+                          e,
+                          {
+                            ...rowData,
+                            rowIndex,
+                          },
+                          sortColumn && !nowPlaying ? sortedData : data
+                        );
+                      }}
+                      handleRowDoubleClick={() => {
+                        handleRowDoubleClick({
+                          ...rowData,
+                          rowIndex,
+                        });
+                      }}
                       onMouseDown={(e: any) => {
                         handleStartSelectDrag.onMouseDown(rowData);
                         handleSelectMouseDown(e, rowData);
