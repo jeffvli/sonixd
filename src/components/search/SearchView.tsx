@@ -1,50 +1,178 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import settings from 'electron-settings';
+import { Icon, Nav } from 'rsuite';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useQueryClient } from 'react-query';
+import { useInfiniteQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { Entry, fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
-import ListViewTable from '../viewtypes/ListViewTable';
-import { SectionTitle, SectionTitleWrapper, StyledPanel } from '../shared/styled';
+import {
+  StyledButton,
+  StyledInput,
+  StyledInputGroup,
+  StyledInputGroupButton,
+  StyledNavItem,
+} from '../shared/styled';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
-import { setPlaylistRate } from '../../redux/playlistSlice';
-import CenterLoader from '../loader/CenterLoader';
+import { Album, Artist, Item } from '../../types';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import ListViewType from '../viewtypes/ListViewType';
 
 const SearchView = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const history = useHistory();
   const query = useRouterQuery();
-  const queryClient = useQueryClient();
+  const urlQuery = query.get('query') || '';
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const playQueue = useAppSelector((state) => state.playQueue);
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
-  const urlQuery = query.get('query') || '';
-  const [musicFolder, setMusicFolder] = useState(undefined);
+  const [search, setSearch] = useState(urlQuery);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(urlQuery);
+  const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
+  const [nav, setNav] = useState<'songs' | 'albums' | 'artists'>('songs');
+  const [artistData, setArtistData] = useState<Artist[]>([]);
+  const [albumData, setAlbumData] = useState<Album[]>([]);
+  const [songData, setSongData] = useState<Entry[]>([]);
 
   useEffect(() => {
     if (folder.applied.search) {
-      setMusicFolder(folder.musicFolder);
+      setMusicFolder({ loaded: true, id: folder.musicFolder });
+    } else {
+      setMusicFolder({ loaded: true, id: undefined });
     }
   }, [folder]);
 
-  const { isLoading, isError, data, error }: any = useQuery(['search', urlQuery, musicFolder], () =>
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'getSearch',
-      args: { query: urlQuery, songCount: 100, musicFolderId: musicFolder },
-    })
+  const debouncedSearchHandler = useMemo(
+    () =>
+      _.debounce((e) => {
+        setDebouncedSearchQuery(e);
+        history.replace(`/search?query=${e}`);
+      }, 300),
+    [history]
   );
+
+  useEffect(() => {});
+
+  const {
+    data: songResults,
+    isLoading: isLoadingSongs,
+    fetchNextPage: fetchNextSongPage,
+    isFetchingNextPage: isFetchingNextSongPage,
+    hasNextPage: hasNextSongPage,
+  }: any = useInfiniteQuery(
+    ['searchpage', debouncedSearchQuery, { type: Item.Music, count: 50 }, musicFolder.id],
+    ({ pageParam = 0 }) =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getSearch',
+        args: {
+          query: debouncedSearchQuery,
+          songCount: 50,
+          songOffset: pageParam,
+          albumCount: 0,
+          artistCount: 0,
+          musicFolderId: musicFolder.id,
+        },
+      }),
+    {
+      enabled: debouncedSearchQuery !== '' && musicFolder.loaded,
+      getNextPageParam: (lastPage) => lastPage.song.nextCursor,
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+
+  const {
+    data: albumResults,
+    isLoading: isLoadingAlbums,
+    fetchNextPage: fetchNextAlbumPage,
+    isFetchingNextPage: isFetchingNextAlbumPage,
+    hasNextPage: hasNextAlbumPage,
+  }: any = useInfiniteQuery(
+    ['searchpage', debouncedSearchQuery, { type: Item.Album, count: 25 }, musicFolder.id],
+    ({ pageParam = 0 }) =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getSearch',
+        args: {
+          query: debouncedSearchQuery,
+          albumCount: 25,
+          albumOffset: pageParam,
+          songCount: 0,
+          artistCount: 0,
+          musicFolderId: musicFolder.id,
+        },
+      }),
+    {
+      enabled: debouncedSearchQuery !== '' && musicFolder.loaded,
+      getNextPageParam: (lastPage) => lastPage.album.nextCursor,
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+
+  const {
+    data: artistResults,
+    isLoading: isLoadingArtists,
+    fetchNextPage: fetchNextArtistPage,
+    isFetchingNextPage: isFetchingNextArtistPage,
+    hasNextPage: hasNextArtistPage,
+  }: any = useInfiniteQuery(
+    ['searchpage', debouncedSearchQuery, { type: Item.Artist, count: 15 }, musicFolder.id],
+    ({ pageParam = 0 }) =>
+      apiController({
+        serverType: config.serverType,
+        endpoint: 'getSearch',
+        args: {
+          query: debouncedSearchQuery,
+          artistCount: 15,
+          artistOffset: pageParam,
+          songCount: 0,
+          albumCount: 0,
+          musicFolderId: musicFolder.id,
+        },
+      }),
+    {
+      enabled: debouncedSearchQuery !== '' && musicFolder.loaded,
+      getNextPageParam: (lastPage) => lastPage.artist.nextCursor,
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+
+  useEffect(() => {
+    setSongData(
+      _.flatten(
+        songResults?.pages.map((page: any) => {
+          return page.song.data;
+        })
+      )
+    );
+  }, [songResults]);
+
+  useEffect(() => {
+    setAlbumData(
+      _.flatten(
+        albumResults?.pages.map((page: any) => {
+          return page.album.data;
+        })
+      )
+    );
+  }, [albumResults]);
+
+  useEffect(() => {
+    setArtistData(
+      _.flatten(
+        artistResults?.pages.map((page: any) => {
+          return page.artist.data;
+        })
+      )
+    );
+  }, [artistResults]);
 
   const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
     doubleClick: (rowData: any) => {
@@ -53,7 +181,7 @@ const SearchView = () => {
       } else {
         dispatch(
           setPlayQueueByRowClick({
-            entries: data.song.filter((entry: any) => entry.isDir !== true),
+            entries: songData.filter((entry: any) => entry.isDir !== true),
             currentIndex: rowData.rowIndex,
             currentSongId: rowData.id,
             uniqueSongId: rowData.uniqueId,
@@ -66,194 +194,195 @@ const SearchView = () => {
     },
   });
 
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'music' },
-      });
-      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.song[index].starred = Date.now();
-        });
+  const {
+    handleRowClick: handleAlbumRowClick,
+    handleRowDoubleClick: handleAlbumRowDoubleClick,
+  } = useListClickHandler({
+    doubleClick: (rowData: any) => history.push(`/library/album/${rowData.id}`),
+  });
 
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.song[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
-
-  const handleArtistFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'artist' },
-      });
-      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.artist[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.artist, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.artist[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
-
-  const handleAlbumFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'artist' },
-      });
-      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.album[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.album, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.album[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
-
-  const handleRowRating = async (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-
-    queryClient.setQueryData(['search', urlQuery, musicFolder], (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData.song[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const {
+    handleRowClick: handleArtistRowClick,
+    handleRowDoubleClick: handleArtistRowDoubleClick,
+  } = useListClickHandler({
+    doubleClick: (rowData: any) => history.push(`/library/artist/${rowData.id}`),
+  });
 
   return (
-    <GenericPage header={<GenericPageHeader title={t('Search: {{urlQuery}}', { urlQuery })} />}>
-      {isLoading && <CenterLoader />}
-      {isError && <div>Error: {error}</div>}
-      {!isLoading && data && (
-        <>
-          <ScrollingMenu
-            title={t('Artists')}
-            data={data.artist}
-            cardTitle={{
-              prefix: '/library/artist',
-              property: 'title',
-              urlProperty: 'id',
-            }}
-            cardSubtitle={
-              config.serverType === Server.Subsonic && {
-                property: 'albumCount',
-                unit: t(' albums'),
-              }
-            }
-            cardSize={config.lookAndFeel.gridView.cardSize}
-            type="artist"
-            handleFavorite={handleArtistFavorite}
-          />
+    <GenericPage
+      hideDivider
+      header={
+        <GenericPageHeader
+          title={
+            <>
+              {t('Search')}{' '}
+              <StyledButton
+                loading={
+                  nav === 'songs'
+                    ? isFetchingNextSongPage
+                    : nav === 'albums'
+                    ? isFetchingNextAlbumPage
+                    : nav === 'artists'
+                    ? isFetchingNextArtistPage
+                    : false
+                }
+                disabled={
+                  nav === 'songs'
+                    ? !hasNextSongPage
+                    : nav === 'albums'
+                    ? !hasNextAlbumPage
+                    : nav === 'artists'
+                    ? !hasNextArtistPage
+                    : false
+                }
+                onClick={() => {
+                  if (nav === 'songs') {
+                    fetchNextSongPage();
+                  }
 
-          <ScrollingMenu
-            title={t('Albums')}
-            data={data.album}
-            cardTitle={{
-              prefix: '/library/album',
-              property: 'title',
-              urlProperty: 'albumId',
-            }}
-            cardSubtitle={{
-              prefix: '/library/artist',
-              property: 'albumArtist',
-              urlProperty: 'albumArtistId',
-              unit: '',
-            }}
-            cardSize={config.lookAndFeel.gridView.cardSize}
-            type="album"
-            handleFavorite={handleAlbumFavorite}
-          />
-          <SectionTitleWrapper>
-            <SectionTitle>{t('Songs')}</SectionTitle>
-          </SectionTitleWrapper>
-          <StyledPanel bodyFill bordered>
-            <ListViewTable
-              height={500}
-              data={data.song}
-              columns={settings.getSync('musicListColumns')}
-              rowHeight={Number(settings.getSync('musicListRowHeight'))}
-              fontSize={settings.getSync('musicListFontSize')}
-              handleRowClick={handleRowClick}
-              handleRowDoubleClick={handleRowDoubleClick}
-              handleRating={handleRowRating}
-              listType="music"
-              cacheImages={{
-                enabled: settings.getSync('cacheImages'),
-                cacheType: 'album',
-                cacheIdProperty: 'albumId',
-              }}
-              disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
-              playQueue={playQueue}
-              multiSelect={multiSelect}
-              isModal={false}
-              miniView={false}
-              dnd={false}
-              virtualized
-              handleFavorite={handleRowFavorite}
-            />
-          </StyledPanel>
-        </>
+                  if (nav === 'albums') {
+                    fetchNextAlbumPage();
+                  }
+
+                  if (nav === 'artists') {
+                    fetchNextArtistPage();
+                  }
+                }}
+              >
+                {t('Load more')}
+              </StyledButton>
+            </>
+          }
+          subtitle={
+            <>
+              <StyledInputGroup inside style={{ width: '50vw', maxWidth: '95%' }}>
+                <StyledInput
+                  id="local-search-input"
+                  value={search}
+                  onChange={(e: string) => {
+                    debouncedSearchHandler(e);
+                    setSearch(e);
+                  }}
+                />
+                {search !== '' && (
+                  <StyledInputGroupButton
+                    height={30}
+                    appearance="subtle"
+                    tabIndex={0}
+                    onClick={() => {
+                      setDebouncedSearchQuery('');
+                      setSearch('');
+                    }}
+                    onKeyDown={(e: KeyboardEvent) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        setDebouncedSearchQuery('');
+                        setSearch('');
+                      }
+                    }}
+                  >
+                    <Icon icon="close" />
+                  </StyledInputGroupButton>
+                )}
+              </StyledInputGroup>
+
+              <Nav activeKey={nav} onSelect={setNav}>
+                <StyledNavItem eventKey="songs">
+                  {t('Songs')} ({songData?.length}
+                  {hasNextSongPage && '+'})
+                </StyledNavItem>
+                <StyledNavItem eventKey="albums">
+                  {t('Albums')} ({albumData?.length}
+                  {hasNextAlbumPage && '+'})
+                </StyledNavItem>
+                <StyledNavItem eventKey="artists">
+                  {t('Artists')} ({artistData?.length}
+                  {hasNextArtistPage && '+'})
+                </StyledNavItem>
+              </Nav>
+            </>
+          }
+        />
+      }
+    >
+      {nav === 'songs' && (
+        <ListViewType
+          loading={isLoadingSongs}
+          data={songData}
+          tableColumns={config.lookAndFeel.listView.music.columns}
+          rowHeight={config.lookAndFeel.listView.music.rowHeight}
+          fontSize={config.lookAndFeel.listView.music.fontSize}
+          handleRowClick={handleRowClick}
+          handleRowDoubleClick={handleRowDoubleClick}
+          handleRating={() => {}}
+          handleFavorite={() => {}}
+          listType="music"
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'album',
+            cacheIdProperty: 'albumId',
+          }}
+          disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
+          playQueue={playQueue}
+          multiSelect={multiSelect}
+          isModal={false}
+          miniView={false}
+          dnd={false}
+          virtualized
+        />
+      )}
+
+      {nav === 'albums' && (
+        <ListViewType
+          loading={isLoadingAlbums}
+          data={albumData}
+          tableColumns={config.lookAndFeel.listView.album.columns}
+          rowHeight={config.lookAndFeel.listView.album.rowHeight}
+          fontSize={config.lookAndFeel.listView.album.fontSize}
+          handleRowClick={handleAlbumRowClick}
+          handleRowDoubleClick={handleAlbumRowDoubleClick}
+          handleRating={() => {}}
+          handleFavorite={() => {}}
+          listType="album"
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'album',
+            cacheIdProperty: 'albumId',
+          }}
+          disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
+          playQueue={playQueue}
+          multiSelect={multiSelect}
+          isModal={false}
+          miniView={false}
+          dnd={false}
+          virtualized
+        />
+      )}
+
+      {nav === 'artists' && (
+        <ListViewType
+          loading={isLoadingArtists}
+          data={artistData}
+          tableColumns={config.lookAndFeel.listView.artist.columns}
+          rowHeight={config.lookAndFeel.listView.artist.rowHeight}
+          fontSize={config.lookAndFeel.listView.artist.fontSize}
+          handleRowClick={handleArtistRowClick}
+          handleRowDoubleClick={handleArtistRowDoubleClick}
+          handleRating={() => {}}
+          handleFavorite={() => {}}
+          listType="artist"
+          cacheImages={{
+            enabled: settings.getSync('cacheImages'),
+            cacheType: 'artist',
+            cacheIdProperty: 'id',
+          }}
+          disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
+          playQueue={playQueue}
+          multiSelect={multiSelect}
+          isModal={false}
+          miniView={false}
+          dnd={false}
+          virtualized
+        />
       )}
     </GenericPage>
   );
