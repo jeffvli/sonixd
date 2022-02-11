@@ -4,7 +4,7 @@ import { Button, Table } from 'rsuite';
 export const TableLinkButton = styled(Button)<{
   subtitle?: string;
   active?: boolean;
-  fontsize?: string;
+  font?: string;
 }>`
   font-size: ${(props) => props.fontsize};
   background: transparent;
