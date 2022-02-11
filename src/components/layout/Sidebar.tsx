@@ -153,7 +153,7 @@ const Sidebar = ({
                         history.push('/');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('dashboard')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('dashboard')}
                   >
                     {t('Dashboard')}
                   </SidebarNavItem>
@@ -168,7 +168,7 @@ const Sidebar = ({
                         history.push('/nowplaying');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('nowplaying')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('nowplaying')}
                   >
                     {t('Now Playing')}
                   </SidebarNavItem>
@@ -184,7 +184,7 @@ const Sidebar = ({
                         history.push('/starred');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('favorites')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('favorites')}
                   >
                     {t('Favorites')}
                   </SidebarNavItem>
@@ -200,7 +200,7 @@ const Sidebar = ({
                           history.push('/library/music');
                         }
                       }}
-                      hide={!config.lookAndFeel.sidebar.selected.includes('songs')}
+                      $show={config.lookAndFeel.sidebar.selected.includes('songs')}
                     >
                       Songs
                     </SidebarNavItem>
@@ -216,7 +216,7 @@ const Sidebar = ({
                         history.push('/library/album');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('albums')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('albums')}
                   >
                     {t('Albums')}
                   </SidebarNavItem>
@@ -231,7 +231,7 @@ const Sidebar = ({
                         history.push('/library/artist');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('artists')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('artists')}
                   >
                     {t('Artists')}
                   </SidebarNavItem>
@@ -246,7 +246,7 @@ const Sidebar = ({
                         history.push('/library/genre');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('genres')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('genres')}
                   >
                     {t('Genres')}
                   </SidebarNavItem>
@@ -263,7 +263,7 @@ const Sidebar = ({
                             history.push('/library/folder');
                           }
                         }}
-                        hide={!config.lookAndFeel.sidebar.selected.includes('folders')}
+                        $show={config.lookAndFeel.sidebar.selected.includes('folders')}
                       >
                         {t('Folders')}
                       </SidebarNavItem>
@@ -280,7 +280,7 @@ const Sidebar = ({
                         history.push('/config');
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('config')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('config')}
                   >
                     {t('Config')}
                   </SidebarNavItem>
@@ -294,7 +294,7 @@ const Sidebar = ({
                         handleToggle();
                       }
                     }}
-                    hide={!config.lookAndFeel.sidebar.selected.includes('collapse')}
+                    $show={config.lookAndFeel.sidebar.selected.includes('collapse')}
                   >
                     {expand ? t('Collapse') : t('Expand')}
                   </SidebarNavItem>
@@ -310,7 +310,7 @@ const Sidebar = ({
                           history.push('/playlist');
                         }
                       }}
-                      hide={!config.lookAndFeel.sidebar.selected.includes('playlists')}
+                      $show={config.lookAndFeel.sidebar.selected.includes('playlists')}
                     >
                       {t('Playlists')}
                     </SidebarNavItem>
