@@ -553,8 +553,8 @@ const playQueueSlice = createSlice({
       }
 
       state.current = { ...state[currentEntry][state.currentIndex] };
-      state.currentSongId = state[currentEntry][state.currentIndex].id;
-      state.currentSongUniqueId = state[currentEntry][state.currentIndex].uniqueId;
+      state.currentSongId = state[currentEntry][state.currentIndex]?.id;
+      state.currentSongUniqueId = state[currentEntry][state.currentIndex]?.uniqueId;
     },
 
     incrementPlayerIndex: (state, action: PayloadAction<number>) => {
