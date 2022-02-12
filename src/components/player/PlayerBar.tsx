@@ -25,7 +25,7 @@ import CustomTooltip from '../shared/CustomTooltip';
 import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
-import { LinkWrapper, SecondaryTextWrapper, StyledButton, StyledRate } from '../shared/styled';
+import { SecondaryTextWrapper, StyledButton, StyledRate } from '../shared/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import { notifyToast } from '../shared/toast';
@@ -394,141 +394,133 @@ const PlayerBar = () => {
                   )}
 
                   <Col xs={2} style={{ minWidth: '120px', maxWidth: '450px', width: '100%' }}>
-                    <Row
-                      style={{
-                        height: '23px',
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                      }}
-                    >
-                      <CustomTooltip
-                        enterable
-                        placement="top"
-                        text={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                          t('Unknown Title')
-                        }
-                      >
-                        <LinkButton tabIndex={0} onClick={() => history.push(`/nowplaying`)}>
-                          {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                            t('Unknown Title')}
-                        </LinkButton>
-                      </CustomTooltip>
-                      {lyrics && (
-                        <CustomTooltip
-                          enterable
-                          placement="top"
-                          text={t('Lyrics')}
-                          onClick={() => setShowLyricsModal(true)}
-                        >
-                          <StyledButton size="xs" appearance="subtle">
-                            <Icon icon="commenting-o" />
-                          </StyledButton>
-                        </CustomTooltip>
-                      )}
-                    </Row>
-
-                    <Row
-                      style={{
-                        height: '23px',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <CustomTooltip
-                        enterable
-                        placement="topStart"
-                        text={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
-                            ? playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist
-                            : t('Unknown Artist')
-                        }
-                      >
-                        <span
+                    {playQueue.entry?.length > 0 && (
+                      <>
+                        <Row
                           style={{
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
+                            height: '23px',
+                            display: 'flex',
+                            alignItems: 'flex-end',
                           }}
                         >
-                          {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtistId ? (
-                            <LinkButton
-                              tabIndex={0}
-                              subtitle="true"
-                              onClick={() => {
-                                if (
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumArtistId
-                                ) {
-                                  history.push(
-                                    `/library/artist/${
-                                      playQueue[currentEntryList][playQueue.currentIndex]
-                                        ?.albumArtistId
-                                    }`
-                                  );
-                                }
-                              }}
-                            >
-                              {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
-                                t('Unknown Artist')}
+                          <CustomTooltip
+                            enterable
+                            placement="top"
+                            text={playQueue[currentEntryList][playQueue.currentIndex]?.title}
+                          >
+                            <LinkButton tabIndex={0} onClick={() => history.push(`/nowplaying`)}>
+                              {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
+                                t('Unknown Title')}
                             </LinkButton>
-                          ) : (
-                            <SecondaryTextWrapper
-                              subtitle="true"
-                              onClick={() => {
-                                if (
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumArtistId
-                                ) {
-                                  history.push(
-                                    `/library/artist/${
-                                      playQueue[currentEntryList][playQueue.currentIndex]
-                                        ?.albumArtistId
-                                    }`
-                                  );
-                                }
-                              }}
+                          </CustomTooltip>
+                          {lyrics && (
+                            <CustomTooltip
+                              enterable
+                              placement="top"
+                              text={t('Lyrics')}
+                              onClick={() => setShowLyricsModal(true)}
                             >
-                              <LinkWrapper maxWidth="100%">
-                                {playQueue[currentEntryList][playQueue.currentIndex]?.albumArtist ||
-                                  t('Unknown Artist')}
-                              </LinkWrapper>
+                              <StyledButton size="xs" appearance="subtle">
+                                <Icon icon="commenting-o" />
+                              </StyledButton>
+                            </CustomTooltip>
+                          )}
+                        </Row>
+                        <Row
+                          style={{
+                            height: '23px',
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {playQueue[currentEntryList][playQueue.currentIndex]?.artist.map(
+                            (artist: Artist, i: number) => (
+                              <>
+                                <CustomTooltip
+                                  key={artist.id}
+                                  enterable
+                                  placement="topStart"
+                                  text={artist?.title}
+                                >
+                                  <span
+                                    style={{
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                    }}
+                                  >
+                                    <SecondaryTextWrapper subtitle="true">
+                                      {i > 0 && <>{', '}</>}
+                                    </SecondaryTextWrapper>
+                                    <LinkButton
+                                      tabIndex={0}
+                                      subtitle="true"
+                                      disabled={false}
+                                      onClick={() => {
+                                        if (
+                                          playQueue[currentEntryList][playQueue.currentIndex]
+                                            ?.albumArtistId
+                                        ) {
+                                          history.push(
+                                            `/library/artist/${
+                                              playQueue[currentEntryList][playQueue.currentIndex]
+                                                ?.albumArtistId
+                                            }`
+                                          );
+                                        }
+                                      }}
+                                    >
+                                      {artist.title}
+                                    </LinkButton>
+                                  </span>
+                                </CustomTooltip>
+                              </>
+                            )
+                          ) || (
+                            <SecondaryTextWrapper subtitle="true">
+                              {t('Unknown Artist')}
                             </SecondaryTextWrapper>
                           )}
-                        </span>
-                      </CustomTooltip>
-                    </Row>
-                    <Row
-                      style={{
-                        height: '23px',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                      }}
-                    >
-                      <CustomTooltip
-                        enterable
-                        placement="topStart"
-                        text={
-                          playQueue[currentEntryList][playQueue.currentIndex]?.album ||
-                          t('Unknown Album')
-                        }
-                      >
-                        <LinkButton
-                          tabIndex={0}
-                          subtitle="true"
-                          onClick={() => {
-                            if (playQueue[currentEntryList][playQueue.currentIndex]?.albumId) {
-                              history.push(
-                                `/library/album/${
-                                  playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                }`
-                              );
-                            }
+                        </Row>
+                        <Row
+                          style={{
+                            height: '23px',
+                            display: 'flex',
+                            alignItems: 'flex-start',
                           }}
                         >
-                          {playQueue[currentEntryList][playQueue.currentIndex]?.album ||
-                            t('Unknown Album')}
-                        </LinkButton>
-                      </CustomTooltip>
-                    </Row>
+                          {(playQueue[currentEntryList][playQueue.currentIndex]?.album && (
+                            <CustomTooltip
+                              enterable
+                              placement="topStart"
+                              text={playQueue[currentEntryList][playQueue.currentIndex]?.album}
+                            >
+                              <LinkButton
+                                tabIndex={0}
+                                subtitle="true"
+                                onClick={() => {
+                                  if (
+                                    playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                  ) {
+                                    history.push(
+                                      `/library/album/${
+                                        playQueue[currentEntryList][playQueue.currentIndex]?.albumId
+                                      }`
+                                    );
+                                  }
+                                }}
+                              >
+                                {playQueue[currentEntryList][playQueue.currentIndex]?.album}
+                              </LinkButton>
+                            </CustomTooltip>
+                          )) || (
+                            <SecondaryTextWrapper subtitle="true">
+                              {t('Unknown Album')}
+                            </SecondaryTextWrapper>
+                          )}
+                        </Row>
+                      </>
+                    )}
                   </Col>
                 </Row>
               </Grid>
