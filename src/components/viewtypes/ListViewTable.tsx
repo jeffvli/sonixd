@@ -96,7 +96,11 @@ const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   }
 
   .rs-table-row.playing {
-    color: ${(props) => props.theme.colors.primary};
+    color: ${(props) => props.theme.colors.primary} !important;
+
+    span {
+      color: ${(props) => props.theme.colors.primary} !important;
+    }
 
     .rs-btn {
       color: ${(props) => props.theme.colors.primary};
@@ -751,40 +755,40 @@ const ListViewTable = ({
                               </CombinedTitleTextWrapper>
                             </Row>
                             <Row className="row-sub-secondarytext">
-                              <span>
-                                {(rowData.artist || []).map((artist: GenericItem, i: number) => (
-                                  <span key={`${rowData.uniqueId}-${artist.id}`}>
-                                    <SecondaryTextWrapper key={nanoid()} subtitle="true">
-                                      {i > 0 && ', '}
-                                    </SecondaryTextWrapper>
-                                    <CustomTooltip
-                                      key={`artist-${rowData.uniqueId}-${artist.id}`}
-                                      text={artist.title}
-                                    >
-                                      <TableLinkButton
-                                        font={`${fontSize}px`}
-                                        subtitle="true"
-                                        onClick={(e: any) => {
-                                          if (!e.ctrlKey && !e.shiftKey) {
-                                            if (artist.id && !isModal) {
-                                              history.push(`/library/artist/${artist.id}`);
-                                            } else if (artist.id && isModal) {
-                                              dispatch(
-                                                addModalPage({
-                                                  pageType: 'artist',
-                                                  id: artist.id,
-                                                })
-                                              );
-                                            }
+                              {rowData.artist.map((artist: GenericItem, i: number) => (
+                                <SecondaryTextWrapper
+                                  subtitle="true"
+                                  key={`${rowData.uniqueId}-${artist.id}`}
+                                  style={{
+                                    fontFamily: configState.lookAndFeel.font,
+                                    fontSize: `${fontSize}px`,
+                                  }}
+                                >
+                                  {i > 0 && ', '}
+                                  <CustomTooltip text={artist.title}>
+                                    <TableLinkButton
+                                      font={`${fontSize}px`}
+                                      subtitle="true"
+                                      onClick={(e: any) => {
+                                        if (!e.ctrlKey && !e.shiftKey) {
+                                          if (artist.id && !isModal) {
+                                            history.push(`/library/artist/${artist.id}`);
+                                          } else if (artist.id && isModal) {
+                                            dispatch(
+                                              addModalPage({
+                                                pageType: 'artist',
+                                                id: artist.id,
+                                              })
+                                            );
                                           }
-                                        }}
-                                      >
-                                        {artist.title}
-                                      </TableLinkButton>
-                                    </CustomTooltip>
-                                  </span>
-                                ))}
-                              </span>
+                                        }
+                                      }}
+                                    >
+                                      {artist.title}
+                                    </TableLinkButton>
+                                  </CustomTooltip>
+                                </SecondaryTextWrapper>
+                              ))}
                             </Row>
                           </Col>
                         </Row>

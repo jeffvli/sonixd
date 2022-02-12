@@ -6,7 +6,7 @@ export const TableLinkButton = styled(Button)<{
   active?: boolean;
   font?: string;
 }>`
-  font-size: ${(props) => props.fontsize};
+  font-size: ${(props) => props.font};
   background: transparent;
   max-width: 100%;
   padding: 0px;
