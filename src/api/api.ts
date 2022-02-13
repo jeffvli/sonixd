@@ -713,17 +713,23 @@ export const getSearch = async (options: {
     artist: {
       data: (data.searchResult3?.artist || []).map((entry: any) => normalizeArtist(entry)),
       nextCursor:
-        data.searchResult3?.artist && (options!.artistOffset || 0) + (options!.artistCount || 0),
+        data.searchResult3?.artist &&
+        data.searchResult3.artist.length === options.artistCount &&
+        (options!.artistOffset || 0) + (options!.artistCount || 0),
     },
     album: {
       data: (data.searchResult3?.album || []).map((entry: any) => normalizeAlbum(entry)),
       nextCursor:
-        data.searchResult3?.album && (options!.albumOffset || 0) + (options!.albumCount || 0),
+        data.searchResult3?.album &&
+        data.searchResult3.album.length === options.albumCount &&
+        (options!.albumOffset || 0) + (options!.albumCount || 0),
     },
     song: {
       data: (data.searchResult3?.song || []).map((entry: any) => normalizeSong(entry)),
       nextCursor:
-        data.searchResult3?.song && (options!.songOffset || 0) + (options!.songCount || 0),
+        data.searchResult3?.song &&
+        data.searchResult3.song.length === options.songCount &&
+        (options!.songOffset || 0) + (options!.songCount || 0),
     },
   };
 };
