@@ -12,6 +12,12 @@ export enum Item {
   Playlist = 'playlist',
 }
 
+export enum Play {
+  Play = 'play',
+  Next = 'next',
+  Later = 'later',
+}
+
 export type ServerType = Server.Subsonic | Server.Jellyfin;
 
 export type APIEndpoints =
