@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import { nanoid } from 'nanoid/non-secure';
 import { ipcRenderer } from 'electron';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
@@ -404,14 +405,9 @@ const PlayerBar = () => {
                             alignItems: 'flex-end',
                           }}
                         >
-                          <CustomTooltip
-                            enterable
-                            placement="top"
-                            text={playQueue[currentEntryList][playQueue.currentIndex]?.title}
-                          >
+                          <CustomTooltip enterable placement="top" text={playQueue?.current?.title}>
                             <LinkButton tabIndex={0} onClick={() => history.push(`/nowplaying`)}>
-                              {playQueue[currentEntryList][playQueue.currentIndex]?.title ||
-                                t('Unknown Title')}
+                              {playQueue?.current?.title || t('Unknown Title')}
                             </LinkButton>
                           </CustomTooltip>
                           {lyrics && (
@@ -434,54 +430,45 @@ const PlayerBar = () => {
                             alignItems: 'center',
                           }}
                         >
-                          {playQueue[currentEntryList][playQueue.currentIndex]?.artist.map(
-                            (artist: Artist, i: number) => (
-                              <>
-                                <CustomTooltip
-                                  key={artist.id}
-                                  enterable
-                                  placement="topStart"
-                                  text={artist?.title}
-                                >
-                                  <span
-                                    style={{
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                    }}
+                          <span
+                            style={{
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            {playQueue.current?.artist.length > 0 ? (
+                              playQueue.current?.artist?.map((artist: Artist, i: number) => (
+                                <React.Fragment key={nanoid()}>
+                                  <SecondaryTextWrapper subtitle="true">
+                                    {i > 0 && <>{', '}</>}
+                                  </SecondaryTextWrapper>
+                                  <CustomTooltip
+                                    enterable
+                                    placement="topStart"
+                                    text={artist?.title}
                                   >
-                                    <SecondaryTextWrapper subtitle="true">
-                                      {i > 0 && <>{', '}</>}
-                                    </SecondaryTextWrapper>
                                     <LinkButton
                                       tabIndex={0}
                                       subtitle="true"
                                       disabled={false}
                                       onClick={() => {
-                                        if (
-                                          playQueue[currentEntryList][playQueue.currentIndex]
-                                            ?.albumArtistId
-                                        ) {
-                                          history.push(
-                                            `/library/artist/${
-                                              playQueue[currentEntryList][playQueue.currentIndex]
-                                                ?.albumArtistId
-                                            }`
-                                          );
+                                        if (artist?.id) {
+                                          history.push(`/library/artist/${artist?.id}`);
                                         }
                                       }}
                                     >
-                                      {artist.title}
+                                      {artist?.title}
                                     </LinkButton>
-                                  </span>
-                                </CustomTooltip>
-                              </>
-                            )
-                          ) || (
-                            <SecondaryTextWrapper subtitle="true">
-                              {t('Unknown Artist')}
-                            </SecondaryTextWrapper>
-                          )}
+                                  </CustomTooltip>
+                                </React.Fragment>
+                              ))
+                            ) : (
+                              <SecondaryTextWrapper subtitle="true">
+                                {t('Unknown Artist')}
+                              </SecondaryTextWrapper>
+                            )}
+                          </span>
                         </Row>
                         <Row
                           style={{
@@ -490,28 +477,22 @@ const PlayerBar = () => {
                             alignItems: 'flex-start',
                           }}
                         >
-                          {(playQueue[currentEntryList][playQueue.currentIndex]?.album && (
+                          {(playQueue?.current?.album && (
                             <CustomTooltip
                               enterable
                               placement="topStart"
-                              text={playQueue[currentEntryList][playQueue.currentIndex]?.album}
+                              text={playQueue?.current?.album}
                             >
                               <LinkButton
                                 tabIndex={0}
                                 subtitle="true"
                                 onClick={() => {
-                                  if (
-                                    playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                  ) {
-                                    history.push(
-                                      `/library/album/${
-                                        playQueue[currentEntryList][playQueue.currentIndex]?.albumId
-                                      }`
-                                    );
+                                  if (playQueue?.current?.albumId) {
+                                    history.push(`/library/album/${playQueue?.current?.albumId}`);
                                   }
                                 }}
                               >
-                                {playQueue[currentEntryList][playQueue.currentIndex]?.album}
+                                {playQueue?.current?.album}
                               </LinkButton>
                             </CustomTooltip>
                           )) || (

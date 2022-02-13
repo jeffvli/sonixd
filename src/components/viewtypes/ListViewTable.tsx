@@ -755,7 +755,7 @@ const ListViewTable = ({
                               </CombinedTitleTextWrapper>
                             </Row>
                             <Row className="row-sub-secondarytext">
-                              {rowData.artist.map((artist: GenericItem, i: number) => (
+                              {rowData.artist?.map((artist: GenericItem, i: number) => (
                                 <SecondaryTextWrapper
                                   subtitle="true"
                                   key={`${rowData.uniqueId}-${artist.id}`}
