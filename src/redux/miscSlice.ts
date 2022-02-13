@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
 import { getImageCachePath, getSongCachePath } from '../shared/utils';
-import { Entry } from './playQueueSlice';
 
 const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
 
@@ -41,7 +40,7 @@ export interface ContextMenu {
   yPos?: number;
   rowId?: string;
   type?: string;
-  details?: Entry;
+  details?: any;
   disabledOptions?: ContextMenuOptions[];
 }
 

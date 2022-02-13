@@ -6,8 +6,7 @@ import {
   moveSelectedToTop,
   moveSelectedUp,
 } from '../shared/utils';
-import { Sort } from '../types';
-import { Entry } from './playQueueSlice';
+import { Sort, Song } from '../types';
 
 export interface Playlist {
   active: {
@@ -18,8 +17,8 @@ export interface Playlist {
       sort: Sort;
     };
   };
-  entry: Entry[];
-  sortedEntry: Entry[];
+  entry: Song[];
+  sortedEntry: Song[];
 }
 
 const initialState: Playlist = {
@@ -55,7 +54,7 @@ const playlistSlice = createSlice({
       }
     },
 
-    setPlaylistData: (state, action: PayloadAction<Entry[]>) => {
+    setPlaylistData: (state, action: PayloadAction<Song[]>) => {
       state.entry = action.payload;
     },
 
@@ -79,28 +78,28 @@ const playlistSlice = createSlice({
       }
     },
 
-    removeFromPlaylist: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    removeFromPlaylist: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       const uniqueIds = _.map(action.payload.selectedEntries, 'uniqueId');
       state.entry = state.entry.filter((entry) => !uniqueIds.includes(entry.uniqueId));
     },
 
-    moveToIndex: (state, action: PayloadAction<Entry[]>) => {
+    moveToIndex: (state, action: PayloadAction<Song[]>) => {
       state.entry = action.payload;
     },
 
-    moveUp: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveUp: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       state.entry = moveSelectedUp(state.entry, action.payload.selectedEntries);
     },
 
-    moveDown: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveDown: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       state.entry = moveSelectedDown(state.entry, action.payload.selectedEntries);
     },
 
-    moveToTop: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveToTop: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       state.entry = moveSelectedToTop(state.entry, action.payload.selectedEntries);
     },
 
-    moveToBottom: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveToBottom: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       state.entry = moveSelectedToBottom(state.entry, action.payload.selectedEntries);
     },
 

@@ -10,38 +10,9 @@ import {
   moveSelectedUp,
 } from '../shared/utils';
 import { mockSettings } from '../shared/mockSettings';
+import { Song } from '../types';
 
 const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
-
-export interface Entry {
-  id: string;
-  album: string;
-  albumId: string;
-  artist: string;
-  bitRate: number;
-  contentType: string;
-  coverArt: string;
-  created: string;
-  duration: string;
-  genre: string;
-  index: number;
-  isDir: boolean;
-  isVideo: boolean;
-  parent: string;
-  path: string;
-  playCount: number;
-  size: number;
-  starred?: string;
-  streamUrl: string;
-  suffix: string;
-  title: string;
-  track: number;
-  type: string;
-  year: number;
-  userRating?: number;
-  uniqueId: string;
-  rowIndex: number;
-}
 
 export interface PlayQueue {
   player1: {
@@ -82,9 +53,9 @@ export interface PlayQueue {
   sortType: 'asc' | 'desc';
   displayQueue: boolean;
   showDebugWindow: boolean;
-  entry: Entry[];
-  shuffledEntry: Entry[];
-  sortedEntry: Entry[];
+  entry: Song[];
+  shuffledEntry: Song[];
+  sortedEntry: Song[];
 }
 
 const initialState: PlayQueue = {
@@ -132,6 +103,7 @@ const initialState: PlayQueue = {
 
 const resetPlayerDefaults = (state: PlayQueue) => {
   state.isFading = false;
+  state.current = undefined;
   state.currentIndex = 0;
   state.currentSongId = '';
   state.currentPlayer = 1;
@@ -600,7 +572,7 @@ const playQueueSlice = createSlice({
       }
     },
 
-    setPlayerIndex: (state, action: PayloadAction<Entry>) => {
+    setPlayerIndex: (state, action: PayloadAction<Song>) => {
       const currentEntry = entrySelect(state);
 
       const findIndex = getCurrentEntryIndexByUID(state[currentEntry], action.payload.uniqueId);
@@ -669,7 +641,7 @@ const playQueueSlice = createSlice({
       }
     },
 
-    setCurrentIndex: (state, action: PayloadAction<Entry>) => {
+    setCurrentIndex: (state, action: PayloadAction<Song>) => {
       const currentEntry = entrySelect(state);
 
       const findIndex = getCurrentEntryIndexByUID(state[currentEntry], action.payload.uniqueId);
@@ -683,7 +655,7 @@ const playQueueSlice = createSlice({
     setPlayQueue: (
       state,
       action: PayloadAction<{
-        entries: Entry[];
+        entries: Song[];
       }>
     ) => {
       // Used with gridview where you just want to set the entry queue directly
@@ -710,7 +682,7 @@ const playQueueSlice = createSlice({
     setPlayQueueByRowClick: (
       state,
       action: PayloadAction<{
-        entries: Entry[];
+        entries: Song[];
         currentIndex: number;
         currentSongId: string;
         uniqueSongId: string;
@@ -741,6 +713,8 @@ const playQueueSlice = createSlice({
         filteredFromCurrentToEnd
       );
 
+      const current = entries.find((entry) => entry.uniqueId === action.payload.uniqueSongId);
+
       state.entry = entries;
 
       if (state.shuffle) {
@@ -759,10 +733,6 @@ const playQueueSlice = createSlice({
         state.currentIndex = 0;
         state.player1.index = 0;
 
-        const current = action.payload.entries.find(
-          (entry) => entry.uniqueId === action.payload.uniqueSongId
-        );
-
         state.current = current;
         state.currentSongId = action.payload.currentSongId;
         state.currentSongUniqueId = action.payload.uniqueSongId;
@@ -771,7 +741,7 @@ const playQueueSlice = createSlice({
           return entry.uniqueId === action.payload.uniqueSongId;
         });
 
-        state.current = action.payload.entries[currentIndex];
+        state.current = current;
         state.currentIndex = currentIndex;
         state.player1.index = currentIndex;
         state.currentSongId = action.payload.currentSongId;
@@ -781,7 +751,7 @@ const playQueueSlice = createSlice({
 
     appendPlayQueue: (
       state,
-      action: PayloadAction<{ entries: Entry[]; type: 'next' | 'later' }>
+      action: PayloadAction<{ entries: Song[]; type: 'next' | 'later' }>
     ) => {
       const isEmptyQueue = state.entry.length < 1;
       // We'll need to update the uniqueId otherwise selecting a song with duplicates
@@ -831,7 +801,7 @@ const playQueueSlice = createSlice({
       }
     },
 
-    removeFromPlayQueue: (state, action: PayloadAction<{ entries: Entry[] }>) => {
+    removeFromPlayQueue: (state, action: PayloadAction<{ entries: Song[] }>) => {
       const uniqueIds = _.map(action.payload.entries, 'uniqueId');
 
       state.entry = state.entry.filter((entry) => !uniqueIds.includes(entry.uniqueId));
@@ -892,6 +862,7 @@ const playQueueSlice = createSlice({
     clearPlayQueue: (state) => {
       state.entry = [];
       state.shuffledEntry = [];
+      state.current = undefined;
       resetPlayerDefaults(state);
     },
 
@@ -907,7 +878,7 @@ const playQueueSlice = createSlice({
       state.isFading = action.payload;
     },
 
-    moveToIndex: (state, action: PayloadAction<Entry[]>) => {
+    moveToIndex: (state, action: PayloadAction<Song[]>) => {
       const currentEntry = entrySelect(state);
 
       // Set the modified entries into the redux state
@@ -929,7 +900,7 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    moveToTop: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveToTop: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       const currentEntry = entrySelect(state);
       const newQueue = moveSelectedToTop(state[currentEntry], action.payload.selectedEntries);
       state[currentEntry] = newQueue;
@@ -947,7 +918,7 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    moveToBottom: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveToBottom: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       const currentEntry = entrySelect(state);
       const newQueue = moveSelectedToBottom(state[currentEntry], action.payload.selectedEntries);
       state[currentEntry] = newQueue;
@@ -965,7 +936,7 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    moveUp: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveUp: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       const currentEntry = entrySelect(state);
       state[currentEntry] = moveSelectedUp(state[currentEntry], action.payload.selectedEntries);
 
@@ -985,7 +956,7 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
-    moveDown: (state, action: PayloadAction<{ selectedEntries: Entry[] }>) => {
+    moveDown: (state, action: PayloadAction<{ selectedEntries: Song[] }>) => {
       const currentEntry = entrySelect(state);
       state[currentEntry] = moveSelectedDown(state[currentEntry], action.payload.selectedEntries);
 
