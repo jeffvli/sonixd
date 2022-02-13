@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Entry } from './playQueueSlice';
 
 interface MultiSelect {
   lastSelected: Record<string, unknown>;
@@ -31,8 +30,8 @@ const multiSelectSlice = createSlice({
   name: 'multiSelect',
   initialState,
   reducers: {
-    /* updateSelected: (state, action: PayloadAction<Entry[]>) => {
-      const newSelected: Entry[] = [];
+    /* updateSelected: (state, action: PayloadAction<any>) => {
+      const newSelected: any = [];
       state.selected.map((entry: Entry) => {
         const matchedEntry = action.payload.find(
           (item: Entry) => item.uniqueId === entry.uniqueId
@@ -65,7 +64,7 @@ const multiSelectSlice = createSlice({
       state.currentMouseOverIndex = action.payload.index;
     },
 
-    setSelected: (state, action: PayloadAction<Entry[]>) => {
+    setSelected: (state, action: PayloadAction<any>) => {
       state.selected = action.payload;
     },
 
@@ -81,8 +80,8 @@ const multiSelectSlice = createSlice({
       state.selected.push(action.payload);
     },
 
-    appendSelected: (state, action: PayloadAction<Entry[]>) => {
-      action.payload.forEach((entry: Entry) => {
+    appendSelected: (state, action: PayloadAction<any>) => {
+      action.payload.forEach((entry: any) => {
         const alreadySelected = state.selected.find((item) => item.uniqueId === entry.uniqueId);
 
         if (!alreadySelected) {

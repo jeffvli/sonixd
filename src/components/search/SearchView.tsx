@@ -9,7 +9,7 @@ import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { Entry, fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import {
   StyledButton,
@@ -19,7 +19,7 @@ import {
   StyledNavItem,
 } from '../shared/styled';
 import { apiController } from '../../api/controller';
-import { Album, Artist, Item } from '../../types';
+import { Album, Artist, Item, Song } from '../../types';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import ListViewType from '../viewtypes/ListViewType';
 
@@ -39,7 +39,7 @@ const SearchView = () => {
   const [nav, setNav] = useState<'songs' | 'albums' | 'artists'>('songs');
   const [artistData, setArtistData] = useState<Artist[]>([]);
   const [albumData, setAlbumData] = useState<Album[]>([]);
-  const [songData, setSongData] = useState<Entry[]>([]);
+  const [songData, setSongData] = useState<Song[]>([]);
 
   useEffect(() => {
     if (folder.applied.search) {
