@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/no-array-index-key */
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -7,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
-import { Icon, Loader, Whisper } from 'rsuite';
+import { ButtonGroup, Icon, Loader, Whisper } from 'rsuite';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
@@ -18,8 +20,10 @@ import {
   StyledInputGroup,
   StyledInputGroupButton,
 } from '../shared/styled';
-import { Item, Song } from '../../types';
+import { Item, Song, Play } from '../../types';
 import Popup from '../shared/Popup';
+import { PlayAppendButton, PlayAppendNextButton, PlayButton } from '../shared/ToolbarButtons';
+import usePlayHandler from '../../hooks/usePlayHandler';
 
 const SearchContainer = styled.div`
   height: 100%;
@@ -41,6 +45,8 @@ const SearchContainer = styled.div`
   }
 
   .search-options {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
 
     .rs-checkbox {
@@ -77,47 +83,130 @@ const SectionResults = styled.div<{ show: boolean }>`
 `;
 
 const SearchResultContainer = styled.div`
+  display: grid;
+  grid-template-columns: 4.5fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  align-self: center;
   padding: 5px;
-  display: flex;
-  overflow: hidden;
-  font-size: 13px;
-
-  .cover-art {
-    flex-grow: 1;
-    width: 50px;
-  }
-
-  .item-details {
-    flex-grow: 2;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .item-top,
-  .item-bottom {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
 
   &:hover {
     cursor: pointer;
     background-color: ${(props) => props.theme.colors.table.selectedRow} !important;
+
+    .search-result-details {
+      padding-right: 110px;
+    }
+
+    .search-controls {
+      display: flex;
+    }
+  }
+
+  .search-result {
+    display: grid;
+    grid-template-columns: 0.5fr 5.5fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas: 'search-result-cover search-result-details';
+    grid-area: 1 / 1 / 2 / 3;
+    user-select: none;
+  }
+
+  .search-result-details {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+      'search-result-details-top'
+      'search-result-details-bottom';
+    grid-area: search-result-details;
+
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .search-result-details-top {
+    grid-area: search-result-details-top;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .search-result-details-bottom {
+    grid-area: search-result-details-bottom;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .search-result-cover {
+    grid-area: search-result-cover;
+    text-align: center;
+    width: 50px;
+  }
+
+  .search-controls {
+    grid-area: 1 / 2 / 2 / 3;
+    display: none;
+    justify-content: flex-end;
+    align-self: center;
   }
 `;
 
-const SearchResult = ({ entry, handleClick, title, details }: any) => {
+const SearchResult = ({ entry, handleClick, title, details, handlePlay }: any) => {
   return (
-    <SearchResultContainer onClick={() => handleClick(entry)}>
-      <div className="cover-art">
-        <LazyLoadImage src={entry.image} width="40" height="40" />
+    <SearchResultContainer>
+      <div className="search-result" onClick={() => handleClick(entry)}>
+        <div className="search-result-details">
+          <div className="search-result-details-top">{title}</div>
+          <div className="search-result-details-bottom">{details}</div>
+        </div>
+        <div className="search-result-cover">
+          <LazyLoadImage src={entry.image} width="40" height="40" />
+        </div>
       </div>
-      <div className="item-details">
-        <div className="item-top">{title}</div>
-        <div className="item-bottom">{details}</div>
+      <div className="search-controls">
+        <ButtonGroup>
+          <PlayButton
+            size="sm"
+            appearance="subtle"
+            onClick={() => {
+              if (entry.type === Item.Music) {
+                handlePlay({ byData: [entry], play: Play.Play });
+              } else {
+                handlePlay({ byItemType: { item: entry.type, id: entry.id }, play: Play.Play });
+              }
+            }}
+          />
+          <PlayAppendNextButton
+            size="sm"
+            appearance="subtle"
+            onClick={() => {
+              if (entry.type === Item.Music) {
+                handlePlay({ byData: [entry], play: Play.Next });
+              } else {
+                handlePlay({ byItemType: { item: entry.type, id: entry.id }, play: Play.Next });
+              }
+            }}
+          />
+          <PlayAppendButton
+            size="sm"
+            appearance="subtle"
+            onClick={() => {
+              if (entry.type === Item.Music) {
+                handlePlay({ byData: [entry], play: Play.Later });
+              } else {
+                handlePlay({ byItemType: { item: entry.type, id: entry.id }, play: Play.Later });
+              }
+            }}
+          />
+        </ButtonGroup>
       </div>
     </SearchResultContainer>
   );
@@ -165,6 +254,8 @@ const SearchBar = () => {
       }, 100);
     }
   });
+
+  const { handlePlay } = usePlayHandler();
 
   useHotkeys('escape', () => {
     setOpenSearch(false);
@@ -362,25 +453,52 @@ const SearchBar = () => {
               </StyledInputGroupButton>
             </StyledInputGroup>
             <div className="search-options">
-              <StyledCheckbox
-                defaultChecked={searchOptions.global}
-                onChange={(_v: any, e: boolean) => {
-                  setSearchOptions({ ...searchOptions, global: e });
+              <div>
+                <StyledCheckbox
+                  defaultChecked={searchOptions.global}
+                  onChange={(_v: any, e: boolean) => {
+                    setSearchOptions({ ...searchOptions, global: e });
+                  }}
+                  checked={searchOptions.global}
+                >
+                  {t('Search library')}
+                </StyledCheckbox>
+                <StyledCheckbox
+                  defaultChecked={searchOptions.local}
+                  onChange={(_v: any, e: boolean) => {
+                    setSearchOptions({ ...searchOptions, local: e });
+                    dispatch(setSearchQuery(e ? debouncedSearchQuery : ''));
+                  }}
+                  checked={searchOptions.local}
+                >
+                  {t('Search page')}
+                </StyledCheckbox>
+              </div>
+              <StyledButton
+                size="xs"
+                appearance="subtle"
+                onClick={() => {
+                  return [searchOptions.albums, searchOptions.songs, searchOptions.artists].some(
+                    (v) => v
+                  )
+                    ? setSearchOptions({
+                        ...searchOptions,
+                        songs: false,
+                        albums: false,
+                        artists: false,
+                      })
+                    : setSearchOptions({
+                        ...searchOptions,
+                        songs: true,
+                        albums: true,
+                        artists: true,
+                      });
                 }}
-                checked={searchOptions.global}
               >
-                {t('Search library')}
-              </StyledCheckbox>
-              <StyledCheckbox
-                defaultChecked={searchOptions.local}
-                onChange={(_v: any, e: boolean) => {
-                  setSearchOptions({ ...searchOptions, local: e });
-                  dispatch(setSearchQuery(e ? debouncedSearchQuery : ''));
-                }}
-                checked={searchOptions.local}
-              >
-                {t('Search page')}
-              </StyledCheckbox>
+                {[searchOptions.albums, searchOptions.songs, searchOptions.artists].some((v) => v)
+                  ? t('Collapse')
+                  : t('Expand')}
+              </StyledButton>
             </div>
 
             {debouncedSearchQuery !== '' ? (
@@ -388,7 +506,7 @@ const SearchBar = () => {
                 {songResults?.pages[0]?.song.data.length < 1 &&
                 albumResults?.pages[0]?.album.data.length < 1 &&
                 artistResults?.pages[0]?.artist.data.length < 1 ? (
-                  <>No results found</>
+                  <div style={{ padding: '0 10px' }}>{t('No results found')}</div>
                 ) : (
                   <>
                     {artistResults?.pages[0]?.artist.data.length > 0 && searchOptions.global && (
@@ -430,6 +548,7 @@ const SearchBar = () => {
                                   handleClick={(lineEntry: Song) =>
                                     history.push(`/library/artist/${lineEntry.id}`)
                                   }
+                                  handlePlay={handlePlay}
                                   title={<>{entry.title}</>}
                                   details={
                                     <>{entry.albumCount && `${entry.albumCount} ${t(' albums')}`}</>
@@ -480,6 +599,7 @@ const SearchBar = () => {
                                   handleClick={(lineEntry: Song) =>
                                     history.push(`/library/album/${lineEntry.id}`)
                                   }
+                                  handlePlay={handlePlay}
                                   title={<>{entry.title}</>}
                                   details={
                                     <>
@@ -538,6 +658,7 @@ const SearchBar = () => {
                                   handleClick={(lineEntry: Song) =>
                                     history.push(`/library/album/${lineEntry.albumId}`)
                                   }
+                                  handlePlay={handlePlay}
                                   title={<>{entry.title}</>}
                                   details={
                                     <>
