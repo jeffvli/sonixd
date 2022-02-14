@@ -306,6 +306,7 @@ const Card = ({
 
                 <CustomTooltip text={t('Add to queue (later)')} delay={1000}>
                   <AppendOverlayButton
+                    aria-label={t('Add to queue (later)')}
                     onClick={() => handlePlayAppend('later')}
                     size={size <= 160 ? 'xs' : 'sm'}
                     icon={<Icon icon="plus" />}
@@ -314,6 +315,7 @@ const Card = ({
 
                 <CustomTooltip text={t('Add to queue (next)')} delay={1000}>
                   <AppendNextOverlayButton
+                    aria-label={t('Add to queue (next)')}
                     onClick={() => handlePlayAppend('next')}
                     size={size <= 160 ? 'xs' : 'sm'}
                     icon={<Icon icon="plus-circle" />}
@@ -323,6 +325,9 @@ const Card = ({
                 {playClick.type !== 'playlist' && (
                   <CustomTooltip text={t('Toggle favorite')} delay={1000}>
                     <FavoriteOverlayButton
+                      aria-label={
+                        rest.details.starred ? t('Remove from favorites') : t('Add to favorites')
+                      }
                       onClick={() => handleFavorite(rest.details)}
                       size={size <= 160 ? 'xs' : 'sm'}
                       icon={<Icon icon={rest.details.starred ? 'heart' : 'heart-o'} />}
@@ -332,6 +337,7 @@ const Card = ({
                 {!rest.isModal && !noModalButton && (
                   <CustomTooltip text={t('View in modal')} delay={1000}>
                     <ModalViewOverlayButton
+                      aria-label={t('View in modal')}
                       size={size <= 160 ? 'xs' : 'sm'}
                       icon={<Icon icon="external-link" />}
                       onClick={handleOpenModal}

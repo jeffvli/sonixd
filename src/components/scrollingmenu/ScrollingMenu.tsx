@@ -60,6 +60,7 @@ const ScrollingMenu = ({
               <ButtonToolbar>
                 <ButtonGroup>
                   <StyledButton
+                    aria-label="scroll left"
                     size="sm"
                     appearance="subtle"
                     onClick={() => {
@@ -75,6 +76,7 @@ const ScrollingMenu = ({
                     <Icon icon="arrow-left" />
                   </StyledButton>
                   <StyledButton
+                    aria-label="scroll right"
                     size="sm"
                     appearance="subtle"
                     onClick={() => {
