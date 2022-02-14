@@ -145,10 +145,20 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
           >
             <FlexboxGrid.Item>
               <ButtonToolbar>
-                <StyledButton appearance="subtle" size="sm" onClick={() => history.goBack()}>
+                <StyledButton
+                  aria-label="back"
+                  appearance="subtle"
+                  size="sm"
+                  onClick={() => history.goBack()}
+                >
                   <Icon icon="arrow-left-line" />
                 </StyledButton>
-                <StyledButton appearance="subtle" size="sm" onClick={() => history.goForward()}>
+                <StyledButton
+                  aria-label="next"
+                  appearance="subtle"
+                  size="sm"
+                  onClick={() => history.goForward()}
+                >
                   <Icon icon="arrow-right-line" />
                 </StyledButton>
               </ButtonToolbar>
@@ -200,7 +210,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
                   placement="bottomEnd"
                   preventOverflow
                 >
-                  <StyledButton appearance="subtle">
+                  <StyledButton aria-label="settings" appearance="subtle">
                     <Icon icon="cog" />
                   </StyledButton>
                 </Whisper>

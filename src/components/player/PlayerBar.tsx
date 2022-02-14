@@ -381,6 +381,7 @@ const PlayerBar = () => {
                           style={{ cursor: 'pointer' }}
                         />
                         <StyledButton
+                          aria-label="show cover art"
                           size="xs"
                           onClick={() => {
                             dispatch(setSidebar({ coverArt: true }));
@@ -531,6 +532,8 @@ const PlayerBar = () => {
               {/* Seek Backward Button */}
               <CustomTooltip text={t('Seek backward')} delay={1000}>
                 <PlayerControlIcon
+                  aria-label={t('Seek backward')}
+                  role="button"
                   tabIndex={0}
                   icon="backward"
                   size="lg"
@@ -546,6 +549,8 @@ const PlayerBar = () => {
               {/* Previous Song Button */}
               <CustomTooltip text={t('Previous Track')} delay={1000}>
                 <PlayerControlIcon
+                  aria-label={t('Previous Track')}
+                  role="button"
                   tabIndex={0}
                   icon="step-backward"
                   size="lg"
@@ -561,6 +566,9 @@ const PlayerBar = () => {
               {/* Play/Pause Button */}
               <CustomTooltip text={t('Play/Pause')} delay={1000}>
                 <PlayerControlIcon
+                  aria-label={t('Play')}
+                  aria-pressed={player.status === 'PLAYING'}
+                  role="button"
                   tabIndex={0}
                   icon={player.status === 'PLAYING' ? 'pause-circle' : 'play-circle'}
                   size="3x"
@@ -575,6 +583,8 @@ const PlayerBar = () => {
               {/* Next Song Button */}
               <CustomTooltip text={t('Next Track')} delay={1000}>
                 <PlayerControlIcon
+                  aria-label={t('Next Track')}
+                  role="button"
                   tabIndex={0}
                   icon="step-forward"
                   size="lg"
@@ -590,6 +600,8 @@ const PlayerBar = () => {
               {/* Seek Forward Button */}
               <CustomTooltip text={t('Seek forward')} delay={1000}>
                 <PlayerControlIcon
+                  aria-label={t('Seek forward')}
+                  role="button"
                   tabIndex={0}
                   icon="forward"
                   size="lg"
@@ -700,6 +712,9 @@ const PlayerBar = () => {
                 {/* Favorite Button */}
                 <CustomTooltip text={t('Favorite')}>
                   <PlayerControlIcon
+                    aria-label={t('Favorite')}
+                    aria-pressed={!!playQueue[currentEntryList][playQueue.currentIndex]?.starred}
+                    role="button"
                     tabIndex={0}
                     icon={
                       playQueue[currentEntryList][playQueue.currentIndex]?.starred
@@ -733,6 +748,17 @@ const PlayerBar = () => {
                   }
                 >
                   <PlayerControlIcon
+                    aria-label={
+                      playQueue.repeat === 'all'
+                        ? t('Repeat all')
+                        : playQueue.repeat === 'one'
+                        ? t('Repeat one')
+                        : t('Repeat')
+                    }
+                    aria-pressed={
+                      playQueue.repeat === 'all' || playQueue.repeat === 'one' ? 'true' : 'false'
+                    }
+                    role="button"
                     tabIndex={0}
                     icon="refresh"
                     size="lg"
@@ -752,6 +778,9 @@ const PlayerBar = () => {
                 {/* Shuffle Button */}
                 <CustomTooltip text={t('Shuffle')}>
                   <PlayerControlIcon
+                    aria-label={t('Shuffle')}
+                    aria-pressed={playQueue.shuffle ? 'true' : 'false'}
+                    role="button"
                     tabIndex={0}
                     icon="random"
                     size="lg"
@@ -769,6 +798,9 @@ const PlayerBar = () => {
                 {/* Display Queue Button */}
                 <CustomTooltip text={t('Mini')}>
                   <PlayerControlIcon
+                    aria-label="show play queue"
+                    aria-pressed={playQueue.displayQueue ? 'true' : 'false'}
+                    role="button"
                     tabIndex={0}
                     icon="tasks"
                     size="lg"

@@ -738,7 +738,7 @@ const ArtistView = ({ ...rest }: any) => {
                       }
                     >
                       <CustomTooltip text={t('Info')}>
-                        <StyledButton appearance="subtle" size="lg">
+                        <StyledButton aria-label={t('Info')} appearance="subtle" size="lg">
                           <Icon icon="info-circle" />
                         </StyledButton>
                       </CustomTooltip>

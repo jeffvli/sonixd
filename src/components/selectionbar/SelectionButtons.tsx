@@ -11,6 +11,7 @@ const CustomIconButton = ({ tooltipText, icon, handleClick, ...rest }: any) => {
       {tooltipText ? (
         <CustomTooltip text={tooltipText}>
           <IconButton
+            aria-label={tooltipText}
             size="xs"
             {...rest}
             icon={<Icon icon={icon} {...rest} />}

@@ -588,6 +588,7 @@ const SearchBar = () => {
     >
       <span style={{ display: 'inline-block' }}>
         <StyledButton
+          aria-label="search"
           onClick={() => {
             setOpenSearch(true);
             setTimeout(() => {
