@@ -10,17 +10,17 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import { StyledButton, StyledInputPicker, StyledInputPickerContainer } from '../shared/styled';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { setCurrentViewedFolder } from '../../redux/folderSlice';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import { Server } from '../../types';
 import { apiController } from '../../api/controller';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const FolderList = () => {
   const { t } = useTranslation();
@@ -96,25 +96,7 @@ const FolderList = () => {
   });
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-
-    queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData.child[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const { handleRating } = useRating();
 
   return (
     <>
@@ -206,7 +188,9 @@ const FolderList = () => {
                 },
               })
             }
-            handleRating={handleRowRating}
+            handleRating={(rowData: any, rating: number) =>
+              handleRating(rowData, { queryKey: ['folder', folder.currentViewedFolder], rating })
+            }
             cacheImages={{
               enabled: settings.getSync('cacheImages'),
               cacheType: 'folder',

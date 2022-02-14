@@ -6,7 +6,7 @@ import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
@@ -15,7 +15,6 @@ import { setStatus } from '../../redux/playerSlice';
 import { StyledNavItem, StyledTag } from '../shared/styled';
 import { setActive, setSort } from '../../redux/favoriteSlice';
 import { apiController } from '../../api/controller';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import useColumnSort from '../../hooks/useColumnSort';
 import { Item, Server } from '../../types';
 import { FilterButton } from '../shared/ToolbarButtons';
@@ -23,6 +22,7 @@ import ColumnSortPopover from '../shared/ColumnSortPopover';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const StarredView = () => {
   const { t } = useTranslation();
@@ -93,20 +93,21 @@ const StarredView = () => {
   });
 
   const { handleFavorite } = useFavorite();
+  const { handleRating } = useRating();
 
-  const handleRowRating = async (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
+  // const handleRowRating = async (rowData: any, e: number) => {
+  //   apiController({
+  //     serverType: config.serverType,
+  //     endpoint: 'setRating',
+  //     args: { ids: [rowData.id], rating: e },
+  //   });
+  //   dispatch(setRate({ id: [rowData.id], rating: e }));
+  //   dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
 
-    await queryClient.refetchQueries(['starred', musicFolder], {
-      active: true,
-    });
-  };
+  //   await queryClient.refetchQueries(['starred', musicFolder], {
+  //     active: true,
+  //   });
+  // };
 
   if (isError) {
     return <span>Error: {error.message}</span>;
@@ -270,7 +271,15 @@ const StarredView = () => {
               tableColumns={config.lookAndFeel.listView.music.columns}
               handleRowClick={handleRowClick}
               handleRowDoubleClick={handleRowDoubleClick}
-              handleRating={handleRowRating}
+              handleRating={(rowData: any, rating: number) =>
+                handleRating(rowData, {
+                  rating,
+                  custom: async () =>
+                    queryClient.refetchQueries(['starred', musicFolder], {
+                      active: true,
+                    }),
+                })
+              }
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
               cacheImages={{
@@ -313,7 +322,15 @@ const StarredView = () => {
                   fontSize={config.lookAndFeel.listView.album.fontSize}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
-                  handleRating={handleRowRating}
+                  handleRating={(rowData: any, rating: number) =>
+                    handleRating(rowData, {
+                      rating,
+                      custom: async () =>
+                        queryClient.refetchQueries(['starred', musicFolder], {
+                          active: true,
+                        }),
+                    })
+                  }
                   cacheImages={{
                     enabled: settings.getSync('cacheImages'),
                     cacheType: 'album',
@@ -391,7 +408,15 @@ const StarredView = () => {
                   fontSize={config.lookAndFeel.listView.artist.fontSize}
                   handleRowClick={handleRowClick}
                   handleRowDoubleClick={handleRowDoubleClick}
-                  handleRating={handleRowRating}
+                  handleRating={(rowData: any, rating: number) =>
+                    handleRating(rowData, {
+                      rating,
+                      custom: async () =>
+                        queryClient.refetchQueries(['starred', musicFolder], {
+                          active: true,
+                        }),
+                    })
+                  }
                   cacheImages={{
                     enabled: false,
                     cacheType: 'artist',

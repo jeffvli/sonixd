@@ -22,7 +22,7 @@ import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
 import { formatDuration, isCached } from '../../shared/utils';
 import { LinkWrapper, SectionTitle, StyledButton, StyledLink, StyledPanel } from '../shared/styled';
@@ -34,7 +34,6 @@ import ListViewTable from '../viewtypes/ListViewTable';
 import Card from '../card/Card';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import useColumnSort from '../../hooks/useColumnSort';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
@@ -42,6 +41,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const fac = new FastAverageColor();
 
@@ -158,25 +158,7 @@ const ArtistView = ({ ...rest }: any) => {
 
   const { handleFavorite } = useFavorite();
   const { handlePlayQueueAdd } = usePlayQueueHandler();
-
-  const handleRowRating = async (rowData: any, e: number, query: any) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-
-    queryClient.setQueryData(query, (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const { handleRating } = useRating();
 
   const handleDownload = async (type: 'copy' | 'download') => {
     if (config.serverType === Server.Jellyfin) {
@@ -624,8 +606,8 @@ const ArtistView = ({ ...rest }: any) => {
               handleFavorite={(rowData: any) =>
                 handleFavorite(rowData, { queryKey: ['artistSongs', artistId] })
               }
-              handleRating={(rowData: any, e: number) =>
-                handleRowRating(rowData, e, ['artistSongs', artistId])
+              handleRating={(rowData: any, rating: number) =>
+                handleRating(rowData, { queryKey: ['artistSongs', artistId], rating })
               }
             />
           ) : location.pathname.match('/albums|/compilationalbums') ? (
@@ -713,8 +695,8 @@ const ArtistView = ({ ...rest }: any) => {
               handleFavorite={(rowData: any) =>
                 handleFavorite(rowData, { queryKey: ['artistTopSongs', data?.title] })
               }
-              handleRating={(rowData: any, e: number) =>
-                handleRowRating(rowData, e, ['artistTopSongs', data?.title])
+              handleRating={(rowData: any, rating: number) =>
+                handleRating(rowData, { queryKey: ['artistTopSongs', data?.title], rating })
               }
             />
           ) : (
@@ -796,8 +778,8 @@ const ArtistView = ({ ...rest }: any) => {
                     }
                     handleRowClick={handleRowClick}
                     handleRowDoubleClick={(e: any) => handleRowDoubleClick(e, topSongs)}
-                    handleRating={(rowData: any, e: number) =>
-                      handleRowRating(rowData, e, ['artistTopSongs', data?.title])
+                    handleRating={(rowData: any, rating: number) =>
+                      handleRating(rowData, { queryKey: ['artistTopSongs', data?.title], rating })
                     }
                     config={[]} // Prevent column sort
                     disabledContextMenuOptions={[

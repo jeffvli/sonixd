@@ -16,7 +16,6 @@ import {
   removeFromPlayQueue,
   setPlayQueue,
   appendPlayQueue,
-  setRate,
   moveToTop,
   moveToBottom,
 } from '../../redux/playQueueSlice';
@@ -51,12 +50,12 @@ import {
 import { notifyToast } from '../shared/toast';
 import { apiController } from '../../api/controller';
 import { Server, Song } from '../../types';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import NowPlayingInfoView from './NowPlayingInfoView';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -230,16 +229,7 @@ const NowPlayingView = () => {
   };
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-  };
+  const { handleRating } = useRating();
 
   return (
     <>
@@ -514,7 +504,7 @@ const NowPlayingView = () => {
                 dnd
                 disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
                 handleFavorite={handleFavorite}
-                handleRating={handleRowRating}
+                handleRating={(rowData: any, rating: number) => handleRating(rowData, { rating })}
                 initialScrollOffset={
                   playQueue.scrollWithCurrentSong
                     ? 0

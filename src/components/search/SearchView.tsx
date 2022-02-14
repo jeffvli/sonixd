@@ -23,6 +23,7 @@ import { Album, Artist, Item, Song } from '../../types';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import ListViewType from '../viewtypes/ListViewType';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const SearchView = () => {
   const { t } = useTranslation();
@@ -175,6 +176,7 @@ const SearchView = () => {
   }, [artistResults]);
 
   const { handleFavorite } = useFavorite();
+  const { handleRating } = useRating();
 
   const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
     doubleClick: (rowData: any) => {
@@ -315,7 +317,18 @@ const SearchView = () => {
           fontSize={config.lookAndFeel.listView.music.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          handleRating={() => {}}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, {
+              rating,
+              custom: () =>
+                queryClient.refetchQueries([
+                  'searchpage',
+                  debouncedSearchQuery,
+                  { type: Item.Music, count: 50 },
+                  musicFolder.id,
+                ]),
+            })
+          }
           handleFavorite={(rowData: any) =>
             handleFavorite(rowData, {
               custom: () =>
@@ -352,7 +365,18 @@ const SearchView = () => {
           fontSize={config.lookAndFeel.listView.album.fontSize}
           handleRowClick={handleAlbumRowClick}
           handleRowDoubleClick={handleAlbumRowDoubleClick}
-          handleRating={() => {}}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, {
+              rating,
+              custom: () =>
+                queryClient.refetchQueries([
+                  'searchpage',
+                  debouncedSearchQuery,
+                  { type: Item.Album, count: 25 },
+                  musicFolder.id,
+                ]),
+            })
+          }
           handleFavorite={(rowData: any) =>
             handleFavorite(rowData, {
               custom: () =>
@@ -389,7 +413,18 @@ const SearchView = () => {
           fontSize={config.lookAndFeel.listView.artist.fontSize}
           handleRowClick={handleArtistRowClick}
           handleRowDoubleClick={handleArtistRowDoubleClick}
-          handleRating={() => {}}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, {
+              rating,
+              custom: () =>
+                queryClient.refetchQueries([
+                  'searchpage',
+                  debouncedSearchQuery,
+                  { type: Item.Artist, count: 15 },
+                  musicFolder.id,
+                ]),
+            })
+          }
           handleFavorite={(rowData: any) =>
             handleFavorite(rowData, {
               custom: () =>

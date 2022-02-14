@@ -32,6 +32,7 @@ import useListScroll from '../../hooks/useListScroll';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 export const ALBUM_SORT_TYPES = [
   { label: i18n.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18n.t('Default') },
@@ -212,23 +213,7 @@ const AlbumList = () => {
   };
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-
-    queryClient.setQueryData(['albumList', view.album.filter, musicFolder.id], (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData.data[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const { handleRating } = useRating();
 
   return (
     <GenericPage
@@ -395,7 +380,12 @@ const AlbumList = () => {
           fontSize={config.lookAndFeel.listView.album.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          handleRating={handleRowRating}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, {
+              queryKey: ['albumList', view.album.filter, musicFolder.id],
+              rating,
+            })
+          }
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',

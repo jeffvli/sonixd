@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { clipboard, shell } from 'electron';
 import settings from 'electron-settings';
@@ -15,7 +14,7 @@ import {
   PlayButton,
 } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
@@ -32,7 +31,6 @@ import {
 } from '../layout/styled';
 import { apiController } from '../../api/controller';
 import { Artist, Genre, Item, Play, Server } from '../../types';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import Card from '../card/Card';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
@@ -40,6 +38,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 interface AlbumParams {
   id: string;
@@ -92,6 +91,7 @@ const AlbumView = ({ ...rest }: any) => {
 
   const { handlePlayQueueAdd } = usePlayQueueHandler();
   const { handleFavorite } = useFavorite();
+  const { handleRating } = useRating();
 
   const handleDownload = async (type: 'copy' | 'download') => {
     if (config.serverType === Server.Jellyfin) {
@@ -140,25 +140,6 @@ const AlbumView = ({ ...rest }: any) => {
     } else {
       notifyToast('warning', t('No parent album found'));
     }
-  };
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-
-    queryClient.setQueryData(['album', albumId], (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData.song[index].userRating = e;
-      });
-
-      return oldData;
-    });
   };
 
   if (isLoading) {
@@ -459,7 +440,9 @@ const AlbumView = ({ ...rest }: any) => {
           tableColumns={config.lookAndFeel.listView.music.columns}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          handleRating={handleRowRating}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, { queryKey: ['album', albumId], rating })
+          }
           virtualized
           rowHeight={Number(settings.getSync('musicListRowHeight'))}
           fontSize={Number(settings.getSync('musicListFontSize'))}

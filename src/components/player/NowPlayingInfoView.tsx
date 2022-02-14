@@ -13,7 +13,7 @@ import { SecondaryTextWrapper, StyledPanel, StyledTag } from '../shared/styled';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import ListViewTable from '../viewtypes/ListViewTable';
 import CenterLoader from '../loader/CenterLoader';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useColumnSort from '../../hooks/useColumnSort';
 import { GenericItem, Genre, Item } from '../../types';
@@ -27,9 +27,9 @@ import {
 } from './styled';
 import Card from '../card/Card';
 import { setFilter, setPagination } from '../../redux/viewSlice';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const NowPlayingInfoView = () => {
   const { t } = useTranslation();
@@ -96,25 +96,7 @@ const NowPlayingInfoView = () => {
   });
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = async (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-
-    queryClient.setQueryData(['similarSongs', currentArtistId, musicFolder, 50], (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const { handleRating } = useRating();
 
   useEffect(() => {
     const fetchAlbum = async () => {
@@ -288,7 +270,12 @@ const NowPlayingInfoView = () => {
                       }
                       handleRowClick={handleRowClick}
                       handleRowDoubleClick={(e: any) => handleRowDoubleClick(e)}
-                      handleRating={(rowData: any, e: number) => handleRowRating(rowData, e)}
+                      handleRating={(rowData: any, rating: number) =>
+                        handleRating(rowData, {
+                          queryKey: ['similarSongs', currentArtistId, musicFolder, 50],
+                          rating,
+                        })
+                      }
                       config={[]} // Prevent column sort
                       disabledContextMenuOptions={[
                         'removeSelected',

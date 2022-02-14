@@ -18,7 +18,7 @@ import {
   UndoButton,
 } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { clearSelected } from '../../redux/multiSelectSlice';
 import {
   createRecoveryFile,
@@ -40,7 +40,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
 import { StyledButton, StyledCheckbox, StyledInput, StyledLink } from '../shared/styled';
-import { removeFromPlaylist, setPlaylistData, setPlaylistRate } from '../../redux/playlistSlice';
+import { removeFromPlaylist, setPlaylistData } from '../../redux/playlistSlice';
 import { PageHeaderSubtitleDataLine } from '../layout/styled';
 import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
@@ -51,6 +51,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 interface PlaylistParams {
   id: string;
@@ -351,16 +352,7 @@ const PlaylistView = ({ ...rest }) => {
   };
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-    dispatch(setRate({ id: [rowData.id], rating: e }));
-    dispatch(setPlaylistRate({ id: [rowData.id], rating: e }));
-  };
+  const { handleRating } = useRating();
 
   useEffect(() => {
     if (data?.image.match('placeholder')) {
@@ -611,7 +603,7 @@ const PlaylistView = ({ ...rest }) => {
         handleFavorite={(rowData: any) =>
           handleFavorite(rowData, { queryKey: ['playlist', playlistId] })
         }
-        handleRating={handleRowRating}
+        handleRating={(rowData: any, rating: number) => handleRating(rowData, { rating })}
         loading={isLoading}
       />
     </GenericPage>

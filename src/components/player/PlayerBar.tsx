@@ -19,7 +19,7 @@ import {
   LinkButton,
   CoverArtContainer,
 } from './styled';
-import { setVolume, setRate } from '../../redux/playQueueSlice';
+import { setVolume } from '../../redux/playQueueSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -27,16 +27,15 @@ import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
 import { SecondaryTextWrapper, StyledButton, StyledRate } from '../shared/styled';
-import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import { notifyToast } from '../shared/toast';
 import { InfoModal } from '../modal/Modal';
-import { setPlaylistRate } from '../../redux/playlistSlice';
 import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
 import { setSidebar } from '../../redux/configSlice';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -297,18 +296,7 @@ const PlayerBar = () => {
   }, [config.serverType, isDragging, manualSeek, playQueue.currentPlayer]);
 
   const { handleFavorite } = useFavorite();
-
-  const handleRating = (e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [playQueue[currentEntryList][playQueue.currentIndex].id], rating: e },
-    });
-    dispatch(setRate({ id: [playQueue[currentEntryList][playQueue.currentIndex].id], rating: e }));
-    dispatch(
-      setPlaylistRate({ id: [playQueue[currentEntryList][playQueue.currentIndex].id], rating: e })
-    );
-  };
+  const { handleRating } = useRating();
 
   return (
     <Player ref={playersRef} currentEntryList={currentEntryList} muted={muted}>
@@ -644,7 +632,9 @@ const PlayerBar = () => {
                         ? playQueue[currentEntryList][playQueue.currentIndex].userRating
                         : 0
                     }
-                    onChange={(e: number) => handleRating(e)}
+                    onChange={(rating: number) =>
+                      handleRating(playQueue[currentEntryList][playQueue.currentIndex], { rating })
+                    }
                   />
                 )}
               </div>

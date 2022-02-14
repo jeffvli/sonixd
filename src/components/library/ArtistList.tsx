@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
 import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
@@ -20,6 +19,7 @@ import { setSort } from '../../redux/artistSlice';
 import { StyledTag } from '../shared/styled';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 const ArtistList = () => {
   const { t } = useTranslation();
@@ -67,23 +67,7 @@ const ArtistList = () => {
   };
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-
-    queryClient.setQueryData(['artistList', musicFolder], (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const { handleRating } = useRating();
 
   return (
     <GenericPage
@@ -167,7 +151,9 @@ const ArtistList = () => {
           fontSize={config.lookAndFeel.listView.artist.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          handleRating={handleRowRating}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, { queryKey: ['artistList', musicFolder], rating })
+          }
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'artist',

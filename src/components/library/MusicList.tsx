@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import _ from 'lodash';
 import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
@@ -22,6 +21,7 @@ import { setStatus } from '../../redux/playerSlice';
 import useListScroll from '../../hooks/useListScroll';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
+import { useRating } from '../../hooks/useRating';
 
 // prettier-ignore
 export const MUSIC_SORT_TYPES = [
@@ -181,23 +181,7 @@ const MusicList = () => {
   };
 
   const { handleFavorite } = useFavorite();
-
-  const handleRowRating = (rowData: any, e: number) => {
-    apiController({
-      serverType: config.serverType,
-      endpoint: 'setRating',
-      args: { ids: [rowData.id], rating: e },
-    });
-
-    queryClient.setQueryData(currentQueryKey, (oldData: any) => {
-      const ratedIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-      ratedIndices.forEach((index) => {
-        oldData.data[index].userRating = e;
-      });
-
-      return oldData;
-    });
-  };
+  const { handleRating } = useRating();
 
   return (
     <GenericPage
@@ -266,7 +250,9 @@ const MusicList = () => {
           fontSize={config.lookAndFeel.listView.music.fontSize}
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
-          handleRating={handleRowRating}
+          handleRating={(rowData: any, rating: number) =>
+            handleRating(rowData, { queryKey: currentQueryKey, rating })
+          }
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
             cacheType: 'album',
