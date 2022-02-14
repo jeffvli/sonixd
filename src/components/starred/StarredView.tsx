@@ -6,12 +6,7 @@ import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  fixPlayer2Index,
-  setPlayQueueByRowClick,
-  setRate,
-  setStar,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ListViewType from '../viewtypes/ListViewType';
@@ -27,6 +22,7 @@ import { FilterButton } from '../shared/ToolbarButtons';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 const StarredView = () => {
   const { t } = useTranslation();
@@ -96,39 +92,7 @@ const StarredView = () => {
     },
   });
 
-  const handleRowFavorite = async (rowData: any) => {
-    await apiController({
-      serverType: config.serverType,
-      endpoint: 'unstar',
-      args: { id: rowData.id, type: 'music' },
-    });
-    dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-    await queryClient.refetchQueries(['starred', musicFolder], {
-      active: true,
-    });
-  };
-
-  const handleRowFavoriteAlbum = async (rowData: any) => {
-    await apiController({
-      serverType: config.serverType,
-      endpoint: 'unstar',
-      args: { id: rowData.id, type: 'album' },
-    });
-    await queryClient.refetchQueries(['starred', musicFolder], {
-      active: true,
-    });
-  };
-
-  const handleRowFavoriteArtist = async (rowData: any) => {
-    await apiController({
-      serverType: config.serverType,
-      endpoint: 'unstar',
-      args: { id: rowData.id, type: 'artist' },
-    });
-    await queryClient.refetchQueries(['starred', musicFolder], {
-      active: true,
-    });
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = async (rowData: any, e: number) => {
     apiController({
@@ -323,7 +287,15 @@ const StarredView = () => {
                 'deletePlaylist',
                 'viewInModal',
               ]}
-              handleFavorite={handleRowFavorite}
+              handleFavorite={(rowData: any) =>
+                handleFavorite(rowData, {
+                  custom: async () => {
+                    await queryClient.refetchQueries(['starred', musicFolder], {
+                      active: true,
+                    });
+                  },
+                })
+              }
               initialScrollOffset={Number(localStorage.getItem('scroll_list_starredMusicList'))}
               onScroll={(scrollIndex: number) => {
                 localStorage.setItem('scroll_list_starredMusicList', String(Math.abs(scrollIndex)));
@@ -355,7 +327,15 @@ const StarredView = () => {
                     'moveSelectedTo',
                     'deletePlaylist',
                   ]}
-                  handleFavorite={handleRowFavoriteAlbum}
+                  handleFavorite={(rowData: any) =>
+                    handleFavorite(rowData, {
+                      custom: async () => {
+                        await queryClient.refetchQueries(['starred', musicFolder], {
+                          active: true,
+                        });
+                      },
+                    })
+                  }
                   initialScrollOffset={Number(localStorage.getItem('scroll_list_starredAlbumList'))}
                   onScroll={(scrollIndex: number) => {
                     localStorage.setItem(
@@ -383,7 +363,15 @@ const StarredView = () => {
                   playClick={{ type: 'album', idProperty: 'id' }}
                   size={config.lookAndFeel.gridView.cardSize}
                   cacheType="album"
-                  handleFavorite={handleRowFavoriteAlbum}
+                  handleFavorite={(rowData: any) =>
+                    handleFavorite(rowData, {
+                      custom: async () => {
+                        await queryClient.refetchQueries(['starred', musicFolder], {
+                          active: true,
+                        });
+                      },
+                    })
+                  }
                   initialScrollOffset={Number(localStorage.getItem('scroll_grid_starredAlbumList'))}
                   onScroll={(scrollIndex: number) => {
                     localStorage.setItem('scroll_grid_starredAlbumList', String(scrollIndex));
@@ -418,7 +406,15 @@ const StarredView = () => {
                     'addToPlaylist',
                     'deletePlaylist',
                   ]}
-                  handleFavorite={handleRowFavoriteArtist}
+                  handleFavorite={(rowData: any) =>
+                    handleFavorite(rowData, {
+                      custom: async () => {
+                        await queryClient.refetchQueries(['starred', musicFolder], {
+                          active: true,
+                        });
+                      },
+                    })
+                  }
                   initialScrollOffset={Number(
                     localStorage.getItem('scroll_list_starredArtistList')
                   )}
@@ -446,7 +442,15 @@ const StarredView = () => {
                   playClick={{ type: 'artist', idProperty: 'id' }}
                   size={config.lookAndFeel.gridView.cardSize}
                   cacheType="artist"
-                  handleFavorite={handleRowFavoriteArtist}
+                  handleFavorite={(rowData: any) =>
+                    handleFavorite(rowData, {
+                      custom: async () => {
+                        await queryClient.refetchQueries(['starred', musicFolder], {
+                          active: true,
+                        });
+                      },
+                    })
+                  }
                   initialScrollOffset={Number(
                     localStorage.getItem('scroll_grid_starredArtistList')
                   )}

@@ -15,12 +15,7 @@ import {
   PlayButton,
 } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  fixPlayer2Index,
-  setPlayQueueByRowClick,
-  setRate,
-  setStar,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
@@ -44,6 +39,7 @@ import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 interface AlbumParams {
   id: string;
@@ -95,58 +91,7 @@ const AlbumView = ({ ...rest }: any) => {
   });
 
   const { handlePlayQueueAdd } = usePlayQueueHandler();
-
-  const handleFavorite = async () => {
-    if (!data.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: data.id, type: 'album' },
-      });
-      queryClient.setQueryData(['album', id], { ...data, starred: Date.now() });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: data.id, type: 'album' },
-      });
-      queryClient.setQueryData(['album', id], { ...data, starred: undefined });
-    }
-  };
-
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'star' }));
-      queryClient.setQueryData(['album', id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.song[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-      queryClient.setQueryData(['album', id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.song, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.song[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleDownload = async (type: 'copy' | 'download') => {
     if (config.serverType === Server.Jellyfin) {
@@ -271,7 +216,15 @@ const AlbumView = ({ ...rest }: any) => {
                 details={data}
                 playClick={{ type: 'album', id: data.id }}
                 url={`/library/album/${data.id}`}
-                handleFavorite={handleFavorite}
+                handleFavorite={() =>
+                  handleFavorite(data, {
+                    custom: () =>
+                      queryClient.setQueryData(['album', id], {
+                        ...data,
+                        starred: data?.starred ? undefined : Date.now(),
+                      }),
+                  })
+                }
               />
             }
             cacheImages={{
@@ -459,7 +412,15 @@ const AlbumView = ({ ...rest }: any) => {
                       size="lg"
                       appearance="subtle"
                       isFavorite={data.starred}
-                      onClick={handleFavorite}
+                      onClick={() =>
+                        handleFavorite(data, {
+                          custom: () =>
+                            queryClient.setQueryData(['album', id], {
+                              ...data,
+                              starred: data?.starred ? undefined : Date.now(),
+                            }),
+                        })
+                      }
                     />
                     <Whisper
                       trigger="hover"
@@ -516,7 +477,7 @@ const AlbumView = ({ ...rest }: any) => {
             'deletePlaylist',
             'viewInModal',
           ]}
-          handleFavorite={handleRowFavorite}
+          handleFavorite={(rowData: any) => handleFavorite(rowData, { queryKey: ['album', id] })}
         />
       </GenericPage>
     </>

@@ -20,6 +20,7 @@ import { apiController } from '../../api/controller';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 const FolderList = () => {
   const { t } = useTranslation();
@@ -94,37 +95,7 @@ const FolderList = () => {
     },
   });
 
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.child[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['folder', folder.currentViewedFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.child[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = (rowData: any, e: number) => {
     apiController({
@@ -218,7 +189,23 @@ const FolderList = () => {
             fontSize={Number(settings.getSync('musicListFontSize'))}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
-            handleFavorite={handleRowFavorite}
+            handleFavorite={(rowData: any) =>
+              handleFavorite(rowData, {
+                custom: () => {
+                  queryClient.setQueryData(
+                    ['folder', folder.currentViewedFolder],
+                    (oldData: any) => {
+                      const starredIndices = _.keys(_.pickBy(oldData.child, { id: rowData.id }));
+                      starredIndices.forEach((index) => {
+                        oldData.child[index].starred = rowData.starred ? undefined : Date.now();
+                      });
+
+                      return oldData;
+                    }
+                  );
+                },
+              })
+            }
             handleRating={handleRowRating}
             cacheImages={{
               enabled: settings.getSync('cacheImages'),

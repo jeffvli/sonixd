@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import GenericPage from '../layout/GenericPage';
 import GenericPageHeader from '../layout/GenericPageHeader';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setStar } from '../../redux/playQueueSlice';
 import { apiController } from '../../api/controller';
 import { Item, Server } from '../../types';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
+import useFavorite from '../../hooks/useFavorite';
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const queryClient = useQueryClient();
   const folder = useAppSelector((state) => state.folder);
   const config = useAppSelector((state) => state.config);
   const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
@@ -94,87 +92,7 @@ const Dashboard = () => {
     }
   );
 
-  const handleFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'album' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'star' }));
-      queryClient.setQueryData(['recentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-      queryClient.setQueryData(['newestAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-      queryClient.setQueryData(['randomAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-      queryClient.setQueryData(['frequentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-      queryClient.setQueryData(['recentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-      queryClient.setQueryData(['newestAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-      queryClient.setQueryData(['randomAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-      queryClient.setQueryData(['frequentAlbums', musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   if (
     isLoadingRecent ||
@@ -213,7 +131,9 @@ const Dashboard = () => {
               }, 50);
             }}
             type="music"
-            handleFavorite={handleFavorite}
+            handleFavorite={(rowData: any) =>
+              handleFavorite(rowData, { queryKey: ['recentAlbums', musicFolder.id] })
+            }
           />
 
           <ScrollingMenu
@@ -239,7 +159,9 @@ const Dashboard = () => {
               }, 50);
             }}
             type="album"
-            handleFavorite={handleFavorite}
+            handleFavorite={(rowData: any) =>
+              handleFavorite(rowData, { queryKey: ['newestAlbums', musicFolder.id] })
+            }
           />
 
           <ScrollingMenu
@@ -265,7 +187,9 @@ const Dashboard = () => {
               }, 50);
             }}
             type="album"
-            handleFavorite={handleFavorite}
+            handleFavorite={(rowData: any) =>
+              handleFavorite(rowData, { queryKey: ['randomAlbums', musicFolder.id] })
+            }
           />
 
           <ScrollingMenu
@@ -291,7 +215,9 @@ const Dashboard = () => {
               }, 50);
             }}
             type="music"
-            handleFavorite={handleFavorite}
+            handleFavorite={(rowData: any) =>
+              handleFavorite(rowData, { queryKey: ['frequentAlbums', musicFolder.id] })
+            }
           />
         </>
       )}

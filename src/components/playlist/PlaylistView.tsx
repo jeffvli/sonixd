@@ -18,12 +18,7 @@ import {
   UndoButton,
 } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  fixPlayer2Index,
-  setPlayQueueByRowClick,
-  setStar,
-  setRate,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { clearSelected } from '../../redux/multiSelectSlice';
 import {
   createRecoveryFile,
@@ -45,12 +40,7 @@ import { setStatus } from '../../redux/playerSlice';
 import { notifyToast } from '../shared/toast';
 import { addProcessingPlaylist, removeProcessingPlaylist } from '../../redux/miscSlice';
 import { StyledButton, StyledCheckbox, StyledInput, StyledLink } from '../shared/styled';
-import {
-  removeFromPlaylist,
-  setPlaylistData,
-  setPlaylistRate,
-  setPlaylistStar,
-} from '../../redux/playlistSlice';
+import { removeFromPlaylist, setPlaylistData, setPlaylistRate } from '../../redux/playlistSlice';
 import { PageHeaderSubtitleDataLine } from '../layout/styled';
 import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
@@ -60,6 +50,7 @@ import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 interface PlaylistParams {
   id: string;
@@ -359,43 +350,7 @@ const PlaylistView = ({ ...rest }) => {
     }
   };
 
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'star' }));
-      dispatch(setPlaylistStar({ id: [rowData.id], type: 'star' }));
-
-      queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.song[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-      dispatch(setPlaylistStar({ id: [rowData.id], type: 'unstar' }));
-
-      queryClient.setQueryData(['playlist', playlistId], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.song, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.song[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = (rowData: any, e: number) => {
     apiController({
@@ -653,7 +608,9 @@ const PlaylistView = ({ ...rest }) => {
         dnd
         isModal={rest.isModal}
         disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
-        handleFavorite={handleRowFavorite}
+        handleFavorite={(rowData: any) =>
+          handleFavorite(rowData, { queryKey: ['playlist', playlistId] })
+        }
         handleRating={handleRowRating}
         loading={isLoading}
       />

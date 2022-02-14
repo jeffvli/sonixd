@@ -19,7 +19,7 @@ import {
   LinkButton,
   CoverArtContainer,
 } from './styled';
-import { setVolume, setStar, setRate } from '../../redux/playQueueSlice';
+import { setVolume, setRate } from '../../redux/playQueueSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import Player from './Player';
 import CustomTooltip from '../shared/CustomTooltip';
@@ -36,6 +36,7 @@ import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
 import { setSidebar } from '../../redux/configSlice';
 import Popup from '../shared/Popup';
+import useFavorite from '../../hooks/useFavorite';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -295,43 +296,7 @@ const PlayerBar = () => {
     return () => clearTimeout(debounce);
   }, [config.serverType, isDragging, manualSeek, playQueue.currentPlayer]);
 
-  const handleFavorite = async () => {
-    if (!playQueue[currentEntryList][playQueue.currentIndex].starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' },
-      });
-      dispatch(
-        setStar({
-          id: [playQueue[currentEntryList][playQueue.currentIndex].id],
-          type: 'star',
-        })
-      );
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: playQueue[currentEntryList][playQueue.currentIndex].id, type: 'music' },
-      });
-      dispatch(
-        setStar({
-          id: [playQueue[currentEntryList][playQueue.currentIndex].id],
-          type: 'unstar',
-        })
-      );
-    }
-
-    await queryClient.refetchQueries(['album'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['starred'], {
-      active: true,
-    });
-    await queryClient.refetchQueries(['playlist'], {
-      active: true,
-    });
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRating = (e: number) => {
     apiController({
@@ -710,10 +675,36 @@ const PlayerBar = () => {
                         ? 'true'
                         : 'false'
                     }
-                    onClick={handleFavorite}
+                    onClick={() =>
+                      handleFavorite(playQueue[currentEntryList][playQueue.currentIndex], {
+                        custom: async () => {
+                          await queryClient.refetchQueries(['album'], {
+                            active: true,
+                          });
+                          await queryClient.refetchQueries(['starred'], {
+                            active: true,
+                          });
+                          await queryClient.refetchQueries(['playlist'], {
+                            active: true,
+                          });
+                        },
+                      })
+                    }
                     onKeyDown={(e: any) => {
                       if (e.key === ' ') {
-                        handleFavorite();
+                        handleFavorite(playQueue[currentEntryList][playQueue.currentIndex].id, {
+                          custom: async () => {
+                            await queryClient.refetchQueries(['album'], {
+                              active: true,
+                            });
+                            await queryClient.refetchQueries(['starred'], {
+                              active: true,
+                            });
+                            await queryClient.refetchQueries(['playlist'], {
+                              active: true,
+                            });
+                          },
+                        });
                       }
                     }}
                   />

@@ -16,7 +16,6 @@ import {
   removeFromPlayQueue,
   setPlayQueue,
   appendPlayQueue,
-  setStar,
   setRate,
   moveToTop,
   moveToBottom,
@@ -57,6 +56,7 @@ import NowPlayingInfoView from './NowPlayingInfoView';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
+import useFavorite from '../../hooks/useFavorite';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -229,23 +229,7 @@ const NowPlayingView = () => {
     return notifyToast('warning', t('No songs found, adjust your filters'));
   };
 
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'star' }));
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = (rowData: any, e: number) => {
     apiController({
@@ -529,7 +513,7 @@ const NowPlayingView = () => {
                 nowPlaying
                 dnd
                 disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
-                handleFavorite={handleRowFavorite}
+                handleFavorite={handleFavorite}
                 handleRating={handleRowRating}
                 initialScrollOffset={
                   playQueue.scrollWithCurrentSong

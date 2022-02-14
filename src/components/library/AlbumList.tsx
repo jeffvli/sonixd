@@ -31,6 +31,7 @@ import useGridScroll from '../../hooks/useGridScroll';
 import useListScroll from '../../hooks/useListScroll';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
+import useFavorite from '../../hooks/useFavorite';
 
 export const ALBUM_SORT_TYPES = [
   { label: i18n.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18n.t('Default') },
@@ -210,37 +211,7 @@ const AlbumList = () => {
     setIsRefreshing(false);
   };
 
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['albumList', view.album.filter, musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['albumList', view.album.filter, musicFolder.id], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = (rowData: any, e: number) => {
     apiController({
@@ -440,7 +411,9 @@ const AlbumList = () => {
             'viewInFolder',
           ]}
           loading={isLoading}
-          handleFavorite={handleRowFavorite}
+          handleFavorite={(rowData: any) =>
+            handleFavorite(rowData, { queryKey: ['albumList', view.album.filter, musicFolder.id] })
+          }
           initialScrollOffset={Number(localStorage.getItem('scroll_list_albumList'))}
           onScroll={(scrollIndex: number) => {
             localStorage.setItem('scroll_list_albumList', String(Math.abs(scrollIndex)));
@@ -514,7 +487,9 @@ const AlbumList = () => {
           playClick={{ type: 'album', idProperty: 'id' }}
           size={config.lookAndFeel.gridView.cardSize}
           cacheType="album"
-          handleFavorite={handleRowFavorite}
+          handleFavorite={(rowData: any) =>
+            handleFavorite(rowData, { queryKey: ['albumList', view.album.filter, musicFolder.id] })
+          }
           initialScrollOffset={Number(localStorage.getItem('scroll_grid_albumList'))}
           onScroll={(scrollIndex: number) => {
             localStorage.setItem('scroll_grid_albumList', String(scrollIndex));

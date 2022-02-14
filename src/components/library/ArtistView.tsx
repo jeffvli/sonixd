@@ -41,6 +41,7 @@ import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 const fac = new FastAverageColor();
 
@@ -155,121 +156,8 @@ const ArtistView = ({ ...rest }: any) => {
     },
   });
 
-  const handleFavorite = async () => {
-    if (!data.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: data.id, type: 'artist' },
-      });
-      queryClient.setQueryData(['artist', artistId, musicFolder], { ...data, starred: Date.now() });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: data.id, type: 'artist' },
-      });
-      queryClient.setQueryData(['artist', artistId, musicFolder], { ...data, starred: undefined });
-    }
-  };
-
+  const { handleFavorite } = useFavorite();
   const { handlePlayQueueAdd } = usePlayQueueHandler();
-
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['artist', artistId, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.album[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'album' },
-      });
-      queryClient.setQueryData(['artist', artistId, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.album, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.album[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
-
-  const handleSimilarArtistRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'artist' },
-      });
-      queryClient.setQueryData(['artist', artistId, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.info?.similarArtist, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.info.similarArtist[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'artist' },
-      });
-      queryClient.setQueryData(['artist', artistId, musicFolder], (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData?.info?.similarArtist, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.info.similarArtist[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
-
-  const handleMusicRowFavorite = async (rowData: any, query: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'music' },
-      });
-      queryClient.setQueryData(query, (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'music' },
-      });
-      queryClient.setQueryData(query, (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
 
   const handleRowRating = async (rowData: any, e: number, query: any) => {
     apiController({
@@ -650,7 +538,15 @@ const ArtistView = ({ ...rest }: any) => {
                       size="lg"
                       appearance="subtle"
                       isFavorite={data.starred}
-                      onClick={() => handleFavorite()}
+                      onClick={() =>
+                        handleFavorite(data, {
+                          custom: () =>
+                            queryClient.setQueryData(['artist', artistId, musicFolder], {
+                              ...data,
+                              starred: data?.starred ? undefined : Date.now(),
+                            }),
+                        })
+                      }
                     />
                     <Whisper
                       trigger="hover"
@@ -726,7 +622,7 @@ const ArtistView = ({ ...rest }: any) => {
               dnd
               disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
               handleFavorite={(rowData: any) =>
-                handleMusicRowFavorite(rowData, ['artistSongs', artistId])
+                handleFavorite(rowData, { queryKey: ['artistSongs', artistId] })
               }
               handleRating={(rowData: any, e: number) =>
                 handleRowRating(rowData, e, ['artistSongs', artistId])
@@ -763,7 +659,9 @@ const ArtistView = ({ ...rest }: any) => {
                     'deletePlaylist',
                     'viewInFolder',
                   ]}
-                  handleFavorite={handleRowFavorite}
+                  handleFavorite={(rowData: any) =>
+                    handleFavorite(rowData, { queryKey: ['artist', artistId, musicFolder] })
+                  }
                 />
               )}
 
@@ -789,7 +687,9 @@ const ArtistView = ({ ...rest }: any) => {
                   size={config.lookAndFeel.gridView.cardSize}
                   cacheType="album"
                   isModal={rest.isModal}
-                  handleFavorite={handleRowFavorite}
+                  handleFavorite={(rowData: any) =>
+                    handleFavorite(rowData, { queryKey: ['artist', artistId, musicFolder] })
+                  }
                 />
               )}
             </>
@@ -811,7 +711,7 @@ const ArtistView = ({ ...rest }: any) => {
               dnd
               disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
               handleFavorite={(rowData: any) =>
-                handleMusicRowFavorite(rowData, ['artistTopSongs', data?.title])
+                handleFavorite(rowData, { queryKey: ['artistTopSongs', data?.title] })
               }
               handleRating={(rowData: any, e: number) =>
                 handleRowRating(rowData, e, ['artistTopSongs', data?.title])
@@ -892,7 +792,7 @@ const ArtistView = ({ ...rest }: any) => {
                     isModal={false}
                     miniView={false}
                     handleFavorite={(rowData: any) =>
-                      handleMusicRowFavorite(rowData, ['artistTopSongs', data.title])
+                      handleFavorite(rowData, { queryKey: ['artistTopSongs', data.title] })
                     }
                     handleRowClick={handleRowClick}
                     handleRowDoubleClick={(e: any) => handleRowDoubleClick(e, topSongs)}
@@ -973,7 +873,9 @@ const ArtistView = ({ ...rest }: any) => {
                     cardSize={config.lookAndFeel.gridView.cardSize}
                     type="album"
                     noScrollbar
-                    handleFavorite={handleRowFavorite}
+                    handleFavorite={(rowData: any) =>
+                      handleFavorite(rowData, { queryKey: ['artist', artistId, musicFolder] })
+                    }
                   />
                 </StyledPanel>
               )}
@@ -1032,7 +934,9 @@ const ArtistView = ({ ...rest }: any) => {
                     cardSize={config.lookAndFeel.gridView.cardSize}
                     type="album"
                     noScrollbar
-                    handleFavorite={handleRowFavorite}
+                    handleFavorite={(rowData: any) =>
+                      handleFavorite(rowData, { queryKey: ['artist', artistId, musicFolder] })
+                    }
                   />
                 </StyledPanel>
               )}
@@ -1098,7 +1002,27 @@ const ArtistView = ({ ...rest }: any) => {
                     cardSize={config.lookAndFeel.gridView.cardSize}
                     type="artist"
                     noScrollbar
-                    handleFavorite={handleSimilarArtistRowFavorite}
+                    handleFavorite={(rowData: any) =>
+                      handleFavorite(rowData, {
+                        custom: () => {
+                          queryClient.setQueryData(
+                            ['artist', artistId, musicFolder],
+                            (oldData: any) => {
+                              const starredIndices = _.keys(
+                                _.pickBy(oldData?.info?.similarArtist, { id: rowData.id })
+                              );
+                              starredIndices.forEach((index) => {
+                                oldData.info.similarArtist[index].starred = rowData.starred
+                                  ? undefined
+                                  : Date.now();
+                              });
+
+                              return oldData;
+                            }
+                          );
+                        },
+                      })
+                    }
                   />
                 </StyledPanel>
               )}

@@ -29,6 +29,7 @@ import Card from '../card/Card';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 const NowPlayingInfoView = () => {
   const { t } = useTranslation();
@@ -94,24 +95,7 @@ const NowPlayingInfoView = () => {
     },
   });
 
-  const handleRowFavorite = async (rowData: any, queryKey: any) => {
-    console.log(rowData);
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: rowData.type },
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: rowData.type },
-      });
-    }
-
-    await queryClient.refetchQueries(queryKey);
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = async (rowData: any, e: number) => {
     apiController({
@@ -298,12 +282,9 @@ const NowPlayingInfoView = () => {
                       miniView={false}
                       loading={isLoadingSimilarToSong}
                       handleFavorite={(rowData: any) =>
-                        handleRowFavorite(rowData, [
-                          'similarSongs',
-                          currentArtistId,
-                          musicFolder,
-                          50,
-                        ])
+                        handleFavorite(rowData, {
+                          queryKey: ['similarSongs', currentArtistId, musicFolder, 50],
+                        })
                       }
                       handleRowClick={handleRowClick}
                       handleRowDoubleClick={(e: any) => handleRowDoubleClick(e)}
@@ -339,7 +320,7 @@ const NowPlayingInfoView = () => {
                 type="album"
                 noScrollbar
                 handleFavorite={(rowData: any) =>
-                  handleRowFavorite(rowData, ['artist', currentArtistId, musicFolder])
+                  handleFavorite(rowData, { queryKey: ['artist', currentArtistId, musicFolder] })
                 }
               />
             </InfoViewPanel>
@@ -359,7 +340,25 @@ const NowPlayingInfoView = () => {
                 type="artist"
                 noScrollbar
                 handleFavorite={(rowData: any) =>
-                  handleRowFavorite(rowData, ['artist', currentArtistId, musicFolder])
+                  handleFavorite(rowData, {
+                    custom: () => {
+                      queryClient.setQueryData(
+                        ['artist', currentArtistId, musicFolder],
+                        (oldData: any) => {
+                          const starredIndices = _.keys(
+                            _.pickBy(oldData?.info?.similarArtist, { id: rowData.id })
+                          );
+                          starredIndices.forEach((index) => {
+                            oldData.info.similarArtist[index].starred = rowData.starred
+                              ? undefined
+                              : Date.now();
+                          });
+
+                          return oldData;
+                        }
+                      );
+                    },
+                  })
                 }
               />
             </InfoViewPanel>

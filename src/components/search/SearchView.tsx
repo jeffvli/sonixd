@@ -3,7 +3,7 @@ import _ from 'lodash';
 import settings from 'electron-settings';
 import { Icon, Nav } from 'rsuite';
 import { useHistory } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import useRouterQuery from '../../hooks/useRouterQuery';
 import GenericPage from '../layout/GenericPage';
@@ -22,10 +22,12 @@ import { apiController } from '../../api/controller';
 import { Album, Artist, Item, Song } from '../../types';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import ListViewType from '../viewtypes/ListViewType';
+import useFavorite from '../../hooks/useFavorite';
 
 const SearchView = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const history = useHistory();
   const query = useRouterQuery();
   const urlQuery = query.get('query') || '';
@@ -57,8 +59,6 @@ const SearchView = () => {
       }, 300),
     [history]
   );
-
-  useEffect(() => {});
 
   const {
     data: songResults,
@@ -173,6 +173,8 @@ const SearchView = () => {
       )
     );
   }, [artistResults]);
+
+  const { handleFavorite } = useFavorite();
 
   const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
     doubleClick: (rowData: any) => {
@@ -314,7 +316,17 @@ const SearchView = () => {
           handleRowClick={handleRowClick}
           handleRowDoubleClick={handleRowDoubleClick}
           handleRating={() => {}}
-          handleFavorite={() => {}}
+          handleFavorite={(rowData: any) =>
+            handleFavorite(rowData, {
+              custom: () =>
+                queryClient.refetchQueries([
+                  'searchpage',
+                  debouncedSearchQuery,
+                  { type: Item.Music, count: 50 },
+                  musicFolder.id,
+                ]),
+            })
+          }
           listType="music"
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
@@ -341,7 +353,17 @@ const SearchView = () => {
           handleRowClick={handleAlbumRowClick}
           handleRowDoubleClick={handleAlbumRowDoubleClick}
           handleRating={() => {}}
-          handleFavorite={() => {}}
+          handleFavorite={(rowData: any) =>
+            handleFavorite(rowData, {
+              custom: () =>
+                queryClient.refetchQueries([
+                  'searchpage',
+                  debouncedSearchQuery,
+                  { type: Item.Album, count: 25 },
+                  musicFolder.id,
+                ]),
+            })
+          }
           listType="album"
           cacheImages={{
             enabled: settings.getSync('cacheImages'),
@@ -368,7 +390,17 @@ const SearchView = () => {
           handleRowClick={handleArtistRowClick}
           handleRowDoubleClick={handleArtistRowDoubleClick}
           handleRating={() => {}}
-          handleFavorite={() => {}}
+          handleFavorite={(rowData: any) =>
+            handleFavorite(rowData, {
+              custom: () =>
+                queryClient.refetchQueries([
+                  'searchpage',
+                  debouncedSearchQuery,
+                  { type: Item.Artist, count: 15 },
+                  musicFolder.id,
+                ]),
+            })
+          }
           listType="artist"
           cacheImages={{
             enabled: settings.getSync('cacheImages'),

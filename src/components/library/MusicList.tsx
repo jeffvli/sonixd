@@ -16,11 +16,12 @@ import { setSearchQuery } from '../../redux/miscSlice';
 import { apiController } from '../../api/controller';
 import { Item } from '../../types';
 import useColumnSort from '../../hooks/useColumnSort';
-import { fixPlayer2Index, setPlayQueueByRowClick, setStar } from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick } from '../../redux/playQueueSlice';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import { setStatus } from '../../redux/playerSlice';
 import useListScroll from '../../hooks/useListScroll';
 import useListClickHandler from '../../hooks/useListClickHandler';
+import useFavorite from '../../hooks/useFavorite';
 
 // prettier-ignore
 export const MUSIC_SORT_TYPES = [
@@ -179,41 +180,7 @@ const MusicList = () => {
     setIsRefreshing(false);
   };
 
-  const handleRowFavorite = async (rowData: any) => {
-    if (!rowData.starred) {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'star',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'star' }));
-
-      queryClient.setQueryData(currentQueryKey, (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = Date.now();
-        });
-
-        return oldData;
-      });
-    } else {
-      await apiController({
-        serverType: config.serverType,
-        endpoint: 'unstar',
-        args: { id: rowData.id, type: 'music' },
-      });
-      dispatch(setStar({ id: [rowData.id], type: 'unstar' }));
-
-      queryClient.setQueryData(currentQueryKey, (oldData: any) => {
-        const starredIndices = _.keys(_.pickBy(oldData.data, { id: rowData.id }));
-        starredIndices.forEach((index) => {
-          oldData.data[index].starred = undefined;
-        });
-
-        return oldData;
-      });
-    }
-  };
+  const { handleFavorite } = useFavorite();
 
   const handleRowRating = (rowData: any, e: number) => {
     apiController({
@@ -316,7 +283,7 @@ const MusicList = () => {
             'viewInFolder',
           ]}
           loading={isLoading}
-          handleFavorite={handleRowFavorite}
+          handleFavorite={(rowData: any) => handleFavorite(rowData, { queryKey: currentQueryKey })}
           initialScrollOffset={Number(localStorage.getItem('scroll_list_musicList'))}
           onScroll={(scrollIndex: number) => {
             localStorage.setItem('scroll_list_musicList', String(Math.abs(scrollIndex)));
