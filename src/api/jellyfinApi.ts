@@ -539,6 +539,7 @@ export const getArtists = async (options: { musicFolderId?: string }) => {
       recursive: true,
       sortBy: 'SortName',
       sortOrder: 'Ascending',
+      userId: auth.username,
       parentId: options.musicFolderId,
     },
   });
@@ -804,6 +805,9 @@ export const getSearch = async (options: {
           startIndex: options.artistOffset,
           parentId: options.musicFolderId,
           searchTerm: options.query,
+          imageTypeLimit: 1,
+          recursive: true,
+          userId: auth.username,
         },
       })
     )?.data;
