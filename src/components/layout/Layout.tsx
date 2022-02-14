@@ -144,7 +144,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
             }}
           >
             <FlexboxGrid.Item>
-              <ButtonToolbar>
+              <ButtonToolbar aria-label="history">
                 <StyledButton
                   aria-label="back"
                   appearance="subtle"
@@ -218,7 +218,9 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
             </FlexboxGrid.Item>
           </FlexboxGrid>
 
-          <Content id="container-content">{children}</Content>
+          <Content id="container-content" role="main">
+            {children}
+          </Content>
         </MainContainer>
         <RootFooter id="container-footer">{footer}</RootFooter>
       </RootContainer>

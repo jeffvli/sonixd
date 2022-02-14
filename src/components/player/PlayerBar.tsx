@@ -347,7 +347,7 @@ const PlayerBar = () => {
   return (
     <Player ref={playersRef} currentEntryList={currentEntryList} muted={muted}>
       {playQueue.showDebugWindow && <DebugWindow currentEntryList={currentEntryList} />}
-      <PlayerContainer>
+      <PlayerContainer aria-label="playback controls" role="complementary">
         <FlexboxGrid align="middle" style={{ height: '100%' }}>
           <FlexboxGrid.Item colspan={6} style={{ textAlign: 'left', paddingLeft: '10px' }}>
             <PlayerColumn left height="80px">
@@ -685,6 +685,7 @@ const PlayerBar = () => {
               >
                 {config.serverType === Server.Subsonic && (
                   <StyledRate
+                    aria-label="rating"
                     size="xs"
                     readOnly={false}
                     value={
