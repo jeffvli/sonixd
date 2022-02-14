@@ -23,7 +23,7 @@ import {
 import { Item, Song, Play } from '../../types';
 import Popup from '../shared/Popup';
 import { PlayAppendButton, PlayAppendNextButton, PlayButton } from '../shared/ToolbarButtons';
-import usePlayHandler from '../../hooks/usePlayHandler';
+import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 
 const SearchContainer = styled.div`
   height: 100%;
@@ -255,7 +255,7 @@ const SearchBar = () => {
     }
   });
 
-  const { handlePlay } = usePlayHandler();
+  const { handlePlayQueueAdd } = usePlayQueueHandler();
 
   useHotkeys('escape', () => {
     setOpenSearch(false);
@@ -548,7 +548,7 @@ const SearchBar = () => {
                                   handleClick={(lineEntry: Song) =>
                                     history.push(`/library/artist/${lineEntry.id}`)
                                   }
-                                  handlePlay={handlePlay}
+                                  handlePlay={handlePlayQueueAdd}
                                   title={<>{entry.title}</>}
                                   details={
                                     <>{entry.albumCount && `${entry.albumCount} ${t(' albums')}`}</>
@@ -599,7 +599,7 @@ const SearchBar = () => {
                                   handleClick={(lineEntry: Song) =>
                                     history.push(`/library/album/${lineEntry.id}`)
                                   }
-                                  handlePlay={handlePlay}
+                                  handlePlay={handlePlayQueueAdd}
                                   title={<>{entry.title}</>}
                                   details={
                                     <>
@@ -658,7 +658,7 @@ const SearchBar = () => {
                                   handleClick={(lineEntry: Song) =>
                                     history.push(`/library/album/${lineEntry.albumId}`)
                                   }
-                                  handlePlay={handlePlay}
+                                  handlePlay={handlePlayQueueAdd}
                                   title={<>{entry.title}</>}
                                   details={
                                     <>

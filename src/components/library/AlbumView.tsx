@@ -16,10 +16,7 @@ import {
 } from '../shared/ToolbarButtons';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
-  appendPlayQueue,
-  clearPlayQueue,
   fixPlayer2Index,
-  setPlayQueue,
   setPlayQueueByRowClick,
   setRate,
   setStar,
@@ -31,14 +28,7 @@ import GenericPageHeader from '../layout/GenericPageHeader';
 import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
 import { notifyToast } from '../shared/toast';
-import {
-  filterPlayQueue,
-  formatDate,
-  formatDuration,
-  getAlbumSize,
-  getPlayedSongsNotification,
-  isCached,
-} from '../../shared/utils';
+import { formatDate, formatDuration, getAlbumSize, isCached } from '../../shared/utils';
 import { LinkWrapper, StyledButton, StyledLink, StyledTagLink } from '../shared/styled';
 import {
   BlurredBackground,
@@ -46,13 +36,14 @@ import {
   PageHeaderSubtitleDataLine,
 } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Artist, Genre, Item, Server } from '../../types';
+import { Artist, Genre, Item, Play, Server } from '../../types';
 import { setPlaylistRate } from '../../redux/playlistSlice';
 import Card from '../card/Card';
 import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
+import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 
 interface AlbumParams {
   id: string;
@@ -103,31 +94,7 @@ const AlbumView = ({ ...rest }: any) => {
     },
   });
 
-  const handlePlay = () => {
-    const songs = filterPlayQueue(config.playback.filters, data.song);
-
-    if (songs.entries.length > 0) {
-      dispatch(setPlayQueue({ entries: songs.entries }));
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
-    } else {
-      dispatch(clearPlayQueue());
-      dispatch(setStatus('PAUSED'));
-    }
-
-    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-  };
-
-  const handlePlayAppend = (type: 'next' | 'later') => {
-    const songs = filterPlayQueue(config.playback.filters, data.song);
-
-    if (songs.entries.length > 0) {
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
-      dispatch(fixPlayer2Index());
-    }
-
-    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-  };
+  const { handlePlayQueueAdd } = usePlayQueueHandler();
 
   const handleFavorite = async () => {
     if (!data.starred) {
@@ -472,16 +439,21 @@ const AlbumView = ({ ...rest }: any) => {
                 </PageHeaderSubtitleDataLine>
                 <div style={{ marginTop: '10px' }}>
                   <ButtonToolbar>
-                    <PlayButton appearance="primary" size="lg" $circle onClick={handlePlay} />
+                    <PlayButton
+                      appearance="primary"
+                      size="lg"
+                      $circle
+                      onClick={() => handlePlayQueueAdd({ byData: data.song, play: Play.Play })}
+                    />
                     <PlayAppendNextButton
                       appearance="subtle"
                       size="lg"
-                      onClick={() => handlePlayAppend('next')}
+                      onClick={() => handlePlayQueueAdd({ byData: data.song, play: Play.Next })}
                     />
                     <PlayAppendButton
                       appearance="subtle"
                       size="lg"
-                      onClick={() => handlePlayAppend('later')}
+                      onClick={() => handlePlayQueueAdd({ byData: data.song, play: Play.Later })}
                     />
                     <FavoriteButton
                       size="lg"

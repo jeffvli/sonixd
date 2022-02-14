@@ -4,15 +4,8 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import cacheImage from '../shared/cacheImage';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-  appendPlayQueue,
-  clearPlayQueue,
-  fixPlayer2Index,
-  setPlayQueue,
-} from '../../redux/playQueueSlice';
-import { filterPlayQueue, getPlayedSongsNotification, isCached } from '../../shared/utils';
-
+import { useAppDispatch } from '../../redux/hooks';
+import { isCached } from '../../shared/utils';
 import {
   CardPanel,
   InfoPanel,
@@ -32,12 +25,11 @@ import {
   ImgPanel,
   CardTitleWrapper,
 } from './styled';
-import { setStatus } from '../../redux/playerSlice';
 import { addModalPage } from '../../redux/miscSlice';
-import { notifyToast } from '../shared/toast';
 import CustomTooltip from '../shared/CustomTooltip';
-import { apiController } from '../../api/controller';
 import { CoverArtWrapper, CustomImageGrid, CustomImageGridWrapper } from '../layout/styled';
+import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
+import { Play } from '../../types';
 
 const Card = ({
   onClick,
@@ -58,7 +50,6 @@ const Card = ({
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const config = useAppSelector((state) => state.config);
 
   const handleClick = () => {
     if (url) {
@@ -70,123 +61,7 @@ const Card = ({
     history.push(subUrl);
   };
 
-  const handlePlayClick = async () => {
-    if (playClick.type === 'playlist') {
-      const res = await apiController({
-        serverType: config.serverType,
-        endpoint: 'getPlaylist',
-        args: { id: playClick.id },
-      });
-
-      const songs = filterPlayQueue(config.playback.filters, res.song);
-
-      if (songs.entries.length > 0) {
-        dispatch(setPlayQueue({ entries: songs.entries }));
-        dispatch(setStatus('PLAYING'));
-        dispatch(fixPlayer2Index());
-      } else {
-        dispatch(clearPlayQueue());
-        dispatch(setStatus('PAUSED'));
-      }
-
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-    }
-
-    if (playClick.type === 'album' || playClick.type === 'music') {
-      const res = await apiController({
-        serverType: config.serverType,
-        endpoint: 'getAlbum',
-        args: { id: playClick.id },
-      });
-
-      const songs = filterPlayQueue(config.playback.filters, res.song);
-
-      if (songs.entries.length > 0) {
-        dispatch(setPlayQueue({ entries: songs.entries }));
-        dispatch(setStatus('PLAYING'));
-        dispatch(fixPlayer2Index());
-      } else {
-        dispatch(clearPlayQueue());
-        dispatch(setStatus('PAUSED'));
-      }
-
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-    }
-
-    if (playClick.type === 'artist') {
-      const res = await apiController({
-        serverType: config.serverType,
-        endpoint: 'getArtistSongs',
-        args: { id: playClick.id, musicFolderId: rest.musicFolderId },
-      });
-
-      const songs = filterPlayQueue(config.playback.filters, res);
-
-      if (songs.entries.length > 0) {
-        dispatch(setPlayQueue({ entries: songs.entries }));
-        dispatch(setStatus('PLAYING'));
-        dispatch(fixPlayer2Index());
-      } else {
-        dispatch(clearPlayQueue());
-        dispatch(setStatus('PAUSED'));
-      }
-
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-    }
-  };
-
-  const handlePlayAppend = async (type: 'next' | 'later') => {
-    if (playClick.type === 'playlist') {
-      const res = await apiController({
-        serverType: config.serverType,
-        endpoint: 'getPlaylist',
-        args: { id: playClick.id },
-      });
-
-      const songs = filterPlayQueue(config.playback.filters, res.song);
-
-      if (songs.entries.length > 0) {
-        dispatch(appendPlayQueue({ entries: songs.entries, type }));
-        dispatch(fixPlayer2Index());
-      }
-
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-    }
-
-    if (playClick.type === 'album' || playClick.type === 'music') {
-      const res = await apiController({
-        serverType: config.serverType,
-        endpoint: 'getAlbum',
-        args: { id: playClick.id },
-      });
-
-      const songs = filterPlayQueue(config.playback.filters, res.song);
-
-      if (songs.entries.length > 0) {
-        dispatch(appendPlayQueue({ entries: songs.entries, type }));
-        dispatch(fixPlayer2Index());
-      }
-
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-    }
-
-    if (playClick.type === 'artist') {
-      const res = await apiController({
-        serverType: config.serverType,
-        endpoint: 'getArtistSongs',
-        args: { id: playClick.id, musicFolderId: rest.musicFolderId },
-      });
-
-      const songs = filterPlayQueue(config.playback.filters, res);
-
-      if (songs.entries.length > 0) {
-        dispatch(appendPlayQueue({ entries: songs.entries, type }));
-        dispatch(fixPlayer2Index());
-      }
-
-      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-    }
-  };
+  const { handlePlayQueueAdd } = usePlayQueueHandler();
 
   const handleOpenModal = () => {
     dispatch(
@@ -301,13 +176,23 @@ const Card = ({
                   size="lg"
                   circle
                   icon={<Icon icon="play" />}
-                  onClick={handlePlayClick}
+                  onClick={() =>
+                    handlePlayQueueAdd({
+                      byItemType: { item: playClick.type, id: playClick.id },
+                      play: Play.Play,
+                    })
+                  }
                 />
 
                 <CustomTooltip text={t('Add to queue (later)')} delay={1000}>
                   <AppendOverlayButton
                     aria-label={t('Add to queue (later)')}
-                    onClick={() => handlePlayAppend('later')}
+                    onClick={() =>
+                      handlePlayQueueAdd({
+                        byItemType: { item: playClick.type, id: playClick.id },
+                        play: Play.Later,
+                      })
+                    }
                     size={size <= 160 ? 'xs' : 'sm'}
                     icon={<Icon icon="plus" />}
                   />
@@ -316,7 +201,12 @@ const Card = ({
                 <CustomTooltip text={t('Add to queue (next)')} delay={1000}>
                   <AppendNextOverlayButton
                     aria-label={t('Add to queue (next)')}
-                    onClick={() => handlePlayAppend('next')}
+                    onClick={() =>
+                      handlePlayQueueAdd({
+                        byItemType: { item: playClick.type, id: playClick.id },
+                        play: Play.Next,
+                      })
+                    }
                     size={size <= 160 ? 'xs' : 'sm'}
                     icon={<Icon icon="plus-circle" />}
                   />

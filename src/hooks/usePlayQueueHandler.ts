@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useQueryClient } from 'react-query';
 import { getPlayedSongsNotification, filterPlayQueue } from '../shared/utils';
 import { notifyToast } from '../components/shared/toast';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -9,12 +10,13 @@ import {
   fixPlayer2Index,
   setPlayQueue,
 } from '../redux/playQueueSlice';
-import { Item, Play, Song } from '../types';
+import { APIEndpoints, Item, Play, Song } from '../types';
 import { apiController } from '../api/controller';
 
-const usePlayHandler = () => {
+const usePlayQueueHandler = () => {
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
+  const queryClient = useQueryClient();
 
   const dispatchSongsToQueue = useCallback(
     (entries: Song[], play: Play) => {
@@ -49,11 +51,11 @@ const usePlayHandler = () => {
     [config.playback.filters, dispatch]
   );
 
-  const handlePlay = async (options: {
-    byData: Song[];
-    byItemType: { item: Item; id: string };
+  const handlePlayQueueAdd = async (options: {
+    byData?: Song[];
+    byItemType?: { item: Item; id: string; endpoint?: APIEndpoints };
     play: Play;
-    musicFolder: string;
+    musicFolder?: string;
   }) => {
     if (options.byData) {
       dispatchSongsToQueue(options.byData, options.play);
@@ -66,6 +68,8 @@ const usePlayHandler = () => {
             return 'getAlbum';
           case Item.Artist:
             return 'getArtistSongs';
+          case Item.Playlist:
+            return 'getPlaylist';
           default:
             return 'getAlbum';
         }
@@ -73,9 +77,17 @@ const usePlayHandler = () => {
 
       const data = await apiController({
         serverType: config.serverType,
-        endpoint: getEndpoint(options.byItemType.item),
+        endpoint: options.byItemType.endpoint || getEndpoint(options.byItemType.item),
         args: { id: options.byItemType.id, musicFolder: options.musicFolder },
       });
+
+      if (options.byItemType.item === Item.Album) {
+        queryClient.setQueryData(['album', options.byItemType.id], data);
+      } else if (options.byItemType.item === Item.Artist) {
+        queryClient.setQueryData(['artistSongs', options.byItemType.id], data);
+      } else if (options.byItemType.item === Item.Playlist) {
+        queryClient.setQueryData(['playlist', options.byItemType.id], data);
+      }
 
       if (data?.song) {
         dispatchSongsToQueue(data.song, options.play);
@@ -85,7 +97,7 @@ const usePlayHandler = () => {
     }
   };
 
-  return { handlePlay };
+  return { handlePlayQueueAdd };
 };
 
-export default usePlayHandler;
+export default usePlayQueueHandler;

@@ -21,22 +21,17 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
   fixPlayer2Index,
   setPlayQueueByRowClick,
-  setPlayQueue,
-  appendPlayQueue,
   setStar,
   setRate,
-  clearPlayQueue,
 } from '../../redux/playQueueSlice';
 import { clearSelected } from '../../redux/multiSelectSlice';
 import {
   createRecoveryFile,
   errorMessages,
-  filterPlayQueue,
   formatDate,
   formatDateTime,
   formatDuration,
   getCurrentEntryList,
-  getPlayedSongsNotification,
   getRecoveryPath,
   getUniqueRandomNumberArr,
   isCached,
@@ -59,11 +54,12 @@ import {
 import { PageHeaderSubtitleDataLine } from '../layout/styled';
 import CustomTooltip from '../shared/CustomTooltip';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Play, Server } from '../../types';
 import Card from '../card/Card';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
+import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 
 interface PlaylistParams {
   id: string;
@@ -159,31 +155,7 @@ const PlaylistView = ({ ...rest }) => {
     dnd: 'playlist',
   });
 
-  const handlePlay = () => {
-    const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);
-
-    if (songs.entries.length > 0) {
-      dispatch(setPlayQueue({ entries: songs.entries }));
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
-    } else {
-      dispatch(clearPlayQueue());
-      dispatch(setStatus('PAUSED'));
-    }
-
-    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-  };
-
-  const handlePlayAppend = (type: 'next' | 'later') => {
-    const songs = filterPlayQueue(config.playback.filters, playlist[getCurrentEntryList(playlist)]);
-
-    if (songs.entries.length > 0) {
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
-      dispatch(fixPlayer2Index());
-    }
-
-    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-  };
+  const { handlePlayQueueAdd } = usePlayQueueHandler();
 
   const handleSave = async (recovery: boolean) => {
     dispatch(clearSelected());
@@ -529,19 +501,34 @@ const PlaylistView = ({ ...rest }) => {
                     appearance="primary"
                     size="lg"
                     $circle
-                    onClick={handlePlay}
+                    onClick={() =>
+                      handlePlayQueueAdd({
+                        byData: playlist[getCurrentEntryList(playlist)],
+                        play: Play.Play,
+                      })
+                    }
                     disabled={playlist.entry?.length < 1}
                   />
                   <PlayAppendNextButton
                     appearance="subtle"
                     size="md"
-                    onClick={() => handlePlayAppend('next')}
+                    onClick={() =>
+                      handlePlayQueueAdd({
+                        byData: playlist[getCurrentEntryList(playlist)],
+                        play: Play.Next,
+                      })
+                    }
                     disabled={playlist.entry?.length < 1}
                   />
                   <PlayAppendButton
                     appearance="subtle"
                     size="md"
-                    onClick={() => handlePlayAppend('later')}
+                    onClick={() =>
+                      handlePlayQueueAdd({
+                        byData: playlist[getCurrentEntryList(playlist)],
+                        play: Play.Later,
+                      })
+                    }
                     disabled={playlist.entry?.length < 1}
                   />
                   <SaveButton

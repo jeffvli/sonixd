@@ -22,26 +22,14 @@ import GenericPage from '../layout/GenericPage';
 import ListViewType from '../viewtypes/ListViewType';
 import GridViewType from '../viewtypes/GridViewType';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import {
-  appendPlayQueue,
-  clearPlayQueue,
-  fixPlayer2Index,
-  setPlayQueue,
-  setPlayQueueByRowClick,
-  setRate,
-} from '../../redux/playQueueSlice';
+import { fixPlayer2Index, setPlayQueueByRowClick, setRate } from '../../redux/playQueueSlice';
 import { notifyToast } from '../shared/toast';
-import {
-  filterPlayQueue,
-  formatDuration,
-  getPlayedSongsNotification,
-  isCached,
-} from '../../shared/utils';
+import { formatDuration, isCached } from '../../shared/utils';
 import { LinkWrapper, SectionTitle, StyledButton, StyledLink, StyledPanel } from '../shared/styled';
 import { setStatus } from '../../redux/playerSlice';
 import { GradientBackground, PageHeaderSubtitleDataLine } from '../layout/styled';
 import { apiController } from '../../api/controller';
-import { Album, GenericItem, Genre, Item, Server } from '../../types';
+import { Album, GenericItem, Genre, Item, Play, Server } from '../../types';
 import ListViewTable from '../viewtypes/ListViewTable';
 import Card from '../card/Card';
 import ScrollingMenu from '../scrollingmenu/ScrollingMenu';
@@ -52,6 +40,7 @@ import { setFilter, setPagination } from '../../redux/viewSlice';
 import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
+import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 
 const fac = new FastAverageColor();
 
@@ -184,61 +173,7 @@ const ArtistView = ({ ...rest }: any) => {
     }
   };
 
-  const handlePlay = async (list: 'topSongs' | 'albums' | 'mix') => {
-    const res =
-      list === 'topSongs'
-        ? topSongs
-        : list === 'mix'
-        ? await apiController({
-            serverType: config.serverType,
-            endpoint: 'getSimilarSongs',
-            args: { id: data.id, count: 100 },
-          })
-        : await apiController({
-            serverType: config.serverType,
-            endpoint: 'getArtistSongs',
-            args: { id: data.id, musicFolderId: musicFolder },
-          });
-
-    const songs = filterPlayQueue(config.playback.filters, res);
-
-    if (songs.entries.length > 0) {
-      dispatch(setPlayQueue({ entries: songs.entries }));
-      dispatch(setStatus('PLAYING'));
-      dispatch(fixPlayer2Index());
-    } else {
-      dispatch(clearPlayQueue());
-      dispatch(setStatus('PAUSED'));
-    }
-
-    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
-  };
-
-  const handlePlayAppend = async (type: 'next' | 'later', list: 'topSongs' | 'albums' | 'mix') => {
-    const res =
-      list === 'topSongs'
-        ? topSongs
-        : list === 'mix'
-        ? await apiController({
-            serverType: config.serverType,
-            endpoint: 'getSimilarSongs',
-            args: { id: data.id, count: 100 },
-          })
-        : await await apiController({
-            serverType: config.serverType,
-            endpoint: 'getArtistSongs',
-            args: { id: data.id, musicFolderId: musicFolder },
-          });
-
-    const songs = filterPlayQueue(config.playback.filters, res);
-
-    if (songs.entries.length > 0) {
-      dispatch(appendPlayQueue({ entries: songs.entries, type }));
-      dispatch(fixPlayer2Index());
-    }
-
-    notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
-  };
+  const { handlePlayQueueAdd } = usePlayQueueHandler();
 
   const handleRowFavorite = async (rowData: any) => {
     if (!rowData.starred) {
@@ -681,17 +616,35 @@ const ArtistView = ({ ...rest }: any) => {
                       $circle
                       appearance="primary"
                       size="lg"
-                      onClick={() => handlePlay('albums')}
+                      onClick={() =>
+                        handlePlayQueueAdd({
+                          byItemType: { item: Item.Artist, id: data.id },
+                          play: Play.Play,
+                          musicFolder,
+                        })
+                      }
                     />
                     <PlayAppendNextButton
                       size="lg"
                       appearance="subtle"
-                      onClick={() => handlePlayAppend('next', 'albums')}
+                      onClick={() =>
+                        handlePlayQueueAdd({
+                          byItemType: { item: Item.Artist, id: data.id },
+                          play: Play.Next,
+                          musicFolder,
+                        })
+                      }
                     />
                     <PlayAppendButton
                       size="lg"
                       appearance="subtle"
-                      onClick={() => handlePlayAppend('later', 'albums')}
+                      onClick={() =>
+                        handlePlayQueueAdd({
+                          byItemType: { item: Item.Artist, id: data.id },
+                          play: Play.Later,
+                          musicFolder,
+                        })
+                      }
                     />
                     <FavoriteButton
                       size="lg"
@@ -897,17 +850,32 @@ const ArtistView = ({ ...rest }: any) => {
                           size="sm"
                           appearance="subtle"
                           text={t('Play Top Songs')}
-                          onClick={() => handlePlay('topSongs')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byData: topSongs,
+                              play: Play.Play,
+                            })
+                          }
                         />
                         <PlayAppendNextButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('next', 'topSongs')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byData: topSongs,
+                              play: Play.Next,
+                            })
+                          }
                         />
                         <PlayAppendButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('later', 'topSongs')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byData: topSongs,
+                              play: Play.Later,
+                            })
+                          }
                         />
                       </ButtonGroup>
                     </>
@@ -960,17 +928,35 @@ const ArtistView = ({ ...rest }: any) => {
                           size="sm"
                           appearance="subtle"
                           text={t('Play Latest Albums')}
-                          onClick={() => handlePlay('albums')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: { item: Item.Artist, id: data.id },
+                              play: Play.Play,
+                              musicFolder,
+                            })
+                          }
                         />
                         <PlayAppendNextButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('next', 'albums')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: { item: Item.Artist, id: data.id },
+                              play: Play.Next,
+                              musicFolder,
+                            })
+                          }
                         />
                         <PlayAppendButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('later', 'albums')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: { item: Item.Artist, id: data.id },
+                              play: Play.Later,
+                              musicFolder,
+                            })
+                          }
                         />
                       </ButtonGroup>
                     }
@@ -1002,17 +988,32 @@ const ArtistView = ({ ...rest }: any) => {
                           size="sm"
                           appearance="subtle"
                           text={t('Play Compilation Albums')}
-                          onClick={() => handlePlay('albums')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: { item: Item.Artist, id: data.id },
+                              play: Play.Play,
+                            })
+                          }
                         />
                         <PlayAppendNextButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('next', 'albums')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: { item: Item.Artist, id: data.id },
+                              play: Play.Next,
+                            })
+                          }
                         />
                         <PlayAppendButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('later', 'albums')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: { item: Item.Artist, id: data.id },
+                              play: Play.Later,
+                            })
+                          }
                         />
                       </ButtonGroup>
                     }
@@ -1046,17 +1047,44 @@ const ArtistView = ({ ...rest }: any) => {
                           size="sm"
                           appearance="subtle"
                           text={t('Play Artist Mix')}
-                          onClick={() => handlePlay('mix')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: {
+                                item: Item.Artist,
+                                id: data.id,
+                                endpoint: 'getSimilarSongs',
+                              },
+                              play: Play.Play,
+                            })
+                          }
                         />
                         <PlayAppendNextButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('next', 'mix')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: {
+                                item: Item.Artist,
+                                id: data.id,
+                                endpoint: 'getSimilarSongs',
+                              },
+                              play: Play.Next,
+                            })
+                          }
                         />
                         <PlayAppendButton
                           size="sm"
                           appearance="subtle"
-                          onClick={() => handlePlayAppend('later', 'mix')}
+                          onClick={() =>
+                            handlePlayQueueAdd({
+                              byItemType: {
+                                item: Item.Artist,
+                                id: data.id,
+                                endpoint: 'getSimilarSongs',
+                              },
+                              play: Play.Later,
+                            })
+                          }
                         />
                       </ButtonGroup>
                     }
