@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import _ from 'lodash';
+import { useQuery } from 'react-query';
 import { ipcRenderer, shell } from 'electron';
 import settings from 'electron-settings';
 import { Nav, Icon, RadioGroup, Whisper, Divider } from 'rsuite';
@@ -45,13 +46,14 @@ import {
   setGridGapSize,
   setSidebar,
 } from '../../../redux/configSlice';
-import { Item, Server } from '../../../types';
+import { Item, Playlist, Server } from '../../../types';
 import ConfigOption from '../ConfigOption';
 import i18n, { Languages } from '../../../i18n/i18n';
 import { notifyToast } from '../../shared/toast';
 import { setPagination } from '../../../redux/viewSlice';
 import { MUSIC_SORT_TYPES } from '../../library/MusicList';
 import Popup from '../../shared/Popup';
+import { apiController } from '../../../api/controller';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -303,6 +305,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
     _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
   );
 
+  const { data: playlists }: any = useQuery(['playlists'], () =>
+    apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
+  );
+
   return (
     <ConfigPanel header={t('Look & Feel')} bordered={bordered}>
       <ConfigOption
@@ -487,37 +493,50 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
           <StyledInputPickerContainer ref={startPagePickerContainerRef}>
             <StyledInputPicker
               container={() => startPagePickerContainerRef.current}
-              data={[
-                {
-                  label: t('Dashboard'),
-                  value: '/',
-                },
-                {
-                  label: t('Playlists'),
-                  value: '/playlist',
-                },
-                {
-                  label: t('Favorites'),
-                  value: '/starred',
-                },
-                {
-                  label: t('Albums'),
-                  value: '/library/album',
-                },
-                {
-                  label: t('Artists'),
-                  value: '/library/artist',
-                },
-                {
-                  label: t('Genres'),
-                  value: '/library/genre',
-                },
-                {
-                  label: t('Folders'),
-                  value: '/library/folder',
-                },
-              ]}
+              data={_.concat(
+                [
+                  {
+                    label: t('Dashboard'),
+                    value: '/',
+                    role: 'Default',
+                  },
+                  {
+                    label: t('Playlists'),
+                    value: '/playlist',
+                    role: 'Default',
+                  },
+                  {
+                    label: t('Favorites'),
+                    value: '/starred',
+                    role: 'Default',
+                  },
+                  {
+                    label: t('Albums'),
+                    value: '/library/album',
+                    role: 'Default',
+                  },
+                  {
+                    label: t('Artists'),
+                    value: '/library/artist',
+                    role: 'Default',
+                  },
+                  {
+                    label: t('Genres'),
+                    value: '/library/genre',
+                    role: 'Default',
+                  },
+                  {
+                    label: t('Folders'),
+                    value: '/library/folder',
+                    role: 'Default',
+                  },
+                ],
+                playlists?.map((pl: Playlist) => {
+                  return { label: pl.title, value: `/playlist/${pl.id}`, role: t('Playlists') };
+                })
+              )}
               cleanable={false}
+              groupBy="role"
               defaultValue={String(settings.getSync('startPage'))}
               width={200}
               placeholder={t('Select')}
