@@ -45,8 +45,8 @@ const Sidebar = ({
   const [sidebarBodyRef, { height: sidebarBodyHeight }] = useMeasure<HTMLDivElement>();
 
   const getSidebarWidth = useCallback((num: number) => {
-    if (num < 160) {
-      return 160;
+    if (num < 165) {
+      return 165;
     }
 
     if (num > 400) {
@@ -64,7 +64,9 @@ const Sidebar = ({
   const handleResizeEnd = useCallback(
     (e: MouseEvent) => {
       if (isResizing) {
-        dispatch(setSidebar({ width: `${getSidebarWidth(e?.clientX)}px` }));
+        const finalWidth = `${getSidebarWidth(e?.clientX)}px`;
+        dispatch(setSidebar({ width: finalWidth }));
+        settings.setSync('sidebar.width', finalWidth);
         setIsResizing(false);
         document.body.style.cursor = 'default';
       }
