@@ -58,6 +58,10 @@ export interface ConfigPage {
       type: 'web' | 'local';
     };
   };
+  window: {
+    minimizeToTray: boolean;
+    exitToTray: boolean;
+  };
   serverType: Server;
 }
 
@@ -197,6 +201,10 @@ const initialState: ConfigPage = {
       type: parsedSettings.obs.type || 'local',
     },
   },
+  window: {
+    minimizeToTray: Boolean(parsedSettings.minimizeToTray),
+    exitToTray: Boolean(parsedSettings.exitToTray),
+  },
   serverType: parsedSettings.serverType,
 };
 
@@ -213,6 +221,10 @@ const configSlice = createSlice({
         ...state.lookAndFeel.sidebar,
         ...action.payload,
       };
+    },
+
+    setWindow: (state, action: PayloadAction<any>) => {
+      state.window = { ...state.window, ...action.payload };
     },
 
     setPageSort: (
@@ -341,5 +353,6 @@ export const {
   setDiscord,
   setOBS,
   setSidebar,
+  setWindow,
 } = configSlice.actions;
 export default configSlice.reducer;

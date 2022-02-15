@@ -409,6 +409,10 @@ const configState: ConfigPage = {
       type: 'local',
     },
   },
+  window: {
+    minimizeToTray: false,
+    exitToTray: false,
+  },
 };
 
 const favoriteState: FavoritePage = {

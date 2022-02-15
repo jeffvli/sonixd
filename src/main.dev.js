@@ -22,6 +22,7 @@ import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redu
 import playerReducer from './redux/playerSlice';
 import playQueueReducer, { toggleShuffle, toggleRepeat, setVolume } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
+import configReducer from './redux/configSlice';
 import MenuBuilder from './menu';
 import { isWindows, isWindows10, isMacOS, isLinux } from './shared/utils';
 import setDefaultSettings from './components/shared/setDefaultSettings';
@@ -38,6 +39,7 @@ export const store = configureStore({
     player: playerReducer,
     playQueue: playQueueReducer,
     multiSelect: multiSelectReducer,
+    config: configReducer,
   },
   middleware: [triggerAlias, forwardToRenderer],
 });
@@ -535,7 +537,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('minimize', (event) => {
-    if (settings.getSync('minimizeToTray')) {
+    if (store.getState().config.window.minimizeToTray) {
       event.preventDefault();
       mainWindow.hide();
     }
@@ -557,7 +559,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('close', (event) => {
-    if (!exitFromTray && settings.getSync('exitToTray')) {
+    if (!exitFromTray && store.getState().config.window.exitToTray) {
       event.preventDefault();
       mainWindow.hide();
     }
@@ -651,15 +653,39 @@ const createTray = () => {
   tray = isLinux() ? new Tray(getAssetPath('icon.png')) : new Tray(getAssetPath('icon.ico'));
   const contextMenu = Menu.buildFromTemplate([
     {
+      label: 'Play/Pause',
+      click: () => {
+        playPause();
+      },
+    },
+    {
+      label: 'Next Track',
+      click: () => {
+        nextTrack();
+      },
+    },
+    {
+      label: 'Previous Track',
+      click: () => {
+        previousTrack();
+      },
+    },
+    {
+      label: 'Stop',
+      click: () => {
+        stop();
+      },
+    },
+    {
+      type: 'separator',
+    },
+    {
       label: 'Open main window',
       click: () => {
         mainWindow.show();
         createWinThumbarButtons();
         createWinThumbnailClip();
       },
-    },
-    {
-      type: 'separator',
     },
     {
       label: 'Quit Sonixd',
