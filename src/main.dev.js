@@ -566,6 +566,8 @@ const createWindow = async () => {
   });
 
   if (isWindows()) {
+    mainWindow.setAppUserModelId(process.execPath);
+
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
 
