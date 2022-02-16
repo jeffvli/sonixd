@@ -359,38 +359,36 @@ const NowPlayingView = () => {
                           />
                         </StyledInputPickerContainer>
                         <br />
-                        <ButtonToolbar>
-                          <StyledButton
-                            appearance="subtle"
-                            onClick={() => handlePlayRandom('addNext')}
-                            loading={isLoadingRandom}
-                            disabled={!(typeof autoPlaylistTrackCount === 'number')}
-                          >
-                            <Icon icon="plus-circle" style={{ marginRight: '10px' }} />
-                            {t('Add (next)')}
-                          </StyledButton>
-                          <StyledButton
-                            appearance="subtle"
-                            onClick={() => handlePlayRandom('addLater')}
-                            loading={isLoadingRandom}
-                            disabled={!(typeof autoPlaylistTrackCount === 'number')}
-                          >
-                            <Icon icon="plus" style={{ marginRight: '10px' }} />
-                            {t('Add (later)')}
-                          </StyledButton>
-                        </ButtonToolbar>
-                        <ButtonToolbar>
-                          <StyledButton
-                            block
-                            appearance="primary"
-                            onClick={() => handlePlayRandom('play')}
-                            loading={isLoadingRandom}
-                            disabled={!(typeof autoPlaylistTrackCount === 'number')}
-                          >
-                            <Icon icon="play" style={{ marginRight: '10px' }} />
-                            {t('Play')}
-                          </StyledButton>
-                        </ButtonToolbar>
+                        <StyledButton
+                          appearance="subtle"
+                          onClick={() => handlePlayRandom('addNext')}
+                          loading={isLoadingRandom}
+                          disabled={!(typeof autoPlaylistTrackCount === 'number')}
+                          style={{ width: '50%' }}
+                        >
+                          <Icon icon="plus-circle" style={{ marginRight: '10px' }} />
+                          {t('Add (next)')}
+                        </StyledButton>
+                        <StyledButton
+                          appearance="subtle"
+                          onClick={() => handlePlayRandom('addLater')}
+                          loading={isLoadingRandom}
+                          disabled={!(typeof autoPlaylistTrackCount === 'number')}
+                          style={{ width: '50%' }}
+                        >
+                          <Icon icon="plus" style={{ marginRight: '10px' }} />
+                          {t('Add (later)')}
+                        </StyledButton>
+                        <StyledButton
+                          block
+                          appearance="primary"
+                          onClick={() => handlePlayRandom('play')}
+                          loading={isLoadingRandom}
+                          disabled={!(typeof autoPlaylistTrackCount === 'number')}
+                        >
+                          <Icon icon="play" style={{ marginRight: '10px' }} />
+                          {t('Play')}
+                        </StyledButton>
                       </Popup>
                     }
                   >
