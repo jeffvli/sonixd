@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-2019]
 
     steps:
       - name: Checkout git repo
@@ -22,6 +22,12 @@ jobs:
 
       - name: Setup yarn
         run: npm install -g yarn
+
+      - name: Set msvs_version
+        run: npm config set msvs_version "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+
+      - name: Test
+        run: echo "$(npm config get msvs_version)"
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
