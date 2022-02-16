@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.13.0] - 2022-02-16
+
+### Added
+
+- Added new searchbar and search UI (#227, #228)
+- Added playback controls to the Sonixd tray menu (#225)
+- Added playlist selections to the `Start Page` config option
+
+### Changed
+
+- Sidebar changes (#206)
+
+  - Allow resizing of the sidebar when expanded
+  - Allow a toggle of the playerbar's cover art to the sidebar when expanded
+  - Display playlist list on the sidebar under the navigation
+  - Allow configuration of the display of sidebar elements
+
+- Changed the `Artist` row on the playerbar to use a comma delimited list of the song's artists rather than the album artist (#218)
+
+### Fixed
+
+- Fixed the player volume not resetting to its default value when resetting a song while crossfading (#228)
+- (Jellyfin) Fixed artist list not displaying user favorites
+- (Jellyfin) Fixed `bitrate` column not properly by its numeric value (#220)
+- Fixed javascript exception when incrementing/decrementing the queue (#230)
+- Fixed popups/tooltips not using the configured font
+
 [0.12.1] - 2022-02-02
 
 ### Fixed

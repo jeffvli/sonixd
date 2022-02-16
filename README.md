@@ -54,10 +54,6 @@ Sonixd has been tested on the following: [Navidrome](https://github.com/navidrom
 
 You can install sonixd by downloading the [latest release](https://github.com/jeffvli/sonixd/releases) for your specified operating system.
 
-- Windows: `.exe`
-- Linux: `.AppImage`
-- MacOS: `.dmg`
-
 ---
 
 ### Windows
@@ -101,7 +97,7 @@ If you have any questions, feel free to check out the [Usage Documentation & FAQ
 This project is built off of [electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) v2.3.0.
 If you want to contribute to this project, please first create an [issue](https://github.com/jeffvli/sonixd/issues/new) or [discussion](https://github.com/jeffvli/sonixd/discussions/new) so that we can both discuss the idea and its feasability for integration.
 
-First, clone the repo via git and install dependencies:
+First, clone the repo via git and install dependencies (Windows development now requires additional setup, see [#232](https://github.com/jeffvli/sonixd/issues/232)):
 
 ```bash
 git clone https://github.com/jeffvli/sonixd.git

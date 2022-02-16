@@ -1,7 +1,7 @@
 {
   "name": "sonixd",
   "productName": "Sonixd",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "description": "A full-featured Subsonic/Jellyfin compatible desktop client",
   "main": "./main.prod.js",
   "author": {
