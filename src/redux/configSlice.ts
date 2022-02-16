@@ -122,42 +122,42 @@ const initialState: ConfigPage = {
     font: String(parsedSettings.font),
     listView: {
       music: {
-        columns: parsedSettings.musicListColumns!.map((col: any) => {
+        columns: parsedSettings.musicListColumns?.map((col: any) => {
           return { ...col, uniqueId: nanoid() };
         }),
         rowHeight: Number(parsedSettings.musicListRowHeight),
         fontSize: Number(parsedSettings.musicListFontSize),
       },
       album: {
-        columns: parsedSettings.albumListColumns!.map((col: any) => {
+        columns: parsedSettings.albumListColumns?.map((col: any) => {
           return { ...col, uniqueId: nanoid() };
         }),
         rowHeight: Number(parsedSettings.albumListRowHeight),
         fontSize: Number(parsedSettings.albumListFontSize),
       },
       playlist: {
-        columns: parsedSettings.playlistListColumns!.map((col: any) => {
+        columns: parsedSettings.playlistListColumns?.map((col: any) => {
           return { ...col, uniqueId: nanoid() };
         }),
         rowHeight: Number(parsedSettings.playlistListRowHeight),
         fontSize: Number(parsedSettings.playlistListFontSize),
       },
       artist: {
-        columns: parsedSettings.artistListColumns!.map((col: any) => {
+        columns: parsedSettings.artistListColumns?.map((col: any) => {
           return { ...col, uniqueId: nanoid() };
         }),
         rowHeight: Number(parsedSettings.artistListRowHeight),
         fontSize: Number(parsedSettings.artistListFontSize),
       },
       genre: {
-        columns: parsedSettings.genreListColumns!.map((col: any) => {
+        columns: parsedSettings.genreListColumns?.map((col: any) => {
           return { ...col, uniqueId: nanoid() };
         }),
         rowHeight: Number(parsedSettings.genreListRowHeight),
         fontSize: Number(parsedSettings.genreListFontSize),
       },
       mini: {
-        columns: parsedSettings.miniListColumns!.map((col: any) => {
+        columns: parsedSettings.miniListColumns?.map((col: any) => {
           return { ...col, uniqueId: nanoid() };
         }),
         rowHeight: Number(parsedSettings.miniListRowHeight),
@@ -190,20 +190,20 @@ const initialState: ConfigPage = {
   },
   external: {
     discord: {
-      enabled: parsedSettings.discord.enabled || false,
-      clientId: parsedSettings.discord.clientId || '',
+      enabled: parsedSettings.discord?.enabled || false,
+      clientId: parsedSettings.discord?.clientId || '',
     },
     obs: {
-      enabled: parsedSettings.obs.enabled || false,
-      url: parsedSettings.obs.url || '',
-      path: parsedSettings.obs.path || '',
-      pollingInterval: parsedSettings.obs.pollingInterval || 1000,
-      type: parsedSettings.obs.type || 'local',
+      enabled: parsedSettings.obs?.enabled || false,
+      url: parsedSettings.obs?.url || '',
+      path: parsedSettings.obs?.path || '',
+      pollingInterval: parsedSettings.obs?.pollingInterval || 1000,
+      type: parsedSettings.obs?.type || 'local',
     },
   },
   window: {
-    minimizeToTray: Boolean(parsedSettings.minimizeToTray),
-    exitToTray: Boolean(parsedSettings.exitToTray),
+    minimizeToTray: parsedSettings.minimizeToTray,
+    exitToTray: parsedSettings.exitToTray,
   },
   serverType: parsedSettings.serverType,
 };
