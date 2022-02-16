@@ -321,14 +321,14 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     // for mpris-service's getPosition() function
     if (isLinux()) {
       const interval = setInterval(() => {
-        ipcRenderer.send(
-          'current-position',
-          playQueue.currentPlayer === 1
-            ? player1Ref.current.audioEl.current.currentTime
-            : player2Ref.current.audioEl.current.currentTime
-        );
-
-        if (player.status === 'PAUSED') {
+        if (player.status === 'PLAYING') {
+          ipcRenderer.send(
+            'current-position',
+            playQueue.currentPlayer === 1
+              ? player1Ref.current.audioEl.current.currentTime
+              : player2Ref.current.audioEl.current.currentTime
+          );
+        } else {
           clearInterval(interval);
         }
       }, 500);
