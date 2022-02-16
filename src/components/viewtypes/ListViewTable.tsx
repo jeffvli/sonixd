@@ -266,10 +266,13 @@ const ListViewTable = ({
   }, [dispatch]);
 
   const handleStartSelectDrag = useLongPress(
-    (rowData) => {
-      dispatch(setSelectedSingle(rowData));
-      dispatch(setIsSelectDragging(true));
-      document.body.style.cursor = 'crosshair';
+    ({ e, rowData }: any) => {
+      // Only allow left click
+      if (e.button === 0) {
+        dispatch(setSelectedSingle(rowData));
+        dispatch(setIsSelectDragging(true));
+        document.body.style.cursor = 'crosshair';
+      }
     },
     { isPreventDefault: true, delay: 150 }
   );
@@ -641,7 +644,7 @@ const ListViewTable = ({
                             }
                           }
                         } else {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }
                       }}
@@ -692,7 +695,7 @@ const ListViewTable = ({
                         })
                       }
                       onMouseDown={(e: any) => {
-                        handleStartSelectDrag.onMouseDown(rowData);
+                        handleStartSelectDrag.onMouseDown({ e, rowData });
                         handleSelectMouseDown(e, rowData);
                       }}
                       onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -939,7 +942,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -991,7 +994,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1035,7 +1038,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1072,7 +1075,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1110,7 +1113,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1148,7 +1151,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1210,7 +1213,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1247,7 +1250,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1285,7 +1288,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1334,7 +1337,7 @@ const ListViewTable = ({
                           });
                         }}
                         onMouseDown={(e: any) => {
-                          handleStartSelectDrag.onMouseDown(rowData);
+                          handleStartSelectDrag.onMouseDown({ e, rowData });
                           handleSelectMouseDown(e, rowData);
                         }}
                         onMouseEnter={() => handleContinueSelectDrag(rowData)}
@@ -1377,7 +1380,7 @@ const ListViewTable = ({
                         });
                       }}
                       onMouseDown={(e: any) => {
-                        handleStartSelectDrag.onMouseDown(rowData);
+                        handleStartSelectDrag.onMouseDown({ e, rowData });
                         handleSelectMouseDown(e, rowData);
                       }}
                       onMouseEnter={() => handleContinueSelectDrag(rowData)}
