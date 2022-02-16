@@ -174,7 +174,21 @@ const Sidebar = ({
                   >
                     {t('Now Playing')}
                   </SidebarNavItem>
-
+                  <SidebarNavItem
+                    tabIndex={0}
+                    eventKey="playlists"
+                    icon={<Icon icon="list-ul" />}
+                    onSelect={handleSidebarSelect}
+                    disabled={disableSidebar}
+                    onKeyDown={(e: any) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        history.push('/playlist');
+                      }
+                    }}
+                    $show={config.lookAndFeel.sidebar.selected.includes('playlists')}
+                  >
+                    {t('Playlists')}
+                  </SidebarNavItem>
                   <SidebarNavItem
                     tabIndex={0}
                     eventKey="starred"
@@ -300,33 +314,16 @@ const Sidebar = ({
                   >
                     {expand ? t('Collapse') : t('Expand')}
                   </SidebarNavItem>
-                  {!expand && (
-                    <SidebarNavItem
-                      tabIndex={0}
-                      eventKey="playlists"
-                      icon={<Icon icon="list-ul" />}
-                      onSelect={handleSidebarSelect}
-                      disabled={disableSidebar}
-                      onKeyDown={(e: any) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                          history.push('/playlist');
-                        }
-                      }}
-                      $show={config.lookAndFeel.sidebar.selected.includes('playlists')}
-                    >
-                      {t('Playlists')}
-                    </SidebarNavItem>
-                  )}
                 </div>
               </Nav>
               {expand &&
                 !disableSidebar &&
-                config.lookAndFeel.sidebar.selected.includes('playlists') && (
+                config.lookAndFeel.sidebar.selected.includes('playlistList') && (
                   <div
                     style={{
                       height: `${
-                        sidebarBodyHeight - mainNavHeight < 170
-                          ? 170
+                        sidebarBodyHeight - mainNavHeight < 100
+                          ? 100
                           : sidebarBodyHeight - mainNavHeight
                       }px`,
                       overflow: 'hidden',
@@ -334,9 +331,7 @@ const Sidebar = ({
                     }}
                   >
                     <>
-                      <PlaylistDivider onClick={() => history.push('/playlist')}>
-                        {t('Playlists')}
-                      </PlaylistDivider>
+                      <PlaylistDivider />
                       <SidebarPlaylists width={width} />
                     </>
                   </div>

@@ -389,13 +389,13 @@ export const SidebarCoverArtContainer = styled.div<{ height: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   background: rgba(50, 50, 50, 0.2);
 
   img {
     max-height: ${(props) => props.height};
     max-width: 100%;
     height: auto;
+    cursor: pointer;
   }
 
   .rs-btn {
@@ -416,5 +416,4 @@ export const SidebarCoverArtContainer = styled.div<{ height: string }>`
 
 export const PlaylistDivider = styled(Divider)`
   margin: 10px 0 !important;
-  cursor: pointer;
 `;

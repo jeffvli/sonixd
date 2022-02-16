@@ -11,6 +11,11 @@ import { StyledButton } from '../shared/styled';
 
 const ListItemContainer = styled.div`
   .rs-btn {
+    padding-left: 20px;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     text-align: left;
     color: ${(props) => props.theme.colors.layout.sideBar.button.color} !important;
 
@@ -34,7 +39,7 @@ const PlaylistRow = ({ data, index, style }: any) => {
         appearance="subtle"
         onClick={() => history.push(`/playlist/${data[index].id}`)}
       >
-        {data[index].title} {`(${data[index].songCount})`}
+        {data[index].title}
       </StyledButton>
     </ListItemContainer>
   );

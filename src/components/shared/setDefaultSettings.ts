@@ -164,6 +164,7 @@ const setDefaultSettings = (force: boolean) => {
       'config',
       'collapse',
       'playlists',
+      'playlistList',
     ]);
   }
 

@@ -619,6 +619,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                   value: 'nowplaying',
                 },
                 {
+                  label: i18n.t('Playlists'),
+                  value: 'playlists',
+                },
+                {
                   label: i18n.t('Favorites'),
                   value: 'favorites',
                 },
@@ -651,8 +655,8 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                   value: 'collapse',
                 },
                 {
-                  label: i18n.t('Playlists'),
-                  value: 'playlists',
+                  label: i18n.t('Playlist List'),
+                  value: 'playlistList',
                 },
               ]}
               searchable={false}
