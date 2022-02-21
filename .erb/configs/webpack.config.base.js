@@ -38,6 +38,11 @@ export default {
     modules: [path.join(__dirname, '../../src'), 'node_modules'],
   },
 
+  externals: {
+    sqlite3: 'commonjs sqlite3',
+    '@vscode/sqlite3': 'commonjs @vscode/sqlite3',
+  },
+
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',

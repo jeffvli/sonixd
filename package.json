@@ -259,6 +259,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
+    "@vscode/sqlite3": "^5.0.7",
     "array-move": "^3.0.1",
     "axios": "^0.21.1",
     "axios-retry": "^3.1.9",
@@ -276,6 +277,7 @@
     "i18next": "^21.6.5",
     "i18next-parser": "^5.4.0",
     "image-downloader": "^4.0.3",
+    "knex": "^1.0.3",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
@@ -301,6 +303,7 @@
     "regenerator-runtime": "^0.13.5",
     "rsuite": "^4.10.2",
     "source-map-support": "^0.5.19",
+    "sqlite3": "^5.0.2",
     "styled-components": "^5.3.0"
   },
   "resolutions": {
