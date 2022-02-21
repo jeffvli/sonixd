@@ -10,6 +10,7 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import { knex } from 'knex';
 import Player from 'mpris-service';
 import path from 'path';
 import settings from 'electron-settings';
@@ -26,6 +27,30 @@ import configReducer from './redux/configSlice';
 import MenuBuilder from './menu';
 import { isWindows, isWindows10, isMacOS, isLinux } from './shared/utils';
 import setDefaultSettings from './components/shared/setDefaultSettings';
+import { createTables } from './database/createTables';
+import sqlHandler from './database/sqlHandler';
+
+const sqlite3 = require('sqlite3').verbose();
+
+const database = new sqlite3.Database('sonixd.db', (err) => {
+  if (err) console.error('Database opening error: ', err);
+});
+
+const dbConfig = {
+  client: 'sqlite3',
+  connection: {
+    filename: 'sonixd.db',
+  },
+  useNullAsDefault: true,
+  pool: {
+    afterCreate: (conn, cb) => conn.run('PRAGMA foreign_keys = ON', cb),
+  },
+};
+
+const dbInstance = knex(dbConfig);
+
+createTables(dbInstance);
+sqlHandler(dbInstance);
 
 settings.configure({
   prettify: true,

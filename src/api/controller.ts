@@ -66,6 +66,7 @@ import {
   getSongs as jfGetSongs,
   getSimilarSongs as jfGetSimilarSongs,
 } from './jellyfinApi';
+import { getGenres as oGetGenres } from './offlineApi';
 import { APIEndpoints, ServerType } from '../types';
 
 // prettier-ignore
@@ -87,7 +88,7 @@ const endpoints = [
   { id: 'batchUnstar', endpoint: { subsonic: batchUnstar, jellyfin: jfBatchUnstar } },
   { id: 'setRating', endpoint: { subsonic: setRating, jellyfin: undefined } },
   { id: 'getSimilarSongs', endpoint: { subsonic: getSimilarSongs, jellyfin: jfGetSimilarSongs } },
-  { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres } },
+  { id: 'getGenres', endpoint: { subsonic: getGenres, jellyfin: jfGetGenres, offline: oGetGenres  } },
   { id: 'getSearch', endpoint: { subsonic: getSearch, jellyfin: jfGetSearch } },
   { id: 'scrobble', endpoint: { subsonic: scrobble, jellyfin: jfScrobble } },
   { id: 'getIndexes', endpoint: { subsonic: getIndexes, jellyfin: jfGetIndexes } },
