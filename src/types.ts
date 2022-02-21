@@ -1,6 +1,7 @@
 export enum Server {
   Subsonic = 'subsonic',
   Jellyfin = 'jellyfin',
+  Offline = 'offline',
 }
 
 export enum Item {
@@ -18,7 +19,7 @@ export enum Play {
   Later = 'later',
 }
 
-export type ServerType = Server.Subsonic | Server.Jellyfin;
+export type ServerType = Server.Subsonic | Server.Jellyfin | Server.Offline;
 
 export type APIEndpoints =
   | 'getPlaylist'
