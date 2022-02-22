@@ -30,6 +30,8 @@ Sonixd is a cross-platform desktop client built for Subsonic-API (and Jellyfin i
 
 Sonixd has been tested on the following: [Navidrome](https://github.com/navidrome/navidrome), [Airsonic](https://github.com/airsonic/airsonic), [Airsonic-Advanced](https://github.com/airsonic-advanced/airsonic-advanced), [Gonic](https://github.com/sentriz/gonic), [Astiga](https://asti.ga/), [Jellyfin](https://github.com/jellyfin/jellyfin)
 
+### [Demo Sonixd using Navidrome](https://github.com/jeffvli/sonixd/discussions/244)
+
 ## Features
 
 - HTML5 audio with crossfading and gapless\* playback
@@ -45,10 +47,10 @@ Sonixd has been tested on the following: [Navidrome](https://github.com/navidrom
 
 ## Screenshots
 
-<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/album.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/album.png" width="49.5%"/></a>
-<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/artist.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/artist.png" width="49.5%"/></a>
-<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/context_menu.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/context_menu.png" width="49.5%"/></a>
-<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/now_playing.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.5.0/now_playing.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/album.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/album.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/artist.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/artist.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/search.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/search.png" width="49.5%"/></a>
+<a href="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/now_playing.png"><img src="https://raw.githubusercontent.com/jeffvli/sonixd/main/assets/screenshots/0.13.1/now_playing.png" width="49.5%"/></a>
 
 ## Install
 
