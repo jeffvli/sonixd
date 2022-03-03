@@ -80,18 +80,6 @@ const getAssetPath = (...paths) => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
-const createWinThumbnailClip = () => {
-  if (isWindows()) {
-    // Set the current song image as thumbnail
-    mainWindow.setThumbnailClip({
-      x: 15,
-      y: mainWindow.getContentSize()[1] - 83,
-      height: 65,
-      width: 65,
-    });
-  }
-};
-
 const stop = () => {
   mainWindow.webContents.send('player-stop');
 };
@@ -401,13 +389,6 @@ const createWinThumbarButtons = () => {
         },
       },
     ]);
-
-    mainWindow.setThumbnailClip({
-      x: 15,
-      y: mainWindow.getContentSize()[1] - 83,
-      height: 65,
-      width: 65,
-    });
   }
 };
 
@@ -552,12 +533,6 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.on('restore', () => {
-    if (isWindows() && isWindows10()) {
-      createWinThumbnailClip();
-    }
-  });
-
   mainWindow.on('close', (event) => {
     if (!exitFromTray && store.getState().config.window.exitToTray) {
       event.preventDefault();
@@ -566,12 +541,9 @@ const createWindow = async () => {
   });
 
   if (isWindows()) {
-    mainWindow.setAppUserModelId(process.execPath);
-
     mainWindow.on('resize', () => {
       const window = mainWindow.getContentBounds();
 
-      createWinThumbnailClip();
       settings.setSync('windowPosition', {
         x: window.x,
         y: window.y,
@@ -686,7 +658,6 @@ const createTray = () => {
       click: () => {
         mainWindow.show();
         createWinThumbarButtons();
-        createWinThumbnailClip();
       },
     },
     {
@@ -701,7 +672,6 @@ const createTray = () => {
   tray.on('double-click', () => {
     mainWindow.show();
     createWinThumbarButtons();
-    createWinThumbnailClip();
   });
 
   tray.setToolTip('Sonixd');
