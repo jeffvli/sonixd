@@ -732,12 +732,16 @@ export const getMusicDirectorySongs = async (options: { id: string }) => {
       excludeItemTypes: 'MusicAlbum, MusicArtist, Folder',
       fields: 'Genres, DateCreated, MediaSources, UserData, ParentId',
       recursive: true,
-      sortBy: 'Album',
       parentId: options.id,
     },
   });
 
-  return (data.Items || []).map((entry: any) => normalizeSong(entry));
+  const entries = (data.Items || []).map((entry: any) => normalizeSong(entry));
+
+  // The entries returned by Jellyfin's API are out of their normal album order
+  const entriesByAlbum = _.orderBy(entries || [], ['album', 'track'], ['asc', 'asc']);
+
+  return entriesByAlbum;
 };
 
 export const getMusicFolders = async () => {
