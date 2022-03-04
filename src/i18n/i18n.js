@@ -9,11 +9,13 @@ import { mockSettings } from '../shared/mockSettings';
 const de = require('./locales/de.json');
 const en = require('./locales/en.json');
 const zhcn = require('./locales/zhcn.json');
+const es = require('./locales/es.json');
 
 const resources = {
   en: { translation: en },
   de: { translation: de },
   zhcn: { translation: zhcn },
+  es: { translation: es },
 };
 
 i18n
@@ -44,5 +46,9 @@ export const Languages = [
   {
     label: '简体中文',
     value: 'zhcn',
+  },
+  {
+    label: 'Español',
+    value: 'es',
   },
 ];
