@@ -335,9 +335,14 @@ export const GlobalContextMenu = () => {
 
   const handleRemoveSelected = async () => {
     if (misc.contextMenu.type === 'nowPlaying') {
-      dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
-      if (playQueue.currentPlayer === 1) {
-        dispatch(fixPlayer2Index());
+      if (multiSelect.selected.length === playQueue.entry.length) {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      } else {
+        dispatch(removeFromPlayQueue({ entries: multiSelect.selected }));
+        if (playQueue.currentPlayer === 1) {
+          dispatch(fixPlayer2Index());
+        }
       }
     } else {
       dispatch(removeFromPlaylist({ selectedEntries: multiSelect.selected }));
