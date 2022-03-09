@@ -596,12 +596,56 @@ export const getTopSongs = async (options: { artist: string; count: number }) =>
   );
 };
 
-export const getSongsByGenre = async (options: {
-  genre: string;
-  count: number;
-  offset: number;
-  musicFolderId?: string | number;
-}) => {
+export const getSongsByGenre = async (
+  options: {
+    genre: string;
+    size: number;
+    offset: number;
+    musicFolderId?: string | number;
+    recursive?: boolean;
+  },
+  recursiveData: any[] = []
+) => {
+  if (options.recursive) {
+    const songs: any = api
+      .get(`/getSongsByGenre`, {
+        params: {
+          genre: options.genre,
+          count: options.size,
+          offset: options.offset,
+          musicFolderId: options.musicFolderId,
+        },
+      })
+      .then((res) => {
+        if (!res.data.songsByGenre.song || res.data.songsByGenre.song.length === 0) {
+          // Flatten and return once there are no more albums left
+          const flattenedSongs = _.flatten(recursiveData);
+
+          return normalizeAPIResult(
+            (flattenedSongs || []).map((entry: any) => normalizeSong(entry)),
+            flattenedSongs.length
+          );
+        }
+
+        // On every iteration, push the existing songs and increase the offset
+        recursiveData.push(res.data.songsByGenre.song);
+
+        return getSongsByGenre(
+          {
+            genre: options.genre,
+            size: options.size,
+            offset: options.offset + options.size,
+            musicFolderId: options.musicFolderId,
+            recursive: true,
+          },
+          recursiveData
+        );
+      })
+      .catch((err) => console.log(err));
+
+    return songs;
+  }
+
   const { data } = await api.get(`/getSongsByGenre`, { params: options });
   return (_.uniqBy(data?.songsByGenre?.song, (e: any) => e.id) || []).map((entry: any) =>
     normalizeSong(entry)
