@@ -235,6 +235,36 @@ export const GlobalContextMenu = () => {
       }
 
       notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
+    } else if (misc.contextMenu.type === 'genre') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getSongsByGenre',
+            args: {
+              type: 'byGenre',
+              genre: multiSelect.selected[i].title,
+              musicFolderId: musicFolder,
+              size: 100,
+              offset: 0,
+              recursive: true,
+            },
+          })
+        );
+      }
+
+      const res = await Promise.all(promises);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'data')));
+      if (songs.entries.length > 0) {
+        dispatch(setPlayQueue({ entries: songs.entries }));
+        dispatch(setStatus('PLAYING'));
+        dispatch(fixPlayer2Index());
+      } else {
+        dispatch(clearPlayQueue());
+        dispatch(setStatus('PAUSED'));
+      }
+
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'play' }));
     }
   };
 
@@ -323,6 +353,33 @@ export const GlobalContextMenu = () => {
 
       const res = await Promise.all(promises);
       const songs = filterPlayQueue(config.playback.filters, _.flatten(res));
+
+      if (songs.entries.length > 0) {
+        dispatch(appendPlayQueue({ entries: songs.entries, type }));
+        dispatch(fixPlayer2Index());
+      }
+
+      notifyToast('info', getPlayedSongsNotification({ ...songs.count, type: 'add' }));
+    } else if (misc.contextMenu.type === 'genre') {
+      for (let i = 0; i < multiSelect.selected.length; i += 1) {
+        promises.push(
+          apiController({
+            serverType: config.serverType,
+            endpoint: 'getSongsByGenre',
+            args: {
+              type: 'byGenre',
+              genre: multiSelect.selected[i].title,
+              musicFolderId: musicFolder,
+              size: 100,
+              offset: 0,
+              recursive: true,
+            },
+          })
+        );
+      }
+
+      const res = await Promise.all(promises);
+      const songs = filterPlayQueue(config.playback.filters, _.flatten(_.map(res, 'data')));
 
       if (songs.entries.length > 0) {
         dispatch(appendPlayQueue({ entries: songs.entries, type }));
