@@ -40,9 +40,16 @@ jobs:
         run: |
           yarn install
 
-      - name: Publish releases
+      - name: Publish Linux
         env:
           # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           yarn postinstall && yarn build && yarn electron-builder --publish always --linux
+
+      - name: Publish ARM64
+        env:
+          # This is used for uploading release assets to github
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: |
+          yarn postinstall && yarn build && yarn electron-builder --publish always --arm64
