@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { webFrame } from 'electron';
 import _ from 'lodash';
+import { useHotkeys } from 'react-hotkeys-hook';
 import settings from 'electron-settings';
 import { ThemeProvider } from 'styled-components';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
@@ -30,12 +32,47 @@ import { defaultDark } from './styles/styledTheme';
 import { mockSettings } from './shared/mockSettings';
 import MusicList from './components/library/MusicList';
 import ReleaseNotes from './components/modal/ReleaseNotes';
+import { notifyToast } from './components/shared/toast';
 
 const App = () => {
+  const [zoomFactor, setZoomFactor] = useState(Number(localStorage.getItem('zoomFactor')) || 1.0);
   const [theme, setTheme] = useState<any>(defaultDark);
   const [font, setFont] = useState('Poppins');
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
+  if (process.env.NODE_ENV !== 'test') {
+    webFrame.setZoomFactor(zoomFactor);
+  }
+
+  useHotkeys(
+    'ctrl+shift+=',
+    (e: KeyboardEvent) => {
+      e.preventDefault();
+      const newZoomFactor = Math.round((zoomFactor + 0.05) * 100) / 100;
+      webFrame.setZoomFactor(newZoomFactor);
+      localStorage.setItem('zoomFactor', String(newZoomFactor));
+      setZoomFactor(newZoomFactor);
+      notifyToast('info', `${Math.round(newZoomFactor * 100)}%`);
+    },
+    [zoomFactor]
+  );
+
+  useHotkeys(
+    'ctrl+shift+-',
+    (e: KeyboardEvent) => {
+      e.preventDefault();
+      const newZoomFactor = Math.round((zoomFactor - 0.05) * 100) / 100;
+
+      if (newZoomFactor > 0) {
+        webFrame.setZoomFactor(newZoomFactor);
+        localStorage.setItem('zoomFactor', String(newZoomFactor));
+        setZoomFactor(newZoomFactor);
+        console.log('newZoomFactor', newZoomFactor);
+        notifyToast('info', `${Math.round(newZoomFactor * 100)}%`);
+      }
+    },
+    [zoomFactor]
+  );
 
   useEffect(() => {
     const themes: any =
