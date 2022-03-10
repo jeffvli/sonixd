@@ -688,6 +688,51 @@ export const getSimilarSongs = async (options: {
   return (data.Items || []).map((entry: any) => normalizeSong(entry));
 };
 
+export const getSongsByGenre = async (options: {
+  genre: string;
+  size: number;
+  offset: number;
+  musicFolderId?: string | number;
+  recursive?: boolean;
+}) => {
+  if (options.recursive) {
+    const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+      params: {
+        fields: 'Genres, DateCreated, MediaSources, UserData, ParentId',
+        genres: options.genre,
+        recursive: true,
+        includeItemTypes: 'Audio',
+        StartIndex: 0,
+      },
+    });
+
+    const entries = (data.Items || []).map((entry: any) => normalizeSong(entry));
+
+    return normalizeAPIResult(
+      _.orderBy(entries || [], ['album', 'track'], ['asc', 'asc']),
+      data.TotalRecordCount
+    );
+  }
+
+  const { data } = await jellyfinApi.get(`/users/${auth.username}/items`, {
+    params: {
+      fields: 'Genres, DateCreated, MediaSources, UserData, ParentId',
+      genres: options.genre,
+      recursive: true,
+      includeItemTypes: 'Audio',
+      limit: options.size || 100,
+      startIndex: options.offset,
+    },
+  });
+
+  const entries = (data.Items || []).map((entry: any) => normalizeSong(entry));
+
+  return normalizeAPIResult(
+    _.orderBy(entries || [], ['album', 'track'], ['asc', 'asc']),
+    data.TotalRecordCount
+  );
+};
+
 export const getGenres = async (options: { musicFolderId?: string }) => {
   const { data } = await jellyfinApi.get(`/musicgenres`, {
     params: { parentId: options.musicFolderId },
