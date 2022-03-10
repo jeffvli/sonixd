@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import i18n from '../../../i18n/i18n';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
-import { appendPlaybackFilter, setAudioDeviceId } from '../../../redux/configSlice';
+import { appendPlaybackFilter, setAudioDeviceId, setPlayer } from '../../../redux/configSlice';
 import { notifyToast } from '../../shared/toast';
 import ConfigOption from '../ConfigOption';
 import { Server } from '../../../types';
@@ -278,6 +278,21 @@ const PlayerConfig = ({ bordered }: any) => {
           }
         />
       )}
+
+      <ConfigOption
+        name={t('System Notifications')}
+        description={<>{t('Show a system notification whenever the song changes.')}</>}
+        option={
+          <StyledToggle
+            defaultChecked={config.player.systemNotifications}
+            checked={config.player.systemNotifications}
+            onChange={(e: boolean) => {
+              settings.setSync('systemNotifications', e);
+              dispatch(setPlayer({ systemNotifications: e }));
+            }}
+          />
+        }
+      />
 
       <ConfigOption
         name={t('Scrobble')}

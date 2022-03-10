@@ -28,6 +28,9 @@ export interface ConfigPage {
     genreListPage?: SortColumn;
     playlistListPage?: SortColumn;
   };
+  player: {
+    systemNotifications: boolean;
+  };
   lookAndFeel: {
     font: string;
     listView: {
@@ -105,6 +108,9 @@ const initialState: ConfigPage = {
   playback: {
     filters: parsedSettings.playbackFilters,
     audioDeviceId: parsedSettings.audioDeviceId || undefined,
+  },
+  player: {
+    systemNotifications: parsedSettings.systemNotifications,
   },
   sort: {
     albumListPage: undefined,
@@ -219,6 +225,13 @@ const configSlice = createSlice({
     setSidebar: (state, action: PayloadAction<any>) => {
       state.lookAndFeel.sidebar = {
         ...state.lookAndFeel.sidebar,
+        ...action.payload,
+      };
+    },
+
+    setPlayer: (state, action: PayloadAction<any>) => {
+      state.player = {
+        ...state.player,
         ...action.payload,
       };
     },
@@ -354,5 +367,6 @@ export const {
   setOBS,
   setSidebar,
   setWindow,
+  setPlayer,
 } = configSlice.actions;
 export default configSlice.reducer;

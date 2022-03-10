@@ -22,6 +22,7 @@ export const mockSettings = {
   pollingInterval: 20,
   fadeDuration: 9,
   fadeType: 'equalPower',
+  systemNotifications: false,
   scrobble: false,
   transcode: false,
   sidebar: {

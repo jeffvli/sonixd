@@ -133,6 +133,9 @@ const configState: ConfigPage = {
     filters: [],
   },
   sort: {},
+  player: {
+    systemNotifications: false,
+  },
   serverType: Server.Subsonic,
   lookAndFeel: {
     font: 'Poppins',
