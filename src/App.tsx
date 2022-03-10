@@ -67,7 +67,6 @@ const App = () => {
         webFrame.setZoomFactor(newZoomFactor);
         localStorage.setItem('zoomFactor', String(newZoomFactor));
         setZoomFactor(newZoomFactor);
-        console.log('newZoomFactor', newZoomFactor);
         notifyToast('info', `${Math.round(newZoomFactor * 100)}%`);
       }
     },
