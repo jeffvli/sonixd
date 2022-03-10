@@ -65,6 +65,7 @@ import {
   updatePlaylist as jfUpdatePlaylist,
   getSongs as jfGetSongs,
   getSimilarSongs as jfGetSimilarSongs,
+  getSongsByGenre as jfGetSongsByGenre,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -97,7 +98,7 @@ const endpoints = [
   { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },
   { id: 'getSongs', endpoint: { subsonic: undefined, jellyfin: jfGetSongs } },
   { id: 'getTopSongs', endpoint: { subsonic: getTopSongs, jellyfin: undefined } },
-  { id: 'getSongsByGenre', endpoint: { subsonic: getSongsByGenre, jellyfin: jfGetSongs } },
+  { id: 'getSongsByGenre', endpoint: { subsonic: getSongsByGenre, jellyfin: jfGetSongsByGenre } },
   { id: 'getLyrics', endpoint: { subsonic: getLyrics, jellyfin: undefined } },
 
   // Playlist handling logic is split up by server type due to differences in how each server handles them.
