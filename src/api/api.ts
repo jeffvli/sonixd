@@ -99,7 +99,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
 
   if (useLegacyAuth) {
     return (
-      `${API_BASE_URL}/getCoverArt` +
+      `${API_BASE_URL}/getCoverArt.view` +
       `?id=${item.coverArt}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
@@ -110,7 +110,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
   }
 
   return (
-    `${API_BASE_URL}/getCoverArt` +
+    `${API_BASE_URL}/getCoverArt.view` +
     `?id=${item.coverArt}` +
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
@@ -124,7 +124,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
 export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAuth) => {
   if (useLegacyAuth) {
     return (
-      `${API_BASE_URL}/download` +
+      `${API_BASE_URL}/download.view` +
       `?id=${options.id}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
@@ -134,7 +134,7 @@ export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAu
   }
 
   return (
-    `${API_BASE_URL}/download` +
+    `${API_BASE_URL}/download.view` +
     `?id=${options.id}` +
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
@@ -147,7 +147,7 @@ export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAu
 const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
   if (useLegacyAuth) {
     return (
-      `${API_BASE_URL}/stream` +
+      `${API_BASE_URL}/stream.view` +
       `?id=${id}` +
       `&u=${auth.username}` +
       `&p=${auth.password}` +
@@ -157,7 +157,7 @@ const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
   }
 
   return (
-    `${API_BASE_URL}/stream` +
+    `${API_BASE_URL}/stream.view` +
     `?id=${id}` +
     `&u=${auth.username}` +
     `&s=${auth.salt}` +
@@ -309,17 +309,17 @@ const normalizeScanStatus = (item: any) => {
 };
 
 export const getPlaylist = async (options: { id: string }) => {
-  const { data } = await api.get(`/getPlaylist?id=${options.id}`);
+  const { data } = await api.get(`/getPlaylist.view`, { params: options });
   return normalizePlaylist(data.playlist);
 };
 
 export const getPlaylists = async () => {
-  const { data } = await api.get('/getPlaylists');
+  const { data } = await api.get('/getPlaylists.view');
   return (data.playlists?.playlist || []).map((playlist: any) => normalizePlaylist(playlist));
 };
 
 export const getStarred = async (options: { musicFolderId?: string | number }) => {
-  const { data } = await api.get(`/getStarred2`, { params: options });
+  const { data } = await api.get(`/getStarred2.view`, { params: options });
 
   return {
     album: (data.starred2.album || []).map((entry: any) => normalizeAlbum(entry)),
@@ -329,7 +329,7 @@ export const getStarred = async (options: { musicFolderId?: string | number }) =
 };
 
 export const getAlbum = async (options: { id: string }) => {
-  const { data } = await api.get(`/getAlbum`, { params: options });
+  const { data } = await api.get(`/getAlbum.view`, { params: options });
   return normalizeAlbum(data.album);
 };
 
@@ -358,7 +358,7 @@ export const getAlbums = async (
 ) => {
   if (options.recursive) {
     const albums: any = api
-      .get(`/getAlbumList2`, {
+      .get(`/getAlbumList2.view`, {
         params: {
           type: options.type.match('alphabeticalByName|alphabeticalByArtist|frequent|newest|recent')
             ? options.type
@@ -402,7 +402,7 @@ export const getAlbums = async (
     return albums;
   }
 
-  const { data } = await api.get(`/getAlbumList2`, { params: options });
+  const { data } = await api.get(`/getAlbumList2.view`, { params: options });
   return normalizeAPIResult(
     (data.albumList2.album || []).map((entry: any) => normalizeAlbum(entry)),
     data.albumList2.album.length
@@ -416,12 +416,12 @@ export const getRandomSongs = async (options: {
   toYear?: number;
   musicFolderId?: number;
 }) => {
-  const { data } = await api.get(`/getRandomSongs`, { params: options });
+  const { data } = await api.get(`/getRandomSongs.view`, { params: options });
   return (data.randomSongs.song || []).map((entry: any) => normalizeSong(entry));
 };
 
 export const getArtist = async (options: { id: string }) => {
-  const { data } = await api.get(`/getArtist`, { params: options });
+  const { data } = await api.get(`/getArtist.view`, { params: options });
   const { data: infoData } = await api.get(`/getArtistInfo2`, {
     params: { id: options.id, count: 15 },
   });
@@ -448,17 +448,17 @@ export const getArtist = async (options: { id: string }) => {
 };
 
 export const getArtists = async (options: { musicFolderId?: string | number }) => {
-  const { data } = await api.get(`/getArtists`, { params: options });
+  const { data } = await api.get(`/getArtists.view`, { params: options });
   const artists = (data.artists?.index || []).flatMap((index: any) => index.artist);
   return (artists || []).map((entry: any) => normalizeArtist(entry));
 };
 
 export const getArtistSongs = async (options: { id: string }) => {
   const promises = [];
-  const { data } = await api.get(`/getArtist`, { params: options });
+  const { data } = await api.get(`/getArtist.view`, { params: options });
 
   for (let i = 0; i < data.artist.album.length; i += 1) {
-    promises.push(api.get(`/getAlbum`, { params: { id: data.artist.album[i].id } }));
+    promises.push(api.get(`/getAlbum.view`, { params: { id: data.artist.album[i].id } }));
   }
 
   const res = await Promise.all(promises);
@@ -469,17 +469,17 @@ export const getArtistSongs = async (options: { id: string }) => {
 };
 
 export const startScan = async () => {
-  const { data } = await api.get(`/startScan`);
+  const { data } = await api.get(`/startScan.view`);
   return normalizeScanStatus(data.scanStatus);
 };
 
 export const getScanStatus = async () => {
-  const { data } = await api.get(`/getScanStatus`);
+  const { data } = await api.get(`/getScanStatus.view`);
   return normalizeScanStatus(data.scanStatus);
 };
 
 export const star = async (options: { id: string; type: string }) => {
-  const { data } = await api.get(`/star`, {
+  const { data } = await api.get(`/star.view`, {
     params: {
       id: options.type === 'music' ? options.id : undefined,
       albumId: options.type === 'album' ? options.id : undefined,
@@ -491,7 +491,7 @@ export const star = async (options: { id: string; type: string }) => {
 };
 
 export const unstar = async (options: { id: string; type: string }) => {
-  const { data } = await api.get(`/unstar`, {
+  const { data } = await api.get(`/unstar.view`, {
     params: {
       id: options.type === 'music' ? options.id : undefined,
       albumId: options.type === 'album' ? options.id : undefined,
@@ -529,7 +529,7 @@ export const batchStar = async (options: { ids: string[]; type: string }) => {
       params.append(key, value);
     });
 
-    res.push((await api.get(`/star`, { params })).data);
+    res.push((await api.get(`/star.view`, { params })).data);
   }
 
   return res;
@@ -562,7 +562,7 @@ export const batchUnstar = async (options: { ids: string[]; type: string }) => {
       params.append(key, value);
     });
 
-    res.push((await api.get(`/unstar`, { params })).data);
+    res.push((await api.get(`/unstar.view`, { params })).data);
   }
 
   return res;
@@ -573,7 +573,7 @@ export const setRating = async (options: { ids: string[]; rating: number }) => {
 
   for (let i = 0; i < options.ids.length; i += 1) {
     promises.push(
-      api.get(`/setRating`, { params: { id: options.ids[i], rating: options.rating } })
+      api.get(`/setRating.view`, { params: { id: options.ids[i], rating: options.rating } })
     );
   }
 
@@ -583,14 +583,14 @@ export const setRating = async (options: { ids: string[]; rating: number }) => {
 };
 
 export const getSimilarSongs = async (options: { id: string; count: number }) => {
-  const { data } = await api.get(`/getSimilarSongs2`, { params: options });
+  const { data } = await api.get(`/getSimilarSongs2.view`, { params: options });
   return (_.uniqBy(data?.similarSongs2?.song, (e: any) => e.id) || []).map((entry: any) =>
     normalizeSong(entry)
   );
 };
 
 export const getTopSongs = async (options: { artist: string; count: number }) => {
-  const { data } = await api.get(`/getTopSongs`, { params: options });
+  const { data } = await api.get(`/getTopSongs.view`, { params: options });
   return (_.uniqBy(data?.topSongs?.song, (e: any) => e.id) || []).map((entry: any) =>
     normalizeSong(entry)
   );
@@ -608,7 +608,7 @@ export const getSongsByGenre = async (
 ) => {
   if (options.recursive) {
     const songs: any = api
-      .get(`/getSongsByGenre`, {
+      .get(`/getSongsByGenre.view`, {
         params: {
           genre: options.genre,
           count: options.size,
@@ -646,7 +646,7 @@ export const getSongsByGenre = async (
     return songs;
   }
 
-  const { data } = await api.get(`/getSongsByGenre`, { params: options });
+  const { data } = await api.get(`/getSongsByGenre.view`, { params: options });
   return (_.uniqBy(data?.songsByGenre?.song, (e: any) => e.id) || []).map((entry: any) =>
     normalizeSong(entry)
   );
@@ -662,7 +662,7 @@ export const updatePlaylistSongs = async (options: { id: string; entry: any[] })
     playlistParams.append(key, value);
   });
 
-  const { data } = await api.get(`/createPlaylist`, {
+  const { data } = await api.get(`/createPlaylist.view`, {
     params: playlistParams,
   });
 
@@ -689,7 +689,7 @@ export const updatePlaylistSongsLg = async (options: { id: string; entry: any[] 
       params.append('songIdToAdd', String(entryIdChunks[i][x]));
     }
 
-    const { data } = await api.get(`/updatePlaylist`, {
+    const { data } = await api.get(`/updatePlaylist.view`, {
       params,
     });
 
@@ -700,12 +700,12 @@ export const updatePlaylistSongsLg = async (options: { id: string; entry: any[] 
 };
 
 export const deletePlaylist = async (options: { id: string }) => {
-  const { data } = await api.get(`/deletePlaylist`, { params: { id: options.id } });
+  const { data } = await api.get(`/deletePlaylist.view`, { params: { id: options.id } });
   return data;
 };
 
 export const createPlaylist = async (options: { name: string }) => {
-  const { data } = await api.get(`/createPlaylist`, { params: options });
+  const { data } = await api.get(`/createPlaylist.view`, { params: options });
   return data;
 };
 
@@ -715,7 +715,7 @@ export const updatePlaylist = async (options: {
   comment: string;
   isPublic: boolean;
 }) => {
-  const { data } = await api.get(`/updatePlaylist`, {
+  const { data } = await api.get(`/updatePlaylist.view`, {
     params: {
       playlistId: options.id,
       name: options.name,
@@ -729,7 +729,7 @@ export const updatePlaylist = async (options: {
 
 export const clearPlaylist = async (options: { id: string }) => {
   // Specifying the playlistId without any songs will empty the existing playlist
-  const { data } = await api.get(`/createPlaylist`, {
+  const { data } = await api.get(`/createPlaylist.view`, {
     params: { playlistId: options.id, songId: '' },
   });
 
@@ -737,7 +737,7 @@ export const clearPlaylist = async (options: { id: string }) => {
 };
 
 export const getGenres = async () => {
-  const { data } = await api.get(`/getGenres`);
+  const { data } = await api.get(`/getGenres.view`);
   return (data.genres.genre || []).map((entry: any) => normalizeGenre(entry));
 };
 
@@ -751,7 +751,7 @@ export const getSearch = async (options: {
   songOffset?: 0;
   musicFolderId?: string | number;
 }) => {
-  const { data } = await api.get(`/search3`, { params: options });
+  const { data } = await api.get(`/search3.view`, { params: options });
 
   return {
     artist: {
@@ -779,7 +779,7 @@ export const getSearch = async (options: {
 };
 
 export const scrobble = async (options: { id: string; time?: number; submission?: boolean }) => {
-  const { data } = await api.get(`/scrobble`, { params: options });
+  const { data } = await api.get(`/scrobble.view`, { params: options });
   return data;
 };
 
@@ -787,7 +787,7 @@ export const getIndexes = async (options: {
   musicFolderId?: string | number;
   ifModifiedSince?: any;
 }) => {
-  const { data } = await api.get(`/getIndexes`, { params: options });
+  const { data } = await api.get(`/getIndexes.view`, { params: options });
 
   const folders: any[] = [];
   data.indexes.index.forEach((entry: any) => {
@@ -801,12 +801,12 @@ export const getIndexes = async (options: {
 };
 
 export const getMusicFolders = async () => {
-  const { data } = await api.get(`/getMusicFolders`);
+  const { data } = await api.get(`/getMusicFolders.view`);
   return (data?.musicFolders?.musicFolder || []).map((entry: any) => normalizeFolder(entry));
 };
 
 export const getMusicDirectory = async (options: { id: string }) => {
-  const { data } = await api.get(`/getMusicDirectory`, { params: options });
+  const { data } = await api.get(`/getMusicDirectory.view`, { params: options });
 
   const child: any[] = [];
   const folders = data.directory?.child?.filter((entry: any) => entry.isDir);
@@ -860,6 +860,6 @@ export const getMusicDirectorySongs = async (options: { id: string }, data: any[
 };
 
 export const getLyrics = async (options: { artist: string; title: string }) => {
-  const { data } = await api.get(`/getLyrics`, { params: options });
+  const { data } = await api.get(`/getLyrics.view`, { params: options });
   return data?.lyrics?.value;
 };
