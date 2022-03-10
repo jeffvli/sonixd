@@ -70,6 +70,8 @@ const usePlayerControls = (
         playersRef.current.player2.audioEl.current.volume = 0;
         playersRef.current.player2.audioEl.current.pause();
 
+        ipcRenderer.send('seeked', 0);
+
         if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
           apiController({
             serverType: config.serverType,
@@ -90,6 +92,8 @@ const usePlayerControls = (
         playersRef.current.player1.audioEl.current.currentTime = 0;
         playersRef.current.player1.audioEl.current.volume = 0;
         playersRef.current.player1.audioEl.current.pause();
+
+        ipcRenderer.send('seeked', 0);
 
         if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
           apiController({
