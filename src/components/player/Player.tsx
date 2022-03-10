@@ -26,7 +26,7 @@ import {
 import cacheSong from '../shared/cacheSong';
 import { isCached, isLinux } from '../../shared/utils';
 import { apiController } from '../../api/controller';
-import { Server } from '../../types';
+import { Artist, Server } from '../../types';
 import { setStatus } from '../../redux/playerSlice';
 
 const gaplessListenHandler = (
@@ -512,21 +512,29 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           dispatch(setIsFading(false));
         }
 
-        ipcRenderer.send(
-          'current-song',
+        const nextSong =
           playQueue[currentEntryList][
             getNextPlayerIndex(
               playQueue[currentEntryList].length,
               playQueue.repeat,
               playQueue.player1.index
             )
-          ]
-        );
+          ];
+
+        if (config.player.systemNotifications) {
+          // eslint-disable-next-line no-new
+          new Notification(nextSong.title, {
+            body: `${nextSong.artist.map((artist: Artist) => artist.title).join(', ')}\n${
+              nextSong.album
+            }`,
+            icon: nextSong.image,
+          });
+        }
 
         dispatch(setAutoIncremented(false));
       }
     }
-  }, [cacheSongs, currentEntryList, dispatch, playQueue]);
+  }, [cacheSongs, config.player.systemNotifications, currentEntryList, dispatch, playQueue]);
 
   const handleOnEndedPlayer2 = useCallback(() => {
     player2Ref.current.audioEl.current.currentTime = 0;
@@ -567,21 +575,30 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           dispatch(setIsFading(false));
         }
 
-        ipcRenderer.send(
-          'current-song',
+        const nextSong =
           playQueue[currentEntryList][
             getNextPlayerIndex(
               playQueue[currentEntryList].length,
               playQueue.repeat,
               playQueue.player2.index
             )
-          ]
-        );
+          ];
+        ipcRenderer.send('current-song', nextSong);
+
+        if (config.player.systemNotifications) {
+          // eslint-disable-next-line no-new
+          new Notification(nextSong.title, {
+            body: `${nextSong.artist.map((artist: Artist) => artist.title).join(', ')}\n${
+              nextSong.album
+            }`,
+            icon: nextSong.image,
+          });
+        }
 
         dispatch(setAutoIncremented(false));
       }
     }
-  }, [cacheSongs, currentEntryList, dispatch, playQueue]);
+  }, [cacheSongs, config.player.systemNotifications, currentEntryList, dispatch, playQueue]);
 
   const handleGaplessPlayer1 = useCallback(() => {
     gaplessListenHandler(
