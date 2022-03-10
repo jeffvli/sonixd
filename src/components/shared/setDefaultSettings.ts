@@ -111,6 +111,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('scrobble', false);
   }
 
+  if (force || !settings.hasSync('systemNotifications')) {
+    settings.setSync('systemNotifications', false);
+  }
+
   if (force || !settings.hasSync('musicFolder.id')) {
     settings.setSync('musicFolder.id', null);
   }
