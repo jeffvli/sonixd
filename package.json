@@ -33,7 +33,7 @@
   "build": {
     "productName": "Sonixd",
     "appId": "org.erb.sonixd",
-    "artifactName": "${productName}-${version}-${os}.${ext}",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "files": [
       "dist/",
       "node_modules/",
@@ -51,8 +51,7 @@
     },
     "mac": {
       "target": [
-        "dmg",
-        "zip"
+        "dmg"
       ],
       "type": "distribution",
       "hardenedRuntime": true,
@@ -83,7 +82,7 @@
     "linux": {
       "target": [
         "AppImage",
-        "zip"
+        "tar.xz"
       ],
       "category": "Development"
     },
