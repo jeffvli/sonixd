@@ -10,12 +10,14 @@ const de = require('./locales/de.json');
 const en = require('./locales/en.json');
 const zhcn = require('./locales/zhcn.json');
 const es = require('./locales/es.json');
+const si = require('./locales/si.json');
 
 const resources = {
   en: { translation: en },
   de: { translation: de },
   zhcn: { translation: zhcn },
   es: { translation: es },
+  si: { translation: si },
 };
 
 i18n
@@ -50,5 +52,9 @@ export const Languages = [
   {
     label: 'Español',
     value: 'es',
+  },
+  {
+    label: 'Sinhala',
+    value: 'si',
   },
 ];
