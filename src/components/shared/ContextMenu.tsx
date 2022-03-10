@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import { useQuery, useQueryClient } from 'react-query';
@@ -115,13 +115,6 @@ export const GlobalContextMenu = () => {
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [indexToMoveTo, setIndexToMoveTo] = useState(0);
   const playlistPickerContainerRef = useRef(null);
-  const [musicFolder, setMusicFolder] = useState(undefined);
-
-  useEffect(() => {
-    if (folder.applied.artists) {
-      setMusicFolder(folder.musicFolder);
-    }
-  }, [folder]);
 
   const { data: playlists }: any = useQuery(['playlists'], () =>
     apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
@@ -217,7 +210,10 @@ export const GlobalContextMenu = () => {
           apiController({
             serverType: config.serverType,
             endpoint: 'getArtistSongs',
-            args: { id: multiSelect.selected[i].id, musicFolderId: musicFolder },
+            args: {
+              id: multiSelect.selected[i].id,
+              musicFolderId: folder.applied.music && folder.musicFolder,
+            },
           })
         );
       }
@@ -244,7 +240,7 @@ export const GlobalContextMenu = () => {
             args: {
               type: 'byGenre',
               genre: multiSelect.selected[i].title,
-              musicFolderId: musicFolder,
+              musicFolderId: (folder.applied.music || folder.applied.albums) && folder.musicFolder,
               size: 100,
               offset: 0,
               recursive: true,
@@ -346,7 +342,10 @@ export const GlobalContextMenu = () => {
           apiController({
             serverType: config.serverType,
             endpoint: 'getArtistSongs',
-            args: { id: multiSelect.selected[i].id, musicFolderId: musicFolder },
+            args: {
+              id: multiSelect.selected[i].id,
+              musicFolderId: folder.applied.artist && folder.musicFolder,
+            },
           })
         );
       }
@@ -369,7 +368,7 @@ export const GlobalContextMenu = () => {
             args: {
               type: 'byGenre',
               genre: multiSelect.selected[i].title,
-              musicFolderId: musicFolder,
+              musicFolderId: (folder.applied.album || folder.applied.artist) && folder.musicFolder,
               size: 100,
               offset: 0,
               recursive: true,
