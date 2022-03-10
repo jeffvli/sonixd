@@ -45,6 +45,10 @@ export const PlayerControlIcon = styled(Icon)`
     outline: none;
     filter: brightness(0.7);
   }
+
+  opacity: ${(props) => props.disabled && '0.5'};
+  cursor: ${(props) => props.disabled && 'default'};
+  pointer-events: ${(props) => props.disabled && 'none'};
 `;
 
 export const CoverArtContainer = styled.div<{ expand: boolean }>`

@@ -222,6 +222,7 @@ const PlayerBar = () => {
     handleRepeat,
     handleShuffle,
     handleDisplayQueue,
+    handleStop,
   } = usePlayerControls(
     config,
     player,
@@ -463,6 +464,24 @@ const PlayerBar = () => {
           </FlexboxGrid.Item>
           <FlexboxGrid.Item colspan={12} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
             <PlayerColumn center height="45px">
+              {/* Stop Button */}
+              <CustomTooltip text={t('Stop')} delay={1000}>
+                <PlayerControlIcon
+                  aria-label={t('Seek forward')}
+                  role="button"
+                  tabIndex={0}
+                  icon="stop"
+                  size="lg"
+                  fixedWidth
+                  disabled={playQueue.entry.length === 0 || player.status !== 'PLAYING'}
+                  onClick={handleStop}
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      handleStop();
+                    }
+                  }}
+                />
+              </CustomTooltip>
               {/* Seek Backward Button */}
               <CustomTooltip text={t('Seek backward')} delay={1000}>
                 <PlayerControlIcon
@@ -472,6 +491,7 @@ const PlayerBar = () => {
                   icon="backward"
                   size="lg"
                   fixedWidth
+                  disabled={playQueue.entry.length === 0}
                   onClick={handleSeekBackward}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
@@ -489,6 +509,7 @@ const PlayerBar = () => {
                   icon="step-backward"
                   size="lg"
                   fixedWidth
+                  disabled={playQueue.entry.length === 0}
                   onClick={handlePrevTrack}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
@@ -506,6 +527,7 @@ const PlayerBar = () => {
                   tabIndex={0}
                   icon={player.status === 'PLAYING' ? 'pause-circle' : 'play-circle'}
                   size="3x"
+                  disabled={playQueue.entry.length === 0}
                   onClick={handlePlayPause}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
@@ -523,6 +545,7 @@ const PlayerBar = () => {
                   icon="step-forward"
                   size="lg"
                   fixedWidth
+                  disabled={playQueue.entry.length === 0}
                   onClick={handleNextTrack}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
@@ -540,6 +563,7 @@ const PlayerBar = () => {
                   icon="forward"
                   size="lg"
                   fixedWidth
+                  disabled={playQueue.entry.length === 0}
                   onClick={handleSeekForward}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
@@ -548,6 +572,9 @@ const PlayerBar = () => {
                   }}
                 />
               </CustomTooltip>
+              <PlayerControlIcon size="lg" fixedWidth>
+                {' '}
+              </PlayerControlIcon>
             </PlayerColumn>
             <PlayerColumn center height="35px">
               <FlexboxGrid

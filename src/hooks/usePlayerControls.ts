@@ -430,6 +430,7 @@ const usePlayerControls = (
     handleRepeat,
     handleShuffle,
     handleDisplayQueue,
+    handleStop,
   };
 };
 
