@@ -29,7 +29,7 @@ import { addModalPage } from '../../redux/miscSlice';
 import CustomTooltip from '../shared/CustomTooltip';
 import { CoverArtWrapper, CustomImageGrid, CustomImageGridWrapper } from '../layout/styled';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
-import { Play } from '../../types';
+import { Item, Play } from '../../types';
 
 const Card = ({
   onClick,
@@ -176,23 +176,35 @@ const Card = ({
                   size="lg"
                   circle
                   icon={<Icon icon="play" />}
-                  onClick={() =>
-                    handlePlayQueueAdd({
+                  onClick={() => {
+                    if (playClick.type === Item.Music) {
+                      return handlePlayQueueAdd({
+                        byData: [playClick],
+                        play: Play.Play,
+                      });
+                    }
+                    return handlePlayQueueAdd({
                       byItemType: { item: playClick.type, id: playClick.id },
                       play: Play.Play,
-                    })
-                  }
+                    });
+                  }}
                 />
 
                 <CustomTooltip text={t('Add to queue (later)')} delay={1000}>
                   <AppendOverlayButton
                     aria-label={t('Add to queue (later)')}
-                    onClick={() =>
-                      handlePlayQueueAdd({
+                    onClick={() => {
+                      if (playClick.type === Item.Music) {
+                        return handlePlayQueueAdd({
+                          byData: [playClick],
+                          play: Play.Later,
+                        });
+                      }
+                      return handlePlayQueueAdd({
                         byItemType: { item: playClick.type, id: playClick.id },
                         play: Play.Later,
-                      })
-                    }
+                      });
+                    }}
                     size={size <= 160 ? 'xs' : 'sm'}
                     icon={<Icon icon="plus" />}
                   />
@@ -201,12 +213,18 @@ const Card = ({
                 <CustomTooltip text={t('Add to queue (next)')} delay={1000}>
                   <AppendNextOverlayButton
                     aria-label={t('Add to queue (next)')}
-                    onClick={() =>
-                      handlePlayQueueAdd({
+                    onClick={() => {
+                      if (playClick.type === Item.Music) {
+                        return handlePlayQueueAdd({
+                          byData: [playClick],
+                          play: Play.Next,
+                        });
+                      }
+                      return handlePlayQueueAdd({
                         byItemType: { item: playClick.type, id: playClick.id },
                         play: Play.Next,
-                      })
-                    }
+                      });
+                    }}
                     size={size <= 160 ? 'xs' : 'sm'}
                     icon={<Icon icon="plus-circle" />}
                   />

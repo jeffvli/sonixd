@@ -6,6 +6,7 @@ import Card from '../card/Card';
 import { SectionTitleWrapper, SectionTitle, StyledButton } from '../shared/styled';
 import { useAppSelector } from '../../redux/hooks';
 import { smoothScroll } from '../../shared/utils';
+import { Item } from '../../types';
 
 const ScrollMenuContainer = styled.div<{ $noScrollbar?: boolean; maxWidth: string }>`
   overflow-x: auto;
@@ -114,7 +115,7 @@ const ScrollingMenu = ({
               coverArt={item.image}
               url={
                 cardTitle.urlProperty
-                  ? `${cardTitle.prefix}/${type === 'music' ? item.albumId : item.id}`
+                  ? `${cardTitle.prefix}/${type === Item.Music ? item.albumId : item.id}`
                   : undefined
               }
               subUrl={
@@ -122,7 +123,7 @@ const ScrollingMenu = ({
                   ? `${cardSubtitle.prefix}/${item[cardSubtitle.urlProperty]}`
                   : undefined
               }
-              playClick={{ type, id: type === 'music' ? item.albumId : item.id }}
+              playClick={type === Item.Music ? item : { type, id: item.id }}
               details={{ cacheType: type, ...item }}
               hasHoverButtons
               size={cardSize || config.lookAndFeel.gridView.cardSize}
