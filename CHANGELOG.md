@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.14.0] - 2022-03-12
+
+### Added
+
+- Added zoom options via hotkeys (#252)
+  - Zoom in: CTRL + SHIFT + =
+  - Zoom out: CTRL + SHIFT + -
+- Added PLAY context menu options to the Genre view (#239)
+- Added STOP button to the main player controls (#252)
+- Added "System Notifications" option to display native notifications when the song automatically changes (#245)
+- Added arm64 build (#238)
+- New languages
+  - Spanish (Thanks @ami-sc) (#250)
+  - Sinhala (Thanks @hirusha-adi) (#254)
+
+### Fixed
+
+- (Jellyfin) Fixed the order of returned songs when playing from the Folder view using the context menu (#240)
+- (Linux) Reset MPRIS position to 0 when using "previous track" resets the song 0 (#249)
+- Fixed JavaScript error when removing all songs from the queue using the context menu (#248)
+- Fixed Ampache server support by adding .view to all Subsonic API endpoints (#253)
+
+### Removed
+
+- (Windows) Removed the cover art display when hovering Sonixd on the taskbar (due to new sidebar position) (#242)
+
 [0.13.1] - 2022-02-16
 
 ### Fixed
