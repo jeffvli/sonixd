@@ -3554,10 +3554,10 @@ charenc@0.0.2:
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
 
-chart.js@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.5.1.tgz#73e24d23a4134a70ccdb5e79a917f156b6f3644a"
-  integrity sha512-m5kzt72I1WQ9LILwQC4syla/LD/N413RYv2Dx2nnTkRS9iv/ey1xLTt0DnPc/eWV4zI+BgEgDYBIzbQhZHc/PQ==
+chart.js@^3.7.1:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.7.1.tgz#0516f690c6a8680c6c707e31a4c1807a6f400ada"
+  integrity sha512-8knRegQLFnPQAheZV8MjxIXc5gQEfDFD897BJgv/klO/vtIyFFmgMXrNfgrXpbTr/XbTturxRgxIXx/Y+ASJBA==
 
 cheerio-select@^1.5.0:
   version "1.5.0"
@@ -10944,13 +10944,6 @@ react-virtualized@^9.21.0:
     loose-envify "^1.4.0"
     prop-types "^15.7.2"
     react-lifecycles-compat "^3.0.4"
-
-react-visibility-sensor@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/react-visibility-sensor/-/react-visibility-sensor-5.1.1.tgz#5238380960d3a0b2be0b7faddff38541e337f5a9"
-  integrity sha512-cTUHqIK+zDYpeK19rzW6zF9YfT4486TIgizZW53wEZ+/GPBbK7cNS0EHyJVyHYacwFEvvHLEKfgJndbemWhB/w==
-  dependencies:
-    prop-types "^15.7.2"
 
 react-window@^1.8.6:
   version "1.8.6"
