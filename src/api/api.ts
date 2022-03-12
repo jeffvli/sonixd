@@ -603,6 +603,7 @@ export const getSongsByGenre = async (
     offset: number;
     musicFolderId?: string | number;
     recursive?: boolean;
+    totalSongs: number;
   },
   recursiveData: any[] = []
 ) => {
@@ -617,7 +618,11 @@ export const getSongsByGenre = async (
         },
       })
       .then((res) => {
-        if (!res.data.songsByGenre.song || res.data.songsByGenre.song.length === 0) {
+        if (
+          !res.data.songsByGenre.song ||
+          res.data.songsByGenre.song.length === 0 ||
+          options.totalSongs <= 0
+        ) {
           // Flatten and return once there are no more albums left
           const flattenedSongs = _.flatten(recursiveData);
 
@@ -637,6 +642,7 @@ export const getSongsByGenre = async (
             offset: options.offset + options.size,
             musicFolderId: options.musicFolderId,
             recursive: true,
+            totalSongs: options.totalSongs - options.size,
           },
           recursiveData
         );

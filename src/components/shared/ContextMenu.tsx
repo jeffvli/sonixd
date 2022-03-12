@@ -241,9 +241,10 @@ export const GlobalContextMenu = () => {
               type: 'byGenre',
               genre: multiSelect.selected[i].title,
               musicFolderId: (folder.applied.music || folder.applied.albums) && folder.musicFolder,
-              size: 100,
+              size: 500,
               offset: 0,
               recursive: true,
+              totalSongs: multiSelect.selected[i]?.songCount,
             },
           })
         );
@@ -369,9 +370,10 @@ export const GlobalContextMenu = () => {
               type: 'byGenre',
               genre: multiSelect.selected[i].title,
               musicFolderId: (folder.applied.album || folder.applied.artist) && folder.musicFolder,
-              size: 100,
+              size: 500,
               offset: 0,
               recursive: true,
+              totalSongs: multiSelect.selected[i]?.songCount,
             },
           })
         );
