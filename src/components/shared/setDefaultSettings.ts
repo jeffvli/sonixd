@@ -78,7 +78,7 @@ const setDefaultSettings = (force: boolean) => {
 
   if (force || !settings.hasSync('exitToTray')) {
     let defaultExitToTray = false;
-    if(isMacOS()) {
+    if (isMacOS()) {
       defaultExitToTray = true;
     }
     settings.setSync('exitToTray', defaultExitToTray);

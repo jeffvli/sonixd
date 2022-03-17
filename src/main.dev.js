@@ -591,7 +591,7 @@ const createWindow = async () => {
       });
     });
 
-    app.on('before-quit', function() {
+    app.on('before-quit', () => {
       forceQuit = true;
     });
   }
