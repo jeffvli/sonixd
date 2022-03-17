@@ -1,6 +1,7 @@
 import settings from 'electron-settings';
 import path from 'path';
 import i18n from '../../i18n/i18n';
+import { isMacOS } from '../../shared/utils';
 
 const setDefaultSettings = (force: boolean) => {
   if (force || !settings.hasSync('discord.enabled')) {
@@ -76,7 +77,11 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('exitToTray')) {
-    settings.setSync('exitToTray', false);
+    let defaultExitToTray = false;
+    if(isMacOS()) {
+      defaultExitToTray = true;
+    }
+    settings.setSync('exitToTray', defaultExitToTray);
   }
 
   if (force || !settings.hasSync('showDebugWindow')) {
