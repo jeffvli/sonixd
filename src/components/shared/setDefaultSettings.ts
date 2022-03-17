@@ -98,7 +98,7 @@ const setDefaultSettings = (force: boolean) => {
 
   if (force || !settings.hasSync('titleBarStyle')) {
     let defaultTitleBarStyle = 'windows';
-    if(isMacOS()) {
+    if (isMacOS()) {
       defaultTitleBarStyle = 'mac';
     }
     settings.setSync('titleBarStyle', defaultTitleBarStyle);
