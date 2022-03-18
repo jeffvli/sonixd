@@ -49,6 +49,7 @@ replayActionMain(store);
 let mainWindow = null;
 let tray = null;
 let exitFromTray = false;
+let forceQuit = false;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -538,6 +539,9 @@ const createWindow = async () => {
       event.preventDefault();
       mainWindow.hide();
     }
+    if (forceQuit) {
+      app.exit();
+    }
   });
 
   if (isWindows()) {
@@ -585,6 +589,10 @@ const createWindow = async () => {
         width: window.width,
         height: window.height,
       });
+    });
+
+    app.on('before-quit', () => {
+      forceQuit = true;
     });
   }
 

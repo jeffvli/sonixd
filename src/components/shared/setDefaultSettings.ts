@@ -77,7 +77,11 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('exitToTray')) {
-    settings.setSync('exitToTray', false);
+    let defaultExitToTray = false;
+    if (isMacOS()) {
+      defaultExitToTray = true;
+    }
+    settings.setSync('exitToTray', defaultExitToTray);
   }
 
   if (force || !settings.hasSync('showDebugWindow')) {
