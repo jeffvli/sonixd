@@ -1,6 +1,7 @@
 import settings from 'electron-settings';
 import path from 'path';
 import i18n from '../../i18n/i18n';
+import { isMacOS } from '../../shared/utils';
 
 const setDefaultSettings = (force: boolean) => {
   if (force || !settings.hasSync('discord.enabled')) {
@@ -96,7 +97,11 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('titleBarStyle')) {
-    settings.setSync('titleBarStyle', 'windows');
+    let defaultTitleBarStyle = 'windows';
+    if (isMacOS()) {
+      defaultTitleBarStyle = 'mac';
+    }
+    settings.setSync('titleBarStyle', defaultTitleBarStyle);
   }
 
   if (force || !settings.hasSync('artistPageLegacy')) {
