@@ -242,9 +242,9 @@ const PlayerBar = () => {
       if (isDraggingVolume) {
         dispatch(setVolume(localVolume));
         if (playQueue.currentPlayer === 1) {
-          playersRef.current.player1.audioEl.current.volume = localVolume;
+          playersRef.current.player1.audioEl.current.volume = localVolume ** 2;
         } else {
-          playersRef.current.player2.audioEl.current.volume = localVolume;
+          playersRef.current.player2.audioEl.current.volume = localVolume ** 2;
         }
 
         settings.setSync('volume', localVolume);

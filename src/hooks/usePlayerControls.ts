@@ -63,7 +63,7 @@ const usePlayerControls = (
         dispatch(fixPlayer2Index());
       } else if (currentPlayer === 1) {
         playersRef.current.player1.audioEl.current.currentTime = 0;
-        playersRef.current.player1.audioEl.current.volume = playQueue.volume;
+        playersRef.current.player1.audioEl.current.volume = playQueue.volume ** 2;
 
         // Reset the alt player if reset during fade
         playersRef.current.player2.audioEl.current.currentTime = 0;
@@ -86,7 +86,7 @@ const usePlayerControls = (
         }
       } else {
         playersRef.current.player2.audioEl.current.currentTime = 0;
-        playersRef.current.player2.audioEl.current.volume = playQueue.volume;
+        playersRef.current.player2.audioEl.current.volume = playQueue.volume ** 2;
 
         // Reset the alt player if reset during fade
         playersRef.current.player1.audioEl.current.currentTime = 0;

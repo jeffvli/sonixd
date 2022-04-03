@@ -50,7 +50,7 @@ const gaplessListenHandler = (
       return;
     }
 
-    nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
+    nextPlayerRef.current.audioEl.current.volume = playQueue.volume ** 2;
     nextPlayerRef.current.audioEl.current.play();
   }
 
@@ -175,8 +175,8 @@ const listenHandler = (
             : playQueue.volume;
 
         if (player === 1) {
-          currentPlayerRef.current.audioEl.current.volume = currentPlayerVolume;
-          nextPlayerRef.current.audioEl.current.volume = nextPlayerVolume;
+          currentPlayerRef.current.audioEl.current.volume = currentPlayerVolume ** 2;
+          nextPlayerRef.current.audioEl.current.volume = nextPlayerVolume ** 2;
           if (debug) {
             dispatch(
               setFadeData({
@@ -194,8 +194,8 @@ const listenHandler = (
             );
           }
         } else {
-          currentPlayerRef.current.audioEl.current.volume = currentPlayerVolume;
-          nextPlayerRef.current.audioEl.current.volume = nextPlayerVolume;
+          currentPlayerRef.current.audioEl.current.volume = currentPlayerVolume ** 2;
+          nextPlayerRef.current.audioEl.current.volume = nextPlayerVolume ** 2;
           if (debug) {
             dispatch(
               setFadeData({
@@ -214,7 +214,7 @@ const listenHandler = (
           }
         }
       } else {
-        nextPlayerRef.current.audioEl.current.volume = playQueue.volume;
+        nextPlayerRef.current.audioEl.current.volume = playQueue.volume ** 2;
       }
     }
   }
@@ -719,10 +719,10 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   useEffect(() => {
     if (!playQueue.isFading || !(playQueue.fadeDuration === 0)) {
       if (playQueue.currentPlayer === 1) {
-        player1Ref.current.audioEl.current.volume = playQueue.volume;
+        player1Ref.current.audioEl.current.volume = playQueue.volume ** 2;
         player2Ref.current.audioEl.current.volume = 0;
       } else {
-        player2Ref.current.audioEl.current.volume = playQueue.volume;
+        player2Ref.current.audioEl.current.volume = playQueue.volume ** 2;
         player1Ref.current.audioEl.current.volume = 0;
       }
     }
