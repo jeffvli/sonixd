@@ -132,6 +132,7 @@ const DebugWindow = ({ ...rest }) => {
             </span>
           </li>
           <li>volume (global): {playQueue.volume.toFixed(2)}</li>
+          <li>actual volume: {(playQueue.volume ** 2).toFixed(2)}</li>
           <li>volumeFade: {playQueue.volumeFade ? 'true' : 'false'}</li>
           <li>shuffle: {playQueue.shuffle ? 'true' : 'false'}</li>
           <li>repeat: {playQueue.repeat}</li>
