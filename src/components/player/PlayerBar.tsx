@@ -27,7 +27,7 @@ import placeholderImg from '../../img/placeholder.png';
 import DebugWindow from '../debug/DebugWindow';
 import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
 import { SecondaryTextWrapper, StyledButton, StyledRate } from '../shared/styled';
-import { Artist, Server } from '../../types';
+import { Artist, Play, Server, Song } from '../../types';
 import { notifyToast } from '../shared/toast';
 import { InfoModal } from '../modal/Modal';
 import useGetLyrics from '../../hooks/useGetLyrics';
@@ -36,6 +36,8 @@ import { setSidebar } from '../../redux/configSlice';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
+import { apiController } from '../../api/controller';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -45,6 +47,7 @@ const PlayerBar = () => {
   const playQueue = useAppSelector((state) => state.playQueue);
   const player = useAppSelector((state) => state.player);
   const config = useAppSelector((state) => state.config);
+  const folder = useAppSelector((state) => state.folder);
   const dispatch = useAppDispatch();
   const [seek, setSeek] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -56,6 +59,23 @@ const PlayerBar = () => {
   const [discordRpc, setDiscordRpc] = useState<any>();
   const [showCoverArtModal, setShowCoverArtModal] = useState(false);
   const [showLyricsModal, setShowLyricsModal] = useState(false);
+  const [isLoadingRandom, setIsLoadingRandom] = useState(false);
+  const { handlePlayQueueAdd } = usePlayQueueHandler();
+
+  const handlePlayRandom = async () => {
+    setIsLoadingRandom(true);
+    const res: Song[] = await apiController({
+      serverType: config.serverType,
+      endpoint: 'getRandomSongs',
+      args: {
+        size: 200,
+        musicFolderId: folder.musicFolder,
+      },
+    });
+
+    handlePlayQueueAdd({ byData: res, play: Play.Play });
+    setIsLoadingRandom(false);
+  };
 
   const playersRef = useRef<any>();
   const history = useHistory();
@@ -572,9 +592,19 @@ const PlayerBar = () => {
                   }}
                 />
               </CustomTooltip>
-              <PlayerControlIcon size="lg" fixedWidth>
-                {' '}
-              </PlayerControlIcon>
+              <CustomTooltip text={t('Play Random')}>
+                <PlayerControlIcon
+                  aria-label={t('Play Random')}
+                  role="button"
+                  tabIndex={0}
+                  icon={isLoadingRandom ? 'spinner' : 'plus-square'}
+                  size="lg"
+                  fixedWidth
+                  onClick={handlePlayRandom}
+                  disabled={isLoadingRandom}
+                  spin={isLoadingRandom}
+                />
+              </CustomTooltip>
             </PlayerColumn>
             <PlayerColumn center height="35px">
               <FlexboxGrid
