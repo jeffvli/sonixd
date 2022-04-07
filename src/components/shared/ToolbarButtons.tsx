@@ -169,10 +169,10 @@ export const FilterButton = ({ ...rest }) => {
 
 export const AutoPlaylistButton = ({ noText, ...rest }: any) => {
   return (
-    <CustomTooltip text={i18n.t('Auto playlist')}>
-      <StyledButton aria-label={i18n.t('Auto playlist')} tabIndex={0} {...rest}>
+    <CustomTooltip text={i18n.t('Play Random')}>
+      <StyledButton aria-label={i18n.t('Play Random')} tabIndex={0} {...rest}>
         <Icon icon="plus-square" style={{ marginRight: noText ? '0px' : '10px' }} />
-        {!noText && i18n.t('Auto playlist')}
+        {!noText && i18n.t('Play Random')}
       </StyledButton>
     </CustomTooltip>
   );
