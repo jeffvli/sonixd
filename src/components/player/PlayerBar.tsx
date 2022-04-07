@@ -465,7 +465,7 @@ const PlayerBar = () => {
           <FlexboxGrid.Item colspan={12} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
             <PlayerColumn center height="45px">
               {/* Stop Button */}
-              <CustomTooltip text={t('Stop')} delay={1000}>
+              <CustomTooltip text={t('Stop')}>
                 <PlayerControlIcon
                   aria-label={t('Seek forward')}
                   role="button"
@@ -483,7 +483,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Seek Backward Button */}
-              <CustomTooltip text={t('Seek backward')} delay={1000}>
+              <CustomTooltip text={t('Seek backward')}>
                 <PlayerControlIcon
                   aria-label={t('Seek backward')}
                   role="button"
@@ -501,7 +501,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Previous Song Button */}
-              <CustomTooltip text={t('Previous Track')} delay={1000}>
+              <CustomTooltip text={t('Previous Track')}>
                 <PlayerControlIcon
                   aria-label={t('Previous Track')}
                   role="button"
@@ -519,7 +519,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Play/Pause Button */}
-              <CustomTooltip text={t('Play/Pause')} delay={1000}>
+              <CustomTooltip text={t('Play/Pause')}>
                 <PlayerControlIcon
                   aria-label={t('Play')}
                   aria-pressed={player.status === 'PLAYING'}
@@ -537,7 +537,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Next Song Button */}
-              <CustomTooltip text={t('Next Track')} delay={1000}>
+              <CustomTooltip text={t('Next Track')}>
                 <PlayerControlIcon
                   aria-label={t('Next Track')}
                   role="button"
@@ -555,7 +555,7 @@ const PlayerBar = () => {
                 />
               </CustomTooltip>
               {/* Seek Forward Button */}
-              <CustomTooltip text={t('Seek forward')} delay={1000}>
+              <CustomTooltip text={t('Seek forward')}>
                 <PlayerControlIcon
                   aria-label={t('Seek forward')}
                   role="button"
