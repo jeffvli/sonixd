@@ -183,7 +183,7 @@ const Login = () => {
               <StyledCheckbox
                 defaultChecked={
                   process.env.NODE_ENV === 'test'
-                    ? mockSettings
+                    ? mockSettings.legacyAuth
                     : Boolean(settings.getSync('legacyAuth'))
                 }
                 checked={legacyAuth}
