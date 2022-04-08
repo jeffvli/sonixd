@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { shell } from 'electron';
 import _ from 'lodash';
-import { Animated } from 'react-animated-css';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
+
 import { apiController } from '../../api/controller';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { CoverArtWrapper, PageHeaderSubtitleDataLine } from '../layout/styled';
@@ -128,12 +129,12 @@ const NowPlayingInfoView = () => {
   }
 
   return (
-    <Animated
-      animationInDuration={500}
-      animationOutDuration={0}
-      animationIn="fadeIn"
-      animationOut="fadeOut"
-      isVisible={!isLoading}
+    <CSSTransition
+      timeout={{
+        enter: 500,
+        exit: 0,
+      }}
+      classNames="grid-animated"
     >
       {currentArtist && playQueue.entry?.length > 0 && (
         <>
@@ -352,7 +353,7 @@ const NowPlayingInfoView = () => {
           )}
         </>
       )}
-    </Animated>
+    </CSSTransition>
   );
 };
 
