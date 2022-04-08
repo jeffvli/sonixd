@@ -198,19 +198,15 @@ const SearchView = () => {
     },
   });
 
-  const {
-    handleRowClick: handleAlbumRowClick,
-    handleRowDoubleClick: handleAlbumRowDoubleClick,
-  } = useListClickHandler({
-    doubleClick: (rowData: any) => history.push(`/library/album/${rowData.id}`),
-  });
+  const { handleRowClick: handleAlbumRowClick, handleRowDoubleClick: handleAlbumRowDoubleClick } =
+    useListClickHandler({
+      doubleClick: (rowData: any) => history.push(`/library/album/${rowData.id}`),
+    });
 
-  const {
-    handleRowClick: handleArtistRowClick,
-    handleRowDoubleClick: handleArtistRowDoubleClick,
-  } = useListClickHandler({
-    doubleClick: (rowData: any) => history.push(`/library/artist/${rowData.id}`),
-  });
+  const { handleRowClick: handleArtistRowClick, handleRowDoubleClick: handleArtistRowDoubleClick } =
+    useListClickHandler({
+      doubleClick: (rowData: any) => history.push(`/library/artist/${rowData.id}`),
+    });
 
   return (
     <GenericPage

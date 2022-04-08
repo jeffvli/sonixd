@@ -357,13 +357,14 @@ if (isWindows() && isWindows10()) {
         : 'Unknown Artist';
     Controls.displayUpdater.musicProperties.albumTitle = arg.album || 'Unknown Album';
 
-    Controls.displayUpdater.thumbnail = windowsStorageStreams.RandomAccessStreamReference.createFromUri(
-      new windowsFoundation.Uri(
-        arg.image.includes('placeholder')
-          ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
-          : arg.image
-      )
-    );
+    Controls.displayUpdater.thumbnail =
+      windowsStorageStreams.RandomAccessStreamReference.createFromUri(
+        new windowsFoundation.Uri(
+          arg.image.includes('placeholder')
+            ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
+            : arg.image
+        )
+      );
 
     Controls.displayUpdater.update();
   });

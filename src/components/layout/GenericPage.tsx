@@ -13,10 +13,8 @@ const GenericPage = ({ header, children, hideDivider, ...rest }: any) => {
     if (misc.dynamicBackground) {
       const cachedImagePath = `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`;
       const serverImagePath = playQueue.current?.image.replace(/size=\d+/, 'size=500');
-      const cssBackgroundImagePath = `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`.replaceAll(
-        '\\',
-        '/'
-      );
+      const cssBackgroundImagePath =
+        `${misc.imageCachePath}album_${playQueue.current?.albumId}.jpg`.replaceAll('\\', '/');
 
       if (!isCached(cachedImagePath)) {
         const preloadImage = new Image();

@@ -81,7 +81,12 @@ const AlbumList = () => {
     }
   }, [config.serverType, musicFolder.id, view.album.filter, view.album.pagination]);
 
-  const { isLoading, isError, data: albums, error }: any = useQuery(
+  const {
+    isLoading,
+    isError,
+    data: albums,
+    error,
+  }: any = useQuery(
     currentQueryKey,
     () =>
       view.album.filter === 'random' ||
@@ -166,14 +171,8 @@ const AlbumList = () => {
     'year',
   ]);
 
-  const {
-    filteredData,
-    byArtistData,
-    byArtistBaseData,
-    byGenreData,
-    byStarredData,
-    byYearData,
-  } = useAdvancedFilter(albums?.data, view.album.advancedFilters);
+  const { filteredData, byArtistData, byArtistBaseData, byGenreData, byStarredData, byYearData } =
+    useAdvancedFilter(albums?.data, view.album.advancedFilters);
 
   const { sortColumns, sortedData } = useColumnSort(filteredData, Item.Album, view.album.sort);
 

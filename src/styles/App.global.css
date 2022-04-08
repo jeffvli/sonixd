@@ -186,20 +186,3 @@ body {
 h6 {
   font-weight: 400;
 }
-
-.grid-animated-enter {
-  opacity: 0;
-}
-
-.grid-animated-enter-active {
-  opacity: 1;
-  transition: opacity 500ms;
-}
-
-.grid-animated-exit {
-  opacity: 1;
-}
-
-.grid-animated-exit-active {
-  opacity: 0;
-}

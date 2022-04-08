@@ -5,7 +5,6 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
 
 import { apiController } from '../../api/controller';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -129,13 +128,7 @@ const NowPlayingInfoView = () => {
   }
 
   return (
-    <CSSTransition
-      timeout={{
-        enter: 500,
-        exit: 0,
-      }}
-      classNames="grid-animated"
-    >
+    <div style={{ animation: `${!isLoading ? 'fadeIn 500ms' : 'fadeOut 0s'}` }}>
       {currentArtist && playQueue.entry?.length > 0 && (
         <>
           <InfoGridContainer>
@@ -353,7 +346,7 @@ const NowPlayingInfoView = () => {
           )}
         </>
       )}
-    </CSSTransition>
+    </div>
   );
 };
 

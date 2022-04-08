@@ -33,7 +33,12 @@ const PlaylistList = () => {
   const playlistTriggerRef = useRef<any>();
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
-  const { isLoading, isError, data: playlists, error }: any = useQuery(['playlists'], () =>
+  const {
+    isLoading,
+    isError,
+    data: playlists,
+    error,
+  }: any = useQuery(['playlists'], () =>
     apiController({ serverType: config.serverType, endpoint: 'getPlaylists' })
   );
   const filteredData = useSearchQuery(misc.searchQuery, playlists, ['title', 'comment', 'owner']);

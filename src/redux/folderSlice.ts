@@ -54,9 +54,6 @@ const folderSlice = createSlice({
   },
 });
 
-export const {
-  setMusicFolder,
-  setCurrentViewedFolder,
-  setAppliedFolderViews,
-} = folderSlice.actions;
+export const { setMusicFolder, setCurrentViewedFolder, setAppliedFolderViews } =
+  folderSlice.actions;
 export default folderSlice.reducer;

@@ -629,12 +629,12 @@ export const getStarred = async (options: { musicFolderId?: string }) => {
   });
 
   return {
-    album: (
-      songAndAlbumData.Items.filter((data: any) => data.Type === 'MusicAlbum') || []
-    ).map((entry: any) => normalizeAlbum(entry)),
-    song: (
-      songAndAlbumData.Items.filter((data: any) => data.Type === 'Audio') || []
-    ).map((entry: any) => normalizeSong(entry)),
+    album: (songAndAlbumData.Items.filter((data: any) => data.Type === 'MusicAlbum') || []).map(
+      (entry: any) => normalizeAlbum(entry)
+    ),
+    song: (songAndAlbumData.Items.filter((data: any) => data.Type === 'Audio') || []).map(
+      (entry: any) => normalizeSong(entry)
+    ),
     artist: (artistData.Items || []).map((entry: any) => normalizeArtist(entry)),
   };
 };
