@@ -22,7 +22,12 @@ const GenreList = () => {
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
   const folder = useAppSelector((state) => state.folder);
-  const { isLoading, isError, data: genres, error }: any = useQuery(['genrePageList'], async () => {
+  const {
+    isLoading,
+    isError,
+    data: genres,
+    error,
+  }: any = useQuery(['genrePageList'], async () => {
     const res = await apiController({
       serverType: config.serverType,
       endpoint: 'getGenres',

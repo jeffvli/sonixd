@@ -40,7 +40,12 @@ const ArtistList = () => {
     }
   }, [folder]);
 
-  const { isLoading, isError, data: artists, error }: any = useQuery(
+  const {
+    isLoading,
+    isError,
+    data: artists,
+    error,
+  }: any = useQuery(
     ['artistList', musicFolder],
     () =>
       apiController({

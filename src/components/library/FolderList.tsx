@@ -34,14 +34,17 @@ const FolderList = () => {
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
   const folderPickerContainerRef = useRef(null);
 
-  const { isLoading, isError, data: indexData, error }: any = useQuery(
-    ['indexes', musicFolder],
-    () =>
-      apiController({
-        serverType: config.serverType,
-        endpoint: 'getIndexes',
-        args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
-      })
+  const {
+    isLoading,
+    isError,
+    data: indexData,
+    error,
+  }: any = useQuery(['indexes', musicFolder], () =>
+    apiController({
+      serverType: config.serverType,
+      endpoint: 'getIndexes',
+      args: config.serverType === Server.Subsonic ? { musicFolderId: musicFolder } : null,
+    })
   );
 
   const { isLoading: isLoadingFolderData, data: folderData }: any = useQuery(

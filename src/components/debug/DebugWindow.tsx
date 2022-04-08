@@ -35,29 +35,6 @@ const DebugWindow = ({ ...rest }) => {
     ],
   };
 
-  const fadeChartOptions = {
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
-    plugins: {
-      title: {
-        display: true,
-        text: `${playQueue.player1.fadeData.volumeData.length} fades`,
-        position: 'bottom',
-      },
-      legend: {
-        display: false,
-      },
-    },
-    animation: false,
-  };
-
   return (
     <Panel
       style={{
@@ -187,7 +164,27 @@ const DebugWindow = ({ ...rest }) => {
           </FlexboxGrid.Item>
         </FlexboxGrid>
 
-        <Line data={fadeChartData} options={fadeChartOptions} />
+        <Line
+          data={fadeChartData}
+          options={{
+            scales: {
+              yAxes: {
+                min: 0,
+              },
+            },
+            plugins: {
+              title: {
+                display: true,
+                text: `${playQueue.player1.fadeData.volumeData.length} fades`,
+                position: 'bottom',
+              },
+              legend: {
+                display: false,
+              },
+            },
+            animation: false,
+          }}
+        />
 
         <Divider />
 

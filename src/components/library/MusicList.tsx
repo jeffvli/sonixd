@@ -70,7 +70,12 @@ const MusicList = () => {
     }
   }, [musicFolder.id, view.music.filter, view.music.pagination]);
 
-  const { isLoading, isError, data: songs, error }: any = useQuery(
+  const {
+    isLoading,
+    isError,
+    data: songs,
+    error,
+  }: any = useQuery(
     currentQueryKey,
     () =>
       view.music.filter === 'random' ||
