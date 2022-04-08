@@ -6,6 +6,7 @@
 @import '~rsuite/lib/styles/themes/dark/index.less';
 @import 'custom-theme.less';
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&family=Cormorant:wght@300;400;500&family=Encode+Sans:wght@300;400;500&family=Epilogue:wght@300;400;500&family=Hahmlet:wght@300;400;500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&family=Manrope:wght@300;400;500&family=Montserrat:wght@300;400;500&family=Oswald:wght@300;400;500&family=Poppins:wght@300;400;500&family=Raleway:wght@300;400;500&family=Roboto:wght@300;400;500&family=Sora:wght@300;400;500&family=Spectral&family=Work+Sans:wght@300;400;500&display=swap');
+
 html,
 body {
   height: 100%;
@@ -184,4 +185,21 @@ body {
 
 h6 {
   font-weight: 400;
+}
+
+.grid-animated-enter {
+  opacity: 0;
+}
+
+.grid-animated-enter-active {
+  opacity: 1;
+  transition: opacity 500ms;
+}
+
+.grid-animated-exit {
+  opacity: 1;
+}
+
+.grid-animated-exit-active {
+  opacity: 0;
 }
