@@ -473,17 +473,27 @@ export const getTheme = (themes: any[], value: string) => {
 export const filterPlayQueue = (filters: any[], entries: any) => {
   const enabledFilters = filters.filter((f: any) => f.enabled === true);
   const joinedFilterRegex = enabledFilters.map((f: any) => f.filter).join('|');
+
+  // Remove invalid songs that may break the player (likely due to Airsonic including folders)
+  const validEntries = entries.filter((song: any) => {
+    return song.bitRate && song.duration;
+  });
+
   if (joinedFilterRegex) {
-    const filteredEntries = entries.filter((entry: any) => !entry.title.match(joinedFilterRegex));
+    const filteredEntries = validEntries.filter(
+      (entry: any) => !entry.title.match(joinedFilterRegex)
+    );
 
     return {
       entries: filteredEntries,
-      count: { original: entries.length, filtered: filteredEntries.length },
+      count: { original: entries.length, filtered: validEntries.length },
     };
   }
-  return { entries, count: { original: entries.length, filtered: entries.length } };
+  return {
+    entries: validEntries,
+    count: { original: entries.length, filtered: validEntries.length },
+  };
 };
-
 export const getPlayedSongsNotification = (options: {
   original: number;
   filtered: number;
