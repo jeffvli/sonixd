@@ -56,6 +56,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { Visualizer } from './Visualizer';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -473,48 +474,53 @@ const NowPlayingView = () => {
           />
         }
       >
-        {!playQueue ? (
-          <CenterLoader />
-        ) : (
-          <>
-            {infoMode && <NowPlayingInfoView />}
-            {!infoMode && (
-              <ListViewType
-                ref={tableRef}
-                data={
-                  misc.searchQuery !== '' ? filteredData : playQueue[getCurrentEntryList(playQueue)]
-                }
-                currentIndex={playQueue.currentIndex}
-                tableColumns={config.lookAndFeel.listView.music.columns}
-                handleRowClick={handleRowClick}
-                handleRowDoubleClick={handleRowDoubleClick}
-                handleDragEnd={handleDragEnd}
-                virtualized
-                rowHeight={config.lookAndFeel.listView.music.rowHeight}
-                fontSize={config.lookAndFeel.listView.music.fontSize}
-                cacheImages={{
-                  enabled: settings.getSync('cacheImages'),
-                  cacheType: 'album',
-                  cacheIdProperty: 'albumId',
-                }}
-                listType="music"
-                nowPlaying
-                dnd
-                disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
-                handleFavorite={handleFavorite}
-                handleRating={(rowData: any, rating: number) => handleRating(rowData, { rating })}
-                initialScrollOffset={
-                  playQueue.scrollWithCurrentSong
-                    ? 0
-                    : Number(localStorage.getItem('scroll_list_nowPlaying'))
-                }
-                onScroll={(scrollIndex: number) => {
-                  localStorage.setItem('scroll_list_nowPlaying', String(Math.abs(scrollIndex)));
-                }}
-              />
-            )}
-          </>
-        )}
+        <>
+          <Visualizer />
+          {!playQueue ? (
+            <CenterLoader />
+          ) : (
+            <>
+              {infoMode && <NowPlayingInfoView />}
+              {!infoMode && (
+                <ListViewType
+                  ref={tableRef}
+                  data={
+                    misc.searchQuery !== ''
+                      ? filteredData
+                      : playQueue[getCurrentEntryList(playQueue)]
+                  }
+                  currentIndex={playQueue.currentIndex}
+                  tableColumns={config.lookAndFeel.listView.music.columns}
+                  handleRowClick={handleRowClick}
+                  handleRowDoubleClick={handleRowDoubleClick}
+                  handleDragEnd={handleDragEnd}
+                  virtualized
+                  rowHeight={config.lookAndFeel.listView.music.rowHeight}
+                  fontSize={config.lookAndFeel.listView.music.fontSize}
+                  cacheImages={{
+                    enabled: settings.getSync('cacheImages'),
+                    cacheType: 'album',
+                    cacheIdProperty: 'albumId',
+                  }}
+                  listType="music"
+                  nowPlaying
+                  dnd
+                  disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
+                  handleFavorite={handleFavorite}
+                  handleRating={(rowData: any, rating: number) => handleRating(rowData, { rating })}
+                  initialScrollOffset={
+                    playQueue.scrollWithCurrentSong
+                      ? 0
+                      : Number(localStorage.getItem('scroll_list_nowPlaying'))
+                  }
+                  onScroll={(scrollIndex: number) => {
+                    localStorage.setItem('scroll_list_nowPlaying', String(Math.abs(scrollIndex)));
+                  }}
+                />
+              )}
+            </>
+          )}
+        </>
       </GenericPage>
     </>
   );
