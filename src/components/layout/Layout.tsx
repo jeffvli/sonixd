@@ -143,79 +143,83 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
               margin: '10px 5px 5px 5px',
             }}
           >
-            <FlexboxGrid.Item>
-              <ButtonToolbar aria-label="history">
-                <StyledButton
-                  aria-label="back"
-                  appearance="subtle"
-                  size="sm"
-                  onClick={() => history.goBack()}
-                >
-                  <Icon icon="arrow-left-line" />
-                </StyledButton>
-                <StyledButton
-                  aria-label="next"
-                  appearance="subtle"
-                  size="sm"
-                  onClick={() => history.goForward()}
-                >
-                  <Icon icon="arrow-right-line" />
-                </StyledButton>
-              </ButtonToolbar>
-            </FlexboxGrid.Item>
-            <FlexboxGrid.Item>
-              <ButtonToolbar>
-                <SearchBar />
-                <Whisper
-                  speaker={
-                    <Popup
-                      style={{
-                        width: '620px',
-                        maxHeight: '80vh',
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
-                        padding: '0px',
-                      }}
+            {!disableSidebar && (
+              <>
+                <FlexboxGrid.Item>
+                  <ButtonToolbar aria-label="history">
+                    <StyledButton
+                      aria-label="back"
+                      appearance="subtle"
+                      size="sm"
+                      onClick={() => history.goBack()}
                     >
-                      <Nav
-                        activeKey={activeConfigNav}
-                        onSelect={(e) => setActiveConfigNav(e)}
-                        appearance="tabs"
-                      >
-                        <StyledNavItem eventKey="listView">{t('List View')}</StyledNavItem>
-                        <StyledNavItem eventKey="gridView">{t('Grid View')}</StyledNavItem>
-                        <StyledNavItem eventKey="playback">{t('Playback')}</StyledNavItem>
-                        <StyledNavItem eventKey="player">{t('Player')}</StyledNavItem>
-                        <StyledNavItem eventKey="theme">{t('Theme')}</StyledNavItem>
-                        <StyledNavItem eventKey="server">{t('Server')}</StyledNavItem>
-                        <StyledNavItem eventKey="other">{t('Other')}</StyledNavItem>
-                      </Nav>
-                      {activeConfigNav === 'listView' && <ListViewConfigPanel />}
-                      {activeConfigNav === 'gridView' && <GridViewConfigPanel />}
-                      {activeConfigNav === 'playback' && <PlaybackConfig />}
-                      {activeConfigNav === 'player' && <PlayerConfig />}
-                      {activeConfigNav === 'theme' && <ThemeConfigPanel />}
-                      {activeConfigNav === 'server' && <ServerConfig />}
-                      {activeConfigNav === 'other' && (
-                        <>
-                          <PaginationConfigPanel />
-                          <CacheConfig />
-                          <WindowConfig />
-                          <AdvancedConfig />
-                        </>
-                      )}
-                    </Popup>
-                  }
-                  trigger="click"
-                  placement="bottomEnd"
-                  preventOverflow
-                >
-                  <StyledButton aria-label="settings" appearance="subtle">
-                    <Icon icon="cog" />
-                  </StyledButton>
-                </Whisper>
-              </ButtonToolbar>
-            </FlexboxGrid.Item>
+                      <Icon icon="arrow-left-line" />
+                    </StyledButton>
+                    <StyledButton
+                      aria-label="next"
+                      appearance="subtle"
+                      size="sm"
+                      onClick={() => history.goForward()}
+                    >
+                      <Icon icon="arrow-right-line" />
+                    </StyledButton>
+                  </ButtonToolbar>
+                </FlexboxGrid.Item>
+                <FlexboxGrid.Item>
+                  <ButtonToolbar>
+                    <SearchBar />
+                    <Whisper
+                      speaker={
+                        <Popup
+                          style={{
+                            width: '620px',
+                            maxHeight: '80vh',
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                            padding: '0px',
+                          }}
+                        >
+                          <Nav
+                            activeKey={activeConfigNav}
+                            onSelect={(e) => setActiveConfigNav(e)}
+                            appearance="tabs"
+                          >
+                            <StyledNavItem eventKey="listView">{t('List View')}</StyledNavItem>
+                            <StyledNavItem eventKey="gridView">{t('Grid View')}</StyledNavItem>
+                            <StyledNavItem eventKey="playback">{t('Playback')}</StyledNavItem>
+                            <StyledNavItem eventKey="player">{t('Player')}</StyledNavItem>
+                            <StyledNavItem eventKey="theme">{t('Theme')}</StyledNavItem>
+                            <StyledNavItem eventKey="server">{t('Server')}</StyledNavItem>
+                            <StyledNavItem eventKey="other">{t('Other')}</StyledNavItem>
+                          </Nav>
+                          {activeConfigNav === 'listView' && <ListViewConfigPanel />}
+                          {activeConfigNav === 'gridView' && <GridViewConfigPanel />}
+                          {activeConfigNav === 'playback' && <PlaybackConfig />}
+                          {activeConfigNav === 'player' && <PlayerConfig />}
+                          {activeConfigNav === 'theme' && <ThemeConfigPanel />}
+                          {activeConfigNav === 'server' && <ServerConfig />}
+                          {activeConfigNav === 'other' && (
+                            <>
+                              <PaginationConfigPanel />
+                              <CacheConfig />
+                              <WindowConfig />
+                              <AdvancedConfig />
+                            </>
+                          )}
+                        </Popup>
+                      }
+                      trigger="click"
+                      placement="bottomEnd"
+                      preventOverflow
+                    >
+                      <StyledButton aria-label="settings" appearance="subtle">
+                        <Icon icon="cog" />
+                      </StyledButton>
+                    </Whisper>
+                  </ButtonToolbar>
+                </FlexboxGrid.Item>
+              </>
+            )}
           </FlexboxGrid>
 
           <Content id="container-content" role="main">
