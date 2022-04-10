@@ -12,6 +12,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('discord.clientId', '923372440934055968');
   }
 
+  if (force || !settings.hasSync('discord.serverImage')) {
+    settings.setSync('discord.serverImage', false);
+  }
+
   if (force || !settings.hasSync('obs.enabled')) {
     settings.setSync('obs.enabled', false);
   }

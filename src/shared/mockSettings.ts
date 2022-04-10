@@ -343,6 +343,7 @@ export const mockSettings = {
     enabled: true,
     applicationId: '',
     clientId: '923372440934055968',
+    serverImage: false,
   },
   obs: {
     enabled: true,

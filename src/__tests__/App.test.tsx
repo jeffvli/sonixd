@@ -403,6 +403,7 @@ const configState: ConfigPage = {
     discord: {
       enabled: false,
       clientId: '',
+      serverImage: false,
     },
     obs: {
       enabled: false,
