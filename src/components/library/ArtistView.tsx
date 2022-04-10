@@ -126,7 +126,7 @@ const ArtistView = ({ ...rest }: any) => {
 
   useEffect(() => {
     if (settings.getSync('artistPageLegacy') && !rest.isModal) {
-      history.push(`/library/artist/${artistId}/albums`);
+      history.replace(`/library/artist/${artistId}/albums`);
     }
   }, [artistId, history, rest.isModal]);
 
