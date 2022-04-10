@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { nanoid } from 'nanoid/non-secure';
-import { ipcRenderer } from 'electron';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
 import { FlexboxGrid, Grid, Row, Col, Whisper, Icon } from 'rsuite';
@@ -51,9 +50,7 @@ const PlayerBar = () => {
   const folder = useAppSelector((state) => state.folder);
   const dispatch = useAppDispatch();
   const [currentTime, setCurrentTime] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
-  const [manualSeek, setManualSeek] = useState(0);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
   const [muted, setMuted] = useState(false);
@@ -255,8 +252,6 @@ const PlayerBar = () => {
     playQueue,
     currentEntryList,
     playersRef,
-    setIsDragging,
-    setManualSeek,
     isDraggingVolume,
     setIsDraggingVolume,
     setLocalVolume,
@@ -290,38 +285,6 @@ const PlayerBar = () => {
     playersRef.current.player1.audioEl.current.currentTime = 0;
     playersRef.current.player2.audioEl.current.currentTime = 0;
   }, [playQueue.playerUpdated]);
-
-  useEffect(() => {
-    // Sets the MPRIS seek slider
-    ipcRenderer.send('seeked', manualSeek * 1000000);
-
-    const debounce = setTimeout(() => {
-      if (isDragging) {
-        if (playQueue.currentPlayer === 1) {
-          if (config.serverType === Server.Jellyfin) {
-            playersRef.current.player1.audioEl.current.pause();
-            playersRef.current.player1.audioEl.current.currentTime = manualSeek;
-            playersRef.current.player1.audioEl.current.play();
-          } else {
-            playersRef.current.player1.audioEl.current.currentTime = manualSeek;
-          }
-        } else if (config.serverType === Server.Jellyfin) {
-          playersRef.current.player2.audioEl.current.pause();
-          playersRef.current.player2.audioEl.current.currentTime = manualSeek;
-          playersRef.current.player2.audioEl.current.play();
-        } else {
-          playersRef.current.player2.audioEl.current.currentTime = manualSeek;
-        }
-
-        // Wait for the seek to catch up, otherwise the bar will bounce back and forth
-        setTimeout(() => {
-          setIsDragging(false);
-        }, 300);
-      }
-    }, 100);
-
-    return () => clearTimeout(debounce);
-  }, [config.serverType, isDragging, manualSeek, playQueue.currentPlayer]);
 
   const { handleFavorite } = useFavorite();
   const { handleRating } = useRating();

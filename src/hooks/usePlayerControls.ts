@@ -21,8 +21,6 @@ const usePlayerControls = (
   playQueue: any,
   currentEntryList: any,
   playersRef: any,
-  setIsDragging: any,
-  setManualSeek: any,
   isDraggingVolume: any,
   setIsDraggingVolume: any,
   setLocalVolume: any,
@@ -182,8 +180,6 @@ const usePlayerControls = (
   const handleSeekBackward = useCallback(() => {
     const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
     if (playQueue[currentEntryList].length > 0) {
-      setIsDragging(true);
-
       if (playQueue.isFading) {
         if (playQueue.currentPlayer === 1) {
           playersRef.current.player2.audioEl.current.pause();
@@ -195,21 +191,24 @@ const usePlayerControls = (
       }
 
       if (playQueue.currentPlayer === 1) {
-        const calculatedTime =
+        const newTime =
           playersRef.current.player1.audioEl.current.currentTime - seekBackwardInterval;
-        setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
+        playersRef.current.player1.audioEl.current.currentTime = newTime;
+        setCurrentTime(newTime);
+        ipcRenderer.send('seeked', newTime * 1000000);
       } else {
-        const calculatedTime =
+        const newTime =
           playersRef.current.player2.audioEl.current.currentTime - seekBackwardInterval;
-        setManualSeek(calculatedTime < 0 ? 0 : calculatedTime);
+        playersRef.current.player2.audioEl.current.currentTime = newTime;
+        setCurrentTime(newTime);
+        ipcRenderer.send('seeked', newTime * 1000000);
       }
     }
-  }, [currentEntryList, playQueue, playersRef, setIsDragging, setManualSeek]);
+  }, [currentEntryList, playQueue, playersRef, setCurrentTime]);
 
   const handleSeekForward = useCallback(() => {
     if (playQueue[currentEntryList].length > 0) {
       const seekForwardInterval = Number(settings.getSync('seekForwardInterval'));
-      setIsDragging(true);
 
       if (playQueue.isFading) {
         if (playQueue.currentPlayer === 1) {
@@ -222,22 +221,26 @@ const usePlayerControls = (
       }
 
       if (playQueue.currentPlayer === 1) {
-        const calculatedTime =
-          playersRef.current.player1.audioEl.current.currentTime + seekForwardInterval;
+        const check = playersRef.current.player1.audioEl.current.currentTime + seekForwardInterval;
         const songDuration = playersRef.current.player1.audioEl.current.duration;
-        setManualSeek(calculatedTime > songDuration ? songDuration - 1 : calculatedTime);
+        const newTime = check > songDuration ? songDuration - 1 : check;
+        playersRef.current.player1.audioEl.current.currentTime = newTime;
+        setCurrentTime(newTime);
+        ipcRenderer.send('seeked', newTime * 1000000);
       } else {
-        const calculatedTime =
-          playersRef.current.player2.audioEl.current.currentTime + seekForwardInterval;
+        const check = playersRef.current.player2.audioEl.current.currentTime + seekForwardInterval;
         const songDuration = playersRef.current.player2.audioEl.current.duration;
-        setManualSeek(calculatedTime > songDuration ? songDuration - 1 : calculatedTime);
+        const newTime = check > songDuration ? songDuration - 1 : check;
+        playersRef.current.player2.audioEl.current.currentTime = newTime;
+        setCurrentTime(newTime);
+        ipcRenderer.send('seeked', newTime * 1000000);
       }
     }
-  }, [currentEntryList, playQueue, playersRef, setIsDragging, setManualSeek]);
+  }, [currentEntryList, playQueue, playersRef, setCurrentTime]);
 
   const handleSeekSlider = useCallback(
-    (e: number | number[]) => {
-      setIsDragging(true);
+    (e: number | any) => {
+      ipcRenderer.send('seeked', e * 1000000);
 
       // If trying to seek back while fading to the next track, we need to
       // pause and reset the next track so that they don't begin overlapping
@@ -251,17 +254,15 @@ const usePlayerControls = (
         }
       }
 
-      setManualSeek(e);
+      if (playQueue.currentPlayer === 1) {
+        playersRef.current.player1.audioEl.current.currentTime = e;
+      } else {
+        playersRef.current.player2.audioEl.current.currentTime = e;
+      }
+
       setCurrentTime(e);
     },
-    [
-      playQueue.currentPlayer,
-      playQueue.isFading,
-      playersRef,
-      setCurrentTime,
-      setIsDragging,
-      setManualSeek,
-    ]
+    [playQueue.currentPlayer, playQueue.isFading, playersRef, setCurrentTime]
   );
 
   const handleVolumeSlider = (e: number) => {
@@ -408,13 +409,11 @@ const usePlayerControls = (
       let newPosition;
       if (arg.currentPlayer === 1) {
         newPosition = playersRef.current.player1.audioEl.current.currentTime + arg.offset / 1000000;
-        setManualSeek(newPosition);
-        setIsDragging(true);
+        setCurrentTime(newPosition);
         ipcRenderer.send('seeked', newPosition * 1000000);
       } else {
         newPosition = playersRef.current.player2.audioEl.current.currentTime + arg.offset / 1000000;
-        setManualSeek(newPosition);
-        setIsDragging(true);
+        setCurrentTime(newPosition);
         ipcRenderer.send('seeked', newPosition * 1000000);
       }
     });
@@ -424,7 +423,7 @@ const usePlayerControls = (
       ipcRenderer.removeAllListeners('position-request');
       ipcRenderer.removeAllListeners('seek-request');
     };
-  }, [playersRef, setIsDragging, setManualSeek]);
+  }, [playersRef, setCurrentTime]);
 
   return {
     handleNextTrack,
