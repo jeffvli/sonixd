@@ -463,7 +463,7 @@ const PlayerBar = () => {
                   icon="stop"
                   size="lg"
                   fixedWidth
-                  disabled={playQueue.entry.length === 0 || player.status !== 'PLAYING'}
+                  disabled={playQueue.entry.length === 0}
                   onClick={handleStop}
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
