@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { nanoid } from 'nanoid/non-secure';
 import { ipcRenderer } from 'electron';
@@ -38,6 +38,7 @@ import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import { apiController } from '../../api/controller';
+import Slider from '../slider/Slider';
 
 const DiscordRPC = require('discord-rpc');
 
@@ -49,7 +50,7 @@ const PlayerBar = () => {
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
   const dispatch = useAppDispatch();
-  const [seek, setSeek] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
   const [manualSeek, setManualSeek] = useState(0);
@@ -61,6 +62,11 @@ const PlayerBar = () => {
   const [showLyricsModal, setShowLyricsModal] = useState(false);
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const { handlePlayQueueAdd } = usePlayQueueHandler();
+  const songDuration = useMemo(
+    () => format(playQueue[currentEntryList][playQueue.currentIndex]?.duration * 1000 || 0),
+    [currentEntryList, playQueue]
+  );
+  const songCurrentTime = useMemo(() => format(currentTime * 1000 || 0), [currentTime]);
 
   const handlePlayRandom = async () => {
     setIsLoadingRandom(true);
@@ -89,9 +95,9 @@ const PlayerBar = () => {
     if (player.status === 'PLAYING') {
       const interval = setInterval(() => {
         if (playQueue.currentPlayer === 1) {
-          setSeek(playersRef.current?.player1.audioEl.current.currentTime || 0);
+          setCurrentTime(playersRef.current?.player1.audioEl.current.currentTime || 0);
         } else {
-          setSeek(playersRef.current?.player2.audioEl.current.currentTime || 0);
+          setCurrentTime(playersRef.current?.player2.audioEl.current.currentTime || 0);
         }
       }, 200);
 
@@ -253,7 +259,8 @@ const PlayerBar = () => {
     setManualSeek,
     isDraggingVolume,
     setIsDraggingVolume,
-    setLocalVolume
+    setLocalVolume,
+    setCurrentTime
   );
 
   useEffect(() => {
@@ -624,27 +631,20 @@ const PlayerBar = () => {
                     userSelect: 'none',
                   }}
                 >
-                  <DurationSpan>{format((isDragging ? manualSeek : seek) * 1000)}</DurationSpan>
+                  <DurationSpan>{songCurrentTime}</DurationSpan>
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item colspan={16}>
                   {/* Seek Slider */}
-                  <CustomSlider
-                    tabIndex={0}
-                    progress
-                    defaultValue={0}
-                    value={isDragging ? manualSeek : seek}
-                    $isDragging={isDragging}
-                    tooltip={false}
+                  <Slider
+                    value={
+                      playQueue.currentPlayer === 1
+                        ? playersRef.current?.player1.audioEl.current.currentTime || 0
+                        : playersRef.current?.player2.audioEl.current.currentTime || 0
+                    }
+                    min={0}
                     max={playQueue[currentEntryList][playQueue.currentIndex]?.duration || 0}
-                    onChange={handleSeekSlider}
-                    onKeyDown={(e: any) => {
-                      if (e.key === 'ArrowLeft') {
-                        handleSeekBackward();
-                      } else if (e.key === 'ArrowRight') {
-                        handleSeekForward();
-                      }
-                    }}
-                    style={{ width: '100%' }}
+                    onAfterChange={handleSeekSlider}
+                    toolTipType="time"
                   />
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item
@@ -655,11 +655,7 @@ const PlayerBar = () => {
                     userSelect: 'none',
                   }}
                 >
-                  <DurationSpan>
-                    {format(
-                      playQueue[currentEntryList][playQueue.currentIndex]?.duration * 1000 || 0
-                    )}
-                  </DurationSpan>
+                  <DurationSpan>{songDuration}</DurationSpan>
                 </FlexboxGrid.Item>
               </FlexboxGrid>
             </PlayerColumn>
