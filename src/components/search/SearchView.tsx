@@ -205,13 +205,7 @@ const SearchView = () => {
 
   const { handleRowClick: handleArtistRowClick, handleRowDoubleClick: handleArtistRowDoubleClick } =
     useListClickHandler({
-      doubleClick: (rowData: any) => {
-        if (settings.getSync('artistPageLegacy')) {
-          history.push(`/library/artist/${rowData.id}/albums`);
-        } else {
-          history.push(`/library/artist/${rowData.id}`);
-        }
-      },
+      doubleClick: (rowData: any) => history.push(`/library/artist/${rowData.id}`),
     });
 
   return (

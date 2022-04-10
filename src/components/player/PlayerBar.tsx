@@ -396,11 +396,7 @@ const PlayerBar = () => {
                                       disabled={false}
                                       onClick={() => {
                                         if (artist?.id) {
-                                          if (settings.getSync('artistPageLegacy')) {
-                                            history.push(`/library/artist/${artist?.id}/albums`);
-                                          } else {
-                                            history.push(`/library/artist/${artist?.id}`);
-                                          }
+                                          history.push(`/library/artist/${artist?.id}`);
                                         }
                                       }}
                                     >

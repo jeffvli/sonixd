@@ -337,11 +337,7 @@ const AlbumView = ({ ...rest }: any) => {
                           tooltip={d.title}
                           onClick={() => {
                             if (!rest.isModal) {
-                              if (settings.getSync('artistPageLegacy')) {
-                                history.push(`/library/artist/${d.id}/albums`);
-                              } else {
-                                history.push(`/library/artist/${d.id}`);
-                              }
+                              history.push(`/library/artist/${d.id}`);
                             } else {
                               dispatch(
                                 addModalPage({
@@ -355,11 +351,7 @@ const AlbumView = ({ ...rest }: any) => {
                             if (e.key === ' ' || e.key === 'Enter') {
                               e.preventDefault();
                               if (!rest.isModal) {
-                                if (settings.getSync('artistPageLegacy')) {
-                                  history.push(`/library/artist/${d.id}/albums`);
-                                } else {
-                                  history.push(`/library/artist/${d.id}`);
-                                }
+                                history.push(`/library/artist/${d.id}`);
                               } else {
                                 dispatch(
                                   addModalPage({
