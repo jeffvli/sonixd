@@ -3,6 +3,7 @@
 /* eslint-disable react/no-array-index-key */
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import settings from 'electron-settings';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -545,9 +546,13 @@ const SearchBar = () => {
                                 <SearchResult
                                   key={entry.uniqueId}
                                   entry={entry}
-                                  handleClick={(lineEntry: Song) =>
-                                    history.push(`/library/artist/${lineEntry.id}`)
-                                  }
+                                  handleClick={(lineEntry: Song) => {
+                                    if (settings.getSync('artistPageLegacy')) {
+                                      history.push(`/library/artist/${lineEntry.id}/albums`);
+                                    } else {
+                                      history.push(`/library/artist/${lineEntry.id}`);
+                                    }
+                                  }}
                                   handlePlay={handlePlayQueueAdd}
                                   title={<>{entry.title}</>}
                                   details={

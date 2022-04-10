@@ -124,12 +124,6 @@ const ArtistView = ({ ...rest }: any) => {
     'year',
   ]);
 
-  useEffect(() => {
-    if (settings.getSync('artistPageLegacy') && !rest.isModal) {
-      history.push(`/library/artist/${artistId}/albums`);
-    }
-  }, [artistId, history, rest.isModal]);
-
   const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
     doubleClick: (rowData: any, songs: any) => {
       if (rowData.type === Item.Album) {

@@ -777,7 +777,11 @@ const ListViewTable = ({
                                       onClick={(e: any) => {
                                         if (!e.ctrlKey && !e.shiftKey) {
                                           if (artist.id && !isModal) {
-                                            history.push(`/library/artist/${artist.id}`);
+                                            if (settings.getSync('artistPageLegacy')) {
+                                              history.push(`/library/artist/${artist.id}/albums`);
+                                            } else {
+                                              history.push(`/library/artist/${artist.id}`);
+                                            }
                                           } else if (artist.id && isModal) {
                                             dispatch(
                                               addModalPage({
@@ -1016,7 +1020,11 @@ const ListViewTable = ({
                         onClickLink={(e: any) => {
                           if (!e.ctrlKey && !e.shiftKey) {
                             if (rowData.albumArtistId && !isModal) {
-                              history.push(`/library/artist/${rowData.albumArtistId}`);
+                              if (settings.getSync('artistPageLegacy')) {
+                                history.push(`/library/artist/${rowData.albumArtistId}/albums`);
+                              } else {
+                                history.push(`/library/artist/${rowData.albumArtistId}`);
+                              }
                             } else if (rowData[0]?.id && isModal) {
                               dispatch(
                                 addModalPage({

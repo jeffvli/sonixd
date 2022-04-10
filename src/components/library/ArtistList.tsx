@@ -62,7 +62,13 @@ const ArtistList = () => {
   const { sortedData, sortColumns } = useColumnSort(artists, Item.Artist, artist.active.list.sort);
 
   const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
-    doubleClick: (rowData: any) => history.push(`/library/artist/${rowData.id}`),
+    doubleClick: (rowData: any) => {
+      if (settings.getSync('artistPageLegacy')) {
+        history.push(`/library/artist/${rowData.id}/albums`);
+      } else {
+        history.push(`/library/artist/${rowData.id}`);
+      }
+    },
   });
 
   const handleRefresh = async () => {

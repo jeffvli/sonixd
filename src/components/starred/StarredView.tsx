@@ -86,6 +86,8 @@ const StarredView = () => {
         dispatch(fixPlayer2Index());
       } else if (favorite.active.tab === 'albums') {
         history.push(`/library/album/${rowData.id}`);
+      } else if (settings.getSync('artistPageLegacy')) {
+        history.push(`/library/artist/${rowData.id}/albums`);
       } else {
         history.push(`/library/artist/${rowData.id}`);
       }
