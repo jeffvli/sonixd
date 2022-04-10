@@ -245,6 +245,7 @@ export default merge(baseConfig, {
   devServer: {
     port,
     hot: true,
+    host: "127.0.0.1",
     headers: { 'Access-Control-Allow-Origin': '*' },
     historyApiFallback: {
       verbose: true,
