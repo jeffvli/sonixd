@@ -117,7 +117,7 @@ const setDefaultSettings = (force: boolean) => {
   }
 
   if (force || !settings.hasSync('scrobble')) {
-    settings.setSync('scrobble', false);
+    settings.setSync('scrobble', true);
   }
 
   if (force || !settings.hasSync('systemNotifications')) {
