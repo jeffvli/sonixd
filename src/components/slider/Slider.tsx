@@ -3,6 +3,11 @@ import ReactSlider, { ReactSliderProps } from 'react-slider';
 import styled from 'styled-components';
 import format from 'format-duration';
 
+interface SliderProps extends ReactSliderProps {
+  toolTipType?: 'text' | 'time';
+  hasToolTip?: boolean;
+}
+
 const StyledSlider = styled<any>(ReactSlider)`
   width: 100%;
   height: 25px;
@@ -22,7 +27,7 @@ const StyledSlider = styled<any>(ReactSlider)`
       padding: 2px 6px;
       white-space: nowrap;
       position: absolute;
-      display: ${(props) => (props.isDragging ? 'block' : 'none')};
+      display: ${(props) => (props.isDragging && props.hasToolTip ? 'block' : 'none')};
     }
 
     &:focus-visible {
@@ -62,22 +67,26 @@ const StyledTrack = styled.div<any>`
       : props.theme.colors.slider.progressBar};
 `;
 
-const StyledThumb = styled.div``;
-
-const MemoizedThumb = ({ props, state }: any) => {
+const MemoizedThumb = ({ props, state, toolTipType }: any) => {
   const { value } = state;
-  const time = useMemo(() => format(value * 1000), [value]);
+  const formattedValue = useMemo(() => {
+    if (toolTipType === 'text') {
+      return value;
+    }
 
-  return <StyledThumb {...props} data-tooltip={time} />;
+    return format(value * 1000);
+  }, [toolTipType, value]);
+
+  return <div {...props} data-tooltip={formattedValue} />;
 };
 
 // eslint-disable-next-line react/destructuring-assignment
 const Track = (props: any, state: any) => <StyledTrack {...props} index={state.index} />;
-const Thumb = (props: any, state: any) => (
-  <MemoizedThumb tabIndex={0} props={props} state={state} />
+const Thumb = (props: any, state: any, toolTipType: any) => (
+  <MemoizedThumb tabIndex={0} props={props} state={state} toolTipType={toolTipType} />
 );
 
-const Slider = ({ ...rest }: ReactSliderProps) => {
+const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   return (
@@ -85,8 +94,11 @@ const Slider = ({ ...rest }: ReactSliderProps) => {
       {...rest}
       defaultValue={0}
       renderTrack={Track}
-      renderThumb={Thumb}
+      renderThumb={(props: any, state: any) => {
+        return Thumb(props, state, toolTipType);
+      }}
       isDragging={isDragging}
+      hasToolTip={hasToolTip}
       onBeforeChange={(e: number, index: number) => {
         if (rest.onBeforeChange) {
           rest.onBeforeChange(e, index);
@@ -101,6 +113,11 @@ const Slider = ({ ...rest }: ReactSliderProps) => {
       }}
     />
   );
+};
+
+Slider.defaultProps = {
+  toolTipType: 'text',
+  hasToolTip: true,
 };
 
 export default Slider;
