@@ -26,7 +26,6 @@ import DebugWindow from '../debug/DebugWindow';
 import { getCurrentEntryList, writeOBSFiles } from '../../shared/utils';
 import { SecondaryTextWrapper, StyledButton, StyledRate } from '../shared/styled';
 import { Artist, Play, Server, Song } from '../../types';
-import { notifyToast } from '../shared/toast';
 import { InfoModal } from '../modal/Modal';
 import useGetLyrics from '../../hooks/useGetLyrics';
 import usePlayerControls from '../../hooks/usePlayerControls';
@@ -37,8 +36,7 @@ import { useRating } from '../../hooks/useRating';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import { apiController } from '../../api/controller';
 import Slider from '../slider/Slider';
-
-const DiscordRPC = require('discord-rpc');
+import useDiscordRpc from '../../hooks/useDiscordRpc';
 
 const PlayerBar = () => {
   const { t } = useTranslation();
@@ -53,7 +51,6 @@ const PlayerBar = () => {
   const [currentEntryList, setCurrentEntryList] = useState('entry');
   const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
   const [muted, setMuted] = useState(false);
-  const [discordRpc, setDiscordRpc] = useState<any>();
   const [showCoverArtModal, setShowCoverArtModal] = useState(false);
   const [showLyricsModal, setShowLyricsModal] = useState(false);
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
@@ -81,6 +78,7 @@ const PlayerBar = () => {
 
   const playersRef = useRef<any>();
   const history = useHistory();
+  useDiscordRpc({ playersRef });
 
   const { data: lyrics } = useGetLyrics(config, {
     artist: playQueue.current?.albumArtist,
@@ -101,61 +99,6 @@ const PlayerBar = () => {
     }
     return () => clearInterval();
   }, [playQueue.currentPlayer, player.status]);
-
-  useEffect(() => {
-    if (config.external.discord.enabled && config.external.discord.clientId.length === 18) {
-      const rpc = new DiscordRPC.Client({ transport: 'ipc' });
-
-      if (discordRpc?.client !== config.external.discord.clientId) {
-        rpc.login({ clientId: config.external.discord.clientId }).catch((err: any) => {
-          notifyToast('error', `${err}`);
-        });
-
-        setDiscordRpc(rpc);
-      }
-    }
-  }, [config.external.discord.clientId, config.external.discord.enabled, discordRpc?.client]);
-
-  useEffect(() => {
-    if (!config.external.discord.enabled) {
-      discordRpc?.destroy();
-    }
-  }, [config.external.discord.enabled, discordRpc]);
-
-  useEffect(() => {
-    if (config.external.discord.enabled) {
-      const setActivity = async () => {
-        if (!discordRpc) {
-          return;
-        }
-
-        discordRpc.setActivity({
-          details:
-            player.status === 'PLAYING'
-              ? playQueue.current?.title.padEnd(2, ' ') || 'Unknown'
-              : `(Paused) ${playQueue.current?.title.padEnd(2, ' ') || 'Not playing'}`,
-          state: playQueue.current?.albumArtist ? `by ${playQueue.current.albumArtist}` : 'Idle',
-          largeImageKey: 'icon',
-          largeImageText: playQueue.current?.album || 'Unknown',
-          instance: false,
-        });
-      };
-
-      // activity can only be set every 15 seconds
-      const interval = setInterval(() => {
-        setActivity();
-      }, 15e3);
-
-      return () => clearInterval(interval);
-    }
-    return () => clearInterval();
-  }, [
-    config.external.discord.enabled,
-    discordRpc,
-    playQueue,
-    playQueue.currentPlayer,
-    player.status,
-  ]);
 
   useEffect(() => {
     if (config.external.obs.enabled && config.external.obs.pollingInterval >= 100) {
