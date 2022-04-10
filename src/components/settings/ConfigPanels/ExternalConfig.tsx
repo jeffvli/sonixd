@@ -16,6 +16,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setDiscord, setOBS } from '../../../redux/configSlice';
 import ConfigOption from '../ConfigOption';
+import { Server } from '../../../types';
 
 const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
 
@@ -73,6 +74,27 @@ const ExternalConfig = ({ bordered }: any) => {
             />
           }
         />
+        {config.serverType === Server.Jellyfin && (
+          <ConfigOption
+            name={t('Display Song Images')}
+            description={
+              <Trans t={t}>
+                Uses the song image returned by your server (only works if your server is publically
+                accessible).
+              </Trans>
+            }
+            option={
+              <StyledToggle
+                defaultChecked={config.external.discord.serverImage}
+                checked={config.external.discord.serverImage}
+                onChange={(e: boolean) => {
+                  settings.setSync('discord.serverImage', e);
+                  dispatch(setDiscord({ ...config.external.discord, serverImage: e }));
+                }}
+              />
+            }
+          />
+        )}
       </ConfigPanel>
       <ConfigPanel header="OBS (Open Broadcaster Software)" collapsible $noBackground>
         <ConfigOption

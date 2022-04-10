@@ -52,6 +52,7 @@ export interface ConfigPage {
     discord: {
       enabled: boolean;
       clientId: string;
+      serverImage: boolean;
     };
     obs: {
       enabled: boolean;
@@ -198,6 +199,7 @@ const initialState: ConfigPage = {
     discord: {
       enabled: parsedSettings.discord?.enabled || false,
       clientId: parsedSettings.discord?.clientId || '',
+      serverImage: parsedSettings.discord?.serverImage || false,
     },
     obs: {
       enabled: parsedSettings.obs?.enabled || false,
