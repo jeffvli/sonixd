@@ -25,7 +25,8 @@ const usePlayerControls = (
   setManualSeek: any,
   isDraggingVolume: any,
   setIsDraggingVolume: any,
-  setLocalVolume: any
+  setLocalVolume: any,
+  setCurrentTime: any
 ) => {
   const dispatch = useAppDispatch();
 
@@ -235,7 +236,7 @@ const usePlayerControls = (
   }, [currentEntryList, playQueue, playersRef, setIsDragging, setManualSeek]);
 
   const handleSeekSlider = useCallback(
-    (e: number) => {
+    (e: number | number[]) => {
       setIsDragging(true);
 
       // If trying to seek back while fading to the next track, we need to
@@ -251,8 +252,16 @@ const usePlayerControls = (
       }
 
       setManualSeek(e);
+      setCurrentTime(e);
     },
-    [playQueue.currentPlayer, playQueue.isFading, playersRef, setIsDragging, setManualSeek]
+    [
+      playQueue.currentPlayer,
+      playQueue.isFading,
+      playersRef,
+      setCurrentTime,
+      setIsDragging,
+      setManualSeek,
+    ]
   );
 
   const handleVolumeSlider = (e: number) => {
