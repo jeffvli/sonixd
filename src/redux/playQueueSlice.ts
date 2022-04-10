@@ -2,6 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
+import { join } from 'path';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { deflateSync, unzipSync } from 'zlib';
 import {
   filterPlayQueue,
   moveSelectedDown,
@@ -975,6 +978,65 @@ const playQueueSlice = createSlice({
 
       state.currentIndex = newCurrentSongIndex;
     },
+
+    saveState: (state, action: PayloadAction<string>) => {
+      const queueLocation = join(action.payload, 'queue');
+
+      const data = JSON.stringify({
+        entry: state.entry,
+        shuffledEntry: state.shuffledEntry,
+        sortedEntry: state.sortedEntry,
+
+        // sorting
+        sortColumn: state.sortColumn,
+        sortType: state.sortType,
+
+        // current song
+        current: state.current,
+        currentSongId: state.currentSongId,
+        currentSongUniqueId: state.currentSongUniqueId,
+
+        // players
+        player1: state.player1,
+        player2: state.player2,
+        currentPlayer: state.currentPlayer,
+      });
+
+      try {
+        const deflated = deflateSync(data);
+        writeFileSync(queueLocation, deflated);
+      } catch (err) {
+        console.error(err);
+      }
+    },
+
+    restoreState: (state, action: PayloadAction<string>) => {
+      const queueLocation = join(action.payload, 'queue');
+
+      try {
+        if (existsSync(queueLocation)) {
+          const unzipped = unzipSync(readFileSync(queueLocation));
+          const result = JSON.parse(unzipped.toString());
+
+          state.entry = result.entry;
+          state.shuffledEntry = result.shuffledEntry;
+          state.sortedEntry = result.sortedEntry;
+
+          state.sortColumn = result.sortColumn;
+          state.sortType = result.sortType;
+
+          state.current = result.current;
+          state.currentSongId = result.currentSongId;
+          state.currentSongUniqueId = result.currentSongUniqueId;
+
+          state.player1 = result.player1;
+          state.player2 = result.player2;
+          state.currentPlayer = result.currentPlayer;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
   },
 });
 
@@ -1014,5 +1076,7 @@ export const {
   shuffleInPlace,
   setFadeData,
   setPlaybackSetting,
+  saveState,
+  restoreState,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

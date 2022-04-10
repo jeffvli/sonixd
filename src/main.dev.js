@@ -20,7 +20,13 @@ import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
 import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
 import playerReducer from './redux/playerSlice';
-import playQueueReducer, { toggleShuffle, toggleRepeat, setVolume } from './redux/playQueueSlice';
+import playQueueReducer, {
+  toggleShuffle,
+  toggleRepeat,
+  setVolume,
+  saveState,
+  restoreState,
+} from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import configReducer from './redux/configSlice';
 import MenuBuilder from './menu';
@@ -394,6 +400,14 @@ const createWinThumbarButtons = () => {
   }
 };
 
+const saveQueue = () => {
+  store.dispatch(saveState(app.getPath('userData')));
+};
+
+const restoreQueue = () => {
+  store.dispatch(restoreState(app.getPath('userData')));
+};
+
 const createWindow = async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
@@ -517,6 +531,8 @@ const createWindow = async () => {
 
       createWinThumbarButtons();
     }
+
+    restoreQueue();
   });
 
   mainWindow.on('minimize', (event) => {
@@ -702,11 +718,15 @@ if (!gotProcessLock) {
  * Add event listeners...
  */
 
+app.on('before-quit', () => {
+  saveQueue();
+});
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   globalShortcut.unregisterAll();
-  if (process.platform === 'darwin') {
+  if (isMacOS()) {
     mainWindow = null;
   } else {
     app.quit();
