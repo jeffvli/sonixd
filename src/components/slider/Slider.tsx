@@ -20,7 +20,7 @@ const StyledSlider = styled<any>(ReactSlider)`
     &:after {
       content: attr(data-tooltip);
       top: -25px;
-      left: -15px;
+      left: -18px;
       color: ${(props) => props.theme.colors.tooltip.color};
       background: ${(props) => props.theme.colors.tooltip.background};
       border-radius: 4px;
@@ -38,7 +38,7 @@ const StyledSlider = styled<any>(ReactSlider)`
       border-radius: 100%;
       text-align: center;
       background-color: #ffffff;
-      transform: translateY(-3px);
+      transform: translate(-12px, -4px);
     }
   }
 
