@@ -470,24 +470,6 @@ const PlayerBar = () => {
                   }}
                 />
               </CustomTooltip>
-              {/* Seek Backward Button */}
-              <CustomTooltip text={t('Seek backward')}>
-                <PlayerControlIcon
-                  aria-label={t('Seek backward')}
-                  role="button"
-                  tabIndex={0}
-                  icon="backward"
-                  size="lg"
-                  fixedWidth
-                  disabled={playQueue.entry.length === 0}
-                  onClick={handleSeekBackward}
-                  onKeyDown={(e: any) => {
-                    if (e.key === ' ' || e.key === 'Enter') {
-                      handleSeekBackward();
-                    }
-                  }}
-                />
-              </CustomTooltip>
               {/* Previous Song Button */}
               <CustomTooltip text={t('Previous Track')}>
                 <PlayerControlIcon
@@ -502,6 +484,24 @@ const PlayerBar = () => {
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
                       handlePrevTrack();
+                    }
+                  }}
+                />
+              </CustomTooltip>
+              {/* Seek Backward Button */}
+              <CustomTooltip text={t('Seek backward')}>
+                <PlayerControlIcon
+                  aria-label={t('Seek backward')}
+                  role="button"
+                  tabIndex={0}
+                  icon="backward"
+                  size="lg"
+                  fixedWidth
+                  disabled={playQueue.entry.length === 0}
+                  onClick={handleSeekBackward}
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      handleSeekBackward();
                     }
                   }}
                 />
@@ -524,24 +524,7 @@ const PlayerBar = () => {
                   }}
                 />
               </CustomTooltip>
-              {/* Next Song Button */}
-              <CustomTooltip text={t('Next Track')}>
-                <PlayerControlIcon
-                  aria-label={t('Next Track')}
-                  role="button"
-                  tabIndex={0}
-                  icon="step-forward"
-                  size="lg"
-                  fixedWidth
-                  disabled={playQueue.entry.length === 0}
-                  onClick={handleNextTrack}
-                  onKeyDown={(e: any) => {
-                    if (e.key === ' ' || e.key === 'Enter') {
-                      handleNextTrack();
-                    }
-                  }}
-                />
-              </CustomTooltip>
+
               {/* Seek Forward Button */}
               <CustomTooltip text={t('Seek forward')}>
                 <PlayerControlIcon
@@ -556,6 +539,24 @@ const PlayerBar = () => {
                   onKeyDown={(e: any) => {
                     if (e.key === ' ' || e.key === 'Enter') {
                       handleSeekForward();
+                    }
+                  }}
+                />
+              </CustomTooltip>
+              {/* Next Song Button */}
+              <CustomTooltip text={t('Next Track')}>
+                <PlayerControlIcon
+                  aria-label={t('Next Track')}
+                  role="button"
+                  tabIndex={0}
+                  icon="step-forward"
+                  size="lg"
+                  fixedWidth
+                  disabled={playQueue.entry.length === 0}
+                  onClick={handleNextTrack}
+                  onKeyDown={(e: any) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      handleNextTrack();
                     }
                   }}
                 />
