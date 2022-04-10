@@ -587,6 +587,7 @@ const ListViewTable = ({
                           handleRowDoubleClick({
                             ...rowData,
                             rowIndex,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                           });
                         }
                       }}
@@ -692,6 +693,7 @@ const ListViewTable = ({
                         handleRowDoubleClick({
                           ...rowData,
                           rowIndex,
+                          tableData: sortColumn && !nowPlaying ? sortedData : data,
                         })
                       }
                       onMouseDown={(e: any) => {
@@ -1377,6 +1379,7 @@ const ListViewTable = ({
                         handleRowDoubleClick({
                           ...rowData,
                           rowIndex,
+                          tableData: sortColumn && !nowPlaying ? sortedData : data,
                         });
                       }}
                       onMouseDown={(e: any) => {

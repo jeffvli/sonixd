@@ -75,7 +75,7 @@ const StarredView = () => {
       if (favorite.active.tab === 'tracks') {
         dispatch(
           setPlayQueueByRowClick({
-            entries: data.song,
+            entries: rowData.tableData,
             currentIndex: rowData.rowIndex,
             currentSongId: rowData.id,
             uniqueSongId: rowData.uniqueId,

@@ -134,7 +134,7 @@ const PlaylistView = ({ ...rest }) => {
     doubleClick: (rowData: any) => {
       dispatch(
         setPlayQueueByRowClick({
-          entries: playlist[getCurrentEntryList(playlist)],
+          entries: rowData.tableData,
           currentIndex: rowData.rowIndex,
           currentSongId: rowData.id,
           uniqueSongId: rowData.uniqueId,
