@@ -12,7 +12,6 @@ import {
   PlayerContainer,
   PlayerColumn,
   PlayerControlIcon,
-  CustomSlider,
   DurationSpan,
   VolumeIcon,
   LinkButton,
@@ -239,7 +238,6 @@ const PlayerBar = () => {
     handleSeekBackward,
     handleSeekForward,
     handleSeekSlider,
-    handleVolumeKey,
     handleVolumeSlider,
     handleVolumeWheel,
     handleRepeat,
@@ -797,10 +795,14 @@ const PlayerBar = () => {
               <div
                 style={{
                   height: '25px',
+                  width: '100%',
+                  maxWidth: '115px',
+                  marginRight: '10px',
                   display: 'flex',
                   alignSelf: 'flex-end',
                   alignItems: 'center',
                 }}
+                onWheel={handleVolumeWheel}
               >
                 {/* Volume Slider */}
                 <VolumeIcon
@@ -815,16 +817,12 @@ const PlayerBar = () => {
                   preventOverflow
                   speaker={<Popup>{muted ? t('Muted') : Math.floor(localVolume * 100)}</Popup>}
                 >
-                  <CustomSlider
-                    tabIndex={0}
-                    progress
+                  <Slider
                     value={Math.floor(localVolume * 100)}
-                    $isDragging={isDraggingVolume}
-                    tooltip={false}
-                    style={{ width: '87px', marginRight: '10px' }}
+                    min={0}
+                    max={100}
                     onChange={handleVolumeSlider}
-                    onKeyDown={handleVolumeKey}
-                    onWheel={handleVolumeWheel}
+                    toolTipType="text"
                   />
                 </Whisper>
               </div>
