@@ -166,6 +166,7 @@ const usePlayerControls = (
     playersRef.current.player2.audioEl.current.currentTime = 0;
     playersRef.current.player1.audioEl.current.pause();
     playersRef.current.player1.audioEl.current.currentTime = 0;
+    setCurrentTime(0);
 
     ipcRenderer.send('playpause', {
       status: 'PAUSED',
@@ -175,7 +176,7 @@ const usePlayerControls = (
     setTimeout(() => {
       dispatch(setStatus('PAUSED'));
     }, 250);
-  }, [dispatch, playersRef]);
+  }, [dispatch, playersRef, setCurrentTime]);
 
   const handleSeekBackward = useCallback(() => {
     const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
