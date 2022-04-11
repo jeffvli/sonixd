@@ -1,4 +1,4 @@
-import { Button, Icon, Slider } from 'rsuite';
+import { Icon, Slider } from 'rsuite';
 import styled from 'styled-components';
 
 export const PlayerContainer = styled.div`
@@ -69,7 +69,7 @@ export const CoverArtContainer = styled.div<{ expand: boolean }>`
   }
 `;
 
-export const LinkButton = styled(Button)<{ subtitle?: string }>`
+export const LinkButton = styled.a<{ playing?: string; subtitle?: string }>`
   border-radius: 0px;
   background: transparent;
   max-width: 100%;

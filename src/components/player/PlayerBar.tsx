@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
-import { nanoid } from 'nanoid/non-secure';
 import { useQueryClient } from 'react-query';
 import settings from 'electron-settings';
 import { FlexboxGrid, Grid, Row, Col, Whisper, Icon } from 'rsuite';
@@ -313,6 +312,7 @@ const PlayerBar = () => {
                             height: '23px',
                             display: 'flex',
                             alignItems: 'center',
+                            color: '#888e94',
                           }}
                         >
                           <span
@@ -324,7 +324,7 @@ const PlayerBar = () => {
                           >
                             {playQueue.current?.artist.length > 0 ? (
                               playQueue.current?.artist?.map((artist: Artist, i: number) => (
-                                <React.Fragment key={nanoid()}>
+                                <React.Fragment key={artist.id}>
                                   <SecondaryTextWrapper subtitle="true">
                                     {i > 0 && <>{', '}</>}
                                   </SecondaryTextWrapper>
@@ -336,7 +336,6 @@ const PlayerBar = () => {
                                     <LinkButton
                                       tabIndex={0}
                                       subtitle="true"
-                                      disabled={false}
                                       onClick={() => {
                                         if (artist?.id) {
                                           history.push(`/library/artist/${artist?.id}`);
