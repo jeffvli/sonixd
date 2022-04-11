@@ -83,7 +83,7 @@ const MemoizedThumb = ({ props, state, toolTipType }: any) => {
 // eslint-disable-next-line react/destructuring-assignment
 const Track = (props: any, state: any) => <StyledTrack {...props} index={state.index} />;
 const Thumb = (props: any, state: any, toolTipType: any) => (
-  <MemoizedThumb tabIndex={0} props={props} state={state} toolTipType={toolTipType} />
+  <MemoizedThumb key="slider" tabIndex={0} props={props} state={state} toolTipType={toolTipType} />
 );
 
 const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
