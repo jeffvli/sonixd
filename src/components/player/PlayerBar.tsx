@@ -324,7 +324,7 @@ const PlayerBar = () => {
                           >
                             {playQueue.current?.artist.length > 0 ? (
                               playQueue.current?.artist?.map((artist: Artist, i: number) => (
-                                <React.Fragment key={artist.id}>
+                                <React.Fragment key={`${artist.id}-link`}>
                                   <SecondaryTextWrapper subtitle="true">
                                     {i > 0 && <>{', '}</>}
                                   </SecondaryTextWrapper>
