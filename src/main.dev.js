@@ -20,13 +20,7 @@ import log from 'electron-log';
 import { configureStore } from '@reduxjs/toolkit';
 import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
 import playerReducer from './redux/playerSlice';
-import playQueueReducer, {
-  toggleShuffle,
-  toggleRepeat,
-  setVolume,
-  saveState,
-  restoreState,
-} from './redux/playQueueSlice';
+import playQueueReducer, { toggleShuffle, toggleRepeat, setVolume } from './redux/playQueueSlice';
 import multiSelectReducer from './redux/multiSelectSlice';
 import configReducer from './redux/configSlice';
 import MenuBuilder from './menu';
@@ -56,6 +50,7 @@ let mainWindow = null;
 let tray = null;
 let exitFromTray = false;
 let forceQuit = false;
+let saved = false;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -400,12 +395,16 @@ const createWinThumbarButtons = () => {
   }
 };
 
-const saveQueue = () => {
-  store.dispatch(saveState(app.getPath('userData')));
+const saveQueue = (callback) => {
+  ipcMain.on('saved-state', () => {
+    callback();
+  });
+
+  mainWindow.webContents.send('save-queue-state', app.getPath('userData'));
 };
 
 const restoreQueue = () => {
-  store.dispatch(restoreState(app.getPath('userData')));
+  mainWindow.webContents.send('restore-queue-state', app.getPath('userData'));
 };
 
 const createWindow = async () => {
@@ -532,7 +531,9 @@ const createWindow = async () => {
       createWinThumbarButtons();
     }
 
-    restoreQueue();
+    if (settings.getSync('resume')) {
+      restoreQueue();
+    }
   });
 
   mainWindow.on('minimize', (event) => {
@@ -556,8 +557,17 @@ const createWindow = async () => {
       event.preventDefault();
       mainWindow.hide();
     }
-    if (forceQuit) {
-      app.exit();
+
+    // If we have enabled saving the queue, we need to defer closing the main window until it has finished saving.
+    if (!saved && settings.getSync('resume')) {
+      event.preventDefault();
+      saved = true;
+      saveQueue(() => {
+        mainWindow.close();
+        if (forceQuit) {
+          app.exit();
+        }
+      });
     }
   });
 
@@ -717,10 +727,6 @@ if (!gotProcessLock) {
 /**
  * Add event listeners...
  */
-
-app.on('before-quit', () => {
-  saveQueue();
-});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even

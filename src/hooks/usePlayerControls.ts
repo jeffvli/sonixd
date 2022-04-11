@@ -6,6 +6,8 @@ import {
   decrementCurrentIndex,
   fixPlayer2Index,
   incrementCurrentIndex,
+  restoreState,
+  saveState,
   setVolume,
   toggleDisplayQueue,
   toggleRepeat,
@@ -314,6 +316,25 @@ const usePlayerControls = (
     dispatch(toggleDisplayQueue());
   };
 
+  const handleSaveQueue = useCallback(
+    (path: string) => {
+      dispatch({
+        ...saveState(path),
+        meta: {
+          scope: 'local',
+        },
+      });
+    },
+    [dispatch]
+  );
+
+  const handleRestoreQueue = useCallback(
+    (path: string) => {
+      dispatch(restoreState(path));
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     ipcRenderer.on('player-next-track', () => {
       handleNextTrack();
@@ -347,6 +368,15 @@ const usePlayerControls = (
       handleRepeat();
     });
 
+    ipcRenderer.on('save-queue-state', (_event, path: string) => {
+      handleSaveQueue(path);
+      ipcRenderer.send('saved-state');
+    });
+
+    ipcRenderer.on('restore-queue-state', (_event, path: string) => {
+      handleRestoreQueue(path);
+    });
+
     return () => {
       ipcRenderer.removeAllListeners('player-next-track');
       ipcRenderer.removeAllListeners('player-prev-track');
@@ -356,6 +386,8 @@ const usePlayerControls = (
       ipcRenderer.removeAllListeners('player-stop');
       ipcRenderer.removeAllListeners('player-shuffle');
       ipcRenderer.removeAllListeners('player-repeat');
+      ipcRenderer.removeAllListeners('save-queue-state');
+      ipcRenderer.removeAllListeners('restore-queue-state');
     };
   }, [
     handleNextTrack,
@@ -366,6 +398,8 @@ const usePlayerControls = (
     handleRepeat,
     handleShuffle,
     handleStop,
+    handleSaveQueue,
+    handleRestoreQueue,
   ]);
 
   useEffect(() => {

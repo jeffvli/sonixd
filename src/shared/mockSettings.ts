@@ -25,6 +25,7 @@ export const mockSettings = {
   systemNotifications: false,
   scrobble: false,
   transcode: false,
+  resume: false,
   sidebar: {
     expand: false,
     width: '165px',

@@ -59,6 +59,7 @@ export interface PlayQueue {
   entry: Song[];
   shuffledEntry: Song[];
   sortedEntry: Song[];
+  resume: boolean;
 }
 
 const initialState: PlayQueue = {
@@ -102,6 +103,7 @@ const initialState: PlayQueue = {
   entry: [],
   shuffledEntry: [],
   sortedEntry: [],
+  resume: Boolean(parsedSettings.resume),
 };
 
 const resetPlayerDefaults = (state: PlayQueue) => {
@@ -979,20 +981,22 @@ const playQueueSlice = createSlice({
       state.currentIndex = newCurrentSongIndex;
     },
 
+    setQueueResume: (state, action: PayloadAction<boolean>) => {
+      state.resume = action.payload;
+    },
+
     saveState: (state, action: PayloadAction<string>) => {
+      if (!state.resume) return;
+
       const queueLocation = join(action.payload, 'queue');
 
       const data = JSON.stringify({
         entry: state.entry,
         shuffledEntry: state.shuffledEntry,
-        sortedEntry: state.sortedEntry,
-
-        // sorting
-        sortColumn: state.sortColumn,
-        sortType: state.sortType,
 
         // current song
         current: state.current,
+        currentIndex: state.currentIndex,
         currentSongId: state.currentSongId,
         currentSongUniqueId: state.currentSongUniqueId,
 
@@ -1011,6 +1015,8 @@ const playQueueSlice = createSlice({
     },
 
     restoreState: (state, action: PayloadAction<string>) => {
+      if (!state.resume) return;
+
       const queueLocation = join(action.payload, 'queue');
 
       try {
@@ -1020,12 +1026,9 @@ const playQueueSlice = createSlice({
 
           state.entry = result.entry;
           state.shuffledEntry = result.shuffledEntry;
-          state.sortedEntry = result.sortedEntry;
-
-          state.sortColumn = result.sortColumn;
-          state.sortType = result.sortType;
 
           state.current = result.current;
+          state.currentIndex = result.currentIndex;
           state.currentSongId = result.currentSongId;
           state.currentSongUniqueId = result.currentSongUniqueId;
 
@@ -1076,6 +1079,7 @@ export const {
   shuffleInPlace,
   setFadeData,
   setPlaybackSetting,
+  setQueueResume,
   saveState,
   restoreState,
 } = playQueueSlice.actions;

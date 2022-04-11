@@ -18,7 +18,7 @@ import {
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import i18n from '../../../i18n/i18n';
-import { setPlaybackSetting } from '../../../redux/playQueueSlice';
+import { setPlaybackSetting, setQueueResume } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter, setAudioDeviceId, setPlayer } from '../../../redux/configSlice';
 import { notifyToast } from '../../shared/toast';
@@ -81,6 +81,7 @@ const PlayerConfig = ({ bordered }: any) => {
   const [systemMediaTransportControls, setSystemMediaTransportControls] = useState(
     Boolean(settings.getSync('systemMediaTransportControls'))
   );
+  const [resume, setResume] = useState(Boolean(settings.getSync('resume')));
   const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>();
   const audioDevicePickerContainerRef = useRef(null);
@@ -162,7 +163,28 @@ const PlayerConfig = ({ bordered }: any) => {
           />
         }
       />
-
+      <ConfigOption
+        name={t('Resume Playback')}
+        description={
+          <Trans>
+            Remember play queue on startup. The current Now Playing queue will be saved on exiting,
+            and will be restored when you reopen Sonixd. Be warned that you should manually close
+            Sonixd for the queue to be saved. An improper shutdown (such as the app closing during a
+            shutdown or force quitting) may result in history not being saved.
+          </Trans>
+        }
+        option={
+          <StyledToggle
+            defaultChecked={resume}
+            checked={resume}
+            onChange={(e: boolean) => {
+              settings.setSync('resume', e);
+              dispatch(setQueueResume(e));
+              setResume(e);
+            }}
+          />
+        }
+      />
       {config.serverType === Server.Jellyfin && (
         <ConfigOption
           name={t('Allow Transcoding')}

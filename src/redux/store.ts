@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { AnyAction, configureStore, Dispatch, EnhancedStore, Middleware } from '@reduxjs/toolkit';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import playerReducer from './playerSlice';
 import playQueueReducer, { PlayQueue } from './playQueueSlice';
@@ -11,7 +11,11 @@ import favoriteReducer from './favoriteSlice';
 import artistReducer from './artistSlice';
 import viewReducer from './viewSlice';
 
-export const store = configureStore<PlayQueue | any>({
+export const store: EnhancedStore<
+  any,
+  AnyAction,
+  [Middleware<Record<string, any>, any, Dispatch<AnyAction>>]
+> = configureStore<PlayQueue | any>({
   reducer: {
     player: playerReducer,
     playQueue: playQueueReducer,
