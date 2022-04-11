@@ -520,6 +520,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
               playQueue.player1.index
             )
           ];
+        ipcRenderer.send('current-song', nextSong);
 
         if (config.player.systemNotifications) {
           // eslint-disable-next-line no-new
