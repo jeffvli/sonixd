@@ -496,6 +496,11 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               data={_.concat(
                 [
                   {
+                    label: t('Now Playing'),
+                    value: '/nowplaying',
+                    role: 'Default',
+                  },
+                  {
                     label: t('Dashboard'),
                     value: '/',
                     role: 'Default',
