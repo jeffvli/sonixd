@@ -18,7 +18,7 @@ import {
 } from '../../shared/styled';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import i18n from '../../../i18n/i18n';
-import { setPlaybackSetting, setQueueResume } from '../../../redux/playQueueSlice';
+import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ListViewTable from '../../viewtypes/ListViewTable';
 import { appendPlaybackFilter, setAudioDeviceId, setPlayer } from '../../../redux/configSlice';
 import { notifyToast } from '../../shared/toast';
@@ -179,7 +179,6 @@ const PlayerConfig = ({ bordered }: any) => {
             checked={resume}
             onChange={(e: boolean) => {
               settings.setSync('resume', e);
-              dispatch(setQueueResume(e));
               setResume(e);
             }}
           />
