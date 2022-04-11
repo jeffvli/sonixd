@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import axios from 'axios';
 import { shell } from 'electron';
 import { Whisper, Nav, ButtonToolbar } from 'rsuite';
@@ -31,17 +32,18 @@ const Config = () => {
   const folder = useAppSelector((state) => state.folder);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
-  const [latestRelease, setLatestRelease] = useState(packageJson.version);
   const showWindowConfig = process.platform === 'darwin';
 
-  useEffect(() => {
-    const fetchReleases = async () => {
+  const { data: latestRelease } = useQuery(
+    ['github'],
+    async () => {
       const releases = await axios.get(GITHUB_RELEASE_URL);
-      setLatestRelease(releases.data[0]?.name);
-    };
-
-    fetchReleases();
-  }, []);
+      return releases?.data[0]?.name;
+    },
+    {
+      staleTime: 60 * 60 * 1000, // Only fetch the latest release once per hour
+    }
+  );
 
   useEffect(() => {
     // Check scan status on render
@@ -75,6 +77,8 @@ const Config = () => {
     }
     return () => clearInterval();
   }, [config.serverType, isScanning]);
+
+  const isLatestRelease = packageJson.version === latestRelease;
 
   return (
     <GenericPage
@@ -211,11 +215,8 @@ const Config = () => {
                   </Popup>
                 }
               >
-                <StyledButton
-                  size="sm"
-                  color={packageJson.version === latestRelease ? undefined : 'green'}
-                >
-                  v{packageJson.version}
+                <StyledButton size="sm" appearance={isLatestRelease ? 'default' : 'primary'}>
+                  {isLatestRelease ? `v${packageJson.version}` : `${t('Update available')}`}
                 </StyledButton>
               </Whisper>
             </ButtonToolbar>
