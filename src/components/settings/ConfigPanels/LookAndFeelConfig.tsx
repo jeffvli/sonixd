@@ -22,7 +22,7 @@ import {
   StyledCheckPicker,
 } from '../../shared/styled';
 import ListViewConfig from './ListViewConfig';
-import { Fonts } from '../Fonts';
+import Fonts from '../Fonts';
 import { ALBUM_SORT_TYPES } from '../../library/AlbumList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setTheme, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
