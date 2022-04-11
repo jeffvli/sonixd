@@ -42,6 +42,7 @@ const Config = () => {
     },
     {
       staleTime: 60 * 60 * 1000, // Only fetch the latest release once per hour
+      initialData: packageJson.version,
     }
   );
 
