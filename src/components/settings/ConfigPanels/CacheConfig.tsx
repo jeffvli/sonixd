@@ -176,7 +176,7 @@ const CacheConfig = ({ bordered }: any) => {
       {!isEditingCachePath && (
         <>
           {t('Location:')}{' '}
-          <div style={{ overflow: 'auto' }}>
+          <div style={{ overflow: 'none' }}>
             <StyledLink onClick={() => shell.openPath(getRootCachePath())}>
               {getRootCachePath()} <Icon icon="external-link" />
             </StyledLink>
