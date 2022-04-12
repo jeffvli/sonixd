@@ -476,7 +476,7 @@ export const filterPlayQueue = (filters: any[], entries: any) => {
 
   // Remove invalid songs that may break the player (likely due to Airsonic including folders)
   const validEntries = entries.filter((song: any) => {
-    return song.bitRate && song.duration;
+    return song.duration;
   });
 
   if (joinedFilterRegex) {
