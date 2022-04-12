@@ -58,6 +58,19 @@ export interface PlayQueue {
   sortedEntry: Song[];
 }
 
+export type PlayQueueSaveState = Pick<
+  PlayQueue,
+  | 'entry'
+  | 'shuffledEntry'
+  | 'current'
+  | 'currentIndex'
+  | 'currentSongId'
+  | 'currentSongUniqueId'
+  | 'player1'
+  | 'player2'
+  | 'currentPlayer'
+>;
+
 const initialState: PlayQueue = {
   player1: {
     src: './components/player/dummy.mp3',
@@ -975,6 +988,22 @@ const playQueueSlice = createSlice({
 
       state.currentIndex = newCurrentSongIndex;
     },
+
+    restoreState: (state, action: PayloadAction<PlayQueueSaveState>) => {
+      const result = action.payload;
+
+      state.entry = result.entry;
+      state.shuffledEntry = result.shuffledEntry;
+
+      state.current = result.current;
+      state.currentIndex = result.currentIndex;
+      state.currentSongId = result.currentSongId;
+      state.currentSongUniqueId = result.currentSongUniqueId;
+
+      state.player1 = result.player1;
+      state.player2 = result.player2;
+      state.currentPlayer = result.currentPlayer;
+    },
   },
 });
 
@@ -1014,5 +1043,6 @@ export const {
   shuffleInPlace,
   setFadeData,
   setPlaybackSetting,
+  restoreState,
 } = playQueueSlice.actions;
 export default playQueueSlice.reducer;

@@ -1,11 +1,16 @@
 import { useCallback, useEffect } from 'react';
 import settings from 'electron-settings';
 import { ipcRenderer } from 'electron';
+import { deflate, inflate } from 'zlib';
+import { join } from 'path';
+import { access, constants, readFile, writeFile } from 'fs';
 import { useAppDispatch } from '../redux/hooks';
 import {
   decrementCurrentIndex,
   fixPlayer2Index,
   incrementCurrentIndex,
+  PlayQueueSaveState,
+  restoreState,
   setVolume,
   toggleDisplayQueue,
   toggleRepeat,
@@ -325,6 +330,82 @@ const usePlayerControls = (
     dispatch(toggleDisplayQueue());
   };
 
+  const handleSaveQueue = useCallback(
+    (path: string) => {
+      const queueLocation = join(path, 'queue');
+
+      const data: PlayQueueSaveState = {
+        entry: playQueue.entry,
+        shuffledEntry: playQueue.shuffledEntry,
+
+        // current song
+        current: playQueue.current,
+        currentIndex: playQueue.currentIndex,
+        currentSongId: playQueue.currentSongId,
+        currentSongUniqueId: playQueue.currentSongUniqueId,
+
+        // players
+        player1: playQueue.player1,
+        player2: playQueue.player2,
+        currentPlayer: playQueue.currentPlayer,
+      };
+
+      const dataString = JSON.stringify(data);
+
+      // This whole compression task is actually quite quick
+      // While we could add a notify toast, it would only show for a moment
+      // before compression would finish.
+      // Compression level 1 seems to give sufficient performance, as it was able to save
+      // around 10k songs by using ~3.5 MB while still being quite fast.
+      deflate(
+        dataString,
+        {
+          level: 1,
+        },
+        (error, deflated) => {
+          if (error) {
+            ipcRenderer.send('saved-state');
+          } else {
+            writeFile(queueLocation, deflated, (writeError) => {
+              if (writeError) console.error(writeError);
+              ipcRenderer.send('saved-state');
+            });
+          }
+        }
+      );
+    },
+    [playQueue]
+  );
+
+  const handleRestoreQueue = useCallback(
+    (path: string) => {
+      const queueLocation = join(path, 'queue');
+      access(queueLocation, constants.F_OK, (accessError) => {
+        // If the file doesn't exist or we can't access it, just don't try
+        if (accessError) {
+          console.error(accessError);
+          return;
+        }
+
+        readFile(queueLocation, (error, buffer) => {
+          if (error) {
+            console.error(error);
+            return;
+          }
+
+          inflate(buffer, (decompressError, data) => {
+            if (decompressError) {
+              console.error(decompressError);
+            } else {
+              dispatch(restoreState(JSON.parse(data.toString())));
+            }
+          });
+        });
+      });
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     ipcRenderer.on('player-next-track', () => {
       handleNextTrack();
@@ -358,6 +439,14 @@ const usePlayerControls = (
       handleRepeat();
     });
 
+    ipcRenderer.on('save-queue-state', (_event, path: string) => {
+      handleSaveQueue(path);
+    });
+
+    ipcRenderer.on('restore-queue-state', (_event, path: string) => {
+      handleRestoreQueue(path);
+    });
+
     return () => {
       ipcRenderer.removeAllListeners('player-next-track');
       ipcRenderer.removeAllListeners('player-prev-track');
@@ -367,6 +456,8 @@ const usePlayerControls = (
       ipcRenderer.removeAllListeners('player-stop');
       ipcRenderer.removeAllListeners('player-shuffle');
       ipcRenderer.removeAllListeners('player-repeat');
+      ipcRenderer.removeAllListeners('save-queue-state');
+      ipcRenderer.removeAllListeners('restore-queue-state');
     };
   }, [
     handleNextTrack,
@@ -377,6 +468,8 @@ const usePlayerControls = (
     handleRepeat,
     handleShuffle,
     handleStop,
+    handleSaveQueue,
+    handleRestoreQueue,
   ]);
 
   useEffect(() => {

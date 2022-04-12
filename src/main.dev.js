@@ -50,6 +50,7 @@ let mainWindow = null;
 let tray = null;
 let exitFromTray = false;
 let forceQuit = false;
+let saved = false;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -394,6 +395,18 @@ const createWinThumbarButtons = () => {
   }
 };
 
+const saveQueue = (callback) => {
+  ipcMain.on('saved-state', () => {
+    callback();
+  });
+
+  mainWindow.webContents.send('save-queue-state', app.getPath('userData'));
+};
+
+const restoreQueue = () => {
+  mainWindow.webContents.send('restore-queue-state', app.getPath('userData'));
+};
+
 const createWindow = async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
@@ -517,6 +530,10 @@ const createWindow = async () => {
 
       createWinThumbarButtons();
     }
+
+    if (settings.getSync('resume')) {
+      restoreQueue();
+    }
   });
 
   mainWindow.on('minimize', (event) => {
@@ -540,8 +557,17 @@ const createWindow = async () => {
       event.preventDefault();
       mainWindow.hide();
     }
-    if (forceQuit) {
-      app.exit();
+
+    // If we have enabled saving the queue, we need to defer closing the main window until it has finished saving.
+    if (!saved && settings.getSync('resume')) {
+      event.preventDefault();
+      saved = true;
+      saveQueue(() => {
+        mainWindow.close();
+        if (forceQuit) {
+          app.exit();
+        }
+      });
     }
   });
 
@@ -706,7 +732,7 @@ app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   globalShortcut.unregisterAll();
-  if (process.platform === 'darwin') {
+  if (isMacOS()) {
     mainWindow = null;
   } else {
     app.quit();

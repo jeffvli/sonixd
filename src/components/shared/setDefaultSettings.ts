@@ -40,6 +40,10 @@ const setDefaultSettings = (force: boolean) => {
     settings.setSync('transcode', false);
   }
 
+  if (force || !settings.hasSync('resume')) {
+    settings.setSync('resume', false);
+  }
+
   if (force || !settings.hasSync('autoUpdate')) {
     settings.setSync('autoUpdate', true);
   }
