@@ -58,7 +58,7 @@ const ArtistList = () => {
       staleTime: Infinity, // Only allow manual refresh
     }
   );
-  const filteredData = useSearchQuery(misc.searchQuery, artists, ['title']);
+  const filteredData = useSearchQuery(misc.searchQuery, artists, ['title', 'genre']);
   const { sortedData, sortColumns } = useColumnSort(artists, Item.Artist, artist.active.list.sort);
 
   const { handleRowClick, handleRowDoubleClick } = useListClickHandler({
