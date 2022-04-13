@@ -1012,6 +1012,17 @@ export const artistColumnList = [
     },
   },
   {
+    label: i18n.t('Genre'),
+    value: {
+      id: i18n.t('Genre'),
+      dataKey: 'genre',
+      alignment: 'left',
+      resizable: true,
+      width: 70,
+      label: i18n.t('Genre'),
+    },
+  },
+  {
     label: i18n.t('Rating'),
     value: {
       id: i18n.t('Rate'),
@@ -1090,6 +1101,16 @@ export const artistColumnListAuto = [
     },
   },
   {
+    label: i18n.t('Genre'),
+    value: {
+      id: i18n.t('Fav'),
+      dataKey: 'genre',
+      alignment: 'center',
+      flexGrow: 2,
+      label: i18n.t('Genre'),
+    },
+  },
+  {
     label: i18n.t('Rating'),
     value: {
       id: i18n.t('Rate'),
@@ -1117,6 +1138,7 @@ export const artistColumnPicker = [
   { label: i18n.t('CoverArt') },
   { label: i18n.t('Duration') },
   { label: i18n.t('Favorite') },
+  { label: i18n.t('Genre') },
   { label: i18n.t('Rating') },
   { label: i18n.t('Title') },
 ];
