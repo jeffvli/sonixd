@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.15.0] - 2022-04-13
+
+### Added
+
+- Added setting to save and resume the current queue between sessions (#130) (Thanks @kgarner7)
+- Added a simple "play random" button to the player bar (#276)
+- Added new seek/volume sliders (#272)
+  - Seeking/dragging is now more responsive
+- Added improved discord rich presence (#286)
+- Added download button on the playlist view (#266)
+- (Jellyfin) Added "genre" column to the artist list
+
+### Changed
+
+- Swapped the order of "Seek Forward/Backward" and "Next/Prev Track" buttons on the player bar
+- Global volume is now calculated logarithmically (#275) (Thanks @gelaechter)
+- "Auto playlist" is now named "Play Random" (#276)
+- "Now playing" option is now available on the "Start page" setting
+
+### Fixed
+
+- Playing songs by double clicking on a list should now play in the proper order (#279)
+- (Linux) Fixed MPRIS metadata not updating when player automatically increments (#263)
+- Application fonts now loaded locally instead of from Google CDN (#284)
+- Enabling "Default to Album List on Artist Page" no longer performs a double redirect when entering the artist page (#271)
+- Stop button is no longer disabled when playback is stopped (#273)
+- Various package updates (#288) (Thanks @kgarner7)
+- Top control bar show no longer be accessible when not logged in (#267)
+
 [0.14.0] - 2022-03-12
 
 ### Added
