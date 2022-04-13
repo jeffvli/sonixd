@@ -10,6 +10,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   DeleteButton,
+  DownloadButton,
   EditButton,
   PlayAppendButton,
   PlayAppendNextButton,
@@ -26,6 +27,7 @@ import {
   formatDate,
   formatDateTime,
   formatDuration,
+  getAlbumSize,
   getCurrentEntryList,
   getRecoveryPath,
   getUniqueRandomNumberArr,
@@ -52,6 +54,7 @@ import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { useBrowserDownload } from '../../hooks/useBrowserDownload';
 
 interface PlaylistParams {
   id: string;
@@ -148,6 +151,7 @@ const PlaylistView = ({ ...rest }) => {
   });
 
   const { handlePlayQueueAdd } = usePlayQueueHandler();
+  const { handleDownload } = useBrowserDownload();
 
   const handleSave = async (recovery: boolean) => {
     dispatch(clearSelected());
@@ -554,7 +558,31 @@ const PlaylistView = ({ ...rest }) => {
                       disabled={misc.isProcessingPlaylist.includes(data?.id)}
                     />
                   </Whisper>
-
+                  <Whisper
+                    trigger="hover"
+                    placement="bottom"
+                    delay={250}
+                    enterable
+                    preventOverflow
+                    speaker={
+                      <Popup>
+                        <ButtonToolbar>
+                          <StyledButton onClick={() => handleDownload(data, 'download', true)}>
+                            {t('Download')}
+                          </StyledButton>
+                          <StyledButton onClick={() => handleDownload(data, 'copy', true)}>
+                            {t('Copy to clipboard')}
+                          </StyledButton>
+                        </ButtonToolbar>
+                      </Popup>
+                    }
+                  >
+                    <DownloadButton
+                      size="lg"
+                      appearance="subtle"
+                      downloadSize={getAlbumSize(data.song)}
+                    />
+                  </Whisper>
                   <Whisper
                     enterable
                     placement="auto"
