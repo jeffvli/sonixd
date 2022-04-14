@@ -50,13 +50,13 @@
       "allowToChangeInstallationDirectory": true
     },
     "mac": {
-      "target": [
-        "dmg"
-      ],
-      "arch": [
-        "x64",
-        "arm64"
-      ],
+      "target": {
+        "target": "default",
+        "arch": [
+          "arm64",
+          "x64"
+        ]
+      },
       "type": "distribution",
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
