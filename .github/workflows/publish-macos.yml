@@ -44,5 +44,6 @@ jobs:
         env:
           # This is used for uploading release assets to github
           GITHUB_TOKEN: ${{ secrets.PAT }}
+          EP_GH_IGNORE_TIME: true
         run: |
           yarn postinstall && yarn build && yarn electron-builder --publish always --mac
