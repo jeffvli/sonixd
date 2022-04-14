@@ -101,7 +101,9 @@
     "publish": {
       "provider": "github",
       "owner": "jeffvli",
-      "repo": "sonixd"
+      "repo": "sonixd",
+      "releaseType": "release"
+
     }
   },
   "repository": {
