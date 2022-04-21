@@ -1103,7 +1103,7 @@ export const artistColumnListAuto = [
   {
     label: i18n.t('Genre'),
     value: {
-      id: i18n.t('Fav'),
+      id: i18n.t('Genre'),
       dataKey: 'genre',
       alignment: 'center',
       flexGrow: 2,

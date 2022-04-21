@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed macOS global hotkeys not working (#241)
+- Fixed incorrect name for artist list "genre" column header
 
 [0.15.0] - 2022-04-13
 
