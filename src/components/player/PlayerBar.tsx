@@ -748,11 +748,6 @@ const PlayerBar = () => {
                 onWheel={handleVolumeWheel}
               >
                 {/* Volume Slider */}
-                <VolumeIcon
-                  icon={muted ? 'volume-off' : 'volume-down'}
-                  onClick={() => setMuted(!muted)}
-                  size="lg"
-                />
                 <Whisper
                   trigger="hover"
                   placement="top"
@@ -760,14 +755,20 @@ const PlayerBar = () => {
                   preventOverflow
                   speaker={<Popup>{muted ? t('Muted') : Math.floor(localVolume * 100)}</Popup>}
                 >
-                  <Slider
-                    value={Math.floor(localVolume * 100)}
-                    min={0}
-                    max={100}
-                    onChange={handleVolumeSlider}
-                    toolTipType="text"
+                  <VolumeIcon
+                    icon={muted ? 'volume-off' : 'volume-down'}
+                    onClick={() => setMuted(!muted)}
+                    size="lg"
                   />
                 </Whisper>
+
+                <Slider
+                  value={Math.floor(localVolume * 100)}
+                  min={0}
+                  max={100}
+                  onChange={handleVolumeSlider}
+                  toolTipType="text"
+                />
               </div>
             </PlayerColumn>
           </FlexboxGrid.Item>
