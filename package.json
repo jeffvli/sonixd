@@ -1,5 +1,6 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "sonixd",
+  "productName": "Sonixd",
   "description": "A foundation for scalable desktop apps",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
@@ -31,8 +32,9 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Sonixd",
+    "appId": "org.erb.sonixd",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -71,13 +73,16 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "zip"
       ]
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "tar.xz"
       ],
+      "icon": "assets/icons/placeholder.png",
       "category": "Development"
     },
     "directories": {
@@ -90,47 +95,29 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "jeffvli",
+      "repo": "sonixd"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/jeffvli/sonixd.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "jeffvli",
+    "url": "https://github.com/jeffvli/"
   },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
-    }
-  ],
-  "license": "MIT",
+  "contributors": [],
+  "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/jeffvli/sonixd/issues"
   },
   "keywords": [
     "electron",
-    "boilerplate",
     "react",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "typescript"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/jeffvli/sonixd",
   "jest": {
     "testURL": "http://localhost/",
     "testEnvironment": "jsdom",
@@ -168,6 +155,7 @@
     "@types/node": "17.0.23",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
+    "@types/react-lazy-load-image-component": "^1.5.2",
     "@types/react-test-renderer": "^17.0.1",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/webpack-bundle-analyzer": "^4.4.1",
@@ -239,10 +227,10 @@
     "electron-updater": "^4.6.5",
     "history": "^5.3.0",
     "react": "^18.0.0",
+    "react-audio-player": "^0.17.0",
     "react-dom": "^18.0.0",
     "react-lazy-load-image-component": "^1.5.4",
     "react-router-dom": "^6.3.0",
-    "react-slider": "^2.0.0",
     "react-spaces": "^0.3.2"
   },
   "devEngines": {
