@@ -1,38 +1,19 @@
-import { Global, MantineProvider } from '@mantine/core';
-import './App.css';
+import { useEffect, useState } from 'react';
+import { MantineProvider } from '@mantine/core';
 import Router from './Router';
+import { dark } from './themes';
+import base from './themes/base';
+import './App.css';
 
 export default function App() {
-  return (
-    <MantineProvider
-      theme={{
-        colorScheme: 'dark',
-        focusRing: 'auto',
-        spacing: {
-          xs: 2,
-          sm: 5,
-        },
-        other: {
-          background: '#141518',
-          sidebar: '#101010',
-          playerbar: '#101010',
-        },
-      }}
-    >
-      <Global
-        styles={(theme) => {
-          return {
-            '*, *::before, *::after': {
-              boxSizing: 'border-box',
-            },
+  const [theme, setTheme] = useState<any>(base);
 
-            body: {
-              backgroundColor: theme.other.background,
-              color: theme.colors.dark[0],
-            },
-          };
-        }}
-      />
+  useEffect(() => {
+    setTheme(dark);
+  }, []);
+
+  return (
+    <MantineProvider theme={theme}>
       <Router />
     </MantineProvider>
   );
