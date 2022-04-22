@@ -1675,7 +1675,7 @@ const setDefaultSettings = (force: boolean) => {
           foreground: '#EBDBB2'
         },
         table: {
-          selectedRow: '#7C6F64'
+          selectedRow: 'rgba(124, 111, 100, .3)',
         },
         tag: {
           background: '#8EC07C',
@@ -1690,8 +1690,8 @@ const setDefaultSettings = (force: boolean) => {
         button: {
           borderRadius: '15px'
         },
-        coverArtBorderRadius': '5px',
-        coverArtFilter: none',
+        coverArtBorderRadius: '5px',
+        coverArtFilter: 'none',
         card: {
           border: 'none',
           hover: {
@@ -1784,10 +1784,10 @@ const setDefaultSettings = (force: boolean) => {
         },
         button: {
           default: {
-            color: '#BDAE93',
-            colorHover: '#3C3836',
-            background: '#EBDBB2',
-            backgroundHover: '#504945'
+            color: '#EBDBB2',
+            colorHover: '#EBDBB2',
+            background: '#665C54',
+            backgroundHover: '#3C3836'
           },
           primary: {
             color: '#3C3836',
@@ -1836,7 +1836,7 @@ const setDefaultSettings = (force: boolean) => {
           foreground: '#3C3836'
         },
         table: {
-          selectedRow: '#A89984'
+          selectedRow: 'rgba(168, 153, 132, .5)',
         },
         tag: {
           background: '#427B58',
@@ -1851,8 +1851,8 @@ const setDefaultSettings = (force: boolean) => {
         button: {
           borderRadius: '15px'
         },
-        coverArtBorderRadius': '3px',
-        coverArtFilter: none',
+        coverArtBorderRadius: '3px',
+        coverArtFilter: 'none',
         card: {
           border: 'none',
           hover: {
