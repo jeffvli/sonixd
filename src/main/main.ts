@@ -13,7 +13,7 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { resolveHtmlPath } from './utils';
 
 export default class AppUpdater {
   constructor() {
@@ -24,12 +24,6 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -73,6 +67,8 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    minWidth: 600,
+    minHeight: 600,
     frame: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
@@ -83,6 +79,22 @@ const createWindow = async () => {
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
+  });
+
+  ipcMain.on('window-maximize', () => {
+    mainWindow?.maximize();
+  });
+
+  ipcMain.on('window-unmaximize', () => {
+    mainWindow?.unmaximize();
+  });
+
+  ipcMain.on('window-minimize', () => {
+    mainWindow?.minimize();
+  });
+
+  ipcMain.on('window-close', () => {
+    mainWindow?.close();
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
