@@ -15,7 +15,7 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest",
-    "prepare": "husky install"
+    "i18next": "i18next -c src/renderer/i18n/i18next-parser.config.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -191,6 +191,7 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^7.0.4",
+    "i18next-parser": "^6.3.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
     "lint-staged": "^12.3.7",
@@ -227,10 +228,12 @@
     "electron-log": "^4.4.6",
     "electron-updater": "^4.6.5",
     "history": "^5.3.0",
+    "i18next": "^21.6.16",
     "is-electron": "^2.2.1",
     "react": "^18.0.0",
     "react-audio-player": "^0.17.0",
     "react-dom": "^18.0.0",
+    "react-i18next": "^11.16.7",
     "react-lazy-load-image-component": "^1.5.4",
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.3.0",
