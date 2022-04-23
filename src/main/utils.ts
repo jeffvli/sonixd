@@ -1,6 +1,7 @@
 /* eslint import/prefer-default-export: off, import/no-mutable-exports: off */
 import { URL } from 'url';
 import path from 'path';
+import process from 'process';
 
 export let resolveHtmlPath: (htmlFileName: string) => string;
 
@@ -16,3 +17,15 @@ if (process.env.NODE_ENV === 'development') {
     return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
   };
 }
+
+export const isMacOS = () => {
+  return process.platform === 'darwin';
+};
+
+export const isWindows = () => {
+  return process.platform === 'win32';
+};
+
+export const isLinux = () => {
+  return process.platform === 'linux';
+};
