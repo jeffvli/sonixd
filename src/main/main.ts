@@ -9,9 +9,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
+
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './utils';
 
@@ -131,6 +133,11 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+
+app.commandLine.appendSwitch(
+  'disable-features',
+  'HardwareMediaKeyHandling,MediaSessionService'
+);
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
