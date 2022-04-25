@@ -1,5 +1,7 @@
-import { createStyles } from '@mantine/core';
 import { useState } from 'react';
+
+import { createStyles } from '@mantine/core';
+
 import { controls } from './controls';
 import windowsClose from './icons/close-w-10.png';
 import windowsMax from './icons/max-w-10.png';
@@ -14,7 +16,7 @@ const useStyles = createStyles(() => ({
     height: '35px',
     width: '130px',
     zIndex: 200,
-    '-webkit-app-region': 'no-drag',
+    WebkitAppRegion: 'no-drag',
   },
   button: {
     height: '100%',
@@ -22,7 +24,7 @@ const useStyles = createStyles(() => ({
     flexGrow: 1,
     textAlign: 'center',
     userSelect: 'none',
-    '-webkit-app-region': 'no-drag',
+    WebkitAppRegion: 'no-drag',
 
     '&:hover': {
       backgroundColor: 'rgba(150, 150, 150, .5)',
