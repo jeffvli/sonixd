@@ -1757,7 +1757,7 @@ const setDefaultSettings = (force: boolean) => {
             color: '#3C3836',
             colorSecondary: '#7C6F64',
             background:
-		    'linear-gradient(0deg, rgba(235, 219, 178, 1) 32%, rgba(251, 241, 199, 1) 100%)',
+              'linear-gradient(0deg, rgba(235, 219, 178, 1) 32%, rgba(251, 241, 199, 1) 100%)',
           },
           playerBar: {
             color: '#3C3836',
