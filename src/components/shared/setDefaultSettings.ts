@@ -1579,6 +1579,329 @@ const setDefaultSettings = (force: boolean) => {
         },
       },
     },
+    {
+      label: 'Gruvbox Dark',
+      value: 'gruvboxDark',
+      type: 'dark',
+      fonts: {
+        size: {
+          page: '14px',
+          panelTitle: '20px',
+        },
+      },
+      colors: {
+        primary: '#8EC07C',
+        layout: {
+          page: {
+            color: '#EBDBB2',
+            colorSecondary: '#A89984',
+            background: 'linear-gradient(0deg, rgba(29, 32, 33, 1) 32%, rgba(40, 40, 40, 1) 100%)',
+          },
+          playerBar: {
+            color: '#EBDBB2',
+            colorSecondary: '#A89984',
+            background: '#1D2021',
+            button: {
+              color: '#A89984',
+              colorHover: '#8EC07C',
+            },
+          },
+          sideBar: {
+            background: '#1D2021',
+            button: {
+              color: '#A89984',
+              colorHover: '#8EC07C',
+            },
+          },
+          titleBar: {
+            color: '#EBDBB2',
+            background: '#1D2021',
+          },
+          miniPlayer: {
+            background: '#282828',
+          },
+        },
+        button: {
+          default: {
+            color: '#BDAE93',
+            colorHover: '#EBDBB2',
+            background: '#1D2021',
+            backgroundHover: '#504945',
+          },
+          primary: {
+            color: '#EBDBB2',
+            colorHover: '#EBDBB2',
+            backgroundHover: '#8EC07C',
+          },
+          subtle: {
+            color: '#BDAE93',
+            colorHover: '#EBDBB2',
+            backgroundHover: 'transparent',
+          },
+        },
+        card: {
+          overlayButton: {
+            color: '#EBDBB2',
+            background: 'transparent',
+            backgroundHover: '#8EC07C',
+            opacity: 0.8,
+          },
+        },
+        contextMenu: {
+          color: '#EBDBB2',
+          colorDisabled: '#A89984',
+          background: '#1D2021',
+          backgroundHover: '#504945',
+        },
+        input: {
+          color: '#EBDBB2',
+          background: '#1D2021',
+          backgroundHover: '#282828',
+          backgroundActive: 'rgba(80, 63, 79, 1)',
+        },
+        nav: {
+          color: '#EBDBB2',
+        },
+        popover: {
+          color: '#EBDBB2',
+          background: '#1D2021',
+        },
+        slider: {
+          background: '#282828',
+          progressBar: '#8EC07C',
+        },
+        spinner: {
+          background: '#1D2021',
+          foreground: '#EBDBB2',
+        },
+        table: {
+          selectedRow: 'rgba(124, 111, 100, .3)',
+        },
+        tag: {
+          background: '#8EC07C',
+          text: '#282828',
+        },
+        tooltip: {
+          color: '#EBDBB2',
+          background: '#1D2021',
+        },
+      },
+      other: {
+        button: {
+          borderRadius: '15px',
+        },
+        coverArtBorderRadius: '5px',
+        coverArtFilter: 'none',
+        card: {
+          border: 'none',
+          hover: {
+            transform: 'none',
+            transition: 'none',
+            filter: 'none',
+          },
+          image: {
+            borderTop: '2px transparent ridge',
+            borderRight: '2px transparent ridge',
+            borderBottom: '2px transparent ridge',
+            borderLeft: '2px transparent ridge',
+            borderRadius: '15px',
+          },
+          info: {
+            borderTop: 'none',
+            borderRight: 'none',
+            borderBottom: 'none',
+            borderLeft: 'none',
+            borderRadius: '0px',
+          },
+        },
+        input: {
+          borderRadius: '15px',
+        },
+        miniPlayer: {
+          height: '450px',
+          opacity: 0.95,
+        },
+        panel: {
+          borderRadius: '0px',
+        },
+        playerBar: {
+          borderTop: '1px solid #282828',
+          borderRight: 'none',
+          borderBottom: 'none',
+          borderLeft: 'none',
+          filter: 'none',
+        },
+        tag: {
+          borderRadius: '15px',
+        },
+        tooltip: {
+          border: '1px #282828 solid',
+          borderRadius: '5px',
+        },
+      },
+    },
+    {
+      label: 'Gruvbox Light',
+      value: 'gruvboxLight',
+      type: 'light',
+      fonts: {
+        size: {
+          page: '14px',
+          panelTitle: '20px',
+        },
+      },
+      colors: {
+        primary: '#427B58',
+        layout: {
+          page: {
+            color: '#3C3836',
+            colorSecondary: '#7C6F64',
+            background:
+              'linear-gradient(0deg, rgba(235, 219, 178, 1) 32%, rgba(251, 241, 199, 1) 100%)',
+          },
+          playerBar: {
+            color: '#3C3836',
+            colorSecondary: '#7C6F64',
+            background: '#EBDBB2',
+            button: {
+              color: '#7C6F64',
+              colorHover: '#427B58',
+            },
+          },
+          sideBar: {
+            background: '#EBDBB2',
+            button: {
+              color: '#7C6F64',
+              colorHover: '#427B58',
+            },
+          },
+          titleBar: {
+            color: '#3C3836',
+            background: '#EBDBB2',
+          },
+          miniPlayer: {
+            background: '#FBF1C7',
+          },
+        },
+        button: {
+          default: {
+            color: '#EBDBB2',
+            colorHover: '#EBDBB2',
+            background: '#665C54',
+            backgroundHover: '#3C3836',
+          },
+          primary: {
+            color: '#3C3836',
+            colorHover: '#3C3836',
+            backgroundHover: '#427B58',
+          },
+          subtle: {
+            color: '#665c54',
+            colorHover: '#3C3836',
+            backgroundHover: 'transparent',
+          },
+        },
+        card: {
+          overlayButton: {
+            color: '#3C3836',
+            background: 'transparent',
+            backgroundHover: '#427B58',
+            opacity: 0.8,
+          },
+        },
+        contextMenu: {
+          color: '#3C3836',
+          colorDisabled: '#7C6F64',
+          background: '#EBDBB2',
+          backgroundHover: '#504945',
+        },
+        input: {
+          color: '#3C3836',
+          background: '#EBDBB2',
+          backgroundHover: '#FBF1C7',
+          backgroundActive: 'rgba(40, 40, 40, .2)',
+        },
+        nav: {
+          color: '#3C3836',
+        },
+        popover: {
+          color: '#3C3836',
+          background: '#EBDBB2',
+        },
+        slider: {
+          background: '#FBF1C7',
+          progressBar: '#427B58',
+        },
+        spinner: {
+          background: '#EBDBB2',
+          foreground: '#3C3836',
+        },
+        table: {
+          selectedRow: 'rgba(168, 153, 132, .5)',
+        },
+        tag: {
+          background: '#427B58',
+          text: '#FBF1C7',
+        },
+        tooltip: {
+          color: '#3C3836',
+          background: '#EBDBB2',
+        },
+      },
+      other: {
+        button: {
+          borderRadius: '15px',
+        },
+        coverArtBorderRadius: '3px',
+        coverArtFilter: 'none',
+        card: {
+          border: 'none',
+          hover: {
+            transform: 'none',
+            transition: 'none',
+            filter: 'none',
+          },
+          image: {
+            borderTop: '2px transparent ridge',
+            borderRight: '2px transparent ridge',
+            borderBottom: '2px transparent ridge',
+            borderLeft: '2px transparent ridge',
+            borderRadius: '15px',
+          },
+          info: {
+            borderTop: 'none',
+            borderRight: 'none',
+            borderBottom: 'none',
+            borderLeft: 'none',
+            borderRadius: '0px',
+          },
+        },
+        input: {
+          borderRadius: '15px',
+        },
+        miniPlayer: {
+          height: '450px',
+          opacity: 0.95,
+        },
+        panel: {
+          borderRadius: '0px',
+        },
+        playerBar: {
+          borderTop: '1px solid #FBF1C7',
+          borderRight: 'none',
+          borderBottom: 'none',
+          borderLeft: 'none',
+          filter: 'none',
+        },
+        tag: {
+          borderRadius: '15px',
+        },
+        tooltip: {
+          border: '1px #FBF1C7 solid',
+          borderRadius: '5px',
+        },
+      },
+    },
   ]);
 };
 
