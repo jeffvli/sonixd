@@ -1604,7 +1604,7 @@ const setDefaultSettings = (force: boolean) => {
             button: {
               color: '#A89984',
               colorHover: '#8EC07C',
-            }
+            },
           },
           sideBar: {
             background: '#1D2021',
@@ -1645,7 +1645,7 @@ const setDefaultSettings = (force: boolean) => {
             background: 'transparent',
             backgroundHover: '#8EC07C',
             opacity: 0.8,
-          }
+          },
         },
         contextMenu: {
           color: '#EBDBB2',
@@ -1756,7 +1756,8 @@ const setDefaultSettings = (force: boolean) => {
           page: {
             color: '#3C3836',
             colorSecondary: '#7C6F64',
-            background: 'linear-gradient(0deg, rgba(235, 219, 178, 1) 32%, rgba(251, 241, 199, 1) 100%)',
+            background:
+		    'linear-gradient(0deg, rgba(235, 219, 178, 1) 32%, rgba(251, 241, 199, 1) 100%)',
           },
           playerBar: {
             color: '#3C3836',
