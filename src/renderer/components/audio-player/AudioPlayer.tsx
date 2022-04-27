@@ -134,21 +134,25 @@ const AudioPlayer = (
     <>
       <ReactPlayer
         ref={player1Ref}
+        height={0}
         muted={muted}
         playing={currentPlayer === 1 && status === PlayerStatus.Playing}
         progressInterval={isTransitioning ? 10 : 250}
         url={player1?.streamUrl}
         volume={volume}
+        width={0}
         onEnded={handleOnEnded}
         onProgress={type === 'gapless' ? handleGapless1 : handleCrossfade1}
       />
       <ReactPlayer
         ref={player2Ref}
+        height={0}
         muted={muted}
         playing={currentPlayer === 2 && status === PlayerStatus.Playing}
         progressInterval={isTransitioning ? 10 : 250}
         url={player2?.streamUrl}
         volume={volume}
+        width={0}
         onEnded={handleOnEnded}
         onProgress={type === 'gapless' ? handleGapless2 : handleCrossfade2}
       />

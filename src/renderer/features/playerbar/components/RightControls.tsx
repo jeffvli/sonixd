@@ -1,9 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 
 import {
-  Box,
   Container,
-  createStyles,
   Group,
   NumberInput,
   Popover,
@@ -25,7 +23,6 @@ import {
 } from 'tabler-icons-react';
 
 import IconButton from 'renderer/components/icon-button/IconButton';
-import Slider from 'renderer/components/slider/Slider';
 import { useAppDispatch, useAppSelector } from 'renderer/hooks/redux';
 import {
   selectPlayerConfig,
@@ -38,6 +35,9 @@ import {
 } from 'renderer/store/playerSlice';
 import { PlayerRepeat } from 'types';
 
+import styles from './RightControls.module.scss';
+import Slider from './Slider';
+
 const CROSSFADE_TYPES = [
   { label: 'Equal Power', value: 'equalPower' },
   { label: 'Linear', value: 'linear' },
@@ -47,25 +47,8 @@ const CROSSFADE_TYPES = [
   { label: 'Constant Power (Slow cut)', value: 'constantPowerSlowCut' },
 ];
 
-const useStyles = createStyles(() => ({
-  wrapper: {
-    height: '100%',
-    width: '100%',
-  },
-  box: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    height: 'calc(100% / 3)',
-  },
-  volumeSlider: {
-    maxWidth: '7em',
-  },
-}));
-
 const RightControls = () => {
   const { t } = useTranslation();
-  const { classes } = useStyles();
   const dispatch = useAppDispatch();
   const {
     muted,
@@ -81,98 +64,100 @@ const RightControls = () => {
   const [openConfig, setOpenConfig] = useState(false);
 
   return (
-    <Container className={classes.wrapper}>
-      <Box className={classes.box} />
-      <Box className={classes.box}>
-        <Group position="right" spacing="sm">
+    <Container className={styles.container}>
+      <div className={styles.box} />
+      <div className={styles.box}>
+        <Group position="right" spacing="xs">
           <Popover
-            opened={openConfig}
-            onClose={() => setOpenConfig(false)}
-            position="top"
             withArrow
+            opened={openConfig}
+            position="top"
             target={
               <IconButton
-                variant="transparent"
+                icon={<Adjustments size={17} />}
                 tooltip={{ label: `${t('player.config')}` }}
-                icon={<Adjustments size={20} />}
+                variant="transparent"
                 onClick={() => setOpenConfig(!openConfig)}
               />
             }
+            onClose={() => setOpenConfig(false)}
           >
             <Stack>
               <RadioGroup
                 label={`${t('player.config.playbackType')}`}
                 orientation="vertical"
-                value={type}
+                size="sm"
                 spacing="md"
+                value={type}
                 onChange={(e: 'gapless' | 'crossfade') => dispatch(setType(e))}
               >
-                <Radio value="gapless" label={`${t('player.gapless')}`} />
-                <Radio value="crossfade" label={`${t('player.crossfade')}`} />
+                <Radio label={`${t('player.gapless')}`} value="gapless" />
+                <Radio label={`${t('player.crossfade')}`} value="crossfade" />
               </RadioGroup>
               <Select
-                defaultValue={crossfadeType}
-                label={`${t('player.config.crossfadeType')}`}
                 data={CROSSFADE_TYPES}
+                defaultValue={crossfadeType}
                 disabled={type !== 'crossfade'}
+                label={`${t('player.config.crossfadeType')}`}
               />
               <NumberInput
                 defaultValue={crossfadeDuration}
+                disabled={type !== 'crossfade'}
                 label={`${t('player.config.crossfadeDuration')}`}
-                min={1}
                 max={12}
+                min={1}
                 onBlur={(e: ChangeEvent<HTMLInputElement>) =>
                   dispatch(setCrossfadeDuration(Number(e.currentTarget.value)))
                 }
-                disabled={type !== 'crossfade'}
               />
             </Stack>
           </Popover>
           <IconButton
             active={repeat !== PlayerRepeat.None}
-            variant="transparent"
-            tooltip={{ label: `${t('player.repeat')}` }}
             icon={
               repeat === PlayerRepeat.One ? (
-                <RepeatOnce size={20} />
+                <RepeatOnce size={17} />
               ) : (
-                <Repeat size={20} />
+                <Repeat size={17} />
               )
             }
+            tooltip={{ label: `${t('player.repeat')}` }}
+            variant="transparent"
             onClick={() => dispatch(toggleRepeat())}
           />
           <IconButton
             active={shuffle}
-            variant="transparent"
+            icon={<ArrowsShuffle size={17} />}
             tooltip={{ label: `${t('player.shuffle')}` }}
-            icon={<ArrowsShuffle size={20} />}
+            variant="transparent"
             onClick={() => dispatch(toggleShuffle())}
           />
           <IconButton
-            variant="transparent"
+            icon={<Playlist size={17} />}
             tooltip={{ label: `${t('player.queue')}` }}
-            icon={<Playlist size={20} />}
+            variant="transparent"
           />
         </Group>
-      </Box>
-      <Box className={classes.box}>
+      </div>
+      <div className={styles.box}>
         <IconButton
-          variant="transparent"
+          icon={muted ? <Volume3 size={17} /> : <Volume2 size={17} />}
           tooltip={{
             label: muted ? `${t('player.muted')}` : String(localVolume),
           }}
-          icon={muted ? <Volume3 size={15} /> : <Volume2 size={15} />}
+          variant="transparent"
           onClick={() => dispatch(toggleMute())}
         />
-        <Slider
-          className={classes.volumeSlider}
-          value={localVolume}
-          min={0}
-          max={100}
-          onChange={(e: number) => setLocalVolume(e)}
-          toolTipType="text"
-        />
-      </Box>
+        <div className={styles.volume}>
+          <Slider
+            max={100}
+            min={0}
+            toolTipType="text"
+            value={localVolume}
+            onChange={(e: number) => setLocalVolume(e)}
+          />
+        </div>
+      </div>
     </Container>
   );
 };

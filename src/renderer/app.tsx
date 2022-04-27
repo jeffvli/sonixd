@@ -18,7 +18,19 @@ export default function App() {
   }, [theme]);
 
   return (
-    <MantineProvider>
+    <MantineProvider
+      theme={{
+        colorScheme: 'dark',
+        focusRing: 'auto',
+        spacing: {
+          xs: 2,
+          sm: 4,
+          md: 6,
+          lg: 8,
+          xl: 10,
+        },
+      }}
+    >
       <ModalsProvider>
         <Router />
       </ModalsProvider>

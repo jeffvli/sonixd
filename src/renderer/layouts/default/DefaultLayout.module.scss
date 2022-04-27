@@ -49,12 +49,12 @@
 }
 
 .handle {
-  background: var(--sidebar-handle-bg);
   opacity: 0;
   height: 100%;
   width: 3px;
   position: absolute;
   right: 0;
+  border-right: 1px var(--sidebar-handle-bg) solid;
 
   &:hover {
     cursor: col-resize;

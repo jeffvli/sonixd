@@ -1,0 +1,16 @@
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: calc(100% / 3);
+}
+
+.volume {
+  display: inline-block;
+  width: 5.5em;
+}

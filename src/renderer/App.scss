@@ -19,7 +19,7 @@ html {
 
 @media only screen and (max-width: 640px) {
   body {
-    overflow-x: scroll;
+    overflow-x: auto;
   }
 }
 
@@ -39,12 +39,17 @@ html {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-x-track-bg);
+  background: var(--scrollbar-track-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-x-thumb-bg);
+  background: var(--scrollbar-thumb-bg);
+}
+
+a {
+  text-decoration: none;
 }

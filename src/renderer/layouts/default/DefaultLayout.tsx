@@ -5,7 +5,7 @@ import isElectron from 'is-electron';
 import throttle from 'lodash/throttle';
 import { Outlet } from 'react-router-dom';
 
-import PlayerBar from '../../features/player-bar/PlayerBar';
+import PlayerBar from '../../features/playerbar/Playerbar';
 import WindowControls from './components/WindowControls';
 import styles from './DefaultLayout.module.scss';
 import { constrainSidebarWidth } from './utils/constrainSidebarWidth';

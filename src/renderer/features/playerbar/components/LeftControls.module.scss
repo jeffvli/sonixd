@@ -1,0 +1,33 @@
+.wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.image {
+  min-width: 100px;
+  width: 100px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stack {
+  margin: 10px 0;
+  width: calc(100% - 90px);
+}
+
+.text {
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--playerbar-text-primary-color);
+}
+
+.secondary {
+  color: var(--playerbar-text-secondary-color);
+}

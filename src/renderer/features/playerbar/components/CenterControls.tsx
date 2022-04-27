@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, createStyles, Grid, Text } from '@mantine/core';
+import { Box, Grid, Text } from '@mantine/core';
+import clsx from 'clsx';
 import format from 'format-duration';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,35 +16,12 @@ import {
 
 import useMainAudioControls from 'renderer/components/audio-player/hooks/useMainAudioControls';
 import IconButton from 'renderer/components/icon-button/IconButton';
-import Slider from 'renderer/components/slider/Slider';
 import { useAppSelector } from 'renderer/hooks/redux';
 import { selectCurrentQueue } from 'renderer/store/playerSlice';
 import { PlayerStatus } from 'types';
 
-const useStyles = createStyles(() => ({
-  slider: {
-    width: '100%',
-    height: '40%',
-    alignContent: 'flex-start',
-  },
-  controls: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '60%',
-  },
-  time: {
-    userSelect: 'none',
-    textAlign: 'center',
-    padding: '.5em',
-  },
-  left: {
-    textAlign: 'right',
-  },
-  right: {
-    textAlign: 'left',
-  },
-}));
+import styles from './CenterControls.module.scss';
+import Slider from './Slider';
 
 interface CenterControlsProps {
   status: PlayerStatus;
@@ -56,7 +34,6 @@ const CenterControls = ({
   playersRef,
   currentPlayer,
 }: CenterControlsProps) => {
-  const { classes, cx } = useStyles();
   const { t } = useTranslation();
   const queue = useAppSelector(selectCurrentQueue);
   const player1 = playersRef?.current?.player1?.player;
@@ -108,38 +85,29 @@ const CenterControls = ({
 
   return (
     <>
-      <Box className={classes.controls}>
+      <Box className={styles.controls}>
         <IconButton
-          size={40}
-          variant="transparent"
-          tooltip={{ label: `${t('player.stop')}` }}
           icon={<PlayerStop size={15} strokeWidth={1.5} />}
+          size={40}
+          tooltip={{ label: `${t('player.stop')}` }}
+          variant="transparent"
           onClick={handleStop}
         />
         <IconButton
-          size={40}
-          variant="transparent"
-          tooltip={{ label: `${t('player.prev')}` }}
           icon={<PlayerSkipBack size={15} strokeWidth={1.5} />}
+          size={40}
+          tooltip={{ label: `${t('player.prev')}` }}
+          variant="transparent"
           onClick={handlePrevTrack}
         />
         <IconButton
-          size={40}
-          variant="transparent"
-          tooltip={{ label: `${t('player.skipBack')}` }}
           icon={<PlayerTrackPrev size={15} strokeWidth={1.5} />}
+          size={40}
+          tooltip={{ label: `${t('player.skipBack')}` }}
+          variant="transparent"
           onClick={handleSkipBackward}
         />
         <IconButton
-          size={40}
-          variant="transparent"
-          radius="xl"
-          tooltip={{
-            label:
-              status === PlayerStatus.Paused
-                ? `${t('player.play')}`
-                : `${t('player.pause')}`,
-          }}
           icon={
             status === PlayerStatus.Paused ? (
               <PlayerPlay size={20} strokeWidth={1.5} />
@@ -147,40 +115,49 @@ const CenterControls = ({
               <PlayerPause size={20} strokeWidth={1.5} />
             )
           }
+          radius="xl"
+          size={40}
+          tooltip={{
+            label:
+              status === PlayerStatus.Paused
+                ? `${t('player.play')}`
+                : `${t('player.pause')}`,
+          }}
+          variant="transparent"
           onClick={handlePlayPause}
         />
         <IconButton
-          size={40}
-          variant="transparent"
-          tooltip={{ label: `${t('player.skipForward')}` }}
           icon={<PlayerTrackNext size={15} strokeWidth={1.5} />}
+          size={40}
+          tooltip={{ label: `${t('player.skipForward')}` }}
+          variant="transparent"
           onClick={handleSkipForward}
         />
         <IconButton
-          size={40}
-          variant="transparent"
-          tooltip={{ label: `${t('player.next')}` }}
           icon={<PlayerSkipForward size={15} strokeWidth={1.5} />}
+          size={40}
+          tooltip={{ label: `${t('player.next')}` }}
+          variant="transparent"
           onClick={handleNextTrack}
         />
       </Box>
-      <Grid className={classes.slider} align="center" gutter="xs">
-        <Grid.Col className={cx(classes.time, classes.left)} span={1}>
+      <Grid align="center" className={styles.slider} gutter="xs">
+        <Grid.Col className={clsx(styles.time, styles.left)} span={2}>
           <Text size="xs">{formattedTime}</Text>
         </Grid.Col>
-        <Grid.Col span={10}>
+        <Grid.Col span={8}>
           <Slider
-            value={currentTime}
-            min={0}
             max={currentPlayerRef?.player.player.duration}
+            min={0}
+            toolTipType="time"
+            value={currentTime}
             onAfterChange={(e) => {
               handleSeekSlider(e);
               setIsSeeking(false);
             }}
-            toolTipType="time"
           />
         </Grid.Col>
-        <Grid.Col className={cx(classes.time, classes.right)} span={1}>
+        <Grid.Col className={clsx(styles.time, styles.right)} span={2}>
           <Text size="xs">{duration}</Text>
         </Grid.Col>
       </Grid>

@@ -1,4 +1,7 @@
 :root {
+  --primary-color: #3a81ed;
+  --secondary-color: #c7648d;
+
   --content-bg: #181819;
 
   --sidebar-bg: #000000;
@@ -7,10 +10,17 @@
   --sidebar-handle-bg: #4d4d4d;
 
   --playerbar-bg: #181818;
-  --playerbar-btn-color: #000000;
-  --playerbar-btn-color-hover: #000000;
+  --playerbar-text-primary-color: #e7e7e7;
+  --playerbar-text-secondary-color: #a8a8a8;
+  --playerbar-btn-color: #c5c5c5;
+  --playerbar-btn-color-hover: #ffffff;
   --playerbar-border-top: 1px rgba(50, 50, 50, 0.7) solid;
+  --playerbar-slider-track-bg: #3c3f43;
+  --playerbar-slider-track-progress-bg: #888e94;
 
-  --scrollbar-x-track-bg: #181818;
-  --scrollbar-x-thumb-bg: #5a5a5a;
+  --tooltip-bg: #ffffff;
+  --tooltip-text-color: #000000;
+
+  --scrollbar-track-bg: #181818;
+  --scrollbar-thumb-bg: #5a5a5a;
 }
