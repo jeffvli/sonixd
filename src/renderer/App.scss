@@ -1,0 +1,50 @@
+@use 'themes/default.scss';
+@use 'themes/dark.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  min-width: 640px;
+  display: block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow-y: hidden;
+}
+
+@media only screen and (max-width: 640px) {
+  body {
+    overflow-x: scroll;
+  }
+}
+
+#root {
+  height: inherit;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-text-size-adjust: none;
+  outline: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-x-track-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-x-thumb-bg);
+}

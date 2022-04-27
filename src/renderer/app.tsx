@@ -1,20 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+
 import { MantineProvider } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
+import { ModalsProvider } from '@mantine/modals';
+
 import Router from './Router';
-import { dark } from './themes';
-import base from './themes/base';
-import './App.css';
+import './App.scss';
 
 export default function App() {
-  const [theme, setTheme] = useState<any>(base);
+  const [theme] = useLocalStorage({
+    key: 'theme',
+    defaultValue: 'dark',
+  });
 
   useEffect(() => {
-    setTheme(dark);
-  }, []);
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
 
   return (
-    <MantineProvider theme={theme}>
-      <Router />
+    <MantineProvider>
+      <ModalsProvider>
+        <Router />
+      </ModalsProvider>
     </MantineProvider>
   );
 }
