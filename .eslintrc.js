@@ -1,5 +1,6 @@
 module.exports = {
   extends: 'erb',
+  plugins: ['import'],
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
@@ -11,6 +12,38 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'jsx-a11y/media-has-caption': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/interactive-supports-focus': 'off',
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', ['parent', 'sibling']],
+        pathGroups: [
+          {
+            pattern: 'react',
+            group: 'external',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['react'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
+    'react/jsx-sort-props': [
+      'error',
+      {
+        callbacksLast: true,
+        shorthandFirst: true,
+        shorthandLast: false,
+        ignoreCase: false,
+        noSortAlphabetically: false,
+        reservedFirst: true,
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2020,
@@ -31,24 +64,5 @@ module.exports = {
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
-    'import/order': [
-      'error',
-      {
-        groups: ['builtin', 'external', 'internal', ['parent', 'sibling']],
-        pathGroups: [
-          {
-            pattern: 'react',
-            group: 'external',
-            position: 'before',
-          },
-        ],
-        pathGroupsExcludedImportTypes: ['react'],
-        'newlines-between': 'never',
-        alphabetize: {
-          order: 'asc',
-          caseInsensitive: true,
-        },
-      },
-    ],
   },
 };
