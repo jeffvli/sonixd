@@ -6,9 +6,9 @@ import throttle from 'lodash/throttle';
 import { Outlet } from 'react-router-dom';
 
 import PlayerBar from '../../features/player-bar/PlayerBar';
+import WindowControls from './components/WindowControls';
 import styles from './DefaultLayout.module.scss';
 import { constrainSidebarWidth } from './utils/constrainSidebarWidth';
-import WindowControls from './window-controls/WindowControls';
 
 const DefaultLayout = () => {
   const [isResizing, setIsResizing] = useState(false);

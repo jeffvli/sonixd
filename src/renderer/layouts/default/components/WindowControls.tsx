@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import { createStyles } from '@mantine/core';
 
+import windowsClose from '../icons/close-w-10.png';
+import windowsMax from '../icons/max-w-10.png';
+import windowsMin from '../icons/min-w-10.png';
 import { controls } from './controls';
-import windowsClose from './icons/close-w-10.png';
-import windowsMax from './icons/max-w-10.png';
-import windowsMin from './icons/min-w-10.png';
 
 const useStyles = createStyles(() => ({
   wrapper: {
@@ -47,13 +47,14 @@ const WindowControls = ({ style }: WindowControlsProps) => {
           <div className={classes.wrapper}>
             <div
               className={classes.button}
-              onClick={controls.minimize}
               role="button"
+              onClick={controls.minimize}
             >
               <img alt="minimize" src={windowsMin} />
             </div>
             <div
               className={classes.button}
+              role="button"
               onClick={() => {
                 if (max) {
                   controls.unmaximize();
@@ -62,14 +63,13 @@ const WindowControls = ({ style }: WindowControlsProps) => {
                 }
                 setMax(!max);
               }}
-              role="button"
             >
               <img alt="maximize" src={windowsMax} />
             </div>
             <div
               className={classes.button}
-              onClick={controls.close}
               role="button"
+              onClick={controls.close}
             >
               <img alt="exit" src={windowsClose} />
             </div>
