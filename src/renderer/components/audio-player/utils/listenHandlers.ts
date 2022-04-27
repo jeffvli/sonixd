@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { Dispatch } from 'react';
 
-import { Crossfade } from '../../../types';
+import { Crossfade } from '../../../../types';
 
 export const gaplessHandler = (args: {
   nextPlayerRef: any;

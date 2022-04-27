@@ -9,7 +9,7 @@ import {
 import ReactPlayer, { ReactPlayerProps } from 'react-player';
 
 import { Crossfade, PlayerStatus, Song } from '../../../types';
-import { crossfadeHandler, gaplessHandler } from './listenHandlers';
+import { crossfadeHandler, gaplessHandler } from './utils/listenHandlers';
 
 interface AudioPlayerProps extends ReactPlayerProps {
   status: PlayerStatus;
@@ -134,23 +134,23 @@ const AudioPlayer = (
     <>
       <ReactPlayer
         ref={player1Ref}
-        volume={volume}
-        playing={currentPlayer === 1 && status === PlayerStatus.Playing}
-        url={player1?.streamUrl}
         muted={muted}
+        playing={currentPlayer === 1 && status === PlayerStatus.Playing}
         progressInterval={isTransitioning ? 10 : 250}
-        onProgress={type === 'gapless' ? handleGapless1 : handleCrossfade1}
+        url={player1?.streamUrl}
+        volume={volume}
         onEnded={handleOnEnded}
+        onProgress={type === 'gapless' ? handleGapless1 : handleCrossfade1}
       />
       <ReactPlayer
         ref={player2Ref}
-        volume={volume}
-        playing={currentPlayer === 2 && status === PlayerStatus.Playing}
-        url={player2?.streamUrl}
         muted={muted}
+        playing={currentPlayer === 2 && status === PlayerStatus.Playing}
         progressInterval={isTransitioning ? 10 : 250}
-        onProgress={type === 'gapless' ? handleGapless2 : handleCrossfade2}
+        url={player2?.streamUrl}
+        volume={volume}
         onEnded={handleOnEnded}
+        onProgress={type === 'gapless' ? handleGapless2 : handleCrossfade2}
       />
     </>
   );
