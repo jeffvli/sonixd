@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
 import { useTranslation } from 'react-i18next';
+import { ipcRenderer } from 'electron';
 import {
   PlayerContainer,
   PlayerColumn,
@@ -197,6 +198,13 @@ const PlayerBar = () => {
     setLocalVolume,
     setCurrentTime
   );
+
+  // Handle mpris volume in/out
+  useEffect(() => {
+    const volume = Number(playQueue.volume.toPrecision(2));
+    setLocalVolume(volume);
+    ipcRenderer.send('volume', volume);
+  }, [playQueue.volume]);
 
   useEffect(() => {
     // Handle volume slider dragging

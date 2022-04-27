@@ -192,8 +192,9 @@ if (isLinux()) {
   });
 
   mprisPlayer.on('volume', (event) => {
-    store.dispatch(setVolume(event));
-    settings.setSync('volume', event);
+    const volume = Math.min(1, Math.max(0, event));
+    store.dispatch(setVolume(volume));
+    settings.setSync('volume', volume);
   });
 
   mprisPlayer.on('loopStatus', () => {
@@ -269,6 +270,10 @@ if (isLinux()) {
 
   ipcMain.on('current-position', (e, arg) => {
     mprisPlayer.getPosition = () => arg * 1e6;
+  });
+
+  ipcMain.on('volume', (e, arg) => {
+    mprisPlayer.volume = Number(arg);
   });
 }
 
