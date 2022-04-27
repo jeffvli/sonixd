@@ -14,12 +14,12 @@ import {
   PlayerTrackPrev,
 } from 'tabler-icons-react';
 
-import useMainAudioControls from 'renderer/components/audio-player/hooks/useMainAudioControls';
-import IconButton from 'renderer/components/icon-button/IconButton';
+import { IconButton } from 'renderer/components';
 import { useAppSelector } from 'renderer/hooks/redux';
 import { selectCurrentQueue } from 'renderer/store/playerSlice';
 import { PlayerStatus } from 'types';
 
+import useMainAudioControls from '../hooks/useMainAudioControls';
 import styles from './CenterControls.module.scss';
 import Slider from './Slider';
 

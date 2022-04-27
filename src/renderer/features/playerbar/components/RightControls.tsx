@@ -22,7 +22,7 @@ import {
   Volume3,
 } from 'tabler-icons-react';
 
-import IconButton from 'renderer/components/icon-button/IconButton';
+import { IconButton } from 'renderer/components';
 import { useAppDispatch, useAppSelector } from 'renderer/hooks/redux';
 import {
   selectPlayerConfig,
