@@ -199,11 +199,9 @@ const PlayerBar = () => {
     setCurrentTime
   );
 
-  // Handle mpris volume in/out
+  // Handle mpris volume change
   useEffect(() => {
-    const volume = Number(playQueue.volume.toPrecision(2));
-    setLocalVolume(volume);
-    ipcRenderer.send('volume', volume);
+    setLocalVolume(Number(playQueue.volume.toPrecision(2)));
   }, [playQueue.volume]);
 
   useEffect(() => {
@@ -221,6 +219,8 @@ const PlayerBar = () => {
       }
       setIsDraggingVolume(false);
     }, 100);
+
+    ipcRenderer.send('volume', localVolume);
 
     return () => clearTimeout(debounce);
   }, [dispatch, isDraggingVolume, localVolume, playQueue.currentPlayer, playQueue.fadeDuration]);
