@@ -1,51 +1,79 @@
-import { Container, createStyles } from '@mantine/core';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import clsx from 'clsx';
 import isElectron from 'is-electron';
+import throttle from 'lodash/throttle';
 import { Outlet } from 'react-router-dom';
-import * as Space from 'react-spaces';
 
 import PlayerBar from '../../features/player-bar/PlayerBar';
-import Sidebar from './sidebar/Sidebar';
+import styles from './DefaultLayout.module.scss';
+import { constrainSidebarWidth } from './utils/constrainSidebarWidth';
 import WindowControls from './window-controls/WindowControls';
 
-const useStyles = createStyles((theme) => ({
-  wrapper: {
-    backgroundColor:
-      theme.colorScheme === 'dark'
-        ? theme.colors.layout[0]
-        : theme.colors.layout[0],
-    height: '100%',
-  },
-  draggable: {
-    display: 'flex',
-    height: '50px',
-    zIndex: 100,
-    WebkitUserSelect: 'none',
-    WebkitAppRegion: 'drag',
-  },
-}));
-
 const DefaultLayout = () => {
-  const { classes } = useStyles();
+  const [isResizing, setIsResizing] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(150);
+
+  const handleResizeStart = (e: any) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.body.style.cursor = 'col-resize';
+  };
+
+  const handleResizeEnd = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(false);
+    document.body.style.cursor = 'default';
+  }, []);
+
+  const handleResizeMove = useMemo(() => {
+    const throttled = throttle(
+      (e: MouseEvent) => setSidebarWidth(constrainSidebarWidth(e.clientX)),
+      25
+    );
+    return (e: MouseEvent) => throttled(e);
+  }, []);
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleResizeEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, [handleResizeEnd, isResizing, handleResizeMove]);
 
   return (
     <>
-      <Space.ViewPort>
-        <Space.Fill>
-          <Sidebar />
-          <Space.Fill>
-            <Container className={classes.wrapper} px="sm" fluid>
-              {isElectron() && (
-                <>
-                  <div className={classes.draggable} />
-                  <WindowControls />
-                </>
-              )}
-              <Outlet />
-            </Container>
-          </Space.Fill>
-        </Space.Fill>
-        <PlayerBar />
-      </Space.ViewPort>
+      <div className={styles.container}>
+        <div
+          className={styles.main}
+          style={{ gridTemplateColumns: `${sidebarWidth}px auto` }}
+        >
+          <div className={styles.sidebar}>
+            <span
+              className={clsx(styles.handle, { [styles.resizing]: isResizing })}
+              role="none"
+              onMouseDown={handleResizeStart}
+            />
+          </div>
+          <div className={styles.content}>
+            <Outlet />
+            {isElectron() && (
+              <>
+                <div className={styles.window} />
+                <WindowControls />
+              </>
+            )}
+          </div>
+        </div>
+        <div className={styles.playerbar}>
+          <PlayerBar />
+        </div>
+      </div>
     </>
   );
 };

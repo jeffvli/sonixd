@@ -1,0 +1,67 @@
+.container {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 100px;
+  gap: 0px 0px;
+  grid-template-areas:
+    'main'
+    'playerbar';
+}
+
+.main {
+  display: grid;
+  grid-area: main;
+  grid-template-columns: 0.2fr auto;
+  grid-template-rows: 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    'sidebar content'
+    'sidebar content'
+    'sidebar content';
+}
+
+.playerbar {
+  grid-area: playerbar;
+  background: var(--playerbar-bg);
+  border-top: var(--playerbar-border-top);
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--sidebar-bg);
+  display: flex;
+  position: relative;
+}
+
+.content {
+  grid-area: content;
+  background: var(--content-bg);
+}
+
+.window {
+  display: flex;
+  height: 50px;
+  z-index: 100;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.handle {
+  background: var(--sidebar-handle-bg);
+  opacity: 0;
+  height: 100%;
+  width: 3px;
+  position: absolute;
+  right: 0;
+
+  &:hover {
+    cursor: col-resize;
+    opacity: 1;
+  }
+}
+
+.resizing {
+  opacity: 1;
+}
