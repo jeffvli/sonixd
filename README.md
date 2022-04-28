@@ -60,12 +60,16 @@ You can install sonixd by downloading the [latest release](https://github.com/je
 
 ### Windows
 
-If you prefer not to download the release binary, you can install using `winget`.
-
-Using your favorite terminal (cmd/pwsh):
+If you prefer not to download the release binary, you can install using `winget`. Using your favorite terminal (cmd/pwsh):
 
 ```
 winget install sonixd
+```
+
+Or you can install using [scoop](https://scoop.sh).
+
+```
+scoop install sonixd
 ```
 
 ---
