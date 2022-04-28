@@ -277,6 +277,7 @@ const usePlayerControls = (
     }
     const vol = Number((e / 100).toFixed(2));
     setLocalVolume(vol);
+    ipcRenderer.send('volume', vol);
   };
 
   const handleVolumeKey = useCallback(
@@ -285,10 +286,12 @@ const usePlayerControls = (
         const vol = Number((playQueue.volume + 0.05 > 1 ? 1 : playQueue.volume + 0.05).toFixed(2));
         setLocalVolume(vol);
         dispatch(setVolume(vol));
+        ipcRenderer.send('volume', vol);
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
         const vol = Number((playQueue.volume - 0.05 < 0 ? 0 : playQueue.volume - 0.05).toFixed(2));
         setLocalVolume(vol);
         dispatch(setVolume(vol));
+        ipcRenderer.send('volume', vol);
       }
     },
     [dispatch, playQueue.volume, setLocalVolume]
@@ -304,11 +307,13 @@ const usePlayerControls = (
         vol = vol < 0 ? 0 : vol;
         setLocalVolume(vol);
         dispatch(setVolume(vol));
+        ipcRenderer.send('volume', vol);
       } else {
         let vol = Number((playQueue.volume + 0.01).toFixed(2));
         vol = vol > 1 ? 1 : vol;
         setLocalVolume(vol);
         dispatch(setVolume(vol));
+        ipcRenderer.send('volume', vol);
       }
     },
     [dispatch, isDraggingVolume, playQueue.volume, setIsDraggingVolume, setLocalVolume]

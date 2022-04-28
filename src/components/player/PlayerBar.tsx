@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import format from 'format-duration';
 import { useTranslation } from 'react-i18next';
+import { ipcRenderer } from 'electron';
 import {
   PlayerContainer,
   PlayerColumn,
@@ -198,6 +199,11 @@ const PlayerBar = () => {
     setCurrentTime
   );
 
+  // Handle mpris volume change
+  useEffect(() => {
+    setLocalVolume(Number(playQueue.volume.toPrecision(2)));
+  }, [playQueue.volume]);
+
   useEffect(() => {
     // Handle volume slider dragging
     const debounce = setTimeout(() => {
@@ -213,6 +219,8 @@ const PlayerBar = () => {
       }
       setIsDraggingVolume(false);
     }, 100);
+
+    ipcRenderer.send('volume', localVolume);
 
     return () => clearTimeout(debounce);
   }, [dispatch, isDraggingVolume, localVolume, playQueue.currentPlayer, playQueue.fadeDuration]);
