@@ -1,0 +1,33 @@
+.window {
+  display: flex;
+  position: absolute;
+  height: 50px;
+  z-index: 100;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.group {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  height: 35px;
+  width: 130px;
+  z-index: 500;
+  -webkit-app-region: no-drag;
+}
+
+.button {
+  height: 100%;
+  padding: 8px;
+  flex-grow: 1;
+  text-align: center;
+  user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+.button:hover {
+  background: rgba(125, 125, 125, 0.3);
+}

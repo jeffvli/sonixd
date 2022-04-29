@@ -39,15 +39,6 @@
   background: var(--content-bg);
 }
 
-.window {
-  display: flex;
-  height: 50px;
-  z-index: 100;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-}
-
 .handle {
   opacity: 0;
   height: 100%;
