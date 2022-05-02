@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  enabled   Boolean
+
+  servers  Server[]
+  tasks    Task[]
+  userRole UserRole?
+}
+
+model UserRole {
+  id       Int @id @default(autoincrement())
+  server   Int
+  playlist Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model Server {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String   @unique
+  username  String
+  password  String
+  public    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  artists Artist[]
+  albums  Album[]
+  songs   Song[]
+  userId  Int
+  User    User     @relation(fields: [userId], references: [id])
+}
+
+model Genre {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  artists GenresOnArtists[]
+  albums  GenresOnAlbums[]
+  songs   GenresOnSongs[]
+}
+
+model GenresOnArtists {
+  Genre   Genre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  Artist   Artist @relation(fields: [artistId], references: [id])
+  artistId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([genreId, artistId])
+}
+
+model GenresOnAlbums {
+  Album   Album @relation(fields: [albumId], references: [id])
+  albumId Int
+
+  Genre   Genre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([genreId, albumId])
+}
+
+model GenresOnSongs {
+  Song   Song @relation(fields: [songId], references: [id])
+  songId Int
+
+  Genre   Genre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  @@id([genreId, songId])
+}
+
+model Artist {
+  id              Int      @id @default(autoincrement())
+  name            String
+  imageUrl        String?
+  biography       String?
+  favorite        Boolean?
+  rating          Int?
+  remoteId        String
+  remoteCreatedAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  albums Album[]
+  genres GenresOnArtists[]
+
+  Server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique([serverId, remoteId])
+}
+
+model Album {
+  id              Int      @id @default(autoincrement())
+  name            String
+  imageUrl        String?
+  favorite        Boolean?
+  rating          Int?
+  year            Int?
+  remoteId        String
+  remoteCreatedAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  songs  Song[]
+  genres GenresOnAlbums[]
+
+  Artist   Artist @relation(fields: [artistId], references: [id])
+  artistId Int
+
+  Server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique([serverId, remoteId])
+}
+
+model Song {
+  id              Int      @id @default(autoincrement())
+  name            String
+  imageUrl        String?
+  favorite        Boolean?
+  rating          Int?
+  remoteId        String
+  remoteCreatedAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  genres GenresOnSongs[]
+
+  Album   Album @relation(fields: [albumId], references: [id])
+  albumId Int
+
+  Server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique([serverId, remoteId])
+}
+
+model Task {
+  id         Int      @id @default(autoincrement())
+  name       String
+  inProgress Boolean
+  completed  Boolean
+  message    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  User   User @relation(fields: [userId], references: [id])
+  userId Int
+}
