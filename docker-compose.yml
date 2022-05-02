@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    container_name: sonixd_db
+    image: postgres:13
+    ports:
+      - '5432:5432'
+    volumes:
+      - /data/db
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+  server:
+    container_name: sonixd
+    image: sonixd:latest
+    depends_on:
+      - db
+    environment:
+      - APP_BASE_URL=${APP_BASE_URL}
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@sonixd_db/${DB_NAME}
+    ports:
+      - '9321:9321'
+    restart: always

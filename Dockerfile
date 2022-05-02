@@ -1,25 +1,42 @@
-# Based off of https://typeofnan.dev/how-to-serve-a-react-app-with-nginx-in-docker/
-
-# Stage 1 - Build frontend assets
-FROM node:18-alpine as builder
-
+# Stage 1 - Build frontend
+FROM node:16.5-alpine as ui-builder
 WORKDIR /app
-
 COPY . .
+RUN npm install && npm run build:renderer
 
+# Stage 2 - Build server
+FROM node:16.5-alpine as server-builder
+WORKDIR /app
+COPY src/server .
+RUN ls -lh
 RUN npm install
+RUN npm run build
 
-# Stage 2 - Serve assets using nginx
-FROM nginx:alpine
+# Stage 3 - Deploy
+FROM node:16.5-alpine
+WORKDIR /root
+RUN mkdir appdata
+RUN mkdir sonixd-server
+RUN mkdir sonixd-client
 
-# Set working directory to nginx asset directory
-WORKDIR /usr/share/nginx/html
+# Install server modules
+COPY src/server/package.json ./sonixd-server
+RUN cd ./sonixd-server && npm install --production
 
-# Remove default nginx static assets
-RUN rm -rf ./*
+# Add server build files
+COPY --from=server-builder /app/dist ./sonixd-server
+COPY --from=server-builder /app/prisma ./sonixd-server/prisma
 
-# Copy static assets from builder stage
-COPY --from=builder /app/release/app/dist/renderer .
+# Add client build files
+COPY --from=ui-builder /app/release/app/dist/renderer ./sonixd-client
 
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+COPY docker-entrypoint.sh ./sonixd-server/docker-entrypoint.sh
+RUN chmod +x ./sonixd-server/docker-entrypoint.sh
+
+RUN cd ./sonixd-server && npx prisma generate
+RUN npm install pm2 -g
+
+WORKDIR /root/sonixd-server
+
+EXPOSE 9321
+CMD ["sh", "docker-entrypoint.sh"]
