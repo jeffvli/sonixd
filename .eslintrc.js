@@ -14,6 +14,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/interactive-supports-focus': 'off',
+    'no-console': 'off',
     'import/order': [
       'error',
       {
