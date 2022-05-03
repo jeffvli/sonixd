@@ -3,14 +3,14 @@ services:
   db:
     container_name: sonixd_db
     image: postgres:13
-    ports:
-      - '${DB_PORT}:5432'
     volumes:
       - ${DB_PERSIST_PATH}:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '${DB_PORT}:5432'
     restart: unless-stopped
   server:
     container_name: sonixd_server
@@ -26,6 +26,7 @@ services:
       - APP_BASE_URL=${APP_BASE_URL}
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}
       - DATABASE_PORT=${DB_PORT}
+      - DATABASE_SECRET=${DB_SECRET}
     ports:
       - '9321:9321'
     restart: unless-stopped
@@ -43,3 +44,4 @@ services:
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}?schema=public
     ports:
       - '5555:5555'
+    restart: unless-stopped

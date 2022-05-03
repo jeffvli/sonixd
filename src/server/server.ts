@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   session({
-    secret: process.env.DB_SECRET || 'secret',
+    secret: process.env.DATABASE_SECRET || 'secret',
     resave: true,
     saveUninitialized: false,
     rolling: true,

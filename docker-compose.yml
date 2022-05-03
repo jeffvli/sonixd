@@ -6,7 +6,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - /data/db
+      - ${DB_PERSIST_PATH}:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -18,7 +18,8 @@ services:
       - db
     environment:
       - APP_BASE_URL=${APP_BASE_URL}
-      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@sonixd_db/${DB_NAME}
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}
+      - DATABASE_SECRET=${DB_SECRET}
     ports:
       - '9321:9321'
     restart: always
