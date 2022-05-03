@@ -5,9 +5,11 @@ import { prisma } from '../lib';
 import ApiError from '../utils/api-error';
 import ApiSuccess from '../utils/api-success';
 
-const login = async (options: { username: string; password: string }) => {
-  const { username, password } = options;
-  return ApiSuccess.ok({ username, password });
+const login = async (options: { username: string }) => {
+  const { username } = options;
+  const user = await prisma.user.findUnique({ where: { username } });
+
+  return ApiSuccess.ok({ ...user });
 };
 
 const register = async (options: { username: string; password: string }) => {
