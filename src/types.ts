@@ -220,3 +220,13 @@ export interface Pagination {
   serverSide?: boolean;
   recordsPerPage: number;
 }
+
+export type UserResponse = {
+  id: number;
+  username: string;
+  password?: string;
+  createdAt: string;
+  updatedAt: string;
+  enabled: boolean;
+  isAdmin: boolean;
+};

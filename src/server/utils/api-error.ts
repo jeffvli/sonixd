@@ -12,8 +12,24 @@ class ApiError extends Error {
     return new ApiError({ statusCode: 400, message });
   }
 
+  static unauthorized(message: string) {
+    return new ApiError({ statusCode: 401, message });
+  }
+
+  static forbidden(message: string) {
+    return new ApiError({ statusCode: 403, message });
+  }
+
+  static notFound(message: string) {
+    return new ApiError({ statusCode: 404, message });
+  }
+
   static conflict(message: string) {
     return new ApiError({ statusCode: 409, message });
+  }
+
+  static gone(message: string) {
+    return new ApiError({ statusCode: 410, message });
   }
 
   static internal(message: string) {

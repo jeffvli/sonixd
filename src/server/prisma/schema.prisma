@@ -20,20 +20,11 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  enabled   Boolean
+  enabled   Boolean  @default(false)
+  isAdmin   Boolean  @default(false)
 
-  servers  Server[]
-  tasks    Task[]
-  userRole UserRole?
-}
-
-model UserRole {
-  id       Int @id @default(autoincrement())
-  server   Int
-  playlist Int
-
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  servers Server[]
+  tasks   Task[]
 }
 
 model Server {

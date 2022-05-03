@@ -15,17 +15,8 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "enabled" BOOLEAN NOT NULL,
-
-    PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "UserRole" (
-    "id" SERIAL NOT NULL,
-    "server" INTEGER NOT NULL,
-    "playlist" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "enabled" BOOLEAN NOT NULL DEFAULT false,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY ("id")
 );
@@ -156,9 +147,6 @@ CREATE UNIQUE INDEX "Session.sid_unique" ON "Session"("sid");
 CREATE UNIQUE INDEX "User.username_unique" ON "User"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "UserRole.userId_unique" ON "UserRole"("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Server.url_unique" ON "Server"("url");
 
 -- CreateIndex
@@ -172,9 +160,6 @@ CREATE UNIQUE INDEX "Album.serverId_remoteId_unique" ON "Album"("serverId", "rem
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Song.serverId_remoteId_unique" ON "Song"("serverId", "remoteId");
-
--- AddForeignKey
-ALTER TABLE "UserRole" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Server" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,5 +1,6 @@
 import path from 'path';
 
+import { PrismaClient } from '@prisma/client';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -9,32 +10,18 @@ import passport from 'passport';
 
 import 'express-async-errors';
 
-import orm from './lib/prisma';
 import { errorHandler } from './middleware';
 import routes from './routes';
+
+require('./lib/passport');
 
 const PORT = 9321;
 
 const app = express();
-
+app.set('trust proxy', 1);
 const staticPath = path.join(__dirname, '../sonixd-client/');
 
 app.use(express.static(staticPath));
-app.use(
-  session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: false,
-    store: new PrismaSessionStore(orm, {
-      checkPeriod: 2 * 60 * 1000,
-      dbRecordIdIsSessionId: true,
-      dbRecordIdFunction: undefined,
-    }),
-    cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    },
-  })
-);
 app.use(
   cors({
     origin: [`http://localhost:4343`, `${process.env.APP_BASE_URL}`],
@@ -44,10 +31,27 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser('secret'));
+app.use(cookieParser());
+app.use(
+  session({
+    secret: process.env.DB_SECRET || 'secret',
+    resave: true,
+    saveUninitialized: false,
+    rolling: true,
+    name: 'user_session',
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    },
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 10 * 60 * 1000, // 10 minutes
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+  })
+);
+
 app.use(passport.initialize());
 app.use(passport.session());
-require('./lib/passport')(passport);
 
 app.get('/', (_req, res) => {
   res.sendFile(path.join(staticPath, 'index.html'));

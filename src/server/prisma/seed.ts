@@ -14,6 +14,7 @@ async function main() {
       username: 'admin',
       password: hashedPassword,
       enabled: true,
+      isAdmin: true,
     },
   });
 }
