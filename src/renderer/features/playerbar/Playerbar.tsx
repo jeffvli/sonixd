@@ -30,20 +30,20 @@ const PlayerBar = () => {
 
   return (
     <div className={styles.playerbar}>
-      <Grid className={styles.grid}>
-        <Grid.Col span={3}>
+      <Grid className={styles.grid} gutter="xs">
+        <Grid.Col px="xs" span={3}>
           <LeftControls
             song={currentPlayer === 1 ? player1Song : player2Song}
           />
         </Grid.Col>
-        <Grid.Col span={6}>
+        <Grid.Col px="xs" span={6}>
           <CenterControls
             currentPlayer={currentPlayer}
             playersRef={playersRef}
             status={playerStatus}
           />
         </Grid.Col>
-        <Grid.Col span={3}>
+        <Grid.Col px="xs" span={3}>
           <RightControls />
         </Grid.Col>
       </Grid>

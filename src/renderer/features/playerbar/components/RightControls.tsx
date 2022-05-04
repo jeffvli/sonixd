@@ -1,7 +1,6 @@
 import { ChangeEvent, useState } from 'react';
 
 import {
-  Container,
   Group,
   NumberInput,
   Popover,
@@ -64,7 +63,7 @@ const RightControls = () => {
   const [openConfig, setOpenConfig] = useState(false);
 
   return (
-    <Container className={styles.container}>
+    <div className={styles.container}>
       <div className={styles.box} />
       <div className={styles.box}>
         <Group position="right" spacing="xs">
@@ -158,7 +157,7 @@ const RightControls = () => {
           />
         </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
