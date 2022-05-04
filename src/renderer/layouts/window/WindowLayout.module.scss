@@ -1,13 +1,3 @@
-.window {
-  display: flex;
-  position: absolute;
-  height: 50px;
-  z-index: 100;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-}
-
 .group {
   position: absolute;
   top: 0;

@@ -20,7 +20,6 @@ const WindowLayout = ({ style }: WindowControlsProps) => {
     <>
       {isElectron() && (
         <>
-          <div className={styles.window} />
           {style === 'windows' && (
             <>
               <div className={styles.group}>
