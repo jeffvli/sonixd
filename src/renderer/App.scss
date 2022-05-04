@@ -16,11 +16,13 @@ html {
   position: absolute;
   overflow-y: hidden;
   overflow-x: hidden;
+  color: var(--content-text-color);
   background: var(--content-bg);
 }
 
 @media only screen and (max-width: 640px) {
-  body {
+  body,
+  html {
     overflow-x: auto;
   }
 }
