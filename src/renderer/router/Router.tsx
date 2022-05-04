@@ -3,7 +3,8 @@ import { ReactNode } from 'react';
 import isElectron from 'is-electron';
 import { MemoryRouter, Routes, Route, BrowserRouter } from 'react-router-dom';
 
-import { Login } from '../features/auth';
+import { LoginRoute } from 'renderer/features/auth';
+
 import Dashboard from '../features/dashboard/Dashboard';
 import { AuthLayout, DefaultLayout, WindowLayout } from '../layouts';
 import AuthOutlet from './outlets/AuthOutlet';
@@ -25,7 +26,7 @@ const Router = () => {
           <Route element={<WindowLayout />}>
             <Route element={<AuthOutlet redirectTo="/" />}>
               <Route element={<AuthLayout />}>
-                <Route element={<Login />} path="/login" />
+                <Route element={<LoginRoute />} path="/login" />
               </Route>
             </Route>
             <Route element={<PrivateOutlet redirectTo="/login" />} path="/">
