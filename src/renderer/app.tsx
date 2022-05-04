@@ -2,9 +2,8 @@ import { useEffect } from 'react';
 
 import { MantineProvider } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { ModalsProvider } from '@mantine/modals';
 
-import Router from './Router';
+import Router from './router/Router';
 import './App.scss';
 
 export default function App() {
@@ -22,18 +21,14 @@ export default function App() {
       theme={{
         colorScheme: 'dark',
         focusRing: 'auto',
+        defaultRadius: 'xs',
         spacing: {
           xs: 2,
-          sm: 4,
-          md: 6,
-          lg: 8,
-          xl: 10,
         },
+        other: {},
       }}
     >
-      <ModalsProvider>
-        <Router />
-      </ModalsProvider>
+      <Router />
     </MantineProvider>
   );
 }
