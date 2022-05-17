@@ -33,7 +33,7 @@ services:
   prisma:
     container_name: sonixd_prisma_studio
     volumes:
-      - /app/prisma
+      - ./src/server/prisma:/app/prisma
     build:
       context: ./src/server/prisma
       dockerfile: Dockerfile
