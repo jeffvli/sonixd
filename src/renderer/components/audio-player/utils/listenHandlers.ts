@@ -9,6 +9,7 @@ export const gaplessHandler = (args: {
   duration: number;
   isTransitioning: boolean;
   setIsTransitioning: Dispatch<boolean>;
+  isFlac: boolean;
 }) => {
   const {
     nextPlayerRef,
@@ -16,6 +17,7 @@ export const gaplessHandler = (args: {
     duration,
     isTransitioning,
     setIsTransitioning,
+    isFlac,
   } = args;
 
   if (!isTransitioning) {
@@ -26,7 +28,7 @@ export const gaplessHandler = (args: {
     return null;
   }
 
-  const durationPadding = 0.13;
+  const durationPadding = isFlac ? 0.065 : 0.115;
   if (currentTime + durationPadding >= duration) {
     return nextPlayerRef.current.getInternalPlayer().play();
   }

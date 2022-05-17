@@ -112,9 +112,10 @@ const AudioPlayer = (
         duration: getDuration(player1Ref),
         isTransitioning,
         setIsTransitioning,
+        isFlac: player1.suffix === 'flac',
       });
     },
-    [isTransitioning]
+    [isTransitioning, player1.suffix]
   );
 
   const handleGapless2 = useCallback(
@@ -125,9 +126,10 @@ const AudioPlayer = (
         duration: getDuration(player2Ref),
         isTransitioning,
         setIsTransitioning,
+        isFlac: player2.suffix === 'flac',
       });
     },
-    [isTransitioning]
+    [isTransitioning, player2.suffix]
   );
 
   return (
