@@ -42,6 +42,15 @@ const getGenres = async (server: Server) => {
   return genres;
 };
 
+const getAlbum = async (server: Server, options: { id: string }) => {
+  const { data: album } = await api.get(
+    `${server.url}/rest/getAlbum.view?v=1.13.0&c=sonixd&f=json&${server.token}`,
+    { params: options }
+  );
+
+  return album;
+};
+
 const getAlbums = async (
   server: Server,
   options: {
@@ -68,7 +77,7 @@ const getAlbums = async (
         res.data.albumList2.album.length === 0
       ) {
         // Flatten and return once there are no more albums left
-        return recursiveData.flatMap((album) => [...album]);
+        return recursiveData.flatMap((album) => album);
       }
 
       // On every iteration, push the existing combined album array and increase the offset
@@ -88,6 +97,7 @@ const getAlbums = async (
 };
 
 const SubsonicApi = {
+  getAlbum,
   getAlbums,
   getArtists,
   getGenres,
