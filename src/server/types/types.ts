@@ -23,7 +23,7 @@ export type ServerFolder = {
 export type User = {
   id: number;
   username: string;
-  password: string;
+  password?: string;
   enabled: boolean;
   isAdmin: boolean;
   createdAt: Date | string;
@@ -81,3 +81,8 @@ export type OffsetPagination = {
   limit: number;
   page: number;
 };
+
+export type AlbumArtistFilter = {
+  serverFolderIds: string;
+  user: User;
+} & OffsetPagination;

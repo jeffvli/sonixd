@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import { z } from 'zod';
 
 import { prisma } from '../lib';
 import ApiError from '../utils/api-error';
@@ -14,22 +13,6 @@ const login = async (options: { username: string }) => {
 
 const register = async (options: { username: string; password: string }) => {
   const { username, password } = options;
-  const registerSchema = z.object({
-    username: z.string().min(4).max(26),
-    password: z.string().min(6).max(255),
-  });
-
-  const validate = await registerSchema.safeParseAsync({
-    username,
-    password,
-  });
-
-  if (!validate.success) {
-    throw ApiError.badRequest(
-      'The username and password must meet the requirements.'
-    );
-  }
-
   const userExists = await prisma.user.findUnique({ where: { username } });
 
   if (userExists) {
