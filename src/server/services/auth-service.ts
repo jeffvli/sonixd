@@ -9,7 +9,7 @@ const login = async (options: { username: string }) => {
   const { username } = options;
   const user = await prisma.user.findUnique({ where: { username } });
 
-  return ApiSuccess.ok({ ...user });
+  return ApiSuccess.ok({ data: { ...user } });
 };
 
 const register = async (options: { username: string; password: string }) => {
@@ -45,7 +45,7 @@ const register = async (options: { username: string; password: string }) => {
     },
   });
 
-  return ApiSuccess.ok(user);
+  return ApiSuccess.ok({ data: user });
 };
 
 export const authService = {

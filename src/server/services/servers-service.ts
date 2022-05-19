@@ -9,7 +9,7 @@ const get = async () => {
     include: { serverFolder: true },
   });
 
-  return ApiSuccess.ok(servers);
+  return ApiSuccess.ok({ data: servers });
 };
 
 const create = async (options: {
@@ -53,7 +53,7 @@ const create = async (options: {
     }
   );
 
-  return ApiSuccess.ok({ ...server });
+  return ApiSuccess.ok({ data: { ...server } });
 };
 
 const scan = async (options: { id: number; userId: number }) => {
@@ -69,7 +69,7 @@ const scan = async (options: { id: number; userId: number }) => {
 
   subsonicScanner.fullScan(userId, server);
 
-  return ApiSuccess.ok({});
+  return ApiSuccess.ok({ data: {} });
 };
 
 export const serversService = {
