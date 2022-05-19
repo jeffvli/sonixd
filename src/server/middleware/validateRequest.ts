@@ -42,7 +42,15 @@ export const validateRequest: <TParams = any, TQuery = any, TBody = any>(
     }
 
     if (errors.length > 0) {
-      throw ApiError.badRequest(JSON.stringify(errors));
+      throw ApiError.badRequest(
+        JSON.stringify(
+          [
+            `[${errors[0].type}]`,
+            `[${errors[0].errors.issues[0].path[0]}]`,
+            errors[0].errors.issues[0].message,
+          ].join(' ')
+        )
+      );
     }
     return next();
   };
