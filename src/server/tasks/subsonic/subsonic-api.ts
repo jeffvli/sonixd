@@ -16,15 +16,18 @@ api.interceptors.response.use(
   }
 );
 
-const getArtists = async (
-  server: Server,
-  options: {
-    musicFolderId?: string | number;
-  }
-) => {
+const getMusicFolders = async (server: Server) => {
+  const { data } = await api.get(
+    `${server.url}/rest/getMusicFolders.view?v=1.13.0&c=sonixd&f=json&${server.token}`
+  );
+
+  return data.musicFolders.musicFolder;
+};
+
+const getArtists = async (server: Server, musicFolderId: string) => {
   const { data } = await api.get(
     `${server.url}/rest/getArtists.view?v=1.13.0&c=sonixd&f=json&${server.token}`,
-    { params: options }
+    { params: { musicFolderId } }
   );
 
   const artists = (data.artists?.index || []).flatMap(
@@ -42,10 +45,10 @@ const getGenres = async (server: Server) => {
   return genres;
 };
 
-const getAlbum = async (server: Server, options: { id: string }) => {
+const getAlbum = async (server: Server, id: string) => {
   const { data: album } = await api.get(
     `${server.url}/rest/getAlbum.view?v=1.13.0&c=sonixd&f=json&${server.token}`,
-    { params: options }
+    { params: { id } }
   );
 
   return album;
@@ -53,11 +56,9 @@ const getAlbum = async (server: Server, options: { id: string }) => {
 
 const getAlbums = async (
   server: Server,
-  options: {
-    size: number;
-    offset: number;
-    musicFolderId?: string | number;
-  },
+  musicFolderId: string,
+  size: number,
+  offset: number,
   recursiveData: any[] = []
 ) => {
   const albums: any = api
@@ -66,8 +67,9 @@ const getAlbums = async (
       {
         params: {
           type: 'newest',
-          size: options.size,
-          offset: options.offset,
+          size,
+          offset,
+          musicFolderId,
         },
       }
     )
@@ -84,10 +86,9 @@ const getAlbums = async (
       recursiveData.push(res.data.albumList2.album);
       return getAlbums(
         server,
-        {
-          size: options.size,
-          offset: options.offset + options.size,
-        },
+        musicFolderId,
+        size,
+        offset + size,
         recursiveData
       );
     })
@@ -97,6 +98,7 @@ const getAlbums = async (
 };
 
 const SubsonicApi = {
+  getMusicFolders,
   getAlbum,
   getAlbums,
   getArtists,

@@ -23,33 +23,56 @@ model User {
   enabled   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
 
-  servers              Server[]
-  tasks                Task[]
-  artistFavorites      ArtistFavorites[]
-  albumArtistFavorites AlbumArtistFavorites[]
-  albumFavorites       AlbumFavorites[]
-  songFavorites        SongFavorites[]
-  artistRatings        ArtistRatings[]
-  albumArtistRatings   AlbumArtistRatings[]
-  albumRatings         AlbumRatings[]
-  songRatings          SongRatings[]
+  serverFolderDenyPermissions ServerFolderDenyPermission[]
+  tasks                       Task[]
+  artistFavorites             ArtistFavorites[]
+  albumArtistFavorites        AlbumArtistFavorites[]
+  albumFavorites              AlbumFavorites[]
+  songFavorites               SongFavorites[]
+  artistRatings               ArtistRatings[]
+  albumArtistRatings          AlbumArtistRatings[]
+  albumRatings                AlbumRatings[]
+  songRatings                 SongRatings[]
 }
 
 model Server {
-  id           Int      @id @default(autoincrement())
-  name         String   @unique
-  url          String   @unique
-  alternateUrl String
-  username     String
-  token        String
-  serverType   String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  url        String   @unique
+  username   String
+  token      String
+  serverType String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  artists      Artist[]
-  albumArtists AlbumArtist[]
-  albums       Album[]
-  songs        Song[]
+  serverFolder ServerFolder[]
+}
+
+model ServerFolder {
+  id        Int      @id @default(autoincrement())
+  name      String
+  remoteId  String   @unique
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  albumArtists                AlbumArtist[]
+  artists                     Artist[]
+  songs                       Song[]
+  albums                      Album[]
+  serverFolderDenyPermissions ServerFolderDenyPermission[]
+
+  Server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique(fields: [serverId, remoteId], name: "uniqueServerFolderId")
+}
+
+model ServerFolderDenyPermission {
+  id Int @id @default(autoincrement())
+
+  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolderId Int
 
   User   User @relation(fields: [userId], references: [id])
   userId Int
@@ -224,15 +247,15 @@ model AlbumArtist {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  albums                 Album[]
-  genresOnAlbumArtists   GenresOnAlbumArtists[]
-  albumArtistFavoritesId AlbumArtistFavorites[]
+  albums               Album[]
+  genresOnAlbumArtists GenresOnAlbumArtists[]
+  albumArtistFavorites AlbumArtistFavorites[]
+  albumArtistRatings   AlbumArtistRatings[]
 
-  Server   Server @relation(fields: [serverId], references: [id])
-  serverId Int
+  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolderId Int
 
-  albumArtistRatings AlbumArtistRatings[]
-  @@unique(fields: [serverId, remoteId], name: "uniqueAlbumArtistId")
+  @@unique(fields: [serverFolderId, remoteId], name: "uniqueAlbumArtistId")
 }
 
 model Album {
@@ -246,17 +269,17 @@ model Album {
   updatedAt       DateTime  @updatedAt
 
   songs          Song[]
-  genres         GenresOnAlbums[]
+  genresOnAlbums GenresOnAlbums[]
   albumFavorites AlbumFavorites[]
   albumRatings   AlbumRatings[]
 
-  Server   Server @relation(fields: [serverId], references: [id])
-  serverId Int
+  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolderId Int
 
   AlbumArtist   AlbumArtist @relation(fields: [albumArtistId], references: [id])
   albumArtistId Int
 
-  @@unique(fields: [serverId, remoteId], name: "uniqueAlbumId")
+  @@unique(fields: [serverFolderId, remoteId], name: "uniqueAlbumId")
 }
 
 model Artist {
@@ -274,10 +297,11 @@ model Artist {
   artistFavorites ArtistFavorites[]
   artistsRatings  ArtistRatings[]
 
-  Server   Server @relation(fields: [serverId], references: [id])
-  serverId Int
 
-  @@unique(fields: [serverId, remoteId], name: "uniqueArtistId")
+  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolderId Int
+
+  @@unique(fields: [serverFolderId, remoteId], name: "uniqueArtistId")
 }
 
 model Song {
@@ -290,20 +314,20 @@ model Song {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  genres        GenresOnSongs[]
+  genresOnSongs GenresOnSongs[]
   songFavorites SongFavorites[]
   songRatings   SongRatings[]
 
   Album   Album @relation(fields: [albumId], references: [id])
   albumId Int
 
-  Server   Server @relation(fields: [serverId], references: [id])
-  serverId Int
-
   Artist   Artist? @relation(fields: [artistId], references: [id])
   artistId Int?
 
-  @@unique(fields: [serverId, remoteId], name: "uniqueSongId")
+  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolderId Int
+
+  @@unique(fields: [serverFolderId, remoteId], name: "uniqueSongId")
 }
 
 model Task {

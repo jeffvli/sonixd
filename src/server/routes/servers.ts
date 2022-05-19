@@ -12,26 +12,24 @@ serversRouter.get('/', authenticateLocal, async (_req, res) => {
 });
 
 serversRouter.post('/', authenticateAdmin, async (req, res) => {
-  const { name, url, alternateUrl, username, token, serverType } = req.body;
+  const { name, url, username, token, serverType } = req.body;
 
   const { statusCode, data } = await serversService.create({
     name,
     url,
-    alternateUrl,
     username,
     token,
     serverType,
-    userId: Number(req.auth.id),
   });
 
   return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
 });
 
-serversRouter.patch('/', async (_req, res) => {
+serversRouter.patch('/:id', async (_req, res) => {
   return res.status(200).json({});
 });
 
-serversRouter.post('/:id/scan/', authenticateAdmin, async (req, res) => {
+serversRouter.post('/:id/scan', authenticateAdmin, async (req, res) => {
   const { statusCode, data } = await serversService.scan({
     id: Number(req.params.id),
     userId: Number(req.auth.id),

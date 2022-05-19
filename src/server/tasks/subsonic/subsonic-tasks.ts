@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { prisma, throttle } from '../../lib';
-import { Server } from '../../types/types';
+import { Server, ServerFolder } from '../../types/types';
 import { groupByProperty } from '../../utils';
 import SubsonicApi from './subsonic-api';
 
@@ -46,8 +46,11 @@ export const importGenres = async (server: Server) => {
   return `Added ${createdGenres.count} genres.`;
 };
 
-export const importAlbumArtists = async (server: Server) => {
-  const res = await SubsonicApi.getArtists(server, {});
+export const importAlbumArtists = async (
+  server: Server,
+  serverFolder: ServerFolder
+) => {
+  const res = await SubsonicApi.getArtists(server, serverFolder.remoteId);
 
   const albumArtists = res.map(
     (artist: {
@@ -59,7 +62,7 @@ export const importAlbumArtists = async (server: Server) => {
       return {
         name: artist.name,
         remoteId: artist.id,
-        serverId: server.id,
+        serverFolderId: serverFolder.id,
         imageUrl: artist.artistImageUrl,
       };
     }
@@ -70,6 +73,7 @@ export const importAlbumArtists = async (server: Server) => {
     skipDuplicates: true,
   });
 
+  // Since Subsonic API doesn't distinguish between "Album Artist" and "Artist", add them to both
   const createdArtists = await prisma.artist.createMany({
     data: albumArtists,
     skipDuplicates: true,
@@ -80,12 +84,17 @@ export const importAlbumArtists = async (server: Server) => {
   } album artists.`;
 };
 
-export const importAlbums = async (server: Server) => {
+export const importAlbums = async (
+  server: Server,
+  serverFolder: ServerFolder
+) => {
   const promises: any[] = [];
-  const res = await SubsonicApi.getAlbums(server, {
-    size: 500,
-    offset: 0,
-  });
+  const res = await SubsonicApi.getAlbums(
+    server,
+    serverFolder.remoteId,
+    500,
+    0
+  );
 
   const albums = res.map(
     (album: {
@@ -107,7 +116,7 @@ export const importAlbums = async (server: Server) => {
         favorite: album.starred,
         rating: album.userRating,
         remoteId: album.id,
-        serverId: server.id,
+        serverFolderId: serverFolder.id,
         albumArtistRemoteId: album.artistId,
         remoteCreatedAt: album.created,
         imageUrl: getCoverArtUrl(server, album),
@@ -123,7 +132,7 @@ export const importAlbums = async (server: Server) => {
       where: {
         uniqueAlbumArtistId: {
           remoteId: albumArtistRemoteId,
-          serverId: server.id,
+          serverFolderId: serverFolder.id,
         },
       },
     });
@@ -134,7 +143,7 @@ export const importAlbums = async (server: Server) => {
           where: {
             uniqueAlbumId: {
               remoteId: album.remoteId,
-              serverId: server.id,
+              serverFolderId: serverFolder.id,
             },
           },
           update: {},
@@ -143,7 +152,7 @@ export const importAlbums = async (server: Server) => {
             name: album.name,
             year: album.year,
             remoteId: album.remoteId,
-            serverId: album.serverId,
+            serverFolderId: album.serverFolderId,
             remoteCreatedAt: album.remoteCreatedAt,
             imageUrl: album.imageUrl,
           },
@@ -159,24 +168,26 @@ export const importAlbums = async (server: Server) => {
   await Promise.all(promises);
 };
 
-export const importAlbum = async (server: Server, taskId: string) => {
+export const importAlbumDetail = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  taskId: number
+) => {
   const promises = [];
   const dbAlbums = await prisma.album.findMany({
     where: {
-      serverId: server.id,
+      serverFolderId: serverFolder.id,
     },
   });
 
   const throttledAlbumFetch = throttle(async (album: any, i: number) => {
-    const albumRes = await SubsonicApi.getAlbum(server, {
-      id: album.remoteId,
-    });
+    const albumRes = await SubsonicApi.getAlbum(server, album.remoteId);
 
     console.log('fetch', i);
     if (i % 500 === 0) {
       await prisma.task.update({
         where: {
-          id: Number(taskId),
+          id: taskId,
         },
         data: {
           message: `${String(i)} scanned`,
@@ -191,7 +202,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
             where: {
               uniqueArtistId: {
                 remoteId: song.artistId,
-                serverId: server.id,
+                serverFolderId: serverFolder.id,
               },
             },
           });
@@ -201,7 +212,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
               artistName: song.artist,
               name: song.title,
               remoteId: song.id,
-              serverId: server.id,
+              serverFolderId: serverFolder.id,
               artistId: artist.id,
             };
           }
@@ -211,7 +222,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
           artistName: song.artist,
           name: song.title,
           remoteId: song.id,
-          serverId: server.id,
+          serverFolderId: serverFolder.id,
         };
       });
 
@@ -221,7 +232,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
         where: {
           uniqueAlbumId: {
             remoteId: albumRes.album.id,
-            serverId: server.id,
+            serverFolderId: serverFolder.id,
           },
         },
         data: {
@@ -238,7 +249,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
         where: {
           uniqueAlbumId: {
             remoteId: albumRes.album.id,
-            serverId: server.id,
+            serverFolderId: serverFolder.id,
           },
         },
       });
@@ -259,7 +270,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
             id: selectedAlbum.id,
           },
           data: {
-            genres: {
+            genresOnAlbums: {
               connectOrCreate: {
                 where: {
                   genreName_albumId: {
@@ -281,7 +292,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
           where: {
             uniqueSongId: {
               remoteId: song.id,
-              serverId: server.id,
+              serverFolderId: serverFolder.id,
             },
           },
         });
@@ -292,7 +303,7 @@ export const importAlbum = async (server: Server, taskId: string) => {
               id: selectedSong.id,
             },
             data: {
-              genres: {
+              genresOnSongs: {
                 connectOrCreate: {
                   where: {
                     genreName_songId: {

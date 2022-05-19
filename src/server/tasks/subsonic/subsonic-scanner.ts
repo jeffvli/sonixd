@@ -1,15 +1,25 @@
 import Queue from 'better-queue';
 
 import { prisma } from '../../lib';
+import { Server, ServerFolder } from '../../types/types';
 import {
-  importAlbum,
+  importAlbumDetail,
   importAlbumArtists,
   importAlbums,
   importGenres,
 } from './subsonic-tasks';
 
 const q = new Queue(
-  async (task: any, cb: any) => {
+  async (
+    task: {
+      id: string;
+      dbId: number;
+      server: Server;
+      serverFolder: ServerFolder;
+      type: 'genres' | 'albumArtists' | 'albums' | 'albumDetail';
+    },
+    cb: any
+  ) => {
     await prisma.task.update({
       where: { id: task.dbId },
       data: { inProgress: true, completed: false },
@@ -20,15 +30,15 @@ const q = new Queue(
     }
 
     if (task.type === 'albumArtists') {
-      await importAlbumArtists(task.server);
+      await importAlbumArtists(task.server, task.serverFolder);
     }
 
     if (task.type === 'albums') {
-      await importAlbums(task.server);
+      await importAlbums(task.server, task.serverFolder);
     }
 
-    if (task.type === 'album') {
-      await importAlbum(task.server, task.dbId);
+    if (task.type === 'albumDetail') {
+      await importAlbumDetail(task.server, task.serverFolder, task.dbId);
     }
 
     await cb(null, task);
@@ -65,7 +75,7 @@ q.on('task_finish', async (_taskId, result) => {
 //   q.push({ id: task.id, server, type });
 // };
 
-const fullScan = async (userId: number, server: any) => {
+const fullScan = async (userId: number, server: Server) => {
   const task = await prisma.task.create({
     data: {
       name: `[${server.name || server.url}]: fullscan`,
@@ -75,24 +85,42 @@ const fullScan = async (userId: number, server: any) => {
     },
   });
 
-  q.push({ id: 'fullscan', dbId: task.id, server, type: 'genres' }).on(
-    'finish',
-    () => {
-      q.push({
-        id: 'fullscan',
-        dbId: task.id,
-        server,
-        type: 'albumArtists',
-      }).on('finish', () => {
-        q.push({ id: 'fullscan', dbId: task.id, server, type: 'albums' }).on(
-          'finish',
-          () => {
-            q.push({ id: 'fullscan', dbId: task.id, server, type: 'album' });
-          }
-        );
+  const args = {
+    id: 'fullscan',
+    dbId: task.id,
+    server,
+  };
+
+  if (server.serverFolder) {
+    server.serverFolder
+      .filter((folder) => folder.enabled)
+      .forEach((folder) => {
+        q.push({
+          ...args,
+          serverFolder: folder,
+          type: 'genres',
+        }).on('finish', () => {
+          q.push({
+            ...args,
+            serverFolder: folder,
+            type: 'albumArtists',
+          }).on('finish', () => {
+            q.push({
+              ...args,
+              serverFolder: folder,
+              type: 'albums',
+            }).on('finish', () => {
+              q.push({
+                ...args,
+                server,
+                serverFolder: folder,
+                type: 'albumDetail',
+              });
+            });
+          });
+        });
       });
-    }
-  );
+  }
 };
 
 q.on('task_progress', (taskId, completed, total) => {
