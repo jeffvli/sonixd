@@ -20,6 +20,17 @@ const authenticateLocal = (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
+    if (!u.enabled) {
+      return res.status(401).json({
+        statusCode: 401,
+        response: 'Error',
+        error: {
+          message: 'Your account is not enabled.',
+          path: req.path,
+        },
+      });
+    }
+
     req.auth = {
       id: u?.id,
       username: u?.username,

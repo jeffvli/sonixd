@@ -20,12 +20,24 @@ const authenticateAdmin = (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
+    if (!u.enabled) {
+      return res.status(401).json({
+        statusCode: 401,
+        response: 'Error',
+        error: {
+          message: 'Your account is not enabled.',
+          path: req.path,
+        },
+      });
+    }
+
     if (!u.isAdmin) {
       return res.status(403).json({
         statusCode: 403,
         response: 'Error',
         error: {
-          message: info?.message || 'Requires admin.',
+          message:
+            info?.message || 'This action requires an administrator account.',
           path: req.path,
         },
       });
