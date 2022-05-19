@@ -2,12 +2,22 @@ export type Server = {
   id: number;
   name: string;
   url: string;
-  alternateUrl: string;
   username: string;
   token: string;
   serverType: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  serverFolder?: ServerFolder[];
+};
+
+export type ServerFolder = {
+  id: number;
+  name: string;
+  remoteId: string;
+  enabled: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  serverId: number;
 };
 
 export type User = {
@@ -16,15 +26,15 @@ export type User = {
   password: string;
   enabled: boolean;
   isAdmin: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 };
 
 export type Genre = {
   id: number;
   name: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 };
 
 export type Artist = {
@@ -36,8 +46,8 @@ export type Artist = {
   rating?: number;
   remoteId: string;
   remoteCreatedAt: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 
   genres?: Genre[];
 };
@@ -51,8 +61,8 @@ export type Album = {
   rating?: number;
   remoteId: string;
   remoteCreatedAt: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 };
 
 export type Song = {
@@ -63,6 +73,11 @@ export type Song = {
   rating?: number;
   remoteId: string;
   remoteCreatedAt: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+};
+
+export type OffsetPagination = {
+  limit: number;
+  page: number;
 };
