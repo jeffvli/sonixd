@@ -7,3 +7,7 @@ export const paginationValidation = {
   ),
   page: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number()),
 };
+
+export const idValidation = {
+  id: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number()),
+};
