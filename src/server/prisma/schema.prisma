@@ -23,16 +23,16 @@ model User {
   enabled   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
 
-  serverFolderDenyPermissions ServerFolderDenyPermission[]
-  tasks                       Task[]
-  artistFavorites             ArtistFavorites[]
-  albumArtistFavorites        AlbumArtistFavorites[]
-  albumFavorites              AlbumFavorites[]
-  songFavorites               SongFavorites[]
-  artistRatings               ArtistRatings[]
-  albumArtistRatings          AlbumArtistRatings[]
-  albumRatings                AlbumRatings[]
-  songRatings                 SongRatings[]
+  tasks                   Task[]
+  artistFavorites         ArtistFavorites[]
+  albumArtistFavorites    AlbumArtistFavorites[]
+  albumFavorites          AlbumFavorites[]
+  songFavorites           SongFavorites[]
+  artistRatings           ArtistRatings[]
+  albumArtistRatings      AlbumArtistRatings[]
+  albumRatings            AlbumRatings[]
+  songRatings             SongRatings[]
+  serverFolderPermissions ServerFolderPermissions[]
 }
 
 model Server {
@@ -55,12 +55,13 @@ model ServerFolder {
   enabled   Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isPublic  Boolean  @default(true)
 
-  albumArtists                AlbumArtist[]
-  artists                     Artist[]
-  songs                       Song[]
-  albums                      Album[]
-  serverFolderDenyPermissions ServerFolderDenyPermission[]
+  albumArtists            AlbumArtist[]
+  artists                 Artist[]
+  songs                   Song[]
+  albums                  Album[]
+  serverFolderPermissions ServerFolderPermissions[]
 
   Server   Server @relation(fields: [serverId], references: [id])
   serverId Int
@@ -68,7 +69,7 @@ model ServerFolder {
   @@unique(fields: [serverId, remoteId], name: "uniqueServerFolderId")
 }
 
-model ServerFolderDenyPermission {
+model ServerFolderPermissions {
   id Int @id @default(autoincrement())
 
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
