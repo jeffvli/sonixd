@@ -10,7 +10,7 @@ const errorHandler = (
     statusCode: err.statusCode || 500,
     response: 'Error',
     error: {
-      message: err.message,
+      message: JSON.parse(err.message) || err.message,
       path: req.path,
     },
   });
