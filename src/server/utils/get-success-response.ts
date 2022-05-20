@@ -30,8 +30,8 @@ const getSuccessResponse = (options: {
     const hasNextPage = startIndex + limit <= totalEntries;
 
     pagination = {
-      prevPage: hasPrevPage ? getPaginationUrl(url, 'prev') : '',
-      nextPage: hasNextPage ? getPaginationUrl(url, 'next') : '',
+      prevPage: hasPrevPage ? getPaginationUrl(url, 'prev') : null,
+      nextPage: hasNextPage ? getPaginationUrl(url, 'next') : null,
       startIndex,
       totalEntries,
     };
