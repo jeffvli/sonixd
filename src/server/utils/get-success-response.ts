@@ -6,13 +6,12 @@ const getPaginationUrl = (url: string, action: 'next' | 'prev') => {
   if (currentPageRegex) {
     const currentPage = Number(currentPageRegex[0].split('=')[1]);
     const newPage = action === 'next' ? currentPage + 1 : currentPage - 1;
-    return `${process.env.APP_BASE_URL?.replace(/\/$/, '')}/${url.replace(
-      /page=\d+/gm,
-      `page=${newPage}`
-    )}`;
+    const normalizedUrl = process.env.APP_BASE_URL?.replace(/\/$/, '');
+
+    return `${normalizedUrl}${url.replace(/page=\d+/gm, `page=${newPage}`)}`;
   }
 
-  return 0;
+  return null;
 };
 
 const getSuccessResponse = (options: {
