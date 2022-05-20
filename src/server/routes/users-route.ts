@@ -1,14 +1,12 @@
 import express, { Router } from 'express';
 
-import orm from '../lib/prisma';
+import { usersController } from '../controllers';
 import { authenticateLocal } from '../middleware';
 
 const usersRouter: Router = express.Router();
 
-usersRouter.get('/', authenticateLocal, async (_req, res) => {
-  const users = await orm.user.findMany();
+usersRouter.get('/', authenticateLocal, usersController.getUsers);
 
-  return res.status(200).json(users);
-});
+usersRouter.get('/:id', authenticateLocal, usersController.getUser);
 
 export default usersRouter;

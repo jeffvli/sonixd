@@ -1,15 +1,28 @@
 import { prisma } from '../lib';
 import { subsonicScanner } from '../tasks';
 import SubsonicApi from '../tasks/subsonic/subsonic-api';
-import ApiError from '../utils/api-error';
-import ApiSuccess from '../utils/api-success';
+import { apiError, apiSuccess } from '../utils';
 
-const get = async () => {
+const getOne = async (options: { id: number }) => {
+  const { id } = options;
+  const server = await prisma.server.findUnique({
+    where: { id },
+    include: { serverFolder: true },
+  });
+
+  if (!server) {
+    throw apiError.notFound('');
+  }
+
+  return apiSuccess.ok({ data: server });
+};
+
+const getMany = async () => {
   const servers = await prisma.server.findMany({
     include: { serverFolder: true },
   });
 
-  return ApiSuccess.ok({ data: servers });
+  return apiSuccess.ok({ data: servers });
 };
 
 const create = async (options: {
@@ -53,7 +66,7 @@ const create = async (options: {
     }
   );
 
-  return ApiSuccess.ok({ data: { ...server } });
+  return apiSuccess.ok({ data: { ...server } });
 };
 
 const scan = async (options: { id: number; userId: number }) => {
@@ -64,16 +77,17 @@ const scan = async (options: { id: number; userId: number }) => {
   });
 
   if (!server) {
-    throw ApiError.notFound('Server does not exist.');
+    throw apiError.notFound('Server does not exist.');
   }
 
   subsonicScanner.fullScan(userId, server);
 
-  return ApiSuccess.ok({ data: {} });
+  return apiSuccess.ok({ data: {} });
 };
 
 export const serversService = {
-  get,
+  getOne,
+  getMany,
   create,
   scan,
 };

@@ -1,41 +1,20 @@
 import express, { Router } from 'express';
 
+import { serversController } from '../controllers';
 import { authenticateAdmin, authenticateLocal } from '../middleware';
-import { serversService } from '../services';
-import { getSuccessResponse } from '../utils';
 
 const serversRouter: Router = express.Router();
 
-serversRouter.get('/', authenticateLocal, async (_req, res) => {
-  const { statusCode, data } = await serversService.get();
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
-});
+serversRouter.get('/', authenticateLocal, serversController.getServers);
 
-serversRouter.post('/', authenticateAdmin, async (req, res) => {
-  const { name, url, username, token, serverType } = req.body;
+serversRouter.get('/:id', authenticateLocal, serversController.getServer);
 
-  const { statusCode, data } = await serversService.create({
-    name,
-    url,
-    username,
-    token,
-    serverType,
-  });
+serversRouter.post('/', authenticateAdmin, serversController.createServer);
 
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
-});
-
-serversRouter.patch('/:id', async (_req, res) => {
-  return res.status(200).json({});
-});
-
-serversRouter.post('/:id/scan', authenticateAdmin, async (req, res) => {
-  const { statusCode, data } = await serversService.scan({
-    id: Number(req.params.id),
-    userId: Number(req.auth.id),
-  });
-
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
-});
+serversRouter.post(
+  '/:id/scan',
+  authenticateAdmin,
+  serversController.scanServer
+);
 
 export default serversRouter;
