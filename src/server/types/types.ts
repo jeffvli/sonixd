@@ -86,3 +86,22 @@ export type AlbumArtistFilter = {
   serverFolderIds: string;
   user: User;
 } & OffsetPagination;
+
+export type PaginationResponse = {
+  totalEntries: number;
+  startIndex: number;
+  nextPage: string;
+  prevPage: string;
+};
+
+export type SuccessResponse = {
+  data: any;
+  paginationItems?: PaginationItems;
+};
+
+export type PaginationItems = {
+  totalEntries: number;
+  startIndex: number;
+  limit: number;
+  url: string;
+};
