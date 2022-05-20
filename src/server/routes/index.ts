@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
-import albumArtistsRouter from './album-artists';
-import authRouter from './auth';
-import serversRouter from './servers';
-import tasksRouter from './tasks';
-import usersRouter from './users';
+import albumArtistsRouter from './album-artists-route';
+import authRouter from './auth-route';
+import serversRouter from './servers-route';
+import tasksRouter from './tasks-route';
+import usersRouter from './users-route';
 
 const routes = Router();
 

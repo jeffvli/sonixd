@@ -1,10 +1,12 @@
+import { Request } from 'express';
+
 import { prisma } from '../lib';
 import { AlbumArtistFilter } from '../types/types';
 import { hasFolderAccess, splitNumberString } from '../utils';
 import ApiError from '../utils/api-error';
 import ApiSuccess from '../utils/api-success';
 
-const get = async (options: { id: number }) => {
+const getOne = async (options: { id: number }) => {
   const { id } = options;
   const album = await prisma.albumArtist.findUnique({ where: { id } });
 
@@ -15,7 +17,7 @@ const get = async (options: { id: number }) => {
   return ApiSuccess.ok({ data: album });
 };
 
-const list = async (options: AlbumArtistFilter) => {
+const getMany = async (req: Request, options: AlbumArtistFilter) => {
   const { user, limit, page, serverFolderIds: rServerFolderIds } = options;
   const serverFolderIds = splitNumberString(rServerFolderIds);
 
@@ -41,10 +43,18 @@ const list = async (options: AlbumArtistFilter) => {
     take: limit,
   });
 
-  return ApiSuccess.ok({ data: albumArtists, totalEntries, startIndex });
+  return ApiSuccess.ok({
+    data: albumArtists,
+    paginationItems: {
+      startIndex,
+      totalEntries,
+      limit,
+      url: req.originalUrl,
+    },
+  });
 };
 
 export const albumArtistsService = {
-  get,
-  list,
+  getOne,
+  getMany,
 };
