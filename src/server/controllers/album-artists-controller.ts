@@ -32,7 +32,10 @@ const getAlbumArtist = async (req: Request, res: Response) => {
   validateRequest(req, { params: z.object({ ...idValidation }) });
 
   const { id } = req.params;
-  const data = await albumArtistsService.getOne({ id: Number(id) });
+  const data = await albumArtistsService.getOne({
+    id: Number(id),
+    user: req.auth,
+  });
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 

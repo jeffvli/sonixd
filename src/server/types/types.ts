@@ -82,11 +82,6 @@ export type OffsetPagination = {
   page: number;
 };
 
-export type AlbumArtistFilter = {
-  serverFolderIds: string;
-  user: User;
-} & OffsetPagination;
-
 export type PaginationResponse = {
   totalEntries: number;
   startIndex: number;

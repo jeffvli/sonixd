@@ -1,28 +1,35 @@
 import { Request } from 'express';
 
 import { prisma } from '../lib';
-import { AlbumArtistFilter } from '../types/types';
+import { OffsetPagination, User } from '../types/types';
 import { hasFolderAccess, splitNumberString } from '../utils';
 import ApiError from '../utils/api-error';
 import ApiSuccess from '../utils/api-success';
 
-const getOne = async (options: { id: number }) => {
-  const { id } = options;
+const getOne = async (options: { id: number; user: User }) => {
+  const { id, user } = options;
   const album = await prisma.albumArtist.findUnique({ where: { id } });
 
   if (!album) {
     throw ApiError.notFound('Album artist not found.');
   }
 
+  if (!(await hasFolderAccess([album?.serverFolderId], user))) {
+    throw ApiError.forbidden('');
+  }
+
   return ApiSuccess.ok({ data: album });
 };
 
-const getMany = async (req: Request, options: AlbumArtistFilter) => {
+const getMany = async (
+  req: Request,
+  options: { serverFolderIds: string; user: User } & OffsetPagination
+) => {
   const { user, limit, page, serverFolderIds: rServerFolderIds } = options;
   const serverFolderIds = splitNumberString(rServerFolderIds);
 
   if (!(await hasFolderAccess(serverFolderIds, user))) {
-    throw ApiError.forbidden('Missing permission for selected server folders.');
+    throw ApiError.forbidden('');
   }
 
   const serverFoldersFilter = serverFolderIds.map((serverFolderId: number) => {
