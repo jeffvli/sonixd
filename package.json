@@ -17,7 +17,9 @@
     "start:web": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.web.ts",
     "test": "jest",
     "prepare": "husky install",
-    "i18next": "i18next -c src/renderer/i18n/i18next-parser.config.js"
+    "i18next": "i18next -c src/renderer/i18n/i18next-parser.config.js",
+    "docker:up": "docker compose --file docker-compose.dev.yml --env-file .env.dev up --detach && docker compose --file docker-compose.dev.yml --env-file .env.dev logs -f",
+    "docker:down": "docker compose --file docker-compose.dev.yml --env-file .env.dev down && docker image rm sonixd_prisma"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -196,6 +198,8 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
+    "eslint-plugin-typescript-sort-keys": "^2.1.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^7.0.4",
