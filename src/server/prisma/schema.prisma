@@ -57,7 +57,7 @@ model ServerFolder {
   songs                   Song[]
   serverFolderPermissions ServerFolderPermission[]
 
-  Server   Server @relation(fields: [serverId], references: [id])
+  server   Server @relation(fields: [serverId], references: [id])
   serverId Int
 
   @@unique(fields: [serverId, remoteId], name: "uniqueServerFolderId")
@@ -69,7 +69,7 @@ model ServerFolderPermission {
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
 
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
   userId Int
 }
 
@@ -95,7 +95,7 @@ model Favorite {
   albums       Album[]
   songs        Song[]
 
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
   userId Int
 }
 
@@ -110,7 +110,7 @@ model Rating {
   albums       Album[]
   songs        Song[]
 
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
   userId Int
 
   @@unique(fields: [value, userId], name: "uniqueRatingId")
@@ -162,7 +162,7 @@ model AlbumArtist {
   images    Image[]
   externals External[]
 
-  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
 
   @@unique(fields: [serverFolderId, remoteId], name: "uniqueAlbumArtistId")
@@ -189,8 +189,8 @@ model Album {
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
 
-  AlbumArtist   AlbumArtist @relation(fields: [albumArtistId], references: [id])
-  albumArtistId Int
+  albumArtist   AlbumArtist? @relation(fields: [albumArtistId], references: [id])
+  albumArtistId Int?
 
   @@unique(fields: [serverFolderId, remoteId], name: "uniqueAlbumId")
 }
@@ -221,7 +221,8 @@ model Artist {
 model Song {
   id              Int       @id @default(autoincrement())
   name            String
-  duration        Int
+  date            DateTime?
+  duration        Float
   bitRate         Int
   container       String
   disc            Int       @default(1)
@@ -239,10 +240,10 @@ model Song {
   images    Image[]
   externals External[]
 
-  Album   Album @relation(fields: [albumId], references: [id])
-  albumId Int
+  album   Album? @relation(fields: [albumId], references: [id])
+  albumId Int?
 
-  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
 
   @@unique(fields: [serverFolderId, remoteId], name: "uniqueSongId")
