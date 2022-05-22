@@ -23,27 +23,21 @@ model User {
   enabled   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
 
-  tasks                   Task[]
-  artistFavorites         ArtistFavorites[]
-  albumArtistFavorites    AlbumArtistFavorites[]
-  albumFavorites          AlbumFavorites[]
-  songFavorites           SongFavorites[]
-  artistRatings           ArtistRatings[]
-  albumArtistRatings      AlbumArtistRatings[]
-  albumRatings            AlbumRatings[]
-  songRatings             SongRatings[]
-  serverFolderPermissions ServerFolderPermissions[]
+  favorites               Favorite[]
+  ratings                 Rating[]
+  serverFolderPermissions ServerFolderPermission[]
 }
 
 model Server {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique
-  url        String   @unique
-  username   String
-  token      String
-  serverType String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  url          String   @unique
+  username     String
+  remoteUserId String
+  token        String
+  serverType   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   serverFolder ServerFolder[]
 }
@@ -59,9 +53,9 @@ model ServerFolder {
 
   albumArtists            AlbumArtist[]
   artists                 Artist[]
-  songs                   Song[]
   albums                  Album[]
-  serverFolderPermissions ServerFolderPermissions[]
+  songs                   Song[]
+  serverFolderPermissions ServerFolderPermission[]
 
   Server   Server @relation(fields: [serverId], references: [id])
   serverId Int
@@ -69,7 +63,7 @@ model ServerFolder {
   @@unique(fields: [serverId, remoteId], name: "uniqueServerFolderId")
 }
 
-model ServerFolderPermissions {
+model ServerFolderPermission {
   id Int @id @default(autoincrement())
 
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
@@ -85,173 +79,58 @@ model Genre {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  artists      GenresOnArtists[]
-  albumArtists GenresOnAlbumArtists[]
-  albums       GenresOnAlbums[]
-  songs        GenresOnSongs[]
+  albumArtists AlbumArtist[]
+  artists      Artist[]
+  albums       Album[]
+  songs        Song[]
 }
 
-model GenresOnArtists {
-  Artist   Artist @relation(fields: [artistId], references: [id])
-  artistId Int
-
-  Genre     Genre  @relation(fields: [genreName], references: [name])
-  genreName String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([genreName, artistId])
-}
-
-model GenresOnAlbumArtists {
-  AlbumArtist   AlbumArtist @relation(fields: [albumArtistId], references: [id])
-  albumArtistId Int
-
-  Genre     Genre  @relation(fields: [genreName], references: [name])
-  genreName String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([genreName, albumArtistId])
-}
-
-model GenresOnAlbums {
-  Album   Album @relation(fields: [albumId], references: [id])
-  albumId Int
-
-  Genre     Genre  @relation(fields: [genreName], references: [name])
-  genreName String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([genreName, albumId])
-}
-
-model GenresOnSongs {
-  Song   Song @relation(fields: [songId], references: [id])
-  songId Int
-
-  Genre     Genre  @relation(fields: [genreName], references: [name])
-  genreName String
-
-  @@id([genreName, songId])
-}
-
-model ArtistFavorites {
+model Favorite {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Artist   Artist @relation(fields: [artistId], references: [id])
-  artistId Int
+  albumArtists AlbumArtist[]
+  artists      Artist[]
+  albums       Album[]
+  songs        Song[]
 
   User   User @relation(fields: [userId], references: [id])
   userId Int
 }
 
-model AlbumArtistFavorites {
+model Rating {
   id        Int      @id @default(autoincrement())
+  value     Int      @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  AlbumArtist   AlbumArtist @relation(fields: [albumArtistId], references: [id])
-  albumArtistId Int
+  albumArtists AlbumArtist[]
+  artists      Artist[]
+  albums       Album[]
+  songs        Song[]
 
   User   User @relation(fields: [userId], references: [id])
   userId Int
 
-}
-
-model AlbumFavorites {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Album   Album @relation(fields: [albumId], references: [id])
-  albumId Int
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
-}
-
-model SongFavorites {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Song   Song @relation(fields: [songId], references: [id])
-  songId Int
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
-}
-
-model ArtistRatings {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Artist   Artist @relation(fields: [artistId], references: [id])
-  artistId Int
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
-}
-
-model AlbumArtistRatings {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  AlbumArtist   AlbumArtist @relation(fields: [albumArtistId], references: [id])
-  albumArtistId Int
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
-}
-
-model AlbumRatings {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Album   Album @relation(fields: [albumId], references: [id])
-  albumId Int
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
-}
-
-model SongRatings {
-  id        Int      @id @default(autoincrement())
-  value     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Song   Song @relation(fields: [songId], references: [id])
-  songId Int
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
+  @@unique(fields: [value, userId], name: "uniqueRatingId")
 }
 
 model AlbumArtist {
   id              Int       @id @default(autoincrement())
   name            String
-  imageUrl        String?
   biography       String?
   remoteId        String
   remoteCreatedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  albums               Album[]
-  genresOnAlbumArtists GenresOnAlbumArtists[]
-  albumArtistFavorites AlbumArtistFavorites[]
-  albumArtistRatings   AlbumArtistRatings[]
+  albums    Album[]
+  genres    Genre[]
+  favorites Favorite[]
+  ratings   Rating[]
+  images    Image[]
+  externals External[]
 
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
@@ -262,17 +141,20 @@ model AlbumArtist {
 model Album {
   id              Int       @id @default(autoincrement())
   name            String
-  imageUrl        String?
+  date            DateTime?
   year            Int?
   remoteId        String
   remoteCreatedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  songs          Song[]
-  genresOnAlbums GenresOnAlbums[]
-  albumFavorites AlbumFavorites[]
-  albumRatings   AlbumRatings[]
+  songs     Song[]
+  genres    Genre[]
+  favorites Favorite[]
+  ratings   Rating[]
+  artists   Artist[]
+  images    Image[]
+  externals External[]
 
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
@@ -286,18 +168,19 @@ model Album {
 model Artist {
   id              Int       @id @default(autoincrement())
   name            String
-  imageUrl        String?
   biography       String?
   remoteId        String?
   remoteCreatedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  songs           Song[]
-  genres          GenresOnArtists[]
-  artistFavorites ArtistFavorites[]
-  artistsRatings  ArtistRatings[]
-
+  genres    Genre[]
+  favorites Favorite[]
+  ratings   Rating[]
+  albums    Album[]
+  songs     Song[]
+  images    Image[]
+  externals External[]
 
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
@@ -308,27 +191,65 @@ model Artist {
 model Song {
   id              Int       @id @default(autoincrement())
   name            String
+  duration        Int
+  bitRate         Int
+  container       String
+  disc            Int       @default(1)
+  track           Int?
   artistName      String
-  imageUrl        String?
   remoteId        String
   remoteCreatedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  genresOnSongs GenresOnSongs[]
-  songFavorites SongFavorites[]
-  songRatings   SongRatings[]
+  genres    Genre[]
+  favorites Favorite[]
+  ratings   Rating[]
+  artists   Artist[]
+  images    Image[]
+  externals External[]
 
   Album   Album @relation(fields: [albumId], references: [id])
   albumId Int
-
-  Artist   Artist? @relation(fields: [artistId], references: [id])
-  artistId Int?
 
   ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
 
   @@unique(fields: [serverFolderId, remoteId], name: "uniqueSongId")
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Song          Song?        @relation(fields: [songId], references: [id])
+  songId        Int?
+  Artist        Artist?      @relation(fields: [artistId], references: [id])
+  artistId      Int?
+  Album         Album?       @relation(fields: [albumId], references: [id])
+  albumId       Int?
+  AlbumArtist   AlbumArtist? @relation(fields: [albumArtistId], references: [id])
+  albumArtistId Int?
+}
+
+model External {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Song          Song?        @relation(fields: [songId], references: [id])
+  songId        Int?
+  AlbumArtist   AlbumArtist? @relation(fields: [albumArtistId], references: [id])
+  albumArtistId Int?
+  Album         Album?       @relation(fields: [albumId], references: [id])
+  albumId       Int?
+  Artist        Artist?      @relation(fields: [artistId], references: [id])
+  artistId      Int?
 }
 
 model Task {
@@ -340,7 +261,4 @@ model Task {
   message    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
 }
