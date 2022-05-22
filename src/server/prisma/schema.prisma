@@ -116,6 +116,36 @@ model Rating {
   @@unique(fields: [value, userId], name: "uniqueRatingId")
 }
 
+model Image {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  albumArtists AlbumArtist[]
+  artists      Artist[]
+  albums       Album[]
+  songs        Song[]
+
+  @@unique(fields: [name, url], name: "uniqueImageId")
+}
+
+model External {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  albumArtists AlbumArtist[]
+  artists      Artist[]
+  albums       Album[]
+  songs        Song[]
+
+  @@unique(fields: [name, url], name: "uniqueExternalId")
+}
+
 model AlbumArtist {
   id              Int       @id @default(autoincrement())
   name            String
@@ -216,40 +246,6 @@ model Song {
   serverFolderId Int
 
   @@unique(fields: [serverFolderId, remoteId], name: "uniqueSongId")
-}
-
-model Image {
-  id        Int      @id @default(autoincrement())
-  name      String
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Song          Song?        @relation(fields: [songId], references: [id])
-  songId        Int?
-  Artist        Artist?      @relation(fields: [artistId], references: [id])
-  artistId      Int?
-  Album         Album?       @relation(fields: [albumId], references: [id])
-  albumId       Int?
-  AlbumArtist   AlbumArtist? @relation(fields: [albumArtistId], references: [id])
-  albumArtistId Int?
-}
-
-model External {
-  id        Int      @id @default(autoincrement())
-  name      String
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Song          Song?        @relation(fields: [songId], references: [id])
-  songId        Int?
-  AlbumArtist   AlbumArtist? @relation(fields: [albumArtistId], references: [id])
-  albumArtistId Int?
-  Album         Album?       @relation(fields: [albumId], references: [id])
-  albumId       Int?
-  Artist        Artist?      @relation(fields: [artistId], references: [id])
-  artistId      Int?
 }
 
 model Task {
