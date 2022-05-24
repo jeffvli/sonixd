@@ -55,6 +55,7 @@ model ServerFolder {
   artists                 Artist[]
   albums                  Album[]
   songs                   Song[]
+  tasks                   Task[]
   serverFolderPermissions ServerFolderPermission[]
 
   server   Server @relation(fields: [serverId], references: [id])
@@ -199,7 +200,7 @@ model Artist {
   id              Int       @id @default(autoincrement())
   name            String
   biography       String?
-  remoteId        String?
+  remoteId        String
   remoteCreatedAt DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -222,12 +223,13 @@ model Song {
   id              Int       @id @default(autoincrement())
   name            String
   date            DateTime?
+  year            Int?
   duration        Float
   bitRate         Int
   container       String
   disc            Int       @default(1)
   track           Int?
-  artistName      String
+  artistName      String?
   remoteId        String
   remoteCreatedAt DateTime?
   createdAt       DateTime  @default(now())
@@ -258,4 +260,7 @@ model Task {
   message    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolderId Int
 }
