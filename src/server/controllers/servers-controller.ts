@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-
 import { serversService } from '../services';
 import { getSuccessResponse, idValidation, validateRequest } from '../utils';
 
@@ -8,44 +7,62 @@ const getServer = async (req: Request, res: Response) => {
   validateRequest(req, { params: z.object({ ...idValidation }) });
 
   const { id } = req.params;
-  const { statusCode, data } = await serversService.getOne({
+  const data = await serversService.getOne({
     id: Number(id),
   });
 
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
+  return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
 const getServers = async (_req: Request, res: Response) => {
-  const { statusCode, data } = await serversService.getMany();
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
+  const data = await serversService.getMany();
+
+  return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
 const createServer = async (req: Request, res: Response) => {
-  const { name, url, username, token, serverType } = req.body;
+  const { name, url, username, remoteUserId, token, serverType } = req.body;
 
-  const { statusCode, data } = await serversService.create({
+  const data = await serversService.create({
     name,
+    remoteUserId,
+    serverType,
+    token,
     url,
     username,
-    token,
-    serverType,
   });
 
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
+  return res.status(data.statusCode).json(getSuccessResponse(data));
+};
+
+const refreshServer = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data = await serversService.refresh({ id: Number(id) });
+
+  return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
 const scanServer = async (req: Request, res: Response) => {
-  const { statusCode, data } = await serversService.scan({
-    id: Number(req.params.id),
+  validateRequest(req, {
+    query: z.object({ serverFolderIds: z.string().optional() }),
+  });
+
+  const { id } = req.params;
+  const { serverFolderIds } = req.query;
+
+  const data = await serversService.fullScan({
+    id: Number(id),
+    serverFolderIds: serverFolderIds && String(serverFolderIds),
     userId: Number(req.auth.id),
   });
 
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
+  return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
 export const serversController = {
+  createServer,
   getServer,
   getServers,
-  createServer,
+  refreshServer,
   scanServer,
 };
