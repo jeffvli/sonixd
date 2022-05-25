@@ -8,4 +8,5 @@ export { default as hasFolderAccess } from './has-folder-access';
 export { default as isArrayEqual } from './is-array-equal';
 export { default as isJsonString } from './is-json-string';
 export { default as validateRequest } from './validate-request';
+export { default as uniqueArray } from './unique-array';
 export * from './zod-validation';
