@@ -1,6 +1,6 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { prisma } from '../../lib';
 import { Server, ServerFolder } from '../../types/types';
+import { groupByProperty, uniqueArray } from '../../utils';
 import { q } from '../scanner-queue';
 import { jellyfinApi } from './jellyfin-api';
 import { JFSong } from './jellyfin-types';
@@ -22,12 +22,12 @@ const scanGenres = async (server: Server, serverFolder: ServerFolder) => {
         parentId: serverFolder.remoteId,
       });
 
-      const genresInsert = genres.Items.map((genre) => {
+      const genresCreate = genres.Items.map((genre) => {
         return { name: genre.Name };
       });
 
       const createdGenres = await prisma.genre.createMany({
-        data: genresInsert,
+        data: genresCreate,
         skipDuplicates: true,
       });
 
@@ -58,33 +58,35 @@ const scanAlbumArtists = async (server: Server, serverFolder: ServerFolder) => {
       });
 
       for (const albumArtist of albumArtists.Items) {
-        const genreInsert = albumArtist.Genres.map((genre) => {
+        const genresConnectOrCreate = albumArtist.Genres.map((genre) => {
           return { create: { name: genre }, where: { name: genre } };
         });
 
-        const imageInsert = [];
+        const imagesConnectOrCreate = [];
         for (const [key, value] of Object.entries(albumArtist.ImageTags)) {
-          imageInsert.push({
+          imagesConnectOrCreate.push({
             create: { name: key, url: value },
             where: { uniqueImageId: { name: key, url: value } },
           });
         }
 
-        const externalInsert = albumArtist.ExternalUrls.map((external) => {
-          return {
-            create: { name: external.Name, url: external.Url },
-            where: {
-              uniqueExternalId: { name: external.Name, url: external.Url },
-            },
-          };
-        });
+        const externalsConnectOrCreate = albumArtist.ExternalUrls.map(
+          (external) => {
+            return {
+              create: { name: external.Name, url: external.Url },
+              where: {
+                uniqueExternalId: { name: external.Name, url: external.Url },
+              },
+            };
+          }
+        );
 
         await prisma.albumArtist.upsert({
           create: {
             biography: albumArtist.Overview,
-            externals: { connectOrCreate: externalInsert },
-            genres: { connectOrCreate: genreInsert },
-            images: { connectOrCreate: imageInsert },
+            externals: { connectOrCreate: externalsConnectOrCreate },
+            genres: { connectOrCreate: genresConnectOrCreate },
+            images: { connectOrCreate: imagesConnectOrCreate },
             name: albumArtist.Name,
             remoteCreatedAt: albumArtist.DateCreated,
             remoteId: albumArtist.Id,
@@ -92,9 +94,9 @@ const scanAlbumArtists = async (server: Server, serverFolder: ServerFolder) => {
           },
           update: {
             biography: albumArtist.Overview,
-            externals: { connectOrCreate: externalInsert },
-            genres: { connectOrCreate: genreInsert },
-            images: { connectOrCreate: imageInsert },
+            externals: { connectOrCreate: externalsConnectOrCreate },
+            genres: { connectOrCreate: genresConnectOrCreate },
+            images: { connectOrCreate: imagesConnectOrCreate },
             name: albumArtist.Name,
             remoteCreatedAt: albumArtist.DateCreated,
             remoteId: albumArtist.Id,
@@ -116,84 +118,6 @@ const scanAlbumArtists = async (server: Server, serverFolder: ServerFolder) => {
     id: taskId,
   });
 };
-
-// const scanArtists = async (server: Server, serverFolder: ServerFolder) => {
-//   const taskId = `[${server.name} (${serverFolder.name})] artists`;
-
-//   q.push({
-//     fn: async () => {
-//       const task = await prisma.task.create({
-//         data: {
-//           inProgress: true,
-//           name: taskId,
-//           serverFolderId: serverFolder.id,
-//         },
-//       });
-
-//       const artists = await jellyfinApi.getArtists(server, {
-//         fields: 'Genres,DateCreated,ExternalUrls,Overview',
-//         parentId: serverFolder.remoteId,
-//       });
-
-//       for (const artist of artists.Items) {
-//         const genreInsert = artist.Genres.map((genre) => {
-//           return { create: { name: genre }, where: { name: genre } };
-//         });
-
-//         const imageInsert = [];
-//         for (const [key, value] of Object.entries(artist.ImageTags)) {
-//           imageInsert.push({
-//             create: { name: key, url: value },
-//             where: { uniqueImageId: { name: key, url: value } },
-//           });
-//         }
-
-//         const externalInsert = artist.ExternalUrls.map((external) => {
-//           return {
-//             create: { name: external.Name, url: external.Url },
-//             where: {
-//               uniqueExternalId: { name: external.Name, url: external.Url },
-//             },
-//           };
-//         });
-
-//         await prisma.artist.upsert({
-//           create: {
-//             biography: artist.Overview,
-//             externals: { connectOrCreate: externalInsert },
-//             genres: { connectOrCreate: genreInsert },
-//             images: { connectOrCreate: imageInsert },
-//             name: artist.Name,
-//             remoteCreatedAt: artist.DateCreated,
-//             remoteId: artist.Id,
-//             serverFolderId: serverFolder.id,
-//           },
-//           update: {
-//             biography: artist.Overview,
-//             externals: { connectOrCreate: externalInsert },
-//             genres: { connectOrCreate: genreInsert },
-//             images: { connectOrCreate: imageInsert },
-//             name: artist.Name,
-//             remoteCreatedAt: artist.DateCreated,
-//             remoteId: artist.Id,
-//             serverFolderId: serverFolder.id,
-//           },
-//           where: {
-//             uniqueArtistId: {
-//               remoteId: artist.Id,
-//               serverFolderId: serverFolder.id,
-//             },
-//           },
-//         });
-//       }
-
-//       const message = `Scanned ${artists.Items.length} artists.`;
-
-//       return { message, task };
-//     },
-//     id: taskId,
-//   });
-// };
 
 const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
   const check = await jellyfinApi.getAlbums(server, {
@@ -234,26 +158,28 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
         });
 
         for (const album of albums.Items) {
-          const genreInsert = album.Genres.map((genre) => {
+          const genresConnectOrCreate = album.Genres.map((genre) => {
             return { create: { name: genre }, where: { name: genre } };
           });
 
-          const imageInsert = [];
+          const imagesConnectOrCreate = [];
           for (const [key, value] of Object.entries(album.ImageTags)) {
-            imageInsert.push({
+            imagesConnectOrCreate.push({
               create: { name: key, url: value },
               where: { uniqueImageId: { name: key, url: value } },
             });
           }
 
-          const externalInsert = album.ExternalUrls.map((external) => {
-            return {
-              create: { name: external.Name, url: external.Url },
-              where: {
-                uniqueExternalId: { name: external.Name, url: external.Url },
-              },
-            };
-          });
+          const externalsConnectOrCreate = album.ExternalUrls.map(
+            (external) => {
+              return {
+                create: { name: external.Name, url: external.Url },
+                where: {
+                  uniqueExternalId: { name: external.Name, url: external.Url },
+                },
+              };
+            }
+          );
 
           const albumArtist =
             album.AlbumArtists.length > 0
@@ -271,9 +197,9 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
             create: {
               albumArtistId: albumArtist?.id,
               date: album.DateCreated,
-              externals: { connectOrCreate: externalInsert },
-              genres: { connectOrCreate: genreInsert },
-              images: { connectOrCreate: imageInsert },
+              externals: { connectOrCreate: externalsConnectOrCreate },
+              genres: { connectOrCreate: genresConnectOrCreate },
+              images: { connectOrCreate: imagesConnectOrCreate },
               name: album.Name,
               remoteCreatedAt: album.DateCreated,
               remoteId: album.Id,
@@ -283,9 +209,9 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
             update: {
               albumArtistId: albumArtist?.id,
               date: album.DateCreated,
-              externals: { connectOrCreate: externalInsert },
-              genres: { connectOrCreate: genreInsert },
-              images: { connectOrCreate: imageInsert },
+              externals: { connectOrCreate: externalsConnectOrCreate },
+              genres: { connectOrCreate: genresConnectOrCreate },
+              images: { connectOrCreate: imagesConnectOrCreate },
               name: album.Name,
               remoteCreatedAt: album.DateCreated,
               remoteId: album.Id,
@@ -310,86 +236,60 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
   }
 };
 
-const insertSong = async (serverFolder: ServerFolder, song: JFSong) => {
-  const genreInsert = song.Genres.map((genre) => {
-    return { create: { name: genre }, where: { name: genre } };
-  });
-
-  const imageInsert = [];
-  for (const [key, value] of Object.entries(song.ImageTags)) {
-    imageInsert.push({
-      create: { name: key, url: value },
-      where: { uniqueImageId: { name: key, url: value } },
-    });
-  }
-
-  const externalConnect = song.ExternalUrls.map((external) => {
-    return {
-      uniqueExternalId: { name: external.Name, url: external.Url },
-    };
-  });
-
-  try {
-    const externalCreate = song.ExternalUrls.map((external) => {
-      return { name: external.Name, url: external.Url };
-    });
-
-    await prisma.external.createMany({
-      data: externalCreate,
-      skipDuplicates: true,
-    });
-  } catch (err) {
-    console.log(song.Id, 'external');
-  }
-
-  try {
-    const artistCreate = song.ArtistItems.map((artist) => {
+const insertSongGroup = async (
+  serverFolder: ServerFolder,
+  songs: JFSong[],
+  remoteAlbumId: string
+) => {
+  const songsUpsert = songs.map((song) => {
+    const artistsConnectOrCreate = song.ArtistItems.map((artist) => {
       return {
-        name: artist.Name,
-        remoteId: artist.Id,
-        serverFolderId: serverFolder.id,
+        create: {
+          name: artist.Name,
+          remoteId: artist.Id,
+          serverFolderId: serverFolder.id,
+        },
+        where: {
+          uniqueArtistId: {
+            remoteId: artist.Id,
+            serverFolderId: serverFolder.id,
+          },
+        },
       };
     });
 
-    await prisma.artist.createMany({
-      data: artistCreate,
-      skipDuplicates: true,
+    const genresConnectOrCreate = song.Genres.map((genre) => {
+      return { create: { name: genre }, where: { name: genre } };
     });
-  } catch (err) {
-    console.log(song.Id, 'artist');
-  }
 
-  const artistConnect = song.ArtistItems.map((artist) => {
+    const imagesConnectOrCreate = [];
+    for (const [key, value] of Object.entries(song.ImageTags)) {
+      imagesConnectOrCreate.push({
+        create: { name: key, url: value },
+        where: { uniqueImageId: { name: key, url: value } },
+      });
+    }
+
+    const externalsConnectOrCreate = song.ExternalUrls.map((external) => {
+      return {
+        create: { name: external.Name, url: external.Url },
+        where: {
+          uniqueExternalId: { name: external.Name, url: external.Url },
+        },
+      };
+    });
+
     return {
-      uniqueArtistId: {
-        remoteId: artist.Id,
-        serverFolderId: serverFolder.id,
-      },
-    };
-  });
-
-  const album = await prisma.album.findUnique({
-    where: {
-      uniqueAlbumId: {
-        remoteId: song.AlbumId,
-        serverFolderId: serverFolder.id,
-      },
-    },
-  });
-
-  try {
-    await prisma.song.upsert({
       create: {
-        albumId: album?.id,
-        artists: { connect: artistConnect },
+        artists: { connectOrCreate: artistsConnectOrCreate },
         bitRate: Math.floor(song.MediaSources[0].Bitrate / 1000),
         container: song.MediaSources[0].Container,
         date: song.PremiereDate,
         disc: song.ParentIndexNumber,
         duration: Math.floor(song.MediaSources[0].RunTimeTicks / 1e7),
-        externals: { connect: externalConnect },
-        genres: { connectOrCreate: genreInsert },
-        images: { connectOrCreate: imageInsert },
+        externals: { connectOrCreate: externalsConnectOrCreate },
+        genres: { connectOrCreate: genresConnectOrCreate },
+        images: { connectOrCreate: imagesConnectOrCreate },
         name: song.Name,
         remoteCreatedAt: song.DateCreated,
         remoteId: song.Id,
@@ -398,16 +298,15 @@ const insertSong = async (serverFolder: ServerFolder, song: JFSong) => {
         year: song.ProductionYear,
       },
       update: {
-        albumId: album?.id,
-        artists: { connect: artistConnect },
+        artists: { connectOrCreate: artistsConnectOrCreate },
         bitRate: Math.floor(song.MediaSources[0].Bitrate / 1000),
         container: song.MediaSources[0].Container,
         date: song.PremiereDate,
         disc: song.ParentIndexNumber,
         duration: Math.floor(song.MediaSources[0].RunTimeTicks / 1e7),
-        externals: { connect: externalConnect },
-        genres: { connectOrCreate: genreInsert },
-        images: { connectOrCreate: imageInsert },
+        externals: { connectOrCreate: externalsConnectOrCreate },
+        genres: { connectOrCreate: genresConnectOrCreate },
+        images: { connectOrCreate: imagesConnectOrCreate },
         name: song.Name,
         remoteCreatedAt: song.DateCreated,
         remoteId: song.Id,
@@ -421,12 +320,36 @@ const insertSong = async (serverFolder: ServerFolder, song: JFSong) => {
           serverFolderId: serverFolder.id,
         },
       },
-    });
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
-      console.log(song.Id, 'song');
-    }
-  }
+    };
+  });
+
+  const uniqueArtistIds = songs
+    .flatMap((song) => {
+      return song.ArtistItems.flatMap((artist) => artist.Id);
+    })
+    .filter(uniqueArray);
+
+  const artistsConnect = uniqueArtistIds.map((artistId) => {
+    return {
+      uniqueArtistId: {
+        remoteId: artistId!,
+        serverFolderId: serverFolder.id,
+      },
+    };
+  });
+
+  await prisma.album.update({
+    data: {
+      artists: { connect: artistsConnect },
+      songs: { upsert: songsUpsert },
+    },
+    where: {
+      uniqueAlbumId: {
+        remoteId: remoteAlbumId,
+        serverFolderId: serverFolder.id,
+      },
+    },
+  });
 };
 
 const scanSongs = async (server: Server, serverFolder: ServerFolder) => {
@@ -463,14 +386,21 @@ const scanSongs = async (server: Server, serverFolder: ServerFolder) => {
           limit: chunkSize,
           parentId: serverFolder.remoteId,
           recursive: true,
-          sortBy: 'DateCreated',
+          sortBy: 'DateCreated,Album',
           sortOrder: 'Descending',
           startIndex: i * chunkSize,
         });
 
-        for (const song of songs.Items) {
-          await insertSong(serverFolder, song);
-        }
+        const albumSongGroups = groupByProperty(songs.Items, 'AlbumId');
+
+        const promises: any[] = [];
+        Object.keys(albumSongGroups).forEach(async (key) => {
+          promises.push(
+            insertSongGroup(serverFolder, albumSongGroups[key], key)
+          );
+        });
+
+        await Promise.all(promises);
 
         const message = `Scanned ${songs.Items.length} songs.`;
 
