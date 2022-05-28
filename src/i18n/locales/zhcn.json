@@ -274,7 +274,7 @@
   "Sets the parent media folder your audio files are located in. Leaving this blank will use all media folders.": "设置你音频文件所在的父媒体目录。此项留空将使用所有媒体目录。",
   "Show Debug Window": "显示调试窗口",
   "SHOW LESS": "显示更少",
-  "SHOW MORE": "现在更多",
+  "SHOW MORE": "显示更多",
   "Shuffle": "随机播放",
   "Shuffle queue": "随机播放队列",
   "Sidebar": "",
