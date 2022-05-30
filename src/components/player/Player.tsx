@@ -637,6 +637,16 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     (playerNumber: 1 | 2) => {
       ipcRenderer.send('current-song', playQueue.current);
 
+      if (config.player.systemNotifications) {
+        // eslint-disable-next-line no-new
+        new Notification(playQueue.current.title, {
+          body: `${playQueue.current.artist.map((artist: Artist) => artist.title).join(', ')}\n${
+            playQueue.current.album
+          }`,
+          icon: playQueue.current.image,
+        });
+      }
+
       if (config.serverType === Server.Jellyfin && playQueue.scrobble) {
         const currentSeek =
           playerNumber === 1
@@ -658,7 +668,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         });
       }
     },
-    [config.serverType, currentEntryList, playQueue]
+    [config.serverType, config.player.systemNotifications, currentEntryList, playQueue]
   );
 
   const handleOnPause = useCallback(
