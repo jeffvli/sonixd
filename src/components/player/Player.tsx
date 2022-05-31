@@ -522,16 +522,6 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           ];
         ipcRenderer.send('current-song', nextSong);
 
-        if (config.player.systemNotifications) {
-          // eslint-disable-next-line no-new
-          new Notification(nextSong.title, {
-            body: `${nextSong.artist.map((artist: Artist) => artist.title).join(', ')}\n${
-              nextSong.album
-            }`,
-            icon: nextSong.image,
-          });
-        }
-
         dispatch(setAutoIncremented(false));
       }
     }
@@ -585,16 +575,6 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
             )
           ];
         ipcRenderer.send('current-song', nextSong);
-
-        if (config.player.systemNotifications) {
-          // eslint-disable-next-line no-new
-          new Notification(nextSong.title, {
-            body: `${nextSong.artist.map((artist: Artist) => artist.title).join(', ')}\n${
-              nextSong.album
-            }`,
-            icon: nextSong.image,
-          });
-        }
 
         dispatch(setAutoIncremented(false));
       }
