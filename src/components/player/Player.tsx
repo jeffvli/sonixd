@@ -525,7 +525,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         dispatch(setAutoIncremented(false));
       }
     }
-  }, [cacheSongs, config.player.systemNotifications, currentEntryList, dispatch, playQueue]);
+  }, [cacheSongs, currentEntryList, dispatch, playQueue]);
 
   const handleOnEndedPlayer2 = useCallback(() => {
     player2Ref.current.audioEl.current.currentTime = 0;
@@ -579,7 +579,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
         dispatch(setAutoIncremented(false));
       }
     }
-  }, [cacheSongs, config.player.systemNotifications, currentEntryList, dispatch, playQueue]);
+  }, [cacheSongs, currentEntryList, dispatch, playQueue]);
 
   const handleGaplessPlayer1 = useCallback(() => {
     gaplessListenHandler(
