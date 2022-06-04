@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import isElectron from 'is-electron';
-import { Outlet } from 'react-router-dom';
-import { controls } from './controls';
-import windowsClose from './icons/close-w-10.png';
-import windowsMax from './icons/max-w-10.png';
-import windowsMin from './icons/min-w-10.png';
-import styles from './WindowLayout.module.scss';
+import { controls } from '../controls';
+import windowsClose from '../icons/close-w-10.png';
+import windowsMax from '../icons/max-w-10.png';
+import windowsMin from '../icons/min-w-10.png';
+import styles from './Titlebar.module.scss';
 
-interface WindowControlsProps {
+interface TitlebarProps {
   style?: 'macos' | 'windows' | 'linux';
 }
 
-export const WindowLayout = ({ style }: WindowControlsProps) => {
+export const Titlebar = ({ style }: TitlebarProps) => {
   const [max, setMax] = useState(false);
 
   return (
@@ -54,11 +53,10 @@ export const WindowLayout = ({ style }: WindowControlsProps) => {
           )}
         </>
       )}
-      <Outlet />
     </>
   );
 };
 
-WindowLayout.defaultProps = {
+Titlebar.defaultProps = {
   style: 'windows',
 };

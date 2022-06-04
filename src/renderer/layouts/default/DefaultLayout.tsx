@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import throttle from 'lodash/throttle';
 import { Outlet } from 'react-router-dom';
 import { PlayerBar } from 'renderer/features/playerbar';
+import { Titlebar } from 'renderer/features/titlebar';
 import { UserMenu } from 'renderer/features/user-menu';
 import styles from './DefaultLayout.module.scss';
 import { constrainSidebarWidth } from './utils/constrainSidebarWidth';
@@ -58,6 +59,7 @@ export const DefaultLayout = () => {
             />
           </div>
           <div className={styles.content}>
+            <Titlebar />
             <UserMenu />
             <Outlet />
           </div>
