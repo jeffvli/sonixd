@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-
 import { Box, Grid, Text } from '@mantine/core';
 import clsx from 'clsx';
 import format from 'format-duration';
@@ -13,23 +12,21 @@ import {
   PlayerTrackNext,
   PlayerTrackPrev,
 } from 'tabler-icons-react';
-
 import { IconButton } from 'renderer/components';
-import { useAppSelector } from 'renderer/hooks/redux';
+import { useAppSelector } from 'renderer/hooks';
 import { selectCurrentQueue } from 'renderer/store/playerSlice';
 import { PlayerStatus } from 'types';
-
-import useMainAudioControls from '../hooks/useMainAudioControls';
+import { useMainAudioControls } from '../hooks/useMainAudioControls';
 import styles from './CenterControls.module.scss';
-import Slider from './Slider';
+import { Slider } from './Slider';
 
 interface CenterControlsProps {
-  status: PlayerStatus;
-  playersRef: any;
   currentPlayer: 1 | 2;
+  playersRef: any;
+  status: PlayerStatus;
 }
 
-const CenterControls = ({
+export const CenterControls = ({
   status,
   playersRef,
   currentPlayer,
@@ -50,10 +47,10 @@ const CenterControls = ({
     handlePrevTrack,
     handleStop,
   } = useMainAudioControls({
-    playersRef,
-    playerStatus: status,
-    queue,
     currentPlayer,
+    playerStatus: status,
+    playersRef,
+    queue,
     setCurrentTime,
   });
 
@@ -164,5 +161,3 @@ const CenterControls = ({
     </>
   );
 };
-
-export default CenterControls;

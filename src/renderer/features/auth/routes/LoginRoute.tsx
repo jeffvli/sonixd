@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import {
   TextInput,
   PasswordInput,
@@ -13,16 +12,16 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { AlertCircle, CircleCheck } from 'tabler-icons-react';
+import { useAppDispatch } from 'renderer/hooks';
+import { login } from 'renderer/store/authSlice';
+import { getServerUrl } from 'renderer/utils';
+import { useLogin } from '../queries/useLogin';
+import { usePingServer } from '../queries/usePingServer';
+import styles from './LoginRoute.module.scss';
 
-import getServerUrl from 'renderer/utils/getServerUrl';
-import useStore from 'store/useStore';
-
-import useLogin from '../queries/useLogin';
-import usePingServer from '../queries/usePingServer';
-import styles from './Login.module.scss';
-
-const Login = () => {
+export const LoginRoute = () => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
 
   const [username, setUsername] = useState(searchParams.get('username') || '');
@@ -31,16 +30,14 @@ const Login = () => {
     searchParams.get('server') || 'http://localhost:9321'
   );
   const [debouncedServer] = useDebouncedValue(server, 500);
-  const login = useStore((state) => state.login);
 
   const {
     mutate: handleLogin,
     isLoading,
     isError,
-  } = useLogin({
-    server,
-    username,
+  } = useLogin(server, {
     password,
+    username,
   });
 
   const {
@@ -56,10 +53,10 @@ const Login = () => {
         onSubmit={(e) => {
           e.preventDefault();
           handleLogin(undefined, {
-            onSuccess: () => {
-              login(getServerUrl(server));
-            },
             onError: () => {},
+            onSuccess: () => {
+              dispatch(login(getServerUrl(server)));
+            },
           });
         }}
       >
@@ -122,5 +119,3 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;

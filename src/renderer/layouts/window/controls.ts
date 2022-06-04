@@ -8,7 +8,7 @@ const unmaximize = () => window.electron.ipcRenderer.windowUnmaximize();
 
 export const controls = {
   close,
-  minimize,
   maximize,
+  minimize,
   unmaximize,
 };

@@ -1,9 +1,7 @@
 import { useRef } from 'react';
-
 import { Grid } from '@mantine/core';
-
-import AudioPlayer from 'renderer/components/audio-player/AudioPlayer';
-import { useAppDispatch, useAppSelector } from 'renderer/hooks/redux';
+import { AudioPlayer } from 'renderer/components/audio-player/AudioPlayer';
+import { useAppDispatch, useAppSelector } from 'renderer/hooks';
 import {
   selectCurrentPlayer,
   selectPlayerStatus,
@@ -12,13 +10,12 @@ import {
   selectPlayer1Song,
   selectPlayerConfig,
 } from 'renderer/store/playerSlice';
-
-import CenterControls from './components/CenterControls';
-import LeftControls from './components/LeftControls';
-import RightControls from './components/RightControls';
+import { CenterControls } from './components/CenterControls';
+import { LeftControls } from './components/LeftControls';
+import { RightControls } from './components/RightControls';
 import styles from './Playerbar.module.scss';
 
-const PlayerBar = () => {
+export const PlayerBar = () => {
   const dispatch = useAppDispatch();
   const playersRef = useRef<any>();
   const playerStatus = useAppSelector(selectPlayerStatus);
@@ -63,5 +60,3 @@ const PlayerBar = () => {
     </div>
   );
 };
-
-export default PlayerBar;

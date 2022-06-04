@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
-
 import { MantineProvider } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-
-import Router from './router/Router';
+import { Router } from './router/Router';
 import './App.scss';
 
-export default function App() {
+export const App = () => {
   const [theme] = useLocalStorage({
-    key: 'theme',
     defaultValue: 'dark',
+    key: 'theme',
   });
 
   useEffect(() => {
@@ -20,15 +18,15 @@ export default function App() {
     <MantineProvider
       theme={{
         colorScheme: 'dark',
-        focusRing: 'auto',
         defaultRadius: 'xs',
+        focusRing: 'auto',
+        other: {},
         spacing: {
           xs: 2,
         },
-        other: {},
       }}
     >
       <Router />
     </MantineProvider>
   );
-}
+};

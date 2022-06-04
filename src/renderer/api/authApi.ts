@@ -1,5 +1,5 @@
-import axios from 'renderer/lib/axios';
-import getServerUrl from 'renderer/utils/getServerUrl';
+import { axios } from 'renderer/lib';
+import { getServerUrl } from 'renderer/utils';
 import { PingResponse, UserResponse } from './types';
 
 const login = async (

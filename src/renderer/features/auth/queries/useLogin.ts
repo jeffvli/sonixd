@@ -1,15 +1,20 @@
 import { useMutation } from 'react-query';
-
 import { authApi } from 'renderer/api';
 
-const useLogin = (options: {
-  server: string;
-  username: string;
-  password: string;
-}) => {
-  const { server, username, password } = options;
-
-  return useMutation(() => authApi.login({ server, username, password }));
+export const useLogin = (
+  server: string,
+  body: {
+    password: string;
+    username: string;
+  }
+) => {
+  return useMutation({
+    mutationFn: () => authApi.login(server, body),
+    onSuccess: () => {
+      localStorage.setItem(
+        'authentication',
+        JSON.stringify({ isAuthenticated: true, serverUrl: server })
+      );
+    },
+  });
 };
-
-export default useLogin;

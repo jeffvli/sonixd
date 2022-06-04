@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
 import clsx from 'clsx';
 import throttle from 'lodash/throttle';
 import { Outlet } from 'react-router-dom';
-
-import PlayerBar from '../../features/playerbar/Playerbar';
+import { PlayerBar } from 'renderer/features/playerbar';
+import { UserMenu } from 'renderer/features/user-menu';
 import styles from './DefaultLayout.module.scss';
 import { constrainSidebarWidth } from './utils/constrainSidebarWidth';
 
-const DefaultLayout = () => {
+export const DefaultLayout = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(150);
 
@@ -59,6 +58,7 @@ const DefaultLayout = () => {
             />
           </div>
           <div className={styles.content}>
+            <UserMenu />
             <Outlet />
           </div>
         </div>
@@ -69,5 +69,3 @@ const DefaultLayout = () => {
     </>
   );
 };
-
-export default DefaultLayout;

@@ -13,6 +13,8 @@ module.exports = {
 
     '@typescript-eslint/no-non-null-assertion': 'off',
 
+    'import/no-default-export': 'error',
+
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
 

@@ -1,7 +1,7 @@
 .body {
-  background: var(--tooltip-bg);
-  color: var(--tooltip-text-color);
   padding: 5px;
+  color: var(--tooltip-text-color);
+  background: var(--tooltip-bg);
 }
 
 .arrow {

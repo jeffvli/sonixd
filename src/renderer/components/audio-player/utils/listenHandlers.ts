@@ -1,15 +1,14 @@
 /* eslint-disable no-nested-ternary */
 import { Dispatch } from 'react';
-
 import { Crossfade } from '../../../../types';
 
 export const gaplessHandler = (args: {
-  nextPlayerRef: any;
   currentTime: number;
   duration: number;
-  isTransitioning: boolean;
-  setIsTransitioning: Dispatch<boolean>;
   isFlac: boolean;
+  isTransitioning: boolean;
+  nextPlayerRef: any;
+  setIsTransitioning: Dispatch<boolean>;
 }) => {
   const {
     nextPlayerRef,
@@ -28,7 +27,7 @@ export const gaplessHandler = (args: {
     return null;
   }
 
-  const durationPadding = isFlac ? 0.065 : 0.115;
+  const durationPadding = isFlac ? 0.065 : 0.116;
   if (currentTime + durationPadding >= duration) {
     return nextPlayerRef.current.getInternalPlayer().play();
   }
@@ -37,17 +36,17 @@ export const gaplessHandler = (args: {
 };
 
 export const crossfadeHandler = (args: {
-  currentTime: number;
-  currentPlayerRef: any;
-  nextPlayerRef: any;
-  volume: number;
-  player: 1 | 2;
   currentPlayer: 1 | 2;
+  currentPlayerRef: any;
+  currentTime: number;
+  duration: number;
   fadeDuration: number;
   fadeType: Crossfade;
-  duration: number;
   isTransitioning: boolean;
+  nextPlayerRef: any;
+  player: 1 | 2;
   setIsTransitioning: Dispatch<boolean>;
+  volume: number;
 }) => {
   const {
     currentTime,

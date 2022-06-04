@@ -1,14 +1,11 @@
 import { ReactNode } from 'react';
-
 import isElectron from 'is-electron';
 import { MemoryRouter, Routes, Route, BrowserRouter } from 'react-router-dom';
-
 import { LoginRoute } from 'renderer/features/auth';
-
-import Dashboard from '../features/dashboard/Dashboard';
+import { DashboardRoute } from 'renderer/features/dashboard';
 import { AuthLayout, DefaultLayout, WindowLayout } from '../layouts';
-import AuthOutlet from './outlets/AuthOutlet';
-import PrivateOutlet from './outlets/PrivateOutlet';
+import { AuthOutlet } from './outlets/AuthOutlet';
+import { PrivateOutlet } from './outlets/PrivateOutlet';
 
 const SelectRouter = ({ children }: { children: ReactNode }) => {
   if (isElectron()) {
@@ -18,7 +15,7 @@ const SelectRouter = ({ children }: { children: ReactNode }) => {
   return <BrowserRouter>{children}</BrowserRouter>;
 };
 
-const Router = () => {
+export const Router = () => {
   return (
     <>
       <SelectRouter>
@@ -31,7 +28,7 @@ const Router = () => {
             </Route>
             <Route element={<PrivateOutlet redirectTo="/login" />} path="/">
               <Route element={<DefaultLayout />}>
-                <Route element={<Dashboard />} path="" />
+                <Route element={<DashboardRoute />} path="" />
                 <Route element={<></>} path="nowplaying" />
               </Route>
             </Route>
@@ -41,5 +38,3 @@ const Router = () => {
     </>
   );
 };
-
-export default Router;

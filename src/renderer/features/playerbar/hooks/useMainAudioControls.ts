@@ -1,15 +1,13 @@
 import { Dispatch, useCallback } from 'react';
-
-import { useAppDispatch } from 'renderer/hooks/redux';
+import { useAppDispatch } from 'renderer/hooks';
 import { next, pause, play, prev } from 'renderer/store/playerSlice';
-
 import { PlayerStatus, Song } from '../../../../types';
 
-const useMainAudioControls = (args: {
-  playersRef: any;
-  playerStatus: PlayerStatus;
-  queue: Song[];
+export const useMainAudioControls = (args: {
   currentPlayer: 1 | 2;
+  playerStatus: PlayerStatus;
+  playersRef: any;
+  queue: Song[];
   setCurrentTime: Dispatch<number>;
 }) => {
   const { playersRef, playerStatus, queue, currentPlayer, setCurrentTime } =
@@ -41,8 +39,9 @@ const useMainAudioControls = (args: {
   }, [player1Ref, player2Ref, resetPlayers]);
 
   const handlePlay = useCallback(() => {
+    currentPlayerRef.getInternalPlayer().play();
     dispatch(play());
-  }, [dispatch]);
+  }, [currentPlayerRef, dispatch]);
 
   const handlePause = useCallback(() => {
     dispatch(pause());
@@ -230,13 +229,11 @@ const useMainAudioControls = (args: {
 
   return {
     handleNextTrack,
-    handlePrevTrack,
     handlePlayPause,
-    handleSkipForward,
-    handleSkipBackward,
+    handlePrevTrack,
     handleSeekSlider,
+    handleSkipBackward,
+    handleSkipForward,
     handleStop,
   };
 };
-
-export default useMainAudioControls;

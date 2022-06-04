@@ -1,4 +1,4 @@
-import axios from 'renderer/lib/axios';
+import { axios } from 'renderer/lib';
 import { UserResponse } from './types';
 
 const getUsers = async () => {

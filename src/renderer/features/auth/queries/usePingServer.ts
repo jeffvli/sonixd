@@ -1,14 +1,11 @@
 import { useQuery } from 'react-query';
+import { authApi, queryKeys } from 'renderer/api';
 
-import { authApi } from 'renderer/api';
-
-import { authKeys } from './queryKeys';
-
-const usePingServer = (server: string) => {
-  return useQuery(authKeys.ping(server), () => authApi.ping({ server }), {
+export const usePingServer = (server: string) => {
+  return useQuery({
     enabled: !!server,
+    queryFn: () => authApi.ping(server),
+    queryKey: queryKeys.ping(server),
     retry: false,
   });
 };
-
-export default usePingServer;

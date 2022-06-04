@@ -1,3 +1,3 @@
-export { default as AuthLayout } from './auth/AuthLayout';
-export { default as DefaultLayout } from './default/DefaultLayout';
-export { default as WindowLayout } from './window/WindowLayout';
+export * from './auth/AuthLayout';
+export * from './default/DefaultLayout';
+export * from './window/WindowLayout';

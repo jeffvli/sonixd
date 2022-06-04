@@ -1,5 +1,4 @@
 import { ChangeEvent, useState } from 'react';
-
 import {
   Group,
   NumberInput,
@@ -20,9 +19,8 @@ import {
   Volume2,
   Volume3,
 } from 'tabler-icons-react';
-
 import { IconButton } from 'renderer/components';
-import { useAppDispatch, useAppSelector } from 'renderer/hooks/redux';
+import { useAppDispatch, useAppSelector } from 'renderer/hooks';
 import {
   selectPlayerConfig,
   setCrossfadeDuration,
@@ -33,9 +31,8 @@ import {
   toggleShuffle,
 } from 'renderer/store/playerSlice';
 import { PlayerRepeat } from 'types';
-
 import styles from './RightControls.module.scss';
-import Slider from './Slider';
+import { Slider } from './Slider';
 
 const CROSSFADE_TYPES = [
   { label: 'Equal Power', value: 'equalPower' },
@@ -46,7 +43,7 @@ const CROSSFADE_TYPES = [
   { label: 'Constant Power (Slow cut)', value: 'constantPowerSlowCut' },
 ];
 
-const RightControls = () => {
+export const RightControls = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const {
@@ -160,5 +157,3 @@ const RightControls = () => {
     </div>
   );
 };
-
-export default RightControls;

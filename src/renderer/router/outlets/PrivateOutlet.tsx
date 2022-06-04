@@ -1,14 +1,13 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-
-import useStore from '../../../store/useStore';
+import { useAppSelector } from 'renderer/hooks';
 
 interface PrivateOutletProps {
   redirectTo: string;
 }
 
-const PrivateOutlet = ({ redirectTo }: PrivateOutletProps) => {
+export const PrivateOutlet = ({ redirectTo }: PrivateOutletProps) => {
   const location = useLocation();
-  const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   if (isAuthenticated) {
     return <Outlet />;
@@ -16,5 +15,3 @@ const PrivateOutlet = ({ redirectTo }: PrivateOutletProps) => {
 
   return <Navigate replace state={{ from: location }} to={redirectTo} />;
 };
-
-export default PrivateOutlet;

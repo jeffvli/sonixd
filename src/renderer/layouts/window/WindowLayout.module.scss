@@ -2,17 +2,17 @@
   position: absolute;
   top: 0;
   right: 0;
-  display: flex;
-  height: 35px;
-  width: 130px;
   z-index: 500;
+  display: flex;
+  width: 130px;
+  height: 35px;
   -webkit-app-region: no-drag;
 }
 
 .button {
+  flex-grow: 1;
   height: 100%;
   padding: 8px;
-  flex-grow: 1;
   text-align: center;
   user-select: none;
   -webkit-app-region: no-drag;

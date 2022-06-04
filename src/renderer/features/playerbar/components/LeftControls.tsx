@@ -2,16 +2,14 @@ import { Stack, Text } from '@mantine/core';
 import clsx from 'clsx';
 import { LazyLoadImage as Image } from 'react-lazy-load-image-component';
 import { Link } from 'react-router-dom';
-
 import { Song } from 'types';
-
 import styles from './LeftControls.module.scss';
 
 interface LeftControlsProps {
   song: Song;
 }
 
-const LeftControls = ({ song }: LeftControlsProps) => {
+export const LeftControls = ({ song }: LeftControlsProps) => {
   const secondaryTextStyles = clsx(styles.text, styles.secondary);
 
   return (
@@ -39,5 +37,3 @@ const LeftControls = ({ song }: LeftControlsProps) => {
     </div>
   );
 };
-
-export default LeftControls;

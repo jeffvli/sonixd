@@ -1,8 +1,6 @@
 import { useState } from 'react';
-
 import isElectron from 'is-electron';
 import { Outlet } from 'react-router-dom';
-
 import { controls } from './controls';
 import windowsClose from './icons/close-w-10.png';
 import windowsMax from './icons/max-w-10.png';
@@ -13,7 +11,7 @@ interface WindowControlsProps {
   style?: 'macos' | 'windows' | 'linux';
 }
 
-const WindowLayout = ({ style }: WindowControlsProps) => {
+export const WindowLayout = ({ style }: WindowControlsProps) => {
   const [max, setMax] = useState(false);
 
   return (
@@ -64,5 +62,3 @@ const WindowLayout = ({ style }: WindowControlsProps) => {
 WindowLayout.defaultProps = {
   style: 'windows',
 };
-
-export default WindowLayout;

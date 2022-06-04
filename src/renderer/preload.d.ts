@@ -3,8 +3,8 @@ declare global {
     electron: {
       ipcRenderer: {
         windowClose(): void;
-        windowMinimize(): void;
         windowMaximize(): void;
+        windowMinimize(): void;
         windowUnmaximize(): void;
       };
     };

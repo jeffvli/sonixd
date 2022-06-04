@@ -1,8 +1,7 @@
 import { Outlet } from 'react-router-dom';
-
 import styles from './AuthLayout.module.scss';
 
-const AuthLayout = () => {
+export const AuthLayout = () => {
   return (
     <>
       <div className={styles.window} />
@@ -12,5 +11,3 @@ const AuthLayout = () => {
     </>
   );
 };
-
-export default AuthLayout;

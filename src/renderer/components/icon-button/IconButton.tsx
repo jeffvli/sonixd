@@ -1,18 +1,21 @@
 import { ReactNode } from 'react';
-
 import { ActionIcon, ActionIconProps } from '@mantine/core';
 import clsx from 'clsx';
-
-import Tooltip from '../tooltip/Tooltip';
+import { Tooltip } from '../tooltip/Tooltip';
 import styles from './IconButton.module.scss';
 
 interface IconButtonProps extends ActionIconProps<'button'> {
-  tooltip?: { label: string };
-  icon: ReactNode;
   active?: boolean;
+  icon: ReactNode;
+  tooltip?: { label: string };
 }
 
-const IconButton = ({ active, tooltip, icon, ...rest }: IconButtonProps) => {
+export const IconButton = ({
+  active,
+  tooltip,
+  icon,
+  ...rest
+}: IconButtonProps) => {
   if (tooltip) {
     return (
       <Tooltip {...tooltip}>
@@ -32,8 +35,6 @@ const IconButton = ({ active, tooltip, icon, ...rest }: IconButtonProps) => {
 };
 
 IconButton.defaultProps = {
-  tooltip: undefined,
   active: false,
+  tooltip: undefined,
 };
-
-export default IconButton;

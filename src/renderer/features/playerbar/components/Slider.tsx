@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-
 import clsx from 'clsx';
 import format from 'format-duration';
 import ReactSlider, { ReactSliderProps } from 'react-slider';
@@ -7,8 +6,8 @@ import ReactSlider, { ReactSliderProps } from 'react-slider';
 import './Slider.scss';
 
 interface SliderProps extends ReactSliderProps {
-  toolTipType?: 'text' | 'time';
   hasToolTip?: boolean;
+  toolTipType?: 'text' | 'time';
 }
 
 const MemoizedThumb = ({ props, state, toolTipType }: any) => {
@@ -40,7 +39,7 @@ const Thumb = (props: any, state: any, toolTipType: any) => (
   />
 );
 
-const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
+export const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   return (
@@ -73,8 +72,6 @@ const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
 };
 
 Slider.defaultProps = {
-  toolTipType: 'text',
   hasToolTip: true,
+  toolTipType: 'text',
 };
-
-export default Slider;

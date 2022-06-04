@@ -1,98 +1,101 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 import { Play, PlayerRepeat, PlayerStatus, Song, Crossfade } from 'types';
-
 import type { RootState } from './store';
 
 export interface PlayerState {
-  status: PlayerStatus;
-  shuffle: boolean;
-  repeat: PlayerRepeat;
-  volume: number;
-  muted: boolean;
-  type: 'gapless' | 'crossfade';
-  crossfadeType: Crossfade;
   crossfadeDuration: number;
+  crossfadeType: Crossfade;
+  muted: boolean;
   queue: {
+    default: Song[];
     index: number;
     player: 1 | 2;
-    default: Song[];
     shuffled: Song[];
     sorted: Song[];
   };
+  repeat: PlayerRepeat;
+  shuffle: boolean;
+  status: PlayerStatus;
+  type: 'gapless' | 'crossfade';
+  volume: number;
 }
 
 const initialState: PlayerState = {
-  status: PlayerStatus.Paused,
-  shuffle: false,
-  repeat: PlayerRepeat.None,
-  volume: 0,
-  muted: false,
-  type: 'gapless',
-  crossfadeType: Crossfade.EqualPower,
   crossfadeDuration: 5,
+  crossfadeType: Crossfade.EqualPower,
+  muted: false,
   queue: {
+    default: [],
     index: 0,
     player: 1,
-    default: [],
     shuffled: [],
     sorted: [],
   },
+  repeat: PlayerRepeat.None,
+  shuffle: false,
+  status: PlayerStatus.Paused,
+  type: 'gapless',
+  volume: 0.3,
 };
 
 export const playerSlice = createSlice({
-  name: 'player',
   initialState,
+  name: 'player',
   reducers: {
-    queue: (state, action: PayloadAction<{ type: Play; data: Song[] }>) => {
-      state.queue.default = action.payload.data;
+    autoIncrement: (state: PlayerState) => {
+      state.queue.index += 1;
+      state.queue.player = state.queue.player === 1 ? 2 : 1;
     },
 
-    play: (state) => {
-      state.status = PlayerStatus.Playing;
-    },
-
-    pause: (state) => {
-      state.status = PlayerStatus.Paused;
-    },
-
-    next: (state) => {
+    next: (state: PlayerState) => {
       state.queue.player = 1;
       state.queue.index += 1;
     },
 
-    prev: (state) => {
+    pause: (state: PlayerState) => {
+      state.status = PlayerStatus.Paused;
+    },
+
+    play: (state: PlayerState) => {
+      state.status = PlayerStatus.Playing;
+    },
+
+    prev: (state: PlayerState) => {
       const newIndex = state.queue.index - 1 < 0 ? 0 : state.queue.index - 1;
       state.queue.player = 1;
       state.queue.index = newIndex;
     },
 
-    autoIncrement: (state) => {
-      state.queue.index += 1;
-      state.queue.player = state.queue.player === 1 ? 2 : 1;
+    queue: (
+      state: PlayerState,
+      action: PayloadAction<{ data: Song[]; type: Play }>
+    ) => {
+      state.queue.default = action.payload.data;
     },
 
-    setVolume: (state, action: PayloadAction<number>) => {
-      state.volume = (action.payload / 100) ** 2;
-    },
-
-    setType: (state, action: PayloadAction<'gapless' | 'crossfade'>) => {
-      state.type = action.payload;
-    },
-
-    setCrossfadeDuration: (state, action: PayloadAction<number>) => {
+    setCrossfadeDuration: (
+      state: PlayerState,
+      action: PayloadAction<number>
+    ) => {
       state.crossfadeDuration = action.payload;
     },
 
-    toggleMute: (state) => {
+    setType: (
+      state: PlayerState,
+      action: PayloadAction<'gapless' | 'crossfade'>
+    ) => {
+      state.type = action.payload;
+    },
+
+    setVolume: (state: PlayerState, action: PayloadAction<number>) => {
+      state.volume = (action.payload / 100) ** 2;
+    },
+
+    toggleMute: (state: PlayerState) => {
       state.muted = !state.muted;
     },
 
-    toggleShuffle: (state) => {
-      state.shuffle = !state.shuffle;
-    },
-
-    toggleRepeat: (state) => {
+    toggleRepeat: (state: PlayerState) => {
       if (state.repeat === PlayerRepeat.None) {
         state.repeat = PlayerRepeat.All;
       } else if (state.repeat === PlayerRepeat.All) {
@@ -100,6 +103,10 @@ export const playerSlice = createSlice({
       } else {
         state.repeat = PlayerRepeat.None;
       }
+    },
+
+    toggleShuffle: (state: PlayerState) => {
+      state.shuffle = !state.shuffle;
     },
   },
 });
@@ -159,14 +166,14 @@ export const selectCurrentPlayer = (state: RootState) => {
 
 export const selectPlayerConfig = (state: RootState) => {
   return {
-    muted: state.player.muted,
-    volume: state.player.volume,
-    shuffle: state.player.shuffle,
-    repeat: state.player.repeat,
-    type: state.player.type,
-    crossfadeType: state.player.crossfadeType,
     crossfadeDuration: state.player.crossfadeDuration,
+    crossfadeType: state.player.crossfadeType,
+    muted: state.player.muted,
+    repeat: state.player.repeat,
+    shuffle: state.player.shuffle,
+    type: state.player.type,
+    volume: state.player.volume,
   };
 };
 
-export default playerSlice.reducer;
+export const playerReducer = playerSlice.reducer;
