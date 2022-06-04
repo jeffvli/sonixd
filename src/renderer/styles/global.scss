@@ -1,21 +1,21 @@
-@use 'themes/default.scss';
-@use 'themes/dark.scss';
+@use '../themes/default.scss';
+@use '../themes/dark.scss';
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body,
 html {
-  min-width: 640px;
-  display: block;
-  height: 100%;
-  width: 100%;
   position: absolute;
-  overflow-y: hidden;
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  height: 100%;
   overflow-x: hidden;
+  overflow-y: hidden;
   color: var(--content-text-color);
   background: var(--content-bg);
 }

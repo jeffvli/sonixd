@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { Router } from './router/Router';
-import './App.scss';
+import './styles/global.scss';
 
 export const App = () => {
   const [theme] = useLocalStorage({
