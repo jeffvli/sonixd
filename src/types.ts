@@ -1,7 +1,9 @@
-export enum Server {
-  Subsonic = 'subsonic',
-  Jellyfin = 'jellyfin',
-}
+const Server: { [x: string]: 'JELLYFIN' | 'SUBSONIC' } = {
+  JELLYFIN: 'JELLYFIN',
+  SUBSONIC: 'SUBSONIC',
+};
+
+export type ServerType = typeof Server[keyof typeof Server];
 
 export enum Item {
   Album = 'album',
@@ -13,32 +15,32 @@ export enum Item {
 }
 
 export enum PlayerStatus {
-  Playing = 'playing',
   Paused = 'paused',
+  Playing = 'playing',
 }
 
 export enum PlayerRepeat {
+  All = 'all',
   None = 'none',
   One = 'one',
-  All = 'all',
 }
 
 export enum Play {
-  Now = 'play',
-  Next = 'next',
   Later = 'later',
+  Next = 'next',
+  Now = 'play',
 }
 
 export enum Crossfade {
+  ConstantPower = 'constantPower',
+  ConstantPowerSlowCut = 'constantPowerSlowCut',
+  ConstantPowerSlowFade = 'constantPowerSlowFade',
+  Dipped = 'dipped',
   EqualPower = 'equalPower',
   Linear = 'linear',
-  Dipped = 'dipped',
-  ConstantPower = 'constantPower',
-  ConstantPowerSlowFade = 'constantPowerSlowFade',
-  ConstantPowerSlowCut = 'constantPowerSlowCut',
 }
 
-export type ServerType = Server.Subsonic | Server.Jellyfin;
+// export type ServerType = Server.Subsonic | Server.Jellyfin;
 
 export type APIEndpoints =
   | 'getPlaylist'
@@ -93,41 +95,41 @@ export interface APIResult {
 }
 
 export interface Album {
-  id: string;
-  title: string;
-  isDir?: boolean;
-  albumId: string;
   albumArtist?: string;
   albumArtistId: string;
-  artist?: Artist[];
-  songCount: number;
-  playCount?: number;
-  duration: number;
-  created: string;
-  year?: number;
-  genre?: Genre[];
   albumGenre?: string;
+  albumId: string;
+  artist?: Artist[];
+  created: string;
+  duration: number;
+  genre?: Genre[];
+  id: string;
   image: string;
+  isDir?: boolean;
+  playCount?: number;
+  song?: Song[];
+  songCount: number;
   starred?: string;
-  userRating?: number;
+  title: string;
   type: Item.Album;
   uniqueId: string;
-  song?: Song[];
+  userRating?: number;
+  year?: number;
 }
 
 export interface Artist {
-  id?: string;
-  title: string;
+  album?: Album[];
   albumCount?: number;
   duration?: number;
   genre?: Genre[];
+  id?: string;
   image?: string;
-  starred?: string;
-  userRating?: number;
   info?: ArtistInfo;
+  starred?: string;
+  title: string;
   type?: Item.Artist;
   uniqueId?: string;
-  album?: Album[];
+  userRating?: number;
 }
 
 export interface ArtistInfo {
@@ -138,75 +140,76 @@ export interface ArtistInfo {
 }
 
 export interface Folder {
-  id: string;
-  title: string;
   created: string;
-  isDir?: boolean;
+  id: string;
   image: string;
+  isDir?: boolean;
+  title: string;
   type: Item.Folder;
   uniqueId: string;
 }
 
 export interface Genre {
-  id: string;
-  title: string;
-  songCount?: number;
   albumCount?: number;
+  id: string;
+  songCount?: number;
+  title: string;
   type?: Item.Genre;
   uniqueId?: string;
 }
 
 export interface Playlist {
-  id: string;
-  title: string;
+  changed?: string;
   comment?: string;
+  created?: string;
+  duration: number;
+  genre?: Genre[];
+  id: string;
+  image: string;
   owner?: string;
   public?: boolean;
+  song?: Song[];
   songCount?: number;
-  duration: number;
-  created?: string;
-  changed?: string;
-  genre?: Genre[];
-  image: string;
+  title: string;
   type: Item.Playlist;
   uniqueId: string;
-  song?: Song[];
 }
 
 export interface Song {
-  id: string;
-  parent?: string;
-  title: string;
-  isDir?: boolean;
-  album: string;
-  albumId?: string;
-  albumArtist: string;
-  albumArtistId?: string;
-  artist: Artist[];
-  track?: number;
-  year?: number;
-  genre?: Genre[];
+  album?: string;
+  albumArtist?: string;
+  albumArtistId?: number;
   albumGenre?: string;
-  size: number;
-  contentType?: string;
-  suffix?: string;
-  duration?: number;
+  albumId?: number;
+  artist?: Artist[];
+  artistName?: string | null;
   bitRate?: number;
+  contentType?: string;
+  created?: string;
+  discNumber?: number;
+  duration?: number;
+  genre?: Genre[];
+  id: number;
+  image?: string;
+  isDir?: boolean;
+  parent?: string;
   path?: string;
   playCount?: number;
-  discNumber?: number;
-  created: string;
-  streamUrl: string;
-  image: string;
+  size?: number;
   starred?: string;
+  streamUrl: string;
+  suffix?: string;
+  title: string;
+  track?: number;
+  type?: Item.Music;
+  uniqueId?: string;
   userRating?: number;
-  type: Item.Music;
-  uniqueId: string;
+  year?: number;
 }
 
 export interface ScanStatus {
-  scanning: boolean;
   count: number | 'N/a';
+  scanning: boolean;
 }
 
 export interface Sort {
@@ -215,18 +218,8 @@ export interface Sort {
 }
 
 export interface Pagination {
-  pages?: number;
   activePage?: number;
-  serverSide?: boolean;
+  pages?: number;
   recordsPerPage: number;
+  serverSide?: boolean;
 }
-
-export type UserResponse = {
-  id: number;
-  username: string;
-  password?: string;
-  createdAt: string;
-  updatedAt: string;
-  enabled: boolean;
-  isAdmin: boolean;
-};
