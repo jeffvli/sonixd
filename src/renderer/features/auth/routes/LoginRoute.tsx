@@ -12,16 +12,13 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { AlertCircle, CircleCheck } from 'tabler-icons-react';
-import { useAppDispatch } from 'renderer/hooks';
-import { login } from 'renderer/store/authSlice';
-import { getServerUrl } from 'renderer/utils';
+import { normalizeServerUrl } from 'renderer/utils';
 import { useLogin } from '../queries/useLogin';
 import { usePingServer } from '../queries/usePingServer';
 import styles from './LoginRoute.module.scss';
 
 export const LoginRoute = () => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
 
   const [username, setUsername] = useState(searchParams.get('username') || '');
@@ -35,7 +32,7 @@ export const LoginRoute = () => {
     mutate: handleLogin,
     isLoading,
     isError,
-  } = useLogin(server, {
+  } = useLogin(normalizeServerUrl(server), {
     password,
     username,
   });
@@ -44,7 +41,7 @@ export const LoginRoute = () => {
     isLoading: isCheckingServer,
     isSuccess: isValidServer,
     isFetched,
-  } = usePingServer(debouncedServer);
+  } = usePingServer(normalizeServerUrl(debouncedServer));
 
   return (
     <div className={styles.container}>
@@ -54,9 +51,7 @@ export const LoginRoute = () => {
           e.preventDefault();
           handleLogin(undefined, {
             onError: () => {},
-            onSuccess: () => {
-              dispatch(login(getServerUrl(server)));
-            },
+            onSuccess: () => {},
           });
         }}
       >

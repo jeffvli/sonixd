@@ -1,17 +1,15 @@
 import { axios } from 'renderer/lib';
-import { getServerUrl } from 'renderer/utils';
 import { PingResponse, UserResponse } from './types';
 
 const login = async (
-  server: string,
+  serverUrl: string,
   body: {
     password: string;
     username: string;
   }
 ) => {
-  const serverUrl = getServerUrl(server);
   const { data } = await axios.post<UserResponse>(
-    `${serverUrl}/auth/login`,
+    `${serverUrl}/api/auth/login`,
     body,
     {
       withCredentials: true,
@@ -21,9 +19,8 @@ const login = async (
   return data;
 };
 
-const ping = async (server: string) => {
-  const serverUrl = getServerUrl(server);
-  const { data } = await axios.get<PingResponse>(`${serverUrl}/auth/ping`, {
+const ping = async (serverUrl: string) => {
+  const { data } = await axios.get<PingResponse>(`${serverUrl}/api/auth/ping`, {
     timeout: 2000,
   });
 

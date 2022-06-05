@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { Logout, Server, Settings } from 'tabler-icons-react';
 import { useAppDispatch } from 'renderer/hooks';
 import { logout } from 'renderer/store/authSlice';
-import { ServersModal } from './servers/components/ServersModal';
+import { AddServerModal } from '../servers/components/AddServerModal';
 import styles from './UserMenu.module.scss';
 
 export const UserMenu = () => {
@@ -42,7 +42,7 @@ export const UserMenu = () => {
           Logout
         </Menu.Item>
       </Menu>
-      <ServersModal
+      <AddServerModal
         opened={addServerModal}
         onClose={() => addServerHandlers.close()}
       />

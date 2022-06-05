@@ -61,9 +61,9 @@ export const validateServer = async (options: {
   return null;
 };
 
-export const useCreateServers = () => {
+export const useCreateServer = () => {
   return useMutation({
-    mutationFn: serversApi.create,
+    mutationFn: serversApi.createServer,
     onError: (e) => console.log(e),
     onSuccess: (e) => console.log(e),
   });

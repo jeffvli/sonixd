@@ -1,12 +1,12 @@
 import { axios } from 'renderer/lib';
-import { ServerResponse, ServersResponse } from './types';
+import { ServerResponse } from './types';
 
 const getServers = async () => {
-  const { data } = await axios.get<ServersResponse>('/servers');
+  const { data } = await axios.get<ServerResponse[]>('/servers');
   return data;
 };
 
-const create = async (body: {
+const createServer = async (body: {
   name: string;
   remoteUserId: string;
   token: string;
@@ -18,6 +18,6 @@ const create = async (body: {
 };
 
 export const serversApi = {
-  create,
+  createServer,
   getServers,
 };
