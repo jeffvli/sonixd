@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.15.2] - 2022-06-02
+
+### Added
+
+- Added Italian translation (Thanks @Arci57)
+- Added Gruvbox Dark/Light themes (Thanks @MarshDeer)
+
+### Changed
+
+- If enabled, notifications are now displayed whenever starting playback instead of only on song change (#327) (Thanks @pztrn)
+
+### Fixed
+
+- Fixed Simplified Chinese translation typo (Thanks @zhullyb)
+- Fixed German translation (Thanks @mattsches)
+- Fixed MPRIS volume integration (Thanks @Gelaechter)
+- macOS 12.3+ build fixes (Thanks @pztrn)
+- Fixed MPRIS errors servers with song ids containing '-' (#318)
+
 [0.15.1] - 2022-04-20
 
 ### Changed

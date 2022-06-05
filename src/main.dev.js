@@ -251,7 +251,7 @@ if (isLinux()) {
     }
 
     mprisPlayer.metadata = {
-      'mpris:trackid': mprisPlayer.objectPath(`track/${arg.id}`),
+      'mpris:trackid': mprisPlayer.objectPath(`track/${arg.id?.replace('-', '')}`),
       'mpris:length': arg.duration ? Math.round((arg.duration || 0) * 1e6) : null,
       'mpris:artUrl': arg.image.includes('placeholder') ? null : arg.image,
       'xesam:title': arg.title || null,
