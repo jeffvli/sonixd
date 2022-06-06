@@ -52,7 +52,35 @@ export type GenreResponse = {
   updatedAt: string;
 };
 
+export type ArtistResponse = {
+  biography: string | null;
+  createdAt: string;
+  id: number;
+  name: string;
+  remoteCreatedAt: string | null;
+  remoteId: string;
+  serverFolderId: number;
+  updatedAt: string;
+};
+
+export type ExternalResponse = {
+  createdAt: string;
+  id: number;
+  name: string;
+  updatedAt: string;
+  url: string;
+};
+
+export type ImageResponse = {
+  createdAt: string;
+  id: number;
+  name: string;
+  updatedAt: string;
+  url: string;
+};
+
 export type AlbumResponse = {
+  _count: CountResponse;
   albumArtistId: number;
   createdAt: string;
   date: string;
@@ -68,15 +96,19 @@ export type AlbumResponse = {
 };
 
 export type SongResponse = {
+  album?: AlbumResponse;
   albumId: number;
   artistName: null;
+  artists?: ArtistResponse[];
   bitRate: number;
   container: string;
   createdAt: string;
   date: string;
   disc: number;
   duration: number;
+  externals?: ExternalResponse[];
   id: number;
+  images?: ImageResponse[];
   name: string;
   remoteCreatedAt: string;
   remoteId: string;
@@ -84,4 +116,14 @@ export type SongResponse = {
   track: number;
   updatedAt: string;
   year: number;
+};
+
+export type CountResponse = {
+  artists?: number;
+  externals?: number;
+  favorites?: number;
+  genres?: number;
+  images?: number;
+  ratings?: number;
+  songs?: number;
 };

@@ -2,17 +2,7 @@ import md5 from 'md5';
 import { useQuery } from 'react-query';
 import { queryKeys, serversApi } from 'renderer/api';
 import { ServerFolderResponse } from 'renderer/api/types';
-
-export interface ServerFolderAuth {
-  id: number;
-  locked: boolean;
-  serverId: number;
-  token: string;
-  type: string;
-  url: string;
-  userId: string;
-  username: string;
-}
+import { ServerFolderAuth } from 'types';
 
 export const useServers = () => {
   return useQuery({
