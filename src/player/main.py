@@ -4,5 +4,8 @@ import routes
 
 if __name__ == "__main__":
 
-    app.debug = True
-    socketio.run(app, use_reloader=True)
+    try:
+        app.debug = True
+        socketio.run(app, use_reloader=True)
+    except Exception:
+        print(Exception)

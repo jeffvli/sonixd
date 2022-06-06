@@ -152,8 +152,16 @@ export const selectPlayer2Song = (state: RootState) => {
   return state.player.queue.default[state.player.queue.index];
 };
 
+export const selectPreviousSong = (state: RootState) => {
+  return state.player.queue.default[state.player.queue.index - 1];
+};
+
 export const selectNextSong = (state: RootState) => {
   return state.player.queue.default[state.player.queue.index + 1];
+};
+
+export const selectNextSongLocal = (state: RootState) => {
+  return state.player.queue.default[state.player.queue.index + 2];
 };
 
 export const selectCurrentQueue = (state: RootState) => {

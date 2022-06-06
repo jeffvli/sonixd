@@ -1,23 +1,86 @@
-import { Dispatch, useCallback } from 'react';
-import { useAppDispatch } from 'renderer/hooks';
-import { next, pause, play, prev } from 'renderer/store/playerSlice';
+import { Dispatch, useCallback, useEffect } from 'react';
+import { useLocalStorage } from '@mantine/hooks';
+import isElectron from 'is-electron';
+import { playerApi, socket } from 'renderer/api/playerApi';
+import { WebSettings } from 'renderer/features/settings';
+import { useAppDispatch, useAppSelector } from 'renderer/hooks';
+import {
+  next,
+  pause,
+  play,
+  prev,
+  selectCurrentSong,
+  selectNextSong,
+  selectNextSongLocal,
+  selectPreviousSong,
+  setVolume,
+} from 'renderer/store/playerSlice';
 import { PlayerStatus, Song } from '../../../../types';
 
 export const useMainAudioControls = (args: {
   currentPlayer: 1 | 2;
+  currentTime: number;
   playerStatus: PlayerStatus;
   playersRef: any;
   queue: Song[];
   setCurrentTime: Dispatch<number>;
+  setDisableNext: Dispatch<boolean>;
+  setDisablePrev: Dispatch<boolean>;
 }) => {
-  const { playersRef, playerStatus, queue, currentPlayer, setCurrentTime } =
-    args;
+  const [settings] = useLocalStorage<WebSettings>({ key: 'settings' });
+  const {
+    playersRef,
+    playerStatus,
+    queue,
+    currentTime,
+    currentPlayer,
+    setCurrentTime,
+    setDisableNext,
+    setDisablePrev,
+  } = args;
 
   const dispatch = useAppDispatch();
   const player1Ref = playersRef?.current?.player1;
   const player2Ref = playersRef?.current?.player2;
   const currentPlayerRef = currentPlayer === 1 ? player1Ref : player2Ref;
   const nextPlayerRef = currentPlayer === 1 ? player2Ref : player1Ref;
+  const previousSong = useAppSelector(selectPreviousSong);
+  const currentSong = useAppSelector(selectCurrentSong);
+  const nextSong = useAppSelector(selectNextSong);
+  const nextSongLocal = useAppSelector(selectNextSongLocal);
+
+  useEffect(() => {
+    if (isElectron() && settings.player === 'local') {
+      socket.on('queue_player1', () => {
+        console.log('SET PLAYER 1');
+        socket.emit('queue_player1', nextSongLocal?.streamUrl);
+        dispatch(next());
+        setCurrentTime(0);
+      });
+
+      return () => {
+        socket.off('queue_player1');
+      };
+    }
+
+    return undefined;
+  }, [dispatch, nextSongLocal, setCurrentTime, settings.player]);
+  useEffect(() => {
+    if (isElectron() && settings.player === 'local') {
+      socket.on('queue_player2', () => {
+        console.log('SET PLAYER 2');
+        socket.emit('queue_player2', nextSongLocal?.streamUrl);
+        dispatch(next());
+        setCurrentTime(0);
+      });
+
+      return () => {
+        socket.off('queue_player2');
+      };
+    }
+
+    return undefined;
+  }, [dispatch, nextSongLocal, setCurrentTime, settings.player]);
 
   const resetPlayers = useCallback(() => {
     player1Ref.getInternalPlayer().currentTime = 0;
@@ -39,29 +102,72 @@ export const useMainAudioControls = (args: {
   }, [player1Ref, player2Ref, resetPlayers]);
 
   const handlePlay = useCallback(() => {
-    currentPlayerRef.getInternalPlayer().play();
+    if (settings.player === 'local') {
+      playerApi.play();
+    } else {
+      currentPlayerRef.getInternalPlayer().play();
+    }
     dispatch(play());
-  }, [currentPlayerRef, dispatch]);
+  }, [currentPlayerRef, dispatch, settings.player]);
 
   const handlePause = useCallback(() => {
+    if (settings.player === 'local') {
+      playerApi.pause();
+    }
+
     dispatch(pause());
-  }, [dispatch]);
+  }, [dispatch, settings.player]);
 
   const handleStop = useCallback(() => {
+    if (settings.player === 'local') {
+      playerApi.stop();
+    } else {
+      stopPlayback();
+    }
+
     dispatch(pause());
-    stopPlayback();
     setCurrentTime(0);
-  }, [dispatch, setCurrentTime, stopPlayback]);
+  }, [dispatch, setCurrentTime, settings.player, stopPlayback]);
 
   const handleNextTrack = useCallback(() => {
-    resetPlayers();
+    if (settings.player === 'local') {
+      setDisableNext(true);
+      playerApi.next(nextSong, nextSongLocal);
+      setCurrentTime(0);
+      setTimeout(() => setDisableNext(false), 400);
+    } else {
+      resetPlayers();
+    }
     dispatch(next());
-  }, [dispatch, resetPlayers]);
+  }, [
+    dispatch,
+    nextSong,
+    nextSongLocal,
+    resetPlayers,
+    setCurrentTime,
+    setDisableNext,
+    settings.player,
+  ]);
 
   const handlePrevTrack = useCallback(() => {
-    resetPlayers();
+    if (settings.player === 'local') {
+      setDisablePrev(true);
+      playerApi.previous(previousSong, currentSong);
+      setCurrentTime(0);
+      setTimeout(() => setDisablePrev(false), 400);
+    } else {
+      resetPlayers();
+    }
     dispatch(prev());
-  }, [dispatch, resetPlayers]);
+  }, [
+    currentSong,
+    dispatch,
+    previousSong,
+    resetPlayers,
+    setCurrentTime,
+    setDisablePrev,
+    settings.player,
+  ]);
 
   const handlePlayPause = useCallback(() => {
     if (queue) {
@@ -101,9 +207,24 @@ export const useMainAudioControls = (args: {
   const handleSeekSlider = useCallback(
     (e: number | any) => {
       setCurrentTime(e);
-      currentPlayerRef.seekTo(e);
+
+      if (settings.player === 'local') {
+        playerApi.seek(e);
+      } else {
+        currentPlayerRef.seekTo(e);
+      }
     },
-    [currentPlayerRef, setCurrentTime]
+    [currentPlayerRef, setCurrentTime, settings.player]
+  );
+
+  const handleVolumeSlider = useCallback(
+    (e: number | any) => {
+      dispatch(setVolume(e));
+      console.log('currentTime', currentTime);
+      console.log('volume', e / 100);
+      playerApi.volume(currentTime, e);
+    },
+    [currentTime, dispatch]
   );
 
   // useEffect(() => {
@@ -235,5 +356,6 @@ export const useMainAudioControls = (args: {
     handleSkipBackward,
     handleSkipForward,
     handleStop,
+    handleVolumeSlider,
   };
 };

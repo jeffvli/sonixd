@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Box, Grid, Text } from '@mantine/core';
 import clsx from 'clsx';
 import format from 'format-duration';
@@ -14,13 +14,13 @@ import {
 } from 'tabler-icons-react';
 import { IconButton } from 'renderer/components';
 import { useAppSelector } from 'renderer/hooks';
-import { selectCurrentQueue } from 'renderer/store/playerSlice';
+import { selectCurrentSong } from 'renderer/store/playerSlice';
 import { PlayerStatus } from 'types';
-import { useMainAudioControls } from '../hooks/useMainAudioControls';
 import styles from './CenterControls.module.scss';
 import { Slider } from './Slider';
 
 interface CenterControlsProps {
+  controls: any;
   currentPlayer: 1 | 2;
   playersRef: any;
   status: PlayerStatus;
@@ -30,35 +30,34 @@ export const CenterControls = ({
   status,
   playersRef,
   currentPlayer,
+  controls,
 }: CenterControlsProps) => {
   const { t } = useTranslation();
-  const queue = useAppSelector(selectCurrentQueue);
+  const currentSong = useAppSelector(selectCurrentSong);
   const player1 = playersRef?.current?.player1?.player;
   const player2 = playersRef?.current?.player2?.player;
-  const [currentTime, setCurrentTime] = useState(0);
-  const [isSeeking, setIsSeeking] = useState(false);
-
   const {
+    currentTime,
+    disableNext,
+    disablePrev,
+    handleNextTrack,
     handlePlayPause,
+    handlePrevTrack,
+    handleSeekSlider,
     handleSkipBackward,
     handleSkipForward,
-    handleSeekSlider,
-    handleNextTrack,
-    handlePrevTrack,
     handleStop,
-  } = useMainAudioControls({
-    currentPlayer,
-    playerStatus: status,
-    playersRef,
-    queue,
+    isSeeking,
     setCurrentTime,
-  });
+    setIsSeeking,
+    settings,
+  } = controls;
 
   const currentPlayerRef = currentPlayer === 1 ? player1 : player2;
 
   const duration = useMemo(
-    () => format(currentPlayerRef?.player?.player.duration * 1000 || 0),
-    [currentPlayerRef?.player?.player.duration]
+    () => format((currentSong?.duration || 0) * 1000),
+    [currentSong?.duration]
   );
 
   const formattedTime = useMemo(
@@ -70,15 +69,21 @@ export const CenterControls = ({
     let interval: any;
 
     if (status === PlayerStatus.Playing && !isSeeking) {
-      interval = setInterval(() => {
-        setCurrentTime(currentPlayerRef.getCurrentTime());
-      }, 500);
+      if (settings.player === 'web') {
+        interval = setInterval(() => {
+          setCurrentTime(currentPlayerRef.getCurrentTime());
+        }, 500);
+      } else {
+        interval = setInterval(() => {
+          setCurrentTime((time: number) => time + 1);
+        }, 1000);
+      }
     } else {
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
-  });
+  }, [currentPlayerRef, isSeeking, setCurrentTime, settings.player, status]);
 
   return (
     <>
@@ -91,6 +96,7 @@ export const CenterControls = ({
           onClick={handleStop}
         />
         <IconButton
+          disabled={disablePrev}
           icon={<PlayerSkipBack size={15} strokeWidth={1.5} />}
           size={40}
           tooltip={{ label: `${t('player.prev')}` }}
@@ -131,6 +137,7 @@ export const CenterControls = ({
           onClick={handleSkipForward}
         />
         <IconButton
+          disabled={disableNext}
           icon={<PlayerSkipForward size={15} strokeWidth={1.5} />}
           size={40}
           tooltip={{ label: `${t('player.next')}` }}
@@ -144,7 +151,7 @@ export const CenterControls = ({
         </Grid.Col>
         <Grid.Col span={8}>
           <Slider
-            max={currentPlayerRef?.player.player.duration}
+            max={currentSong?.duration}
             min={0}
             toolTipType="time"
             value={currentTime}

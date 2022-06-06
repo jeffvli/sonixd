@@ -9,7 +9,6 @@ import {
   Stack,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { useThrottleFn } from 'react-use';
 import {
   Adjustments,
   ArrowsShuffle,
@@ -25,7 +24,6 @@ import {
   selectPlayerConfig,
   setCrossfadeDuration,
   setType,
-  setVolume as setGlobalVolume,
   toggleMute,
   toggleRepeat,
   toggleShuffle,
@@ -43,7 +41,11 @@ const CROSSFADE_TYPES = [
   { label: 'Constant Power (Slow cut)', value: 'constantPowerSlowCut' },
 ];
 
-export const RightControls = () => {
+interface RightControlsProps {
+  controls: any;
+}
+
+export const RightControls = ({ controls }: RightControlsProps) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const {
@@ -56,7 +58,6 @@ export const RightControls = () => {
     type,
   } = useAppSelector(selectPlayerConfig);
   const [localVolume, setLocalVolume] = useState(volume * 100);
-  useThrottleFn((v) => dispatch(setGlobalVolume(v)), 200, [localVolume]);
   const [openConfig, setOpenConfig] = useState(false);
 
   return (
@@ -150,7 +151,10 @@ export const RightControls = () => {
             min={0}
             toolTipType="text"
             value={localVolume}
-            onChange={(e: number) => setLocalVolume(e)}
+            onAfterChange={(e) => {
+              setLocalVolume(e);
+              controls.handleVolumeSlider(e);
+            }}
           />
         </div>
       </div>

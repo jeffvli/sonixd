@@ -5,55 +5,68 @@ from server import app, socketio
 player = AudioPlayer()
 
 
-@app.route("/play", methods=["POST"])
-def play():
-    player.start_queue()
-    return "playing"
-
-
-@app.route("/pause", methods=["POST"])
-def pause():
-    player.pause()
-    return "paused"
-
-
-@app.route("/set-volume", methods=["POST"])
-def set_volume():
-    player.set_volume(1.0)
-    player.stop()
-    player.start_queue()
-    return "hello"
-
-
-# @app.route("/queue", methods=["POST"])
-# def set_queue():
-#     if request.method == "POST":
-#         print(request.get_json())
-#         return request.get_json()
-
-
 @app.route("/info")
 def get_current_time():
     time = player.get_play_object()
     return time
 
 
-# @app.route("/get")
-# def get_song():
-#     time = player.lookup(0)
-#     return time
+@socketio.on("queue")
+def on_queue(player1_stream_url, player2_stream_url):
+    player.set_queue(player1_stream_url, player2_stream_url)
 
 
-@app.route("/set-next", methods=["POST"])
-def get_song():
-    time = player.lookup(0)
-    return time
+@socketio.on("queue_player1")
+def on_queue_player1(stream_url):
+    player.set_player1(stream_url)
 
 
-@socketio.on("message")
-def handle_message(message):
-    print("Message:" + message)
-    send(message)
+@socketio.on("queue_player2")
+def on_queue_player2(stream_url):
+    player.set_player2(stream_url)
+
+
+@socketio.on("player_play")
+def on_play():
+    player.start_queue()
+
+
+@socketio.on("player_pause")
+def on_pause():
+    player.pause()
+
+
+@socketio.on("player_stop")
+def on_stop():
+    player.stop()
+
+
+@socketio.on("player_next")
+def on_next(player1_stream_url, player2_stream_url):
+    player.stop()
+    player.set_queue(player1_stream_url, player2_stream_url)
+    player.start_queue()
+
+
+@socketio.on("player_previous")
+def on_previous(player1_stream_url, player2_stream_url):
+    player.stop()
+    player.set_queue(player1_stream_url, player2_stream_url)
+    player.start_queue()
+
+
+@socketio.on("player_seek")
+def on_seek(seconds):
+    player.seek(seconds)
+    player.start_queue()
+
+
+@socketio.on("player_volume")
+def on_volume(seconds, volume):
+    player.set_volume(volume)
+    print(seconds)
+    player.seek(seconds)
+    player.start_queue()
 
 
 @socketio.on("connect")
