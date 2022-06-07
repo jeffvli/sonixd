@@ -1,8 +1,8 @@
-class ApiError extends Error {
+export class ApiError extends Error {
   message: string;
   statusCode: number;
 
-  constructor(options: { statusCode: number; message: string }) {
+  constructor(options: { message: string; statusCode: number }) {
     super(options.message);
     this.message = options.message;
     this.statusCode = options.statusCode;
@@ -10,40 +10,38 @@ class ApiError extends Error {
 
   static badRequest(message: string) {
     return new ApiError({
-      statusCode: 400,
       message: message || 'Bad request.',
+      statusCode: 400,
     });
   }
 
   static unauthorized(message: string) {
     return new ApiError({
-      statusCode: 401,
       message: message || 'Unauthorized.',
+      statusCode: 401,
     });
   }
 
   static forbidden(message: string) {
-    return new ApiError({ statusCode: 403, message: message || 'Forbidden.' });
+    return new ApiError({ message: message || 'Forbidden.', statusCode: 403 });
   }
 
   static notFound(message: string) {
-    return new ApiError({ statusCode: 404, message: message || 'Not found.' });
+    return new ApiError({ message: message || 'Not found.', statusCode: 404 });
   }
 
   static conflict(message: string) {
-    return new ApiError({ statusCode: 409, message: message || 'Conflict.' });
+    return new ApiError({ message: message || 'Conflict.', statusCode: 409 });
   }
 
   static gone(message: string) {
-    return new ApiError({ statusCode: 410, message: message || 'Gone.' });
+    return new ApiError({ message: message || 'Gone.', statusCode: 410 });
   }
 
   static internal(message: string) {
     return new ApiError({
-      statusCode: 500,
       message: message || 'Internal error.',
+      statusCode: 500,
     });
   }
 }
-
-export default ApiError;

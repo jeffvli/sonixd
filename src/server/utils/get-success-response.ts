@@ -14,10 +14,10 @@ const getPaginationUrl = (url: string, action: 'next' | 'prev') => {
   return null;
 };
 
-const getSuccessResponse = (options: {
-  statusCode: number;
+export const getSuccessResponse = (options: {
   data: any;
   paginationItems?: PaginationItems;
+  statusCode: number;
 }) => {
   const { statusCode, data, paginationItems } = options;
 
@@ -29,19 +29,17 @@ const getSuccessResponse = (options: {
     const hasNextPage = startIndex + limit <= totalEntries;
 
     pagination = {
-      prevPage: hasPrevPage ? getPaginationUrl(url, 'prev') : null,
       nextPage: hasNextPage ? getPaginationUrl(url, 'next') : null,
+      prevPage: hasPrevPage ? getPaginationUrl(url, 'prev') : null,
       startIndex,
       totalEntries,
     };
   }
 
   return {
-    response: 'Success',
-    statusCode,
     data,
     pagination,
+    response: 'Success',
+    statusCode,
   };
 };
-
-export default getSuccessResponse;

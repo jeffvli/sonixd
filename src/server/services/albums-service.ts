@@ -1,17 +1,37 @@
 import { Request } from 'express';
-
 import { prisma } from '../lib';
 import { OffsetPagination, User } from '../types/types';
-import { hasFolderAccess, splitNumberString } from '../utils';
-import ApiError from '../utils/api-error';
-import ApiSuccess from '../utils/api-success';
+import {
+  ApiError,
+  ApiSuccess,
+  hasFolderAccess,
+  splitNumberString,
+} from '../utils';
 
 const getOne = async (options: { id: number; user: User }) => {
   const { id, user } = options;
-  const album = await prisma.album.findUnique({ where: { id } });
+
+  const album = await prisma.album.findUnique({
+    include: {
+      _count: true,
+      albumArtist: true,
+      genres: true,
+      songs: {
+        include: {
+          album: true,
+          artists: true,
+          externals: true,
+          genres: true,
+          images: true,
+        },
+        orderBy: [{ disc: 'asc' }, { track: 'asc' }],
+      },
+    },
+    where: { id },
+  });
 
   if (!album) {
-    throw ApiError.notFound('Album artist not found.');
+    throw ApiError.notFound('');
   }
 
   if (!(await hasFolderAccess([album?.serverFolderId], user))) {
@@ -45,23 +65,28 @@ const getMany = async (
     where: { OR: serverFoldersFilter },
   });
   const albums = await prisma.album.findMany({
-    where: { OR: serverFoldersFilter },
+    include: {
+      _count: { select: { songs: true } },
+      albumArtist: true,
+      genres: true,
+    },
     skip: startIndex,
     take: limit,
+    where: { OR: serverFoldersFilter },
   });
 
   return ApiSuccess.ok({
     data: albums,
     paginationItems: {
+      limit,
       startIndex,
       totalEntries,
-      limit,
       url: req.originalUrl,
     },
   });
 };
 
 export const albumsService = {
-  getOne,
   getMany,
+  getOne,
 };

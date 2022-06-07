@@ -1,7 +1,7 @@
 import { prisma } from '../lib';
 import { User } from '../types/types';
 
-const hasFolderAccess = async (serverFolderIds: any[], user: User) => {
+export const hasFolderAccess = async (serverFolderIds: any[], user: User) => {
   if (user.isAdmin) {
     return true;
   }
@@ -36,5 +36,3 @@ const hasFolderAccess = async (serverFolderIds: any[], user: User) => {
 
   return hasAccess;
 };
-
-export default hasFolderAccess;

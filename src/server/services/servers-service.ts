@@ -5,28 +5,62 @@ import {
   subsonicApi,
   subsonicTasks,
 } from '../queue';
-import { apiError, apiSuccess, splitNumberString } from '../utils';
+import { User } from '../types/types';
+import { ApiError, ApiSuccess, splitNumberString } from '../utils';
 
-const getOne = async (options: { id: number }) => {
+const getOne = async (user: User, options: { id: number }) => {
   const { id } = options;
   const server = await prisma.server.findUnique({
-    include: { serverFolder: true },
+    include: {
+      serverFolder: user.isAdmin
+        ? true
+        : {
+            where: {
+              OR: [
+                { isPublic: true },
+                { serverFolderPermissions: { some: { userId: user.id } } },
+              ],
+            },
+          },
+    },
     where: { id },
   });
 
   if (!server) {
-    throw apiError.notFound('');
+    throw ApiError.notFound('');
   }
 
-  return apiSuccess.ok({ data: server });
+  if (!user.isAdmin && server.serverFolder.length === 0) {
+    throw ApiError.forbidden('');
+  }
+
+  return ApiSuccess.ok({ data: server });
 };
 
-const getMany = async () => {
-  const servers = await prisma.server.findMany({
-    include: { serverFolder: true },
-  });
+const getMany = async (user: User) => {
+  let servers;
 
-  return apiSuccess.ok({ data: servers });
+  if (user.isAdmin) {
+    servers = await prisma.server.findMany({
+      include: { serverFolder: true },
+    });
+  } else {
+    servers = await prisma.server.findMany({
+      include: {
+        serverFolder: {
+          where: {
+            OR: [
+              { isPublic: true },
+              { serverFolderPermissions: { some: { userId: user.id } } },
+            ],
+          },
+        },
+      },
+      where: { serverFolder: { some: { isPublic: true } } },
+    });
+  }
+
+  return ApiSuccess.ok({ data: servers });
 };
 
 const create = async (options: {
@@ -80,7 +114,7 @@ const create = async (options: {
     });
   });
 
-  return apiSuccess.ok({ data: { ...server } });
+  return ApiSuccess.ok({ data: { ...server } });
 };
 
 const refresh = async (options: { id: number }) => {
@@ -88,7 +122,7 @@ const refresh = async (options: { id: number }) => {
   const server = await prisma.server.findUnique({ where: { id } });
 
   if (!server) {
-    throw apiError.notFound('');
+    throw ApiError.notFound('');
   }
 
   let musicFoldersData: {
@@ -132,7 +166,7 @@ const refresh = async (options: { id: number }) => {
     });
   });
 
-  return apiSuccess.ok({ data: { ...server } });
+  return ApiSuccess.ok({ data: { ...server } });
 };
 
 const fullScan = async (options: {
@@ -147,7 +181,7 @@ const fullScan = async (options: {
   });
 
   if (!server) {
-    throw apiError.notFound('Server does not exist.');
+    throw ApiError.notFound('Server does not exist.');
   }
 
   let serverFolders;
@@ -172,7 +206,7 @@ const fullScan = async (options: {
     }
   }
 
-  return apiSuccess.ok({ data: {} });
+  return ApiSuccess.ok({ data: {} });
 };
 
 export const serversService = {

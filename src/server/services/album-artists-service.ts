@@ -1,17 +1,26 @@
 import { Request } from 'express';
-
 import { prisma } from '../lib';
 import { OffsetPagination, User } from '../types/types';
-import { hasFolderAccess, splitNumberString } from '../utils';
-import ApiError from '../utils/api-error';
-import ApiSuccess from '../utils/api-success';
+import {
+  ApiError,
+  ApiSuccess,
+  hasFolderAccess,
+  splitNumberString,
+} from '../utils';
 
 const getOne = async (options: { id: number; user: User }) => {
   const { id, user } = options;
-  const album = await prisma.albumArtist.findUnique({ where: { id } });
+  const album = await prisma.albumArtist.findUnique({
+    include: {
+      albums: { include: { songs: true } },
+      genres: true,
+      images: true,
+    },
+    where: { id },
+  });
 
   if (!album) {
-    throw ApiError.notFound('Album artist not found.');
+    throw ApiError.notFound('');
   }
 
   if (!(await hasFolderAccess([album?.serverFolderId], user))) {
@@ -34,34 +43,33 @@ const getMany = async (
 
   const serverFoldersFilter = serverFolderIds.map((serverFolderId: number) => {
     return {
-      ServerFolder: {
-        id: { equals: Number(serverFolderId) },
-      },
+      serverFolder: { id: { equals: Number(serverFolderId) } },
     };
   });
 
   const startIndex = limit * page;
-  const totalEntries = await prisma.albumArtist.count();
+  const totalEntries = await prisma.albumArtist.count({
+    where: { OR: serverFoldersFilter },
+  });
   const albumArtists = await prisma.albumArtist.findMany({
-    where: {
-      OR: serverFoldersFilter,
-    },
+    include: { genres: true },
     skip: startIndex,
     take: limit,
+    where: { OR: serverFoldersFilter },
   });
 
   return ApiSuccess.ok({
     data: albumArtists,
     paginationItems: {
+      limit,
       startIndex,
       totalEntries,
-      limit,
       url: req.originalUrl,
     },
   });
 };
 
 export const albumArtistsService = {
-  getOne,
   getMany,
+  getOne,
 };

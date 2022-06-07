@@ -1,79 +1,91 @@
 export type Server = {
+  createdAt: Date | string;
   id: number;
   name: string;
+  remoteUserId: string;
+  serverFolder?: ServerFolder[];
+  serverType: string;
+  token: string;
+  updatedAt: Date | string;
   url: string;
   username: string;
-  token: string;
-  serverType: string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
-  serverFolder?: ServerFolder[];
 };
 
 export type ServerFolder = {
+  createdAt: Date | string;
+  enabled: boolean;
   id: number;
   name: string;
   remoteId: string;
-  enabled: boolean;
-  createdAt: Date | string;
-  updatedAt: Date | string;
   serverId: number;
+  updatedAt: Date | string;
 };
 
 export type User = {
-  id: number;
-  username: string;
-  password?: string;
-  enabled: boolean;
-  isAdmin: boolean;
   createdAt: Date | string;
+  enabled: boolean;
+  id: number;
+  isAdmin: boolean;
+  password?: string;
   updatedAt: Date | string;
+  username: string;
 };
 
 export type Genre = {
+  createdAt: Date | string;
   id: number;
   name: string;
-  createdAt: Date | string;
   updatedAt: Date | string;
 };
 
 export type Artist = {
-  id: number;
-  name: string;
-  imageUrl?: string;
   biography: string;
-  favorite?: boolean;
-  rating?: number;
-  remoteId: string;
-  remoteCreatedAt: string;
   createdAt: Date | string;
-  updatedAt: Date | string;
-
+  favorite?: boolean;
   genres?: Genre[];
+  id: number;
+  imageUrl?: string;
+  name: string;
+  rating?: number;
+  remoteCreatedAt: string;
+  remoteId: string;
+
+  updatedAt: Date | string;
 };
 
 export type Album = {
-  id: number;
-  name: string;
-  imageUrl?: string;
   biography?: string;
-  favorite?: boolean;
-  rating?: number;
-  remoteId: string;
-  remoteCreatedAt: string;
   createdAt: Date | string;
+  favorite?: boolean;
+  id: number;
+  imageUrl?: string;
+  name: string;
+  rating?: number;
+  remoteCreatedAt: string;
+  remoteId: string;
   updatedAt: Date | string;
 };
 
 export type Song = {
-  id: number;
-  name: string;
-  imageUrl?: string;
-  favorite?: boolean;
-  rating?: number;
-  remoteId: string;
-  remoteCreatedAt: string;
   createdAt: Date | string;
+  favorite?: boolean;
+  id: number;
+  imageUrl?: string;
+  name: string;
+  rating?: number;
+  remoteCreatedAt: string;
+  remoteId: string;
+  updatedAt: Date | string;
+};
+
+export type Task = {
+  completed: boolean;
+  createdAt: Date | string;
+  id: number;
+  inProgress: boolean;
+  isError: boolean | null;
+  message: string | null;
+  name: string;
   updatedAt: Date | string;
 };
 
@@ -83,10 +95,10 @@ export type OffsetPagination = {
 };
 
 export type PaginationResponse = {
-  totalEntries: number;
-  startIndex: number;
   nextPage: string;
   prevPage: string;
+  startIndex: number;
+  totalEntries: number;
 };
 
 export type SuccessResponse = {
@@ -95,8 +107,8 @@ export type SuccessResponse = {
 };
 
 export type PaginationItems = {
-  totalEntries: number;
-  startIndex: number;
   limit: number;
+  startIndex: number;
+  totalEntries: number;
   url: string;
 };

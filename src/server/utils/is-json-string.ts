@@ -1,4 +1,4 @@
-const isJsonString = (string: string) => {
+export const isJsonString = (string: string) => {
   try {
     JSON.parse(string);
   } catch (e) {
@@ -6,5 +6,3 @@ const isJsonString = (string: string) => {
   }
   return true;
 };
-
-export default isJsonString;

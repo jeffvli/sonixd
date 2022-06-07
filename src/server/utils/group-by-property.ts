@@ -1,4 +1,4 @@
-const groupByProperty = (object: any, property: string) => {
+export const groupByProperty = (object: any, property: string) => {
   return object.reduce((groups: any, item: any) => {
     const group = groups[item[property]] || [];
     group.push(item);
@@ -6,5 +6,3 @@ const groupByProperty = (object: any, property: string) => {
     return groups;
   }, {});
 };
-
-export default groupByProperty;
