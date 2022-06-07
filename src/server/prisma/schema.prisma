@@ -72,6 +72,8 @@ model ServerFolderPermission {
 
   user   User @relation(fields: [userId], references: [id])
   userId Int
+
+  @@unique(fields: [serverFolderId, userId], name: "uniqueServerFolderPermissionId")
 }
 
 model Genre {
