@@ -261,6 +261,7 @@
     "react-router-dom": "^6.3.0",
     "react-slider": "^2.0.0",
     "react-use": "^17.3.2",
+    "socket.io-client": "^4.5.1",
     "tabler-icons-react": "^1.46.0",
     "zustand": "^4.0.0-rc.1"
   },
