@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-
 import { artistsService } from '../services';
 import {
   getSuccessResponse,

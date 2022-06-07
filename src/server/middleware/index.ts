@@ -1,3 +1,3 @@
-export { default as errorHandler } from './error-handler';
-export { default as authenticateLocal } from './authenticate-local';
-export { default as authenticateAdmin } from './authenticate-admin';
+export * from './error-handler';
+export * from './authenticate-local';
+export * from './authenticate-admin';

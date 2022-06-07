@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-
 import { usersService } from '../services';
 import { getSuccessResponse, idValidation, validateRequest } from '../utils';
 

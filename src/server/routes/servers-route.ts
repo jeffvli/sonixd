@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import { serversController } from '../controllers';
 import { authenticateAdmin, authenticateLocal } from '../middleware';
 
-const serversRouter: Router = express.Router();
+export const serversRouter: Router = express.Router();
 
 serversRouter.get('/', authenticateLocal, serversController.getServers);
 
@@ -21,5 +21,3 @@ serversRouter.post(
   authenticateAdmin,
   serversController.scanServer
 );
-
-export default serversRouter;

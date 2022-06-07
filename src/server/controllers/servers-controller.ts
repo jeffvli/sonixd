@@ -7,15 +7,15 @@ const getServer = async (req: Request, res: Response) => {
   validateRequest(req, { params: z.object({ ...idValidation }) });
 
   const { id } = req.params;
-  const data = await serversService.getOne({
+  const data = await serversService.getOne(req.auth, {
     id: Number(id),
   });
 
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
-const getServers = async (_req: Request, res: Response) => {
-  const data = await serversService.getMany();
+const getServers = async (req: Request, res: Response) => {
+  const data = await serversService.getMany(req.auth);
 
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };

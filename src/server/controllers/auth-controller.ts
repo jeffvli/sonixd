@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-
 import packageJson from '../package.json';
 import { authService } from '../services';
 import { getSuccessResponse, validateRequest } from '../utils';
@@ -11,24 +10,24 @@ const login = async (req: Request, res: Response) => {
   const { username } = req.body;
   const { statusCode, data } = await authService.login({ username });
 
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
+  return res.status(statusCode).json(getSuccessResponse({ data, statusCode }));
 };
 
 const register = async (req: Request, res: Response) => {
   validateRequest(req, {
     body: z.object({
-      username: z.string().min(4).max(26),
       password: z.string().min(6).max(255),
+      username: z.string().min(4).max(26),
     }),
   });
 
   const { username, password } = req.body;
   const { statusCode, data } = await authService.register({
-    username,
     password,
+    username,
   });
 
-  return res.status(statusCode).json(getSuccessResponse({ statusCode, data }));
+  return res.status(statusCode).json(getSuccessResponse({ data, statusCode }));
 };
 
 const logout = async (req: Request, res: Response) => {
@@ -42,14 +41,14 @@ const logout = async (req: Request, res: Response) => {
 const ping = async (_req: Request, res: Response) => {
   return res.status(200).json(
     getSuccessResponse({
-      statusCode: 200,
       data: {
-        name: packageJson.name,
         description: packageJson.description,
+        name: packageJson.name,
         version: packageJson.version,
       },
+      statusCode: 200,
     })
   );
 };
 
-export const authController = { login, register, logout, ping };
+export const authController = { login, logout, ping, register };

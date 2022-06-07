@@ -6,31 +6,6 @@ import { q } from '../scanner-queue';
 import { subsonicApi } from './subsonic-api';
 import { SSAlbumListEntry } from './subsonic-types';
 
-// const getCoverArtUrl = (server: Server, item: any, size?: number) => {
-//   if (!item.coverArt && !item.artistImageUrl) {
-//     return null;
-//   }
-
-//   if (
-//     !item.coverArt &&
-//     !item.artistImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')
-//   ) {
-//     return item.artistImageUrl;
-//   }
-
-//   if (item.artistImageUrl?.match('2a96cbd8b46e442fc41c2b86b821562f')) {
-//     return null;
-//   }
-
-//   return (
-//     `${server.url}/getCoverArt.view` +
-//     `?id=${item.coverArt}` +
-//     `&v=1.13.0` +
-//     `&c=sonixd` +
-//     `${size ? `&size=${size}` : ''}`
-//   );
-// };
-
 export const scanGenres = async (
   server: Server,
   serverFolder: ServerFolder
