@@ -1,18 +1,8 @@
 import { useRef, useState } from 'react';
 import { Grid } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import { AudioPlayer } from 'renderer/components/audio-player/AudioPlayer';
-import { useAppDispatch, useAppSelector } from 'renderer/hooks';
-import {
-  selectCurrentPlayer,
-  selectPlayerStatus,
-  autoIncrement,
-  selectPlayer2Song,
-  selectPlayer1Song,
-  selectPlayerConfig,
-  selectCurrentQueue,
-} from 'renderer/store/playerSlice';
-import { WebSettings } from '../settings';
+import { usePlayerStore } from 'renderer/store';
+import { PlaybackType } from 'types';
 import { CenterControls } from './components/CenterControls';
 import { LeftControls } from './components/LeftControls';
 import { RightControls } from './components/RightControls';
@@ -20,20 +10,17 @@ import { useMainAudioControls } from './hooks/useMainAudioControls';
 import styles from './Playerbar.module.scss';
 
 export const PlayerBar = () => {
-  const dispatch = useAppDispatch();
   const playersRef = useRef<any>();
-  const [settings] = useLocalStorage<WebSettings>({ key: 'settings' });
-  const playerStatus = useAppSelector(selectPlayerStatus);
-  const player1Song = useAppSelector(selectPlayer1Song);
-  const player2Song = useAppSelector(selectPlayer2Song);
-  const currentPlayer = useAppSelector(selectCurrentPlayer);
-  const { muted, volume, type, crossfadeType, crossfadeDuration } =
-    useAppSelector(selectPlayerConfig);
-  const queue = useAppSelector(selectCurrentQueue);
+  const settings = usePlayerStore((state) => state.settings);
+  const volume = usePlayerStore((state) => state.settings.volume);
   const [currentTime, setCurrentTime] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
   const [disableNext, setDisableNext] = useState(false);
   const [disablePrev, setDisablePrev] = useState(false);
+  const playerData = usePlayerStore((state) => state.getPlayerData());
+  const status = usePlayerStore((state) => state.current.status);
+  const player = usePlayerStore((state) => state.current.player);
+  const autoNext = usePlayerStore((state) => state.autoNext);
 
   const {
     handlePlayPause,
@@ -45,11 +32,8 @@ export const PlayerBar = () => {
     handleStop,
     handleVolumeSlider,
   } = useMainAudioControls({
-    currentPlayer,
     currentTime,
-    playerStatus,
     playersRef,
-    queue,
     setCurrentTime,
     setDisableNext,
     setDisablePrev,
@@ -59,9 +43,7 @@ export const PlayerBar = () => {
     <div className={styles.playerbar}>
       <Grid className={styles.grid} gutter="xs">
         <Grid.Col px="xs" span={3}>
-          <LeftControls
-            song={currentPlayer === 1 ? player1Song : player2Song}
-          />
+          <LeftControls song={playerData.queue.current} />
         </Grid.Col>
         <Grid.Col px="xs" span={6}>
           <CenterControls
@@ -81,27 +63,27 @@ export const PlayerBar = () => {
               setIsSeeking,
               settings,
             }}
-            currentPlayer={currentPlayer}
+            // currentPlayer={currentPlayer}
             playersRef={playersRef}
-            status={playerStatus}
+            // status={playerStatus}
           />
         </Grid.Col>
         <Grid.Col px="xs" span={3}>
           <RightControls controls={{ handleVolumeSlider }} />
         </Grid.Col>
       </Grid>
-      {settings.player === 'web' && (
+      {settings.type === PlaybackType.Web && (
         <AudioPlayer
           ref={playersRef}
-          autoIncrement={() => dispatch(autoIncrement())}
-          crossfadeDuration={crossfadeDuration}
-          crossfadeType={crossfadeType}
-          currentPlayer={currentPlayer}
-          muted={muted}
-          player1={player1Song}
-          player2={player2Song}
-          status={playerStatus}
-          type={type}
+          autoNext={autoNext}
+          crossfadeDuration={settings.crossfadeDuration}
+          crossfadeStyle={settings.crossfadeStyle}
+          currentPlayer={player}
+          muted={settings.muted}
+          player1={playerData.player1}
+          player2={playerData.player2}
+          status={status}
+          style={settings.style}
           volume={volume}
         />
       )}

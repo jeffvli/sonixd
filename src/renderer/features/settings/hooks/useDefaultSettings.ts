@@ -1,11 +1,29 @@
 import isElectron from 'is-electron';
+import { PlayerState } from 'renderer/store';
+import {
+  CrossfadeStyle,
+  PlaybackStyle,
+  PlaybackType,
+  PlayerRepeat,
+} from 'types';
 
 export interface WebSettings {
-  player: 'web' | 'local';
+  player: PlayerSettings;
 }
 
+export type PlayerSettings = PlayerState['settings'];
+
 const DEFAULT_SETTINGS: WebSettings = {
-  player: isElectron() ? 'local' : 'web',
+  player: {
+    crossfadeDuration: 5,
+    crossfadeStyle: CrossfadeStyle.EqualPower,
+    muted: false,
+    repeat: PlayerRepeat.All,
+    shuffle: false,
+    style: PlaybackStyle.Gapless,
+    type: isElectron() ? PlaybackType.Local : PlaybackType.Web,
+    volume: 0.5,
+  },
 };
 
 export const useDefaultSettings = () => {

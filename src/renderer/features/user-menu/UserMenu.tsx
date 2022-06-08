@@ -2,15 +2,20 @@ import { Button, Menu } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate } from 'react-router';
 import { Logout, Server, Settings } from 'tabler-icons-react';
-import { useAppDispatch } from 'renderer/hooks';
-import { logout } from 'renderer/store/authSlice';
+import { useAuthStore } from 'renderer/store';
 import { AddServerModal } from '../servers/components/AddServerModal';
 import styles from './UserMenu.module.scss';
 
 export const UserMenu = () => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [addServerModal, addServerHandlers] = useDisclosure(false);
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem('authentication');
+    navigate('/login');
+  };
 
   return (
     <>
@@ -31,14 +36,7 @@ export const UserMenu = () => {
           Servers
         </Menu.Item>
         <Menu.Item icon={<Settings size={20} />}>Settings</Menu.Item>
-        <Menu.Item
-          icon={<Logout size={20} />}
-          onClick={() => {
-            dispatch(logout());
-            localStorage.removeItem('authentication');
-            navigate('/login');
-          }}
-        >
+        <Menu.Item icon={<Logout size={20} />} onClick={handleLogout}>
           Logout
         </Menu.Item>
       </Menu>

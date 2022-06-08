@@ -31,13 +31,23 @@ export enum Play {
   Now = 'play',
 }
 
-export enum Crossfade {
+export enum CrossfadeStyle {
   ConstantPower = 'constantPower',
   ConstantPowerSlowCut = 'constantPowerSlowCut',
   ConstantPowerSlowFade = 'constantPowerSlowFade',
   Dipped = 'dipped',
   EqualPower = 'equalPower',
   Linear = 'linear',
+}
+
+export enum PlaybackStyle {
+  Crossfade = 'crossfade',
+  Gapless = 'gapless',
+}
+
+export enum PlaybackType {
+  Local = 'local',
+  Web = 'web',
 }
 
 // export type ServerType = Server.Subsonic | Server.Jellyfin;
@@ -222,4 +232,15 @@ export interface Pagination {
   pages?: number;
   recordsPerPage: number;
   serverSide?: boolean;
+}
+
+export interface ServerFolderAuth {
+  id: number;
+  locked: boolean;
+  serverId: number;
+  token: string;
+  type: string;
+  url: string;
+  userId: string;
+  username: string;
 }

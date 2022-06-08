@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { Dispatch } from 'react';
-import { Crossfade } from '../../../../types';
+import { CrossfadeStyle } from '../../../../types';
 
 export const gaplessHandler = (args: {
   currentTime: number;
@@ -41,7 +41,7 @@ export const crossfadeHandler = (args: {
   currentTime: number;
   duration: number;
   fadeDuration: number;
-  fadeType: Crossfade;
+  fadeType: CrossfadeStyle;
   isTransitioning: boolean;
   nextPlayerRef: any;
   player: 1 | 2;

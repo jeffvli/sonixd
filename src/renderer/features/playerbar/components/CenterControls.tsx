@@ -13,29 +13,30 @@ import {
   PlayerTrackPrev,
 } from 'tabler-icons-react';
 import { IconButton } from 'renderer/components';
-import { useAppSelector } from 'renderer/hooks';
-import { selectCurrentSong } from 'renderer/store/playerSlice';
+import { usePlayerStore } from 'renderer/store';
 import { PlayerStatus } from 'types';
 import styles from './CenterControls.module.scss';
 import { Slider } from './Slider';
 
 interface CenterControlsProps {
   controls: any;
-  currentPlayer: 1 | 2;
+  // currentPlayer: 1 | 2;
   playersRef: any;
-  status: PlayerStatus;
+  // status: PlayerStatus;
 }
 
 export const CenterControls = ({
-  status,
+  // status,
   playersRef,
-  currentPlayer,
+  // currentPlayer,
   controls,
 }: CenterControlsProps) => {
   const { t } = useTranslation();
-  const currentSong = useAppSelector(selectCurrentSong);
+  const playerData = usePlayerStore((state) => state.getPlayerData());
   const player1 = playersRef?.current?.player1?.player;
   const player2 = playersRef?.current?.player2?.player;
+  const status = usePlayerStore((state) => state.current.status);
+  const currentPlayer = usePlayerStore((state) => state.current.player);
   const {
     currentTime,
     disableNext,
@@ -48,16 +49,16 @@ export const CenterControls = ({
     handleSkipForward,
     handleStop,
     isSeeking,
-    setCurrentTime,
     setIsSeeking,
     settings,
+    setCurrentTime,
   } = controls;
 
   const currentPlayerRef = currentPlayer === 1 ? player1 : player2;
 
   const duration = useMemo(
-    () => format((currentSong?.duration || 0) * 1000),
-    [currentSong?.duration]
+    () => format((playerData.queue.current?.duration || 0) * 1000),
+    [playerData.queue]
   );
 
   const formattedTime = useMemo(
@@ -151,7 +152,7 @@ export const CenterControls = ({
         </Grid.Col>
         <Grid.Col span={8}>
           <Slider
-            max={currentSong?.duration}
+            max={playerData.queue.current?.duration}
             min={0}
             toolTipType="time"
             value={currentTime}

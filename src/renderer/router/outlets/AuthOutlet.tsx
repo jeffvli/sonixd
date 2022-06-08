@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAppSelector } from 'renderer/hooks';
+import { useAuthStore } from 'renderer/store';
 
 interface AuthOutletProps {
   redirectTo: string;
@@ -7,7 +7,7 @@ interface AuthOutletProps {
 
 export const AuthOutlet = ({ redirectTo }: AuthOutletProps) => {
   const location = useLocation();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   if (isAuthenticated) {
     return <Navigate replace state={{ from: location }} to={redirectTo} />;

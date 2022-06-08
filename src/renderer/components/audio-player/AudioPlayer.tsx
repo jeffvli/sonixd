@@ -6,17 +6,22 @@ import {
   useCallback,
 } from 'react';
 import ReactPlayer, { ReactPlayerProps } from 'react-player';
-import { Crossfade, PlayerStatus, Song } from '../../../types';
+import {
+  CrossfadeStyle,
+  PlaybackStyle,
+  PlayerStatus,
+  Song,
+} from '../../../types';
 import { crossfadeHandler, gaplessHandler } from './utils/listenHandlers';
 
 interface AudioPlayerProps extends ReactPlayerProps {
   crossfadeDuration: number;
-  crossfadeType: Crossfade;
+  crossfadeStyle: CrossfadeStyle;
   currentPlayer: 1 | 2;
   player1: Song;
   player2: Song;
   status: PlayerStatus;
-  type: 'gapless' | 'crossfade';
+  style: PlaybackStyle;
   volume: number;
 }
 
@@ -35,11 +40,11 @@ export const AudioPlayer = forwardRef(
   (
     {
       status,
-      type,
-      crossfadeType,
+      style,
+      crossfadeStyle,
       crossfadeDuration,
       currentPlayer,
-      autoIncrement,
+      autoNext,
       player1,
       player2,
       muted,
@@ -61,7 +66,7 @@ export const AudioPlayer = forwardRef(
     }));
 
     const handleOnEnded = () => {
-      autoIncrement();
+      autoNext();
       setIsTransitioning(false);
     };
 
@@ -73,7 +78,7 @@ export const AudioPlayer = forwardRef(
           currentTime: e.playedSeconds,
           duration: getDuration(player1Ref),
           fadeDuration: crossfadeDuration,
-          fadeType: crossfadeType,
+          fadeType: crossfadeStyle,
           isTransitioning,
           nextPlayerRef: player2Ref,
           player: 1,
@@ -81,7 +86,13 @@ export const AudioPlayer = forwardRef(
           volume,
         });
       },
-      [crossfadeDuration, crossfadeType, currentPlayer, isTransitioning, volume]
+      [
+        crossfadeDuration,
+        crossfadeStyle,
+        currentPlayer,
+        isTransitioning,
+        volume,
+      ]
     );
 
     const handleCrossfade2 = useCallback(
@@ -92,7 +103,7 @@ export const AudioPlayer = forwardRef(
           currentTime: e.playedSeconds,
           duration: getDuration(player2Ref),
           fadeDuration: crossfadeDuration,
-          fadeType: crossfadeType,
+          fadeType: crossfadeStyle,
           isTransitioning,
           nextPlayerRef: player1Ref,
           player: 2,
@@ -100,7 +111,13 @@ export const AudioPlayer = forwardRef(
           volume,
         });
       },
-      [crossfadeDuration, crossfadeType, currentPlayer, isTransitioning, volume]
+      [
+        crossfadeDuration,
+        crossfadeStyle,
+        currentPlayer,
+        isTransitioning,
+        volume,
+      ]
     );
 
     const handleGapless1 = useCallback(
@@ -143,7 +160,9 @@ export const AudioPlayer = forwardRef(
           volume={volume}
           width={0}
           onEnded={handleOnEnded}
-          onProgress={type === 'gapless' ? handleGapless1 : handleCrossfade1}
+          onProgress={
+            style === PlaybackStyle.Gapless ? handleGapless1 : handleCrossfade1
+          }
         />
         <ReactPlayer
           ref={player2Ref}
@@ -155,7 +174,9 @@ export const AudioPlayer = forwardRef(
           volume={volume}
           width={0}
           onEnded={handleOnEnded}
-          onProgress={type === 'gapless' ? handleGapless2 : handleCrossfade2}
+          onProgress={
+            style === PlaybackStyle.Gapless ? handleGapless2 : handleCrossfade2
+          }
         />
       </>
     );

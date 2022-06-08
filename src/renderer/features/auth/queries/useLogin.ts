@@ -2,8 +2,7 @@ import md5 from 'md5';
 import { nanoid } from 'nanoid';
 import { useMutation } from 'react-query';
 import { authApi } from 'renderer/api';
-import { useAppDispatch } from 'renderer/hooks';
-import { login } from 'renderer/store/authSlice';
+import { useAuthStore } from 'renderer/store';
 
 export const useLogin = (
   serverUrl: string,
@@ -12,12 +11,13 @@ export const useLogin = (
     username: string;
   }
 ) => {
-  const dispatch = useAppDispatch();
+  const login = useAuthStore((state) => state.login);
 
   return useMutation({
     mutationFn: () => authApi.login(serverUrl, body),
     onSuccess: () => {
-      dispatch(login(serverUrl));
+      const key = md5(serverUrl);
+      login({ key, serverUrl });
 
       if (!localStorage.getItem('device_id')) {
         localStorage.setItem('device_id', nanoid());
@@ -27,7 +27,7 @@ export const useLogin = (
         'authentication',
         JSON.stringify({
           isAuthenticated: true,
-          key: md5(serverUrl),
+          key,
           serverUrl,
         })
       );
