@@ -74,6 +74,16 @@ scoop install sonixd
 
 ---
 
+### MacOS
+
+If you prefer not to download the release binary, you can install using `homebrew`. Using your favorite terminal:
+
+```
+brew install --cask sonicxd
+```
+
+---
+
 ### Arch Linux
 
 There is an AUR package of the latest AppImage release available [here](https://aur.archlinux.org/packages/sonixd-appimage).
