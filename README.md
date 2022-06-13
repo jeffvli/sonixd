@@ -79,7 +79,7 @@ scoop install sonixd
 If you prefer not to download the release binary, you can install using `homebrew`. Using your favorite terminal:
 
 ```
-brew install --cask sonicxd
+brew install --cask sonixd
 ```
 
 ---
