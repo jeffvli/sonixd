@@ -69,6 +69,7 @@ const NowPlayingMiniView = () => {
   const autoPlaylistTriggerRef = useRef<any>();
   const [autoPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
   const [autoPlaylistToYear, setRandomPlaylistToYear] = useState(0);
+  const [initialScroll, setInitialScroll] = useState<undefined | number>(undefined);
   const [randomPlaylistGenre, setRandomPlaylistGenre] = useState('');
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
@@ -117,13 +118,16 @@ const NowPlayingMiniView = () => {
 
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {
+      const rowHeight = Number(settings.getSync('miniListRowHeight'));
+      const scrollPosition =
+        rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
+          ? rowHeight * playQueue.currentIndex - rowHeight * 2
+          : 0;
+
+      setInitialScroll(scrollPosition);
+
       setTimeout(() => {
-        const rowHeight = Number(settings.getSync('miniListRowHeight'));
-        tableRef?.current?.table.current.scrollTop(
-          rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
-            ? rowHeight * playQueue.currentIndex - rowHeight * 2
-            : 0
-        );
+        tableRef?.current?.table.current.scrollTop(scrollPosition);
       }, 100);
     }
   }, [playQueue.currentIndex, tableRef, playQueue.displayQueue, playQueue.scrollWithCurrentSong]);
@@ -457,6 +461,7 @@ const NowPlayingMiniView = () => {
               dnd
               disabledContextMenuOptions={['deletePlaylist', 'viewInModal']}
               handleFavorite={handleFavorite}
+              initialScrollOffset={initialScroll}
             />
           </GenericPage>
         </MiniViewContainer>
