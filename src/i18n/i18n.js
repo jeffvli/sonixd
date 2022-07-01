@@ -12,6 +12,7 @@ const zhcn = require('./locales/zhcn.json');
 const es = require('./locales/es.json');
 const si = require('./locales/si.json');
 const it = require('./locales/it.json');
+const tr = require('./locales/tr.json');
 
 const resources = {
   en: { translation: en },
@@ -20,6 +21,7 @@ const resources = {
   es: { translation: es },
   si: { translation: si },
   it: { translation: it },
+  tr: { translation: tr },
 };
 
 i18n
@@ -62,5 +64,9 @@ export const Languages = [
   {
     label: 'Italiano',
     value: 'it',
+  },
+  {
+    label: 'Türkçe',
+    value: 'tr',
   },
 ];
