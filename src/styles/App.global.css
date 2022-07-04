@@ -58,6 +58,7 @@ body {
 .rs-panel-body,
 .rs-panel-heading {
   padding: 0px;
+  user-select: none;
 }
 
 .rs-popover.in {
