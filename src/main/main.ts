@@ -9,13 +9,12 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
-
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './utils';
+import './features';
 
 export default class AppUpdater {
   constructor() {
@@ -66,21 +65,23 @@ const createWindow = async () => {
   };
 
   mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728,
-    minWidth: 600,
-    minHeight: 600,
     frame: false,
+    height: 728,
     icon: getAssetPath('icon.png'),
+    minHeight: 600,
+    minWidth: 640,
+    show: false,
     webPreferences: {
-      nodeIntegration: true,
+      backgroundThrottling: false,
+
       contextIsolation: true,
       devTools: true,
+      nodeIntegration: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
+    width: 1024,
   });
 
   ipcMain.on('window-maximize', () => {
@@ -138,6 +139,10 @@ app.commandLine.appendSwitch(
   'disable-features',
   'HardwareMediaKeyHandling,MediaSessionService'
 );
+
+export const getMainWindow = () => {
+  return mainWindow;
+};
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
