@@ -3,20 +3,17 @@
  */
 
 import webpack from 'webpack';
-
 import { dependencies as externals } from '../../release/app/package.json';
 import webpackPaths from './webpack.paths';
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
 
-  stats: 'errors-only',
-
   module: {
     rules: [
       {
-        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
+        test: /\.[jt]sx?$/,
         use: {
           loader: 'ts-loader',
           options: {
@@ -29,19 +26,12 @@ const configuration: webpack.Configuration = {
   },
 
   output: {
-    path: webpackPaths.srcPath,
     // https://github.com/webpack/webpack/issues/1114
     library: {
       type: 'commonjs2',
     },
-  },
 
-  /**
-   * Determine the array of extensions that should be used to resolve modules.
-   */
-  resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    modules: [webpackPaths.srcPath, 'node_modules'],
+    path: webpackPaths.srcPath,
   },
 
   plugins: [
@@ -49,6 +39,19 @@ const configuration: webpack.Configuration = {
       NODE_ENV: 'production',
     }),
   ],
+
+  /**
+   * Determine the array of extensions that should be used to resolve modules.
+   */
+  resolve: {
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+    fallback: {
+      child_process: false,
+    },
+    modules: [webpackPaths.srcPath, 'node_modules'],
+  },
+
+  stats: 'errors-only',
 };
 
 export default configuration;
