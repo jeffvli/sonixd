@@ -419,8 +419,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: settings.getSync('windowPosition.width') || 1024,
-    height: settings.getSync('windowPosition.height') || 728,
+    width: 1024,
+    height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -524,15 +524,6 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
 
-      if (settings.getSync('windowMaximize')) {
-        mainWindow.maximize();
-      } else {
-        const windowPosition = settings.getSync('windowPosition');
-        if (windowPosition) {
-          mainWindow.setPosition(windowPosition.x, windowPosition.y);
-        }
-      }
-
       createWinThumbarButtons();
     }
 
@@ -545,15 +536,6 @@ const createWindow = async () => {
     if (store.getState().config.window.minimizeToTray) {
       event.preventDefault();
       mainWindow.hide();
-    }
-
-    if (isWindows() && isWindows10()) {
-      mainWindow.setThumbnailClip({
-        x: 0,
-        y: 0,
-        height: 0,
-        width: 0,
-      });
     }
   });
 
@@ -578,63 +560,13 @@ const createWindow = async () => {
 
   if (isWindows()) {
     app.setAppUserModelId(process.execPath);
-
-    mainWindow.on('resize', () => {
-      const window = mainWindow.getContentBounds();
-
-      settings.setSync('windowPosition', {
-        x: window.x,
-        y: window.y,
-        width: window.width,
-        height: window.height,
-      });
-    });
-
-    mainWindow.on('moved', () => {
-      const window = mainWindow.getContentBounds();
-      settings.setSync('windowPosition', {
-        x: window.x,
-        y: window.y,
-        width: window.width,
-        height: window.height,
-      });
-    });
   }
 
   if (isMacOS()) {
-    mainWindow.on('resize', () => {
-      const window = mainWindow.getContentBounds();
-
-      settings.setSync('windowPosition', {
-        x: window.x,
-        y: window.y,
-        width: window.width,
-        height: window.height,
-      });
-    });
-
-    mainWindow.on('moved', () => {
-      const window = mainWindow.getContentBounds();
-      settings.setSync('windowPosition', {
-        x: window.x,
-        y: window.y,
-        width: window.width,
-        height: window.height,
-      });
-    });
-
     app.on('before-quit', () => {
       forceQuit = true;
     });
   }
-
-  mainWindow.once('maximize', () => {
-    settings.setSync('windowMaximize', true);
-  });
-
-  mainWindow.on('unmaximize', () => {
-    settings.setSync('windowMaximize', false);
-  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
