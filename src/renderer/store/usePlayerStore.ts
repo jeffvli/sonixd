@@ -16,7 +16,9 @@ export interface PlayerState {
   current: {
     index: number;
     player: 1 | 2;
+    song: Song;
     status: PlayerStatus;
+    time: number;
   };
   queue: {
     default: Song[];
@@ -39,8 +41,9 @@ export interface PlayerData {
   current: {
     index: number;
     player: 1 | 2;
-
+    song: Song;
     status: PlayerStatus;
+    time: number;
   };
   player1: Song;
   player2: Song;
@@ -52,13 +55,16 @@ export interface PlayerData {
 }
 
 export interface PlayerSlice extends PlayerState {
-  add: (songs: Song[]) => void;
-  autoNext: () => void;
+  add: (songs: Song[]) => PlayerData;
+  autoNext: () => PlayerData;
   getPlayerData: () => PlayerData;
   next: () => PlayerData;
   pause: () => void;
   play: () => void;
+  player1: () => Song;
+  player2: () => Song;
   prev: () => PlayerData;
+  setCurrentTime: (time: number) => void;
   setSettings: (settings: Partial<PlayerState['settings']>) => void;
 }
 
@@ -68,21 +74,30 @@ export const usePlayerStore = create<PlayerSlice>()(
       set(
         produce((state) => {
           state.queue.default = songs;
+          state.current.time = 0;
+          state.current.player = 1;
+          state.current.song = state.queue.default[state.current.index];
         })
       );
+
+      return get().getPlayerData();
     },
     autoNext: () => {
       set(
         produce((state) => {
+          state.current.time = 0;
           state.current.index += 1;
           state.current.player = state.current.player === 1 ? 2 : 1;
-          state.current.time = 0;
+          state.current.song = state.queue.default[state.current.index];
         })
       );
+
+      return get().getPlayerData();
     },
     current: {
       index: 0,
       player: 1,
+      song: {} as Song,
       status: PlayerStatus.Paused,
       time: 0,
     },
@@ -104,8 +119,9 @@ export const usePlayerStore = create<PlayerSlice>()(
         current: {
           index: get().current.index,
           player: get().current.player,
-
+          song: get().current.song,
           status: get().current.status,
+          time: get().current.time,
         },
         player1,
         player2,
@@ -119,8 +135,10 @@ export const usePlayerStore = create<PlayerSlice>()(
     next: () => {
       set(
         produce((state) => {
+          state.current.time = 0;
           state.current.index += 1;
           state.current.player = 1;
+          state.current.song = state.queue.default[state.current.index];
         })
       );
 
@@ -140,12 +158,20 @@ export const usePlayerStore = create<PlayerSlice>()(
         })
       );
     },
+    player1: () => {
+      return get().getPlayerData().player1;
+    },
+    player2: () => {
+      return get().getPlayerData().player2;
+    },
     prev: () => {
       set(
         produce((state) => {
+          state.current.time = 0;
           state.current.index =
             state.current.index - 1 < 0 ? 0 : state.current.index - 1;
           state.current.player = 1;
+          state.current.song = state.queue.default[state.current.index];
         })
       );
 
@@ -156,6 +182,13 @@ export const usePlayerStore = create<PlayerSlice>()(
       shuffled: [],
       sorted: [],
     },
+    setCurrentTime: (time) => {
+      set(
+        produce((state) => {
+          state.current.time = time;
+        })
+      );
+    },
     setSettings: (settings) => {
       set(
         produce((state) => {
@@ -163,7 +196,11 @@ export const usePlayerStore = create<PlayerSlice>()(
         })
       );
 
-      setLocalStorageSettings('player', get().settings);
+      try {
+        setLocalStorageSettings('player', get().settings);
+      } catch (err) {
+        console.log('none');
+      }
     },
     settings: {
       crossfadeDuration: 5,
