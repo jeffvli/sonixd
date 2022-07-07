@@ -1,62 +1,61 @@
-import { useState } from 'react';
-import isElectron from 'is-electron';
-import { controls } from '../controls';
-import windowsClose from '../icons/close-w-10.png';
-import windowsMax from '../icons/max-w-10.png';
-import windowsMin from '../icons/min-w-10.png';
-import styles from './Titlebar.module.scss';
+import { ReactNode } from 'react';
+import { Group } from '@mantine/core';
+import { useNavigate } from 'react-router';
+import styled from 'styled-components';
+import { ArrowNarrowLeft, ArrowNarrowRight } from 'tabler-icons-react';
+import { IconButton } from 'renderer/components';
 
 interface TitlebarProps {
-  style?: 'macos' | 'windows' | 'linux';
+  children?: ReactNode;
 }
 
-export const Titlebar = ({ style }: TitlebarProps) => {
-  const [max, setMax] = useState(false);
+const TitlebarContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 1rem;
+  -webkit-app-region: no-drag;
+`;
+
+const Left = styled.div`
+  flex: auto;
+`;
+
+const Right = styled.div`
+  flex: auto;
+  -webkit-app-region: drag;
+`;
+
+export const Titlebar = ({ children }: TitlebarProps) => {
+  const navigate = useNavigate();
 
   return (
     <>
-      {isElectron() && (
-        <>
-          {style === 'windows' && (
-            <>
-              <div className={styles.group}>
-                <div
-                  className={styles.button}
-                  role="button"
-                  onClick={controls.minimize}
-                >
-                  <img alt="minimize" src={windowsMin} />
-                </div>
-                <div
-                  className={styles.button}
-                  role="button"
-                  onClick={() => {
-                    if (max) {
-                      controls.unmaximize();
-                    } else {
-                      controls.maximize();
-                    }
-                    setMax(!max);
-                  }}
-                >
-                  <img alt="maximize" src={windowsMax} />
-                </div>
-                <div
-                  className={styles.button}
-                  role="button"
-                  onClick={controls.close}
-                >
-                  <img alt="exit" src={windowsClose} />
-                </div>
-              </div>
-            </>
-          )}
-        </>
-      )}
+      <TitlebarContainer>
+        <Left>
+          <Group spacing="xs">
+            <IconButton
+              icon={<ArrowNarrowLeft size={30} strokeWidth={1.5} />}
+              radius="xl"
+              size={40}
+              variant="hover"
+              onClick={() => navigate(-1)}
+            />
+            <IconButton
+              icon={<ArrowNarrowRight size={30} strokeWidth={1.5} />}
+              radius="xl"
+              size={40}
+              variant="hover"
+              onClick={() => navigate(1)}
+            />
+          </Group>
+        </Left>
+        <Right>{children}</Right>
+      </TitlebarContainer>
     </>
   );
 };
 
 Titlebar.defaultProps = {
-  style: 'windows',
+  children: <></>,
 };
