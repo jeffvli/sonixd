@@ -10,7 +10,7 @@ const mpv = new MpvAPI(
     binary: '',
     time_update: 1,
   },
-  ['--gapless-audio=yes']
+  ['--gapless-audio=yes', '--prefetch-playlist']
 );
 
 mpv.start().catch((error: any) => {
