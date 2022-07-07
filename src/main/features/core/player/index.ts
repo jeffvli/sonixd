@@ -7,7 +7,7 @@ const mpv = new MpvAPI(
   {
     audio_only: true,
     auto_restart: true,
-    binary: '',
+    binary: 'C:/ProgramData/chocolatey/lib/mpv.install/tools/mpv.exe',
     time_update: 1,
   },
   ['--gapless-audio=yes', '--prefetch-playlist']
@@ -66,6 +66,16 @@ ipcMain.on('player-pause', async () => {
 // Stops the player
 ipcMain.on('player-stop', async () => {
   await mpv.stop();
+});
+
+// Stops the player
+ipcMain.on('player-next', async () => {
+  await mpv.next();
+});
+
+// Stops the player
+ipcMain.on('player-previous', async () => {
+  await mpv.previous();
 });
 
 // Seeks forward or backward by the given amount of seconds
