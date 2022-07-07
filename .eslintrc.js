@@ -10,16 +10,10 @@ module.exports = {
   plugins: ['import', 'sort-keys-fix'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
-
     '@typescript-eslint/no-non-null-assertion': 'off',
-
-    'import/no-default-export': 'error',
-
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
-
     'import/no-unresolved': 'error',
-
     'import/order': [
       'error',
       {
@@ -39,25 +33,15 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['react'],
       },
     ],
-
     'import/prefer-default-export': 'off',
-
     'jsx-a11y/click-events-have-key-events': 'off',
-
     'jsx-a11y/interactive-supports-focus': 'off',
-
     'jsx-a11y/media-has-caption': 'off',
-
     'no-await-in-loop': 'off',
-
     'no-console': 'off',
-
     'no-nested-ternary': 'off',
-
     'no-restricted-syntax': 'off',
-
     'react/jsx-props-no-spreading': 'off',
-
     'react/jsx-sort-props': [
       'error',
       {
@@ -79,7 +63,9 @@ module.exports = {
     },
     'import/resolver': {
       // See https://github.com/benmosher/eslint-plugin-import/issues/1396#issuecomment-575727774 for line below
-      node: {},
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
       typescript: {},
       webpack: {
         config: require.resolve('./.erb/configs/webpack.config.eslint.ts'),
