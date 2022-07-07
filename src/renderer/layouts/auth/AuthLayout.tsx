@@ -1,16 +1,32 @@
 import { Outlet } from 'react-router-dom';
+import styled from 'styled-components';
 import { Titlebar } from 'renderer/features/titlebar';
-import styles from './AuthLayout.module.scss';
+
+const WindowsTitlebarContainer = styled.div`
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  width: 100%;
+  height: 50px;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-app-region: drag;
+`;
+
+const ContentContainer = styled.div`
+  display: flex;
+  height: 100%;
+`;
 
 export const AuthLayout = () => {
   return (
     <>
-      <div className={styles.window}>
+      <WindowsTitlebarContainer>
         <Titlebar />
-      </div>
-      <div className={styles.container}>
+      </WindowsTitlebarContainer>
+      <ContentContainer>
         <Outlet />
-      </div>
+      </ContentContainer>
     </>
   );
 };

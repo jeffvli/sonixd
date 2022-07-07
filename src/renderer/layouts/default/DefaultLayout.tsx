@@ -1,12 +1,80 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import clsx from 'clsx';
 import throttle from 'lodash/throttle';
 import { Outlet } from 'react-router-dom';
-import { PlayerBar } from 'renderer/features/playerbar';
+import styled from 'styled-components';
+import { Playerbar } from 'renderer/features/player';
 import { Titlebar } from 'renderer/features/titlebar';
-import { UserMenu } from 'renderer/features/user-menu';
-import styles from './DefaultLayout.module.scss';
+import { WindowControls } from 'renderer/features/window-controls';
 import { constrainSidebarWidth } from './utils/constrainSidebarWidth';
+
+const LayoutContainer = styled.div`
+  display: grid;
+  grid-template-areas:
+    'main'
+    'playerbar';
+  grid-template-rows: auto 90px;
+  grid-template-columns: 1fr;
+  gap: 0px 0px;
+  height: 100%;
+`;
+
+const MainContainer = styled.div`
+  display: grid;
+  grid-area: main;
+  grid-template-areas:
+    'sidebar content'
+    'sidebar content'
+    'sidebar content';
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 0.2fr auto;
+  gap: 0px 0px;
+`;
+
+const PlayerbarContainer = styled.div`
+  grid-area: playerbar;
+  background: var(--playerbar-bg);
+  border-top: var(--playerbar-border-top);
+`;
+
+const SidebarContainer = styled.div`
+  position: relative;
+  display: flex;
+  grid-area: sidebar;
+  background: var(--sidebar-bg);
+`;
+
+const ContentContainer = styled.div`
+  grid-area: content;
+  max-height: calc(100vh - 90px - 35px); // Playerbar and Titlebar heights
+  overflow-y: auto;
+  background: var(--content-bg);
+`;
+
+const PageContentContainer = styled.div`
+  padding: 0 1rem 1rem;
+`;
+
+const TitlebarContainer = styled.div`
+  width: 100%;
+  height: 55px;
+  padding: 0 1rem;
+  display: flex;
+  align-content: center;
+`;
+
+const ResizeHandle = styled.span<{ $isResizing: boolean }>`
+  position: absolute;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  border-right: 1px var(--sidebar-handle-bg) solid;
+  opacity: ${(props) => (props.$isResizing ? 1 : 0)};
+
+  &:hover {
+    cursor: col-resize;
+    opacity: 1;
+  }
+`;
 
 export const DefaultLayout = () => {
   const [isResizing, setIsResizing] = useState(false);
@@ -46,28 +114,31 @@ export const DefaultLayout = () => {
 
   return (
     <>
-      <div className={styles.container}>
-        <div
-          className={styles.main}
+      <LayoutContainer>
+        <MainContainer
           style={{ gridTemplateColumns: `${sidebarWidth}px auto` }}
         >
-          <div className={styles.sidebar}>
-            <span
-              className={clsx(styles.handle, { [styles.resizing]: isResizing })}
+          <SidebarContainer>
+            <ResizeHandle
+              $isResizing={isResizing}
               role="none"
               onMouseDown={handleResizeStart}
             />
-          </div>
-          <div className={styles.content}>
-            <Titlebar />
-            <UserMenu />
-            <Outlet />
-          </div>
-        </div>
-        <div className={styles.playerbar}>
-          <PlayerBar />
-        </div>
-      </div>
+          </SidebarContainer>
+          <ContentContainer>
+            <TitlebarContainer>
+              <Titlebar />
+            </TitlebarContainer>
+            <PageContentContainer>
+              <Outlet />
+            </PageContentContainer>
+          </ContentContainer>
+        </MainContainer>
+        <PlayerbarContainer>
+          <Playerbar />
+        </PlayerbarContainer>
+      </LayoutContainer>
+      <WindowControls />
     </>
   );
 };

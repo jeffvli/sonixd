@@ -23,6 +23,13 @@ export const App = () => {
         colorScheme: 'dark',
         defaultRadius: 'xs',
         focusRing: 'auto',
+        fontSizes: {
+          lg: 16,
+          md: 14,
+          sm: 12,
+          xl: 18,
+          xs: 10,
+        },
         other: {},
         spacing: {
           xs: 2,

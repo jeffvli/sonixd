@@ -1,3 +1,10 @@
+export enum Platform {
+  Linux = 'linux',
+  MacOS = 'macos',
+  Web = 'web',
+  Windows = 'windows',
+}
+
 const Server: { [x: string]: 'JELLYFIN' | 'SUBSONIC' } = {
   JELLYFIN: 'JELLYFIN',
   SUBSONIC: 'SUBSONIC',
