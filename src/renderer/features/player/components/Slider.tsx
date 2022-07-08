@@ -4,16 +4,18 @@ import ReactSlider, { ReactSliderProps } from 'react-slider';
 import styled from 'styled-components';
 
 interface SliderProps extends ReactSliderProps {
-  hasToolTip?: boolean;
-  toolTipType?: 'text' | 'time';
+  hasTooltip?: boolean;
+  height: string;
+  tooltipType?: 'text' | 'time';
 }
 
 const StyledSlider = styled(ReactSlider)<SliderProps | any>`
   width: 100%;
   outline: none;
+  height: ${(props) => props.height};
 
   .thumb {
-    opacity: 0;
+    opacity: 1;
     top: 37%;
 
     &:after {
@@ -96,7 +98,12 @@ const Thumb = (props: any, state: any, toolTipType: any) => (
   />
 );
 
-export const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
+export const Slider = ({
+  height,
+  tooltipType: toolTipType,
+  hasTooltip: hasToolTip,
+  ...rest
+}: SliderProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   return (
@@ -106,6 +113,7 @@ export const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
       $isDragging={isDragging}
       className="player-slider"
       defaultValue={0}
+      height={height}
       renderThumb={(props: any, state: any) => {
         return Thumb(props, state, toolTipType);
       }}
@@ -127,6 +135,6 @@ export const Slider = ({ toolTipType, hasToolTip, ...rest }: SliderProps) => {
 };
 
 Slider.defaultProps = {
-  hasToolTip: true,
-  toolTipType: 'text',
+  hasTooltip: true,
+  tooltipType: 'text',
 };
