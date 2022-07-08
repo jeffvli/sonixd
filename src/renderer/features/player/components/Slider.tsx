@@ -52,6 +52,7 @@ const StyledSlider = styled(ReactSlider)<SliderProps | any>`
 
   .track {
     top: 37%;
+    border-radius: 5px;
   }
 
   &:hover {
