@@ -5,10 +5,12 @@ import {
 } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { Font } from 'renderer/styles';
 import { textEllipsis } from 'renderer/styles/mixins';
 
 interface TextProps extends MantineTextProps<'div'> {
   children: ReactNode;
+  font?: Font;
   link?: boolean;
   noSelect?: boolean;
   overflow?: 'hidden' | 'visible';
@@ -19,6 +21,7 @@ interface TextProps extends MantineTextProps<'div'> {
 
 interface LinkTextProps extends MantineTextProps<'Link'> {
   children: ReactNode;
+  font?: Font;
   link?: boolean;
   overflow?: 'hidden' | 'visible';
   secondary?: boolean;
@@ -27,8 +30,8 @@ interface LinkTextProps extends MantineTextProps<'Link'> {
 }
 
 const BaseText = styled(MantineText)<any>`
+  font-family: ${(props) => props.font || Font.GOTHAM};
   cursor: ${(props) => (props.link ? 'cursor' : 'default')};
-  font-family: 'Gotham';
   color: ${(props) =>
     props.$secondary
       ? 'var(--playerbar-text-secondary-color)'
@@ -46,6 +49,7 @@ export const Text = ({
   link,
   secondary,
   overflow,
+  font,
   to,
   noSelect,
   ...rest
@@ -56,6 +60,7 @@ export const Text = ({
         $noSelect={noSelect}
         $secondary={secondary}
         component={Link}
+        font={font}
         link="true"
         overflow={overflow}
         to={to || ''}
@@ -70,6 +75,7 @@ export const Text = ({
     <StyledText
       $noSelect={noSelect}
       $secondary={secondary}
+      font={font}
       overflow={overflow}
       {...rest}
     >
@@ -79,6 +85,7 @@ export const Text = ({
 };
 
 Text.defaultProps = {
+  font: Font.GOTHAM,
   link: false,
   noSelect: false,
   overflow: 'visible',

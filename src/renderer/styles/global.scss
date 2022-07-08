@@ -18,6 +18,7 @@ html {
   overflow-y: hidden;
   color: var(--content-text-color);
   background: var(--content-bg);
+  font-size: 12px;
 }
 
 @media only screen and (max-width: 639px) {
@@ -56,10 +57,6 @@ html {
 
 a {
   text-decoration: none;
-}
-
-.icon.icon-tabler {
-  fill: var(--icon-color);
 }
 
 @font-face {
