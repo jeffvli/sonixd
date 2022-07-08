@@ -4,12 +4,12 @@
     ".prettierrc": "jsonc",
     ".eslintignore": "ignore"
   },
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "editor.tabSize": 2,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
-    "source.fixAll.stylelint": true
+    "source.fixAll.stylelint": false
   },
-  "stylelint.validate": ["css", "scss"],
   "css.validate": false,
   "less.validate": false,
   "scss.validate": false,
