@@ -19,6 +19,7 @@ const ImageWrapper = styled.div`
 const MetadataStack = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 0.1rem;
   overflow: hidden;
   justify-content: center;
@@ -29,8 +30,6 @@ export const LeftControls = () => {
   const title = song?.title;
   const artists = song?.artist?.map((artist) => artist?.title).join(', ');
   const album = song?.album;
-
-  console.log('f');
 
   return (
     <LeftControlsContainer>

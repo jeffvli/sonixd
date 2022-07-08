@@ -5,10 +5,12 @@ import { usePlayerStore } from 'renderer/store';
 import { PlaybackType } from 'types';
 import { CenterControls } from './CenterControls';
 import { LeftControls } from './LeftControls';
+import { RightControls } from './RightControls';
 
 const PlayerbarContainer = styled.div`
   width: 100%;
   height: 100%;
+  border-top: var(--playerbar-border-top);
 `;
 
 const PlayerbarControlsGrid = styled.div`
@@ -19,20 +21,25 @@ const PlayerbarControlsGrid = styled.div`
 
 const RightGridItem = styled.div`
   align-self: center;
-  width: calc(100vw / 3);
+  height: 100%;
+  width: calc(100% / 3);
+  overflow: hidden;
 `;
 
 const LeftGridItem = styled.div`
   height: 100%;
-  width: calc(100vw / 3);
+  width: calc(100% / 3);
+  overflow: hidden;
 `;
 
 const CenterGridItem = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
   justify-content: center;
-  width: calc(100vw / 3);
+  width: calc(100% / 3);
   height: 100%;
+  overflow: hidden;
 `;
 
 export const Playerbar = () => {
@@ -55,7 +62,7 @@ export const Playerbar = () => {
           <CenterControls playersRef={playersRef} />
         </CenterGridItem>
         <RightGridItem>
-          {/* <RightControls controls={{ handleVolumeSlider }} /> */}
+          <RightControls />
         </RightGridItem>
       </PlayerbarControlsGrid>
       {settings.type === PlaybackType.Web && (

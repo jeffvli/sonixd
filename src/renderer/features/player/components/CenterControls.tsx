@@ -39,7 +39,7 @@ const SliderContainer = styled.div`
 
 const SliderValueWrapper = styled.div<{ position: 'left' | 'right' }>`
   flex: 1;
-  align-self: flex-end;
+  align-self: center;
   text-align: center;
   max-width: 50px;
 `;
@@ -47,7 +47,7 @@ const SliderValueWrapper = styled.div<{ position: 'left' | 'right' }>`
 const SliderWrapper = styled.div`
   flex: 6;
   display: flex;
-  align-self: center;
+  height: 100%;
 `;
 
 export const CenterControls = ({ playersRef }: CenterControlsProps) => {
@@ -102,7 +102,7 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
 
   return (
     <>
-      <ControlsContainer>
+      <ControlsContainer onScroll={(e) => console.log(e)}>
         <ButtonsContainer>
           <IconButton
             icon={<PlayerSkipBack size={15} strokeWidth={1.5} />}
@@ -161,9 +161,10 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
         </SliderValueWrapper>
         <SliderWrapper>
           <Slider
+            height="100%"
             max={playerData.queue.current?.duration}
             min={0}
-            toolTipType="time"
+            tooltipType="time"
             value={currentTime}
             onAfterChange={(e) => {
               handleSeekSlider(e);
