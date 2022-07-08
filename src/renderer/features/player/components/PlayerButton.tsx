@@ -15,15 +15,7 @@ interface PlayerButtonProps extends UnstyledButtonProps<'button'> {
 }
 
 const WrapperMainVariant = css`
-  border-radius: 50%;
-  background: var(--playerbar-btn-color);
-  width: 30px;
-  height: 30px;
   margin: 0 0.5rem;
-
-  &:hover {
-    background: var(--playerbar-btn-color-hover);
-  }
 `;
 
 type MotionWrapperProps = { variant: PlayerButtonProps['variant'] };
@@ -37,6 +29,9 @@ const MotionWrapper = styled(motion.div)<MotionWrapperProps>`
 `;
 
 const ButtonMainVariant = css`
+  border-radius: 50%;
+  background: var(--playerbar-btn-color);
+
   svg {
     fill: black;
     stroke: black;
@@ -44,6 +39,11 @@ const ButtonMainVariant = css`
   }
 
   &:hover {
+    background: var(--playerbar-btn-color-hover);
+  }
+
+  &:focus-visible {
+    background: var(--playerbar-btn-color-hover);
   }
 `;
 
@@ -55,6 +55,13 @@ const ButtonSecondaryVariant = css`
   }
 
   &:hover {
+    svg {
+      fill: var(--playerbar-btn-color-hover);
+      stroke: var(--playerbar-btn-color-hover);
+    }
+  }
+
+  &:focus-visible {
     svg {
       fill: var(--playerbar-btn-color-hover);
       stroke: var(--playerbar-btn-color-hover);
@@ -79,10 +86,6 @@ const StyledPlayerButton = styled(UnstyledButton)<StyledPlayerButtonProps>`
 
   &:focus-visible {
     outline: 1px var(--primary-color) solid;
-    svg {
-      fill: var(--playerbar-btn-color-hover);
-      stroke: var(--playerbar-btn-color-hover);
-    }
   }
 
   &:disabled {
