@@ -1,9 +1,19 @@
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
+import isElectron from 'is-electron';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { useDefaultSettings } from './features/settings';
 import { AppRouter } from './router/AppRouter';
 import './styles/global.scss';
+
+const SelectRouter = ({ children }: { children: ReactNode }) => {
+  if (isElectron()) {
+    return <HashRouter>{children}</HashRouter>;
+  }
+
+  return <BrowserRouter>{children}</BrowserRouter>;
+};
 
 export const App = () => {
   const [theme] = useLocalStorage({
@@ -36,7 +46,9 @@ export const App = () => {
         },
       }}
     >
-      <AppRouter />
+      <SelectRouter>
+        <AppRouter />
+      </SelectRouter>
     </MantineProvider>
   );
 };
