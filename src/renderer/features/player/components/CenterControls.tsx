@@ -10,10 +10,12 @@ import {
   PlayerTrackNext,
   PlayerTrackPrev,
 } from 'tabler-icons-react';
-import { IconButton, Text } from 'renderer/components';
+import { Text } from 'renderer/components';
 import { usePlayerStore } from 'renderer/store';
+import { Font } from 'renderer/styles';
 import { PlaybackType, PlayerStatus } from 'types';
 import { useCenterControls } from '../hooks/useCenterControls';
+import { PlayerButton } from './PlayerButton';
 import { Slider } from './Slider';
 
 interface CenterControlsProps {
@@ -89,7 +91,6 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
     if (status === PlayerStatus.Playing && !isSeeking) {
       if (settings.type === PlaybackType.Web) {
         interval = setInterval(() => {
-          console.log('int');
           setCurrentTime(currentPlayerRef.getCurrentTime());
         }, 1000);
       }
@@ -104,21 +105,19 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
     <>
       <ControlsContainer onScroll={(e) => console.log(e)}>
         <ButtonsContainer>
-          <IconButton
+          <PlayerButton
             icon={<PlayerSkipBack size={15} strokeWidth={1.5} />}
-            size={25}
             tooltip={{ label: `${t('player.prev')}` }}
-            variant="transparent"
+            variant="secondary"
             onClick={handlePrevTrack}
           />
-          <IconButton
+          <PlayerButton
             icon={<PlayerTrackPrev size={15} strokeWidth={1.5} />}
-            size={25}
             tooltip={{ label: `${t('player.skipBack')}` }}
-            variant="transparent"
+            variant="secondary"
             onClick={handleSkipBackward}
           />
-          <IconButton
+          <PlayerButton
             icon={
               status === PlayerStatus.Paused ? (
                 <PlayerPlay size={20} strokeWidth={1.5} />
@@ -126,36 +125,32 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
                 <PlayerPause size={20} strokeWidth={1.5} />
               )
             }
-            radius="xl"
-            size={30}
             tooltip={{
               label:
                 status === PlayerStatus.Paused
                   ? `${t('player.play')}`
                   : `${t('player.pause')}`,
             }}
-            variant="filled"
+            variant="main"
             onClick={handlePlayPause}
           />
-          <IconButton
-            icon={<PlayerTrackNext size={15} strokeWidth={1.5} />}
-            size={25}
+          <PlayerButton
+            icon={<PlayerTrackNext size={15} />}
             tooltip={{ label: `${t('player.skipForward')}` }}
-            variant="transparent"
+            variant="secondary"
             onClick={handleSkipForward}
           />
-          <IconButton
+          <PlayerButton
             icon={<PlayerSkipForward size={15} strokeWidth={1.5} />}
-            size={25}
             tooltip={{ label: `${t('player.next')}` }}
-            variant="transparent"
+            variant="secondary"
             onClick={handleNextTrack}
           />
         </ButtonsContainer>
       </ControlsContainer>
       <SliderContainer>
         <SliderValueWrapper position="left">
-          <Text noSelect secondary size="xs" weight={800}>
+          <Text noSelect secondary font={Font.POPPINS} size="xs" weight={600}>
             {formattedTime}
           </Text>
         </SliderValueWrapper>
@@ -173,7 +168,7 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
           />
         </SliderWrapper>
         <SliderValueWrapper position="right">
-          <Text noSelect secondary size="xs" weight={800}>
+          <Text noSelect secondary font={Font.POPPINS} size="xs" weight={600}>
             {duration}
           </Text>
         </SliderValueWrapper>
