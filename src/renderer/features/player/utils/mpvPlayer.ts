@@ -24,6 +24,8 @@ const seekTo = (seconds: number) => ipc.PLAYER_SEEK_TO(seconds);
 
 const volume = (value: number) => ipc.PLAYER_VOLUME(value);
 
+const mute = () => ipc.PLAYER_MUTE();
+
 const {
   setCurrentTime,
   play: setPlay,
@@ -46,6 +48,7 @@ ipc.RENDERER_PLAYER_SET_QUEUE_NEXT(() => {
 
 export const mpvPlayer = {
   currentTime,
+  mute,
   next,
   pause,
   play,

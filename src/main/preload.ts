@@ -6,6 +6,9 @@ contextBridge.exposeInMainWorld('electron', {
     PLAYER_CURRENT_TIME() {
       ipcRenderer.send('player-current-time');
     },
+    PLAYER_MUTE() {
+      ipcRenderer.send('player-mute');
+    },
     PLAYER_NEXT() {
       ipcRenderer.send('player-next');
     },

@@ -103,3 +103,8 @@ ipcMain.on('player-set-queue-next', async (_event, data: PlayerData) => {
 ipcMain.on('player-volume', async (_event, value: number) => {
   mpv.volume(value);
 });
+
+// Toggles the mute status
+ipcMain.on('player-mute', async () => {
+  mpv.mute();
+});

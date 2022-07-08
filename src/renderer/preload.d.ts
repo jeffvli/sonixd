@@ -6,6 +6,7 @@ declare global {
     electron: {
       ipcRenderer: {
         PLAYER_CURRENT_TIME(): void;
+        PLAYER_MUTE(): void;
         PLAYER_NEXT(): void;
         PLAYER_PAUSE(): void;
         PLAYER_PLAY(): void;
