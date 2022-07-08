@@ -42,13 +42,13 @@ const SliderContainer = styled.div`
 const SliderValueWrapper = styled.div<{ position: 'left' | 'right' }>`
   flex: 1;
   align-self: center;
-  text-align: center;
   max-width: 50px;
+  text-align: center;
 `;
 
 const SliderWrapper = styled.div`
-  flex: 6;
   display: flex;
+  flex: 6;
   height: 100%;
 `;
 
@@ -106,13 +106,13 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
       <ControlsContainer onScroll={(e) => console.log(e)}>
         <ButtonsContainer>
           <PlayerButton
-            icon={<PlayerSkipBack size={15} strokeWidth={1.5} />}
+            icon={<PlayerSkipBack size={15} />}
             tooltip={{ label: `${t('player.prev')}` }}
             variant="secondary"
             onClick={handlePrevTrack}
           />
           <PlayerButton
-            icon={<PlayerTrackPrev size={15} strokeWidth={1.5} />}
+            icon={<PlayerTrackPrev size={15} />}
             tooltip={{ label: `${t('player.skipBack')}` }}
             variant="secondary"
             onClick={handleSkipBackward}
@@ -120,9 +120,9 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
           <PlayerButton
             icon={
               status === PlayerStatus.Paused ? (
-                <PlayerPlay size={20} strokeWidth={1.5} />
+                <PlayerPlay size={20} />
               ) : (
-                <PlayerPause size={20} strokeWidth={1.5} />
+                <PlayerPause size={20} />
               )
             }
             tooltip={{
@@ -141,7 +141,7 @@ export const CenterControls = ({ playersRef }: CenterControlsProps) => {
             onClick={handleSkipForward}
           />
           <PlayerButton
-            icon={<PlayerSkipForward size={15} strokeWidth={1.5} />}
+            icon={<PlayerSkipForward size={15} />}
             tooltip={{ label: `${t('player.next')}` }}
             variant="secondary"
             onClick={handleNextTrack}

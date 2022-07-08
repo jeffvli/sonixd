@@ -21,14 +21,14 @@ const PlayerbarControlsGrid = styled.div`
 
 const RightGridItem = styled.div`
   align-self: center;
-  height: 100%;
   width: calc(100% / 3);
+  height: 100%;
   overflow: hidden;
 `;
 
 const LeftGridItem = styled.div`
-  height: 100%;
   width: calc(100% / 3);
+  height: 100%;
   overflow: hidden;
 `;
 

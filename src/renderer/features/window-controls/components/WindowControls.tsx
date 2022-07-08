@@ -31,7 +31,7 @@ const WindowsButton = styled.div`
   -webkit-app-region: no-drag;
 
   &:hover {
-    background: rgba(125, 125, 125, 0.3);
+    background: rgba(125 125 125 30%);
   }
 `;
 

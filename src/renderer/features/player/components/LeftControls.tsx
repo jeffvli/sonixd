@@ -2,6 +2,7 @@ import { LazyLoadImage as Image } from 'react-lazy-load-image-component';
 import styled from 'styled-components';
 import { Text } from 'renderer/components';
 import { usePlayerStore } from 'renderer/store';
+import { Font } from 'renderer/styles';
 
 const LeftControlsContainer = styled.div`
   display: flex;
@@ -19,10 +20,10 @@ const ImageWrapper = styled.div`
 const MetadataStack = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 0.1rem;
-  overflow: hidden;
   justify-content: center;
+  width: 100%;
+  overflow: hidden;
 `;
 
 export const LeftControls = () => {
@@ -38,30 +39,34 @@ export const LeftControls = () => {
       </ImageWrapper>
       <MetadataStack>
         <Text
+          font={Font.POPPINS}
           link={!!title}
           overflow="hidden"
           size="sm"
           to="/nowplaying"
-          weight={600}
+          weight={500}
         >
           {title || '—'}
         </Text>
         <Text
           secondary
+          font={Font.POPPINS}
           link={!!artists}
           overflow="hidden"
           size="sm"
           to="/nowplaying"
-          weight={600}
+          weight={500}
         >
           {artists || '—'}
         </Text>
         <Text
           secondary
+          font={Font.POPPINS}
           link={!!album}
           overflow="hidden"
           size="sm"
           to="/nowplaying"
+          weight={500}
         >
           {album || '—'}
         </Text>

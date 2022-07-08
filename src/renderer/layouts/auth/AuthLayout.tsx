@@ -8,7 +8,6 @@ const WindowsTitlebarContainer = styled.div`
   display: flex;
   width: 100%;
   height: 50px;
-  -webkit-user-select: none;
   user-select: none;
   -webkit-app-region: drag;
 `;

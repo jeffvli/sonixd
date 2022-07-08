@@ -23,10 +23,10 @@ const MetadataStack = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  overflow: visible;
-  justify-content: center;
   align-items: flex-end;
+  justify-content: center;
   width: 100%;
+  overflow: visible;
 `;
 
 export const RightControls = () => {

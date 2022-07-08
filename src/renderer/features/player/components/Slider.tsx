@@ -11,43 +11,43 @@ interface SliderProps extends ReactSliderProps {
 
 const StyledSlider = styled(ReactSlider)<SliderProps | any>`
   width: 100%;
-  outline: none;
   height: ${(props) => props.height};
+  outline: none;
 
   .thumb {
-    opacity: 1;
     top: 37%;
+    opacity: 1;
 
-    &:after {
-      content: attr(data-tooltip);
+    &::after {
+      position: absolute;
       top: -25px;
       left: -18px;
-      color: var(--tooltip-text-color);
-      background: var(--tooltip-bg);
-      border-radius: 4px;
-      padding: 2px 6px;
-      white-space: nowrap;
-      position: absolute;
       display: ${(props) =>
         props.$isDragging && props.$hasToolTip ? 'block' : 'none'};
+      padding: 2px 6px;
+      color: var(--tooltip-text-color);
+      white-space: nowrap;
+      background: var(--tooltip-bg);
+      border-radius: 4px;
+      content: attr(data-tooltip);
     }
 
     &:focus-visible {
-      opacity: 1;
-      outline: none;
-      height: 13px;
       width: 13px;
+      height: 13px;
+      text-align: center;
+      background-color: #fff;
       border: 1px var(--primary-color) solid;
       border-radius: 100%;
-      text-align: center;
-      background-color: #ffffff;
+      outline: none;
       transform: translate(-12px, -4px);
+      opacity: 1;
     }
   }
 
   .track-0 {
-    transition: background 0.2s ease-in-out;
     background: ${(props) => props.$isDragging && 'var(--primary-color)'};
+    transition: background 0.2s ease-in-out;
   }
 
   .track {

@@ -30,12 +30,12 @@ interface LinkTextProps extends MantineTextProps<'Link'> {
 }
 
 const BaseText = styled(MantineText)<any>`
-  font-family: ${(props) => props.font || Font.GOTHAM};
-  cursor: ${(props) => (props.link ? 'cursor' : 'default')};
   color: ${(props) =>
     props.$secondary
       ? 'var(--playerbar-text-secondary-color)'
       : 'var(--playerbar-text-primary-color)'};
+  font-family: ${(props) => props.font || Font.GOTHAM};
+  cursor: ${(props) => (props.link ? 'cursor' : 'default')};
   user-select: ${(props) => (props.$noSelect ? 'none' : 'auto')};
   ${(props) => props.overflow === 'hidden' && textEllipsis}
 `;

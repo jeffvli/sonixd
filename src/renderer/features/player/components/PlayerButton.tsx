@@ -29,13 +29,14 @@ const MotionWrapper = styled(motion.div)<MotionWrapperProps>`
 `;
 
 const ButtonMainVariant = css`
-  border-radius: 50%;
+  padding: 0.5rem;
   background: var(--playerbar-btn-color);
+  border-radius: 50%;
 
   svg {
+    display: flex;
     fill: black;
     stroke: black;
-    display: flex;
   }
 
   &:hover {
@@ -48,10 +49,12 @@ const ButtonMainVariant = css`
 `;
 
 const ButtonSecondaryVariant = css`
+  padding: 0.5rem;
+
   svg {
+    display: flex;
     fill: var(--playerbar-btn-color);
     stroke: var(--playerbar-btn-color);
-    display: flex;
   }
 
   &:hover {
@@ -72,13 +75,13 @@ const ButtonSecondaryVariant = css`
 type StyledPlayerButtonProps = Omit<PlayerButtonProps, 'icon'>;
 
 const StyledPlayerButton = styled(UnstyledButton)<StyledPlayerButtonProps>`
-  width: 100%;
   display: flex;
   align-items: center;
+  width: 100%;
+  padding: 0.5rem;
   overflow: visible;
   all: unset;
   cursor: default;
-  padding: 0.5rem;
 
   button {
     display: flex;
