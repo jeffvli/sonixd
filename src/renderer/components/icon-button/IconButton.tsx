@@ -1,13 +1,11 @@
 import { ReactNode } from 'react';
-import { ActionIcon, ActionIconProps } from '@mantine/core';
-import clsx from 'clsx';
+import { ActionIcon, ActionIconProps, TooltipProps } from '@mantine/core';
 import { Tooltip } from '../tooltip/Tooltip';
-import styles from './IconButton.module.scss';
 
 interface IconButtonProps extends ActionIconProps<'button'> {
   active?: boolean;
   icon: ReactNode;
-  tooltip?: { label: string };
+  tooltip?: Omit<TooltipProps, 'children'>;
 }
 
 export const IconButton = ({
@@ -19,14 +17,7 @@ export const IconButton = ({
   if (tooltip) {
     return (
       <Tooltip {...tooltip}>
-        <ActionIcon
-          classNames={{
-            transparent: clsx(styles.button, { [styles.active]: active }),
-          }}
-          {...rest}
-        >
-          {icon}
-        </ActionIcon>
+        <ActionIcon {...rest}>{icon}</ActionIcon>
       </Tooltip>
     );
   }
