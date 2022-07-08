@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useDefaultSettings } from './features/settings';
-import { Router } from './router/Router';
+import { AppRouter } from './router/AppRouter';
 import './styles/global.scss';
 
 export const App = () => {
@@ -36,7 +36,7 @@ export const App = () => {
         },
       }}
     >
-      <Router />
+      <AppRouter />
     </MantineProvider>
   );
 };
