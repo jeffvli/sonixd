@@ -434,6 +434,12 @@ const createWindow = async () => {
     frame: settings.getSync('titleBarStyle') === 'native',
   });
 
+  if (isLinux()) {
+    globalShortcut.register('Control+Q', () => {
+      app.exit();
+    });
+  }
+  
   if (settings.getSync('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
       stop();
