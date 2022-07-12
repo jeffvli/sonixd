@@ -1937,8 +1937,8 @@ const setDefaultSettings = (force: boolean) => {
             },
           },
           titleBar: {
-            color: '#31363B',
-            background: '#FCFCFC',
+            color: '#FCFCFC',
+            background: '#31363B',
           },
           miniPlayer: {
             background: '#1B1E20',
