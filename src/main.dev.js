@@ -107,6 +107,11 @@ const previousTrack = () => {
 };
 
 if (isLinux()) {
+
+  electronLocalshortcut.register('Control+Q', () => {
+    app.exit();
+  });
+
   const mprisPlayer = Player({
     name: 'Sonixd',
     identity: 'Sonixd',
