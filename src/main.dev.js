@@ -107,7 +107,6 @@ const previousTrack = () => {
 };
 
 if (isLinux()) {
-
   electronLocalshortcut.register('Control+Q', () => {
     app.exit();
   });
