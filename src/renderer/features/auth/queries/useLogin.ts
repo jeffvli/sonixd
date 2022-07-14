@@ -1,7 +1,7 @@
 import md5 from 'md5';
 import { nanoid } from 'nanoid';
 import { useMutation } from 'react-query';
-import { authApi } from 'renderer/api';
+import { authApi } from 'renderer/api/authApi';
 import { useAuthStore } from 'renderer/store';
 
 export const useLogin = (

@@ -1,5 +1,6 @@
 import { useQuery } from 'react-query';
-import { authApi, queryKeys } from 'renderer/api';
+import { authApi } from 'renderer/api/authApi';
+import { queryKeys } from 'renderer/api/queryKeys';
 
 export const usePingServer = (server: string) => {
   return useQuery({
