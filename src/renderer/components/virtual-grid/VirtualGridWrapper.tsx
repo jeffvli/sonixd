@@ -1,36 +1,46 @@
 import { Ref, useMemo } from 'react';
 import { FixedSizeList, FixedSizeListProps } from 'react-window';
+import { CardRow } from 'renderer/types';
 import { GridCard } from './GridCard';
 
 export const VirtualGridWrapper = ({
   refInstance,
+  cardRows,
   itemGap,
   itemWidth,
+  itemHeight,
+  itemCount,
+  columnCount,
+  rowCount,
   ...rest
 }: Omit<FixedSizeListProps, 'ref' | 'itemSize' | 'children'> & {
+  cardRows: CardRow[];
+  columnCount: number;
   itemGap: number;
   itemHeight: number;
   itemWidth: number;
   refInstance: Ref<any>;
+  rowCount: number;
 }) => {
-  const itemHeight = itemWidth + 55;
-
-  const columnCount = Math.floor(
-    (Number(rest.width) - itemGap + 3) / (itemWidth + itemGap + 2)
-  );
-
-  const rowCount = Math.ceil(rest.itemCount / columnCount);
-
   const itemData = useMemo(
     () => ({
+      cardRows,
       columnCount,
-      itemCount: rest.itemCount,
+      itemCount,
       itemData: rest.itemData,
       itemGap,
       itemHeight,
       itemWidth,
     }),
-    [columnCount, itemGap, itemHeight, itemWidth, rest.itemCount, rest.itemData]
+    [
+      cardRows,
+      columnCount,
+      itemCount,
+      rest.itemData,
+      itemGap,
+      itemHeight,
+      itemWidth,
+    ]
   );
 
   return (
@@ -41,6 +51,7 @@ export const VirtualGridWrapper = ({
       itemCount={rowCount}
       itemData={itemData}
       itemSize={itemHeight + itemGap}
+      overscanCount={10}
     >
       {GridCard}
     </FixedSizeList>

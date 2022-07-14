@@ -3,6 +3,7 @@ import debounce from 'lodash/debounce';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeListProps } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
+import { CardRow } from 'renderer/types';
 import { VirtualGridWrapper } from './VirtualGridWrapper';
 
 interface VirtualGridProps
@@ -10,9 +11,9 @@ interface VirtualGridProps
     FixedSizeListProps,
     'children' | 'itemSize' | 'height' | 'width'
   > {
+  cardRows: CardRow[];
   itemGap?: number;
-  itemHeight?: number;
-  itemWidth?: number;
+  itemSize: number;
   minimumBatchSize?: number;
   query: (props: any) => Promise<any>;
   queryParams?: Record<string, any>;
@@ -23,8 +24,8 @@ export const VirtualInfiniteGrid = forwardRef(
     {
       itemCount,
       itemGap,
-      itemWidth,
-      itemHeight,
+      itemSize,
+      cardRows,
       minimumBatchSize,
       query,
       queryParams,
@@ -79,9 +80,13 @@ export const VirtualInfiniteGrid = forwardRef(
     return (
       <AutoSizer>
         {({ height, width }) => {
+          const itemHeight = itemSize! + cardRows.length * 25;
+
           const columnCount = Math.floor(
-            (Number(width) - itemGap! + 3) / (itemWidth! + itemGap! + 2)
+            (Number(width) - itemGap! + 3) / (itemSize! + itemGap! + 2)
           );
+
+          const rowCount = Math.ceil(itemCount / columnCount);
 
           const pageItemLimit = columnCount * minimumBatchSize!;
 
@@ -103,13 +108,16 @@ export const VirtualInfiniteGrid = forwardRef(
             >
               {({ onItemsRendered, ref: infiniteLoaderRef }) => (
                 <VirtualGridWrapper
+                  cardRows={cardRows}
+                  columnCount={columnCount}
                   height={height}
                   itemCount={itemCount || 0}
                   itemData={itemData}
                   itemGap={itemGap!}
                   itemHeight={itemHeight!}
-                  itemWidth={itemWidth!}
+                  itemWidth={itemSize}
                   refInstance={infiniteLoaderRef}
+                  rowCount={rowCount}
                   width={width}
                   onItemsRendered={onItemsRendered}
                 />
@@ -124,8 +132,6 @@ export const VirtualInfiniteGrid = forwardRef(
 
 VirtualInfiniteGrid.defaultProps = {
   itemGap: 10,
-  itemHeight: 200,
-  itemWidth: 150,
   minimumBatchSize: 20,
   queryParams: {},
 };
