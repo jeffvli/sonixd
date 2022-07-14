@@ -24,8 +24,8 @@ export const Tooltip = ({ children, ...rest }: TooltipProps) => {
 };
 
 Tooltip.defaultProps = {
-  duration: 1000,
-  openDelay: 500,
+  openDelay: 0,
+  placement: 'center',
   transition: 'fade',
   transitionDuration: 250,
   withArrow: true,
