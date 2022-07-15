@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed certain UI elements from being drag selectable (#350) (Thanks @GermanDarknes)
 - Fixed application occasionally being invisible due to invalid persisted window settings (#278)
 - Fixed spanish translation (#333) (Thanks @ami-sc)
+- Fixed MPRIS Javascript error due to missing song id on Linux (#251)
 
 [0.15.2] - 2022-06-02
 
