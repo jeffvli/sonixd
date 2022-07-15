@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.15.3] - 2022-07-14
+
+### Added
+
+- Added KDE Breeze dark theme (#354) (Thanks )
+- Added "Is not favorite" album filter option (#357)
+- Added Turkish translation (#347) (Thanks @yekeskin)
+- Added Italian translation (#329) (Thanks @Arci57)
+
+### Fixed
+
+- Fixed mini player initial scroll position when when auto scrolling is enabled (#346) (Thanks @kgarner7)
+- Fixed album/disc/track order when playing from the folder view on Jellyfin (#309)
+- Fixed certain UI elements from being drag selectable (#350) (Thanks @GermanDarknes)
+- Fixed application occasionally being invisible due to invalid persisted window settings (#278)
+- Fixed spanish translation (#333) (Thanks @ami-sc)
+
 [0.15.2] - 2022-06-02
 
 ### Added
