@@ -176,6 +176,21 @@ const AdvancedFilters = ({ filteredData, originalData, filter, setAdvancedFilter
       >
         Is favorite
       </StyledCheckbox>
+      <StyledCheckbox
+        defaultChecked={filter.properties.notStarred}
+        checked={filter.properties.notStarred}
+        onChange={(_v: any, e: boolean) => {
+          dispatch(
+            setAdvancedFilters({
+              listType: Item.Album,
+              filter: 'notStarred',
+              value: e,
+            })
+          );
+        }}
+      >
+        Is not favorite
+      </StyledCheckbox>
       <Divider />
       <FilterHeader>
         <FlexboxGrid justify="space-between">

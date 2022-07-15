@@ -10,6 +10,7 @@ export interface AdvancedFilters {
   nav: 'filters' | 'sort';
   properties: {
     starred: boolean;
+    notStarred: boolean;
     genre: {
       list: any[];
       type: 'and' | 'or';
@@ -55,6 +56,7 @@ const initialState: View = {
       nav: 'filters',
       properties: {
         starred: false,
+        notStarred: false,
         genre: {
           list: [],
           type: 'and',
@@ -109,7 +111,7 @@ const viewSlice = createSlice({
       state,
       action: PayloadAction<{
         listType: Item;
-        filter: 'enabled' | 'starred' | 'genre' | 'artist' | 'year' | 'nav';
+        filter: 'enabled' | 'starred' | 'notStarred' | 'genre' | 'artist' | 'year' | 'nav';
         value: any;
       }>
     ) => {
@@ -120,6 +122,10 @@ const viewSlice = createSlice({
 
         if (action.payload.filter === 'starred') {
           state.album.advancedFilters.properties.starred = action.payload.value;
+        }
+
+        if (action.payload.filter === 'notStarred') {
+          state.album.advancedFilters.properties.notStarred = action.payload.value;
         }
 
         if (action.payload.filter === 'genre') {

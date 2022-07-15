@@ -22,11 +22,19 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
           })
         : data;
 
+      const filteredByNotStarred = filterProps.properties.notStarred
+        ? (data || []).filter((entry) => {
+            return entry.starred === null || entry.starred === undefined;
+          })
+        : data;
+
+      const starFilter = filterProps.properties.starred ? filteredByStarred : filteredByNotStarred;
+
       // Genre filter
       const genreRegex = new RegExp(filterProps.properties?.genre?.list.join('|'), 'i');
       const filteredByGenres =
         filterProps.properties.genre.list.length > 0
-          ? (filteredByStarred || []).filter((entry) => {
+          ? (starFilter || []).filter((entry) => {
               const entryGenres = _.map(entry.genre, 'title');
 
               if (filterProps.properties.genre.type === 'or') {
@@ -42,7 +50,7 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
 
               return matches.length === filterProps.properties.genre.list.length;
             })
-          : filteredByStarred;
+          : starFilter;
 
       const artistRegex = new RegExp(filterProps.properties?.artist?.list.join('|'), 'i');
 
@@ -69,7 +77,7 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
       // Instead of filtering from the previous (genre), start from the starred filter
       const filteredByArtistsBase =
         filterProps.properties.artist.list.length > 0
-          ? (filteredByStarred || []).filter((entry) => {
+          ? (starFilter || []).filter((entry) => {
               const entryArtistIds = _.map(entry.artist, 'id');
 
               if (filterProps.properties.artist.type === 'or') {
@@ -85,7 +93,7 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
 
               return matches.length === filterProps.properties.artist.list.length;
             })
-          : filteredByStarred;
+          : starFilter;
 
       const filteredByYear = !(
         filterProps.properties.year.from === 0 && filterProps.properties.year.to === 0
@@ -110,7 +118,7 @@ const useAdvancedFilter = (data: any[], filters: AdvancedFilters) => {
           })
         : filteredByArtists;
 
-      setByStarredData(_.compact(_.uniqBy(filteredByStarred, 'uniqueId')));
+      setByStarredData(_.compact(_.uniqBy(starFilter, 'uniqueId')));
       setByGenreData(_.compact(_.uniqBy(filteredByGenres, 'uniqueId')));
       setByArtistData(_.compact(_.uniqBy(filteredByArtists, 'uniqueId')));
       setByArtistBaseData(_.compact(_.uniqBy(filteredByArtistsBase, 'uniqueId')));
