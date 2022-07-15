@@ -157,7 +157,7 @@ const normalizeSong = (item: any) => {
     bitRate: item.MediaSources && Number(Math.trunc(item.MediaSources[0]?.Bitrate / 1000)),
     path: item.MediaSources && item.MediaSources[0]?.Path,
     playCount: item.UserData && item.UserData.PlayCount,
-    discNumber: undefined,
+    discNumber: (item.ParentIndexNumber && item.ParentIndexNumber) || 1,
     created: item.DateCreated,
     streamUrl: getStreamUrl(
       item.MediaSources[0]?.Id,
@@ -564,8 +564,8 @@ export const getArtistSongs = async (options: { id: string; musicFolderId?: stri
   // The entries returned by Jellyfin's API are out of their normal album order
   const entriesDescByYear = _.orderBy(
     entries || [],
-    ['year', 'album', 'track'],
-    ['desc', 'asc', 'asc']
+    ['year', 'album', 'discNumber', 'track'],
+    ['desc', 'asc', 'asc', 'asc']
   );
 
   return entriesDescByYear;
@@ -784,7 +784,11 @@ export const getMusicDirectorySongs = async (options: { id: string }) => {
   const entries = (data.Items || []).map((entry: any) => normalizeSong(entry));
 
   // The entries returned by Jellyfin's API are out of their normal album order
-  const entriesByAlbum = _.orderBy(entries || [], ['album', 'track'], ['asc', 'asc']);
+  const entriesByAlbum = _.orderBy(
+    entries || [],
+    ['album', 'discNumber', 'track'],
+    ['asc', 'asc', 'asc']
+  );
 
   return entriesByAlbum;
 };
