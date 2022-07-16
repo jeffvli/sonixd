@@ -196,13 +196,31 @@ const fullScan = async (options: {
 
   if (server.serverType === 'jellyfin') {
     for (const serverFolder of serverFolders) {
-      jellyfinTasks.scanAll(server, serverFolder);
+      const task = await prisma.task.create({
+        data: {
+          completed: false,
+          inProgress: true,
+          name: 'Full scan',
+          serverFolderId: serverFolder.id,
+        },
+      });
+
+      await jellyfinTasks.scanAll(server, serverFolder, task);
     }
   }
 
   if (server.serverType === 'subsonic') {
     for (const serverFolder of serverFolders) {
-      subsonicTasks.scanAll(server, serverFolder);
+      const task = await prisma.task.create({
+        data: {
+          completed: false,
+          inProgress: true,
+          name: 'Full scan',
+          serverFolderId: serverFolder.id,
+        },
+      });
+
+      await subsonicTasks.scanAll(server, serverFolder, task);
     }
   }
 

@@ -8,10 +8,11 @@ interface QueueTask {
   task: Task;
 }
 
-interface QueueResult {
-  message?: string;
-  task: Task;
-}
+// interface QueueResult {
+//   completed?: boolean;
+//   message?: string;
+//   task: Task;
+// }
 
 export const q: Queue = new Queue(
   async (task: QueueTask, cb: any) => {
@@ -29,21 +30,45 @@ export const q: Queue = new Queue(
   }
 );
 
-q.on('task_finish', async (_taskId, result: QueueResult) => {
+// q.on('task_finish', async (_taskId, result: QueueResult) => {});
+
+q.on('task_failed', async (taskId, errorMessage) => {
+  const dbTaskId = taskId.split('(')[1].split(')')[0];
   await prisma.task.update({
-    data: { completed: true, inProgress: false, message: result.message },
-    where: { id: Number(result.task.id) },
+    data: {
+      completed: true,
+      inProgress: false,
+      isError: true,
+      message: errorMessage,
+    },
+    where: { id: dbTaskId },
   });
 });
 
-q.on('empty', () => {
-  console.log('queue empty');
+q.on('drain', async () => {
+  await prisma.task.updateMany({
+    data: { completed: true, inProgress: false },
+    where: {
+      OR: [{ inProgress: true }, { completed: false }],
+    },
+  });
 });
 
-q.on('task_failed', () => {
-  console.log('failed');
-});
+export const completeTask = async (task: Task) => {
+  q.push({
+    fn: async () => {
+      await prisma.task.update({
+        data: {
+          completed: true,
+          inProgress: false,
+          message: 'Completed',
+          progress: '',
+        },
+        where: { id: task.id },
+      });
 
-q.on('drain', () => {
-  console.log('drained');
-});
+      return { task };
+    },
+    id: `${task.id}-complete`,
+  });
+};

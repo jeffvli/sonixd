@@ -1,21 +1,22 @@
 import { prisma } from '../../lib';
-import { Server, ServerFolder } from '../../types/types';
+import { Server, ServerFolder, Task } from '../../types/types';
 import { groupByProperty, uniqueArray } from '../../utils';
-import { q } from '../scanner-queue';
+import { completeTask, q } from '../scanner-queue';
 import { jellyfinApi } from './jellyfin-api';
 import { JFSong } from './jellyfin-types';
 
-const scanGenres = async (server: Server, serverFolder: ServerFolder) => {
+const scanGenres = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  task: Task
+) => {
   const taskId = `[${server.name} (${serverFolder.name})] genres`;
 
   q.push({
     fn: async () => {
-      const task = await prisma.task.create({
-        data: {
-          inProgress: true,
-          name: taskId,
-          serverFolderId: serverFolder.id,
-        },
+      await prisma.task.update({
+        data: { message: 'Scanning genres' },
+        where: { id: task.id },
       });
 
       const genres = await jellyfinApi.getGenres(server, {
@@ -26,32 +27,30 @@ const scanGenres = async (server: Server, serverFolder: ServerFolder) => {
         return { name: genre.Name };
       });
 
-      const createdGenres = await prisma.genre.createMany({
+      await prisma.genre.createMany({
         data: genresCreate,
         skipDuplicates: true,
       });
 
-      const message = `Imported ${createdGenres.count} new genres.`;
-
-      return { message, task };
+      return { task };
     },
     id: taskId,
   });
 };
 
-const scanAlbumArtists = async (server: Server, serverFolder: ServerFolder) => {
+const scanAlbumArtists = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  task: Task
+) => {
   const taskId = `[${server.name} (${serverFolder.name})] album artists`;
 
   q.push({
     fn: async () => {
-      const task = await prisma.task.create({
-        data: {
-          inProgress: true,
-          name: taskId,
-          serverFolderId: serverFolder.id,
-        },
+      await prisma.task.update({
+        data: { message: 'Scanning album artists' },
+        where: { id: task.id },
       });
-
       const albumArtists = await jellyfinApi.getAlbumArtists(server, {
         fields: 'Genres,DateCreated,ExternalUrls,Overview',
         parentId: serverFolder.remoteId,
@@ -94,6 +93,7 @@ const scanAlbumArtists = async (server: Server, serverFolder: ServerFolder) => {
           },
           update: {
             biography: albumArtist.Overview,
+            deleted: false,
             externals: { connectOrCreate: externalsConnectOrCreate },
             genres: { connectOrCreate: genresConnectOrCreate },
             images: { connectOrCreate: imagesConnectOrCreate },
@@ -111,15 +111,17 @@ const scanAlbumArtists = async (server: Server, serverFolder: ServerFolder) => {
         });
       }
 
-      const message = `Scanned ${albumArtists.Items.length} album artists.`;
-
-      return { message, task };
+      return { task };
     },
     id: taskId,
   });
 };
 
-const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
+const scanAlbums = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  task: Task
+) => {
   const check = await jellyfinApi.getAlbums(server, {
     enableUserData: false,
     includeItemTypes: 'MusicAlbum',
@@ -128,24 +130,20 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
     recursive: true,
   });
 
-  // Fetch in chunks of 5000 entries
   const albumCount = check.TotalRecordCount;
   const chunkSize = 5000;
   const albumChunkCount = Math.ceil(albumCount / chunkSize);
 
-  for (let i = 0; i < albumChunkCount; i += 1) {
-    const taskId = `[${server.name} (${serverFolder.name})] albums-page-${i}`;
+  const taskId = `(${task.id}) [${server.name} (${serverFolder.name})] albums`;
 
-    q.push({
-      fn: async () => {
-        const task = await prisma.task.create({
-          data: {
-            inProgress: true,
-            name: taskId,
-            serverFolderId: serverFolder.id,
-          },
-        });
+  q.push({
+    fn: async () => {
+      await prisma.task.update({
+        data: { message: 'Scanning albums' },
+        where: { id: task.id },
+      });
 
+      for (let i = 0; i < albumChunkCount; i += 1) {
         const albums = await jellyfinApi.getAlbums(server, {
           enableImageTypes: 'Primary,Logo,Backdrop',
           enableUserData: false,
@@ -209,6 +207,7 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
             update: {
               albumArtistId: albumArtist?.id,
               date: album.DateCreated,
+              deleted: false,
               externals: { connectOrCreate: externalsConnectOrCreate },
               genres: { connectOrCreate: genresConnectOrCreate },
               images: { connectOrCreate: imagesConnectOrCreate },
@@ -227,13 +226,23 @@ const scanAlbums = async (server: Server, serverFolder: ServerFolder) => {
           });
         }
 
-        const message = `Scanned ${albums.Items.length} albums.`;
+        const currentTask = await prisma.task.findUnique({
+          where: { id: task.id },
+        });
 
-        return { message, task };
-      },
-      id: taskId,
-    });
-  }
+        const newCount =
+          Number(currentTask?.progress || 0) + Number(albums.Items.length);
+
+        await prisma.task.update({
+          data: { progress: String(newCount) },
+          where: { id: task.id },
+        });
+      }
+
+      return { task };
+    },
+    id: taskId,
+  });
 };
 
 const insertSongGroup = async (
@@ -323,6 +332,14 @@ const insertSongGroup = async (
     };
   });
 
+  const artists = songs.flatMap((song) => {
+    return song.ArtistItems.map((artist) => ({
+      name: artist.Name,
+      remoteId: artist.Id,
+      serverFolderId: serverFolder.id,
+    }));
+  });
+
   const uniqueArtistIds = songs
     .flatMap((song) => {
       return song.ArtistItems.flatMap((artist) => artist.Id);
@@ -338,21 +355,39 @@ const insertSongGroup = async (
     };
   });
 
-  await prisma.album.update({
-    data: {
-      artists: { connect: artistsConnect },
-      songs: { upsert: songsUpsert },
-    },
-    where: {
-      uniqueAlbumId: {
-        remoteId: remoteAlbumId,
+  await prisma.$transaction([
+    prisma.artist.createMany({
+      data: artists,
+      skipDuplicates: true,
+    }),
+    prisma.artist.updateMany({
+      data: { deleted: false },
+      where: {
+        remoteId: { in: uniqueArtistIds },
         serverFolderId: serverFolder.id,
       },
-    },
-  });
+    }),
+    prisma.album.update({
+      data: {
+        artists: { connect: artistsConnect },
+        deleted: false,
+        songs: { upsert: songsUpsert },
+      },
+      where: {
+        uniqueAlbumId: {
+          remoteId: remoteAlbumId,
+          serverFolderId: serverFolder.id,
+        },
+      },
+    }),
+  ]);
 };
 
-const scanSongs = async (server: Server, serverFolder: ServerFolder) => {
+const scanSongs = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  task: Task
+) => {
   const check = await jellyfinApi.getSongs(server, {
     enableUserData: false,
     limit: 0,
@@ -360,24 +395,20 @@ const scanSongs = async (server: Server, serverFolder: ServerFolder) => {
     recursive: true,
   });
 
-  // Fetch in chunks of 5000 entries
+  // Fetch in chunks
   const songCount = check.TotalRecordCount;
-  const chunkSize = 5000;
+  const chunkSize = 10000;
   const songChunkCount = Math.ceil(songCount / chunkSize);
+  const taskId = `[${server.name} (${serverFolder.name})] songs`;
 
-  for (let i = 0; i < songChunkCount; i += 1) {
-    const taskId = `[${server.name} (${serverFolder.name})] songs-page-${i}`;
+  q.push({
+    fn: async () => {
+      await prisma.task.update({
+        data: { message: 'Scanning songs' },
+        where: { id: task.id },
+      });
 
-    q.push({
-      fn: async () => {
-        const task = await prisma.task.create({
-          data: {
-            inProgress: true,
-            name: taskId,
-            serverFolderId: serverFolder.id,
-          },
-        });
-
+      for (let i = 0; i < songChunkCount; i += 1) {
         const songs = await jellyfinApi.getSongs(server, {
           enableImageTypes: 'Primary,Logo,Backdrop',
           enableUserData: false,
@@ -393,29 +424,81 @@ const scanSongs = async (server: Server, serverFolder: ServerFolder) => {
 
         const albumSongGroups = groupByProperty(songs.Items, 'AlbumId');
 
-        const promises: any[] = [];
-        Object.keys(albumSongGroups).forEach(async (key) => {
-          promises.push(
-            insertSongGroup(serverFolder, albumSongGroups[key], key)
-          );
-        });
+        const keys = Object.keys(albumSongGroups);
 
-        await Promise.all(promises);
+        for (let b = 0; b < keys.length; b += 1) {
+          const songGroup = albumSongGroups[keys[b]];
+          await insertSongGroup(serverFolder, songGroup, keys[b]);
 
-        const message = `Scanned ${songs.Items.length} songs.`;
+          const currentTask = await prisma.task.findUnique({
+            where: { id: task.id },
+          });
 
-        return { message, task };
-      },
-      id: taskId,
-    });
-  }
+          const newCount =
+            Number(currentTask?.progress || 0) + Number(songGroup.length);
+
+          await prisma.task.update({
+            data: { progress: String(newCount) },
+            where: { id: task.id },
+          });
+        }
+      }
+
+      return { completed: true, task };
+    },
+    id: taskId,
+  });
 };
 
-const scanAll = async (server: Server, serverFolder: ServerFolder) => {
-  await scanGenres(server, serverFolder);
-  await scanAlbumArtists(server, serverFolder);
-  await scanAlbums(server, serverFolder);
-  await scanSongs(server, serverFolder);
+const checkDeleted = async (task: Task, serverFolder: ServerFolder) => {
+  q.push({
+    fn: async () => {
+      await prisma.$transaction([
+        prisma.albumArtist.updateMany({
+          data: { deleted: true },
+          where: {
+            serverFolderId: serverFolder.id,
+            updatedAt: { lte: task.createdAt },
+          },
+        }),
+        prisma.artist.updateMany({
+          data: { deleted: true },
+          where: {
+            serverFolderId: serverFolder.id,
+            updatedAt: { lte: task.createdAt },
+          },
+        }),
+        prisma.album.updateMany({
+          data: { deleted: true },
+          where: {
+            serverFolderId: serverFolder.id,
+            updatedAt: { lte: task.createdAt },
+          },
+        }),
+        prisma.song.updateMany({
+          data: { deleted: true },
+          where: {
+            serverFolderId: serverFolder.id,
+            updatedAt: { lte: task.createdAt },
+          },
+        }),
+      ]);
+    },
+    id: `${task.id}-difference`,
+  });
+};
+
+const scanAll = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  task: Task
+) => {
+  await scanGenres(server, serverFolder, task);
+  await scanAlbumArtists(server, serverFolder, task);
+  await scanAlbums(server, serverFolder, task);
+  await scanSongs(server, serverFolder, task);
+  await checkDeleted(task, serverFolder);
+  await completeTask(task);
 };
 
 export const jellyfinTasks = {
