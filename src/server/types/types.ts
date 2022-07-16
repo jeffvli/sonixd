@@ -95,6 +95,7 @@ export type OffsetPagination = {
 };
 
 export type PaginationResponse = {
+  currentPage: number;
   nextPage: string;
   prevPage: string;
   startIndex: number;
@@ -108,6 +109,7 @@ export type SuccessResponse = {
 
 export type PaginationItems = {
   limit: number;
+  page: number;
   startIndex: number;
   totalEntries: number;
   url: string;

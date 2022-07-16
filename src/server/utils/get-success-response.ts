@@ -24,11 +24,12 @@ export const getSuccessResponse = (options: {
   let pagination;
 
   if (paginationItems) {
-    const { startIndex, totalEntries, limit, url } = paginationItems;
+    const { startIndex, totalEntries, limit, url, page } = paginationItems;
     const hasPrevPage = startIndex - limit >= 0;
     const hasNextPage = startIndex + limit <= totalEntries;
 
     pagination = {
+      currentPage: page,
       nextPage: hasNextPage ? getPaginationUrl(url, 'next') : null,
       prevPage: hasPrevPage ? getPaginationUrl(url, 'prev') : null,
       startIndex,
