@@ -22,15 +22,26 @@ model User {
   updatedAt DateTime @updatedAt
   enabled   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
+  deviceId  String   @unique
 
   favorites               Favorite[]
   ratings                 Rating[]
+  histories               History[]
   serverFolderPermissions ServerFolderPermission[]
+}
+
+model History {
+  id Int @id @default(autoincrement())
+
+  songs Song[]
+
+  User   User @relation(fields: [userId], references: [id])
+  userId Int
 }
 
 model Server {
   id           Int      @id @default(autoincrement())
-  name         String   @unique
+  name         String
   url          String   @unique
   username     String
   remoteUserId String
@@ -39,7 +50,24 @@ model Server {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  serverFolder ServerFolder[]
+  albumArtists  AlbumArtist[]
+  artists       Artist[]
+  albums        Album[]
+  songs         Song[]
+  serverFolders ServerFolder[]
+  serverUrls    ServerUrl[]
+}
+
+model ServerUrl {
+  id        Int      @id @default(autoincrement())
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique(fields: [serverId, url], name: "uniqueServerUrlId")
 }
 
 model ServerFolder {
@@ -50,6 +78,7 @@ model ServerFolder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isPublic  Boolean  @default(true)
+  deleted   Boolean  @default(false)
 
   albumArtists            AlbumArtist[]
   artists                 Artist[]
@@ -155,20 +184,22 @@ model AlbumArtist {
   biography       String?
   remoteId        String
   remoteCreatedAt DateTime?
+  deleted         Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  albums    Album[]
-  genres    Genre[]
-  favorites Favorite[]
-  ratings   Rating[]
-  images    Image[]
-  externals External[]
+  albums        Album[]
+  genres        Genre[]
+  favorites     Favorite[]
+  ratings       Rating[]
+  images        Image[]
+  externals     External[]
+  serverFolders ServerFolder[]
 
-  serverFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
-  serverFolderId Int
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
 
-  @@unique(fields: [serverFolderId, remoteId], name: "uniqueAlbumArtistId")
+  @@unique(fields: [serverId, remoteId], name: "uniqueAlbumArtistId")
 }
 
 model Album {
@@ -178,24 +209,26 @@ model Album {
   year            Int?
   remoteId        String
   remoteCreatedAt DateTime?
+  deleted         Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  songs     Song[]
-  genres    Genre[]
-  favorites Favorite[]
-  ratings   Rating[]
-  artists   Artist[]
-  images    Image[]
-  externals External[]
-
-  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
-  serverFolderId Int
+  songs         Song[]
+  genres        Genre[]
+  favorites     Favorite[]
+  ratings       Rating[]
+  artists       Artist[]
+  images        Image[]
+  externals     External[]
+  serverFolders ServerFolder[]
 
   albumArtist   AlbumArtist? @relation(fields: [albumArtistId], references: [id])
   albumArtistId Int?
 
-  @@unique(fields: [serverFolderId, remoteId], name: "uniqueAlbumId")
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique(fields: [serverId, remoteId], name: "uniqueAlbumId")
 }
 
 model Artist {
@@ -204,21 +237,23 @@ model Artist {
   biography       String?
   remoteId        String
   remoteCreatedAt DateTime?
+  deleted         Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  genres    Genre[]
-  favorites Favorite[]
-  ratings   Rating[]
-  albums    Album[]
-  songs     Song[]
-  images    Image[]
-  externals External[]
+  genres        Genre[]
+  favorites     Favorite[]
+  ratings       Rating[]
+  albums        Album[]
+  songs         Song[]
+  images        Image[]
+  externals     External[]
+  serverFolders ServerFolder[]
 
-  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
-  serverFolderId Int
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
 
-  @@unique(fields: [serverFolderId, remoteId], name: "uniqueArtistId")
+  @@unique(fields: [serverId, remoteId], name: "uniqueArtistId")
 }
 
 model Song {
@@ -234,35 +269,39 @@ model Song {
   artistName      String?
   remoteId        String
   remoteCreatedAt DateTime?
+  deleted         Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  genres    Genre[]
-  favorites Favorite[]
-  ratings   Rating[]
-  artists   Artist[]
-  images    Image[]
-  externals External[]
+  genres        Genre[]
+  favorites     Favorite[]
+  ratings       Rating[]
+  artists       Artist[]
+  images        Image[]
+  externals     External[]
+  serverFolders ServerFolder[]
+  histories     History[]
 
   album   Album? @relation(fields: [albumId], references: [id])
   albumId Int?
 
-  serverFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
-  serverFolderId Int
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
 
-  @@unique(fields: [serverFolderId, remoteId], name: "uniqueSongId")
+  @@unique(fields: [serverId, remoteId], name: "uniqueSongId")
 }
 
 model Task {
   id         Int      @id @default(autoincrement())
   name       String
-  inProgress Boolean
+  inProgress Boolean  @default(false)
   completed  Boolean  @default(false)
   isError    Boolean? @default(false)
+  progress   String?
   message    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  ServerFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
+  serverFolder   ServerFolder @relation(fields: [serverFolderId], references: [id])
   serverFolderId Int
 }

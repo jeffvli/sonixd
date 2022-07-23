@@ -1,6 +1,7 @@
 /* eslint-disable promise/catch-or-return */
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { randomString } from '../utils';
 
 const prisma = new PrismaClient();
 
@@ -9,6 +10,7 @@ async function main() {
 
   await prisma.user.upsert({
     create: {
+      deviceId: `admin_${randomString(10)}`,
       enabled: true,
       isAdmin: true,
       password: hashedPassword,

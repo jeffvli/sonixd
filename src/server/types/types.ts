@@ -23,6 +23,7 @@ export type ServerFolder = {
 
 export type User = {
   createdAt: Date | string;
+  deviceId: string;
   enabled: boolean;
   id: number;
   isAdmin: boolean;
