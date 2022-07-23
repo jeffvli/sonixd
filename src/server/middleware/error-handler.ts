@@ -9,6 +9,10 @@ export const errorHandler = (
 ) => {
   let message = '';
 
+  const trace = err.stack.match(/at .* \(.*\)/g).map((e: string) => {
+    return e.replace(/\(|\)/g, '');
+  });
+
   if (err.message) {
     message = isJsonString(err.message) ? JSON.parse(err.message) : err.message;
   }
@@ -17,6 +21,7 @@ export const errorHandler = (
     error: {
       message,
       path: req.path,
+      trace,
     },
     response: 'Error',
     statusCode: err.statusCode || 500,
