@@ -460,6 +460,7 @@ const viewState: View = {
       enabled: false,
       nav: 'filters',
       properties: {
+        notStarred: false,
         starred: false,
         genre: {
           list: [],
