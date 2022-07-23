@@ -12,10 +12,10 @@ import {
 
 export const api = axios.create({});
 
-export const getMusicFolders = async (server: Server) => {
+export const getMusicFolders = async (server: Partial<Server>) => {
   const { data } = await api.get<JFMusicFoldersResponse>(
     `${server.url}/users/${server.remoteUserId}/items`,
-    { headers: { 'X-MediaBrowser-Token': server.token } }
+    { headers: { 'X-MediaBrowser-Token': server.token! } }
   );
 
   const musicFolders = data.Items.filter(

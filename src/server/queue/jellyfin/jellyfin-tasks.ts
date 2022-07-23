@@ -1,3 +1,4 @@
+import uniqBy from 'lodash/uniqBy';
 import { prisma } from '../../lib';
 import { Server, ServerFolder, Task } from '../../types/types';
 import { groupByProperty, uniqueArray } from '../../utils';
@@ -89,7 +90,8 @@ const scanAlbumArtists = async (
             name: albumArtist.Name,
             remoteCreatedAt: albumArtist.DateCreated,
             remoteId: albumArtist.Id,
-            serverFolderId: serverFolder.id,
+            serverFolders: { connect: { id: serverFolder.id } },
+            serverId: server.id,
           },
           update: {
             biography: albumArtist.Overview,
@@ -100,12 +102,13 @@ const scanAlbumArtists = async (
             name: albumArtist.Name,
             remoteCreatedAt: albumArtist.DateCreated,
             remoteId: albumArtist.Id,
-            serverFolderId: serverFolder.id,
+            serverFolders: { connect: { id: serverFolder.id } },
+            serverId: server.id,
           },
           where: {
             uniqueAlbumArtistId: {
               remoteId: albumArtist.Id,
-              serverFolderId: serverFolder.id,
+              serverId: server.id,
             },
           },
         });
@@ -185,7 +188,7 @@ const scanAlbums = async (
                   where: {
                     uniqueAlbumArtistId: {
                       remoteId: album.AlbumArtists && album.AlbumArtists[0].Id,
-                      serverFolderId: serverFolder.id,
+                      serverId: server.id,
                     },
                   },
                 })
@@ -201,7 +204,8 @@ const scanAlbums = async (
               name: album.Name,
               remoteCreatedAt: album.DateCreated,
               remoteId: album.Id,
-              serverFolderId: serverFolder.id,
+              serverFolders: { connect: { id: serverFolder.id } },
+              serverId: server.id,
               year: album.ProductionYear,
             },
             update: {
@@ -214,13 +218,14 @@ const scanAlbums = async (
               name: album.Name,
               remoteCreatedAt: album.DateCreated,
               remoteId: album.Id,
-              serverFolderId: serverFolder.id,
+              serverFolders: { connect: { id: serverFolder.id } },
+              serverId: server.id,
               year: album.ProductionYear,
             },
             where: {
               uniqueAlbumId: {
                 remoteId: album.Id,
-                serverFolderId: serverFolder.id,
+                serverId: server.id,
               },
             },
           });
@@ -246,6 +251,7 @@ const scanAlbums = async (
 };
 
 const insertSongGroup = async (
+  server: Server,
   serverFolder: ServerFolder,
   songs: JFSong[],
   remoteAlbumId: string
@@ -256,12 +262,13 @@ const insertSongGroup = async (
         create: {
           name: artist.Name,
           remoteId: artist.Id,
-          serverFolderId: serverFolder.id,
+          serverFolders: { connect: { id: serverFolder.id } },
+          serverId: server.id,
         },
         where: {
           uniqueArtistId: {
             remoteId: artist.Id,
-            serverFolderId: serverFolder.id,
+            serverId: server.id,
           },
         },
       };
@@ -302,7 +309,8 @@ const insertSongGroup = async (
         name: song.Name,
         remoteCreatedAt: song.DateCreated,
         remoteId: song.Id,
-        serverFolderId: serverFolder.id,
+        serverFolders: { connect: { id: serverFolder.id } },
+        serverId: server.id,
         track: song.IndexNumber,
         year: song.ProductionYear,
       },
@@ -319,26 +327,31 @@ const insertSongGroup = async (
         name: song.Name,
         remoteCreatedAt: song.DateCreated,
         remoteId: song.Id,
-        serverFolderId: serverFolder.id,
+        serverFolders: { connect: { id: serverFolder.id } },
+        serverId: server.id,
         track: song.IndexNumber,
         year: song.ProductionYear,
       },
       where: {
         uniqueSongId: {
           remoteId: song.Id,
-          serverFolderId: serverFolder.id,
+          serverId: server.id,
         },
       },
     };
   });
 
-  const artists = songs.flatMap((song) => {
-    return song.ArtistItems.map((artist) => ({
-      name: artist.Name,
-      remoteId: artist.Id,
-      serverFolderId: serverFolder.id,
-    }));
-  });
+  const artists = uniqBy(
+    songs.flatMap((song) => {
+      return song.ArtistItems.map((artist) => ({
+        name: artist.Name,
+        remoteId: artist.Id,
+        serverFolders: { connect: { id: serverFolder.id } },
+        serverId: server.id,
+      }));
+    }),
+    'remoteId'
+  );
 
   const uniqueArtistIds = songs
     .flatMap((song) => {
@@ -350,21 +363,34 @@ const insertSongGroup = async (
     return {
       uniqueArtistId: {
         remoteId: artistId!,
-        serverFolderId: serverFolder.id,
+        serverId: server.id,
       },
     };
   });
 
+  artists.forEach(async (artist) => {
+    await prisma.artist.upsert({
+      create: artist,
+      update: artist,
+      where: {
+        uniqueArtistId: {
+          remoteId: artist.remoteId,
+          serverId: server.id,
+        },
+      },
+    });
+  });
+
   await prisma.$transaction([
-    prisma.artist.createMany({
-      data: artists,
-      skipDuplicates: true,
-    }),
+    // prisma.artist.createMany({
+    //   data: artists,
+    //   skipDuplicates: true,
+    // }),
     prisma.artist.updateMany({
       data: { deleted: false },
       where: {
         remoteId: { in: uniqueArtistIds },
-        serverFolderId: serverFolder.id,
+        serverId: server.id,
       },
     }),
     prisma.album.update({
@@ -376,7 +402,7 @@ const insertSongGroup = async (
       where: {
         uniqueAlbumId: {
           remoteId: remoteAlbumId,
-          serverFolderId: serverFolder.id,
+          serverId: server.id,
         },
       },
     }),
@@ -428,19 +454,19 @@ const scanSongs = async (
 
         for (let b = 0; b < keys.length; b += 1) {
           const songGroup = albumSongGroups[keys[b]];
-          await insertSongGroup(serverFolder, songGroup, keys[b]);
+          await insertSongGroup(server, serverFolder, songGroup, keys[b]);
 
-          const currentTask = await prisma.task.findUnique({
-            where: { id: task.id },
-          });
+          // const currentTask = await prisma.task.findUnique({
+          //   where: { id: task.id },
+          // });
 
-          const newCount =
-            Number(currentTask?.progress || 0) + Number(songGroup.length);
+          // const newCount =
+          //   Number(currentTask?.progress || 0) + Number(songGroup.length);
 
-          await prisma.task.update({
-            data: { progress: String(newCount) },
-            where: { id: task.id },
-          });
+          // await prisma.task.update({
+          //   data: { progress: String(newCount) },
+          //   where: { id: task.id },
+          // });
         }
       }
 
@@ -450,35 +476,43 @@ const scanSongs = async (
   });
 };
 
-const checkDeleted = async (task: Task, serverFolder: ServerFolder) => {
+const checkDeleted = async (
+  server: Server,
+  serverFolder: ServerFolder,
+  task: Task
+) => {
   q.push({
     fn: async () => {
       await prisma.$transaction([
         prisma.albumArtist.updateMany({
           data: { deleted: true },
           where: {
-            serverFolderId: serverFolder.id,
+            serverFolders: { some: { id: serverFolder.id } },
+            serverId: server.id,
             updatedAt: { lte: task.createdAt },
           },
         }),
         prisma.artist.updateMany({
           data: { deleted: true },
           where: {
-            serverFolderId: serverFolder.id,
+            serverFolders: { some: { id: serverFolder.id } },
+            serverId: server.id,
             updatedAt: { lte: task.createdAt },
           },
         }),
         prisma.album.updateMany({
           data: { deleted: true },
           where: {
-            serverFolderId: serverFolder.id,
+            serverFolders: { some: { id: serverFolder.id } },
+            serverId: server.id,
             updatedAt: { lte: task.createdAt },
           },
         }),
         prisma.song.updateMany({
           data: { deleted: true },
           where: {
-            serverFolderId: serverFolder.id,
+            serverFolders: { some: { id: serverFolder.id } },
+            serverId: server.id,
             updatedAt: { lte: task.createdAt },
           },
         }),
@@ -497,7 +531,7 @@ const scanAll = async (
   await scanAlbumArtists(server, serverFolder, task);
   await scanAlbums(server, serverFolder, task);
   await scanSongs(server, serverFolder, task);
-  await checkDeleted(task, serverFolder);
+  await checkDeleted(server, serverFolder, task);
   await completeTask(task);
 };
 
