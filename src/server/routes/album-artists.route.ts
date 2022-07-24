@@ -13,5 +13,5 @@ albumArtistsRouter.get(
 albumArtistsRouter.get(
   '/:id',
   authenticateLocal,
-  albumArtistsController.getAlbumArtist
+  albumArtistsController.getAlbumArtistById
 );

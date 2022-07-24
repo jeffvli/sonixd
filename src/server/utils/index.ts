@@ -4,7 +4,7 @@ export * from './get-success-response';
 export * from './group-by-property';
 export * from './split-number-string';
 export * from './split-text-string';
-export * from './has-folder-access';
+export * from './folder-permissions';
 export * from './is-array-equal';
 export * from './is-json-string';
 export * from './validate-request';

@@ -8,11 +8,11 @@ import {
   validateRequest,
 } from '../utils';
 
-const getArtist = async (req: Request, res: Response) => {
+const getArtistById = async (req: Request, res: Response) => {
   validateRequest(req, { params: z.object({ ...idValidation }) });
 
   const { id } = req.params;
-  const data = await artistsService.getOne({
+  const data = await artistsService.findById({
     id: Number(id),
     user: req.auth,
   });
@@ -28,7 +28,7 @@ const getArtists = async (req: Request, res: Response) => {
   });
 
   const { limit, page, serverFolderIds } = req.query;
-  const data = await artistsService.getMany(req, {
+  const data = await artistsService.findMany(req, {
     limit: Number(limit),
     page: Number(page),
     serverFolderIds: String(serverFolderIds),
@@ -38,4 +38,4 @@ const getArtists = async (req: Request, res: Response) => {
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
-export const artistsController = { getArtist, getArtists };
+export const artistsController = { getArtistById, getArtists };

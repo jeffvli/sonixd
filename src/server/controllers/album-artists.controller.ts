@@ -17,7 +17,7 @@ const getAlbumArtists = async (req: Request, res: Response) => {
   });
 
   const { limit, page, serverFolderIds } = req.query;
-  const data = await albumArtistsService.getMany(req, {
+  const data = await albumArtistsService.findMany(req, {
     limit: Number(limit),
     page: Number(page),
     serverFolderIds: String(serverFolderIds),
@@ -27,15 +27,15 @@ const getAlbumArtists = async (req: Request, res: Response) => {
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
-const getAlbumArtist = async (req: Request, res: Response) => {
+const getAlbumArtistById = async (req: Request, res: Response) => {
   validateRequest(req, { params: z.object({ ...idValidation }) });
 
   const { id } = req.params;
-  const data = await albumArtistsService.getOne({
+  const data = await albumArtistsService.findById({
     id: Number(id),
     user: req.auth,
   });
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
-export const albumArtistsController = { getAlbumArtist, getAlbumArtists };
+export const albumArtistsController = { getAlbumArtistById, getAlbumArtists };

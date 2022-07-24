@@ -6,12 +6,18 @@ export const serversRouter: Router = express.Router();
 
 serversRouter.get('/', authenticateLocal, serversController.getServers);
 
-serversRouter.get('/:id', authenticateLocal, serversController.getServer);
+serversRouter.get('/:id', authenticateLocal, serversController.getServerById);
 
 serversRouter.get(
   '/:id/refresh',
   authenticateAdmin,
   serversController.refreshServer
+);
+
+serversRouter.get(
+  '/:id/folder',
+  authenticateAdmin,
+  serversController.getFolder
 );
 
 serversRouter.post('/', authenticateAdmin, serversController.createServer);

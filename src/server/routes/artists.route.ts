@@ -6,4 +6,4 @@ export const artistsRouter: Router = express.Router();
 
 artistsRouter.get('/', authenticateLocal, artistsController.getArtists);
 
-artistsRouter.get('/:id', authenticateLocal, artistsController.getArtist);
+artistsRouter.get('/:id', authenticateLocal, artistsController.getArtistById);

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../lib';
-import { ApiSuccess } from '../utils';
+import { ApiSuccess, randomString } from '../utils';
 import { ApiError } from '../utils/api-error';
 
 const login = async (options: { username: string }) => {
@@ -21,6 +21,7 @@ const register = async (options: { password: string; username: string }) => {
   const hashedPassword = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
     data: {
+      deviceId: `${username}_${randomString(10)}`,
       enabled: false,
       password: hashedPassword,
       username,

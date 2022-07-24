@@ -8,14 +8,20 @@ import {
   validateRequest,
 } from '../utils';
 
-const getAlbum = async (req: Request, res: Response) => {
-  validateRequest(req, { params: z.object({ ...idValidation }) });
+const getAlbumById = async (req: Request, res: Response) => {
+  validateRequest(req, {
+    params: z.object({ ...idValidation }),
+    query: z.object({ serverUrls: z.optional(z.string().min(1)) }),
+  });
 
   const { id } = req.params;
-  const data = await albumsService.getOne({
+  const { serverUrls } = req.query;
+  const data = await albumsService.findById({
     id: Number(id),
+    serverUrls: serverUrls && String(serverUrls),
     user: req.auth,
   });
+
   return res.status(data.statusCode).json(getSuccessResponse(data));
 };
 
@@ -23,15 +29,17 @@ const getAlbums = async (req: Request, res: Response) => {
   validateRequest(req, {
     query: z.object({
       ...paginationValidation,
-      serverFolderIds: z.string().min(1),
+      serverFolderIds: z.optional(z.string().min(1)),
+      serverUrls: z.optional(z.string().min(1)),
     }),
   });
 
-  const { limit, page, serverFolderIds } = req.query;
-  const data = await albumsService.getMany(req, {
+  const { limit, page, serverFolderIds, serverUrls } = req.query;
+  const data = await albumsService.findMany(req, {
     limit: Number(limit),
     page: Number(page),
-    serverFolderIds: String(serverFolderIds),
+    serverFolderIds: serverFolderIds && String(serverFolderIds),
+    serverUrls: serverUrls && String(serverUrls),
     user: req.auth,
   });
 
@@ -39,6 +47,6 @@ const getAlbums = async (req: Request, res: Response) => {
 };
 
 export const albumsController = {
-  getAlbum,
+  getAlbumById,
   getAlbums,
 };

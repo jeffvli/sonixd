@@ -6,4 +6,4 @@ export const albumsRouter: Router = express.Router();
 
 albumsRouter.get('/', authenticateLocal, albumsController.getAlbums);
 
-albumsRouter.get('/:id', authenticateLocal, albumsController.getAlbum);
+albumsRouter.get('/:id', authenticateLocal, albumsController.getAlbumById);

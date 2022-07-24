@@ -8,11 +8,11 @@ import {
 import { User } from '../types/types';
 import { ApiError, ApiSuccess, splitNumberString } from '../utils';
 
-const getOne = async (user: User, options: { id: number }) => {
+const findById = async (user: User, options: { id: number }) => {
   const { id } = options;
   const server = await prisma.server.findUnique({
     include: {
-      serverFolder: user.isAdmin
+      serverFolders: user.isAdmin
         ? true
         : {
             where: {
@@ -30,24 +30,24 @@ const getOne = async (user: User, options: { id: number }) => {
     throw ApiError.notFound('');
   }
 
-  if (!user.isAdmin && server.serverFolder.length === 0) {
+  if (!user.isAdmin && server.serverFolders.length === 0) {
     throw ApiError.forbidden('');
   }
 
   return ApiSuccess.ok({ data: server });
 };
 
-const getMany = async (user: User) => {
+const findMany = async (user: User) => {
   let servers;
 
   if (user.isAdmin) {
     servers = await prisma.server.findMany({
-      include: { serverFolder: true },
+      include: { serverFolders: true },
     });
   } else {
     servers = await prisma.server.findMany({
       include: {
-        serverFolder: {
+        serverFolders: {
           where: {
             OR: [
               { isPublic: true },
@@ -56,7 +56,7 @@ const getMany = async (user: User) => {
           },
         },
       },
-      where: { serverFolder: { some: { isPublic: true } } },
+      where: { serverFolders: { some: { isPublic: true } } },
     });
   }
 
@@ -71,7 +71,13 @@ const create = async (options: {
   url: string;
   username: string;
 }) => {
-  const server = await prisma.server.create({ data: options });
+  const checkDuplicate = await prisma.server.findUnique({
+    where: { url: options.url },
+  });
+
+  if (checkDuplicate) {
+    throw ApiError.conflict('Server already exists.');
+  }
 
   let musicFoldersData: {
     name: string;
@@ -80,7 +86,26 @@ const create = async (options: {
   }[] = [];
 
   if (options.serverType === 'subsonic') {
-    const musicFoldersRes = await subsonicApi.getMusicFolders(server);
+    const musicFoldersRes = await subsonicApi.getMusicFolders({
+      token: options.token,
+      url: options.url,
+    });
+
+    if (!musicFoldersRes) {
+      throw ApiError.badRequest('Server is inaccessible.');
+    }
+
+    const server = await prisma.server.create({
+      data: {
+        name: options.name,
+        remoteUserId: options.remoteUserId,
+        serverType: options.serverType,
+        token: options.token,
+        url: options.url,
+        username: options.username,
+      },
+    });
+
     musicFoldersData = musicFoldersRes.map((musicFolder) => {
       return {
         name: musicFolder.name,
@@ -88,10 +113,46 @@ const create = async (options: {
         serverId: server.id,
       };
     });
+
+    musicFoldersData.forEach(async (musicFolder) => {
+      await prisma.serverFolder.upsert({
+        create: musicFolder,
+        update: { name: musicFolder.name },
+        where: {
+          uniqueServerFolderId: {
+            remoteId: musicFolder.remoteId,
+            serverId: musicFolder.serverId,
+          },
+        },
+      });
+    });
+
+    return ApiSuccess.ok({ data: { ...server } });
   }
 
   if (options.serverType === 'jellyfin') {
-    const musicFoldersRes = await jellyfinApi.getMusicFolders(server);
+    const musicFoldersRes = await jellyfinApi.getMusicFolders({
+      remoteUserId: options.remoteUserId,
+      token: options.token,
+      url: options.url,
+    });
+
+    if (!musicFoldersRes) {
+      throw ApiError.badRequest('Server is inaccessible.');
+    }
+
+    const server = await prisma.server.create({
+      data: {
+        name: options.name,
+        remoteUserId: options.remoteUserId,
+        serverType: options.serverType,
+        serverUrls: { create: { url: options.url } },
+        token: options.token,
+        url: options.url,
+        username: options.username,
+      },
+    });
+
     musicFoldersData = musicFoldersRes.map((musicFolder) => {
       return {
         name: musicFolder.Name,
@@ -99,22 +160,24 @@ const create = async (options: {
         serverId: server.id,
       };
     });
+
+    musicFoldersData.forEach(async (musicFolder) => {
+      await prisma.serverFolder.upsert({
+        create: musicFolder,
+        update: { name: musicFolder.name },
+        where: {
+          uniqueServerFolderId: {
+            remoteId: musicFolder.remoteId,
+            serverId: musicFolder.serverId,
+          },
+        },
+      });
+    });
+
+    return ApiSuccess.ok({ data: { ...server } });
   }
 
-  musicFoldersData.forEach(async (musicFolder) => {
-    await prisma.serverFolder.upsert({
-      create: musicFolder,
-      update: { name: musicFolder.name },
-      where: {
-        uniqueServerFolderId: {
-          remoteId: musicFolder.remoteId,
-          serverId: musicFolder.serverId,
-        },
-      },
-    });
-  });
-
-  return ApiSuccess.ok({ data: { ...server } });
+  return ApiSuccess.ok({ data: {} });
 };
 
 const refresh = async (options: { id: number }) => {
@@ -153,6 +216,8 @@ const refresh = async (options: { id: number }) => {
     });
   }
 
+  // mark as deleted if not found
+
   musicFoldersData.forEach(async (musicFolder) => {
     await prisma.serverFolder.upsert({
       create: musicFolder,
@@ -176,7 +241,7 @@ const fullScan = async (options: {
 }) => {
   const { id, serverFolderIds } = options;
   const server = await prisma.server.findUnique({
-    include: { serverFolder: true },
+    include: { serverFolders: true },
     where: { id },
   });
 
@@ -187,11 +252,11 @@ const fullScan = async (options: {
   let serverFolders;
   if (serverFolderIds) {
     const selectedServerFolderIds = splitNumberString(serverFolderIds);
-    serverFolders = server.serverFolder.filter((folder) =>
+    serverFolders = server.serverFolders.filter((folder) =>
       selectedServerFolderIds?.includes(folder.id)
     );
   } else {
-    serverFolders = server.serverFolder;
+    serverFolders = server.serverFolders;
   }
 
   if (server.serverType === 'jellyfin') {
@@ -229,8 +294,8 @@ const fullScan = async (options: {
 
 export const serversService = {
   create,
+  findById,
+  findMany,
   fullScan,
-  getMany,
-  getOne,
   refresh,
 };
