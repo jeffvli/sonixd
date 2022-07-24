@@ -1,6 +1,9 @@
+import { Album } from '@prisma/client';
 import { Request } from 'express';
+import { albumHelpers, AlbumSort } from '../helpers/albums.helpers';
+import { sharedHelpers } from '../helpers/shared.helpers';
 import { prisma } from '../lib';
-import { OffsetPagination, User } from '../types/types';
+import { OffsetPagination, SortOrder, User } from '../types/types';
 import {
   ApiError,
   ApiSuccess,
@@ -19,28 +22,8 @@ const findById = async (options: {
 
   const album = await prisma.album.findUnique({
     include: {
-      _count: true,
-      albumArtist: true,
-      genres: true,
-      images: true,
-      server: {
-        include: {
-          serverUrls: serverUrls
-            ? { where: { id: { in: splitNumberString(serverUrls) } } }
-            : true,
-        },
-      },
+      ...albumHelpers.include({ serverUrls, songs: true }),
       serverFolders: true,
-      songs: {
-        include: {
-          album: true,
-          artists: true,
-          externals: true,
-          genres: true,
-          images: true,
-        },
-        orderBy: [{ disc: 'asc' }, { track: 'asc' }],
-      },
     },
     where: { id },
   });
@@ -63,8 +46,10 @@ const findById = async (options: {
 const findMany = async (
   req: Request,
   options: {
+    orderBy: SortOrder;
     serverFolderIds?: string;
     serverUrls?: string;
+    sortBy: AlbumSort;
     user: User;
   } & OffsetPagination
 ) => {
@@ -74,6 +59,8 @@ const findMany = async (
     page,
     serverFolderIds: rServerFolderIds,
     serverUrls,
+    sortBy,
+    orderBy,
   } = options;
 
   const serverFolderIds = rServerFolderIds
@@ -84,51 +71,57 @@ const findMany = async (
     throw ApiError.forbidden('');
   }
 
-  const serverFoldersFilter = serverFolderIds!.map((serverFolderId: number) => {
-    return {
-      serverFolders: {
-        some: {
-          id: { equals: Number(serverFolderId) },
-        },
-      },
-    };
-  });
+  const serverFoldersFilter = sharedHelpers.serverFolderFilter(
+    serverFolderIds!
+  );
 
   const startIndex = limit * page;
-  const totalEntries = await prisma.album.count({
-    where: {
-      OR: [...serverFoldersFilter],
-    },
-  });
+  let totalEntries = 0;
+  let albums: Album[];
 
-  const albums = await prisma.album.findMany({
-    include: {
-      _count: { select: { favorites: true, songs: true } },
-      albumArtist: true,
-      genres: true,
-      images: true,
-      server: {
-        include: {
-          serverUrls: serverUrls
-            ? { where: { id: { in: splitNumberString(serverUrls) } } }
-            : true,
+  if (sortBy === AlbumSort.RATING) {
+    const [count, result] = await prisma.$transaction([
+      prisma.albumRating.count({
+        where: {
+          album: { OR: serverFoldersFilter },
+          user: { id: user.id },
         },
-      },
-      songs: {
+      }),
+      prisma.albumRating.findMany({
         include: {
-          album: true,
-          artists: true,
-          externals: true,
-          genres: true,
-          images: true,
+          album: {
+            include: { ...albumHelpers.include({ serverUrls, songs: false }) },
+          },
         },
-        orderBy: [{ disc: 'asc' }, { track: 'asc' }],
-      },
-    },
-    skip: startIndex,
-    take: limit,
-    where: { OR: serverFoldersFilter },
-  });
+        orderBy: { value: orderBy },
+        skip: startIndex,
+        take: limit,
+        where: {
+          album: { OR: serverFoldersFilter },
+          user: { id: user.id },
+        },
+      }),
+    ]);
+
+    albums = result.map((rating) => rating.album) as Album[];
+    totalEntries = count;
+  } else {
+    const [count, result] = await prisma.$transaction([
+      prisma.album.count({
+        where: { OR: serverFoldersFilter },
+      }),
+      prisma.album.findMany({
+        include: { ...albumHelpers.include({ serverUrls, songs: false }) },
+        orderBy: [{ ...albumHelpers.sort(sortBy, orderBy) }],
+        skip: startIndex,
+        take: limit,
+        where: { OR: serverFoldersFilter },
+      }),
+    ]);
+
+    albums = result;
+    totalEntries = count;
+  }
 
   return ApiSuccess.ok({
     data: toRes.albums(albums, user),

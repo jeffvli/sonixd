@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import { User } from '../types/types';
+import meanBy from 'lodash/meanBy';
+import { Rating, User } from '../types/types';
 import { getImageUrl } from '../utils';
 
 const getSubsonicStreamUrl = (
@@ -162,9 +163,14 @@ const albums = (items: any[], user: User) => {
     items?.map((item: any) => {
       const { serverType, token, remoteUserId } = item.server;
       const { url } = item.server.serverUrls[0];
+      const rating = item.ratings.find(
+        (r: Rating) => r.userId === user.id
+      )?.value;
+      const averageRating = meanBy(item.ratings, 'value');
 
       return {
         albumArtistId: item.albumArtistId,
+        averageRating,
         createdAt: item.createdAt,
         dateCreated: item.date,
         deleted: item.deleted,
@@ -172,6 +178,7 @@ const albums = (items: any[], user: User) => {
         id: item.id,
         image: primaryImage(item.images, serverType, url, item.remoteId),
         name: item.name,
+        rating,
         remoteCreatedAt: item.remoteCreatedAt,
         remoteId: item.remoteId,
         serverFolderId: item.serverFolderId,
