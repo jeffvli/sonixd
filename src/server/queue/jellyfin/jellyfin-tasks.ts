@@ -295,6 +295,9 @@ const insertSongGroup = async (
       };
     });
 
+    const pathSplit = song.MediaSources[0].Path.split('/');
+    const parentPath = pathSplit.slice(0, pathSplit.length - 1).join('/');
+
     return {
       create: {
         artists: { connectOrCreate: artistsConnectOrCreate },
@@ -304,6 +307,11 @@ const insertSongGroup = async (
         disc: song.ParentIndexNumber,
         duration: Math.floor(song.MediaSources[0].RunTimeTicks / 1e7),
         externals: { connectOrCreate: externalsConnectOrCreate },
+        folders: {
+          connect: {
+            uniqueFolderId: { path: parentPath, serverId: server.id },
+          },
+        },
         genres: { connectOrCreate: genresConnectOrCreate },
         images: { connectOrCreate: imagesConnectOrCreate },
         name: song.Name,
@@ -322,6 +330,11 @@ const insertSongGroup = async (
         disc: song.ParentIndexNumber,
         duration: Math.floor(song.MediaSources[0].RunTimeTicks / 1e7),
         externals: { connectOrCreate: externalsConnectOrCreate },
+        folders: {
+          connect: {
+            uniqueFolderId: { path: parentPath, serverId: server.id },
+          },
+        },
         genres: { connectOrCreate: genresConnectOrCreate },
         images: { connectOrCreate: imagesConnectOrCreate },
         name: song.Name,
@@ -382,10 +395,6 @@ const insertSongGroup = async (
   });
 
   await prisma.$transaction([
-    // prisma.artist.createMany({
-    //   data: artists,
-    //   skipDuplicates: true,
-    // }),
     prisma.artist.updateMany({
       data: { deleted: false },
       where: {
@@ -448,6 +457,84 @@ const scanSongs = async (
           startIndex: i * chunkSize,
         });
 
+        const folderGroups = songs.Items.map((song) => {
+          const songPaths = song.MediaSources[0].Path.split('/');
+          const paths = [];
+          for (let b = 0; b < songPaths.length - 1; b += 1) {
+            paths.push({
+              name: songPaths[b],
+              path: songPaths.slice(0, b + 1).join('/'),
+            });
+          }
+
+          return paths;
+        });
+
+        const uniqueFolders = uniqBy(
+          folderGroups.flatMap((folder) => folder).filter((f) => f.path !== ''),
+          'path'
+        );
+
+        const folderSave: any[] = [];
+
+        for (let f = 0; f < uniqueFolders.length; f += 1) {
+          const t = await prisma.folder.upsert({
+            create: {
+              name: uniqueFolders[f].name,
+              path: uniqueFolders[f].path,
+              serverFolders: {
+                connect: {
+                  uniqueServerFolderId: {
+                    remoteId: serverFolder.remoteId,
+                    serverId: server.id,
+                  },
+                },
+              },
+              serverId: server.id,
+            },
+            update: {
+              name: uniqueFolders[f].name,
+              path: uniqueFolders[f].path,
+              serverFolders: {
+                connect: {
+                  uniqueServerFolderId: {
+                    remoteId: serverFolder.remoteId,
+                    serverId: server.id,
+                  },
+                },
+              },
+            },
+            where: {
+              uniqueFolderId: {
+                path: uniqueFolders[f].path,
+                serverId: server.id,
+              },
+            },
+          });
+
+          folderSave.push(t);
+        }
+
+        folderSave.forEach(async (f) => {
+          if (f.parentId) return;
+
+          const pathSplit = f.path.split('/');
+          const parentPath = pathSplit.slice(0, pathSplit.length - 1).join('/');
+
+          const parentPathData = folderSave.find(
+            (save) => save.path === parentPath
+          );
+
+          if (parentPathData) {
+            await prisma.folder.update({
+              data: {
+                parentId: parentPathData.id,
+              },
+              where: { id: f.id },
+            });
+          }
+        });
+
         const albumSongGroups = groupByProperty(songs.Items, 'AlbumId');
 
         const keys = Object.keys(albumSongGroups);
@@ -456,17 +543,17 @@ const scanSongs = async (
           const songGroup = albumSongGroups[keys[b]];
           await insertSongGroup(server, serverFolder, songGroup, keys[b]);
 
-          // const currentTask = await prisma.task.findUnique({
-          //   where: { id: task.id },
-          // });
+          const currentTask = await prisma.task.findUnique({
+            where: { id: task.id },
+          });
 
-          // const newCount =
-          //   Number(currentTask?.progress || 0) + Number(songGroup.length);
+          const newCount =
+            Number(currentTask?.progress || 0) + Number(songGroup.length);
 
-          // await prisma.task.update({
-          //   data: { progress: String(newCount) },
-          //   where: { id: task.id },
-          // });
+          await prisma.task.update({
+            data: { progress: String(newCount) },
+            where: { id: task.id },
+          });
         }
       }
 
