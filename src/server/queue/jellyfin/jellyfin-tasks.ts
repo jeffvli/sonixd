@@ -197,7 +197,7 @@ const scanAlbums = async (
           await prisma.album.upsert({
             create: {
               albumArtistId: albumArtist?.id,
-              date: album.DateCreated,
+              date: album.PremiereDate,
               externals: { connectOrCreate: externalsConnectOrCreate },
               genres: { connectOrCreate: genresConnectOrCreate },
               images: { connectOrCreate: imagesConnectOrCreate },
@@ -210,7 +210,7 @@ const scanAlbums = async (
             },
             update: {
               albumArtistId: albumArtist?.id,
-              date: album.DateCreated,
+              date: album.PremiereDate,
               deleted: false,
               externals: { connectOrCreate: externalsConnectOrCreate },
               genres: { connectOrCreate: genresConnectOrCreate },
