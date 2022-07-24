@@ -39,6 +39,26 @@ model History {
   userId Int
 }
 
+model Folder {
+  id        Int      @id @default(autoincrement())
+  name      String
+  path      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  songs         Song[]
+  serverFolders ServerFolder[]
+
+  parentId Int?
+  parent   Folder?  @relation("FolderChildren", fields: [parentId], references: [id])
+  children Folder[] @relation("FolderChildren")
+
+  Server   Server @relation(fields: [serverId], references: [id])
+  serverId Int
+
+  @@unique(fields: [serverId, path], name: "uniqueFolderId")
+}
+
 model Server {
   id           Int      @id @default(autoincrement())
   name         String
@@ -56,6 +76,7 @@ model Server {
   songs         Song[]
   serverFolders ServerFolder[]
   serverUrls    ServerUrl[]
+  folders       Folder[]
 }
 
 model ServerUrl {
@@ -84,6 +105,7 @@ model ServerFolder {
   artists                 Artist[]
   albums                  Album[]
   songs                   Song[]
+  folders                 Folder[]
   tasks                   Task[]
   serverFolderPermissions ServerFolderPermission[]
 
@@ -279,6 +301,7 @@ model Song {
   artists       Artist[]
   images        Image[]
   externals     External[]
+  folders       Folder[]
   serverFolders ServerFolder[]
   histories     History[]
 
