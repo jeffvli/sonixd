@@ -1,29 +1,64 @@
+/* eslint-disable no-underscore-dangle */
 import Axios from 'axios';
+import { authApi } from 'renderer/api/authApi';
 
-export const axios = Axios.create({
-  withCredentials: true,
+export const api = Axios.create({
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: false,
 });
 
-axios.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
-    const serverBaseURL = JSON.parse(
+    const { serverUrl, accessToken } = JSON.parse(
       localStorage.getItem('authentication') || '{}'
-    )?.serverUrl;
+    );
 
-    config.baseURL = `${serverBaseURL}/api`;
+    config.baseURL = `${serverUrl}/api`;
+    config.headers = {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    };
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (res) => {
-    return res.data;
+    return res;
   },
-  (err) => {
+  async (err) => {
     if (err.response && err.response.status === 401) {
-      console.log('unauthorized');
+      const { config } = err;
+      if (err.response.data.error.message === 'jwt expired' && !config.sent) {
+        config.sent = true;
+
+        const auth = JSON.parse(localStorage.getItem('authentication') || '{}');
+
+        const { accessToken } = (
+          await authApi.refresh(auth.serverUrl, {
+            refreshToken: auth.refreshToken,
+          })
+        ).data;
+
+        localStorage.setItem(
+          'authentication',
+          JSON.stringify({ ...auth, accessToken })
+        );
+
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${accessToken}`,
+        };
+
+        return Axios(config);
+      }
+
+      localStorage.setItem('authentication', '{}');
+      window.location.reload();
     }
     return Promise.reject(err);
   }

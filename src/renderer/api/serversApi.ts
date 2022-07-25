@@ -1,7 +1,7 @@
-import { axios } from 'renderer/lib';
+import { api } from 'renderer/lib';
 
 const getServers = async () => {
-  const { data } = await axios.get<any[]>('/servers');
+  const { data } = await api.get<any[]>('/servers');
   return data;
 };
 
@@ -12,7 +12,7 @@ const createServer = async (body: {
   url: string;
   username: string;
 }) => {
-  const { data } = await axios.post<any>('/servers', body);
+  const { data } = await api.post<any>('/servers', body);
   return data;
 };
 

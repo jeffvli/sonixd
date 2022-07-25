@@ -1,8 +1,8 @@
-import { axios } from 'renderer/lib';
+import { api } from 'renderer/lib';
 import { UserResponse } from './types';
 
 const getUsers = async () => {
-  const { data } = await axios.get<UserResponse>('/users');
+  const { data } = await api.get<UserResponse>('/users');
   return data;
 };
 

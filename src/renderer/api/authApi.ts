@@ -1,5 +1,6 @@
-import { axios } from 'renderer/lib';
-import { PingResponse, UserResponse } from './types';
+// import axios from 'axios';
+import axios from 'axios';
+import { LoginResponse, PingResponse } from './types';
 
 const login = async (
   serverUrl: string,
@@ -8,12 +9,9 @@ const login = async (
     username: string;
   }
 ) => {
-  const { data } = await axios.post<UserResponse>(
+  const { data } = await axios.post<LoginResponse>(
     `${serverUrl}/api/auth/login`,
-    body,
-    {
-      withCredentials: true,
-    }
+    body
   );
 
   return data;
@@ -27,7 +25,14 @@ const ping = async (serverUrl: string) => {
   return data;
 };
 
+const refresh = async (serverUrl: string, body: { refreshToken: string }) => {
+  const { data } = await axios.post(`${serverUrl}/api/auth/refresh`, body);
+
+  return data;
+};
+
 export const authApi = {
   login,
   ping,
+  refresh,
 };
