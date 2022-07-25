@@ -11,13 +11,13 @@ import { prisma } from './prisma';
 
 export const generateToken = (userId: number) => {
   return jwt.sign({ id: userId }, String(process.env.TOKEN_SECRET), {
-    expiresIn: '15m',
+    expiresIn: String(process.env.TOKEN_EXPIRATION || '15m'),
   });
 };
 
 export const generateRefreshToken = (userId: number) => {
   return jwt.sign({ id: userId }, String(process.env.TOKEN_SECRET), {
-    expiresIn: '30d',
+    expiresIn: String(process.env.TOKEN_REFRESH_EXPIRATION || '90d'),
   });
 };
 
