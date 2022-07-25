@@ -7,6 +7,7 @@
     "stylelint-config-rational-order"
   ],
   "rules": {
+    "color-function-notation": ["legacy"],
     "declaration-empty-line-before": null,
     "order/properties-order": [],
     "plugin/rational-order": [
