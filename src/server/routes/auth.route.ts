@@ -11,4 +11,6 @@ authRouter.post('/register', authController.register);
 
 authRouter.post('/logout', authenticateLocal, authController.logout);
 
+authRouter.post('/refresh', authController.refresh);
+
 authRouter.get('/ping', authController.ping);
