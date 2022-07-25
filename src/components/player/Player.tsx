@@ -615,15 +615,20 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
 
   const handleOnPlay = useCallback(
     (playerNumber: 1 | 2) => {
+      const currentSong =
+        playerNumber === 1
+          ? playQueue[currentEntryList][playQueue.player1.index]
+          : playQueue[currentEntryList][playQueue.player2.index];
+
       ipcRenderer.send('current-song', playQueue.current);
 
-      if (config.player.systemNotifications) {
+      if (config.player.systemNotifications && currentSong) {
         // eslint-disable-next-line no-new
-        new Notification(playQueue.current.title, {
-          body: `${playQueue.current.artist.map((artist: Artist) => artist.title).join(', ')}\n${
-            playQueue.current.album
+        new Notification(currentSong.title, {
+          body: `${currentSong.artist.map((artist: Artist) => artist.title).join(', ')}\n${
+            currentSong.album
           }`,
-          icon: playQueue.current.image,
+          icon: currentSong.image,
         });
       }
 
@@ -637,10 +642,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           serverType: config.serverType,
           endpoint: 'scrobble',
           args: {
-            id:
-              playerNumber === 1
-                ? playQueue[currentEntryList][playQueue.player1.index]?.id
-                : playQueue[currentEntryList][playQueue.player2.index]?.id,
+            id: currentSong?.id,
             submission: false,
             position: currentSeek * 1e7,
             event: 'unpause',
