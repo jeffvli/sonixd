@@ -6,14 +6,12 @@ export const authenticateLocal = (
   res: Response,
   next: NextFunction
 ) => {
-  passport.authenticate('local', { session: true }, (err, _user, info) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
     if (err) {
       return next(err);
     }
 
-    const u: any = req.user;
-
-    if (!u) {
+    if (!user) {
       return res.status(401).json({
         error: {
           message: info?.message || 'Invalid authorization.',
@@ -24,7 +22,7 @@ export const authenticateLocal = (
       });
     }
 
-    if (!u.enabled) {
+    if (!user.enabled) {
       return res.status(401).json({
         error: {
           message: 'Your account is not enabled.',
@@ -36,12 +34,12 @@ export const authenticateLocal = (
     }
 
     req.auth = {
-      createdAt: u?.createdAt,
-      enabled: u?.enabled,
-      id: u?.id,
-      isAdmin: u?.isAdmin,
-      updatedAt: u?.updatedAt,
-      username: u?.username,
+      createdAt: user?.createdAt,
+      enabled: user?.enabled,
+      id: user?.id,
+      isAdmin: user?.isAdmin,
+      updatedAt: user?.updatedAt,
+      username: user?.username,
     };
 
     return next();

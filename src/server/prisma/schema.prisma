@@ -7,11 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
+model RefreshToken {
+  id    Int    @id @default(autoincrement())
+  token String @unique
+
+  User   User @relation(fields: [userId], references: [id])
+  userId Int
 }
 
 model User {
@@ -31,6 +32,7 @@ model User {
   artistRatings           ArtistRating[]
   albumRatings            AlbumRating[]
   songRatings             SongRating[]
+  refreshTokens           RefreshToken[]
 }
 
 model History {

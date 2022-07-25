@@ -4,13 +4,13 @@ services:
     container_name: sonixd_db
     image: postgres:13
     volumes:
-      - ${DB_PERSIST_PATH}:/var/lib/postgresql/data
+      - ${DATABASE_PERSIST_PATH}:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
     ports:
-      - '${DB_PORT}:5432'
+      - '${DATABASE_PORT}:5432'
     restart: unless-stopped
   server:
     container_name: sonixd_server
@@ -24,9 +24,9 @@ services:
       - db
     environment:
       - APP_BASE_URL=${APP_BASE_URL}
-      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}?schema=public&connection_limit=14&pool_timeout=20
-      - DATABASE_PORT=${DB_PORT}
-      - DATABASE_SECRET=${DB_SECRET}
+      - DATABASE_URL=postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@db/${DATABASE_NAME}?schema=public&connection_limit=14&pool_timeout=20
+      - DATABASE_PORT=${DATABASE_PORT}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     ports:
       - '9321:9321'
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
       - db
       - server
     environment:
-      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}?schema=public
+      - DATABASE_URL=postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@db/${DATABASE_NAME}?schema=public
     ports:
       - '5555:5555'
     restart: unless-stopped
