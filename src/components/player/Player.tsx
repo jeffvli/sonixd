@@ -472,6 +472,24 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
     );
   }, [config.serverType, currentEntryList, dispatch, playQueue, scrobbled]);
 
+  function setMetadata(arg: any) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: arg.title || 'Unknown Title',
+      artist:
+        arg.artist?.length !== 0
+          ? arg.artist?.map((artist: any) => artist.title).join(', ')
+          : 'Unknown Artist',
+      album: 'Unknown Album',
+      artwork: [
+        {
+          src: arg.image.includes('placeholder')
+            ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
+            : arg.image,
+        },
+      ],
+    });
+  }
+
   const handleOnEndedPlayer1 = useCallback(() => {
     player1Ref.current.audioEl.current.currentTime = 0;
     if (cacheSongs) {
@@ -521,6 +539,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
             )
           ];
         ipcRenderer.send('current-song', nextSong);
+        setMetadata(nextSong);
 
         dispatch(setAutoIncremented(false));
       }
@@ -575,6 +594,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
             )
           ];
         ipcRenderer.send('current-song', nextSong);
+        setMetadata(nextSong);
 
         dispatch(setAutoIncremented(false));
       }
@@ -621,6 +641,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
           : playQueue[currentEntryList][playQueue.player2.index];
 
       ipcRenderer.send('current-song', playQueue.current);
+      setMetadata(playQueue.current);
 
       if (config.player.systemNotifications && currentSong) {
         // eslint-disable-next-line no-new

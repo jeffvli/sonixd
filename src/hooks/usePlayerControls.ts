@@ -120,6 +120,8 @@ const usePlayerControls = (
   const handlePlayPause = useCallback(() => {
     if (playQueue[currentEntryList].length > 0) {
       if (player.status === 'PAUSED') {
+        navigator.mediaSession.playbackState = 'playing';
+
         dispatch(setStatus('PLAYING'));
 
         ipcRenderer.send('playpause', {
@@ -130,6 +132,8 @@ const usePlayerControls = (
               : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
         });
       } else {
+        navigator.mediaSession.playbackState = 'paused';
+
         dispatch(setStatus('PAUSED'));
         ipcRenderer.send('playpause', {
           status: 'PAUSED',
@@ -143,6 +147,8 @@ const usePlayerControls = (
   }, [currentEntryList, dispatch, playQueue, player.status, playersRef]);
 
   const handlePlay = useCallback(() => {
+    navigator.mediaSession.playbackState = 'playing';
+
     ipcRenderer.send('playpause', {
       status: 'PLAYING',
       position:
@@ -155,6 +161,8 @@ const usePlayerControls = (
   }, [dispatch, playQueue.currentPlayer, playersRef]);
 
   const handlePause = useCallback(() => {
+    navigator.mediaSession.playbackState = 'paused';
+
     ipcRenderer.send('playpause', {
       status: 'PAUSED',
       position:
@@ -172,6 +180,8 @@ const usePlayerControls = (
     playersRef.current.player1.audioEl.current.pause();
     playersRef.current.player1.audioEl.current.currentTime = 0;
     setCurrentTime(0);
+
+    navigator.mediaSession.playbackState = 'paused';
 
     ipcRenderer.send('playpause', {
       status: 'PAUSED',
@@ -476,6 +486,30 @@ const usePlayerControls = (
     handleSaveQueue,
     handleRestoreQueue,
   ]);
+
+  useEffect(() => {
+    const media = navigator.mediaSession;
+
+    media.setActionHandler('play', () => {
+      handlePlay();
+    });
+
+    media.setActionHandler('pause', () => {
+      handlePause();
+    });
+
+    media.setActionHandler('stop', () => {
+      handleStop();
+    });
+
+    media.setActionHandler('nexttrack', () => {
+      handleNextTrack();
+    });
+
+    media.setActionHandler('previoustrack', () => {
+      handlePrevTrack();
+    });
+  }, [handlePlay, handlePause, handleStop, handleNextTrack, handlePrevTrack]);
 
   useEffect(() => {
     ipcRenderer.on('current-position-request', (_event, arg) => {

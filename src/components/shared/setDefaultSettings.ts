@@ -1701,7 +1701,7 @@ const DEFAULT_SETTINGS: Settings = {
 
 export const settings = new Store({
   defaults: DEFAULT_SETTINGS,
-  name: 'settings'
+  name: 'settings',
 });
 
 export const setDefaultSettings = (force: boolean) => {
