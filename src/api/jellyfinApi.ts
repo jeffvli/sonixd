@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
-import settings from 'electron-settings';
 import _ from 'lodash';
 import moment from 'moment';
 import { nanoid } from 'nanoid/non-secure';
@@ -10,9 +9,10 @@ import { handleDisconnect } from '../components/settings/DisconnectButton';
 import { notifyToast } from '../components/shared/toast';
 import { GenericItem, Item, Song } from '../types';
 import { mockSettings } from '../shared/mockSettings';
+import { settings } from '../components/shared/setDefaultSettings';
 
 const transcode =
-  process.env.NODE_ENV === 'test' ? mockSettings.transcode : Boolean(settings.getSync('transcode'));
+  process.env.NODE_ENV === 'test' ? mockSettings.transcode : Boolean(settings.get('transcode'));
 
 const getAuth = () => {
   return {

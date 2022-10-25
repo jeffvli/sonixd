@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
-import settings from 'electron-settings';
 import { ButtonToolbar, ControlLabel, Form, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery, useQueryClient } from 'react-query';
@@ -55,6 +54,7 @@ import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
 import { useBrowserDownload } from '../../hooks/useBrowserDownload';
+import { settings } from '../shared/setDefaultSettings';
 
 interface PlaylistParams {
   id: string;
@@ -410,7 +410,7 @@ const PlaylistView = ({ ...rest }) => {
             />
           }
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'playlist',
             id: data.id,
           }}
@@ -619,7 +619,7 @@ const PlaylistView = ({ ...rest }) => {
         rowHeight={config.lookAndFeel.listView.music.rowHeight}
         fontSize={config.lookAndFeel.listView.music.fontSize}
         cacheImages={{
-          enabled: settings.getSync('cacheImages'),
+          enabled: settings.get('cacheImages'),
           cacheType: 'album',
           cacheIdProperty: 'albumId',
         }}

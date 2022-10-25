@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import settings from 'electron-settings';
 import styled from 'styled-components';
 import { ButtonGroup, ButtonToolbar, FlexboxGrid, Icon } from 'rsuite';
 import Card from '../card/Card';
@@ -7,6 +6,7 @@ import { SectionTitleWrapper, SectionTitle, StyledButton } from '../shared/style
 import { useAppSelector } from '../../redux/hooks';
 import { smoothScroll } from '../../shared/utils';
 import { Item } from '../../types';
+import { settings } from '../shared/setDefaultSettings';
 
 const ScrollMenuContainer = styled.div<{ $noScrollbar?: boolean; maxWidth: string }>`
   overflow-x: auto;
@@ -33,7 +33,7 @@ const ScrollingMenu = ({
   maxWidth,
   noButtons,
 }: any) => {
-  const cacheImages = Boolean(settings.getSync('cacheImages'));
+  const cacheImages = Boolean(settings.get('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const scrollContainerRef = useRef<any>();

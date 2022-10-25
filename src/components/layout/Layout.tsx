@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import settings from 'electron-settings';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useHistory } from 'react-router-dom';
 import { ButtonToolbar, Content, FlexboxGrid, Icon, Nav, Whisper } from 'rsuite';
@@ -26,6 +25,7 @@ import AdvancedConfig from '../settings/ConfigPanels/AdvancedConfig';
 import { setSidebar } from '../../redux/configSlice';
 import SearchBar from '../search/SearchBar';
 import Popup from '../shared/Popup';
+import { settings } from '../shared/setDefaultSettings';
 
 const Layout = ({ footer, children, disableSidebar, font }: any) => {
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ const Layout = ({ footer, children, disableSidebar, font }: any) => {
   );
 
   const handleToggle = () => {
-    settings.setSync('sidebar.expand', !config.lookAndFeel.sidebar.expand);
+    settings.set('sidebar.expand', !config.lookAndFeel.sidebar.expand);
     dispatch(setSidebar({ expand: !config.lookAndFeel.sidebar.expand }));
   };
 

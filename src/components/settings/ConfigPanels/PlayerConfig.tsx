@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ipcRenderer, shell } from 'electron';
-import settings from 'electron-settings';
 import { Form, Whisper } from 'rsuite';
 import { WhisperInstance } from 'rsuite/lib/Whisper';
 import { Trans, useTranslation } from 'react-i18next';
@@ -26,6 +25,7 @@ import ConfigOption from '../ConfigOption';
 import { Server } from '../../../types';
 import { isWindows, isWindows10 } from '../../../shared/utils';
 import Popup from '../../shared/Popup';
+import { settings } from '../../shared/setDefaultSettings';
 
 const getAudioDevice = async () => {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -74,21 +74,21 @@ const PlayerConfig = ({ bordered }: any) => {
   const multiSelect = useAppSelector((state) => state.multiSelect);
   const config = useAppSelector((state) => state.config);
   const [newFilter, setNewFilter] = useState({ string: '', valid: false });
-  const [transcode, setTranscode] = useState(Boolean(settings.getSync('transcode')));
+  const [transcode, setTranscode] = useState(Boolean(settings.get('transcode')));
   const [globalMediaHotkeys, setGlobalMediaHotkeys] = useState(
-    Boolean(settings.getSync('globalMediaHotkeys'))
+    Boolean(settings.get('globalMediaHotkeys'))
   );
   const [systemMediaTransportControls, setSystemMediaTransportControls] = useState(
-    Boolean(settings.getSync('systemMediaTransportControls'))
+    Boolean(settings.get('systemMediaTransportControls'))
   );
-  const [resume, setResume] = useState(Boolean(settings.getSync('resume')));
-  const [scrobble, setScrobble] = useState(Boolean(settings.getSync('scrobble')));
+  const [resume, setResume] = useState(Boolean(settings.get('resume')));
+  const [scrobble, setScrobble] = useState(Boolean(settings.get('scrobble')));
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>();
   const audioDevicePickerContainerRef = useRef(null);
   const transcodingRestartWhisper = useRef<WhisperInstance>();
 
   useEffect(() => {
-    settings.setSync('playbackFilters', config.playback.filters);
+    settings.set('playbackFilters', config.playback.filters);
   }, [config.playback.filters]);
 
   useEffect(() => {
@@ -121,7 +121,7 @@ const PlayerConfig = ({ bordered }: any) => {
               placeholder={t('Select')}
               onChange={(e: string) => {
                 dispatch(setAudioDeviceId(e));
-                settings.setSync('audioDeviceId', e);
+                settings.set('audioDeviceId', e);
               }}
             />
           </StyledInputPickerContainer>
@@ -134,13 +134,13 @@ const PlayerConfig = ({ bordered }: any) => {
         )}
         option={
           <StyledInputNumber
-            defaultValue={String(settings.getSync('seekForwardInterval')) || '0'}
+            defaultValue={String(settings.get('seekForwardInterval')) || '0'}
             step={0.5}
             min={0}
             max={100}
             width={125}
             onChange={(e: any) => {
-              settings.setSync('seekForwardInterval', Number(e));
+              settings.set('seekForwardInterval', Number(e));
             }}
           />
         }
@@ -152,13 +152,13 @@ const PlayerConfig = ({ bordered }: any) => {
         )}
         option={
           <StyledInputNumber
-            defaultValue={String(settings.getSync('seekBackwardInterval')) || '0'}
+            defaultValue={String(settings.get('seekBackwardInterval')) || '0'}
             step={0.5}
             min={0}
             max={100}
             width={125}
             onChange={(e: any) => {
-              settings.setSync('seekBackwardInterval', Number(e));
+              settings.set('seekBackwardInterval', Number(e));
             }}
           />
         }
@@ -178,7 +178,7 @@ const PlayerConfig = ({ bordered }: any) => {
             defaultChecked={resume}
             checked={resume}
             onChange={(e: boolean) => {
-              settings.setSync('resume', e);
+              settings.set('resume', e);
               setResume(e);
             }}
           />
@@ -219,7 +219,7 @@ const PlayerConfig = ({ bordered }: any) => {
                   defaultChecked={transcode}
                   checked={transcode}
                   onChange={(e: boolean) => {
-                    settings.setSync('transcode', e);
+                    settings.set('transcode', e);
                     setTranscode(e);
                     transcodingRestartWhisper.current?.open();
                   }}
@@ -252,12 +252,12 @@ const PlayerConfig = ({ bordered }: any) => {
             defaultChecked={globalMediaHotkeys}
             checked={globalMediaHotkeys}
             onChange={(e: boolean) => {
-              settings.setSync('globalMediaHotkeys', e);
+              settings.set('globalMediaHotkeys', e);
               setGlobalMediaHotkeys(e);
               if (e) {
                 ipcRenderer.send('enableGlobalHotkeys');
 
-                settings.setSync('systemMediaTransportControls', !e);
+                settings.set('systemMediaTransportControls', !e);
                 setSystemMediaTransportControls(!e);
                 ipcRenderer.send('disableSystemMediaTransportControls');
               } else {
@@ -283,12 +283,12 @@ const PlayerConfig = ({ bordered }: any) => {
               defaultChecked={systemMediaTransportControls}
               checked={systemMediaTransportControls}
               onChange={(e: boolean) => {
-                settings.setSync('systemMediaTransportControls', e);
+                settings.set('systemMediaTransportControls', e);
                 setSystemMediaTransportControls(e);
                 if (e) {
                   ipcRenderer.send('enableSystemMediaTransportControls');
 
-                  settings.setSync('globalMediaHotkeys', !e);
+                  settings.set('globalMediaHotkeys', !e);
                   setGlobalMediaHotkeys(!e);
                   ipcRenderer.send('disableGlobalHotkeys');
                 } else {
@@ -308,7 +308,7 @@ const PlayerConfig = ({ bordered }: any) => {
             defaultChecked={config.player.systemNotifications}
             checked={config.player.systemNotifications}
             onChange={(e: boolean) => {
-              settings.setSync('systemNotifications', e);
+              settings.set('systemNotifications', e);
               dispatch(setPlayer({ systemNotifications: e }));
             }}
           />
@@ -325,7 +325,7 @@ const PlayerConfig = ({ bordered }: any) => {
             defaultChecked={scrobble}
             checked={scrobble}
             onChange={(e: boolean) => {
-              settings.setSync('scrobble', e);
+              settings.set('scrobble', e);
               dispatch(setPlaybackSetting({ setting: 'scrobble', value: e }));
               setScrobble(e);
             }}
@@ -363,7 +363,7 @@ const PlayerConfig = ({ bordered }: any) => {
               disabled={newFilter.string === '' || newFilter.valid === false}
               onClick={() => {
                 dispatch(appendPlaybackFilter({ filter: newFilter.string, enabled: true }));
-                settings.setSync(
+                settings.set(
                   'playbackFilters',
                   config.playback.filters.concat({
                     filter: newFilter,

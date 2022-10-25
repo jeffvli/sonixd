@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { webFrame } from 'electron';
 import _ from 'lodash';
 import { useHotkeys } from 'react-hotkeys-hook';
-import settings from 'electron-settings';
 import { ThemeProvider } from 'styled-components';
 import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import './styles/App.global.css';
@@ -33,6 +32,7 @@ import { mockSettings } from './shared/mockSettings';
 import MusicList from './components/library/MusicList';
 import ReleaseNotes from './components/modal/ReleaseNotes';
 import { notifyToast } from './components/shared/toast';
+import { settings } from './components/shared/setDefaultSettings';
 
 const App = () => {
   const [zoomFactor, setZoomFactor] = useState(Number(localStorage.getItem('zoomFactor')) || 1.0);
@@ -77,7 +77,7 @@ const App = () => {
     const themes: any =
       process.env.NODE_ENV === 'test'
         ? mockSettings.themesDefault
-        : _.concat(settings.getSync('themes'), settings.getSync('themesDefault'));
+        : _.concat(settings.get('themes'), settings.get('themesDefault'));
     setTheme(getTheme(themes, misc.theme) || defaultDark);
   }, [misc.theme]);
 

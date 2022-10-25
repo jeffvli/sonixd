@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import settings from 'electron-settings';
 import useMeasure from 'react-use/lib/useMeasure';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +19,7 @@ import { InfoModal } from '../modal/Modal';
 import placeholderImg from '../../img/placeholder.png';
 import SidebarPlaylists from './SidebarPlaylists';
 import { setSidebar } from '../../redux/configSlice';
+import { settings } from '../shared/setDefaultSettings';
 
 const Sidebar = ({
   expand,
@@ -66,7 +66,7 @@ const Sidebar = ({
       if (isResizing) {
         const finalWidth = `${getSidebarWidth(e?.clientX)}px`;
         dispatch(setSidebar({ width: finalWidth }));
-        settings.setSync('sidebar.width', finalWidth);
+        settings.set('sidebar.width', finalWidth);
         setIsResizing(false);
         document.body.style.cursor = 'default';
       }
@@ -115,7 +115,7 @@ const Sidebar = ({
                 size="xs"
                 onClick={() => {
                   dispatch(setSidebar({ coverArt: false }));
-                  settings.setSync('sidebar.coverArt', false);
+                  settings.set('sidebar.coverArt', false);
                 }}
               >
                 <Icon icon="down" />

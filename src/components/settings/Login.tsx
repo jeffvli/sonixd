@@ -1,11 +1,10 @@
 import React, { useRef, useState } from 'react';
 import md5 from 'md5';
 import randomstring from 'randomstring';
-import settings from 'electron-settings';
 import { Form, ControlLabel, Message, RadioGroup } from 'rsuite';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import setDefaultSettings from '../shared/setDefaultSettings';
+import { settings, setDefaultSettings } from '../shared/setDefaultSettings';
 import {
   StyledButton,
   StyledCheckbox,
@@ -68,13 +67,13 @@ const Login = () => {
     localStorage.setItem('salt', salt);
     localStorage.setItem('hash', hash);
 
-    settings.setSync('server', cleanServerName);
-    settings.setSync('serverBase64', btoa(cleanServerName));
-    settings.setSync('serverType', 'subsonic');
-    settings.setSync('username', userName);
-    settings.setSync('password', password);
-    settings.setSync('salt', salt);
-    settings.setSync('hash', hash);
+    settings.set('server', cleanServerName);
+    settings.set('serverBase64', btoa(cleanServerName));
+    settings.set('serverType', 'subsonic');
+    settings.set('username', userName);
+    settings.set('password', password);
+    settings.set('salt', salt);
+    settings.set('hash', hash);
 
     // Set defaults on login
     setDefaultSettings(false);
@@ -107,12 +106,12 @@ const Login = () => {
       localStorage.setItem('token', data.AccessToken);
       localStorage.setItem('deviceId', deviceId);
 
-      settings.setSync('server', cleanServerName);
-      settings.setSync('serverBase64', btoa(cleanServerName));
-      settings.setSync('serverType', 'jellyfin');
-      settings.setSync('username', data.User.Id);
-      settings.setSync('token', data.AccessToken);
-      settings.setSync('deviceId', deviceId);
+      settings.set('server', cleanServerName);
+      settings.set('serverBase64', btoa(cleanServerName));
+      settings.set('serverType', 'jellyfin');
+      settings.set('username', data.User.Id);
+      settings.set('token', data.AccessToken);
+      settings.set('deviceId', deviceId);
     } catch (err) {
       if (err instanceof Error) {
         setMessage(`${err.message}`);
@@ -184,11 +183,11 @@ const Login = () => {
                 defaultChecked={
                   process.env.NODE_ENV === 'test'
                     ? mockSettings.legacyAuth
-                    : Boolean(settings.getSync('legacyAuth'))
+                    : Boolean(settings.get('legacyAuth'))
                 }
                 checked={legacyAuth}
                 onChange={(_v: any, e: boolean) => {
-                  settings.setSync('legacyAuth', e);
+                  settings.set('legacyAuth', e);
                   setLegacyAuth(e);
                 }}
               >

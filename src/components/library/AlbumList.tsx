@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { ButtonToolbar, Nav, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
@@ -33,6 +32,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 export const ALBUM_SORT_TYPES = [
   { label: i18n.t('A-Z (Name)'), value: 'alphabeticalByName', role: i18n.t('Default') },
@@ -54,7 +54,7 @@ const AlbumList = () => {
   const view = useAppSelector((state) => state.view);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortTypes, setSortTypes] = useState<any[]>([]);
-  const [viewType, setViewType] = useState(settings.getSync('albumViewType'));
+  const [viewType, setViewType] = useState(settings.get('albumViewType'));
   const [musicFolder, setMusicFolder] = useState({ loaded: false, id: undefined });
   const albumFilterPickerContainerRef = useRef(null);
   const [currentQueryKey, setCurrentQueryKey] = useState<any>(['albumList']);
@@ -386,7 +386,7 @@ const AlbumList = () => {
             })
           }
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}

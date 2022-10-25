@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import settings from 'electron-settings';
 import _ from 'lodash';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
@@ -21,6 +20,7 @@ import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 const FolderList = () => {
   const { t } = useTranslation();
@@ -169,9 +169,9 @@ const FolderList = () => {
                 : indexData
             }
             loading={isLoadingFolderData}
-            tableColumns={settings.getSync('musicListColumns')}
-            rowHeight={Number(settings.getSync('musicListRowHeight'))}
-            fontSize={Number(settings.getSync('musicListFontSize'))}
+            tableColumns={settings.get('musicListColumns')}
+            rowHeight={Number(settings.get('musicListRowHeight'))}
+            fontSize={Number(settings.get('musicListFontSize'))}
             handleRowClick={handleRowClick}
             handleRowDoubleClick={handleRowDoubleClick}
             handleFavorite={(rowData: any) =>
@@ -195,7 +195,7 @@ const FolderList = () => {
               handleRating(rowData, { queryKey: ['folder', folder.currentViewedFolder], rating })
             }
             cacheImages={{
-              enabled: settings.getSync('cacheImages'),
+              enabled: settings.get('cacheImages'),
               cacheType: 'folder',
               cacheIdProperty: 'albumId',
             }}

@@ -1,6 +1,5 @@
 // Referenced from: https://codesandbox.io/s/jjkz5y130w?file=/index.js:700-703
 import React, { useEffect, useMemo, useState } from 'react';
-import settings from 'electron-settings';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import Card from '../card/Card';
@@ -8,6 +7,7 @@ import 'react-virtualized/styles.css';
 import { useAppSelector } from '../../redux/hooks';
 import Paginator from '../shared/Paginator';
 import CenterLoader from '../loader/CenterLoader';
+import { settings } from '../shared/setDefaultSettings';
 
 const GridCard = ({ data, index, style }: any) => {
   const { cardHeight, cardWidth, columnCount, gapSize, itemCount } = data;
@@ -178,7 +178,7 @@ const GridViewType = ({
   loading,
   gridRef,
 }: any) => {
-  const cacheImages = Boolean(settings.getSync('cacheImages'));
+  const cacheImages = Boolean(settings.get('cacheImages'));
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);

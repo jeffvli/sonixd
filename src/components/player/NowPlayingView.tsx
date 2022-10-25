@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { ButtonToolbar, ButtonGroup, ControlLabel, FlexboxGrid, Icon, Whisper } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -56,6 +55,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 const NowPlayingView = () => {
   const { t } = useTranslation();
@@ -70,14 +70,14 @@ const NowPlayingView = () => {
   const folder = useAppSelector((state) => state.folder);
   const misc = useAppSelector((state) => state.misc);
   const [autoPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
-    Number(settings.getSync('randomPlaylistTrackCount'))
+    Number(settings.get('randomPlaylistTrackCount'))
   );
   const [autoPlaylistFromYear, setRandomPlaylistFromYear] = useState(0);
   const [autoPlaylistToYear, setRandomPlaylistToYear] = useState(0);
   const [randomPlaylistGenre, setRandomPlaylistGenre] = useState<string | undefined>(undefined);
   const [isLoadingRandom, setIsLoadingRandom] = useState(false);
   const [musicFolder, setMusicFolder] = useState(folder.musicFolder);
-  const [infoMode, setInfoMode] = useState(settings.getSync('infoMode' || false));
+  const [infoMode, setInfoMode] = useState(settings.get('infoMode' || false));
 
   const { data: musicFolders } = useQuery(['musicFolders'], () =>
     apiController({ serverType: config.serverType, endpoint: 'getMusicFolders' })
@@ -131,7 +131,7 @@ const NowPlayingView = () => {
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {
       setTimeout(() => {
-        const rowHeight = Number(settings.getSync('musicListRowHeight'));
+        const rowHeight = Number(settings.get('musicListRowHeight'));
         tableRef?.current?.table.current?.scrollTop(
           rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
             ? rowHeight * playQueue.currentIndex - rowHeight * 2
@@ -288,7 +288,7 @@ const NowPlayingView = () => {
                           defaultValue={autoPlaylistTrackCount}
                           value={autoPlaylistTrackCount}
                           onChange={(e: number) => {
-                            settings.setSync('randomPlaylistTrackCount', Number(e));
+                            settings.set('randomPlaylistTrackCount', Number(e));
                             setRandomPlaylistTrackCount(Number(e));
                           }}
                         />
@@ -397,7 +397,7 @@ const NowPlayingView = () => {
                   <StyledButton
                     size="sm"
                     onClick={() => {
-                      settings.setSync('infoMode', !infoMode);
+                      settings.set('infoMode', !infoMode);
                       setInfoMode(!infoMode);
                     }}
                   >
@@ -456,7 +456,7 @@ const NowPlayingView = () => {
                     defaultChecked={playQueue.scrollWithCurrentSong}
                     checked={playQueue.scrollWithCurrentSong}
                     onChange={(_v: any, e: boolean) => {
-                      settings.setSync('scrollWithCurrentSong', e);
+                      settings.set('scrollWithCurrentSong', e);
                       dispatch(
                         setPlaybackSetting({
                           setting: 'scrollWithCurrentSong',
@@ -493,7 +493,7 @@ const NowPlayingView = () => {
                 rowHeight={config.lookAndFeel.listView.music.rowHeight}
                 fontSize={config.lookAndFeel.listView.music.fontSize}
                 cacheImages={{
-                  enabled: settings.getSync('cacheImages'),
+                  enabled: settings.get('cacheImages'),
                   cacheType: 'album',
                   cacheIdProperty: 'albumId',
                 }}

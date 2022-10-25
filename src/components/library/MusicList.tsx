@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +21,7 @@ import useListScroll from '../../hooks/useListScroll';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 // prettier-ignore
 export const MUSIC_SORT_TYPES = [
@@ -259,7 +259,7 @@ const MusicList = () => {
             handleRating(rowData, { queryKey: currentQueryKey, rating })
           }
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}

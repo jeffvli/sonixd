@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import settings from 'electron-settings';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { ButtonToolbar } from 'rsuite';
@@ -20,6 +19,7 @@ import { StyledTag } from '../shared/styled';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 const ArtistList = () => {
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ const ArtistList = () => {
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [viewType, setViewType] = useState(settings.getSync('artistViewType'));
+  const [viewType, setViewType] = useState(settings.get('artistViewType'));
   const [musicFolder, setMusicFolder] = useState(undefined);
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const ArtistList = () => {
             handleRating(rowData, { queryKey: ['artistList', musicFolder], rating })
           }
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'artist',
             cacheIdProperty: 'id',
           }}

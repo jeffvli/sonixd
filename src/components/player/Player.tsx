@@ -7,7 +7,6 @@ import React, {
   useCallback,
 } from 'react';
 import { ipcRenderer } from 'electron';
-import settings from 'electron-settings';
 import ReactAudioPlayer from 'react-audio-player';
 import { Helmet } from 'react-helmet-async';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -28,6 +27,7 @@ import { isCached, isLinux } from '../../shared/utils';
 import { apiController } from '../../api/controller';
 import { Artist, Server } from '../../types';
 import { setStatus } from '../../redux/playerSlice';
+import { settings } from '../shared/setDefaultSettings';
 
 const gaplessListenHandler = (
   currentPlayerRef: any,
@@ -252,7 +252,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
   const player = useAppSelector((state) => state.player);
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
-  const cacheSongs = settings.getSync('cacheSongs');
+  const cacheSongs = settings.get('cacheSongs');
   const [title] = useState('');
   const [scrobbled, setScrobbled] = useState(false);
 

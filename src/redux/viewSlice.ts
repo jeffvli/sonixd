@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
 import { Item, Sort, Pagination } from '../types';
+import { settings } from '../components/shared/setDefaultSettings';
 
-const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
+const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.get();
 
 export interface AdvancedFilters {
   enabled: boolean;

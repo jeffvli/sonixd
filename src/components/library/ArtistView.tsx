@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { nanoid } from 'nanoid/non-secure';
 import FastAverageColor from 'fast-average-color';
 import { clipboard, shell } from 'electron';
-import settings from 'electron-settings';
 import { ButtonToolbar, Whisper, ButtonGroup, Icon } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +41,7 @@ import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 const fac = new FastAverageColor();
 
@@ -58,7 +58,7 @@ const ArtistView = ({ ...rest }: any) => {
   const misc = useAppSelector((state) => state.misc);
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
-  const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
+  const [viewType, setViewType] = useState(settings.get('albumViewType') || 'list');
   const [imageAverageColor, setImageAverageColor] = useState({ color: '', loaded: false });
   const [artistDurationTotal, setArtistDurationTotal] = useState('');
   const [artistSongTotal, setArtistSongTotal] = useState(0);
@@ -125,7 +125,7 @@ const ArtistView = ({ ...rest }: any) => {
   ]);
 
   useEffect(() => {
-    if (settings.getSync('artistPageLegacy') && !rest.isModal) {
+    if (settings.get('artistPageLegacy') && !rest.isModal) {
       history.replace(`/library/artist/${artistId}/albums`);
     }
   }, [artistId, history, rest.isModal]);
@@ -357,7 +357,7 @@ const ArtistView = ({ ...rest }: any) => {
               />
             }
             cacheImages={{
-              enabled: settings.getSync('cacheImages'),
+              enabled: settings.get('cacheImages'),
               cacheType: 'artist',
               id: data.id,
             }}
@@ -596,7 +596,7 @@ const ArtistView = ({ ...rest }: any) => {
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
               cacheImages={{
-                enabled: settings.getSync('cacheImages'),
+                enabled: settings.get('cacheImages'),
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
@@ -628,7 +628,7 @@ const ArtistView = ({ ...rest }: any) => {
                   rowHeight={config.lookAndFeel.listView.album.rowHeight}
                   fontSize={config.lookAndFeel.listView.album.fontSize}
                   cacheImages={{
-                    enabled: settings.getSync('cacheImages'),
+                    enabled: settings.get('cacheImages'),
                     cacheType: 'album',
                     cacheIdProperty: 'albumId',
                   }}
@@ -685,7 +685,7 @@ const ArtistView = ({ ...rest }: any) => {
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
               cacheImages={{
-                enabled: settings.getSync('cacheImages'),
+                enabled: settings.get('cacheImages'),
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}

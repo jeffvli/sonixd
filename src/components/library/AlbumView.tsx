@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { nanoid } from 'nanoid/non-secure';
 import { clipboard, shell } from 'electron';
-import settings from 'electron-settings';
 import { ButtonToolbar, Whisper } from 'rsuite';
 import { useQuery, useQueryClient } from 'react-query';
 import { useParams, useHistory } from 'react-router-dom';
@@ -39,6 +38,7 @@ import Popup from '../shared/Popup';
 import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 interface AlbumParams {
   id: string;
@@ -209,7 +209,7 @@ const AlbumView = ({ ...rest }: any) => {
               />
             }
             cacheImages={{
-              enabled: settings.getSync('cacheImages'),
+              enabled: settings.get('cacheImages'),
               cacheType: 'album',
               id: data.albumId,
             }}
@@ -444,10 +444,10 @@ const AlbumView = ({ ...rest }: any) => {
             handleRating(rowData, { queryKey: ['album', albumId], rating })
           }
           virtualized
-          rowHeight={Number(settings.getSync('musicListRowHeight'))}
-          fontSize={Number(settings.getSync('musicListFontSize'))}
+          rowHeight={Number(settings.get('musicListRowHeight'))}
+          fontSize={Number(settings.get('musicListFontSize'))}
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}

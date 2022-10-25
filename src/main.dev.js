@@ -12,8 +12,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Player from 'mpris-service';
 import path from 'path';
-import settings from 'electron-settings';
-import { ipcMain, app, BrowserWindow, shell, globalShortcut, Menu, Tray } from 'electron';
+import { ipcMain, app, BrowserWindow, shell, globalShortcut, Menu, Tray, dialog } from 'electron';
 import electronLocalshortcut from 'electron-localshortcut';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -25,12 +24,7 @@ import multiSelectReducer from './redux/multiSelectSlice';
 import configReducer from './redux/configSlice';
 import MenuBuilder from './menu';
 import { isWindows, isWindows10, isMacOS, isLinux } from './shared/utils';
-import setDefaultSettings from './components/shared/setDefaultSettings';
-
-settings.configure({
-  prettify: true,
-  numSpaces: 2,
-});
+import { settings, setDefaultSettings } from './components/shared/setDefaultSettings';
 
 setDefaultSettings(false);
 
@@ -187,25 +181,25 @@ if (isLinux()) {
 
   mprisPlayer.on('shuffle', () => {
     store.dispatch(toggleShuffle());
-    settings.setSync('shuffle', !settings.getSync('shuffle'));
-    mprisPlayer.shuffle = Boolean(settings.getSync('shuffle'));
+    settings.set('shuffle', !settings.get('shuffle'));
+    mprisPlayer.shuffle = Boolean(settings.get('shuffle'));
   });
 
   mprisPlayer.on('volume', (event) => {
     const volume = Math.min(1, Math.max(0, event));
     store.dispatch(setVolume(volume));
-    settings.setSync('volume', volume);
+    settings.set('volume', volume);
   });
 
   mprisPlayer.on('loopStatus', () => {
-    const currentRepeat = settings.getSync('repeat');
+    const currentRepeat = settings.get('repeat');
     const newRepeat = currentRepeat === 'none' ? 'all' : currentRepeat === 'all' ? 'one' : 'none';
     store.dispatch(toggleRepeat());
 
     mprisPlayer.loopStatus =
       newRepeat === 'none' ? 'None' : newRepeat === 'all' ? 'Playlist' : 'Track';
 
-    settings.setSync('repeat', newRepeat);
+    settings.set('repeat', newRepeat);
   });
 
   mprisPlayer.on('position', (event) => {
@@ -277,105 +271,6 @@ if (isLinux()) {
   });
 }
 
-if (isWindows() && isWindows10()) {
-  const windowsMedia = require('@nodert-win10-au/windows.media');
-  const windowsMediaPlayback = require('@nodert-win10-au/windows.media.playback');
-  const windowsStorageStreams = require('@nodert-win10-au/windows.storage.streams');
-  const windowsFoundation = require('@nodert-win10-au/windows.foundation');
-
-  const Controls = windowsMediaPlayback.BackgroundMediaPlayer.current.systemMediaTransportControls;
-
-  if (settings.getSync('systemMediaTransportControls')) {
-    Controls.isEnabled = true;
-  } else {
-    Controls.isEnabled = false;
-  }
-
-  ipcMain.on('enableSystemMediaTransportControls', () => {
-    Controls.isEnabled = true;
-  });
-
-  ipcMain.on('disableSystemMediaTransportControls', () => {
-    Controls.isEnabled = false;
-  });
-
-  Controls.isChannelUpEnabled = false;
-  Controls.isChannelDownEnabled = false;
-  Controls.isFastForwardEnabled = false;
-  Controls.isRewindEnabled = false;
-  Controls.isRecordEnabled = false;
-  Controls.isPlayEnabled = true;
-  Controls.isPauseEnabled = true;
-  Controls.isStopEnabled = true;
-  Controls.isNextEnabled = true;
-  Controls.isPreviousEnabled = true;
-
-  Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.closed;
-  Controls.displayUpdater.type = windowsMedia.MediaPlaybackType.music;
-
-  Controls.displayUpdater.musicProperties.title = 'Sonixd';
-  Controls.displayUpdater.musicProperties.artist = 'No Track Playing';
-  Controls.displayUpdater.musicProperties.albumTitle = 'No Album Playing';
-  Controls.displayUpdater.update();
-
-  Controls.on('buttonpressed', (sender, eventArgs) => {
-    switch (eventArgs.button) {
-      case windowsMedia.SystemMediaTransportControlsButton.play:
-        play();
-        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
-        break;
-      case windowsMedia.SystemMediaTransportControlsButton.pause:
-        pause();
-        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.paused;
-        break;
-      case windowsMedia.SystemMediaTransportControlsButton.stop:
-        stop();
-        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.stopped;
-        break;
-      case windowsMedia.SystemMediaTransportControlsButton.next:
-        nextTrack();
-        break;
-      case windowsMedia.SystemMediaTransportControlsButton.previous:
-        previousTrack();
-        break;
-      default:
-        break;
-    }
-  });
-
-  ipcMain.on('playpause', (_event, arg) => {
-    if (arg.status === 'PLAYING') {
-      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
-    } else {
-      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.paused;
-    }
-  });
-
-  ipcMain.on('current-song', (_event, arg) => {
-    if (Controls.playbackStatus !== windowsMedia.MediaPlaybackStatus.playing) {
-      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
-    }
-
-    Controls.displayUpdater.musicProperties.title = arg.title || 'Unknown Title';
-    Controls.displayUpdater.musicProperties.artist =
-      arg.artist?.length !== 0
-        ? arg.artist?.map((artist) => artist.title).join(', ')
-        : 'Unknown Artist';
-    Controls.displayUpdater.musicProperties.albumTitle = arg.album || 'Unknown Album';
-
-    Controls.displayUpdater.thumbnail =
-      windowsStorageStreams.RandomAccessStreamReference.createFromUri(
-        new windowsFoundation.Uri(
-          arg.image.includes('placeholder')
-            ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
-            : arg.image
-        )
-      );
-
-    Controls.displayUpdater.update();
-  });
-}
-
 const createWinThumbarButtons = () => {
   if (isWindows()) {
     mainWindow.setThumbarButtons([
@@ -431,10 +326,12 @@ const createWindow = async () => {
     autoHideMenuBar: true,
     minWidth: 768,
     minHeight: 600,
-    frame: settings.getSync('titleBarStyle') === 'native',
+    frame: settings.get('titleBarStyle') === 'native',
   });
 
-  if (settings.getSync('globalMediaHotkeys')) {
+  // require("@electron/remote/main").enable(mainWindow.webContents);
+
+  if (settings.get('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
       stop();
     });
@@ -450,7 +347,7 @@ const createWindow = async () => {
     globalShortcut.register('MediaPreviousTrack', () => {
       previousTrack();
     });
-  } else if (!settings.getSync('systemMediaTransportControls')) {
+  } else if (!settings.get('systemMediaTransportControls')) {
     electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
       stop();
     });
@@ -491,7 +388,7 @@ const createWindow = async () => {
   ipcMain.on('disableGlobalHotkeys', () => {
     globalShortcut.unregisterAll();
 
-    if (!settings.getSync('systemMediaTransportControls')) {
+    if (!settings.get('systemMediaTransportControls')) {
       electronLocalshortcut.register(mainWindow, 'MediaStop', () => {
         stop();
       });
@@ -510,7 +407,7 @@ const createWindow = async () => {
     }
   });
 
-  mainWindow.loadURL(`file://${__dirname}/index.html#${settings.getSync('startPage')}`);
+  mainWindow.loadURL(`file://${__dirname}/index.html#${settings.get('startPage')}`);
 
   // @TODO: Use 'ready-to-show' event
   // https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -527,7 +424,7 @@ const createWindow = async () => {
       createWinThumbarButtons();
     }
 
-    if (settings.getSync('resume')) {
+    if (settings.get('resume')) {
       restoreQueue();
     }
   });
@@ -546,7 +443,7 @@ const createWindow = async () => {
     }
 
     // If we have enabled saving the queue, we need to defer closing the main window until it has finished saving.
-    if (!saved && settings.getSync('resume')) {
+    if (!saved && settings.get('resume')) {
       event.preventDefault();
       saved = true;
       saveQueue(() => {
@@ -582,15 +479,135 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  if (settings.getSync('autoUpdate') === true) {
+  if (settings.get('autoUpdate') === true) {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
     autoUpdater.checkForUpdatesAndNotify();
 
     autoUpdater.on('update-downloaded', () => {
-      settings.setSync('autoUpdateNotice', true);
+      settings.set('autoUpdateNotice', true);
     });
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ipcMain.handle('file-path', async (_, argument) => {
+    const filePath = dialog.showOpenDialogSync({
+      properties: ['openFile', 'openDirectory'],
+    });
+    return filePath;
+  });
+
+  ipcMain.on('minimize', () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.on('maximize', () => {
+    mainWindow.maximize();
+  });
+
+  ipcMain.on('unmaximize', () => {
+    mainWindow.unmaximize();
+  });
+
+  ipcMain.on('close', () => {
+    mainWindow.close();
+  });
+
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('maximize');
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('unmaximize');
+  });
+
+  // if ("navigator" in window) {
+  //   const media = navigator.mediaSession;
+
+  //   let enabled = settings.get('systemMediaTransportControls');
+
+  //   function setupControls() {
+  //     media.setActionHandler('play', () => {
+  //       media.playbackState = 'playing';
+  //       play();
+  //     });
+
+  //     media.setActionHandler('pause', () => {
+  //       media.playbackState = 'paused';
+  //       pause();
+  //     });
+
+  //     media.setActionHandler('stop', () => {
+  //       media.playbackState = 'none';
+  //       stop();
+  //     });
+
+  //     media.setActionHandler('nexttrack', () => {
+  //       nextTrack()
+  //     });
+
+  //     media.setActionHandler('previoustrack', () => {
+  //       previousTrack();
+  //     });
+  //   }
+
+  //   function disableControls() {
+  //     media.setActionHandler('play', null);
+  //     media.setActionHandler('pause', null);
+  //     media.setActionHandler('stop', null);
+  //     media.setActionHandler('nexttrack', null);
+  //     media.setActionHandler('previoustrack', null);
+  //   }
+
+  //   if (enabled) {
+  //     setupControls();
+  //   } else {
+  //     disableControls();
+  //   }
+
+  //   ipcMain.on('enableSystemMediaTransportControls', () => {
+  //     if (!enabled) {
+  //       setupControls();
+  //       enabled = true;
+  //     }
+  //   });
+
+  //   ipcMain.on('disableSystemMediaTransportControls', () => {
+  //     if (enabled) {
+  //       disableControls();
+  //       enabled = false;
+  //     }
+  //   });
+
+  //   media.metadata = new MediaMetadata({
+  //     title: 'Sonixd',
+  //     artist: 'No Track Playing',
+  //     album: 'No Album Playing'
+  //   });
+
+  //   ipcMain.on('playpause', (_event, arg) => {
+  //     if (arg.status === 'PLAYING') {
+  //       media.playbackState = 'playing';
+  //     } else {
+  //       media.playbackState = 'paused';
+  //     }
+  //   });
+
+  //   ipcMain.on('current-song', (_event, arg) => {
+  //     media.metadata = new MediaMetadata({
+  //       title: arg.title || 'Unknown Title',
+  //       artist: arg.artist?.length !== 0
+  //       ? arg.artist?.map((artist) => artist.title).join(', ')
+  //       : 'Unknown Artist',
+  //       album: 'Unknown Album',
+  //       artwork: [
+  //         { src: arg.image.includes('placeholder')
+  //         ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
+  //         : arg.image }
+  //       ]
+  //     });
+  //   });
+  // }
 };
 
 const createTray = () => {

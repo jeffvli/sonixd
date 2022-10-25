@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import settings from 'electron-settings';
 import { ipcRenderer } from 'electron';
 import { deflate, inflate } from 'zlib';
 import { join } from 'path';
@@ -19,6 +18,7 @@ import {
 import { setStatus } from '../redux/playerSlice';
 import { apiController } from '../api/controller';
 import { Server } from '../types';
+import { settings } from '../components/shared/setDefaultSettings';
 
 const usePlayerControls = (
   config: any,
@@ -184,7 +184,7 @@ const usePlayerControls = (
   }, [dispatch, playersRef, setCurrentTime]);
 
   const handleSeekBackward = useCallback(() => {
-    const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
+    const seekBackwardInterval = Number(settings.get('seekBackwardInterval'));
     if (playQueue[currentEntryList].length > 0) {
       if (playQueue.isFading) {
         if (playQueue.currentPlayer === 1) {
@@ -214,7 +214,7 @@ const usePlayerControls = (
 
   const handleSeekForward = useCallback(() => {
     if (playQueue[currentEntryList].length > 0) {
-      const seekForwardInterval = Number(settings.getSync('seekForwardInterval'));
+      const seekForwardInterval = Number(settings.get('seekForwardInterval'));
 
       if (playQueue.isFading) {
         if (playQueue.currentPlayer === 1) {
@@ -320,15 +320,15 @@ const usePlayerControls = (
   );
 
   const handleRepeat = useCallback(() => {
-    const currentRepeat = settings.getSync('repeat');
+    const currentRepeat = settings.get('repeat');
     const newRepeat = currentRepeat === 'none' ? 'all' : currentRepeat === 'all' ? 'one' : 'none';
     dispatch(toggleRepeat());
-    settings.setSync('repeat', newRepeat);
+    settings.set('repeat', newRepeat);
   }, [dispatch]);
 
   const handleShuffle = useCallback(() => {
     dispatch(toggleShuffle());
-    settings.setSync('shuffle', !settings.getSync('shuffle'));
+    settings.set('shuffle', !settings.get('shuffle'));
   }, [dispatch]);
 
   const handleDisplayQueue = () => {

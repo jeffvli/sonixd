@@ -1,3 +1,17 @@
+jest.mock("electron", () => {
+  const originalModule = jest.requireActual("electron")
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    ipcRenderer: {
+      on: jest.fn(),
+      sendSync: jest.fn(),
+      removeAllListeners: jest.fn()
+    }
+  }
+});
+
 import React from 'react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';

@@ -1,11 +1,11 @@
 import React from 'react';
-import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
 import { StyledToggle } from '../../shared/styled';
 import ConfigOption from '../ConfigOption';
 import { setWindow } from '../../../redux/configSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { settings } from '../../shared/setDefaultSettings';
 
 const WindowConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ const WindowConfig = ({ bordered }: any) => {
             defaultChecked={config.window.minimizeToTray}
             checked={config.window.minimizeToTray}
             onChange={(e: boolean) => {
-              settings.setSync('minimizeToTray', e);
+              settings.set('minimizeToTray', e);
               dispatch(setWindow({ minimizeToTray: e }));
             }}
           />
@@ -43,7 +43,7 @@ const WindowConfig = ({ bordered }: any) => {
             defaultChecked={config.window.exitToTray}
             checked={config.window.exitToTray}
             onChange={(e: boolean) => {
-              settings.setSync('exitToTray', e);
+              settings.set('exitToTray', e);
               dispatch(setWindow({ exitToTray: e }));
             }}
           />

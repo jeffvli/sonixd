@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 import { ipcRenderer, shell } from 'electron';
-import settings from 'electron-settings';
 import { Nav, Icon, RadioGroup, Whisper, Divider } from 'rsuite';
 import { WhisperInstance } from 'rsuite/lib/Whisper';
 import { Trans, useTranslation } from 'react-i18next';
@@ -54,6 +53,7 @@ import { setPagination } from '../../../redux/viewSlice';
 import { MUSIC_SORT_TYPES } from '../../library/MusicList';
 import Popup from '../../shared/Popup';
 import { apiController } from '../../../api/controller';
+import { settings } from '../../shared/setDefaultSettings';
 
 export const ListViewConfigPanel = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -61,15 +61,15 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
   const config = useAppSelector((state) => state.config);
 
   const [highlightOnRowHoverChk, setHighlightOnRowHoverChk] = useState(
-    Boolean(settings.getSync('highlightOnRowHover'))
+    Boolean(settings.get('highlightOnRowHover'))
   );
 
-  const songCols: any = settings.getSync('musicListColumns');
-  const albumCols: any = settings.getSync('albumListColumns');
-  const playlistCols: any = settings.getSync('playlistListColumns');
-  const artistCols: any = settings.getSync('artistListColumns');
-  const miniCols: any = settings.getSync('miniListColumns');
-  const genreCols: any = settings.getSync('genreListColumns');
+  const songCols: any = settings.get('musicListColumns');
+  const albumCols: any = settings.get('albumListColumns');
+  const playlistCols: any = settings.get('playlistListColumns');
+  const artistCols: any = settings.get('artistListColumns');
+  const miniCols: any = settings.get('miniListColumns');
+  const genreCols: any = settings.get('genreListColumns');
 
   const currentSongColumns = songCols?.map((column: any) => column.label) || [];
   const currentAlbumColumns = albumCols?.map((column: any) => column.label) || [];
@@ -201,7 +201,7 @@ export const ListViewConfigPanel = ({ bordered }: any) => {
             defaultChecked={highlightOnRowHoverChk}
             checked={highlightOnRowHoverChk}
             onChange={(e: boolean) => {
-              settings.setSync('highlightOnRowHover', e);
+              settings.set('highlightOnRowHover', e);
               dispatch(
                 setMiscSetting({
                   setting: 'highlightOnRowHover',
@@ -235,7 +235,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
             max={350}
             width={125}
             onChange={(e: any) => {
-              settings.setSync('gridCardSize', Number(e));
+              settings.set('gridCardSize', Number(e));
               dispatch(setGridCardSize({ size: Number(e) }));
             }}
           />
@@ -253,7 +253,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
             max={100}
             width={125}
             onChange={(e: any) => {
-              settings.setSync('gridGapSize', Number(e));
+              settings.set('gridGapSize', Number(e));
               dispatch(setGridGapSize({ size: Number(e) }));
             }}
           />
@@ -271,7 +271,7 @@ export const GridViewConfigPanel = ({ bordered }: any) => {
             value={config.lookAndFeel.gridView.alignment}
             onChange={(e: string) => {
               dispatch(setGridAlignment({ alignment: e }));
-              settings.setSync('gridAlignment', e);
+              settings.set('gridAlignment', e);
             }}
           >
             <StyledRadio value="flex-start">{t('Left')}</StyledRadio>
@@ -288,10 +288,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const dispatch = useAppDispatch();
   const config = useAppSelector((state) => state.config);
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
-    Boolean(settings.getSync('dynamicBackground'))
+    Boolean(settings.get('dynamicBackground'))
   );
 
-  const [selectedTheme, setSelectedTheme] = useState(String(settings.getSync('theme')));
+  const [selectedTheme, setSelectedTheme] = useState(String(settings.get('theme')));
   const languagePickerContainerRef = useRef(null);
   const themePickerContainerRef = useRef(null);
   const fontPickerContainerRef = useRef(null);
@@ -302,7 +302,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const sidebarPickerContainerRef = useRef(null);
   const titleBarRestartWhisper = React.createRef<WhisperInstance>();
   const [themeList, setThemeList] = useState(
-    _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
+    _.concat(settings.get('themes'), settings.get('themesDefault'))
   );
 
   const { data: playlists }: any = useQuery(['playlists'], () =>
@@ -321,7 +321,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               data={Languages}
               width={200}
               cleanable={false}
-              defaultValue={String(settings.getSync('language'))}
+              defaultValue={String(settings.get('language'))}
               placeholder={t('Select')}
               onChange={(e: string) => {
                 i18n.changeLanguage(e, (err) => {
@@ -329,7 +329,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                     notifyToast('error', 'Error while changing the language');
                   }
                 });
-                settings.setSync('language', e);
+                settings.set('language', e);
               }}
             />
           </StyledInputPickerContainer>
@@ -346,9 +346,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               onClick={() => {
                 dispatch(setTheme('defaultDark'));
                 dispatch(setTheme(selectedTheme));
-                setThemeList(
-                  _.concat(settings.getSync('themes'), settings.getSync('themesDefault'))
-                );
+                setThemeList(_.concat(settings.get('themes'), settings.get('themesDefault')));
               }}
             />
           </>
@@ -377,7 +375,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                 defaultValue={selectedTheme}
                 placeholder={t('Select')}
                 onChange={(e: string) => {
-                  settings.setSync('theme', e);
+                  settings.set('theme', e);
                   setSelectedTheme(e);
                   dispatch(setTheme(e));
                 }}
@@ -398,10 +396,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               groupBy="role"
               width={200}
               cleanable={false}
-              defaultValue={String(settings.getSync('font'))}
+              defaultValue={String(settings.get('font'))}
               placeholder={t('Select')}
               onChange={(e: string) => {
-                settings.setSync('font', e);
+                settings.set('font', e);
                 dispatch(setFont(e));
               }}
             />
@@ -454,11 +452,11 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                   },
                 ]}
                 cleanable={false}
-                defaultValue={String(settings.getSync('titleBarStyle'))}
+                defaultValue={String(settings.get('titleBarStyle'))}
                 width={200}
                 placeholder={t('Select')}
                 onChange={(e: string) => {
-                  settings.setSync('titleBarStyle', e);
+                  settings.set('titleBarStyle', e);
                   dispatch(setMiscSetting({ setting: 'titleBar', value: e }));
                   titleBarRestartWhisper.current?.open();
                 }}
@@ -476,7 +474,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
             defaultChecked={dynamicBackgroundChk}
             checked={dynamicBackgroundChk}
             onChange={(e: boolean) => {
-              settings.setSync('dynamicBackground', e);
+              settings.set('dynamicBackground', e);
               dispatch(setDynamicBackground(e));
               setDynamicBackgroundChk(e);
             }}
@@ -542,11 +540,11 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               )}
               cleanable={false}
               groupBy="role"
-              defaultValue={String(settings.getSync('startPage'))}
+              defaultValue={String(settings.get('startPage'))}
               width={200}
               placeholder={t('Select')}
               onChange={(e: string) => {
-                settings.setSync('startPage', e);
+                settings.set('startPage', e);
               }}
             />
           </StyledInputPickerContainer>
@@ -565,10 +563,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                 config.serverType === Server.Jellyfin ? ['frequent', 'recent'] : []
               }
               cleanable={false}
-              defaultValue={String(settings.getSync('albumSortDefault'))}
+              defaultValue={String(settings.get('albumSortDefault'))}
               width={200}
               onChange={(e: string) => {
-                settings.setSync('albumSortDefault', e);
+                settings.set('albumSortDefault', e);
               }}
             />
           </StyledInputPickerContainer>
@@ -584,10 +582,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
                 container={() => musicSortDefaultPickerContainerRef.current}
                 data={MUSIC_SORT_TYPES}
                 cleanable={false}
-                defaultValue={String(settings.getSync('musicSortDefault'))}
+                defaultValue={String(settings.get('musicSortDefault'))}
                 width={200}
                 onChange={(e: string) => {
-                  settings.setSync('musicSortDefault', e);
+                  settings.set('musicSortDefault', e);
                 }}
               />
             </StyledInputPickerContainer>
@@ -601,9 +599,9 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
         )}
         option={
           <StyledToggle
-            defaultChecked={Boolean(settings.getSync('artistPageLegacy'))}
+            defaultChecked={Boolean(settings.get('artistPageLegacy'))}
             onChange={(e: boolean) => {
-              settings.setSync('artistPageLegacy', e);
+              settings.set('artistPageLegacy', e);
             }}
           />
         }
@@ -670,7 +668,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               width={250}
               disabledItemValues={config.serverType === Server.Subsonic ? ['songs'] : []}
               onChange={(e: string) => {
-                settings.setSync('sidebar.selected', e);
+                settings.set('sidebar.selected', e);
                 dispatch(setSidebar({ selected: e }));
               }}
             />
@@ -711,15 +709,15 @@ export const PaginationConfigPanel = ({ bordered }: any) => {
                       data: { activePage: 1, recordsPerPage: Number(e) },
                     })
                   );
-                  settings.setSync('pagination.music.recordsPerPage', Number(e));
+                  settings.set('pagination.music.recordsPerPage', Number(e));
                 }}
               />
               {config.serverType === Server.Jellyfin && (
                 <StyledCheckbox
-                  defaultChecked={settings.getSync('pagination.music.serverSide')}
+                  defaultChecked={settings.get('pagination.music.serverSide')}
                   checked={view.music.pagination.serverSide}
                   onChange={(_v: any, e: boolean) => {
-                    settings.setSync('pagination.music.serverSide', e);
+                    settings.set('pagination.music.serverSide', e);
                     dispatch(setPagination({ listType: Item.Music, data: { serverSide: e } }));
                   }}
                 >
@@ -747,15 +745,15 @@ export const PaginationConfigPanel = ({ bordered }: any) => {
                     data: { activePage: 1, recordsPerPage: Number(e) },
                   })
                 );
-                settings.setSync('pagination.album.recordsPerPage', Number(e));
+                settings.set('pagination.album.recordsPerPage', Number(e));
               }}
             />
             {config.serverType === Server.Jellyfin && (
               <StyledCheckbox
-                defaultChecked={settings.getSync('pagination.album.serverSide')}
+                defaultChecked={settings.get('pagination.album.serverSide')}
                 checked={view.album.pagination.serverSide}
                 onChange={(_v: any, e: boolean) => {
-                  settings.setSync('pagination.album.serverSide', e);
+                  settings.set('pagination.album.serverSide', e);
                   dispatch(setPagination({ listType: Item.Album, data: { serverSide: e } }));
                 }}
               >

@@ -1,617 +1,247 @@
-import settings from 'electron-settings';
+import Store from 'electron-store';
 import path from 'path';
+// eslint-disable-next-line import/no-cycle
 import i18n from '../../i18n/i18n';
+// eslint-disable-next-line import/no-cycle
 import { isMacOS } from '../../shared/utils';
 
-const setDefaultSettings = (force: boolean) => {
-  if (force || !settings.hasSync('discord.enabled')) {
-    settings.setSync('discord.enabled', false);
-  }
-
-  if (force || !settings.hasSync('discord.clientId')) {
-    settings.setSync('discord.clientId', '923372440934055968');
-  }
-
-  if (force || !settings.hasSync('discord.serverImage')) {
-    settings.setSync('discord.serverImage', false);
-  }
-
-  if (force || !settings.hasSync('obs.enabled')) {
-    settings.setSync('obs.enabled', false);
-  }
-
-  if (force || !settings.hasSync('obs.url')) {
-    settings.setSync('obs.url', '');
-  }
-
-  if (force || !settings.hasSync('obs.type')) {
-    settings.setSync('obs.type', 'local');
-  }
-
-  if (force || !settings.hasSync('obs.path')) {
-    settings.setSync('obs.path', '');
-  }
-
-  if (force || !settings.hasSync('obs.pollingInterval')) {
-    settings.setSync('obs.pollingInterval', 2000);
-  }
-
-  if (force || !settings.hasSync('transcode')) {
-    settings.setSync('transcode', false);
-  }
-
-  if (force || !settings.hasSync('resume')) {
-    settings.setSync('resume', false);
-  }
-
-  if (force || !settings.hasSync('autoUpdate')) {
-    settings.setSync('autoUpdate', true);
-  }
-
-  if (force || !settings.hasSync('autoUpdateNotice')) {
-    settings.setSync('autoUpdateNotice', true);
-  }
-
-  if (force || !settings.hasSync('serverType')) {
-    settings.setSync('serverType', 'subsonic');
-  }
-
-  if (force || !settings.hasSync('legacyAuth')) {
-    settings.setSync('legacyAuth', false);
-  }
-
-  if (force || !settings.hasSync('language')) {
-    settings.setSync('language', 'en');
-  }
-
-  if (force || !settings.hasSync('theme')) {
-    settings.setSync('theme', 'defaultDark');
-  }
-
-  if (force || !settings.hasSync('font')) {
-    settings.setSync('font', 'Poppins');
-  }
-
-  if (force || !settings.hasSync('dynamicBackground')) {
-    settings.setSync('dynamicBackground', false);
-  }
-
-  if (force || !settings.hasSync('highlightOnRowHover')) {
-    settings.setSync('highlightOnRowHover', true);
-  }
-
-  if (force || !settings.hasSync('minimizeToTray')) {
-    settings.setSync('minimizeToTray', false);
-  }
-
-  if (force || !settings.hasSync('exitToTray')) {
-    let defaultExitToTray = false;
-    if (isMacOS()) {
-      defaultExitToTray = true;
-    }
-    settings.setSync('exitToTray', defaultExitToTray);
-  }
-
-  if (force || !settings.hasSync('showDebugWindow')) {
-    settings.setSync('showDebugWindow', false);
-  }
-
-  if (force || !settings.hasSync('globalMediaHotkeys')) {
-    settings.setSync('globalMediaHotkeys', false);
-  }
-
-  if (force || !settings.hasSync('systemMediaTransportControls')) {
-    settings.setSync('systemMediaTransportControls', false);
-  }
-
-  if (force || !settings.hasSync('cachePath')) {
-    settings.setSync('cachePath', path.join(path.dirname(settings.file())));
-  }
-
-  if (force || !settings.hasSync('titleBarStyle')) {
-    let defaultTitleBarStyle = 'windows';
-    if (isMacOS()) {
-      defaultTitleBarStyle = 'mac';
-    }
-    settings.setSync('titleBarStyle', defaultTitleBarStyle);
-  }
-
-  if (force || !settings.hasSync('artistPageLegacy')) {
-    settings.setSync('artistPageLegacy', false);
-  }
-
-  if (force || !settings.hasSync('startPage')) {
-    settings.setSync('startPage', '/');
-  }
-
-  if (force || !settings.hasSync('scrobble')) {
-    settings.setSync('scrobble', true);
-  }
-
-  if (force || !settings.hasSync('systemNotifications')) {
-    settings.setSync('systemNotifications', false);
-  }
-
-  if (force || !settings.hasSync('musicFolder.id')) {
-    settings.setSync('musicFolder.id', null);
-  }
-
-  if (force || !settings.hasSync('musicFolder.albums')) {
-    settings.setSync('musicFolder.albums', true);
-  }
-
-  if (force || !settings.hasSync('musicFolder.artists')) {
-    settings.setSync('musicFolder.artists', true);
-  }
-
-  if (force || !settings.hasSync('musicFolder.dashboard')) {
-    settings.setSync('musicFolder.dashboard', false);
-  }
-
-  if (force || !settings.hasSync('musicFolder.search')) {
-    settings.setSync('musicFolder.search', false);
-  }
-
-  if (force || !settings.hasSync('musicFolder.starred')) {
-    settings.setSync('musicFolder.starred', false);
-  }
-
-  if (force || !settings.hasSync('musicFolder.music')) {
-    settings.setSync('musicFolder.music', true);
-  }
-
-  if (force || !settings.hasSync('sidebar.expand')) {
-    settings.setSync('sidebar.expand', true);
-  }
-
-  if (force || !settings.hasSync('sidebar.width')) {
-    settings.setSync('sidebar.width', '225px');
-  }
-
-  if (force || !settings.hasSync('sidebar.coverArt')) {
-    settings.setSync('sidebar.coverArt', true);
-  }
-
-  if (force || !settings.hasSync('sidebar.selected')) {
-    settings.setSync('sidebar.selected', [
-      'dashboard',
-      'nowplaying',
-      'favorites',
-      'songs',
-      'albums',
-      'artists',
-      'genres',
-      'folders',
-      'config',
-      'collapse',
-      'playlists',
-      'playlistList',
-    ]);
-  }
-
-  if (force || !settings.hasSync('pagination.music.recordsPerPage')) {
-    settings.setSync('pagination.music.recordsPerPage', 50);
-  }
-
-  if (force || !settings.hasSync('pagination.music.serverSide')) {
-    settings.setSync('pagination.music.serverSide', true);
-  }
-
-  if (force || !settings.hasSync('pagination.album.recordsPerPage')) {
-    settings.setSync('pagination.album.recordsPerPage', 50);
-  }
-
-  if (force || !settings.hasSync('pagination.album.serverSide')) {
-    settings.setSync('pagination.album.serverSide', false);
-  }
-
-  if (force || !settings.hasSync('volume')) {
-    settings.setSync('volume', 0.3);
-  }
-
-  if (force || !settings.hasSync('audioDeviceId')) {
-    settings.setSync('audioDeviceId', null);
-  }
-
-  if (force || !settings.hasSync('seekForwardInterval')) {
-    settings.setSync('seekForwardInterval', 5);
-  }
-
-  if (force || !settings.hasSync('seekBackwardInterval')) {
-    settings.setSync('seekBackwardInterval', 5);
-  }
-
-  if (force || !settings.hasSync('volumeFade')) {
-    settings.setSync('volumeFade', true);
-  }
-
-  if (force || !settings.hasSync('repeat')) {
-    settings.setSync('repeat', 'all');
-  }
-
-  if (force || !settings.hasSync('shuffle')) {
-    settings.setSync('shuffle', false);
-  }
-
-  if (force || !settings.hasSync('scrollWithCurrentSong')) {
-    settings.setSync('scrollWithCurrentSong', true);
-  }
-
-  if (force || !settings.hasSync('cacheImages')) {
-    settings.setSync('cacheImages', true);
-  }
-
-  if (force || !settings.hasSync('cacheSongs')) {
-    settings.setSync('cacheSongs', false);
-  }
-
-  if (force || !settings.hasSync('pollingInterval')) {
-    settings.setSync('pollingInterval', 100);
-  }
-
-  if (force || !settings.hasSync('fadeDuration')) {
-    settings.setSync('fadeDuration', 9);
-  }
-
-  if (force || !settings.hasSync('fadeType')) {
-    settings.setSync('fadeType', 'equalPower');
-  }
-
-  if (force || !settings.hasSync('gridCardSize')) {
-    settings.setSync('gridCardSize', 175);
-  }
-
-  if (force || !settings.hasSync('gridGapSize')) {
-    settings.setSync('gridGapSize', 20);
-  }
-
-  if (force || !settings.hasSync('gridAlignment')) {
-    settings.setSync('gridAlignment', 'flex-start');
-  }
-
-  if (force || !settings.hasSync('playlistViewType')) {
-    settings.setSync('playlistViewType', 'list');
-  }
-
-  if (force || !settings.hasSync('albumViewType')) {
-    settings.setSync('albumViewType', 'list');
-  }
-
-  if (force || !settings.hasSync('albumSortDefault')) {
-    settings.setSync('albumSortDefault', 'random');
-  }
-
-  if (force || !settings.hasSync('musicSortDefault')) {
-    settings.setSync('musicSortDefault', 'random');
-  }
-
-  if (force || !settings.hasSync('artistViewType')) {
-    settings.setSync('artistViewType', 'list');
-  }
-
-  if (force || !settings.hasSync('musicListFontSize')) {
-    settings.setSync('musicListFontSize', '14');
-  }
-
-  if (force || !settings.hasSync('musicListRowHeight')) {
-    settings.setSync('musicListRowHeight', '60.0');
-  }
-
-  if (force || !settings.hasSync('randomPlaylistTrackCount')) {
-    settings.setSync('randomPlaylistTrackCount', 50);
-  }
-
-  if (force || !settings.hasSync('playbackFilters')) {
-    settings.setSync('playbackFilters', [
-      {
-        filter: '(\\(|\\[|~|-|（)[Oo]ff [Vv]ocal(\\)|\\]|~|-|）)',
-        enabled: false,
-      },
-      {
-        filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',
-        enabled: false,
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('musicListColumns')) {
-    settings.setSync('musicListColumns', [
-      {
-        id: '#',
-        dataKey: 'index',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: '# (Drag/Drop)',
-      },
-      {
-        id: i18n.t('Title')?.toString(),
-        dataKey: 'combinedtitle',
-        alignment: 'left',
-        flexGrow: 5,
-        label: i18n.t('Title (Combined)')?.toString(),
-      },
-      {
-        id: i18n.t('Album')?.toString(),
-        dataKey: 'album',
-        alignment: 'left',
-        flexGrow: 3,
-        label: i18n.t('Album')?.toString(),
-      },
-      {
-        id: i18n.t('Duration')?.toString(),
-        dataKey: 'duration',
-        alignment: 'center',
-        flexGrow: 2,
-        label: i18n.t('Duration')?.toString(),
-      },
-      {
-        id: i18n.t('Bitrate')?.toString(),
-        dataKey: 'bitRate',
-        alignment: 'left',
-        flexGrow: 1,
-        label: i18n.t('Bitrate')?.toString(),
-      },
-      {
-        id: i18n.t('Fav')?.toString(),
-        dataKey: 'starred',
-        alignment: 'center',
-        flexGrow: 1,
-        label: i18n.t('Favorite')?.toString(),
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('albumListFontSize')) {
-    settings.setSync('albumListFontSize', '14');
-  }
-
-  if (force || !settings.hasSync('albumListRowHeight')) {
-    settings.setSync('albumListRowHeight', '60.0');
-  }
-
-  if (force || !settings.hasSync('albumListColumns')) {
-    settings.setSync('albumListColumns', [
-      {
-        id: '#',
-        dataKey: 'index',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: '#',
-      },
-      {
-        id: i18n.t('Title')?.toString(),
-        dataKey: 'combinedtitle',
-        alignment: 'left',
-        flexGrow: 5,
-        label: i18n.t('Title (Combined)')?.toString(),
-      },
-      {
-        id: i18n.t('Tracks')?.toString(),
-        dataKey: 'songCount',
-        alignment: 'center',
-        flexGrow: 1,
-        label: i18n.t('Track Count')?.toString(),
-      },
-      {
-        id: i18n.t('Duration')?.toString(),
-        dataKey: 'duration',
-        alignment: 'center',
-        flexGrow: 2,
-        label: i18n.t('Duration')?.toString(),
-      },
-      {
-        id: i18n.t('Fav')?.toString(),
-        dataKey: 'starred',
-        alignment: 'center',
-        flexGrow: 1,
-        label: i18n.t('Favorite')?.toString(),
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('playlistListFontSize')) {
-    settings.setSync('playlistListFontSize', '14');
-  }
-
-  if (force || !settings.hasSync('playlistListRowHeight')) {
-    settings.setSync('playlistListRowHeight', '45.0');
-  }
-
-  if (force || !settings.hasSync('playlistListColumns')) {
-    settings.setSync('playlistListColumns', [
-      {
-        id: '#',
-        dataKey: 'index',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: '#',
-      },
-      {
-        id: i18n.t('Title')?.toString(),
-        dataKey: 'title',
-        alignment: 'left',
-        flexGrow: 5,
-        label: i18n.t('Title')?.toString(),
-      },
-      {
-        id: i18n.t('Description')?.toString(),
-        dataKey: 'comment',
-        alignment: 'left',
-        flexGrow: 3,
-        label: i18n.t('Description')?.toString(),
-      },
-      {
-        id: i18n.t('Tracks')?.toString(),
-        dataKey: 'songCount',
-        alignment: 'center',
-        flexGrow: 1,
-        label: i18n.t('Track Count')?.toString(),
-      },
-      {
-        id: i18n.t('Owner')?.toString(),
-        dataKey: 'owner',
-        alignment: 'left',
-        flexGrow: 2,
-        label: i18n.t('Owner')?.toString(),
-      },
-      {
-        id: i18n.t('Modified')?.toString(),
-        dataKey: 'changed',
-        alignment: 'left',
-        flexGrow: 1,
-        label: i18n.t('Modified')?.toString(),
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('artistListFontSize')) {
-    settings.setSync('artistListFontSize', '14');
-  }
-
-  if (force || !settings.hasSync('artistListRowHeight')) {
-    settings.setSync('artistListRowHeight', '60.0');
-  }
-
-  if (force || !settings.hasSync('artistListColumns')) {
-    settings.setSync('artistListColumns', [
-      {
-        id: '#',
-        dataKey: 'index',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: '#',
-      },
-      {
-        id: i18n.t('Art')?.toString(),
-        dataKey: 'coverart',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: i18n.t('CoverArt')?.toString(),
-      },
-      {
-        id: i18n.t('Title')?.toString(),
-        dataKey: 'title',
-        alignment: 'left',
-        flexGrow: 5,
-        label: i18n.t('Title')?.toString(),
-      },
-      {
-        id: i18n.t('Albums')?.toString(),
-        dataKey: 'albumCount',
-        alignment: 'left',
-        flexGrow: 1,
-        label: i18n.t('Album Count')?.toString(),
-      },
-      {
-        id: i18n.t('Fav')?.toString(),
-        dataKey: 'starred',
-        alignment: 'center',
-        flexGrow: 1,
-        label: i18n.t('Favorite')?.toString(),
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('miniListFontSize')) {
-    settings.setSync('miniListFontSize', '12');
-  }
-
-  if (force || !settings.hasSync('miniListRowHeight')) {
-    settings.setSync('miniListRowHeight', '40');
-  }
-
-  if (force || !settings.hasSync('miniListColumns')) {
-    settings.setSync('miniListColumns', [
-      {
-        id: '#',
-        dataKey: 'index',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: '# (Drag/Drop)',
-      },
-      {
-        width: 220,
-        id: i18n.t('Title')?.toString(),
-        dataKey: 'combinedtitle',
-        alignment: 'left',
-        label: i18n.t('Title (Combined)')?.toString(),
-        rowIndex: 7,
-        resizable: true,
-      },
-      {
-        width: 60,
-        id: i18n.t('Duration')?.toString(),
-        dataKey: 'duration',
-        alignment: 'center',
-        label: i18n.t('Duration')?.toString(),
-        rowIndex: 3,
-        resizable: true,
-      },
-      {
-        width: 45,
-        id: i18n.t('Fav')?.toString(),
-        dataKey: 'starred',
-        alignment: 'center',
-        label: i18n.t('Favorite')?.toString(),
-        rowIndex: 6,
-        resizable: true,
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('genreListFontSize')) {
-    settings.setSync('genreListFontSize', '14');
-  }
-
-  if (force || !settings.hasSync('genreListRowHeight')) {
-    settings.setSync('genreListRowHeight', '50');
-  }
-
-  if (force || !settings.hasSync('genreListColumns')) {
-    settings.setSync('genreListColumns', [
-      {
-        id: '#',
-        dataKey: 'index',
-        alignment: 'center',
-        resizable: true,
-        width: 50,
-        label: '#',
-      },
-      {
-        id: i18n.t('Title')?.toString(),
-        dataKey: 'title',
-        alignment: 'left',
-        flexGrow: 5,
-        label: i18n.t('Title')?.toString(),
-      },
-      {
-        id: i18n.t('Albums')?.toString(),
-        dataKey: 'albumCount',
-        alignment: 'left',
-        flexGrow: 3,
-        label: i18n.t('Album Count')?.toString(),
-      },
-      {
-        id: i18n.t('Tracks')?.toString(),
-        dataKey: 'songCount',
-        alignment: 'left',
-        flexGrow: 1,
-        label: i18n.t('Song Count')?.toString(),
-      },
-    ]);
-  }
-
-  if (force || !settings.hasSync('themes')) {
-    settings.setSync('themes', []);
-  }
-
-  settings.setSync('themesDefault', [
+interface Filter {
+  filter: string;
+  enabled: boolean;
+}
+
+interface Column {
+  id: string;
+  dataKey: string;
+  alignment: string;
+  resizable?: boolean;
+  width?: number;
+  label: string;
+  flexGrow?: number;
+  rowIndex?: number;
+}
+
+interface Settings {
+  discord: {
+    enabled: boolean;
+    clientId: string;
+    serverImage: boolean;
+  };
+  obs: {
+    enabled: boolean;
+    url: string;
+    type: string;
+    path: string;
+    pollingInterval: number;
+  };
+  transcode: boolean;
+  resume: boolean;
+  autoUpdate: boolean;
+  autoUpdateNotice: boolean;
+  serverType: string;
+  legacyAuth: boolean;
+  language: string;
+  theme: string;
+  font: string;
+  dynamicBackground: boolean;
+  highlightOnRowHover: boolean;
+  minimizeToTray: boolean;
+  exitToTray?: boolean;
+  showDebugWindow: boolean;
+  globalMediaHotkeys: boolean;
+  systemMediaTransportControls: boolean;
+  cachePath?: string;
+  titleBarStyle?: string;
+  artistPageLegacy: boolean;
+  startPage: string;
+  scrobble: boolean;
+  systemNotifications: boolean;
+  musicFolder: {
+    id: null | string;
+    albums: boolean;
+    artists: boolean;
+    dashboard: boolean;
+    search: boolean;
+    starred: boolean;
+    music: boolean;
+  };
+  sidebar: {
+    expand: boolean;
+    width: string;
+    coverArt: boolean;
+  };
+  selected: string[];
+  pagination: {
+    music: {
+      recordsPerPage: number;
+      serverSide: boolean;
+    };
+    album: {
+      recordsPerPage: number;
+      serverSide: boolean;
+    };
+  };
+  volume: number;
+  audioDeviceId: null | string;
+  seekForwardInterval: number;
+  seekBackwardInterval: number;
+  volumeFade: boolean;
+  repeat: string;
+  shuffle: string;
+  scrollWithCurrentSong: boolean;
+  cacheImages: boolean;
+  cacheSongs: boolean;
+  pollingInterval: number;
+  fadeDuration: number;
+  fadeType: string;
+  gridCardSize: number;
+  gridGapSize: number;
+  gridAlignment: string;
+  playlistViewType: string;
+  albumViewType: string;
+  albumSortDefault: string;
+  musicSortDefault: string;
+  artistViewType: string;
+  musicListFontSize: string | number;
+  musicListRowHeight: string | number;
+  randomPlaylistTrackCount: number;
+  playbackFilters: Filter[];
+  musicListColumns?: Column[];
+  albumListFontSize: string | number;
+  albumListRowHeight: string | number;
+  albumListColumns?: Column[];
+  playlistListFontSize: string | number;
+  playlistListRowHeight: string | number;
+  playlistListColumns?: Column[];
+  artistListFontSize: string | number;
+  artistListRowHeight: string | number;
+  artistListColumns?: Column[];
+  miniListFontSize: string | number;
+  miniListRowHeight: string | number;
+  miniListColumns?: Column[];
+  genreListFontSize: string | number;
+  genreListRowHeight: string | number;
+  genreListColumns?: Column[];
+  themes: any[];
+  themesDefault: any[];
+}
+
+const DEFAULT_SETTINGS: Settings = {
+  discord: {
+    enabled: false,
+    clientId: '923372440934055968',
+    serverImage: false,
+  },
+  obs: {
+    enabled: false,
+    url: '',
+    type: 'local',
+    path: '',
+    pollingInterval: 2000,
+  },
+  transcode: false,
+  resume: false,
+  autoUpdate: true,
+  autoUpdateNotice: true,
+  serverType: 'subsonic',
+  legacyAuth: false,
+  language: 'en',
+  theme: 'defaultDark',
+  font: 'Poppins',
+  dynamicBackground: false,
+  highlightOnRowHover: true,
+  minimizeToTray: false,
+  showDebugWindow: false,
+  globalMediaHotkeys: false,
+  systemMediaTransportControls: false,
+  artistPageLegacy: false,
+  startPage: '/',
+  scrobble: true,
+  systemNotifications: false,
+  musicFolder: {
+    id: null,
+    albums: true,
+    artists: true,
+    dashboard: true,
+    search: false,
+    starred: false,
+    music: true,
+  },
+  sidebar: {
+    expand: true,
+    width: '225px',
+    coverArt: true,
+  },
+  selected: [
+    'dashboard',
+    'nowplaying',
+    'favorites',
+    'songs',
+    'albums',
+    'artists',
+    'genres',
+    'folders',
+    'config',
+    'collapse',
+    'playlists',
+    'playlistList',
+  ],
+  pagination: {
+    music: {
+      recordsPerPage: 50,
+      serverSide: true,
+    },
+    album: {
+      recordsPerPage: 50,
+      serverSide: false,
+    },
+  },
+  volume: 0.3,
+  audioDeviceId: null,
+  seekForwardInterval: 5,
+  seekBackwardInterval: 5,
+  volumeFade: true,
+  repeat: 'all',
+  shuffle: 'false',
+  scrollWithCurrentSong: true,
+  cacheImages: true,
+  cacheSongs: false,
+  pollingInterval: 100,
+  fadeDuration: 9,
+  fadeType: 'equalPower',
+  gridCardSize: 175,
+  gridGapSize: 20,
+  gridAlignment: 'flex-start',
+  playlistViewType: 'list',
+  albumViewType: 'list',
+  albumSortDefault: 'random',
+  musicSortDefault: 'random',
+  artistViewType: 'list',
+  musicListFontSize: '14',
+  musicListRowHeight: '60.0',
+  randomPlaylistTrackCount: 50,
+  playbackFilters: [
+    {
+      filter: '(\\(|\\[|~|-|（)[Oo]ff [Vv]ocal(\\)|\\]|~|-|）)',
+      enabled: false,
+    },
+    {
+      filter: '(（|\\(|\\[|~|-)[Ii]nst(rumental)?(\\)|\\]|~|-|）)',
+      enabled: false,
+    },
+  ],
+  albumListFontSize: '14',
+  albumListRowHeight: '60.0',
+  playlistListFontSize: '14',
+  playlistListRowHeight: '45.0',
+  artistListFontSize: '14',
+  artistListRowHeight: '60.0',
+  miniListFontSize: '12',
+  miniListRowHeight: '40',
+  genreListFontSize: '14',
+  genreListRowHeight: '50',
+  themes: [],
+  themesDefault: [
     {
       label: 'Default Dark',
       value: 'defaultDark',
@@ -2066,7 +1696,281 @@ const setDefaultSettings = (force: boolean) => {
         },
       },
     },
-  ]);
+  ],
 };
 
-export default setDefaultSettings;
+export const settings = new Store({
+  defaults: DEFAULT_SETTINGS,
+  name: 'settings'
+});
+
+export const setDefaultSettings = (force: boolean) => {
+  if (force) {
+    settings.clear();
+  }
+
+  if (force || !settings.has('cachePath')) {
+    settings.set('cachePath', path.join(path.dirname(settings.path)));
+  }
+
+  if (force || !settings.has('exitToTray')) {
+    settings.set('exitToTray', isMacOS());
+  }
+
+  if (force || !settings.has('titleBarStyle')) {
+    settings.set('titleBarStyle', isMacOS() ? 'mac' : 'windows');
+  }
+
+  if (force || !settings.has('musicListColumns')) {
+    settings.set('musicListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '# (Drag/Drop)',
+      },
+      {
+        id: i18n.t('Title')?.toString(),
+        dataKey: 'combinedtitle',
+        alignment: 'left',
+        flexGrow: 5,
+        label: i18n.t('Title (Combined)')?.toString(),
+      },
+      {
+        id: i18n.t('Album')?.toString(),
+        dataKey: 'album',
+        alignment: 'left',
+        flexGrow: 3,
+        label: i18n.t('Album')?.toString(),
+      },
+      {
+        id: i18n.t('Duration')?.toString(),
+        dataKey: 'duration',
+        alignment: 'center',
+        flexGrow: 2,
+        label: i18n.t('Duration')?.toString(),
+      },
+      {
+        id: i18n.t('Bitrate')?.toString(),
+        dataKey: 'bitRate',
+        alignment: 'left',
+        flexGrow: 1,
+        label: i18n.t('Bitrate')?.toString(),
+      },
+      {
+        id: i18n.t('Fav')?.toString(),
+        dataKey: 'starred',
+        alignment: 'center',
+        flexGrow: 1,
+        label: i18n.t('Favorite')?.toString(),
+      },
+    ]);
+  }
+
+  if (force || !settings.has('albumListColumns')) {
+    settings.set('albumListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: i18n.t('Title')?.toString(),
+        dataKey: 'combinedtitle',
+        alignment: 'left',
+        flexGrow: 5,
+        label: i18n.t('Title (Combined)')?.toString(),
+      },
+      {
+        id: i18n.t('Tracks')?.toString(),
+        dataKey: 'songCount',
+        alignment: 'center',
+        flexGrow: 1,
+        label: i18n.t('Track Count')?.toString(),
+      },
+      {
+        id: i18n.t('Duration')?.toString(),
+        dataKey: 'duration',
+        alignment: 'center',
+        flexGrow: 2,
+        label: i18n.t('Duration')?.toString(),
+      },
+      {
+        id: i18n.t('Fav')?.toString(),
+        dataKey: 'starred',
+        alignment: 'center',
+        flexGrow: 1,
+        label: i18n.t('Favorite')?.toString(),
+      },
+    ]);
+  }
+
+  if (force || !settings.has('playlistListColumns')) {
+    settings.set('playlistListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: i18n.t('Title')?.toString(),
+        dataKey: 'title',
+        alignment: 'left',
+        flexGrow: 5,
+        label: i18n.t('Title')?.toString(),
+      },
+      {
+        id: i18n.t('Description')?.toString(),
+        dataKey: 'comment',
+        alignment: 'left',
+        flexGrow: 3,
+        label: i18n.t('Description')?.toString(),
+      },
+      {
+        id: i18n.t('Tracks')?.toString(),
+        dataKey: 'songCount',
+        alignment: 'center',
+        flexGrow: 1,
+        label: i18n.t('Track Count')?.toString(),
+      },
+      {
+        id: i18n.t('Owner')?.toString(),
+        dataKey: 'owner',
+        alignment: 'left',
+        flexGrow: 2,
+        label: i18n.t('Owner')?.toString(),
+      },
+      {
+        id: i18n.t('Modified')?.toString(),
+        dataKey: 'changed',
+        alignment: 'left',
+        flexGrow: 1,
+        label: i18n.t('Modified')?.toString(),
+      },
+    ]);
+  }
+
+  if (force || !settings.has('artistListColumns')) {
+    settings.set('artistListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: i18n.t('Art')?.toString(),
+        dataKey: 'coverart',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: i18n.t('CoverArt')?.toString(),
+      },
+      {
+        id: i18n.t('Title')?.toString(),
+        dataKey: 'title',
+        alignment: 'left',
+        flexGrow: 5,
+        label: i18n.t('Title')?.toString(),
+      },
+      {
+        id: i18n.t('Albums')?.toString(),
+        dataKey: 'albumCount',
+        alignment: 'left',
+        flexGrow: 1,
+        label: i18n.t('Album Count')?.toString(),
+      },
+      {
+        id: i18n.t('Fav')?.toString(),
+        dataKey: 'starred',
+        alignment: 'center',
+        flexGrow: 1,
+        label: i18n.t('Favorite')?.toString(),
+      },
+    ]);
+  }
+
+  if (force || !settings.has('miniListColumns')) {
+    settings.set('miniListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '# (Drag/Drop)',
+      },
+      {
+        width: 220,
+        id: i18n.t('Title')?.toString(),
+        dataKey: 'combinedtitle',
+        alignment: 'left',
+        label: i18n.t('Title (Combined)')?.toString(),
+        rowIndex: 7,
+        resizable: true,
+      },
+      {
+        width: 60,
+        id: i18n.t('Duration')?.toString(),
+        dataKey: 'duration',
+        alignment: 'center',
+        label: i18n.t('Duration')?.toString(),
+        rowIndex: 3,
+        resizable: true,
+      },
+      {
+        width: 45,
+        id: i18n.t('Fav')?.toString(),
+        dataKey: 'starred',
+        alignment: 'center',
+        label: i18n.t('Favorite')?.toString(),
+        rowIndex: 6,
+        resizable: true,
+      },
+    ]);
+  }
+
+  if (force || !settings.has('genreListColumns')) {
+    settings.set('genreListColumns', [
+      {
+        id: '#',
+        dataKey: 'index',
+        alignment: 'center',
+        resizable: true,
+        width: 50,
+        label: '#',
+      },
+      {
+        id: i18n.t('Title')?.toString(),
+        dataKey: 'title',
+        alignment: 'left',
+        flexGrow: 5,
+        label: i18n.t('Title')?.toString(),
+      },
+      {
+        id: i18n.t('Albums')?.toString(),
+        dataKey: 'albumCount',
+        alignment: 'left',
+        flexGrow: 3,
+        label: i18n.t('Album Count')?.toString(),
+      },
+      {
+        id: i18n.t('Tracks')?.toString(),
+        dataKey: 'songCount',
+        alignment: 'left',
+        flexGrow: 1,
+        label: i18n.t('Song Count')?.toString(),
+      },
+    ]);
+  }
+};

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Divider } from 'rsuite';
-import settings from 'electron-settings';
 import { shell } from 'electron';
 import axios from 'axios';
 import { InfoModal } from './Modal';
 import { StyledButton } from '../shared/styled';
 import { ConfigPanel } from '../settings/styled';
 import CenterLoader from '../loader/CenterLoader';
+import { settings } from '../shared/setDefaultSettings';
 
 const ReleaseNotes = () => {
-  const [show, setShow] = useState(Boolean(settings.getSync('autoUpdateNotice')));
+  const [show, setShow] = useState(Boolean(settings.get('autoUpdateNotice')));
   const [releaseDetails, setReleaseDetails] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,7 +40,7 @@ const ReleaseNotes = () => {
       show={show}
       handleHide={() => {
         setShow(false);
-        settings.setSync('autoUpdateNotice', false);
+        settings.set('autoUpdateNotice', false);
       }}
     >
       <ConfigPanel>
