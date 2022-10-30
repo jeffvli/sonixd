@@ -321,15 +321,12 @@ const createWindow = async () => {
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: false,
-      preload: path.join(__dirname, 'preload.ts'), // Add custom titlebar functionality
     },
     autoHideMenuBar: true,
     minWidth: 768,
     minHeight: 600,
     frame: settings.get('titleBarStyle') === 'native',
   });
-
-  // require("@electron/remote/main").enable(mainWindow.webContents);
 
   if (settings.get('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {

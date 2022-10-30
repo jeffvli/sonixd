@@ -5,8 +5,8 @@ export default class Store {
   }
 
   /**
-   * 
-   * @param {string} key 
+   *
+   * @param {string} key
    */
   _getParentObject(key) {
     const path = key.split(".");
@@ -25,7 +25,7 @@ export default class Store {
   }
 
   /**
-   * 
+   *
    * @param {string} key 
    */
   has(key) {
@@ -38,8 +38,8 @@ export default class Store {
   }
 
   /**
-   * 
-   * @param {string} key 
+   *
+   * @param {string} key
    */
   get(key) {
     if (key.indexOf(".") !== -1) {
@@ -52,7 +52,7 @@ export default class Store {
   }
 
   /**
-   * 
+   *
    * @param {string} key 
    * @param {any} value
    */

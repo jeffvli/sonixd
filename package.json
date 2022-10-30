@@ -41,7 +41,6 @@
       "main.prod.js",
       "main.prod.js.map",
       "package.json",
-      "preload.ts",
       "img/"
     ],
     "afterSign": ".erb/scripts/Notarize.js",
@@ -263,7 +262,6 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.8",
     "@reduxjs/toolkit": "^1.6.1",
     "array-move": "^3.0.1",
     "axios": "^0.21.1",

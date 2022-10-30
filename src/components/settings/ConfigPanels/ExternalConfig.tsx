@@ -18,8 +18,6 @@ import ConfigOption from '../ConfigOption';
 import { Server } from '../../../types';
 import { settings } from '../../shared/setDefaultSettings';
 
-// const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
-
 const ExternalConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
