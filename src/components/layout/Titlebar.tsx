@@ -73,6 +73,7 @@ const Titlebar = ({ font }: any) => {
                 minButton
                 className="button"
                 id="min-button"
+                onClick={() => ipcRenderer.send('minimize')}
                 onMouseOver={() => setHoverMin(true)}
                 onMouseLeave={() => setHoverMin(false)}
               >
@@ -87,6 +88,7 @@ const Titlebar = ({ font }: any) => {
                 maxButton
                 className="button"
                 id="max-button"
+                onClick={() => ipcRenderer.send('maximize')}
                 onMouseOver={() => setHoverMax(true)}
                 onMouseLeave={() => setHoverMax(false)}
               >
@@ -101,6 +103,7 @@ const Titlebar = ({ font }: any) => {
                 restoreButton
                 className="button"
                 id="restore-button"
+                onClick={() => ipcRenderer.send('unmaximize')}
                 onMouseOver={() => setHoverMax(true)}
                 onMouseLeave={() => setHoverMax(false)}
               >
@@ -114,6 +117,7 @@ const Titlebar = ({ font }: any) => {
               <MacControlButton
                 className="button"
                 id="close-button"
+                onClick={() => ipcRenderer.send('close')}
                 onMouseOver={() => setHoverClose(true)}
                 onMouseLeave={() => setHoverClose(false)}
               >
