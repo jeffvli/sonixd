@@ -5054,10 +5054,10 @@ electron-updater@^4.3.4:
     lodash.isequal "^4.5.0"
     semver "^7.3.5"
 
-electron@^20.0.0:
-  version "20.3.3"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-20.3.3.tgz#19dd8a02b333ad5d7bf3fa37cfd9382c28f8d5b5"
-  integrity sha512-6Cp3vMZGFEEtaIZrQ49iLqO2qogLWThlIYgH4a6dEl7xfaNQ6CjfXNBxFJRJTg7XRBFpeNtzuXkeGfNv9Kwfcg==
+electron@^21.0.0:
+  version "21.2.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-21.2.0.tgz#8eb65d69b36aa8dac0ee7330eab70181df211c8b"
+  integrity sha512-oKV4fo8l6jlOZ1cYZ4RpZz02ZxLuBo3SO7DH+FrJ8uDyCirP+eVJ/qlzu23odtNe0P7S/mYAZbC6abZHWoqtLg==
   dependencies:
     "@electron/get" "^1.14.1"
     "@types/node" "^16.11.26"
