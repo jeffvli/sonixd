@@ -4,6 +4,14 @@ export default class Store {
     this.settings = options.defaults || {};
   }
 
+  get store() {
+    return this.set;
+  }
+
+  set store(value) {
+    this.settings = value;
+  }
+
   /**
    *
    * @param {string} key

@@ -157,7 +157,7 @@ const CacheConfig = ({ bordered }: any) => {
             </StyledInputGroupButton>
             <StyledInputGroupButton
               onClick={() => {
-                const defaultPath = path.join(path.dirname(settings.file()));
+                const defaultPath = path.join(path.dirname(settings.path));
                 settings.set('cachePath', defaultPath);
                 dispatch(setMiscSetting({ setting: 'imageCachePath', value: getImageCachePath() }));
                 dispatch(setMiscSetting({ setting: 'songCachePath', value: getSongCachePath() }));

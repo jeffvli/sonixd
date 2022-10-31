@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Icon } from 'rsuite';
-import { shell } from 'electron';
 import { useTranslation } from 'react-i18next';
 import { ConfigPanel } from '../styled';
 import { StyledButton, StyledToggle } from '../../shared/styled';
@@ -56,7 +55,7 @@ const AdvancedConfig = ({ bordered }: any) => {
       />
 
       <br />
-      <StyledButton appearance="primary" onClick={() => shell.openPath(settings.file())}>
+      <StyledButton appearance="primary" onClick={() => settings.openInEditor()}>
         {t('Open settings JSON')} <Icon icon="external-link" />
       </StyledButton>
     </ConfigPanel>

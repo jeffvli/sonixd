@@ -521,6 +521,9 @@ const ListViewTable = ({
         }}
       >
         {columns.map((column: any) => (
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - children does actually exist, but rsuite expects react 16.
+          // Upgrading to rsuite 5 will come with some new changes (namely, different icons), so I will leave this in for now
           <Table.Column
             key={nanoid()}
             align={column.alignment}

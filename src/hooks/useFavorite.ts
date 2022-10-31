@@ -12,7 +12,7 @@ const useFavorite = () => {
   const queryClient = useQueryClient();
 
   const handleFavorite = useCallback(
-    async (rowData, options?: { queryKey?: any; custom?: any }) => {
+    async (rowData: any, options?: { queryKey?: any; custom?: any }) => {
       const favorite = !rowData.starred;
 
       await apiController({

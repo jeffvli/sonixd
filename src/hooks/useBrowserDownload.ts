@@ -12,7 +12,7 @@ export const useBrowserDownload = () => {
   const config = useAppSelector((state) => state.config);
 
   const handleDownload = useCallback(
-    async (data, type: 'copy' | 'download', playlist?: boolean) => {
+    async (data: any, type: 'copy' | 'download', playlist?: boolean) => {
       const downloadUrls = [];
 
       if (config.serverType === Server.Jellyfin) {

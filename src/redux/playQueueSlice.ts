@@ -12,7 +12,7 @@ import { mockSettings } from '../shared/mockSettings';
 import { Song } from '../types';
 import { settings } from '../components/shared/setDefaultSettings';
 
-const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.get();
+const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.store;
 
 export interface PlayQueue {
   player1: {

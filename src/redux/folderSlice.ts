@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { mockSettings } from '../shared/mockSettings';
 import { settings } from '../components/shared/setDefaultSettings';
 
-const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.get();
+const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.store;
 
 export interface FolderSelection {
   musicFolder?: string;

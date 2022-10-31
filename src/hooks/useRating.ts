@@ -12,7 +12,7 @@ export const useRating = () => {
   const config = useAppSelector((state) => state.config);
 
   const handleRating = useCallback(
-    async (rowData, options: { queryKey?: any; rating: number; custom?: any }) => {
+    async (rowData: any, options: { queryKey?: any; rating: number; custom?: any }) => {
       await apiController({
         serverType: config.serverType,
         endpoint: 'setRating',

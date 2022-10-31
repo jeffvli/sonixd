@@ -5,7 +5,7 @@ import { moveSelectedToIndex } from '../shared/utils';
 import { Server } from '../types';
 import { settings } from '../components/shared/setDefaultSettings';
 
-const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.get();
+const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.store;
 
 export interface ConfigPage {
   active: {

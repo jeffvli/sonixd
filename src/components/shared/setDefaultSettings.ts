@@ -124,6 +124,7 @@ interface Settings {
   genreListColumns?: Column[];
   themes: any[];
   themesDefault: any[];
+  infoMode?: boolean;
 }
 
 const DEFAULT_SETTINGS: Settings = {
