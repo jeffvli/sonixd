@@ -54,6 +54,8 @@ export interface General {
   dynamicBackground: boolean;
   retainWindowSize: boolean;
   savedWindowSize: number[];
+  defaultWindowX: number;
+  defaultWindowY: number;
   highlightOnRowHover: boolean;
   imageCachePath: string;
   songCachePath: string;
@@ -79,6 +81,8 @@ const initialState: General = {
   dynamicBackground: Boolean(parsedSettings.dynamicBackground),
   retainWindowSize: Boolean(parsedSettings.retainWindowSize),
   savedWindowSize: Array(parsedSettings.savedWindowSize),
+  defaultWindowX: Number(parsedSettings.defaultWindowX),
+  defaultWindowY: Number(parsedSettings.defaultWindowY),
   highlightOnRowHover: Boolean(parsedSettings.highlightOnRowHover),
   imageCachePath: getImageCachePath(),
   songCachePath: getSongCachePath(),
@@ -99,6 +103,12 @@ const miscSlice = createSlice({
     },
     savedWindowSize: (state, action: PayloadAction<Array<number>>) => {
       state.savedWindowSize = action.payload;
+    },
+    setDefaultWindowX: (state, action: PayloadAction<number>) => {
+      state.defaultWindowX = action.payload;
+    },
+    setDefaultWindowY: (state, action: PayloadAction<number>) => {
+      state.defaultWindowY = action.payload;
     },
 
     setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
@@ -207,9 +217,11 @@ export const {
   removeProcessingPlaylist,
   setContextMenu,
   setDynamicBackground,
+  savedWindowSize,
+  setDefaultWindowX,
+  setDefaultWindowY,
   setMiscSetting,
   setImgModal,
   setRetainWindowSize,
-  savedWindowSize,
 } = miscSlice.actions;
 export default miscSlice.reducer;

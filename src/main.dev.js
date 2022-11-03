@@ -417,11 +417,11 @@ const createWindow = async () => {
 
   let windowDimensions = [];
 
-  // If retained window size is enabled, use saved dimensions
+  // If retained window size is enabled, use saved dimensions. Otherwise, use defined defaults
   if (settings.getSync('retainWindowSize')) {
     windowDimensions = settings.getSync('savedWindowSize');
   } else {
-    windowDimensions = [1024, 728];
+    windowDimensions = [settings.getSync('defaultWindowX'), settings.getSync('defaultWindowY')];
   }
 
   mainWindow = new BrowserWindow({

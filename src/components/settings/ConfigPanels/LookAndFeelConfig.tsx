@@ -29,6 +29,8 @@ import {
   setDynamicBackground,
   setMiscSetting,
   setRetainWindowSize,
+  setDefaultWindowX,
+  setDefaultWindowY,
 } from '../../../redux/miscSlice';
 import {
   songColumnPicker,
@@ -298,6 +300,12 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const [retainWindowSizeChk, setRetainWindowSizeChk] = useState(
     Boolean(settings.getSync('retainWindowSize'))
   );
+  const [defaultWindowX, setDefaultWindowXValue] = useState(
+    Number(settings.getSync('defaultWindowX'))
+  );
+  const [defaultWindowY, setDefaultWindowYValue] = useState(
+    Number(settings.getSync('defaultWindowY'))
+  );
 
   const [selectedTheme, setSelectedTheme] = useState(String(settings.get('theme')));
   const languagePickerContainerRef = useRef(null);
@@ -503,6 +511,50 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               settings.setSync('retainWindowSize', e);
               dispatch(setRetainWindowSize(e));
               setRetainWindowSizeChk(e);
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={t('Default Window Width')}
+        description={t(
+          'The default width to use when Retain Window Size is disabled. Default: 1024'
+        )}
+        option={
+          <StyledInputNumber
+            defaultValue={defaultWindowX}
+            value={defaultWindowX}
+            step={1}
+            min={600}
+            max={7680}
+            width={125}
+            onChange={(e: number) => {
+              settings.setSync('defaultWindowX', Number(e));
+              dispatch(setDefaultWindowX(Number(e)));
+              setDefaultWindowXValue(Number(e));
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={t('Default Window Height')}
+        description={t(
+          'The default height to use when Retain Window Size is disabled. Default: 728'
+        )}
+        option={
+          <StyledInputNumber
+            defaultValue={defaultWindowY}
+            value={defaultWindowY}
+            step={1}
+            min={600}
+            max={7680}
+            width={125}
+            onChange={(e: number) => {
+              settings.setSync('defaultWindowY', Number(e));
+              dispatch(setDefaultWindowY(Number(e)));
+              setDefaultWindowYValue(Number(e));
             }}
           />
         }

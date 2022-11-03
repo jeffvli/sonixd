@@ -334,6 +334,8 @@ export const mockSettings = {
   dynamicBackground: false,
   retainWindowSize: false,
   savedWindowSize: [1024, 728],
+  defaultWindowX: 1024,
+  defaultWindowY: 728,
   minimizeToTray: true,
   exitToTray: true,
   windowPosition: { x: 0, y: 0, width: 960, height: 1560 },
