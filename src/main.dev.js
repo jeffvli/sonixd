@@ -100,6 +100,10 @@ const previousTrack = () => {
   mainWindow.webContents.send('player-prev-track');
 };
 
+const quickSave = () => {
+  mainWindow.webContents.send('save-queue-state', app.getPath('userData'));
+};
+
 if (isLinux()) {
   const mprisPlayer = Player({
     name: 'Sonixd',
@@ -460,6 +464,10 @@ const createWindow = async () => {
       previousTrack();
     });
   }
+
+  ipcMain.on('quicksave', () => {
+    quickSave();
+  });
 
   ipcMain.on('enableGlobalHotkeys', () => {
     electronLocalshortcut.unregisterAll(mainWindow);
