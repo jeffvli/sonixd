@@ -125,6 +125,11 @@ interface Settings {
   themes: any[];
   themesDefault: any[];
   infoMode?: boolean;
+  retainWindowSize: boolean;
+  defaultWindowWidth: number;
+  defaultWindowHeight: number;
+  savedWindowSize: number[];
+  savedWindowPos: number[];
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -241,6 +246,11 @@ const DEFAULT_SETTINGS: Settings = {
   miniListRowHeight: '40',
   genreListFontSize: '14',
   genreListRowHeight: '50',
+  retainWindowSize: false,
+  defaultWindowWidth: 1280,
+  defaultWindowHeight: 720,
+  savedWindowSize: [1280, 720],
+  savedWindowPos: [50, 50],
   themes: [],
   themesDefault: [
     {

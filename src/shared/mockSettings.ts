@@ -332,6 +332,8 @@ export const mockSettings = {
   server: 'http://192.168.14.11:4040',
   serverBase64: 'aHR0cDovLzE5Mi4xNjguMTQuMTE6NDA0MA==',
   dynamicBackground: false,
+  retainWindowSize: false,
+  savedWindowSize: [1024, 728],
   minimizeToTray: true,
   exitToTray: true,
   windowPosition: { x: 0, y: 0, width: 960, height: 1560 },

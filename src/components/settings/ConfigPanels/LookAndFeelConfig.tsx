@@ -24,7 +24,12 @@ import ListViewConfig from './ListViewConfig';
 import Fonts from '../Fonts';
 import { ALBUM_SORT_TYPES } from '../../library/AlbumList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setTheme, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
+import {
+  setTheme,
+  setDynamicBackground,
+  setMiscSetting,
+  setRetainWindowSize,
+} from '../../../redux/miscSlice';
 import {
   songColumnPicker,
   songColumnListAuto,
@@ -290,6 +295,9 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
     Boolean(settings.get('dynamicBackground'))
   );
+  const [retainWindowSizeChk, setRetainWindowSizeChk] = useState(
+    Boolean(settings.getSync('retainWindowSize'))
+  );
 
   const [selectedTheme, setSelectedTheme] = useState(String(settings.get('theme')));
   const languagePickerContainerRef = useRef(null);
@@ -477,6 +485,24 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               settings.set('dynamicBackground', e);
               dispatch(setDynamicBackground(e));
               setDynamicBackgroundChk(e);
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={t('Retain Window Size')}
+        description={t(
+          'Retains the size of the application window. Only saves when the program is exited properly!'
+        )}
+        option={
+          <StyledToggle
+            defaultChecked={retainWindowSizeChk}
+            checked={retainWindowSizeChk}
+            onChange={(e: boolean) => {
+              settings.setSync('retainWindowSize', e);
+              dispatch(setRetainWindowSize(e));
+              setRetainWindowSizeChk(e);
             }}
           />
         }
