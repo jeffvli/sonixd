@@ -29,8 +29,8 @@ import {
   setDynamicBackground,
   setMiscSetting,
   setRetainWindowSize,
-  setDefaultWindowX,
-  setDefaultWindowY,
+  setDefaultWindowWidth,
+  setDefaultWindowHeight,
 } from '../../../redux/miscSlice';
 import {
   songColumnPicker,
@@ -300,11 +300,11 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const [retainWindowSizeChk, setRetainWindowSizeChk] = useState(
     Boolean(settings.getSync('retainWindowSize'))
   );
-  const [defaultWindowX, setDefaultWindowXValue] = useState(
-    Number(settings.getSync('defaultWindowX'))
+  const [defaultWindowWidth, setDefaultWindowWidthValue] = useState(
+    Number(settings.getSync('defaultWindowHeight'))
   );
-  const [defaultWindowY, setDefaultWindowYValue] = useState(
-    Number(settings.getSync('defaultWindowY'))
+  const [defaultWindowHeight, setDefaultWindowHeightValue] = useState(
+    Number(settings.getSync('defaultWindowWidth'))
   );
 
   const [selectedTheme, setSelectedTheme] = useState(String(settings.get('theme')));
@@ -501,7 +501,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
       <ConfigOption
         name={t('Retain Window Size')}
         description={t(
-          'Retains the size of the application window. Only saves when the program is exited properly!'
+          'Retains the size and position of the application window. Size is only saved when the program is exited properly!'
         )}
         option={
           <StyledToggle
@@ -523,16 +523,16 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
         )}
         option={
           <StyledInputNumber
-            defaultValue={defaultWindowX}
-            value={defaultWindowX}
+            defaultValue={defaultWindowWidth}
+            value={defaultWindowWidth}
             step={1}
-            min={600}
+            min={768}
             max={7680}
             width={125}
             onChange={(e: number) => {
-              settings.setSync('defaultWindowX', Number(e));
-              dispatch(setDefaultWindowX(Number(e)));
-              setDefaultWindowXValue(Number(e));
+              settings.setSync('defaultWindowWidth', Number(e));
+              dispatch(setDefaultWindowWidth(Number(e)));
+              setDefaultWindowWidthValue(Number(e));
             }}
           />
         }
@@ -545,16 +545,16 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
         )}
         option={
           <StyledInputNumber
-            defaultValue={defaultWindowY}
-            value={defaultWindowY}
+            defaultValue={defaultWindowHeight}
+            value={defaultWindowHeight}
             step={1}
             min={600}
             max={7680}
             width={125}
             onChange={(e: number) => {
-              settings.setSync('defaultWindowY', Number(e));
-              dispatch(setDefaultWindowY(Number(e)));
-              setDefaultWindowYValue(Number(e));
+              settings.setSync('defaultWindowHeight', Number(e));
+              dispatch(setDefaultWindowHeight(Number(e)));
+              setDefaultWindowHeightValue(Number(e));
             }}
           />
         }

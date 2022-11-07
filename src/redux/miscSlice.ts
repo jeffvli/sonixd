@@ -54,8 +54,9 @@ export interface General {
   dynamicBackground: boolean;
   retainWindowSize: boolean;
   savedWindowSize: number[];
-  defaultWindowX: number;
-  defaultWindowY: number;
+  savedWindowPos: number[];
+  defaultWindowWidth: number;
+  defaultWindowHeight: number;
   highlightOnRowHover: boolean;
   imageCachePath: string;
   songCachePath: string;
@@ -81,8 +82,9 @@ const initialState: General = {
   dynamicBackground: Boolean(parsedSettings.dynamicBackground),
   retainWindowSize: Boolean(parsedSettings.retainWindowSize),
   savedWindowSize: Array(parsedSettings.savedWindowSize),
-  defaultWindowX: Number(parsedSettings.defaultWindowX),
-  defaultWindowY: Number(parsedSettings.defaultWindowY),
+  savedWindowPos: Array(parsedSettings.savedWindowPos),
+  defaultWindowWidth: Number(parsedSettings.defaultWindowWidth),
+  defaultWindowHeight: Number(parsedSettings.defaultWindowHeight),
   highlightOnRowHover: Boolean(parsedSettings.highlightOnRowHover),
   imageCachePath: getImageCachePath(),
   songCachePath: getSongCachePath(),
@@ -104,11 +106,14 @@ const miscSlice = createSlice({
     savedWindowSize: (state, action: PayloadAction<Array<number>>) => {
       state.savedWindowSize = action.payload;
     },
-    setDefaultWindowX: (state, action: PayloadAction<number>) => {
-      state.defaultWindowX = action.payload;
+    savedWindowPos: (state, action: PayloadAction<Array<number>>) => {
+      state.savedWindowPos = action.payload;
     },
-    setDefaultWindowY: (state, action: PayloadAction<number>) => {
-      state.defaultWindowY = action.payload;
+    setDefaultWindowWidth: (state, action: PayloadAction<number>) => {
+      state.defaultWindowWidth = action.payload;
+    },
+    setDefaultWindowHeight: (state, action: PayloadAction<number>) => {
+      state.defaultWindowHeight = action.payload;
     },
 
     setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
@@ -218,8 +223,9 @@ export const {
   setContextMenu,
   setDynamicBackground,
   savedWindowSize,
-  setDefaultWindowX,
-  setDefaultWindowY,
+  savedWindowPos,
+  setDefaultWindowWidth,
+  setDefaultWindowHeight,
   setMiscSetting,
   setImgModal,
   setRetainWindowSize,

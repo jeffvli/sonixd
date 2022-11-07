@@ -416,18 +416,28 @@ const createWindow = async () => {
   }
 
   let windowDimensions = [];
+  let windowPos = [];
+  let isCentered = true;
 
-  // If retained window size is enabled, use saved dimensions. Otherwise, use defined defaults
+  // If retained window size is enabled, use saved dimensions and position. Otherwise, use defined defaults
   if (settings.getSync('retainWindowSize')) {
     windowDimensions = settings.getSync('savedWindowSize');
+    windowPos = settings.getSync('savedWindowPos');
+    isCentered = false;
   } else {
-    windowDimensions = [settings.getSync('defaultWindowX'), settings.getSync('defaultWindowY')];
+    windowDimensions = [
+      settings.getSync('defaultWindowWidth'),
+      settings.getSync('defaultWindowHeight'),
+    ];
   }
 
   mainWindow = new BrowserWindow({
     show: false,
     width: windowDimensions[0],
     height: windowDimensions[1],
+    center: isCentered,
+    x: windowPos[0],
+    y: windowPos[1],
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -546,6 +556,12 @@ const createWindow = async () => {
     if (store.getState().config.window.minimizeToTray) {
       event.preventDefault();
       mainWindow.hide();
+    }
+  });
+
+  mainWindow.on('moved', () => {
+    if (settings.getSync('retainWindowSize')) {
+      settings.setSync(`savedWindowPos`, mainWindow.getPosition());
     }
   });
 
