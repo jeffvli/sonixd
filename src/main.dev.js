@@ -561,7 +561,7 @@ const createWindow = async () => {
 
   mainWindow.on('moved', () => {
     if (settings.getSync('retainWindowSize')) {
-      settings.setSync(`savedWindowPos`, mainWindow.getPosition());
+      settings.setSync('savedWindowPos', mainWindow.getPosition());
     }
   });
 
