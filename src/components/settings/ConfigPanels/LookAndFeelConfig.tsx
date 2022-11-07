@@ -300,10 +300,10 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const [retainWindowSizeChk, setRetainWindowSizeChk] = useState(
     Boolean(settings.getSync('retainWindowSize'))
   );
-  const [defaultWindowWidth, setDefaultWindowWidthValue] = useState(
+  const [defaultWindowHeight, setDefaultWindowHeightValue] = useState(
     Number(settings.getSync('defaultWindowHeight'))
   );
-  const [defaultWindowHeight, setDefaultWindowHeightValue] = useState(
+  const [defaultWindowWidth, setDefaultWindowWidthValue] = useState(
     Number(settings.getSync('defaultWindowWidth'))
   );
 
