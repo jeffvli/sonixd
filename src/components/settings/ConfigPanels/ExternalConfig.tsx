@@ -40,7 +40,6 @@ const ExternalConfig = ({ bordered }: any) => {
             <StyledToggle
               defaultChecked={config.external.discord.enabled}
               checked={config.external.discord.enabled}
-              disabled={config.external.discord.clientId.length !== 18}
               onChange={(e: boolean) => {
                 settings.setSync('discord.enabled', e);
                 dispatch(setDiscord({ ...config.external.discord, enabled: e }));
