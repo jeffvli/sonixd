@@ -271,6 +271,105 @@ if (isLinux()) {
   });
 }
 
+if (isWindows() && isWindows10()) {
+  const windowsMedia = require('@nodert-win10-au/windows.media');
+  const windowsMediaPlayback = require('@nodert-win10-au/windows.media.playback');
+  const windowsStorageStreams = require('@nodert-win10-au/windows.storage.streams');
+  const windowsFoundation = require('@nodert-win10-au/windows.foundation');
+
+  const Controls = windowsMediaPlayback.BackgroundMediaPlayer.current.systemMediaTransportControls;
+
+  if (settings.getSync('systemMediaTransportControls')) {
+    Controls.isEnabled = true;
+  } else {
+    Controls.isEnabled = false;
+  }
+
+  ipcMain.on('enableSystemMediaTransportControls', () => {
+    Controls.isEnabled = true;
+  });
+
+  ipcMain.on('disableSystemMediaTransportControls', () => {
+    Controls.isEnabled = false;
+  });
+
+  Controls.isChannelUpEnabled = false;
+  Controls.isChannelDownEnabled = false;
+  Controls.isFastForwardEnabled = false;
+  Controls.isRewindEnabled = false;
+  Controls.isRecordEnabled = false;
+  Controls.isPlayEnabled = true;
+  Controls.isPauseEnabled = true;
+  Controls.isStopEnabled = true;
+  Controls.isNextEnabled = true;
+  Controls.isPreviousEnabled = true;
+
+  Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.closed;
+  Controls.displayUpdater.type = windowsMedia.MediaPlaybackType.music;
+
+  Controls.displayUpdater.musicProperties.title = 'Sonixd';
+  Controls.displayUpdater.musicProperties.artist = 'No Track Playing';
+  Controls.displayUpdater.musicProperties.albumTitle = 'No Album Playing';
+  Controls.displayUpdater.update();
+
+  Controls.on('buttonpressed', (sender, eventArgs) => {
+    switch (eventArgs.button) {
+      case windowsMedia.SystemMediaTransportControlsButton.play:
+        play();
+        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.pause:
+        pause();
+        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.paused;
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.stop:
+        stop();
+        Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.stopped;
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.next:
+        nextTrack();
+        break;
+      case windowsMedia.SystemMediaTransportControlsButton.previous:
+        previousTrack();
+        break;
+      default:
+        break;
+    }
+  });
+
+  ipcMain.on('playpause', (_event, arg) => {
+    if (arg.status === 'PLAYING') {
+      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
+    } else {
+      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.paused;
+    }
+  });
+
+  ipcMain.on('current-song', (_event, arg) => {
+    if (Controls.playbackStatus !== windowsMedia.MediaPlaybackStatus.playing) {
+      Controls.playbackStatus = windowsMedia.MediaPlaybackStatus.playing;
+    }
+
+    Controls.displayUpdater.musicProperties.title = arg.title || 'Unknown Title';
+    Controls.displayUpdater.musicProperties.artist =
+      arg.artist?.length !== 0
+        ? arg.artist?.map((artist) => artist.title).join(', ')
+        : 'Unknown Artist';
+    Controls.displayUpdater.musicProperties.albumTitle = arg.album || 'Unknown Album';
+
+    Controls.displayUpdater.thumbnail =
+      windowsStorageStreams.RandomAccessStreamReference.createFromUri(
+        new windowsFoundation.Uri(
+          arg.image.includes('placeholder')
+            ? 'https://raw.githubusercontent.com/jeffvli/sonixd/main/src/img/placeholder.png'
+            : arg.image
+        )
+      );
+
+    Controls.displayUpdater.update();
+  });
+}
+
 const createWinThumbarButtons = () => {
   if (isWindows()) {
     mainWindow.setThumbarButtons([
