@@ -2,6 +2,34 @@
 # yarn lockfile v1
 
 
+"@nodert-win10-au/windows.foundation@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nodert-win10-au/windows.foundation/-/windows.foundation-0.4.4.tgz#13e9fe3a233cae8f6ea3f50d677860b3da8c9220"
+  integrity sha512-M31DRrLb3DWTtInxwrZqTjvTl4d7O2EqfPHOcgoch2gA1JDgLr+cpTYxDRar+MvkKEO2dCNDhsV2eoDRZFHkiw==
+  dependencies:
+    nan latest
+
+"@nodert-win10-au/windows.media.playback@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nodert-win10-au/windows.media.playback/-/windows.media.playback-0.4.4.tgz#6fda817c1fbbcbfe21ab9c324f6a093d461ef7c9"
+  integrity sha512-z8FjQEA2bxBhbwO5vb0hnFTfOa5cass6dZvERU5aGs7iVFmw+bplY3Wz8B6ZuaypUB0p1BXU04Xchn2gjY098g==
+  dependencies:
+    nan latest
+
+"@nodert-win10-au/windows.media@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nodert-win10-au/windows.media/-/windows.media-0.4.4.tgz#34afc6d2563adc1d0f867a03b60588d0fde3a9dc"
+  integrity sha512-5Apk9Wxks5qtYNd2ug1uOleekDf/r8oBZa67uMySMLr2IgdDbWZxu+bGZWH0MTL74Ik77KmTvYujPF1kgc4SHA==
+  dependencies:
+    nan latest
+
+"@nodert-win10-au/windows.storage.streams@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@nodert-win10-au/windows.storage.streams/-/windows.storage.streams-0.4.4.tgz#277e9004b3802b6bce8d96b6bfb018506e82e725"
+  integrity sha512-8dUSkAHZJEQAa/bcMEbotfym3Uxq01LFEfcyjCbIbTwJfW1ZNElDpMIrqizLCVr03i9mrrJ5dYCcYeABdtj+vA==
+  dependencies:
+    nan latest
+
 "@nornagon/put@0.0.8":
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/@nornagon/put/-/put-0.0.8.tgz#9d497ec46c9364acc3f8b59aa3cf8ee4134ae337"
@@ -186,6 +214,11 @@ nan@^2.12.1:
   version "2.15.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.15.0.tgz#3f34a473ff18e15c1b5626b62903b5ad6e665fee"
   integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
+
+nan@latest:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.17.0.tgz#c0150a2368a182f033e9aa5195ec76ea41a199cb"
+  integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
 
 object-is@^1.0.1:
   version "1.1.5"
