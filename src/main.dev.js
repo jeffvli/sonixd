@@ -100,6 +100,10 @@ const previousTrack = () => {
   mainWindow.webContents.send('player-prev-track');
 };
 
+const quickSave = () => {
+  mainWindow.webContents.send('save-queue-state', app.getPath('userData'));
+};
+
 if (isLinux()) {
   const mprisPlayer = Player({
     name: 'Sonixd',
@@ -279,7 +283,7 @@ if (isWindows() && isWindows10()) {
 
   const Controls = windowsMediaPlayback.BackgroundMediaPlayer.current.systemMediaTransportControls;
 
-  if (settings.getSync('systemMediaTransportControls')) {
+  if (settings.get('systemMediaTransportControls')) {
     Controls.isEnabled = true;
   } else {
     Controls.isEnabled = false;
@@ -411,10 +415,26 @@ const createWindow = async () => {
     await installExtensions();
   }
 
+  let windowDimensions = [];
+  let windowPos = [];
+  let isCentered = true;
+
+  // If retained window size is enabled, use saved dimensions and position. Otherwise, use defined defaults
+  if (settings.get('retainWindowSize')) {
+    windowDimensions = settings.get('savedWindowSize');
+    windowPos = settings.get('savedWindowPos');
+    isCentered = false;
+  } else {
+    windowDimensions = [settings.get('defaultWindowWidth'), settings.get('defaultWindowHeight')];
+  }
+
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: windowDimensions[0],
+    height: windowDimensions[1],
+    center: isCentered,
+    x: windowPos[0],
+    y: windowPos[1],
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -460,6 +480,10 @@ const createWindow = async () => {
       previousTrack();
     });
   }
+
+  ipcMain.on('quicksave', () => {
+    quickSave();
+  });
 
   ipcMain.on('enableGlobalHotkeys', () => {
     electronLocalshortcut.unregisterAll(mainWindow);
@@ -532,11 +556,23 @@ const createWindow = async () => {
     }
   });
 
+  mainWindow.on('moved', () => {
+    if (settings.get('retainWindowSize')) {
+      settings.set('savedWindowPos', mainWindow.getPosition());
+    }
+  });
+
   mainWindow.on('close', (event) => {
     if (!exitFromTray && !forceQuit && store.getState().config.window.exitToTray) {
       exitFromTray = true;
       event.preventDefault();
       mainWindow.hide();
+    }
+
+    // If retain window size is enabled, save the dimensions
+    if (settings.get('retainWindowSize')) {
+      const curSize = mainWindow.getSize();
+      settings.set('savedWindowSize', [curSize[0], curSize[1]]);
     }
 
     // If we have enabled saving the queue, we need to defer closing the main window until it has finished saving.

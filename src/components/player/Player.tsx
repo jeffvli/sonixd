@@ -643,6 +643,13 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       ipcRenderer.send('current-song', playQueue.current);
       setMetadata(playQueue.current);
 
+      // Save the queue 2.5 seconds after fade length
+      if (settings.get('resume')) {
+        setTimeout(() => {
+          ipcRenderer.send('quicksave');
+        }, playQueue.fadeDuration * 1000 + 2500);
+      }
+
       if (config.player.systemNotifications && currentSong) {
         // eslint-disable-next-line no-new
         new Notification(currentSong.title, {

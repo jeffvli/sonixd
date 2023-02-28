@@ -24,7 +24,14 @@ import ListViewConfig from './ListViewConfig';
 import Fonts from '../Fonts';
 import { ALBUM_SORT_TYPES } from '../../library/AlbumList';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { setTheme, setDynamicBackground, setMiscSetting } from '../../../redux/miscSlice';
+import {
+  setTheme,
+  setDynamicBackground,
+  setMiscSetting,
+  setRetainWindowSize,
+  setDefaultWindowWidth,
+  setDefaultWindowHeight,
+} from '../../../redux/miscSlice';
 import {
   songColumnPicker,
   songColumnListAuto,
@@ -290,6 +297,15 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
   const [dynamicBackgroundChk, setDynamicBackgroundChk] = useState(
     Boolean(settings.get('dynamicBackground'))
   );
+  const [retainWindowSizeChk, setRetainWindowSizeChk] = useState(
+    Boolean(settings.get('retainWindowSize'))
+  );
+  const [defaultWindowHeight, setDefaultWindowHeightValue] = useState(
+    Number(settings.get('defaultWindowHeight'))
+  );
+  const [defaultWindowWidth, setDefaultWindowWidthValue] = useState(
+    Number(settings.get('defaultWindowWidth'))
+  );
 
   const [selectedTheme, setSelectedTheme] = useState(String(settings.get('theme')));
   const languagePickerContainerRef = useRef(null);
@@ -477,6 +493,68 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
               settings.set('dynamicBackground', e);
               dispatch(setDynamicBackground(e));
               setDynamicBackgroundChk(e);
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={t('Retain Window Size')}
+        description={t(
+          'Retains the size and position of the application window. Size is only saved when the program is exited properly!'
+        )}
+        option={
+          <StyledToggle
+            defaultChecked={retainWindowSizeChk}
+            checked={retainWindowSizeChk}
+            onChange={(e: boolean) => {
+              settings.set('retainWindowSize', e);
+              dispatch(setRetainWindowSize(e));
+              setRetainWindowSizeChk(e);
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={t('Default Window Width')}
+        description={t(
+          'The default width to use when Retain Window Size is disabled. Default: 1024'
+        )}
+        option={
+          <StyledInputNumber
+            defaultValue={defaultWindowWidth}
+            value={defaultWindowWidth}
+            step={1}
+            min={768}
+            max={7680}
+            width={125}
+            onChange={(e: number) => {
+              settings.set('defaultWindowWidth', Number(e));
+              dispatch(setDefaultWindowWidth(Number(e)));
+              setDefaultWindowWidthValue(Number(e));
+            }}
+          />
+        }
+      />
+
+      <ConfigOption
+        name={t('Default Window Height')}
+        description={t(
+          'The default height to use when Retain Window Size is disabled. Default: 728'
+        )}
+        option={
+          <StyledInputNumber
+            defaultValue={defaultWindowHeight}
+            value={defaultWindowHeight}
+            step={1}
+            min={600}
+            max={7680}
+            width={125}
+            onChange={(e: number) => {
+              settings.set('defaultWindowHeight', Number(e));
+              dispatch(setDefaultWindowHeight(Number(e)));
+              setDefaultWindowHeightValue(Number(e));
             }}
           />
         }

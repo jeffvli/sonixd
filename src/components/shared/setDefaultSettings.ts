@@ -125,6 +125,11 @@ interface Settings {
   themes: any[];
   themesDefault: any[];
   infoMode?: boolean;
+  retainWindowSize: boolean;
+  defaultWindowWidth: number;
+  defaultWindowHeight: number;
+  savedWindowSize: number[];
+  savedWindowPos: number[];
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -241,6 +246,11 @@ const DEFAULT_SETTINGS: Settings = {
   miniListRowHeight: '40',
   genreListFontSize: '14',
   genreListRowHeight: '50',
+  retainWindowSize: false,
+  defaultWindowWidth: 1280,
+  defaultWindowHeight: 720,
+  savedWindowSize: [1280, 720],
+  savedWindowPos: [50, 50],
   themes: [],
   themesDefault: [
     {
@@ -1720,6 +1730,26 @@ export const setDefaultSettings = (force: boolean) => {
 
   if (force || !settings.has('titleBarStyle')) {
     settings.set('titleBarStyle', isMacOS() ? 'mac' : 'windows');
+  }
+
+  if (force || !settings.has('retainWindowSize')) {
+    settings.set('retainWindowSize', false);
+  }
+
+  if (force || !settings.has('defaultWindowWidth')) {
+    settings.set('defaultWindowWidth', 1280);
+  }
+
+  if (force || !settings.has('defaultWindowHeight')) {
+    settings.set('defaultWindowHeight', 720);
+  }
+
+  if (force || !settings.has('savedWindowSize')) {
+    settings.set('savedWindowSize', [1280, 720]);
+  }
+
+  if (force || !settings.has('savedWindowPos')) {
+    settings.set('savedWindowPos', [50, 50]);
   }
 
   if (force || !settings.has('musicListColumns')) {

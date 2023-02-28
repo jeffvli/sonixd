@@ -52,6 +52,11 @@ export interface General {
   isProcessingPlaylist: string[];
   contextMenu: ContextMenu;
   dynamicBackground: boolean;
+  retainWindowSize: boolean;
+  savedWindowSize: number[];
+  savedWindowPos: number[];
+  defaultWindowWidth: number;
+  defaultWindowHeight: number;
   highlightOnRowHover: boolean;
   imageCachePath: string;
   songCachePath: string;
@@ -75,6 +80,11 @@ const initialState: General = {
     show: false,
   },
   dynamicBackground: Boolean(parsedSettings.dynamicBackground),
+  retainWindowSize: Boolean(parsedSettings.retainWindowSize),
+  savedWindowSize: Array(parsedSettings.savedWindowSize),
+  savedWindowPos: Array(parsedSettings.savedWindowPos),
+  defaultWindowWidth: Number(parsedSettings.defaultWindowWidth),
+  defaultWindowHeight: Number(parsedSettings.defaultWindowHeight),
   highlightOnRowHover: Boolean(parsedSettings.highlightOnRowHover),
   imageCachePath: getImageCachePath(),
   songCachePath: getSongCachePath(),
@@ -88,6 +98,22 @@ const miscSlice = createSlice({
   reducers: {
     setDynamicBackground: (state, action: PayloadAction<boolean>) => {
       state.dynamicBackground = action.payload;
+    },
+
+    setRetainWindowSize: (state, action: PayloadAction<boolean>) => {
+      state.retainWindowSize = action.payload;
+    },
+    savedWindowSize: (state, action: PayloadAction<Array<number>>) => {
+      state.savedWindowSize = action.payload;
+    },
+    savedWindowPos: (state, action: PayloadAction<Array<number>>) => {
+      state.savedWindowPos = action.payload;
+    },
+    setDefaultWindowWidth: (state, action: PayloadAction<number>) => {
+      state.defaultWindowWidth = action.payload;
+    },
+    setDefaultWindowHeight: (state, action: PayloadAction<number>) => {
+      state.defaultWindowHeight = action.payload;
     },
 
     setMiscSetting: (state, action: PayloadAction<{ setting: string; value: any }>) => {
@@ -196,7 +222,12 @@ export const {
   removeProcessingPlaylist,
   setContextMenu,
   setDynamicBackground,
+  savedWindowSize,
+  savedWindowPos,
+  setDefaultWindowWidth,
+  setDefaultWindowHeight,
   setMiscSetting,
   setImgModal,
+  setRetainWindowSize,
 } = miscSlice.actions;
 export default miscSlice.reducer;

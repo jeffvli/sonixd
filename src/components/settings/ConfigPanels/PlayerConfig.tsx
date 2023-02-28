@@ -165,14 +165,7 @@ const PlayerConfig = ({ bordered }: any) => {
       />
       <ConfigOption
         name={t('Resume Playback')}
-        description={
-          <Trans>
-            Remember play queue on startup. The current Now Playing queue will be saved on exiting,
-            and will be restored when you reopen Sonixd. Be warned that you should manually close
-            Sonixd for the queue to be saved. An improper shutdown (such as the app closing during a
-            shutdown or force quitting) may result in history not being saved.
-          </Trans>
-        }
+        description={t('Resumes the player queue on startup.')}
         option={
           <StyledToggle
             defaultChecked={resume}
