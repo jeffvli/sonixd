@@ -1,7 +1,7 @@
 import React from 'react';
-import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import { StyledButton } from '../shared/styled';
+import { settings } from '../shared/setDefaultSettings';
 
 export const handleDisconnect = () => {
   localStorage.removeItem('server');
@@ -12,18 +12,18 @@ export const handleDisconnect = () => {
   localStorage.removeItem('hash');
   localStorage.removeItem('token');
 
-  settings.setSync('server', '');
-  settings.setSync('serverBase64', '');
-  settings.setSync('username', '');
-  settings.setSync('userId', '');
-  settings.setSync('password', '');
-  settings.setSync('salt', '');
-  settings.setSync('hash', '');
-  settings.setSync('token', '');
+  settings.set('server', '');
+  settings.set('serverBase64', '');
+  settings.set('username', '');
+  settings.set('userId', '');
+  settings.set('password', '');
+  settings.set('salt', '');
+  settings.set('hash', '');
+  settings.set('token', '');
 
   // Remove the selected musicFolder on disconnect since it will cause conflicts with other servers
-  settings.setSync('musicFolder.id', null);
-  settings.setSync('musicFolder.name', null);
+  settings.set('musicFolder.id', null);
+  settings.set('musicFolder.name', null);
   window.location.reload();
 };
 

@@ -4,9 +4,11 @@ import os from 'os';
 import path from 'path';
 import moment from 'moment';
 import arrayMove from 'array-move';
-import settings from 'electron-settings';
+// eslint-disable-next-line import/no-cycle
 import i18n from '../i18n/i18n';
 import { mockSettings } from './mockSettings';
+// eslint-disable-next-line import/no-cycle
+import { settings } from '../components/shared/setDefaultSettings';
 
 export const isCached = (filePath: string) => {
   return fs.existsSync(filePath);
@@ -14,14 +16,12 @@ export const isCached = (filePath: string) => {
 
 export const getRootCachePath = () => {
   const baseCachePath =
-    process.env.NODE_ENV === 'test'
-      ? mockSettings.cachePath
-      : String(settings.getSync('cachePath'));
+    process.env.NODE_ENV === 'test' ? mockSettings.cachePath : String(settings.get('cachePath'));
 
   const serverBase64 =
     process.env.NODE_ENV === 'test'
       ? mockSettings.serverBase64
-      : String(settings.getSync('serverBase64'));
+      : String(settings.get('serverBase64'));
 
   return path.join(baseCachePath, 'sonixdCache', serverBase64);
 };

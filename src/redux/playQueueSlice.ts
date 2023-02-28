@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
 import {
   filterPlayQueue,
@@ -11,8 +10,9 @@ import {
 } from '../shared/utils';
 import { mockSettings } from '../shared/mockSettings';
 import { Song } from '../types';
+import { settings } from '../components/shared/setDefaultSettings';
 
-const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
+const parsedSettings = process.env.NODE_ENV === 'test' ? mockSettings : settings.store;
 
 export interface PlayQueue {
   player1: {

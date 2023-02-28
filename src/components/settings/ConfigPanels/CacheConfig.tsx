@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import settings from 'electron-settings';
 import { shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
@@ -20,6 +19,7 @@ import { notifyToast } from '../../shared/toast';
 import { setMiscSetting } from '../../../redux/miscSlice';
 import { useAppDispatch } from '../../../redux/hooks';
 import Popup from '../../shared/Popup';
+import { settings } from '../../shared/setDefaultSettings';
 
 const fsUtils = require('nodejs-fs-utils');
 
@@ -31,8 +31,8 @@ const CacheConfig = ({ bordered }: any) => {
   const [isEditingCachePath, setIsEditingCachePath] = useState(false);
   const [newCachePath, setNewCachePath] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [cacheSongs, setCacheSongs] = useState(Boolean(settings.getSync('cacheSongs')));
-  const [cacheImages, setCacheImages] = useState(Boolean(settings.getSync('cacheImages')));
+  const [cacheSongs, setCacheSongs] = useState(Boolean(settings.get('cacheSongs')));
+  const [cacheImages, setCacheImages] = useState(Boolean(settings.get('cacheImages')));
 
   useEffect(() => {
     // Retrieve cache sizes on render
@@ -127,7 +127,7 @@ const CacheConfig = ({ bordered }: any) => {
               onClick={() => {
                 const check = fs.existsSync(newCachePath);
                 if (check) {
-                  settings.setSync('cachePath', newCachePath);
+                  settings.set('cachePath', newCachePath);
                   fs.mkdirSync(getSongCachePath(), { recursive: true });
                   fs.mkdirSync(getImageCachePath(), { recursive: true });
                   dispatch(
@@ -157,8 +157,8 @@ const CacheConfig = ({ bordered }: any) => {
             </StyledInputGroupButton>
             <StyledInputGroupButton
               onClick={() => {
-                const defaultPath = path.join(path.dirname(settings.file()));
-                settings.setSync('cachePath', defaultPath);
+                const defaultPath = path.join(path.dirname(settings.path));
+                settings.set('cachePath', defaultPath);
                 dispatch(setMiscSetting({ setting: 'imageCachePath', value: getImageCachePath() }));
                 dispatch(setMiscSetting({ setting: 'songCachePath', value: getSongCachePath() }));
                 setErrorMessage('');
@@ -187,7 +187,7 @@ const CacheConfig = ({ bordered }: any) => {
         <StyledCheckbox
           defaultChecked={cacheSongs}
           onChange={(_v: any, e: boolean) => {
-            settings.setSync('cacheSongs', e);
+            settings.set('cacheSongs', e);
             setCacheSongs(e);
           }}
         >
@@ -199,7 +199,7 @@ const CacheConfig = ({ bordered }: any) => {
         <StyledCheckbox
           defaultChecked={cacheImages}
           onChange={(_v: any, e: boolean) => {
-            settings.setSync('cacheImages', e);
+            settings.set('cacheImages', e);
             setCacheImages(e);
           }}
         >

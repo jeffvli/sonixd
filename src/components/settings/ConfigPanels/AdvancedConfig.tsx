@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import settings from 'electron-settings';
 import { Icon } from 'rsuite';
-import { shell } from 'electron';
 import { useTranslation } from 'react-i18next';
 import { ConfigPanel } from '../styled';
 import { StyledButton, StyledToggle } from '../../shared/styled';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
+import { settings } from '../../shared/setDefaultSettings';
 
 const AdvancedConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [showDebugWindow, setShowDebugWindow] = useState(
-    Boolean(settings.getSync('showDebugWindow'))
-  );
-  const [autoUpdate, setAutoUpdate] = useState(Boolean(settings.getSync('autoUpdate')));
+  const [showDebugWindow, setShowDebugWindow] = useState(Boolean(settings.get('showDebugWindow')));
+  const [autoUpdate, setAutoUpdate] = useState(Boolean(settings.get('autoUpdate')));
 
   return (
     <ConfigPanel bordered={bordered} header={t('Advanced')}>
@@ -29,7 +26,7 @@ const AdvancedConfig = ({ bordered }: any) => {
             defaultChecked={autoUpdate}
             checked={autoUpdate}
             onChange={(e: boolean) => {
-              settings.setSync('autoUpdate', e);
+              settings.set('autoUpdate', e);
               setAutoUpdate(e);
             }}
           />
@@ -44,7 +41,7 @@ const AdvancedConfig = ({ bordered }: any) => {
             defaultChecked={showDebugWindow}
             checked={showDebugWindow}
             onChange={(e: boolean) => {
-              settings.setSync('showDebugWindow', e);
+              settings.set('showDebugWindow', e);
               dispatch(
                 setPlaybackSetting({
                   setting: 'showDebugWindow',
@@ -58,7 +55,7 @@ const AdvancedConfig = ({ bordered }: any) => {
       />
 
       <br />
-      <StyledButton appearance="primary" onClick={() => shell.openPath(settings.file())}>
+      <StyledButton appearance="primary" onClick={() => settings.openInEditor()}>
         {t('Open settings JSON')} <Icon icon="external-link" />
       </StyledButton>
     </ConfigPanel>

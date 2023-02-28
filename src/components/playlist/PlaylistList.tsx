@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { Form, Whisper } from 'rsuite';
-import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import ListViewType from '../viewtypes/ListViewType';
@@ -21,6 +20,7 @@ import { setSort } from '../../redux/playlistSlice';
 import ColumnSortPopover from '../shared/ColumnSortPopover';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
+import { settings } from '../shared/setDefaultSettings';
 
 const PlaylistList = () => {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ const PlaylistList = () => {
   const playlist = useAppSelector((state) => state.playlist);
   const playlistTriggerRef = useRef<any>();
   const [newPlaylistName, setNewPlaylistName] = useState('');
-  const [viewType, setViewType] = useState(settings.getSync('playlistViewType') || 'list');
+  const [viewType, setViewType] = useState(settings.get('playlistViewType') || 'list');
   const {
     isLoading,
     isError,
@@ -201,7 +201,7 @@ const PlaylistList = () => {
           rowHeight={config.lookAndFeel.listView.playlist.rowHeight}
           fontSize={config.lookAndFeel.listView.playlist.fontSize}
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'playlist',
             cacheIdProperty: 'id',
           }}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { useQueryClient } from 'react-query';
-import settings from 'electron-settings';
 import { FlexboxGrid, Grid, Row, Col, Whisper, Icon } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -37,6 +36,7 @@ import usePlayQueueHandler from '../../hooks/usePlayQueueHandler';
 import { apiController } from '../../api/controller';
 import Slider from '../slider/Slider';
 import useDiscordRpc from '../../hooks/useDiscordRpc';
+import { settings } from '../shared/setDefaultSettings';
 
 const PlayerBar = () => {
   const { t } = useTranslation();
@@ -49,7 +49,7 @@ const PlayerBar = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
   const [currentEntryList, setCurrentEntryList] = useState('entry');
-  const [localVolume, setLocalVolume] = useState(Number(settings.getSync('volume')));
+  const [localVolume, setLocalVolume] = useState(Number(settings.get('volume')));
   const [muted, setMuted] = useState(false);
   const [showCoverArtModal, setShowCoverArtModal] = useState(false);
   const [showLyricsModal, setShowLyricsModal] = useState(false);
@@ -215,7 +215,7 @@ const PlayerBar = () => {
           playersRef.current.player2.audioEl.current.volume = localVolume ** 2;
         }
 
-        settings.setSync('volume', localVolume);
+        settings.set('volume', localVolume);
       }
       setIsDraggingVolume(false);
     }, 100);
@@ -278,7 +278,7 @@ const PlayerBar = () => {
                           size="xs"
                           onClick={() => {
                             dispatch(setSidebar({ coverArt: true }));
-                            settings.setSync('sidebar.coverArt', true);
+                            settings.set('sidebar.coverArt', true);
                           }}
                         >
                           <Icon icon="up" />

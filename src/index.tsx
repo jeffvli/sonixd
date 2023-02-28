@@ -1,6 +1,5 @@
 import React from 'react';
-import settings from 'electron-settings';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { HelmetProvider } from 'react-helmet-async';
@@ -16,18 +15,13 @@ const queryClient = new QueryClient({
   },
 });
 
-settings.configure({
-  prettify: true,
-  numSpaces: 2,
-});
-
-render(
+const root = createRoot(document.getElementById('root')!);
+root.render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <App />
       </HelmetProvider>
     </QueryClientProvider>
-  </Provider>,
-  document.getElementById('root')
+  </Provider>
 );

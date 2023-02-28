@@ -1,3 +1,18 @@
+jest.mock('electron', () => {
+  const originalModule = jest.requireActual('electron');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    ipcRenderer: {
+      on: jest.fn(),
+      sendSync: jest.fn(),
+      removeAllListeners: jest.fn(),
+    },
+  };
+});
+
+/* eslint-disable import/first */
 import React from 'react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
@@ -16,6 +31,7 @@ import App from '../App';
 import { Server } from '../types';
 import { ArtistPage } from '../redux/artistSlice';
 import { View } from '../redux/viewSlice';
+/* eslint-enable import/first */
 
 const middlewares: Middleware<Record<string, unknown>, any, Dispatch<AnyAction>>[] | undefined = [];
 const mockStore = configureMockStore(middlewares);

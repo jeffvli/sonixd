@@ -2,9 +2,20 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Button, Checkbox, Divider, FlexboxGrid, Panel, Slider } from 'rsuite';
 import { useTranslation } from 'react-i18next';
+import {
+  Chart,
+  CategoryScale,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+} from 'chart.js';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import CustomTooltip from '../shared/CustomTooltip';
 import { setFadeData } from '../../redux/playQueueSlice';
+
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Legend);
 
 const DebugWindow = ({ ...rest }) => {
   const { t } = useTranslation();

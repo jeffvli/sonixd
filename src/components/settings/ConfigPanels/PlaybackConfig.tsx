@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import settings from 'electron-settings';
 import { ButtonToolbar } from 'rsuite';
 import { useTranslation } from 'react-i18next';
 import { ConfigPanel } from '../styled';
@@ -13,22 +12,19 @@ import {
 import { useAppDispatch } from '../../../redux/hooks';
 import { setPlaybackSetting } from '../../../redux/playQueueSlice';
 import ConfigOption from '../ConfigOption';
+import { settings } from '../../shared/setDefaultSettings';
 
 const PlaybackConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [crossfadeDuration, setCrossfadeDuration] = useState(
-    Number(settings.getSync('fadeDuration'))
-  );
-  const [pollingInterval, setPollingInterval] = useState(
-    Number(settings.getSync('pollingInterval'))
-  );
-  const [volumeFade, setVolumeFade] = useState(Boolean(settings.getSync('volumeFade')));
+  const [crossfadeDuration, setCrossfadeDuration] = useState(Number(settings.get('fadeDuration')));
+  const [pollingInterval, setPollingInterval] = useState(Number(settings.get('pollingInterval')));
+  const [volumeFade, setVolumeFade] = useState(Boolean(settings.get('volumeFade')));
   const crossfadePickerContainerRef = useRef(null);
 
   const handleSetCrossfadeDuration = (e: number) => {
     setCrossfadeDuration(e);
-    settings.setSync('fadeDuration', Number(e));
+    settings.set('fadeDuration', Number(e));
     dispatch(
       setPlaybackSetting({
         setting: 'fadeDuration',
@@ -39,7 +35,7 @@ const PlaybackConfig = ({ bordered }: any) => {
 
   const handleSetPollingInterval = (e: number) => {
     setPollingInterval(e);
-    settings.setSync('pollingInterval', Number(e));
+    settings.set('pollingInterval', Number(e));
     dispatch(
       setPlaybackSetting({
         setting: 'pollingInterval',
@@ -50,7 +46,7 @@ const PlaybackConfig = ({ bordered }: any) => {
 
   const handleSetVolumeFade = (e: boolean) => {
     setVolumeFade(e);
-    settings.setSync('volumeFade', e);
+    settings.set('volumeFade', e);
     dispatch(setPlaybackSetting({ setting: 'volumeFade', value: e }));
   };
 
@@ -133,10 +129,10 @@ const PlaybackConfig = ({ bordered }: any) => {
                   },
                 ]}
                 cleanable={false}
-                defaultValue={String(settings.getSync('fadeType'))}
+                defaultValue={String(settings.get('fadeType'))}
                 placeholder={t('Select')}
                 onChange={(e: string) => {
-                  settings.setSync('fadeType', e);
+                  settings.set('fadeType', e);
                   dispatch(setPlaybackSetting({ setting: 'fadeType', value: e }));
                 }}
                 width={200}

@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import settings from 'electron-settings';
 import { ipcRenderer } from 'electron';
 import { deflate, inflate } from 'zlib';
 import { join } from 'path';
@@ -19,6 +18,7 @@ import {
 import { setStatus } from '../redux/playerSlice';
 import { apiController } from '../api/controller';
 import { Server } from '../types';
+import { settings } from '../components/shared/setDefaultSettings';
 
 const usePlayerControls = (
   config: any,
@@ -120,6 +120,8 @@ const usePlayerControls = (
   const handlePlayPause = useCallback(() => {
     if (playQueue[currentEntryList].length > 0) {
       if (player.status === 'PAUSED') {
+        navigator.mediaSession.playbackState = 'playing';
+
         dispatch(setStatus('PLAYING'));
 
         ipcRenderer.send('playpause', {
@@ -130,6 +132,8 @@ const usePlayerControls = (
               : Math.floor(playersRef.current.player2.audioEl.current.currentTime * 1000000),
         });
       } else {
+        navigator.mediaSession.playbackState = 'paused';
+
         dispatch(setStatus('PAUSED'));
         ipcRenderer.send('playpause', {
           status: 'PAUSED',
@@ -143,6 +147,8 @@ const usePlayerControls = (
   }, [currentEntryList, dispatch, playQueue, player.status, playersRef]);
 
   const handlePlay = useCallback(() => {
+    navigator.mediaSession.playbackState = 'playing';
+
     ipcRenderer.send('playpause', {
       status: 'PLAYING',
       position:
@@ -155,6 +161,8 @@ const usePlayerControls = (
   }, [dispatch, playQueue.currentPlayer, playersRef]);
 
   const handlePause = useCallback(() => {
+    navigator.mediaSession.playbackState = 'paused';
+
     ipcRenderer.send('playpause', {
       status: 'PAUSED',
       position:
@@ -173,6 +181,8 @@ const usePlayerControls = (
     playersRef.current.player1.audioEl.current.currentTime = 0;
     setCurrentTime(0);
 
+    navigator.mediaSession.playbackState = 'paused';
+
     ipcRenderer.send('playpause', {
       status: 'PAUSED',
       position: 0,
@@ -184,7 +194,7 @@ const usePlayerControls = (
   }, [dispatch, playersRef, setCurrentTime]);
 
   const handleSeekBackward = useCallback(() => {
-    const seekBackwardInterval = Number(settings.getSync('seekBackwardInterval'));
+    const seekBackwardInterval = Number(settings.get('seekBackwardInterval'));
     if (playQueue[currentEntryList].length > 0) {
       if (playQueue.isFading) {
         if (playQueue.currentPlayer === 1) {
@@ -214,7 +224,7 @@ const usePlayerControls = (
 
   const handleSeekForward = useCallback(() => {
     if (playQueue[currentEntryList].length > 0) {
-      const seekForwardInterval = Number(settings.getSync('seekForwardInterval'));
+      const seekForwardInterval = Number(settings.get('seekForwardInterval'));
 
       if (playQueue.isFading) {
         if (playQueue.currentPlayer === 1) {
@@ -320,15 +330,15 @@ const usePlayerControls = (
   );
 
   const handleRepeat = useCallback(() => {
-    const currentRepeat = settings.getSync('repeat');
+    const currentRepeat = settings.get('repeat');
     const newRepeat = currentRepeat === 'none' ? 'all' : currentRepeat === 'all' ? 'one' : 'none';
     dispatch(toggleRepeat());
-    settings.setSync('repeat', newRepeat);
+    settings.set('repeat', newRepeat);
   }, [dispatch]);
 
   const handleShuffle = useCallback(() => {
     dispatch(toggleShuffle());
-    settings.setSync('shuffle', !settings.getSync('shuffle'));
+    settings.set('shuffle', !settings.get('shuffle'));
   }, [dispatch]);
 
   const handleDisplayQueue = () => {
@@ -476,6 +486,30 @@ const usePlayerControls = (
     handleSaveQueue,
     handleRestoreQueue,
   ]);
+
+  useEffect(() => {
+    const media = navigator.mediaSession;
+
+    media.setActionHandler('play', () => {
+      handlePlay();
+    });
+
+    media.setActionHandler('pause', () => {
+      handlePause();
+    });
+
+    media.setActionHandler('stop', () => {
+      handleStop();
+    });
+
+    media.setActionHandler('nexttrack', () => {
+      handleNextTrack();
+    });
+
+    media.setActionHandler('previoustrack', () => {
+      handlePrevTrack();
+    });
+  }, [handlePlay, handlePause, handleStop, handleNextTrack, handlePrevTrack]);
 
   useEffect(() => {
     ipcRenderer.on('current-position-request', (_event, arg) => {

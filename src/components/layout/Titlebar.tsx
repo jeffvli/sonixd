@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ipcRenderer } from 'electron';
 import {
   TitleHeader,
   DragRegion,
@@ -38,6 +39,21 @@ const Titlebar = ({ font }: any) => {
     document.title = `${playStatus} ${songTitle}`.trim();
   }, [playQueue, player.status, t]);
 
+  useEffect(() => {
+    ipcRenderer.on('maximize', () => {
+      document.body.classList.add('maximized');
+    });
+
+    ipcRenderer.on('unmaximize', () => {
+      document.body.classList.remove('maximized');
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('maximize');
+      ipcRenderer.removeAllListeners('unmaximize');
+    };
+  }, []);
+
   // if the titlebar is native return no custom titlebar
   if (misc.titleBar === 'native') {
     return null;
@@ -57,6 +73,7 @@ const Titlebar = ({ font }: any) => {
                 minButton
                 className="button"
                 id="min-button"
+                onClick={() => ipcRenderer.send('minimize')}
                 onMouseOver={() => setHoverMin(true)}
                 onMouseLeave={() => setHoverMin(false)}
               >
@@ -71,6 +88,7 @@ const Titlebar = ({ font }: any) => {
                 maxButton
                 className="button"
                 id="max-button"
+                onClick={() => ipcRenderer.send('maximize')}
                 onMouseOver={() => setHoverMax(true)}
                 onMouseLeave={() => setHoverMax(false)}
               >
@@ -85,6 +103,7 @@ const Titlebar = ({ font }: any) => {
                 restoreButton
                 className="button"
                 id="restore-button"
+                onClick={() => ipcRenderer.send('unmaximize')}
                 onMouseOver={() => setHoverMax(true)}
                 onMouseLeave={() => setHoverMax(false)}
               >
@@ -98,6 +117,7 @@ const Titlebar = ({ font }: any) => {
               <MacControlButton
                 className="button"
                 id="close-button"
+                onClick={() => ipcRenderer.send('close')}
                 onMouseOver={() => setHoverClose(true)}
                 onMouseLeave={() => setHoverClose(false)}
               >
@@ -121,7 +141,12 @@ const Titlebar = ({ font }: any) => {
               </span>
             </div>
             <WindowControl id="window-controls">
-              <WindowControlButton minButton className="button" id="min-button">
+              <WindowControlButton
+                minButton
+                className="button"
+                id="min-button"
+                onClick={() => ipcRenderer.send('minimize')}
+              >
                 <img
                   className="icon"
                   srcSet="img/icons/min-w-10.png 1x, img/icons/min-w-12.png 1.25x, img/icons/min-w-15.png 1.5x, img/icons/min-w-15.png 1.75x, img/icons/min-w-20.png 2x, img/icons/min-w-20.png 2.25x, img/icons/min-w-24.png 2.5x, img/icons/min-w-30.png 3x, img/icons/min-w-30.png 3.5x"
@@ -129,7 +154,12 @@ const Titlebar = ({ font }: any) => {
                   alt=""
                 />
               </WindowControlButton>
-              <WindowControlButton maxButton className="button" id="max-button">
+              <WindowControlButton
+                maxButton
+                className="button"
+                id="max-button"
+                onClick={() => ipcRenderer.send('maximize')}
+              >
                 <img
                   className="icon"
                   srcSet="img/icons/max-w-10.png 1x, img/icons/max-w-12.png 1.25x, img/icons/max-w-15.png 1.5x, img/icons/max-w-15.png 1.75x, img/icons/max-w-20.png 2x, img/icons/max-w-20.png 2.25x, img/icons/max-w-24.png 2.5x, img/icons/max-w-30.png 3x, img/icons/max-w-30.png 3.5x"
@@ -137,7 +167,12 @@ const Titlebar = ({ font }: any) => {
                   alt=""
                 />
               </WindowControlButton>
-              <WindowControlButton restoreButton className="button" id="restore-button">
+              <WindowControlButton
+                restoreButton
+                className="button"
+                id="restore-button"
+                onClick={() => ipcRenderer.send('unmaximize')}
+              >
                 <img
                   className="icon"
                   srcSet="img/icons/restore-w-10.png 1x, img/icons/restore-w-12.png 1.25x, img/icons/restore-w-15.png 1.5x, img/icons/restore-w-15.png 1.75x, img/icons/restore-w-20.png 2x, img/icons/restore-w-20.png 2.25x, img/icons/restore-w-24.png 2.5x, img/icons/restore-w-30.png 3x, img/icons/restore-w-30.png 3.5x"
@@ -145,7 +180,11 @@ const Titlebar = ({ font }: any) => {
                   alt=""
                 />
               </WindowControlButton>
-              <WindowControlButton className="button" id="close-button">
+              <WindowControlButton
+                className="button"
+                id="close-button"
+                onClick={() => ipcRenderer.send('close')}
+              >
                 <img
                   className="icon"
                   srcSet="img/icons/close-w-10.png 1x, img/icons/close-w-12.png 1.25x, img/icons/close-w-15.png 1.5x, img/icons/close-w-15.png 1.75x, img/icons/close-w-20.png 2x, img/icons/close-w-20.png 2.25x, img/icons/close-w-24.png 2.5x, img/icons/close-w-30.png 3x, img/icons/close-w-30.png 3.5x"

@@ -3,7 +3,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import styled from 'styled-components';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { nanoid } from 'nanoid';
@@ -67,6 +66,7 @@ import CoverArtCell from './TableCells/CoverArtCell';
 import TextCell from './TableCells/TextCell';
 import LinkCell from './TableCells/LinkCell';
 import CustomCell from './TableCells/CustomCell';
+import { settings } from '../shared/setDefaultSettings';
 
 const StyledTable = styled(Table)<{ rowHeight: number; $isDragging: boolean }>`
   .rs-table-row.selected {
@@ -521,6 +521,9 @@ const ListViewTable = ({
         }}
       >
         {columns.map((column: any) => (
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - children does actually exist, but rsuite expects react 16.
+          // Upgrading to rsuite 5 will come with some new changes (namely, different icons), so I will leave this in for now
           <Table.Column
             key={nanoid()}
             align={column.alignment}
@@ -536,9 +539,9 @@ const ListViewTable = ({
               );
 
               if (!miniView) {
-                settings.setSync(`${listType}ListColumns[${resizedColumnIndex}].width`, newWidth);
+                settings.set(`${listType}ListColumns[${resizedColumnIndex}].width`, newWidth);
               } else {
-                settings.setSync(`miniListColumns[${resizedColumnIndex}].width`, newWidth);
+                settings.set(`miniListColumns[${resizedColumnIndex}].width`, newWidth);
               }
 
               const newCols = configState.lookAndFeel.listView[

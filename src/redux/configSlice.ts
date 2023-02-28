@@ -1,11 +1,11 @@
 import { nanoid } from 'nanoid/non-secure';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import settings from 'electron-settings';
 import { mockSettings } from '../shared/mockSettings';
 import { moveSelectedToIndex } from '../shared/utils';
 import { Server } from '../types';
+import { settings } from '../components/shared/setDefaultSettings';
 
-const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.getSync();
+const parsedSettings: any = process.env.NODE_ENV === 'test' ? mockSettings : settings.store;
 
 export interface ConfigPage {
   active: {

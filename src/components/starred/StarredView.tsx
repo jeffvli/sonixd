@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useQuery, useQueryClient } from 'react-query';
 import { Nav } from 'rsuite';
-import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -23,6 +22,7 @@ import CenterLoader from '../loader/CenterLoader';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 const StarredView = () => {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ const StarredView = () => {
   const favorite = useAppSelector((state) => state.favorite);
   const config = useAppSelector((state) => state.config);
   const misc = useAppSelector((state) => state.misc);
-  const [viewType, setViewType] = useState(settings.getSync('albumViewType') || 'list');
+  const [viewType, setViewType] = useState(settings.get('albumViewType') || 'list');
   const [musicFolder, setMusicFolder] = useState(undefined);
 
   useEffect(() => {
@@ -283,7 +283,7 @@ const StarredView = () => {
               rowHeight={config.lookAndFeel.listView.music.rowHeight}
               fontSize={config.lookAndFeel.listView.music.fontSize}
               cacheImages={{
-                enabled: settings.getSync('cacheImages'),
+                enabled: settings.get('cacheImages'),
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
@@ -332,7 +332,7 @@ const StarredView = () => {
                     })
                   }
                   cacheImages={{
-                    enabled: settings.getSync('cacheImages'),
+                    enabled: settings.get('cacheImages'),
                     cacheType: 'album',
                     cacheIdProperty: 'albumId',
                   }}

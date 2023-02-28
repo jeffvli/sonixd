@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import settings from 'electron-settings';
 import { useQuery } from 'react-query';
 import { CheckboxGroup } from 'rsuite';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import { apiController } from '../../../api/controller';
 import { Folder, Server } from '../../../types';
 import ConfigOption from '../ConfigOption';
 import CenterLoader from '../../loader/CenterLoader';
+import { settings } from '../../shared/setDefaultSettings';
 
 const ServerConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -45,8 +45,8 @@ const ServerConfig = ({ bordered }: any) => {
               placeholder={t('Select')}
               onChange={(e: string) => {
                 const selectedFolder = musicFolders.find((f: Folder) => f.id === e);
-                settings.setSync('musicFolder.id', e);
-                settings.setSync('musicFolder.name', selectedFolder?.title);
+                settings.set('musicFolder.id', e);
+                settings.set('musicFolder.name', selectedFolder?.title);
                 dispatch(setMusicFolder({ id: e, name: selectedFolder?.title }));
               }}
             />
@@ -63,7 +63,7 @@ const ServerConfig = ({ bordered }: any) => {
             defaultChecked={folder.applied.albums}
             onChange={(_v: any, e: boolean) => {
               dispatch(setAppliedFolderViews({ ...folder.applied, albums: e }));
-              settings.setSync('musicFolder.albums', e);
+              settings.set('musicFolder.albums', e);
             }}
           >
             {t('Albums')}
@@ -72,7 +72,7 @@ const ServerConfig = ({ bordered }: any) => {
             defaultChecked={folder.applied.artists}
             onChange={(_v: any, e: boolean) => {
               dispatch(setAppliedFolderViews({ ...folder.applied, artists: e }));
-              settings.setSync('musicFolder.artists', e);
+              settings.set('musicFolder.artists', e);
             }}
           >
             {t('Artists')}
@@ -81,7 +81,7 @@ const ServerConfig = ({ bordered }: any) => {
             defaultChecked={folder.applied.dashboard}
             onChange={(_v: any, e: boolean) => {
               dispatch(setAppliedFolderViews({ ...folder.applied, dashboard: e }));
-              settings.setSync('musicFolder.dashboard', e);
+              settings.set('musicFolder.dashboard', e);
             }}
           >
             {t('Dashboard')}
@@ -90,7 +90,7 @@ const ServerConfig = ({ bordered }: any) => {
             defaultChecked={folder.applied.starred}
             onChange={(_v: any, e: boolean) => {
               dispatch(setAppliedFolderViews({ ...folder.applied, starred: e }));
-              settings.setSync('musicFolder.starred', e);
+              settings.set('musicFolder.starred', e);
             }}
           >
             {t('Favorites')}
@@ -99,7 +99,7 @@ const ServerConfig = ({ bordered }: any) => {
             defaultChecked={folder.applied.search}
             onChange={(_v: any, e: boolean) => {
               dispatch(setAppliedFolderViews({ ...folder.applied, search: e }));
-              settings.setSync('musicFolder.search', e);
+              settings.set('musicFolder.search', e);
             }}
           >
             {t('Search')}
@@ -109,7 +109,7 @@ const ServerConfig = ({ bordered }: any) => {
               defaultChecked={folder.applied.music}
               onChange={(_v: any, e: boolean) => {
                 dispatch(setAppliedFolderViews({ ...folder.applied, music: e }));
-                settings.setSync('musicFolder.music', e);
+                settings.set('musicFolder.music', e);
               }}
             >
               {t('Songs')}

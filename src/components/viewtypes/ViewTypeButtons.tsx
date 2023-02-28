@@ -1,7 +1,7 @@
 import React from 'react';
 import { ButtonGroup, Icon } from 'rsuite';
-import settings from 'electron-settings';
 import { StyledButton } from '../shared/styled';
+import { settings } from '../shared/setDefaultSettings';
 
 const ViewTypeButtons = ({ handleListClick, handleGridClick, viewTypeSetting }: any) => {
   return (
@@ -12,7 +12,7 @@ const ViewTypeButtons = ({ handleListClick, handleGridClick, viewTypeSetting }: 
         onClick={async () => {
           handleListClick();
           localStorage.setItem(`${viewTypeSetting}ViewType`, 'list');
-          settings.setSync(`${viewTypeSetting}ViewType`, 'list');
+          settings.set(`${viewTypeSetting}ViewType`, 'list');
         }}
       >
         <Icon icon="list" />
@@ -23,7 +23,7 @@ const ViewTypeButtons = ({ handleListClick, handleGridClick, viewTypeSetting }: 
         onClick={async () => {
           handleGridClick();
           localStorage.setItem(`${viewTypeSetting}ViewType`, 'grid');
-          settings.setSync(`${viewTypeSetting}ViewType`, 'grid');
+          settings.set(`${viewTypeSetting}ViewType`, 'grid');
         }}
       >
         <Icon icon="th-large" />

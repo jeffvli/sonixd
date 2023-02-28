@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid/non-secure';
-import settings from 'electron-settings';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../i18n/i18n';
 import {
@@ -21,6 +20,7 @@ import {
 } from '../../../redux/configSlice';
 import ConfigOption from '../ConfigOption';
 import useListClickHandler from '../../../hooks/useListClickHandler';
+import { settings } from '../../shared/setDefaultSettings';
 
 const columnSelectorColumns = [
   {
@@ -73,10 +73,7 @@ const ListViewConfig = ({
 
     setSelectedColumns(cols);
 
-    settings.setSync(
-      settingsConfig.columnList,
-      config.lookAndFeel.listView[columnListType].columns
-    );
+    settings.set(settingsConfig.columnList, config.lookAndFeel.listView[columnListType].columns);
   }, [columnListType, config.lookAndFeel.listView, settingsConfig.columnList]);
 
   const { handleRowClick } = useListClickHandler({});
@@ -146,7 +143,7 @@ const ListViewConfig = ({
                 });
 
                 dispatch(setColumnList({ listType: columnListType, entries: columns }));
-                settings.setSync(settingsConfig.columnList, cleanColumns);
+                settings.set(settingsConfig.columnList, cleanColumns);
               }}
               labelKey="label"
               valueKey="label"
@@ -189,7 +186,7 @@ const ListViewConfig = ({
             max={250}
             width={125}
             onChange={(e: number) => {
-              settings.setSync(settingsConfig.rowHeight, Number(e));
+              settings.set(settingsConfig.rowHeight, Number(e));
               dispatch(setRowHeight({ listType: columnListType, height: Number(e) }));
             }}
           />
@@ -207,7 +204,7 @@ const ListViewConfig = ({
             max={100}
             width={125}
             onChange={(e: number) => {
-              settings.setSync(settingsConfig.fontSize, Number(e));
+              settings.set(settingsConfig.fontSize, Number(e));
               dispatch(setFontSize({ listType: columnListType, size: Number(e) }));
             }}
           />

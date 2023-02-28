@@ -1,16 +1,14 @@
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { nanoid } from 'nanoid/non-secure';
 import axiosRetry from 'axios-retry';
 import { mockSettings } from '../shared/mockSettings';
 import { Item } from '../types';
+import { settings } from '../components/shared/setDefaultSettings';
 
 const legacyAuth =
-  process.env.NODE_ENV === 'test'
-    ? mockSettings.legacyAuth
-    : Boolean(settings.getSync('legacyAuth'));
+  process.env.NODE_ENV === 'test' ? mockSettings.legacyAuth : Boolean(settings.get('legacyAuth'));
 
 const getAuth = (useLegacyAuth: boolean) => {
   if (useLegacyAuth) {

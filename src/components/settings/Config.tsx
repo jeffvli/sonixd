@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import GenericPage from '../layout/GenericPage';
 import DisconnectButton from './DisconnectButton';
 import GenericPageHeader from '../layout/GenericPageHeader';
-import setDefaultSettings from '../shared/setDefaultSettings';
+import { setDefaultSettings } from '../shared/setDefaultSettings';
 import { StyledButton, StyledNavItem } from '../shared/styled';
 import PlaybackConfig from './ConfigPanels/PlaybackConfig';
 import LookAndFeelConfig from './ConfigPanels/LookAndFeelConfig';

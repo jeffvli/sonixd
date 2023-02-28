@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { Icon, Nav } from 'rsuite';
 import { useHistory } from 'react-router-dom';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
@@ -24,6 +23,7 @@ import useListClickHandler from '../../hooks/useListClickHandler';
 import ListViewType from '../viewtypes/ListViewType';
 import useFavorite from '../../hooks/useFavorite';
 import { useRating } from '../../hooks/useRating';
+import { settings } from '../shared/setDefaultSettings';
 
 const SearchView = () => {
   const { t } = useTranslation();
@@ -338,7 +338,7 @@ const SearchView = () => {
           }
           listType="music"
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}
@@ -386,7 +386,7 @@ const SearchView = () => {
           }
           listType="album"
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'album',
             cacheIdProperty: 'albumId',
           }}
@@ -434,7 +434,7 @@ const SearchView = () => {
           }
           listType="artist"
           cacheImages={{
-            enabled: settings.getSync('cacheImages'),
+            enabled: settings.get('cacheImages'),
             cacheType: 'artist',
             cacheIdProperty: 'id',
           }}

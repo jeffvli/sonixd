@@ -1,6 +1,5 @@
 import React from 'react';
-import { shell } from 'electron';
-import settings from 'electron-settings';
+import { ipcRenderer, shell } from 'electron';
 import { Icon, RadioGroup } from 'rsuite';
 import { Trans, useTranslation } from 'react-i18next';
 import { ConfigOptionDescription, ConfigPanel } from '../styled';
@@ -17,8 +16,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { setDiscord, setOBS } from '../../../redux/configSlice';
 import ConfigOption from '../ConfigOption';
 import { Server } from '../../../types';
-
-const dialog: any = process.env.NODE_ENV === 'test' ? '' : require('electron').remote.dialog;
+import { settings } from '../../shared/setDefaultSettings';
 
 const ExternalConfig = ({ bordered }: any) => {
   const { t } = useTranslation();
@@ -42,7 +40,7 @@ const ExternalConfig = ({ bordered }: any) => {
               checked={config.external.discord.enabled}
               disabled={config.external.discord.clientId.length !== 18}
               onChange={(e: boolean) => {
-                settings.setSync('discord.enabled', e);
+                settings.set('discord.enabled', e);
                 dispatch(setDiscord({ ...config.external.discord, enabled: e }));
               }}
             />
@@ -68,7 +66,7 @@ const ExternalConfig = ({ bordered }: any) => {
               value={config.external.discord.clientId}
               disabled={config.external.discord.enabled}
               onChange={(e: boolean) => {
-                settings.setSync('discord.clientId', e);
+                settings.set('discord.clientId', e);
                 dispatch(setDiscord({ ...config.external.discord, clientId: e }));
               }}
             />
@@ -88,7 +86,7 @@ const ExternalConfig = ({ bordered }: any) => {
                 defaultChecked={config.external.discord.serverImage}
                 checked={config.external.discord.serverImage}
                 onChange={(e: boolean) => {
-                  settings.setSync('discord.serverImage', e);
+                  settings.set('discord.serverImage', e);
                   dispatch(setDiscord({ ...config.external.discord, serverImage: e }));
                 }}
               />
@@ -106,7 +104,7 @@ const ExternalConfig = ({ bordered }: any) => {
                 defaultValue={config.external.obs.type}
                 value={config.external.obs.type}
                 onChange={(e: string) => {
-                  settings.setSync('obs.type', e);
+                  settings.set('obs.type', e);
                   dispatch(setOBS({ ...config.external.obs, type: e }));
                 }}
               >
@@ -124,7 +122,7 @@ const ExternalConfig = ({ bordered }: any) => {
                 defaultChecked={config.external.obs.enabled}
                 checked={config.external.obs.enabled}
                 onChange={(e: boolean) => {
-                  settings.setSync('obs.enabled', e);
+                  settings.set('obs.enabled', e);
                   dispatch(setOBS({ ...config.external.obs, enabled: e }));
                 }}
               />
@@ -145,7 +143,7 @@ const ExternalConfig = ({ bordered }: any) => {
               max={25000}
               width={125}
               onChange={(e: number) => {
-                settings.setSync('obs.pollingInterval', e);
+                settings.set('obs.pollingInterval', e);
                 dispatch(setOBS({ ...config.external.obs, pollingInterval: e }));
               }}
             />
@@ -162,7 +160,7 @@ const ExternalConfig = ({ bordered }: any) => {
                 placeholder="http://localhost:1608"
                 value={config.external.obs.url}
                 onChange={(e: string) => {
-                  settings.setSync('obs.url', e);
+                  settings.set('obs.url', e);
                   dispatch(setOBS({ ...config.external.obs, url: e }));
                 }}
               />
@@ -177,14 +175,17 @@ const ExternalConfig = ({ bordered }: any) => {
                 <StyledInput disabled width={200} value={config.external.obs.path} />
                 <StyledInputGroupButton
                   onClick={() => {
-                    const path = dialog.showOpenDialogSync({
-                      properties: ['openFile', 'openDirectory'],
-                    });
+                    ipcRenderer
+                      .invoke('file-path')
+                      .then((path) => {
+                        if (path) {
+                          settings.set('obs.path', path[0]);
+                          dispatch(setOBS({ ...config.external.obs, path: path[0] }));
+                        }
 
-                    if (path) {
-                      settings.setSync('obs.path', path[0]);
-                      dispatch(setOBS({ ...config.external.obs, path: path[0] }));
-                    }
+                        return null;
+                      })
+                      .catch((err) => console.log(err));
                   }}
                 >
                   <Icon icon="folder-open" />

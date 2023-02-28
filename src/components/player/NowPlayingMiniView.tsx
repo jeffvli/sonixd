@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import _ from 'lodash';
-import settings from 'electron-settings';
 import { ButtonToolbar, FlexboxGrid, Icon, Whisper, ControlLabel } from 'rsuite';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from 'react-query';
@@ -52,6 +51,7 @@ import { Server, Song } from '../../types';
 import useListClickHandler from '../../hooks/useListClickHandler';
 import Popup from '../shared/Popup';
 import useFavorite from '../../hooks/useFavorite';
+import { settings } from '../shared/setDefaultSettings';
 
 const NowPlayingMiniView = () => {
   const { t } = useTranslation();
@@ -62,7 +62,7 @@ const NowPlayingMiniView = () => {
   const config = useAppSelector((state) => state.config);
   const folder = useAppSelector((state) => state.folder);
   const [autoPlaylistTrackCount, setRandomPlaylistTrackCount] = useState(
-    Number(settings.getSync('randomPlaylistTrackCount'))
+    Number(settings.get('randomPlaylistTrackCount'))
   );
   const genrePickerContainerRef = useRef(null);
   const musicFolderPickerContainerRef = useRef(null);
@@ -118,7 +118,7 @@ const NowPlayingMiniView = () => {
 
   useEffect(() => {
     if (playQueue.scrollWithCurrentSong) {
-      const rowHeight = Number(settings.getSync('miniListRowHeight'));
+      const rowHeight = Number(settings.get('miniListRowHeight'));
       const scrollPosition =
         rowHeight * playQueue.currentIndex - rowHeight * 2 > 0
           ? rowHeight * playQueue.currentIndex - rowHeight * 2
@@ -273,7 +273,7 @@ const NowPlayingMiniView = () => {
                               defaultValue={autoPlaylistTrackCount}
                               value={autoPlaylistTrackCount}
                               onChange={(e: number) => {
-                                settings.setSync('randomPlaylistTrackCount', Number(e));
+                                settings.set('randomPlaylistTrackCount', Number(e));
                                 setRandomPlaylistTrackCount(Number(e));
                               }}
                             />
@@ -425,7 +425,7 @@ const NowPlayingMiniView = () => {
                       defaultChecked={playQueue.scrollWithCurrentSong}
                       checked={playQueue.scrollWithCurrentSong}
                       onChange={(_v: any, e: boolean) => {
-                        settings.setSync('scrollWithCurrentSong', e);
+                        settings.set('scrollWithCurrentSong', e);
                         dispatch(
                           setPlaybackSetting({
                             setting: 'scrollWithCurrentSong',
@@ -451,7 +451,7 @@ const NowPlayingMiniView = () => {
               rowHeight={config.lookAndFeel.listView.mini.rowHeight}
               fontSize={config.lookAndFeel.listView.mini.fontSize}
               cacheImages={{
-                enabled: settings.getSync('cacheImages'),
+                enabled: settings.get('cacheImages'),
                 cacheType: 'album',
                 cacheIdProperty: 'albumId',
               }}
