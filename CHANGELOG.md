@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.15.4] - 2023-02-28
+
+### Added
+
+- Some QOL improvements (#398) (Thanks @fishnxt)
+  - More consistent queue persistence behavior
+  - `Retain window size` setting to persist window size
+  - Default window width/height options
+
+### Fixed
+
+- Removed hard-coded discord rich presence appId length limit (#404)
+- Fixed Javascript application error when adding songs to the queue from double clicking on a non-title column
+
+### Other
+
+- Bump electron version from 13 -> 22 and other package upgrades (#397) (Thanks @kgnarner7)
+
 [0.15.3] - 2022-07-14
 
 ### Added
