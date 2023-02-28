@@ -943,6 +943,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -995,6 +996,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1039,6 +1041,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1076,6 +1079,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1114,6 +1118,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1152,6 +1157,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1214,6 +1220,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1251,6 +1258,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1289,6 +1297,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
@@ -1338,6 +1347,7 @@ const ListViewTable = ({
                         handleRowDoubleClick={() => {
                           handleRowDoubleClick({
                             ...rowData,
+                            tableData: sortColumn && !nowPlaying ? sortedData : data,
                             rowIndex,
                           });
                         }}
