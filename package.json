@@ -44,6 +44,7 @@
       "img/"
     ],
     "afterSign": ".erb/scripts/Notarize.js",
+    "electronVersion": "22.3.1",
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
@@ -325,5 +326,10 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "workspaces": {
+    "nohoist": [
+      "electron"
+    ]
   }
 }
