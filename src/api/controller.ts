@@ -66,6 +66,7 @@ import {
   getSongs as jfGetSongs,
   getSimilarSongs as jfGetSimilarSongs,
   getSongsByGenre as jfGetSongsByGenre,
+  getTopSongs as jfGetTopSongs,
 } from './jellyfinApi';
 import { APIEndpoints, ServerType } from '../types';
 
@@ -97,7 +98,7 @@ const endpoints = [
   { id: 'getMusicDirectorySongs', endpoint: { subsonic: getMusicDirectorySongs, jellyfin: jfGetMusicDirectorySongs } },
   { id: 'getDownloadUrl', endpoint: { subsonic: getDownloadUrl, jellyfin: jfGetDownloadUrl } },
   { id: 'getSongs', endpoint: { subsonic: undefined, jellyfin: jfGetSongs } },
-  { id: 'getTopSongs', endpoint: { subsonic: getTopSongs, jellyfin: undefined } },
+  { id: 'getTopSongs', endpoint: { subsonic: getTopSongs, jellyfin: jfGetTopSongs  } },
   { id: 'getSongsByGenre', endpoint: { subsonic: getSongsByGenre, jellyfin: jfGetSongsByGenre } },
   { id: 'getLyrics', endpoint: { subsonic: getLyrics, jellyfin: undefined } },
 

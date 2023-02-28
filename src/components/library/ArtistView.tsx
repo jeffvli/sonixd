@@ -91,9 +91,12 @@ const ArtistView = ({ ...rest }: any) => {
       apiController({
         serverType: config.serverType,
         endpoint: 'getTopSongs',
-        args: { artist: data?.title, count: 100 },
+        args: {
+          artist: config.serverType === Server.Jellyfin ? id : data?.title,
+          count: 100,
+        },
       }),
-    { enabled: Boolean(data?.title) }
+    { enabled: Boolean(data?.title || data?.id) }
   );
 
   const { data: allSongs } = useQuery(
@@ -799,7 +802,6 @@ const ArtistView = ({ ...rest }: any) => {
                   )}
                 </StyledPanel>
               )}
-
               {albumsByYearDesc.length > 0 && (
                 <StyledPanel>
                   <ScrollingMenu

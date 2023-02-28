@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - More consistent queue persistence behavior
   - `Retain window size` setting to persist window size
   - Default window width/height options
+- Added Top Songs list on the artist page for Jellyfin
 
 ### Fixed
 

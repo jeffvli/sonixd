@@ -537,7 +537,7 @@ export const StyledPanel = styled(Panel)<{ $maxWidth?: string }>`
   color: ${(props) => props.theme.colors.layout.page.color};
   border-radius: ${(props) => props.theme.other.panel.borderRadius};
   max-width: ${(props) => props.$maxWidth};
-  /* margin-bottom: 10px; */
+  margin-bottom: 15px;
 
   .rs-panel-heading {
     user-select: none;
