@@ -1,3 +1,12 @@
+# NOTICE: Maintenance Mode
+
+**The application is undergoing a full rewrite under the name Feishin.**
+[**Check it out here!**](https://github.com/jeffvli/feishin)
+
+Sonixd has entered maintenance mode as of 0.15.4. Only breaking bugs will be fixed. The application will continue to be available for download and use, but no new features will be added. The application will be maintained until the rewrite is complete.
+
+Thank you to all the contributors and users who have helped make this project possible!
+
 <img src="assets/icon.png" alt="sonixd logo" title="sonixd" align="right" height="60px" />
 
 # Sonixd
@@ -86,17 +95,7 @@ brew install --cask sonixd
 
 ### Arch Linux
 
-There is an AUR package of the latest AppImage release available [here](https://aur.archlinux.org/packages/sonixd-appimage).
-
-To install it you can use your favourite AUR package manager and install the package: `sonixd-appimage`
-
-For example using `yay`:
-
-```
-yay -S sonixd-appimage
-```
-
-If you encounter any problems please comment on the [AUR](https://aur.archlinux.org/packages/sonixd-appimage) or contact the [maintainer](mailto:robin@blckct.io) directly before you open an issue here.
+Check for available packages [here](https://aur.archlinux.org/packages?O=0&K=sonixd).
 
 ---
 
