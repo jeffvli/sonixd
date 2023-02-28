@@ -12,7 +12,7 @@ const useDiscordRpc = ({ playersRef }: any) => {
   const [discordRpc, setDiscordRpc] = useState<any>();
 
   useEffect(() => {
-    if (config.external.discord.enabled && config.external.discord.clientId.length === 18) {
+    if (config.external.discord.enabled) {
       const client = new RPC.Client({ transport: 'ipc' });
 
       if (discordRpc?.client !== config.external.discord.clientId) {
@@ -94,7 +94,7 @@ const useDiscordRpc = ({ playersRef }: any) => {
 
       return () => clearInterval(interval);
     }
-    return () => clearInterval();
+    return () => {};
   }, [
     config.external.discord.enabled,
     config.external.discord.serverImage,
