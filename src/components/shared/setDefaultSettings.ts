@@ -1732,6 +1732,26 @@ export const setDefaultSettings = (force: boolean) => {
     settings.set('titleBarStyle', isMacOS() ? 'mac' : 'windows');
   }
 
+  if (force || !settings.has('retainWindowSize')) {
+    settings.set('retainWindowSize', false);
+  }
+
+  if (force || !settings.has('defaultWindowWidth')) {
+    settings.set('defaultWindowWidth', 1280);
+  }
+
+  if (force || !settings.has('defaultWindowHeight')) {
+    settings.set('defaultWindowHeight', 720);
+  }
+
+  if (force || !settings.has('savedWindowSize')) {
+    settings.set('savedWindowSize', [1280, 720]);
+  }
+
+  if (force || !settings.has('savedWindowPos')) {
+    settings.set('savedWindowPos', [50, 50]);
+  }
+
   if (force || !settings.has('musicListColumns')) {
     settings.set('musicListColumns', [
       {

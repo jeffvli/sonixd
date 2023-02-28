@@ -283,7 +283,7 @@ if (isWindows() && isWindows10()) {
 
   const Controls = windowsMediaPlayback.BackgroundMediaPlayer.current.systemMediaTransportControls;
 
-  if (settings.getSync('systemMediaTransportControls')) {
+  if (settings.get('systemMediaTransportControls')) {
     Controls.isEnabled = true;
   } else {
     Controls.isEnabled = false;
@@ -420,15 +420,12 @@ const createWindow = async () => {
   let isCentered = true;
 
   // If retained window size is enabled, use saved dimensions and position. Otherwise, use defined defaults
-  if (settings.getSync('retainWindowSize')) {
-    windowDimensions = settings.getSync('savedWindowSize');
-    windowPos = settings.getSync('savedWindowPos');
+  if (settings.get('retainWindowSize')) {
+    windowDimensions = settings.get('savedWindowSize');
+    windowPos = settings.get('savedWindowPos');
     isCentered = false;
   } else {
-    windowDimensions = [
-      settings.getSync('defaultWindowWidth'),
-      settings.getSync('defaultWindowHeight'),
-    ];
+    windowDimensions = [settings.get('defaultWindowWidth'), settings.get('defaultWindowHeight')];
   }
 
   mainWindow = new BrowserWindow({
@@ -560,8 +557,8 @@ const createWindow = async () => {
   });
 
   mainWindow.on('moved', () => {
-    if (settings.getSync('retainWindowSize')) {
-      settings.setSync('savedWindowPos', mainWindow.getPosition());
+    if (settings.get('retainWindowSize')) {
+      settings.set('savedWindowPos', mainWindow.getPosition());
     }
   });
 
@@ -573,9 +570,9 @@ const createWindow = async () => {
     }
 
     // If retain window size is enabled, save the dimensions
-    if (settings.getSync('retainWindowSize')) {
+    if (settings.get('retainWindowSize')) {
       const curSize = mainWindow.getSize();
-      settings.setSync('savedWindowSize', [curSize[0], curSize[1]]);
+      settings.set('savedWindowSize', [curSize[0], curSize[1]]);
     }
 
     // If we have enabled saving the queue, we need to defer closing the main window until it has finished saving.

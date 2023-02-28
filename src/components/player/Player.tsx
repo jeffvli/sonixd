@@ -644,7 +644,7 @@ const Player = ({ currentEntryList, muted, children }: any, ref: any) => {
       setMetadata(playQueue.current);
 
       // Save the queue 2.5 seconds after fade length
-      if (settings.getSync('resume')) {
+      if (settings.get('resume')) {
         setTimeout(() => {
           ipcRenderer.send('quicksave');
         }, playQueue.fadeDuration * 1000 + 2500);

@@ -298,13 +298,13 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
     Boolean(settings.get('dynamicBackground'))
   );
   const [retainWindowSizeChk, setRetainWindowSizeChk] = useState(
-    Boolean(settings.getSync('retainWindowSize'))
+    Boolean(settings.get('retainWindowSize'))
   );
   const [defaultWindowHeight, setDefaultWindowHeightValue] = useState(
-    Number(settings.getSync('defaultWindowHeight'))
+    Number(settings.get('defaultWindowHeight'))
   );
   const [defaultWindowWidth, setDefaultWindowWidthValue] = useState(
-    Number(settings.getSync('defaultWindowWidth'))
+    Number(settings.get('defaultWindowWidth'))
   );
 
   const [selectedTheme, setSelectedTheme] = useState(String(settings.get('theme')));
@@ -508,7 +508,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
             defaultChecked={retainWindowSizeChk}
             checked={retainWindowSizeChk}
             onChange={(e: boolean) => {
-              settings.setSync('retainWindowSize', e);
+              settings.set('retainWindowSize', e);
               dispatch(setRetainWindowSize(e));
               setRetainWindowSizeChk(e);
             }}
@@ -530,7 +530,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
             max={7680}
             width={125}
             onChange={(e: number) => {
-              settings.setSync('defaultWindowWidth', Number(e));
+              settings.set('defaultWindowWidth', Number(e));
               dispatch(setDefaultWindowWidth(Number(e)));
               setDefaultWindowWidthValue(Number(e));
             }}
@@ -552,7 +552,7 @@ export const ThemeConfigPanel = ({ bordered }: any) => {
             max={7680}
             width={125}
             onChange={(e: number) => {
-              settings.setSync('defaultWindowHeight', Number(e));
+              settings.set('defaultWindowHeight', Number(e));
               dispatch(setDefaultWindowHeight(Number(e)));
               setDefaultWindowHeightValue(Number(e));
             }}
