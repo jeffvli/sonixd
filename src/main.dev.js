@@ -563,8 +563,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('close', (event) => {
-    if (!exitFromTray && !forceQuit && store.getState().config.window.exitToTray) {
-      exitFromTray = true;
+    if (!exitFromTray && store.getState().config.window.exitToTray) {
       event.preventDefault();
       mainWindow.hide();
     }
