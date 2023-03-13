@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[0.15.5] - 2023-03-13
+
+### Fixed
+
+- Fixed "Exit to Tray" behavior on Windows/Linux (#430)
+- Fixed an issue where the player would spam the server with requests when playing a song that requires transcoding (Subsonic)
+
 [0.15.4] - 2023-02-28
 
 ### Added
