@@ -563,8 +563,10 @@ const createWindow = async () => {
   });
 
   mainWindow.on('close', (event) => {
-    if (!exitFromTray && !forceQuit && store.getState().config.window.exitToTray) {
-      exitFromTray = true;
+    if (!exitFromTray && store.getState().config.window.exitToTray) {
+      if (isMacOS() && !forceQuit) {
+        exitFromTray = true;
+      }
       event.preventDefault();
       mainWindow.hide();
     }
