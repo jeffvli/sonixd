@@ -447,6 +447,10 @@ const createWindow = async () => {
     frame: settings.get('titleBarStyle') === 'native',
   });
 
+  electronLocalshortcut.register(mainWindow, 'Ctrl+Shift+I', () => {
+    mainWindow?.webContents.openDevTools();
+  });
+
   if (settings.get('globalMediaHotkeys')) {
     globalShortcut.register('MediaStop', () => {
       stop();
