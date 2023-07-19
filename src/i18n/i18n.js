@@ -14,6 +14,7 @@ const es = require('./locales/es.json');
 const si = require('./locales/si.json');
 const it = require('./locales/it.json');
 const tr = require('./locales/tr.json');
+const ja = require('./locales/ja.json');
 
 const resources = {
   en: { translation: en },
@@ -23,6 +24,7 @@ const resources = {
   si: { translation: si },
   it: { translation: it },
   tr: { translation: tr },
+  ja: { translation: ja },
 };
 
 i18n
@@ -69,5 +71,9 @@ export const Languages = [
   {
     label: 'Türkçe',
     value: 'tr',
+  },
+  {
+    label: '日本語',
+    value: 'ja',
   },
 ];
