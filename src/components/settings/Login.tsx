@@ -38,7 +38,7 @@ const Login = () => {
     try {
       const testConnection = legacyAuth
         ? await axios.get(
-            `${cleanServerName}/rest/ping.view?v=1.13.0&c=sonixd&f=json&u=${userName}&p=${password}`
+            `${cleanServerName}/rest/ping.view?v=1.13.0&c=sonixd&f=json&u=${userName}&p=${encodeURIComponent(password)}`
           )
         : await axios.get(
             `${cleanServerName}/rest/ping.view?v=1.13.0&c=sonixd&f=json&u=${userName}&s=${salt}&t=${hash}`
@@ -64,6 +64,7 @@ const Login = () => {
     localStorage.setItem('serverType', 'subsonic');
     localStorage.setItem('username', userName);
     localStorage.setItem('password', password);
+    localStorage.setItem('passwordEncoded', encodeURIComponent(password));
     localStorage.setItem('salt', salt);
     localStorage.setItem('hash', hash);
 

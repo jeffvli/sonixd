@@ -15,6 +15,7 @@ const getAuth = (useLegacyAuth: boolean) => {
     return {
       username: localStorage.getItem('username') || '',
       password: localStorage.getItem('password') || '',
+      passwordEncoded: localStorage.getItem('passwordEncoded') || '',
       server: localStorage.getItem('server') || '',
     };
   }
@@ -100,7 +101,7 @@ const getCoverArtUrl = (item: any, useLegacyAuth: boolean, size?: number) => {
       `${API_BASE_URL}/getCoverArt.view` +
       `?id=${item.coverArt}` +
       `&u=${auth.username}` +
-      `&p=${auth.password}` +
+      `&p=${auth.passwordEncoded}` +
       `&v=1.13.0` +
       `&c=sonixd` +
       `${size ? `&size=${size}` : ''}`
@@ -125,7 +126,7 @@ export const getDownloadUrl = (options: { id: string }, useLegacyAuth = legacyAu
       `${API_BASE_URL}/download.view` +
       `?id=${options.id}` +
       `&u=${auth.username}` +
-      `&p=${auth.password}` +
+      `&p=${auth.passwordEncoded}` +
       `&v=1.13.0` +
       `&c=sonixd`
     );
@@ -148,7 +149,7 @@ const getStreamUrl = (id: string, useLegacyAuth: boolean) => {
       `${API_BASE_URL}/stream.view` +
       `?id=${id}` +
       `&u=${auth.username}` +
-      `&p=${auth.password}` +
+      `&p=${auth.passwordEncoded}` +
       `&v=1.13.0` +
       `&c=sonixd`
     );
